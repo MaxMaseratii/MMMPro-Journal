@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MMM Buffer Journal</title>
+
+<!-- Tailwind CSS (CDN, no build step) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- React + ReactDOM (CDN) -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+<!-- Babel (lets us write JSX directly in the browser, no build tools) -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<style>
+  body { background:#000; margin:0; font-family: 'Inter', system-ui, sans-serif; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+// ---- Simple inline icon components (so we don't depend on lucide-react npm package) ----
+const Icon = ({ name, className }) => {
+  const ref = React.useRef(null);
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.innerHTML = '';
+      const svg = lucide.createElement(lucide[name]);
+      ref.current.appendChild(svg);
+    }
+  }, [name]);
+  return <span ref={ref} className={className}></span>;
+};
+
+const fmt = (n) => {
+  if (n === null || n === undefined || isNaN(n)) return '$0.00';
+  const sign = n < 0 ? '-' : '';
+  return `${sign}$${Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+};
+
+const ACC_KEY = 'mmm-journal-accounts';
+const ENT_KEY = 'mmm-journal-entries';
+
+function MMMJournal() {
+  const [accounts, setAccounts] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(ACC_KEY)) || []; } catch (e) { return []; }
+  });
+  const [entries, setEntries] = useState(() => {
+    try { return JSON.parse(localStorage.getItem(ENT_KEY)) || []; } catch (e) { return []; }
+  });
+  const [activeAccountId, setActiveAccountId] = useState(null);
+  const [showAddAccount, setShowAddAccount] = useState(false);
+  const [showAddEntry, setShowAddEntry] = useState(false);
+  const [expandedEntry, setExpandedEntry] = useState(null);
+
+  const [newAccount, setNewAccount] = useState({ name: '', startingBalance: '', maxDrawdown: '', profitTarget: '' });
+  const [newEntry, setNewEntry] = useState({
+    date: new Date().toISOString().split('T')[0],
+    trades: [{ result: 'win', pnl: '' }],
+    notes: ''
+  });
+
+  useEffect(() => { localStorage.setItem(ACC_KEY, JSON.stringify(accounts)); }, [accounts]);
+  useEffect(() => { localStorage.setItem(ENT_KEY, JSON.stringify(entries)); }, [entries]);
+  useEffect(() => { if (accounts.length && !activeAccountId) setActiveAccountId(accounts[0].id); }, [accounts, activeAccountId]);
+
+  const activeAccount = accounts.find(a => a.id === activeAccountId);
+  const accountEntries = entries.filter(e => e.accountId === activeAccountId).sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const calcBufferHistory = (account, accEntries) => {
+    if (!account) return [];
+    const chronological = [...accEntries].sort((a, b) => new Date(a.date) - new Date(b.date));
+    let buffer = parseFloat(account.maxDrawdown) || 0;
+    const history = [];
+    chronological.forEach(entry => {
+      const signedPnl = entry.trades.reduce((s, t) => {
+        const val = Math.abs(parseFloat(t.pnl) || 0);
+        return s + (t.result === 'win' ? val : -val);
+      }, 0);
+      buffer = buffer + signedPnl;
+      history.push({ date: entry.date, buffer, pnl: signedPnl, riskPerTrade: buffer / 10 });
+    });
+    return history;
+  };
+
+  const bufferHistory = activeAccount ? calcBufferHistory(activeAccount, accountEntries) : [];
+  const currentBuffer = bufferHistory.length > 0 ? bufferHistory[bufferHistory.length - 1].buffer : (activeAccount ? parseFloat(activeAccount.maxDrawdown) || 0 : 0);
+  const riskPerTrade = currentBuffer / 10;
+  const microsUnlocked = Math.max(1, Math.floor(currentBuffer / 1000));
+  const nextTierAt = (microsUnlocked + 1) * 1000;
+  const distToNextTier = nextTierAt - currentBuffer;
+
+  const totalPnl = accountEntries.reduce((sum, e) => sum + e.trades.reduce((s, t) => {
+    const val = Math.abs(parseFloat(t.pnl) || 0);
+    return s + (t.result === 'win' ? val : -val);
+  }, 0), 0);
+
+  const winTrades = accountEntries.flatMap(e => e.trades).filter(t => t.result === 'win').length;
+  const lossTrades = accountEntries.flatMap(e => e.trades).filter(t => t.result === 'loss').length;
+  const totalTrades = winTrades + lossTrades;
+  const winRate = totalTrades > 0 ? (winTrades / totalTrades) * 100 : 0;
+
+  const handleAddAccount = () => {
+    if (!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown) return;
+    const acc = {
+      id: Date.now(),
+      name: newAccount.name,
+      startingBalance: parseFloat(newAccount.startingBalance),
+      maxDrawdown: parseFloat(newAccount.maxDrawdown),
+      profitTarget: parseFloat(newAccount.profitTarget) || 0,
+    };
+    setAccounts([...accounts, acc]);
+    setActiveAccountId(acc.id);
+    setNewAccount({ name: '', startingBalance: '', maxDrawdown: '', profitTarget: '' });
+    setShowAddAccount(false);
+  };
+
+  const handleDeleteAccount = (id) => {
+    if (!confirm('Delete this account and all its journal entries?')) return;
+    setAccounts(accounts.filter(a => a.id !== id));
+    setEntries(entries.filter(e => e.accountId !== id));
+    if (activeAccountId === id) setActiveAccountId(null);
+  };
+
+  const addTradeRow = () => setNewEntry({ ...newEntry, trades: [...newEntry.trades, { result: 'win', pnl: '' }] });
+  const removeTradeRow = (idx) => setNewEntry({ ...newEntry, trades: newEntry.trades.filter((_, i) => i !== idx) });
+  const updateTradeRow = (idx, field, value) => {
+    const trades = [...newEntry.trades];
+    trades[idx] = { ...trades[idx], [field]: value };
+    setNewEntry({ ...newEntry, trades });
+  };
+
+  const handleSaveEntry = () => {
+    const validTrades = newEntry.trades.filter(t => t.pnl !== '');
+    if (validTrades.length === 0 || !activeAccountId) return;
+    const entry = { id: Date.now(), accountId: activeAccountId, date: newEntry.date, trades: validTrades, notes: newEntry.notes };
+    setEntries([...entries, entry]);
+    setNewEntry({ date: new Date().toISOString().split('T')[0], trades: [{ result: 'win', pnl: '' }], notes: '' });
+    setShowAddEntry(false);
+  };
+
+  const handleDeleteEntry = (id) => setEntries(entries.filter(e => e.id !== id));
+
+  return (
+    <div className="min-h-screen bg-black text-white p-4 md:p-8">
+      <div className="max-w-5xl mx-auto space-y-6">
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">
+              MMM Buffer Journal
+            </h1>
+            <p className="text-gray-500 text-sm mt-1">The 10% Rule — Offense & Defense, automatically</p>
+          </div>
+          <button onClick={() => setShowAddAccount(true)}
+            className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-yellow-300 hover:to-yellow-500 transition">
+            <Icon name="Plus" className="h-4 w-4" /> Add Account
+          </button>
+        </div>
+
+        <div className="border border-yellow-500/30 bg-gradient-to-r from-yellow-500/10 to-transparent rounded-xl p-4 flex items-start gap-3">
+          <Icon name="Zap" className="h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+          <p className="text-sm text-yellow-100/80">
+            <span className="text-yellow-400 font-semibold">Golden Rule: </span>
+            Always divide your <span className="text-white font-medium">current buffer</span> by 10. Never change the percentage —
+            the dollar amount shrinks automatically as you lose, and grows automatically as you win.
+          </p>
+        </div>
+
+        {accounts.length === 0 ? (
+          <div className="text-center py-20 border border-dashed border-gray-700 rounded-2xl">
+            <Icon name="Shield" className="h-10 w-10 text-gray-600 mx-auto mb-3" />
+            <p className="text-gray-500">No accounts yet. Add one to start tracking your buffer.</p>
+          </div>
+        ) : (
+          <React.Fragment>
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {accounts.map(acc => (
+                <button key={acc.id} onClick={() => setActiveAccountId(acc.id)}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition border ${activeAccountId === acc.id ? 'bg-yellow-500/15 border-yellow-400/50 text-yellow-300' : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:border-gray-700'}`}>
+                  {acc.name}
+                </button>
+              ))}
+            </div>
+
+            {activeAccount && (
+              <React.Fragment>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <StatCard label="Current Buffer" value={fmt(currentBuffer)} icon="Shield"
+                    color={currentBuffer >= (parseFloat(activeAccount.maxDrawdown) || 0) ? 'text-green-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-red-400' : 'text-yellow-400'} />
+                  <StatCard label="Risk Per Trade (÷10)" value={fmt(riskPerTrade)} icon="Target" color="text-blue-400" />
+                  <StatCard label="Total P&L" value={fmt(totalPnl)} icon={totalPnl >= 0 ? "TrendingUp" : "TrendingDown"} color={totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
+                  <StatCard label="Win Rate" value={`${winRate.toFixed(1)}%`} icon="DollarSign" color={winRate >= 50 ? 'text-green-400' : 'text-red-400'} sub={`${winTrades}W / ${lossTrades}L`} />
+                </div>
+
+                <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Icon name="Zap" className="h-5 w-5 text-yellow-400" />
+                    <h2 className="text-lg font-semibold text-white">Position Sizing — Live</h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
+                      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Contracts Unlocked</div>
+                      <div className="text-2xl font-bold text-yellow-400">{microsUnlocked} Micro{microsUnlocked > 1 ? 's' : ''}</div>
+                      <div className="text-xs text-gray-500 mt-1">1 Micro per $1,000 of buffer</div>
+                    </div>
+                    <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
+                      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Max Risk / Trade</div>
+                      <div className="text-2xl font-bold text-blue-400">{fmt(riskPerTrade)}</div>
+                      <div className="text-xs text-gray-500 mt-1">Buffer ÷ 10, always</div>
+                    </div>
+                    <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
+                      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Next Tier ({microsUnlocked + 1} Micros)</div>
+                      <div className="text-2xl font-bold text-purple-400">{fmt(Math.max(0, distToNextTier))}</div>
+                      <div className="text-xs text-gray-500 mt-1">away — resets stop to tight range</div>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-4 leading-relaxed">
+                    Below the next $1,000 tier, don't add contracts — widen your stop loss with the extra risk allowance instead.
+                    Once buffer crosses the next tier, unlock the next micro and your stop resets tight.
+                  </p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                  <div className="text-sm text-gray-500">
+                    Start: <span className="text-white">{fmt(activeAccount.startingBalance)}</span> ·
+                    Max DD: <span className="text-white">{fmt(activeAccount.maxDrawdown)}</span> ·
+                    Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span>
+                    <button onClick={() => handleDeleteAccount(activeAccount.id)} className="ml-3 text-red-400/70 hover:text-red-400 text-xs underline">
+                      delete account
+                    </button>
+                  </div>
+                  <button onClick={() => setShowAddEntry(true)}
+                    className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-green-400 hover:to-emerald-500 transition">
+                    <Icon name="Plus" className="h-4 w-4" /> Log Today's Trades
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <Icon name="Calendar" className="h-5 w-5 text-yellow-400" /> Trade History
+                  </h2>
+                  {accountEntries.length === 0 ? (
+                    <div className="text-center py-12 border border-dashed border-gray-800 rounded-xl text-gray-500 text-sm">
+                      No entries yet. Log your first day above.
+                    </div>
+                  ) : (
+                    accountEntries.map(entry => {
+                      const dayPnl = entry.trades.reduce((s, t) => {
+                        const val = Math.abs(parseFloat(t.pnl) || 0);
+                        return s + (t.result === 'win' ? val : -val);
+                      }, 0);
+                      const bufferAtDate = bufferHistory.find(b => b.date === entry.date);
+                      const isExpanded = expandedEntry === entry.id;
+                      return (
+                        <div key={entry.id} className="bg-gray-900/60 border border-gray-800 rounded-xl overflow-hidden">
+                          <button onClick={() => setExpandedEntry(isExpanded ? null : entry.id)}
+                            className="w-full flex items-center justify-between p-4 hover:bg-gray-800/30 transition">
+                            <div className="flex items-center gap-4">
+                              <div className={`w-2 h-2 rounded-full ${dayPnl >= 0 ? 'bg-green-400' : 'bg-red-400'}`}></div>
+                              <span className="text-white font-medium">{entry.date}</span>
+                              <span className="text-xs text-gray-500">{entry.trades.length} trade{entry.trades.length !== 1 ? 's' : ''}</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <span className={`font-semibold ${dayPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                {dayPnl >= 0 ? '+' : ''}{fmt(dayPnl)}
+                              </span>
+                              <Icon name={isExpanded ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500" />
+                            </div>
+                          </button>
+                          {isExpanded && (
+                            <div className="px-4 pb-4 space-y-2 border-t border-gray-800 pt-3">
+                              {entry.trades.map((t, i) => {
+                                const val = Math.abs(parseFloat(t.pnl) || 0);
+                                return (
+                                  <div key={i} className="flex items-center justify-between text-sm bg-black/30 rounded-lg px-3 py-2">
+                                    <span className="text-gray-400">Trade {i + 1}</span>
+                                    <span className={`font-medium px-2 py-0.5 rounded ${t.result === 'win' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'}`}>
+                                      {t.result === 'win' ? 'WIN' : 'LOSS'}
+                                    </span>
+                                    <span className={`font-semibold ${t.result === 'win' ? 'text-green-400' : 'text-red-400'}`}>
+                                      {t.result === 'win' ? '+' : '-'}{fmt(val)}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                              {entry.notes && <p className="text-xs text-gray-500 italic mt-2">"{entry.notes}"</p>}
+                              {bufferAtDate && (
+                                <p className="text-xs text-gray-600 mt-2">
+                                  Buffer after this day: <span className="text-gray-400">{fmt(bufferAtDate.buffer)}</span> ·
+                                  Risk/trade was: <span className="text-gray-400">{fmt(bufferAtDate.riskPerTrade)}</span>
+                                </p>
+                              )}
+                              <button onClick={() => handleDeleteEntry(entry.id)} className="text-xs text-red-400/70 hover:text-red-400 flex items-center gap-1 mt-2">
+                                <Icon name="Trash2" className="h-3 w-3" /> Delete entry
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </React.Fragment>
+            )}
+          </React.Fragment>
+        )}
+      </div>
+
+      {showAddAccount && (
+        <Modal onClose={() => setShowAddAccount(false)} title="Add Trading Account">
+          <div className="space-y-4">
+            <Field label="Account Name">
+              <input value={newAccount.name} onChange={e => setNewAccount({ ...newAccount, name: e.target.value })}
+                placeholder="e.g. FTMO 100k Challenge"
+                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Starting Balance">
+                <input type="number" value={newAccount.startingBalance} onChange={e => setNewAccount({ ...newAccount, startingBalance: e.target.value })}
+                  placeholder="100000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+              </Field>
+              <Field label="Max Drawdown ($)">
+                <input type="number" value={newAccount.maxDrawdown} onChange={e => setNewAccount({ ...newAccount, maxDrawdown: e.target.value })}
+                  placeholder="5000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+              </Field>
+            </div>
+            <Field label="Profit Target ($)">
+              <input type="number" value={newAccount.profitTarget} onChange={e => setNewAccount({ ...newAccount, profitTarget: e.target.value })}
+                placeholder="10000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+            </Field>
+            <button onClick={handleAddAccount} disabled={!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown}
+              className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              <Icon name="Save" className="h-4 w-4" /> Save Account
+            </button>
+          </div>
+        </Modal>
+      )}
+
+      {showAddEntry && (
+        <Modal onClose={() => setShowAddEntry(false)} title="Log Today's Trades" size="lg">
+          <div className="space-y-4">
+            <Field label="Date">
+              <input type="date" value={newEntry.date} onChange={e => setNewEntry({ ...newEntry, date: e.target.value })}
+                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+            </Field>
+            <div className="space-y-2">
+              <label className="text-sm text-gray-400">Trades</label>
+              {newEntry.trades.map((trade, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <button onClick={() => updateTradeRow(idx, 'result', 'win')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition ${trade.result === 'win' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700'}`}>
+                    Win
+                  </button>
+                  <button onClick={() => updateTradeRow(idx, 'result', 'loss')}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition ${trade.result === 'loss' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700'}`}>
+                    Loss
+                  </button>
+                  <input type="number" placeholder="P&L amount" value={trade.pnl} onChange={e => updateTradeRow(idx, 'pnl', e.target.value)}
+                    className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                  {newEntry.trades.length > 1 && (
+                    <button onClick={() => removeTradeRow(idx)} className="text-gray-500 hover:text-red-400">
+                      <Icon name="X" className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button onClick={addTradeRow} className="text-sm text-yellow-400 hover:text-yellow-300 flex items-center gap-1 mt-1">
+                <Icon name="Plus" className="h-3 w-3" /> Add another trade
+              </button>
+            </div>
+            <Field label="Notes (optional)">
+              <textarea value={newEntry.notes} onChange={e => setNewEntry({ ...newEntry, notes: e.target.value })}
+                placeholder="What went well? What to fix tomorrow?"
+                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-20 focus:border-yellow-400/50 outline-none resize-none"></textarea>
+            </Field>
+            <button onClick={handleSaveEntry} disabled={newEntry.trades.every(t => t.pnl === '')}
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              <Icon name="Save" className="h-4 w-4" /> Save Entry
+            </button>
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+function StatCard({ label, value, icon, color, sub }) {
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-xl p-4">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs text-gray-500 uppercase tracking-wide">{label}</span>
+        <Icon name={icon} className={`h-4 w-4 ${color}`} />
+      </div>
+      <div className={`text-xl font-bold ${color}`}>{value}</div>
+      {sub && <div className="text-xs text-gray-600 mt-0.5">{sub}</div>}
+    </div>
+  );
+}
+
+function Modal({ onClose, title, children, size = 'md' }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-80" onClick={onClose}></div>
+      <div className={`relative bg-black border border-yellow-500/20 rounded-2xl p-6 w-full ${size === 'lg' ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto shadow-2xl`}>
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-lg font-bold text-white">{title}</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-white">
+            <Icon name="X" className="h-5 w-5" />
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, children }) {
+  return (
+    <div>
+      <label className="block text-sm text-gray-400 mb-1">{label}</label>
+      {children}
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<MMMJournal />);
+</script>
+</body>
+</html>
