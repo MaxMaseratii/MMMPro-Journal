@@ -9,12 +9,34 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<!-- Firebase (Auth + Firestore) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
 <style>
   body { background:#000; margin:0; font-family: 'Inter', system-ui, sans-serif; }
 </style>
 </head>
 <body>
 <div id="root"></div>
+  
+<script>
+  // ====== FIREBASE CONFIG ======
+  const firebaseConfig = {
+    apiKey: "AIzaSyDcrEEhcY6kHLQxZ7RQ37KmAcCDPgol0gg",
+    authDomain: "mmm-pro-journal.firebaseapp.com",
+    projectId: "mmm-pro-journal",
+    storageBucket: "mmm-pro-journal.firebasestorage.app",
+    messagingSenderId: "46182009652",
+    appId: "1:46182009652:web:14574d6cfee75fe483f361",
+    measurementId: "G-8XK8ZB9C73"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+</script>
 
 <script type="text/babel">
 const { useState, useEffect } = React;
@@ -37,8 +59,6 @@ const fmt = (n) => {
   return `${sign}$${Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
-// CHALLENGE = ÷10  -> aggressive-but-controlled sizing to clear the target fast
-// FUNDED    = ÷20  -> conservative sizing to protect real payout capital
 const getDivisor = (accountType) => accountType === 'challenge' ? 10 : 20;
 
 const computeStatus = (account, buffer, totalPnl) => {
@@ -57,18 +77,73 @@ const STATUS_STYLES = {
   breached:      { label: 'Breached',             cls: 'bg-red-500/15 text-red-300 border-red-500/30' },
 };
 
-const ACC_KEY = 'mmm-journal-accounts';
-const ENT_KEY = 'mmm-journal-entries';
-
 const emptyAccountForm = { name: '', startingBalance: '', maxDrawdown: '', profitTarget: '', accountType: 'challenge', copiedAccountNumber: '', linkedFromId: null };
 
-function MMMJournal() {
-  const [accounts, setAccounts] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(ACC_KEY)) || []; } catch (e) { return []; }
-  });
-  const [entries, setEntries] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(ENT_KEY)) || []; } catch (e) { return []; }
-  });
+// ---------------- AUTH SCREEN ----------------
+function AuthScreen() {
+  const [mode, setMode] = useState('login'); // 'login' | 'signup'
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setError('');
+    if (!email || !password) { setError('Enter email and password.'); return; }
+    setLoading(true);
+    try {
+      if (mode === 'signup') {
+        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        if (displayName) await cred.user.updateProfile({ displayName });
+      } else {
+        await auth.signInWithEmailAndPassword(email, password);
+      }
+    } catch (e) {
+      setError(e.message.replace('Firebase: ', ''));
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+      <div className="w-full max-w-sm bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-8">
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent text-center mb-1">
+          MMM Pro Journal
+        </h1>
+        <p className="text-gray-500 text-sm text-center mb-6">{mode === 'login' ? 'Sign in to your account' : 'Create your account'}</p>
+
+        {mode === 'signup' && (
+          <input value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="Your name"
+            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 focus:border-yellow-400/50 outline-none" />
+        )}
+        <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" type="email"
+          className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 focus:border-yellow-400/50 outline-none" />
+        <input value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" type="password"
+          className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 focus:border-yellow-400/50 outline-none" />
+
+        {error && <p className="text-red-400 text-xs mb-3">{error}</p>}
+
+        <button onClick={handleSubmit} disabled={loading}
+          className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-50 mb-3">
+          {loading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'}
+        </button>
+
+        <p className="text-center text-sm text-gray-500">
+          {mode === 'login' ? "Don't have an account?" : "Already have an account?"}{' '}
+          <button onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(''); }} className="text-yellow-400 hover:underline">
+            {mode === 'login' ? 'Sign up' : 'Sign in'}
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// ---------------- MAIN JOURNAL (per logged-in user) ----------------
+function MMMJournal({ user }) {
+  const [accounts, setAccounts] = useState([]);
+  const [entries, setEntries] = useState([]);
   const [activeAccountId, setActiveAccountId] = useState(null);
   const [showAddAccount, setShowAddAccount] = useState(false);
   const [showAddEntry, setShowAddEntry] = useState(false);
@@ -80,12 +155,28 @@ function MMMJournal() {
     notes: ''
   });
 
-  useEffect(() => { localStorage.setItem(ACC_KEY, JSON.stringify(accounts)); }, [accounts]);
-  useEffect(() => { localStorage.setItem(ENT_KEY, JSON.stringify(entries)); }, [entries]);
-  useEffect(() => { if (accounts.length && !activeAccountId) setActiveAccountId(accounts[0].id); }, [accounts, activeAccountId]);
+  const accountsRef = db.collection('users').doc(user.uid).collection('accounts');
+  const entriesRef = db.collection('users').doc(user.uid).collection('entries');
+
+  // Live sync — every account under this UID only
+  useEffect(() => {
+    const unsub = accountsRef.orderBy('createdAt', 'asc').onSnapshot(snap => {
+      const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      setAccounts(list);
+      if (list.length && !activeAccountId) setActiveAccountId(list[0].id);
+    });
+    return unsub;
+  }, [user.uid]);
+
+  useEffect(() => {
+    const unsub = entriesRef.orderBy('date', 'desc').onSnapshot(snap => {
+      setEntries(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+    return unsub;
+  }, [user.uid]);
 
   const activeAccount = accounts.find(a => a.id === activeAccountId);
-  const accountEntries = entries.filter(e => e.accountId === activeAccountId).sort((a, b) => new Date(b.date) - new Date(a.date));
+  const accountEntries = entries.filter(e => e.accountId === activeAccountId);
   const divisor = activeAccount ? getDivisor(activeAccount.accountType) : 10;
 
   const calcBufferHistory = (account, accEntries) => {
@@ -121,23 +212,22 @@ function MMMJournal() {
   const lossTrades = accountEntries.flatMap(e => e.trades).filter(t => t.result === 'loss').length;
   const totalTrades = winTrades + lossTrades;
   const winRate = totalTrades > 0 ? (winTrades / totalTrades) * 100 : 0;
-
   const activeStatus = activeAccount ? computeStatus(activeAccount, currentBuffer, totalPnl) : 'active';
 
   const getAccountStatus = (acc) => {
-    const hist = calcBufferHistory(acc, entries.filter(e => e.accountId === acc.id));
+    const accE = entries.filter(e => e.accountId === acc.id);
+    const hist = calcBufferHistory(acc, accE);
     const buf = hist.length > 0 ? hist[hist.length - 1].buffer : (parseFloat(acc.maxDrawdown) || 0);
-    const pnl = entries.filter(e => e.accountId === acc.id).reduce((sum, e) => sum + e.trades.reduce((s, t) => {
+    const pnl = accE.reduce((sum, e) => sum + e.trades.reduce((s, t) => {
       const val = Math.abs(parseFloat(t.pnl) || 0);
       return s + (t.result === 'win' ? val : -val);
     }, 0), 0);
     return computeStatus(acc, buf, pnl);
   };
 
-  const handleAddAccount = () => {
+  const handleAddAccount = async () => {
     if (!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown) return;
-    const acc = {
-      id: Date.now(),
+    const doc = await accountsRef.add({
       name: newAccount.name,
       startingBalance: parseFloat(newAccount.startingBalance),
       maxDrawdown: parseFloat(newAccount.maxDrawdown),
@@ -145,9 +235,9 @@ function MMMJournal() {
       accountType: newAccount.accountType,
       copiedAccountNumber: newAccount.copiedAccountNumber || '',
       linkedFromId: newAccount.linkedFromId || null,
-    };
-    setAccounts([...accounts, acc]);
-    setActiveAccountId(acc.id);
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+    setActiveAccountId(doc.id);
     setNewAccount(emptyAccountForm);
     setShowAddAccount(false);
   };
@@ -163,10 +253,13 @@ function MMMJournal() {
     setShowAddAccount(true);
   };
 
-  const handleDeleteAccount = (id) => {
+  const handleDeleteAccount = async (id) => {
     if (!confirm('Delete this account and all its journal entries?')) return;
-    setAccounts(accounts.filter(a => a.id !== id));
-    setEntries(entries.filter(e => e.accountId !== id));
+    const batchEntries = await entriesRef.where('accountId', '==', id).get();
+    const batch = db.batch();
+    batchEntries.forEach(d => batch.delete(d.ref));
+    batch.delete(accountsRef.doc(id));
+    await batch.commit();
     if (activeAccountId === id) setActiveAccountId(null);
   };
 
@@ -178,16 +271,15 @@ function MMMJournal() {
     setNewEntry({ ...newEntry, trades });
   };
 
-  const handleSaveEntry = () => {
+  const handleSaveEntry = async () => {
     const validTrades = newEntry.trades.filter(t => t.pnl !== '');
     if (validTrades.length === 0 || !activeAccountId) return;
-    const entry = { id: Date.now(), accountId: activeAccountId, date: newEntry.date, trades: validTrades, notes: newEntry.notes };
-    setEntries([...entries, entry]);
+    await entriesRef.add({ accountId: activeAccountId, date: newEntry.date, trades: validTrades, notes: newEntry.notes });
     setNewEntry({ date: new Date().toISOString().split('T')[0], trades: [{ result: 'win', pnl: '' }], notes: '' });
     setShowAddEntry(false);
   };
 
-  const handleDeleteEntry = (id) => setEntries(entries.filter(e => e.id !== id));
+  const handleDeleteEntry = async (id) => { await entriesRef.doc(id).delete(); };
 
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
@@ -198,7 +290,9 @@ function MMMJournal() {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">
               MMM Pro Journal
             </h1>
-            <p className="text-gray-500 text-sm mt-1">The Buffer Rule — Challenge ÷10, Funded ÷20</p>
+            <p className="text-gray-500 text-sm mt-1">
+              {user.displayName || user.email} · <button onClick={() => auth.signOut()} className="text-red-400 hover:underline">Sign out</button>
+            </p>
           </div>
           <button onClick={() => { setNewAccount(emptyAccountForm); setShowAddAccount(true); }}
             className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-yellow-300 hover:to-yellow-500 transition">
@@ -210,10 +304,8 @@ function MMMJournal() {
           <Icon name="Zap" className="h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0" />
           <p className="text-sm text-yellow-100/80">
             <span className="text-yellow-400 font-semibold">Golden Rule: </span>
-            <span className="text-white font-medium">Challenge accounts ÷10</span> — you're spreading your buffer across roughly
-            10 trades' worth of risk to clear the target and pass. <span className="text-white font-medium">Funded accounts ÷20</span> —
-            once real payout capital is on the line, you cut risk in half per trade to protect it and reach your payout target safely.
-            Same self-adjusting math either way: the dollar risk shrinks as you lose, grows as you win.
+            <span className="text-white font-medium">Challenge accounts ÷10</span> to clear the target fast.
+            <span className="text-white font-medium"> Funded accounts ÷20</span> to protect real payout capital.
           </p>
         </div>
 
@@ -234,9 +326,7 @@ function MMMJournal() {
                     <span className={`text-[10px] px-1.5 py-0.5 rounded ${acc.accountType === 'challenge' ? 'bg-purple-500/20 text-purple-300' : 'bg-emerald-500/20 text-emerald-300'}`}>
                       {acc.accountType === 'challenge' ? 'Challenge' : 'Funded'}
                     </span>
-                    {st !== 'active' && (
-                      <span className={`w-1.5 h-1.5 rounded-full ${st === 'breached' ? 'bg-red-400' : 'bg-green-400'}`}></span>
-                    )}
+                    {st !== 'active' && <span className={`w-1.5 h-1.5 rounded-full ${st === 'breached' ? 'bg-red-400' : 'bg-green-400'}`}></span>}
                   </button>
                 );
               })}
@@ -244,16 +334,12 @@ function MMMJournal() {
 
             {activeAccount && (
               <React.Fragment>
-
-                {/* Status Alert Banners */}
                 {activeStatus === 'breached' && (
                   <div className="border border-red-500/40 bg-red-500/10 rounded-xl p-4 flex items-start gap-3">
                     <Icon name="AlertTriangle" className="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
                       <p className="text-red-300 font-semibold text-sm">Account Breached</p>
-                      <p className="text-red-200/70 text-xs mt-1">
-                        Buffer has been fully consumed by losses. This account has failed. Open a new challenge to try again.
-                      </p>
+                      <p className="text-red-200/70 text-xs mt-1">Buffer fully consumed. Open a new challenge to try again.</p>
                     </div>
                     <button onClick={() => { setNewAccount(emptyAccountForm); setShowAddAccount(true); }}
                       className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-1.5 rounded-lg border border-red-500/40 flex-shrink-0">
@@ -266,9 +352,7 @@ function MMMJournal() {
                     <Icon name="Trophy" className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
                       <p className="text-green-300 font-semibold text-sm">Challenge Passed!</p>
-                      <p className="text-green-200/70 text-xs mt-1">
-                        Profit target reached. You can now start tracking the funded account for this pass.
-                      </p>
+                      <p className="text-green-200/70 text-xs mt-1">Start tracking the funded account for this pass.</p>
                     </div>
                     <button onClick={() => handleStartFundedFromChallenge(activeAccount)}
                       className="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/40 flex-shrink-0">
@@ -281,7 +365,7 @@ function MMMJournal() {
                     <Icon name="DollarSign" className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="text-green-300 font-semibold text-sm">Target Hit — Ready for Payout</p>
-                      <p className="text-green-200/70 text-xs mt-1">Profit target reached on this funded account. Request your payout.</p>
+                      <p className="text-green-200/70 text-xs mt-1">Request your payout on this funded account.</p>
                     </div>
                   </div>
                 )}
@@ -301,9 +385,7 @@ function MMMJournal() {
                       <h2 className="text-lg font-semibold text-white">Position Sizing — Live</h2>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${STATUS_STYLES[activeStatus].cls}`}>
-                        {STATUS_STYLES[activeStatus].label}
-                      </span>
+                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${STATUS_STYLES[activeStatus].cls}`}>{STATUS_STYLES[activeStatus].label}</span>
                       <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${activeAccount.accountType === 'challenge' ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30' : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'}`}>
                         {activeAccount.accountType === 'challenge' ? 'Challenge · ÷10' : 'Funded · ÷20'}
                       </span>
@@ -313,17 +395,14 @@ function MMMJournal() {
                     <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
                       <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Contracts Unlocked</div>
                       <div className="text-2xl font-bold text-yellow-400">{microsUnlocked} Micro{microsUnlocked > 1 ? 's' : ''}</div>
-                      <div className="text-xs text-gray-500 mt-1">1 Micro per $1,000 of buffer</div>
                     </div>
                     <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
                       <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Max Risk / Trade</div>
                       <div className="text-2xl font-bold text-blue-400">{fmt(riskPerTrade)}</div>
-                      <div className="text-xs text-gray-500 mt-1">Buffer ÷ {divisor}, always</div>
                     </div>
                     <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
                       <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Next Tier ({microsUnlocked + 1} Micros)</div>
                       <div className="text-2xl font-bold text-purple-400">{fmt(Math.max(0, distToNextTier))}</div>
-                      <div className="text-xs text-gray-500 mt-1">away — resets stop to tight range</div>
                     </div>
                   </div>
                 </div>
@@ -333,12 +412,8 @@ function MMMJournal() {
                     Start: <span className="text-white">{fmt(activeAccount.startingBalance)}</span> ·
                     Max DD: <span className="text-white">{fmt(activeAccount.maxDrawdown)}</span> ·
                     Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span>
-                    {activeAccount.copiedAccountNumber && (
-                      <React.Fragment> · Copy of Acct: <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></React.Fragment>
-                    )}
-                    <button onClick={() => handleDeleteAccount(activeAccount.id)} className="ml-3 text-red-400/70 hover:text-red-400 text-xs underline">
-                      delete account
-                    </button>
+                    {activeAccount.copiedAccountNumber && <React.Fragment> · Copy of: <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></React.Fragment>}
+                    <button onClick={() => handleDeleteAccount(activeAccount.id)} className="ml-3 text-red-400/70 hover:text-red-400 text-xs underline">delete account</button>
                   </div>
                   <button onClick={() => setShowAddEntry(true)}
                     className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-green-400 hover:to-emerald-500 transition">
@@ -351,11 +426,9 @@ function MMMJournal() {
                     <Icon name="Calendar" className="h-5 w-5 text-yellow-400" /> Trade History
                   </h2>
                   {accountEntries.length === 0 ? (
-                    <div className="text-center py-12 border border-dashed border-gray-800 rounded-xl text-gray-500 text-sm">
-                      No entries yet. Log your first day above.
-                    </div>
+                    <div className="text-center py-12 border border-dashed border-gray-800 rounded-xl text-gray-500 text-sm">No entries yet.</div>
                   ) : (
-                    accountEntries.map(entry => {
+                    [...accountEntries].sort((a,b) => new Date(b.date) - new Date(a.date)).map(entry => {
                       const dayPnl = entry.trades.reduce((s, t) => {
                         const val = Math.abs(parseFloat(t.pnl) || 0);
                         return s + (t.result === 'win' ? val : -val);
@@ -372,9 +445,7 @@ function MMMJournal() {
                               <span className="text-xs text-gray-500">{entry.trades.length} trade{entry.trades.length !== 1 ? 's' : ''}</span>
                             </div>
                             <div className="flex items-center gap-4">
-                              <span className={`font-semibold ${dayPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                                {dayPnl >= 0 ? '+' : ''}{fmt(dayPnl)}
-                              </span>
+                              <span className={`font-semibold ${dayPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>{dayPnl >= 0 ? '+' : ''}{fmt(dayPnl)}</span>
                               <Icon name={isExpanded ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500" />
                             </div>
                           </button>
@@ -385,22 +456,13 @@ function MMMJournal() {
                                 return (
                                   <div key={i} className="flex items-center justify-between text-sm bg-black/30 rounded-lg px-3 py-2">
                                     <span className="text-gray-400">Trade {i + 1}</span>
-                                    <span className={`font-medium px-2 py-0.5 rounded ${t.result === 'win' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'}`}>
-                                      {t.result === 'win' ? 'WIN' : 'LOSS'}
-                                    </span>
-                                    <span className={`font-semibold ${t.result === 'win' ? 'text-green-400' : 'text-red-400'}`}>
-                                      {t.result === 'win' ? '+' : '-'}{fmt(val)}
-                                    </span>
+                                    <span className={`font-medium px-2 py-0.5 rounded ${t.result === 'win' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'}`}>{t.result === 'win' ? 'WIN' : 'LOSS'}</span>
+                                    <span className={`font-semibold ${t.result === 'win' ? 'text-green-400' : 'text-red-400'}`}>{t.result === 'win' ? '+' : '-'}{fmt(val)}</span>
                                   </div>
                                 );
                               })}
                               {entry.notes && <p className="text-xs text-gray-500 italic mt-2">"{entry.notes}"</p>}
-                              {bufferAtDate && (
-                                <p className="text-xs text-gray-600 mt-2">
-                                  Buffer after this day: <span className="text-gray-400">{fmt(bufferAtDate.buffer)}</span> ·
-                                  Risk/trade was: <span className="text-gray-400">{fmt(bufferAtDate.riskPerTrade)}</span>
-                                </p>
-                              )}
+                              {bufferAtDate && <p className="text-xs text-gray-600 mt-2">Buffer after this day: <span className="text-gray-400">{fmt(bufferAtDate.buffer)}</span></p>}
                               <button onClick={() => handleDeleteEntry(entry.id)} className="text-xs text-red-400/70 hover:text-red-400 flex items-center gap-1 mt-2">
                                 <Icon name="Trash2" className="h-3 w-3" /> Delete entry
                               </button>
@@ -423,42 +485,33 @@ function MMMJournal() {
             <div>
               <label className="block text-sm text-gray-400 mb-1">Account Type</label>
               <div className="flex gap-2">
-                <button
-                  onClick={() => setNewAccount({ ...newAccount, accountType: 'challenge' })}
-                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition border ${newAccount.accountType === 'challenge' ? 'bg-purple-500/20 text-purple-400 border-purple-500/40' : 'bg-gray-800 text-gray-500 border-gray-700'}`}>
-                  Challenge (÷10)
-                </button>
-                <button
-                  onClick={() => setNewAccount({ ...newAccount, accountType: 'funded' })}
-                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition border ${newAccount.accountType === 'funded' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' : 'bg-gray-800 text-gray-500 border-gray-700'}`}>
-                  Funded (÷20)
-                </button>
+                <button onClick={() => setNewAccount({ ...newAccount, accountType: 'challenge' })}
+                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition border ${newAccount.accountType === 'challenge' ? 'bg-purple-500/20 text-purple-400 border-purple-500/40' : 'bg-gray-800 text-gray-500 border-gray-700'}`}>Challenge (÷10)</button>
+                <button onClick={() => setNewAccount({ ...newAccount, accountType: 'funded' })}
+                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition border ${newAccount.accountType === 'funded' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' : 'bg-gray-800 text-gray-500 border-gray-700'}`}>Funded (÷20)</button>
               </div>
             </div>
             <Field label="Account Name">
-              <input value={newAccount.name} onChange={e => setNewAccount({ ...newAccount, name: e.target.value })}
-                placeholder="e.g. FTMO 100k Challenge"
+              <input value={newAccount.name} onChange={e => setNewAccount({ ...newAccount, name: e.target.value })} placeholder="e.g. FTMO 100k Challenge"
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
             </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Starting Balance">
-                <input type="number" value={newAccount.startingBalance} onChange={e => setNewAccount({ ...newAccount, startingBalance: e.target.value })}
-                  placeholder="100000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                <input type="number" value={newAccount.startingBalance} onChange={e => setNewAccount({ ...newAccount, startingBalance: e.target.value })} placeholder="100000"
+                  className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
               </Field>
               <Field label="Max Drawdown ($)">
-                <input type="number" value={newAccount.maxDrawdown} onChange={e => setNewAccount({ ...newAccount, maxDrawdown: e.target.value })}
-                  placeholder="5000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                <input type="number" value={newAccount.maxDrawdown} onChange={e => setNewAccount({ ...newAccount, maxDrawdown: e.target.value })} placeholder="5000"
+                  className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
               </Field>
             </div>
             <Field label="Profit Target ($)">
-              <input type="number" value={newAccount.profitTarget} onChange={e => setNewAccount({ ...newAccount, profitTarget: e.target.value })}
-                placeholder="10000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+              <input type="number" value={newAccount.profitTarget} onChange={e => setNewAccount({ ...newAccount, profitTarget: e.target.value })} placeholder="10000"
+                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
             </Field>
             <Field label="Master / Copied Account Number (optional)">
-              <input value={newAccount.copiedAccountNumber} onChange={e => setNewAccount({ ...newAccount, copiedAccountNumber: e.target.value })}
-                placeholder="If copying a master account, enter its account #"
+              <input value={newAccount.copiedAccountNumber} onChange={e => setNewAccount({ ...newAccount, copiedAccountNumber: e.target.value })} placeholder="If copying a master account, enter its account #"
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
-              <p className="text-xs text-gray-600 mt-1">Use this to link multiple accounts that mirror the same master account/trades.</p>
             </Field>
             <button onClick={handleAddAccount} disabled={!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown}
               className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
@@ -480,19 +533,13 @@ function MMMJournal() {
               {newEntry.trades.map((trade, idx) => (
                 <div key={idx} className="flex items-center gap-2">
                   <button onClick={() => updateTradeRow(idx, 'result', 'win')}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition ${trade.result === 'win' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700'}`}>
-                    Win
-                  </button>
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition ${trade.result === 'win' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700'}`}>Win</button>
                   <button onClick={() => updateTradeRow(idx, 'result', 'loss')}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition ${trade.result === 'loss' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700'}`}>
-                    Loss
-                  </button>
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition ${trade.result === 'loss' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700'}`}>Loss</button>
                   <input type="number" placeholder="P&L amount" value={trade.pnl} onChange={e => updateTradeRow(idx, 'pnl', e.target.value)}
                     className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
                   {newEntry.trades.length > 1 && (
-                    <button onClick={() => removeTradeRow(idx)} className="text-gray-500 hover:text-red-400">
-                      <Icon name="X" className="h-4 w-4" />
-                    </button>
+                    <button onClick={() => removeTradeRow(idx)} className="text-gray-500 hover:text-red-400"><Icon name="X" className="h-4 w-4" /></button>
                   )}
                 </div>
               ))}
@@ -501,8 +548,7 @@ function MMMJournal() {
               </button>
             </div>
             <Field label="Notes (optional)">
-              <textarea value={newEntry.notes} onChange={e => setNewEntry({ ...newEntry, notes: e.target.value })}
-                placeholder="What went well? What to fix tomorrow?"
+              <textarea value={newEntry.notes} onChange={e => setNewEntry({ ...newEntry, notes: e.target.value })} placeholder="What went well? What to fix tomorrow?"
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-20 focus:border-yellow-400/50 outline-none resize-none"></textarea>
             </Field>
             <button onClick={handleSaveEntry} disabled={newEntry.trades.every(t => t.pnl === '')}
@@ -536,9 +582,7 @@ function Modal({ onClose, title, children, size = 'md' }) {
       <div className={`relative bg-black border border-yellow-500/20 rounded-2xl p-6 w-full ${size === 'lg' ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto shadow-2xl`}>
         <div className="flex items-center justify-between mb-5">
           <h3 className="text-lg font-bold text-white">{title}</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-white">
-            <Icon name="X" className="h-5 w-5" />
-          </button>
+          <button onClick={onClose} className="text-gray-500 hover:text-white"><Icon name="X" className="h-5 w-5" /></button>
         </div>
         {children}
       </div>
@@ -547,16 +591,25 @@ function Modal({ onClose, title, children, size = 'md' }) {
 }
 
 function Field({ label, children }) {
-  return (
-    <div>
-      <label className="block text-sm text-gray-400 mb-1">{label}</label>
-      {children}
-    </div>
-  );
+  return (<div><label className="block text-sm text-gray-400 mb-1">{label}</label>{children}</div>);
+}
+
+// ---------------- ROOT: watches auth state ----------------
+function App() {
+  const [user, setUser] = useState(undefined); // undefined = loading, null = logged out
+  useEffect(() => {
+    const unsub = auth.onAuthStateChanged(u => setUser(u));
+    return unsub;
+  }, []);
+
+  if (user === undefined) {
+    return <div className="min-h-screen bg-black flex items-center justify-center text-yellow-400">Loading...</div>;
+  }
+  return user ? <MMMJournal user={user} /> : <AuthScreen />;
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<MMMJournal />);
+root.render(<App />);
 </script>
 </body>
 </html>
