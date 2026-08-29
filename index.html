@@ -132,7 +132,7 @@ const emptyAccountForm = {
   accountType: 'challenge', copiedAccountNumber: '', linkedFromId: null,
   backtestWinRate: '', backtestSampleSize: '', winRateTier: 'average',
   strategyName: '', longRules: [''], shortRules: [''],
-  accountCost: '', activationCost: '', resetCost: '', totalPayouts: ''
+  accountCost: '', activationCost: '', resetCost: ''
 };
 
 const emptyEntryForm = function() {
@@ -198,6 +198,90 @@ function AuthScreen() {
           </button>
         </p>
       </div>
+    </div>
+  );
+}
+
+function SystemExplainer() {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="border border-yellow-500/30 bg-gradient-to-r from-yellow-500/10 to-transparent rounded-xl overflow-hidden">
+      <button onClick={function() { setOpen(!open); }} className="w-full flex items-start gap-3 p-4 text-left">
+        <Icon name="Zap" className="h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+        <div className="flex-1">
+          <p className="text-sm text-yellow-100/80">
+            <span className="text-yellow-400 font-semibold">System: </span>
+            <span className="text-white font-medium">TRA</span> is set by backtested win rate. <span className="text-white font-medium">RTU</span> = buffer / TRA.
+            <span className="text-white font-medium"> DRT</span> caps you at 2 RTU lost or 2 RTU won, max 3 trades/day.
+            <span className="text-yellow-400 underline ml-1">{open ? 'Hide details' : 'What does this mean?'}</span>
+          </p>
+        </div>
+        <Icon name={open ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+      </button>
+      {open && (
+        <div className="px-4 pb-4 space-y-3 text-sm text-gray-300 border-t border-yellow-500/20 pt-3">
+          <div>
+            <p className="text-yellow-400 font-semibold mb-1">TRA - Total RTU Allocation</p>
+            <p className="text-gray-400">How many "lives" your account has before it's fully exhausted. It's a count, not a dollar figure. Set once when you add the account, based on your backtested win rate (30+ trades). A 45-54% win rate gets 25 TRA on a Challenge account.</p>
+          </div>
+          <div>
+            <p className="text-blue-400 font-semibold mb-1">RTU - Risk Tolerance Unit</p>
+            <p className="text-gray-400">The dollar cost of one single life. RTU = current buffer / TRA. Example: $500 buffer / 25 TRA = $20 RTU. As your buffer grows from wins or shrinks from losses, RTU recalculates automatically - same life-count, but each life is worth more or less.</p>
+          </div>
+          <div>
+            <p className="text-red-400 font-semibold mb-1">DRT - Daily Risk Tolerance</p>
+            <p className="text-gray-400">Your daily circuit breaker, measured in RTUs. Fixed at 2 RTU lost (stop - you're down 2 RTU today) or 2 RTU won (stop - protect the gain), max 3 trades either way.</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AccountGroupNav(props) {
+  const accounts = props.accounts;
+  const activeAccountId = props.activeAccountId;
+  const onSelect = props.onSelect;
+  const getStatus = props.getStatus;
+  const filter = props.filter;
+  const [openGroup, setOpenGroup] = useState('challenge');
+
+  return (
+    <div className="space-y-2">
+      {ACCOUNT_TYPES.map(function(type) {
+        const allOfType = accounts.filter(function(a) { return a.accountType === type.key; });
+        const group = filter === 'all' ? allOfType : allOfType.filter(function(a) { return !isArchived(a, getStatus(a)); });
+        const activeInGroup = allOfType.filter(function(a) { return !isArchived(a, getStatus(a)); }).length;
+        const isOpen = openGroup === type.key;
+        return (
+          <div key={type.key} className="border border-gray-800 rounded-xl overflow-hidden">
+            <button onClick={function() { setOpenGroup(isOpen ? null : type.key); }}
+              className="w-full flex items-center justify-between px-4 py-3 bg-gray-900 hover:bg-gray-800/60 transition">
+              <div className="flex items-center gap-2">
+                <span className={"text-sm font-semibold px-2 py-0.5 rounded " + (ACCOUNT_BADGE_CLS[type.key])}>{type.label}</span>
+                <span className="text-xs text-gray-500">{activeInGroup} active / {allOfType.length} total</span>
+              </div>
+              <Icon name={isOpen ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500" />
+            </button>
+            {isOpen && (
+              <div className="flex flex-wrap gap-2 p-3 bg-black/30">
+                {group.length === 0 && <p className="text-xs text-gray-600">No {type.label.toLowerCase()} accounts to show.</p>}
+                {group.map(function(acc) {
+                  const st = getStatus(acc);
+                  const archived = isArchived(acc, st);
+                  return (
+                    <button key={acc.id} onClick={function() { onSelect(acc.id); }}
+                      className={"flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border " + (archived ? 'opacity-40 ' : '') + (activeAccountId === acc.id ? 'bg-yellow-500/15 border-yellow-400/50 text-yellow-300' : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-white')}>
+                      <span>{acc.name} #{acc.accountNumber}</span>
+                      {archived && <span className="text-red-400">- Archived</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -338,61 +422,101 @@ function StrategyCard(props) {
   );
 }
 
-function CostsPayoutsCard(props) {
+function MiniStat(props) {
+  return (<div className="bg-black/40 border border-gray-800 rounded-xl p-3"><div className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">{props.label}</div><div className={"text-lg font-bold " + props.color}>{props.value}</div></div>);
+}
+
+function TradingPlanSummaryCard(props) {
   const account = props.account;
-  const onSave = props.onSave;
-  const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({
-    accountCost: account.accountCost || 0,
-    activationCost: account.activationCost || 0,
-    resetCost: account.resetCost || 0,
-    totalPayouts: account.totalPayouts || 0
-  });
-  const totalCosts = (parseFloat(account.accountCost) || 0) + (parseFloat(account.activationCost) || 0) + (parseFloat(account.resetCost) || 0);
-  const totalPayouts = parseFloat(account.totalPayouts) || 0;
-  const profitability = totalPayouts - totalCosts;
+  const rtu = props.riskPerTrade;
+  const rr = parseFloat(account.rewardRatio) || 2;
+  const winPerTrade = rtu * rr;
+  const dailyTarget = winPerTrade * 2;
+  const minWinRate = (rtu + winPerTrade) > 0 ? (rtu / (rtu + winPerTrade)) * 100 : 0;
+  const winsToTarget = winPerTrade > 0 ? Math.ceil((parseFloat(account.profitTarget) || 0) / winPerTrade) : 0;
+  const remaining = (parseFloat(account.profitTarget) || 0) - props.totalPnl;
 
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Icon name="Receipt" className="h-5 w-5 text-yellow-400" />
-          <h2 className="text-lg font-semibold text-white">Costs &amp; Payouts</h2>
-        </div>
-        <button onClick={function() { setEditing(!editing); }} className="text-xs text-yellow-400 hover:text-yellow-300 flex items-center gap-1">
-          <Icon name={editing ? "X" : "Edit3"} className="h-3.5 w-3.5" /><span>{editing ? 'Cancel' : 'Edit'}</span>
-        </button>
+      <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Icon name="ClipboardList" className="h-5 w-5 text-yellow-400" /><span>Trading Plan Summary</span></h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <MiniStat label="Account Capital" value={fmt(account.maxDrawdown)} color="text-yellow-400" />
+        <MiniStat label="Profit Target" value={fmt(account.profitTarget)} color="text-green-400" />
+        <MiniStat label="Risk / Trade (RTU)" value={fmt(rtu)} color="text-red-400" />
+        <MiniStat label="Win / Trade" value={fmt(winPerTrade)} color="text-green-400" />
+        <MiniStat label="RR Ratio" value={rr + ":1"} color="text-purple-400" />
+        <MiniStat label="Daily Target (2 wins)" value={fmt(dailyTarget)} color="text-blue-400" />
+        <MiniStat label="Breakeven Win Rate" value={minWinRate.toFixed(1) + "%"} color="text-purple-400" />
+        <MiniStat label="Wins to Hit Target" value={winsToTarget + " wins"} color="text-purple-400" />
+        <MiniStat label="Max Trades / Day" value="3" color="text-white" />
+        <MiniStat label="Max Losses / Day" value="2" color="text-red-400" />
+        <MiniStat label="Remaining to Target" value={fmt(Math.max(0, remaining))} color="text-yellow-400" />
+        <MiniStat label="Contracts Unlocked" value={props.microsUnlocked + " Micro" + (props.microsUnlocked > 1 ? 's' : '')} color="text-yellow-400" />
       </div>
-      {editing ? (
-        <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Account/Challenge Cost ($)"><input type="number" value={form.accountCost} onChange={function(e) { setForm(Object.assign({}, form, { accountCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
-            <Field label="Activation Cost ($)"><input type="number" value={form.activationCost} onChange={function(e) { setForm(Object.assign({}, form, { activationCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Reset Cost ($)"><input type="number" value={form.resetCost} onChange={function(e) { setForm(Object.assign({}, form, { resetCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
-            <Field label="Total Payouts Received ($)"><input type="number" value={form.totalPayouts} onChange={function(e) { setForm(Object.assign({}, form, { totalPayouts: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
-          </div>
-          <button onClick={function() { onSave(form); setEditing(false); }} className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2 rounded-lg font-semibold flex items-center justify-center gap-1.5">
-            <Icon name="Save" className="h-4 w-4" /><span>Save</span>
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="bg-black/40 border border-gray-800 rounded-xl p-3">
-            <div className="text-xs text-gray-500 uppercase mb-1">Total Costs</div>
-            <div className="text-lg font-bold text-red-400">{fmt(totalCosts)}</div>
-          </div>
-          <div className="bg-black/40 border border-gray-800 rounded-xl p-3">
-            <div className="text-xs text-gray-500 uppercase mb-1">Payouts Received</div>
-            <div className="text-lg font-bold text-green-400">{fmt(totalPayouts)}</div>
-          </div>
-          <div className="bg-black/40 border border-gray-800 rounded-xl p-3 col-span-2">
-            <div className="text-xs text-gray-500 uppercase mb-1">Net Profitability</div>
-            <div className={"text-lg font-bold " + (profitability >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(profitability)}</div>
-          </div>
-        </div>
-      )}
+    </div>
+  );
+}
+
+function CostsCard(props) {
+  const account = props.account;
+  const totalCosts = (parseFloat(account.accountCost) || 0) + (parseFloat(account.activationCost) || 0) + (parseFloat(account.resetCost) || 0);
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-4">
+        <Icon name="Receipt" className="h-5 w-5 text-yellow-400" />
+        <h2 className="text-lg font-semibold text-white">Costs</h2>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <MiniStat label="Account/Challenge Cost" value={fmt(account.accountCost)} color="text-red-400" />
+        <MiniStat label="Activation Cost" value={fmt(account.activationCost)} color="text-red-400" />
+        <MiniStat label="Reset Cost" value={fmt(account.resetCost)} color="text-red-400" />
+        <MiniStat label="Total Costs" value={fmt(totalCosts)} color="text-red-400" />
+      </div>
+    </div>
+  );
+}
+
+function PayoutLedger(props) {
+  const account = props.account;
+  const onAddPayout = props.onAddPayout;
+  const [amount, setAmount] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const payouts = account.payouts || [];
+  const totalPayouts = payouts.reduce(function(s, p) { return s + (parseFloat(p.amount) || 0); }, 0);
+  const totalCosts = (parseFloat(account.accountCost) || 0) + (parseFloat(account.activationCost) || 0) + (parseFloat(account.resetCost) || 0);
+  const profitability = totalPayouts - totalCosts;
+
+  if (account.accountType === 'challenge') return null;
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-4">
+        <Icon name="Banknote" className="h-5 w-5 text-green-400" />
+        <h2 className="text-lg font-semibold text-white">Payout Ledger</h2>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-2 mb-4">
+        <input type="date" value={date} onChange={function(e) { setDate(e.target.value); }}
+          className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" />
+        <input type="number" placeholder="Payout amount" value={amount} onChange={function(e) { setAmount(e.target.value); }}
+          className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" />
+        <button onClick={function() { if (!amount) return; onAddPayout({ amount: amount, date: date }); setAmount(''); }}
+          className="bg-green-500/20 text-green-400 border border-green-500/40 px-4 py-2 rounded-lg text-sm font-medium">Add Payout</button>
+      </div>
+      <div className="space-y-1.5 mb-4">
+        {payouts.slice().sort(function(a,b){return new Date(b.date)-new Date(a.date);}).map(function(p, i) {
+          return (
+            <div key={i} className="flex justify-between text-sm bg-black/30 rounded-lg px-3 py-2">
+              <span className="text-gray-400">{p.date}</span>
+              <span className="text-green-400 font-semibold">{fmt(parseFloat(p.amount))}</span>
+            </div>
+          );
+        })}
+        {payouts.length === 0 && <p className="text-xs text-gray-600">No payouts recorded yet.</p>}
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <MiniStat label="Total Payouts" value={fmt(totalPayouts)} color="text-green-400" />
+        <MiniStat label="Net Profitability" value={fmt(profitability)} color={profitability >= 0 ? 'text-green-400' : 'text-red-400'} />
+      </div>
     </div>
   );
 }
@@ -501,6 +625,9 @@ function OverviewSection(props) {
     if (worstDay === null || byDate[d] < byDate[worstDay]) worstDay = d;
   });
 
+  const totalAllCosts = accounts.reduce(function(s, a) { return s + (parseFloat(a.accountCost) || 0) + (parseFloat(a.activationCost) || 0) + (parseFloat(a.resetCost) || 0); }, 0);
+  const totalAllPayouts = accounts.reduce(function(s, a) { return s + (a.payouts || []).reduce(function(ps, p) { return ps + (parseFloat(p.amount) || 0); }, 0); }, 0);
+
   return (
     <div className="space-y-6 pt-4 border-t border-gray-800">
       <h2 className="text-xl font-bold text-white flex items-center gap-2">
@@ -512,10 +639,15 @@ function OverviewSection(props) {
         <StatCard label="Rule Adherence" value={ruleAdherencePct === null ? "N/A" : ruleAdherencePct.toFixed(1) + "%"} icon="CheckSquare" color={ruleAdherencePct === null ? 'text-gray-500' : ruleAdherencePct >= 70 ? 'text-green-400' : ruleAdherencePct >= 40 ? 'text-yellow-400' : 'text-red-400'} sub="Matrix+Bias+Risk+Size+HTF" />
         <StatCard label="Bias Alignment" value={biasAlignmentPct === null ? "N/A" : biasAlignmentPct.toFixed(1) + "%"} icon="Compass" color={biasAlignmentPct === null ? 'text-gray-500' : biasAlignmentPct >= 60 ? 'text-green-400' : 'text-yellow-400'} />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard label="Total Costs (All Accounts)" value={fmt(totalAllCosts)} icon="Receipt" color="text-red-400" />
+        <StatCard label="Total Payouts (All Accounts)" value={fmt(totalAllPayouts)} icon="Banknote" color="text-green-400" />
+        <StatCard label="Net Spend vs Payout" value={fmt(totalAllPayouts - totalAllCosts)} icon={totalAllPayouts - totalAllCosts >= 0 ? "TrendingUp" : "TrendingDown"} color={totalAllPayouts - totalAllCosts >= 0 ? 'text-green-400' : 'text-red-400'} />
+        <StatCard label="Exercise Days" value={exercisePct === null ? 'N/A' : exercisePct.toFixed(0) + '%'} icon="Dumbbell" color="text-blue-400" sub={exerciseDays + " of " + entries.length + " logged days"} />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {bestDay && (<div className="bg-black/40 border border-green-800/40 rounded-xl p-4"><p className="text-xs text-green-400 uppercase mb-1">Best Day</p><p className="text-white font-medium">{bestDay}</p><p className="text-xl font-bold text-green-400">{fmt(byDate[bestDay])}</p></div>)}
         {worstDay && (<div className="bg-black/40 border border-red-800/40 rounded-xl p-4"><p className="text-xs text-red-400 uppercase mb-1">Worst Day</p><p className="text-white font-medium">{worstDay}</p><p className="text-xl font-bold text-red-400">{fmt(byDate[worstDay])}</p></div>)}
-        <div className="bg-black/40 border border-blue-800/40 rounded-xl p-4"><p className="text-xs text-blue-400 uppercase mb-1">Exercise Days</p><p className="text-xl font-bold text-blue-400">{exercisePct === null ? 'N/A' : exercisePct.toFixed(0) + '%'}</p><p className="text-xs text-gray-500">{exerciseDays} of {entries.length} logged days</p></div>
       </div>
       <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-4"><Icon name="Activity" className="h-5 w-5 text-yellow-400" /><h3 className="text-lg font-semibold text-white">Combined Equity Curve</h3></div>
@@ -531,9 +663,9 @@ function OverviewSection(props) {
             const accWins = accTrades.filter(function(t) { return t.result === 'win'; }).length;
             const accWinRate = accTrades.length > 0 ? (accWins / accTrades.length) * 100 : 0;
             return (
-              <div key={acc.id} className="flex items-center justify-between bg-black/30 rounded-lg px-4 py-3">
+              <div key={acc.id} className="flex items-center justify-between bg-black/30 rounded-lg px-4 py-3 flex-wrap gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-white font-medium">{acc.name} {acc.accountNumber ? "#" + acc.accountNumber : ''}</span>
+                  <span className="text-white font-medium">{acc.name} #{acc.accountNumber}</span>
                   <span className={"text-[10px] px-1.5 py-0.5 rounded " + (ACCOUNT_BADGE_CLS[acc.accountType] || ACCOUNT_BADGE_CLS.challenge)}>
                     {(function() { const f = ACCOUNT_TYPES.find(function(t) { return t.key === acc.accountType; }); return f ? f.label : ''; })()}
                   </span>
@@ -663,7 +795,7 @@ function MMMJournal(props) {
       accountCost: parseFloat(newAccount.accountCost) || 0,
       activationCost: parseFloat(newAccount.activationCost) || 0,
       resetCost: parseFloat(newAccount.resetCost) || 0,
-      totalPayouts: parseFloat(newAccount.totalPayouts) || 0,
+      payouts: [],
       archived: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
@@ -699,12 +831,9 @@ function MMMJournal(props) {
     if (activeAccountId === id) setActiveAccountId(null);
   };
 
-  const handleSaveCosts = async function(form) {
+  const handleAddPayout = async function(payout) {
     await accountsRef.doc(activeAccount.id).update({
-      accountCost: parseFloat(form.accountCost) || 0,
-      activationCost: parseFloat(form.activationCost) || 0,
-      resetCost: parseFloat(form.resetCost) || 0,
-      totalPayouts: parseFloat(form.totalPayouts) || 0,
+      payouts: firebase.firestore.FieldValue.arrayUnion(payout)
     });
   };
 
@@ -788,11 +917,6 @@ function MMMJournal(props) {
   const entryWins = newEntry.trades.filter(function(t) { return t.result === 'win'; }).length;
   const entryLosses = newEntry.trades.filter(function(t) { return t.result === 'loss'; }).length;
 
-  const visibleAccounts = accounts.filter(function(acc) {
-    if (accountFilter === 'all') return true;
-    return !isArchived(acc, getAccountStatus(acc));
-  });
-
   const lastEntryForActive = accountEntries.length > 0 ? accountEntries.slice().sort(function(a, b) { return new Date(b.date) - new Date(a.date); })[0] : null;
   const daysSinceLastLog = lastEntryForActive ? Math.floor((new Date() - new Date(lastEntryForActive.date)) / (1000 * 60 * 60 * 24)) : null;
 
@@ -816,14 +940,7 @@ function MMMJournal(props) {
           </div>
         </div>
 
-        <div className="border border-yellow-500/30 bg-gradient-to-r from-yellow-500/10 to-transparent rounded-xl p-4 flex items-start gap-3">
-          <Icon name="Zap" className="h-5 w-5 text-yellow-400 mt-0.5" />
-          <p className="text-sm text-yellow-100/80">
-            <span className="text-yellow-400 font-semibold">System: </span>
-            <span className="text-white font-medium">TRA</span> is set by backtested win rate. <span className="text-white font-medium">RTU</span> = buffer / TRA.
-            <span className="text-white font-medium"> DRT</span> caps you at 2 RTU lost or 2 RTU won, max 3 trades/day.
-          </p>
-        </div>
+        <SystemExplainer />
 
         {accounts.length === 0 ? (
           <div className="text-center py-20 border border-dashed border-gray-700 rounded-2xl">
@@ -832,22 +949,7 @@ function MMMJournal(props) {
           </div>
         ) : (
           <React.Fragment>
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {visibleAccounts.map(function(acc) {
-                const st = getAccountStatus(acc);
-                const archived = isArchived(acc, st);
-                return (
-                  <button key={acc.id} onClick={function() { setActiveAccountId(acc.id); }}
-                    className={"flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition border " + (archived ? 'opacity-50 ' : '') + (activeAccountId === acc.id ? 'bg-yellow-500/15 border-yellow-400/50 text-yellow-300' : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:border-gray-700')}>
-                    <span>{acc.name} {acc.accountNumber ? "#" + acc.accountNumber : ''}</span>
-                    <span className={"text-[10px] px-1.5 py-0.5 rounded " + (ACCOUNT_BADGE_CLS[acc.accountType] || ACCOUNT_BADGE_CLS.challenge)}>
-                      {(function() { const f = ACCOUNT_TYPES.find(function(t) { return t.key === acc.accountType; }); return f ? f.label : 'Challenge'; })()}
-                    </span>
-                    {archived && <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-900/40 text-red-300">Archived</span>}
-                  </button>
-                );
-              })}
-            </div>
+            <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={setActiveAccountId} getStatus={getAccountStatus} filter={accountFilter} />
 
             {activeAccount && (
               <React.Fragment>
@@ -913,6 +1015,8 @@ function MMMJournal(props) {
                   </div>
                 </div>
 
+                <TradingPlanSummaryCard account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} microsUnlocked={microsUnlocked} />
+
                 <button onClick={function() { setNewEntry(emptyEntryForm()); setShowAddEntry(true); }}
                   className="w-full flex items-center justify-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-3 rounded-xl font-semibold hover:from-green-400 hover:to-emerald-500 transition">
                   <Icon name="Plus" className="h-4 w-4" /><span>Log Today's Trades / No-Trade Day</span>
@@ -920,7 +1024,8 @@ function MMMJournal(props) {
 
                 <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} tra={tra} accountType={activeAccount.accountType} />
                 <StrategyCard account={activeAccount} />
-                <CostsPayoutsCard account={activeAccount} onSave={handleSaveCosts} />
+                <CostsCard account={activeAccount} />
+                <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} />
 
                 <div className="space-y-3">
                   <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="Calendar" className="h-5 w-5 text-yellow-400" /><span>Trade History</span></h2>
@@ -1056,10 +1161,11 @@ function MMMJournal(props) {
               </div>
             </div>
             <div className="border-t border-gray-800 pt-4">
-              <p className="text-sm text-yellow-400 font-medium mb-2 flex items-center gap-1.5"><Icon name="Receipt" className="h-4 w-4" /><span>Costs &amp; Payouts (optional)</span></p>
-              <div className="grid grid-cols-2 gap-3">
+              <p className="text-sm text-yellow-400 font-medium mb-2 flex items-center gap-1.5"><Icon name="Receipt" className="h-4 w-4" /><span>Costs (optional - payouts are added later, per date, from the account page)</span></p>
+              <div className="grid grid-cols-3 gap-3">
                 <Field label="Account/Challenge Cost ($)"><input type="number" value={newAccount.accountCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { accountCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
                 <Field label="Activation Cost ($)"><input type="number" value={newAccount.activationCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { activationCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+                <Field label="Reset Cost ($)"><input type="number" value={newAccount.resetCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { resetCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
               </div>
             </div>
             <Field label="Master / Copied Account Number (optional)"><input value={newAccount.copiedAccountNumber} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { copiedAccountNumber: e.target.value })); }} placeholder="If copying a master account" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
