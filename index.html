@@ -241,6 +241,12 @@ function SystemExplainer() {
   );
 }
 
+function t_border(key) {
+  if (key === 'challenge') return 'bg-purple-500/10 border-purple-500/40';
+  if (key === 'funded') return 'bg-emerald-500/10 border-emerald-500/40';
+  return 'bg-cyan-500/10 border-cyan-500/40';
+}
+
 function AccountGroupNav(props) {
   const accounts = props.accounts;
   const activeAccountId = props.activeAccountId;
@@ -285,12 +291,6 @@ function AccountGroupNav(props) {
       })}
     </div>
   );
-}
-
-function t_border(key) {
-  if (key === 'challenge') return 'bg-purple-500/10 border-purple-500/40';
-  if (key === 'funded') return 'bg-emerald-500/10 border-emerald-500/40';
-  return 'bg-cyan-500/10 border-cyan-500/40';
 }
 
 function RiskOfRuinCard(props) {
@@ -430,7 +430,7 @@ function StrategyCard(props) {
 }
 
 function MiniStat(props) {
-  return (<div className="bg-black/40 border border-gray-800 rounded-xl p-3"><div className="text-[10px] text-gray-500 uppercase tracking-wide mb-1">{props.label}</div><div className={"text-lg font-bold " + props.color}>{props.value}</div></div>);
+  return (<div className="bg-black/40 border border-gray-800 rounded-xl p-2.5"><div className="text-[9px] text-gray-500 uppercase tracking-wide mb-1 leading-tight">{props.label}</div><div className={"text-base font-bold " + props.color}>{props.value}</div></div>);
 }
 
 function TradingPlanSummaryGrid(props) {
@@ -456,34 +456,38 @@ function TradingPlanSummaryGrid(props) {
   );
 }
 
-function CostsCard(props) {
+// 6-box combined Costs + Payouts + Profitability summary
+function CostsAndPayoutsCard(props) {
   const account = props.account;
   const totalCosts = (parseFloat(account.accountCost) || 0) + (parseFloat(account.activationCost) || 0) + (parseFloat(account.resetCost) || 0);
+  const payouts = account.payouts || [];
+  const totalPayouts = payouts.reduce(function(s, p) { return s + (parseFloat(p.amount) || 0); }, 0);
+  const profitability = totalPayouts - totalCosts;
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
       <div className="flex items-center gap-2 mb-4">
         <Icon name="Receipt" className="h-5 w-5 text-yellow-400" />
         <h2 className="text-lg font-semibold text-white">Costs</h2>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
         <MiniStat label="Account/Challenge Cost" value={fmt(account.accountCost)} color="text-red-400" />
         <MiniStat label="Activation Cost" value={fmt(account.activationCost)} color="text-red-400" />
         <MiniStat label="Reset Cost" value={fmt(account.resetCost)} color="text-red-400" />
         <MiniStat label="Total Costs" value={fmt(totalCosts)} color="text-red-400" />
+        <MiniStat label="Total Payouts" value={fmt(totalPayouts)} color="text-green-400" />
+        <MiniStat label="Net Profitability" value={fmt(profitability)} color={profitability >= 0 ? 'text-green-400' : 'text-red-400'} />
       </div>
     </div>
   );
 }
 
+// Add-payout form + dated list only (summary numbers now live in CostsAndPayoutsCard above)
 function PayoutLedger(props) {
   const account = props.account;
   const onAddPayout = props.onAddPayout;
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const payouts = account.payouts || [];
-  const totalPayouts = payouts.reduce(function(s, p) { return s + (parseFloat(p.amount) || 0); }, 0);
-  const totalCosts = (parseFloat(account.accountCost) || 0) + (parseFloat(account.activationCost) || 0) + (parseFloat(account.resetCost) || 0);
-  const profitability = totalPayouts - totalCosts;
 
   if (account.accountType === 'challenge') return null;
 
@@ -501,7 +505,7 @@ function PayoutLedger(props) {
         <button onClick={function() { if (!amount) return; onAddPayout({ amount: amount, date: date }); setAmount(''); }}
           className="bg-green-500/20 text-green-400 border border-green-500/40 px-4 py-2 rounded-lg text-sm font-medium">Add Payout</button>
       </div>
-      <div className="space-y-1.5 mb-4">
+      <div className="space-y-1.5">
         {payouts.slice().sort(function(a,b){return new Date(b.date)-new Date(a.date);}).map(function(p, i) {
           return (
             <div key={i} className="flex justify-between text-sm bg-black/30 rounded-lg px-3 py-2">
@@ -512,10 +516,6 @@ function PayoutLedger(props) {
         })}
         {payouts.length === 0 && <p className="text-xs text-gray-600">No payouts recorded yet.</p>}
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        <MiniStat label="Total Payouts" value={fmt(totalPayouts)} color="text-green-400" />
-        <MiniStat label="Net Profitability" value={fmt(profitability)} color={profitability >= 0 ? 'text-green-400' : 'text-red-400'} />
-      </div>
     </div>
   );
 }
@@ -523,7 +523,7 @@ function PayoutLedger(props) {
 function EquityCurve(props) {
   const points = props.points;
   if (!points || points.length < 2) return <p className="text-xs text-gray-600 py-6 text-center">Not enough data yet - log at least 2 days to see your equity curve.</p>;
-  const w = 500, h = 160, pad = 25;
+  const w = 900, h = 220, pad = 30;
   const values = points.map(function(p) { return p.cum; });
   const minV = Math.min(0, Math.min.apply(null, values));
   const maxV = Math.max(0, Math.max.apply(null, values));
@@ -540,13 +540,13 @@ function EquityCurve(props) {
   const lineColor = last.cum >= 0 ? '#4ade80' : '#f87171';
   return (
     <div className="overflow-x-auto">
-      <svg viewBox={"0 0 " + w + " " + h} className="w-full" style={{ minWidth: '320px', height: '160px' }}>
+      <svg viewBox={"0 0 " + w + " " + h} className="w-full" style={{ minWidth: '500px', height: '220px' }}>
         <line x1={pad} y1={zeroY} x2={w - pad} y2={zeroY} stroke="#374151" strokeDasharray="4 4" strokeWidth="1" />
         <path d={pathD} fill="none" stroke={lineColor} strokeWidth="2" />
         <circle cx={last.x} cy={last.y} r="4" fill={lineColor} />
-        <text x={pad} y={h - 6} fill="#6b7280" fontSize="9">{coords[0].date}</text>
-        <text x={w - pad} y={h - 6} fill="#6b7280" fontSize="9" textAnchor="end">{last.date}</text>
-        <text x={last.x} y={last.y - 8} fill={lineColor} fontSize="10" fontWeight="600" textAnchor="end">{fmt(last.cum)}</text>
+        <text x={pad} y={h - 8} fill="#6b7280" fontSize="10">{coords[0].date}</text>
+        <text x={w - pad} y={h - 8} fill="#6b7280" fontSize="10" textAnchor="end">{last.date}</text>
+        <text x={last.x} y={last.y - 10} fill={lineColor} fontSize="11" fontWeight="600" textAnchor="end">{fmt(last.cum)}</text>
       </svg>
     </div>
   );
@@ -572,9 +572,7 @@ function computeTradeAdherence(trade, entry, account) {
   return factors.reduce(function(s, f) { return s + f; }, 0) / factors.length;
 }
 
-function OverviewSection(props) {
-  const accounts = props.accounts;
-  const entries = props.entries;
+function computeOverviewData(accounts, entries) {
   const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no'; });
   const allTrades = tradedEntries.flatMap(function(e) {
     return e.trades.map(function(t) { return Object.assign({}, t, { date: e.date, accountId: e.accountId, entry: e }); });
@@ -614,46 +612,73 @@ function OverviewSection(props) {
     if (worstDay === null || byDate[d] < byDate[worstDay]) worstDay = d;
   });
 
+  return { totalPnl: totalPnl, overallWinRate: overallWinRate, totalTrades: totalTrades, ruleAdherencePct: ruleAdherencePct,
+    totalAllCosts: totalAllCosts, totalAllPayouts: totalAllPayouts, equityPoints: equityPoints,
+    bestDay: bestDay, worstDay: worstDay, byDate: byDate };
+}
+
+function OverviewStats(props) {
+  const d = computeOverviewData(props.accounts, props.entries);
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
-        <MiniStat label="Combined P&L" value={fmt(totalPnl)} color={totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
-        <MiniStat label="Overall Win Rate" value={overallWinRate.toFixed(1) + "%"} color={overallWinRate >= 50 ? 'text-green-400' : 'text-red-400'} />
-        <MiniStat label="Rule Adherence" value={ruleAdherencePct === null ? "N/A" : ruleAdherencePct.toFixed(1) + "%"} color={ruleAdherencePct === null ? 'text-gray-500' : ruleAdherencePct >= 70 ? 'text-green-400' : ruleAdherencePct >= 40 ? 'text-yellow-400' : 'text-red-400'} />
-        <MiniStat label="Total Trades" value={String(totalTrades)} color="text-blue-400" />
-        <MiniStat label="Total Costs" value={fmt(totalAllCosts)} color="text-red-400" />
-        <MiniStat label="Total Payouts" value={fmt(totalAllPayouts)} color="text-green-400" />
-        {bestDay && <MiniStat label={"Best Day (" + bestDay + ")"} value={fmt(byDate[bestDay])} color="text-green-400" />}
-        {worstDay && <MiniStat label={"Worst Day (" + worstDay + ")"} value={fmt(byDate[worstDay])} color="text-red-400" />}
+    <div className="grid grid-cols-2 gap-3">
+      <MiniStat label="Combined P&L" value={fmt(d.totalPnl)} color={d.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
+      <MiniStat label="Overall Win Rate" value={d.overallWinRate.toFixed(1) + "%"} color={d.overallWinRate >= 50 ? 'text-green-400' : 'text-red-400'} />
+      <MiniStat label="Rule Adherence" value={d.ruleAdherencePct === null ? "N/A" : d.ruleAdherencePct.toFixed(1) + "%"} color={d.ruleAdherencePct === null ? 'text-gray-500' : d.ruleAdherencePct >= 70 ? 'text-green-400' : d.ruleAdherencePct >= 40 ? 'text-yellow-400' : 'text-red-400'} />
+      <MiniStat label="Total Trades" value={String(d.totalTrades)} color="text-blue-400" />
+      <MiniStat label="Total Costs" value={fmt(d.totalAllCosts)} color="text-red-400" />
+      <MiniStat label="Total Payouts" value={fmt(d.totalAllPayouts)} color="text-green-400" />
+      {d.bestDay && <MiniStat label={"Best Day (" + d.bestDay + ")"} value={fmt(d.byDate[d.bestDay])} color="text-green-400" />}
+      {d.worstDay && <MiniStat label={"Worst Day (" + d.worstDay + ")"} value={fmt(d.byDate[d.worstDay])} color="text-red-400" />}
+    </div>
+  );
+}
+
+function EquityCurveBlock(props) {
+  const d = computeOverviewData(props.accounts, props.entries);
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-4">
+        <Icon name="Activity" className="h-5 w-5 text-yellow-400" />
+        <h2 className="text-lg font-semibold text-white">Combined Equity Curve</h2>
       </div>
-      <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
-        <p className="text-xs text-gray-500 uppercase mb-2">Combined Equity Curve</p>
-        <EquityCurve points={equityPoints} />
+      <EquityCurve points={d.equityPoints} />
+    </div>
+  );
+}
+
+function PerAccountBreakdown(props) {
+  const accounts = props.accounts;
+  const entries = props.entries;
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-4">
+        <Icon name="Layers" className="h-5 w-5 text-yellow-400" />
+        <h2 className="text-lg font-semibold text-white">Per-Account Breakdown</h2>
       </div>
-      <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
-        <p className="text-xs text-gray-500 uppercase mb-2">Per-Account Breakdown</p>
-        <div className="space-y-1.5">
-          {accounts.map(function(acc) {
-            const accEntries = entries.filter(function(e) { return e.accountId === acc.id; });
-            const accTrades = accEntries.filter(function(e) { return e.tradedToday !== 'no'; }).flatMap(function(e) { return e.trades; });
-            const accPnl = accTrades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
-            return (
-              <div key={acc.id} className="flex items-center justify-between text-xs bg-gray-900/60 rounded-lg px-3 py-2">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-white font-medium">{acc.name} #{acc.accountNumber}</span>
-                  <span className={"px-1 py-0.5 rounded text-[9px] " + (ACCOUNT_BADGE_CLS[acc.accountType] || ACCOUNT_BADGE_CLS.challenge)}>
-                    {(function() { const f = ACCOUNT_TYPES.find(function(t) { return t.key === acc.accountType; }); return f ? f.label : ''; })()}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-gray-500">{accTrades.length} trades</span>
-                  <span className={"font-semibold " + (accPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(accPnl)}</span>
-                </div>
+      <div className="space-y-1.5">
+        {accounts.map(function(acc) {
+          const accEntries = entries.filter(function(e) { return e.accountId === acc.id; });
+          const accTrades = accEntries.filter(function(e) { return e.tradedToday !== 'no'; }).flatMap(function(e) { return e.trades; });
+          const accPnl = accTrades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+          const accWins = accTrades.filter(function(t) { return t.result === 'win'; }).length;
+          const accWinRate = accTrades.length > 0 ? (accWins / accTrades.length) * 100 : 0;
+          return (
+            <div key={acc.id} className="flex items-center justify-between text-sm bg-black/30 rounded-lg px-4 py-3 flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-white font-medium">{acc.name} #{acc.accountNumber}</span>
+                <span className={"px-1.5 py-0.5 rounded text-[10px] " + (ACCOUNT_BADGE_CLS[acc.accountType] || ACCOUNT_BADGE_CLS.challenge)}>
+                  {(function() { const f = ACCOUNT_TYPES.find(function(t) { return t.key === acc.accountType; }); return f ? f.label : ''; })()}
+                </span>
               </div>
-            );
-          })}
-          {accounts.length === 0 && <p className="text-xs text-gray-600 text-center py-2">No accounts yet.</p>}
-        </div>
+              <div className="flex items-center gap-4">
+                <span className="text-gray-500">{accTrades.length} trades</span>
+                <span className={accWinRate >= 50 ? 'text-green-400' : 'text-red-400'}>{accWinRate.toFixed(0)}% WR</span>
+                <span className={"font-semibold " + (accPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(accPnl)}</span>
+              </div>
+            </div>
+          );
+        })}
+        {accounts.length === 0 && <p className="text-sm text-gray-500 text-center py-4">No accounts yet.</p>}
       </div>
     </div>
   );
@@ -909,7 +934,7 @@ function MMMJournal(props) {
                 <button onClick={function() { setAccountFilter('active'); }} className={"px-3 py-1.5 rounded-md text-xs font-medium " + (accountFilter === 'active' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')}>Active Only</button>
                 <button onClick={function() { setAccountFilter('all'); }} className={"px-3 py-1.5 rounded-md text-xs font-medium " + (accountFilter === 'all' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')}>All Accounts</button>
               </div>
-              <button onClick={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }} className="flex items-center gap-1.5 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-yellow-300 hover:to-yellow-500 transition">
+              <button onClick={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }} className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-green-400 hover:to-emerald-500 transition">
                 <Icon name="Plus" className="h-4 w-4" /><span>Add Account</span>
               </button>
             </div>
@@ -994,10 +1019,15 @@ function MMMJournal(props) {
                   <TradingPlanSummaryGrid account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} />
                 </div>
 
+                <CostsAndPayoutsCard account={activeAccount} />
+                <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} />
+
+                <EquityCurveBlock accounts={accounts} entries={entries} />
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
                   <div className="space-y-3">
                     <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="LayoutDashboard" className="h-5 w-5 text-yellow-400" /><span>Performance Overview</span></h2>
-                    <OverviewSection accounts={accounts} entries={entries} />
+                    <OverviewStats accounts={accounts} entries={entries} />
                   </div>
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
@@ -1080,10 +1110,10 @@ function MMMJournal(props) {
                   </div>
                 </div>
 
+                <PerAccountBreakdown accounts={accounts} entries={entries} />
+
                 <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} tra={tra} accountType={activeAccount.accountType} />
                 <StrategyCard account={activeAccount} />
-                <CostsCard account={activeAccount} />
-                <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} />
               </React.Fragment>
             )}
           </React.Fragment>
@@ -1152,7 +1182,7 @@ function MMMJournal(props) {
               </div>
             </div>
             <Field label="Master / Copied Account Number (optional)"><input value={newAccount.copiedAccountNumber} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { copiedAccountNumber: e.target.value })); }} placeholder="If copying a master account" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
-            <button onClick={handleAddAccount} disabled={!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown} className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"><Icon name="Save" className="h-4 w-4" /><span>Save Account</span></button>
+            <button onClick={handleAddAccount} disabled={!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown} className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"><Icon name="Save" className="h-4 w-4" /><span>Save Account</span></button>
           </div>
         </Modal>
       )}
