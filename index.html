@@ -21,7 +21,7 @@
 </head>
 <body>
 <div id="root"></div>
-  
+
 <script>
   // ====== FIREBASE CONFIG ======
   const firebaseConfig = {
@@ -59,7 +59,38 @@ const fmt = (n) => {
   return `${sign}$${Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
 
-const getDivisor = (accountType) => accountType === 'challenge' ? 10 : 20;
+// ---------------------------------------------------------------------
+// WIN-RATE TIERED SURVIVABILITY TABLE
+// Challenge and Funded divisors are set independently per tier — Funded
+// is NEVER derived by doubling the Challenge number. It is always its
+// own deliberately conservative value, because funded capital protection
+// (getting paid) matters more than clearing a target fast.
+// ---------------------------------------------------------------------
+const DIVISOR_TABLE = {
+  scalper:  { label: '70%+ win rate (high-accuracy scalper)', range: '70%+',      challenge: 12, funded: 25 },
+  reliable: { label: '55–69% win rate (reliable day trader)', range: '55–69%',    challenge: 18, funded: 35 },
+  average:  { label: '45–54% win rate (average — default)',   range: '45–54%',    challenge: 25, funded: 50 },
+  trend:    { label: 'Under 45% win rate (trend follower)',   range: '<45%',      challenge: 45, funded: 90 },
+};
+
+const MIN_SAMPLE_SIZE = 30; // minimum backtested trades before trusting a win rate
+
+// Decide which tier applies. Falls back to 'average' (the safe, stated
+// default assumption) whenever win rate or sample size is missing/too small.
+const determineTier = (winRate, sampleSize) => {
+  const wr = parseFloat(winRate);
+  const ss = parseInt(sampleSize);
+  if (!wr || !ss || ss < MIN_SAMPLE_SIZE) return 'average';
+  if (wr >= 70) return 'scalper';
+  if (wr >= 55) return 'reliable';
+  if (wr >= 45) return 'average';
+  return 'trend';
+};
+
+const getDivisor = (account) => {
+  const tier = DIVISOR_TABLE[account.winRateTier] ? account.winRateTier : 'average';
+  return account.accountType === 'challenge' ? DIVISOR_TABLE[tier].challenge : DIVISOR_TABLE[tier].funded;
+};
 
 const computeStatus = (account, buffer, totalPnl) => {
   const target = parseFloat(account.profitTarget) || 0;
@@ -77,11 +108,15 @@ const STATUS_STYLES = {
   breached:      { label: 'Breached',             cls: 'bg-red-500/15 text-red-300 border-red-500/30' },
 };
 
-const emptyAccountForm = { name: '', startingBalance: '', maxDrawdown: '', profitTarget: '', accountType: 'challenge', copiedAccountNumber: '', linkedFromId: null };
+const emptyAccountForm = {
+  name: '', startingBalance: '', maxDrawdown: '', profitTarget: '',
+  accountType: 'challenge', copiedAccountNumber: '', linkedFromId: null,
+  backtestWinRate: '', backtestSampleSize: '', winRateTier: 'average'
+};
 
 // ---------------- AUTH SCREEN ----------------
 function AuthScreen() {
-  const [mode, setMode] = useState('login'); // 'login' | 'signup'
+  const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -140,6 +175,69 @@ function AuthScreen() {
   );
 }
 
+// ---------------- RISK OF RUIN PROJECTION ----------------
+// Assumes every hypothetical loss consumes exactly buffer/divisor of the
+// CURRENT buffer (the self-adjusting rule) — so this compounds geometrically:
+// remaining = startingBuffer * (1 - 1/divisor) ^ consecutiveLosses
+function RiskOfRuinCard({ currentBuffer, divisor, accountType }) {
+  const checkpoints = [5, 10, 15, 20, 25, 30, 40, 50].filter(n => n <= divisor * 2.5);
+  const rows = checkpoints.map(n => {
+    const remaining = currentBuffer * Math.pow(1 - 1 / divisor, n);
+    const pctRemaining = currentBuffer > 0 ? (remaining / currentBuffer) * 100 : 0;
+    return { n, remaining, pctRemaining };
+  });
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-1">
+        <Icon name="TrendingDown" className="h-5 w-5 text-red-400" />
+        <h2 className="text-lg font-semibold text-white">Risk of Ruin — Consecutive Loss Projection</h2>
+      </div>
+      <p className="text-xs text-gray-500 mb-4">
+        Hypothetical: if every trade lost at the current max risk (buffer ÷ {divisor}), here's what happens to your buffer over a losing streak.
+        This is a projection, not your actual trade history.
+      </p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-gray-500 text-xs uppercase tracking-wide border-b border-gray-800">
+              <th className="pb-2 pr-4">Consecutive Losses</th>
+              <th className="pb-2 pr-4">Buffer Remaining</th>
+              <th className="pb-2">% of Buffer Left</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map(r => (
+              <tr key={r.n} className="border-b border-gray-800/50 last:border-0">
+                <td className="py-2 pr-4 text-white font-medium">{r.n} losses</td>
+                <td className={`py-2 pr-4 font-semibold ${r.pctRemaining <= 20 ? 'text-red-400' : r.pctRemaining <= 50 ? 'text-yellow-400' : 'text-green-400'}`}>
+                  {fmt(r.remaining)}
+                </td>
+                <td className="py-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-24 bg-gray-800 rounded-full h-1.5 overflow-hidden">
+                      <div className={`h-full rounded-full ${r.pctRemaining <= 20 ? 'bg-red-400' : r.pctRemaining <= 50 ? 'bg-yellow-400' : 'bg-green-400'}`}
+                        style={{ width: `${Math.max(r.pctRemaining, 2)}%` }}></div>
+                    </div>
+                    <span className={`text-xs ${r.pctRemaining <= 20 ? 'text-red-400' : r.pctRemaining <= 50 ? 'text-yellow-400' : 'text-green-400'}`}>
+                      {r.pctRemaining.toFixed(1)}%
+                    </span>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-xs text-gray-600 mt-3">
+        {accountType === 'funded'
+          ? 'Funded accounts use a higher divisor on purpose — the buffer erodes slower under a bad streak, protecting your payout eligibility.'
+          : 'Challenge accounts use a tighter divisor to clear the target faster — the trade-off is a losing streak erodes the buffer quicker.'}
+      </p>
+    </div>
+  );
+}
+
 // ---------------- MAIN JOURNAL (per logged-in user) ----------------
 function MMMJournal({ user }) {
   const [accounts, setAccounts] = useState([]);
@@ -158,7 +256,6 @@ function MMMJournal({ user }) {
   const accountsRef = db.collection('users').doc(user.uid).collection('accounts');
   const entriesRef = db.collection('users').doc(user.uid).collection('entries');
 
-  // Live sync — every account under this UID only
   useEffect(() => {
     const unsub = accountsRef.orderBy('createdAt', 'asc').onSnapshot(snap => {
       const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -177,11 +274,11 @@ function MMMJournal({ user }) {
 
   const activeAccount = accounts.find(a => a.id === activeAccountId);
   const accountEntries = entries.filter(e => e.accountId === activeAccountId);
-  const divisor = activeAccount ? getDivisor(activeAccount.accountType) : 10;
+  const divisor = activeAccount ? getDivisor(activeAccount) : DIVISOR_TABLE.average.challenge;
 
   const calcBufferHistory = (account, accEntries) => {
     if (!account) return [];
-    const d = getDivisor(account.accountType);
+    const d = getDivisor(account);
     const chronological = [...accEntries].sort((a, b) => new Date(a.date) - new Date(b.date));
     let buffer = parseFloat(account.maxDrawdown) || 0;
     const history = [];
@@ -227,6 +324,7 @@ function MMMJournal({ user }) {
 
   const handleAddAccount = async () => {
     if (!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown) return;
+    const tier = determineTier(newAccount.backtestWinRate, newAccount.backtestSampleSize);
     const doc = await accountsRef.add({
       name: newAccount.name,
       startingBalance: parseFloat(newAccount.startingBalance),
@@ -235,6 +333,9 @@ function MMMJournal({ user }) {
       accountType: newAccount.accountType,
       copiedAccountNumber: newAccount.copiedAccountNumber || '',
       linkedFromId: newAccount.linkedFromId || null,
+      backtestWinRate: newAccount.backtestWinRate ? parseFloat(newAccount.backtestWinRate) : null,
+      backtestSampleSize: newAccount.backtestSampleSize ? parseInt(newAccount.backtestSampleSize) : null,
+      winRateTier: tier,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
     setActiveAccountId(doc.id);
@@ -242,12 +343,17 @@ function MMMJournal({ user }) {
     setShowAddAccount(false);
   };
 
+  // Funded pulls its OWN conservative divisor from the same tier — never
+  // derived by doubling the challenge number. Tier carries over; the number doesn't.
   const handleStartFundedFromChallenge = (challengeAcc) => {
     setNewAccount({
       ...emptyAccountForm,
       accountType: 'funded',
       name: challengeAcc.name.replace(/challenge/i, '').trim() + ' - Funded',
       startingBalance: challengeAcc.startingBalance,
+      backtestWinRate: challengeAcc.backtestWinRate || '',
+      backtestSampleSize: challengeAcc.backtestSampleSize || '',
+      winRateTier: challengeAcc.winRateTier || 'average',
       linkedFromId: challengeAcc.id,
     });
     setShowAddAccount(true);
@@ -281,6 +387,11 @@ function MMMJournal({ user }) {
 
   const handleDeleteEntry = async (id) => { await entriesRef.doc(id).delete(); };
 
+  // Live preview of which tier/divisor the form's current inputs would produce
+  const previewTier = determineTier(newAccount.backtestWinRate, newAccount.backtestSampleSize);
+  const previewDivisor = newAccount.accountType === 'challenge' ? DIVISOR_TABLE[previewTier].challenge : DIVISOR_TABLE[previewTier].funded;
+  const sampleTooSmall = newAccount.backtestSampleSize && parseInt(newAccount.backtestSampleSize) < MIN_SAMPLE_SIZE;
+
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
       <div className="max-w-5xl mx-auto space-y-6">
@@ -304,8 +415,10 @@ function MMMJournal({ user }) {
           <Icon name="Zap" className="h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0" />
           <p className="text-sm text-yellow-100/80">
             <span className="text-yellow-400 font-semibold">Golden Rule: </span>
-            <span className="text-white font-medium">Challenge accounts ÷10</span> to clear the target fast.
-            <span className="text-white font-medium"> Funded accounts ÷20</span> to protect real payout capital.
+            Your buffer's survivability divisor is set by your <span className="text-white font-medium">backtested win rate</span> —
+            not a fixed number. Funded accounts always use their own more conservative divisor for that tier,
+            protecting real payout capital rather than derived by simply doubling the challenge number.
+            With no verified backtest (30+ trades), the account defaults to the <span className="text-white font-medium">45–54% average tier</span>.
           </p>
         </div>
 
@@ -352,7 +465,7 @@ function MMMJournal({ user }) {
                     <Icon name="Trophy" className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
                       <p className="text-green-300 font-semibold text-sm">Challenge Passed!</p>
-                      <p className="text-green-200/70 text-xs mt-1">Start tracking the funded account for this pass.</p>
+                      <p className="text-green-200/70 text-xs mt-1">Start tracking the funded account for this pass — it'll get its own conservative divisor.</p>
                     </div>
                     <button onClick={() => handleStartFundedFromChallenge(activeAccount)}
                       className="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/40 flex-shrink-0">
@@ -384,10 +497,14 @@ function MMMJournal({ user }) {
                       <Icon name="Zap" className="h-5 w-5 text-yellow-400" />
                       <h2 className="text-lg font-semibold text-white">Position Sizing — Live</h2>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${STATUS_STYLES[activeStatus].cls}`}>{STATUS_STYLES[activeStatus].label}</span>
                       <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${activeAccount.accountType === 'challenge' ? 'bg-purple-500/15 text-purple-300 border border-purple-500/30' : 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'}`}>
-                        {activeAccount.accountType === 'challenge' ? 'Challenge · ÷10' : 'Funded · ÷20'}
+                        {activeAccount.accountType === 'challenge' ? 'Challenge' : 'Funded'} · ÷{divisor}
+                      </span>
+                      <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                        Tier: {DIVISOR_TABLE[activeAccount.winRateTier || 'average'].range}
+                        {activeAccount.backtestSampleSize ? ` (${activeAccount.backtestSampleSize} trades)` : ' (default)'}
                       </span>
                     </div>
                   </div>
@@ -395,17 +512,22 @@ function MMMJournal({ user }) {
                     <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
                       <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Contracts Unlocked</div>
                       <div className="text-2xl font-bold text-yellow-400">{microsUnlocked} Micro{microsUnlocked > 1 ? 's' : ''}</div>
+                      <div className="text-xs text-gray-500 mt-1">1 Micro per $1,000 of buffer</div>
                     </div>
                     <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
                       <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Max Risk / Trade</div>
                       <div className="text-2xl font-bold text-blue-400">{fmt(riskPerTrade)}</div>
+                      <div className="text-xs text-gray-500 mt-1">Buffer ÷ {divisor}, always</div>
                     </div>
                     <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
                       <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Next Tier ({microsUnlocked + 1} Micros)</div>
                       <div className="text-2xl font-bold text-purple-400">{fmt(Math.max(0, distToNextTier))}</div>
+                      <div className="text-xs text-gray-500 mt-1">away — resets stop to tight range</div>
                     </div>
                   </div>
                 </div>
+
+                <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} divisor={divisor} accountType={activeAccount.accountType} />
 
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                   <div className="text-sm text-gray-500">
@@ -480,17 +602,18 @@ function MMMJournal({ user }) {
       </div>
 
       {showAddAccount && (
-        <Modal onClose={() => setShowAddAccount(false)} title={newAccount.linkedFromId ? "Start Funded Account" : "Add Trading Account"}>
+        <Modal onClose={() => setShowAddAccount(false)} title={newAccount.linkedFromId ? "Start Funded Account" : "Add Trading Account"} size="lg">
           <div className="space-y-4">
             <div>
               <label className="block text-sm text-gray-400 mb-1">Account Type</label>
               <div className="flex gap-2">
                 <button onClick={() => setNewAccount({ ...newAccount, accountType: 'challenge' })}
-                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition border ${newAccount.accountType === 'challenge' ? 'bg-purple-500/20 text-purple-400 border-purple-500/40' : 'bg-gray-800 text-gray-500 border-gray-700'}`}>Challenge (÷10)</button>
+                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition border ${newAccount.accountType === 'challenge' ? 'bg-purple-500/20 text-purple-400 border-purple-500/40' : 'bg-gray-800 text-gray-500 border-gray-700'}`}>Challenge</button>
                 <button onClick={() => setNewAccount({ ...newAccount, accountType: 'funded' })}
-                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition border ${newAccount.accountType === 'funded' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' : 'bg-gray-800 text-gray-500 border-gray-700'}`}>Funded (÷20)</button>
+                  className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition border ${newAccount.accountType === 'funded' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' : 'bg-gray-800 text-gray-500 border-gray-700'}`}>Funded</button>
               </div>
             </div>
+
             <Field label="Account Name">
               <input value={newAccount.name} onChange={e => setNewAccount({ ...newAccount, name: e.target.value })} placeholder="e.g. FTMO 100k Challenge"
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
@@ -509,10 +632,43 @@ function MMMJournal({ user }) {
               <input type="number" value={newAccount.profitTarget} onChange={e => setNewAccount({ ...newAccount, profitTarget: e.target.value })} placeholder="10000"
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
             </Field>
+
+            <div className="border-t border-gray-800 pt-4">
+              <p className="text-sm text-yellow-400 font-medium mb-1 flex items-center gap-2">
+                <Icon name="BarChart3" className="h-4 w-4" /> Strategy Backtest (sets your risk divisor)
+              </p>
+              <p className="text-xs text-gray-500 mb-3">
+                Need at least {MIN_SAMPLE_SIZE} backtested trades to count. Without a verified sample, the account
+                defaults to the 45–54% average tier — assuming your strategy needs at least that win rate to succeed.
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Backtest Win Rate (%)">
+                  <input type="number" value={newAccount.backtestWinRate} onChange={e => setNewAccount({ ...newAccount, backtestWinRate: e.target.value })} placeholder="e.g. 58"
+                    className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                </Field>
+                <Field label="Sample Size (# of trades)">
+                  <input type="number" value={newAccount.backtestSampleSize} onChange={e => setNewAccount({ ...newAccount, backtestSampleSize: e.target.value })} placeholder={`min ${MIN_SAMPLE_SIZE}`}
+                    className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                </Field>
+              </div>
+              {sampleTooSmall && (
+                <p className="text-xs text-orange-400 mt-2 flex items-center gap-1">
+                  <Icon name="AlertTriangle" className="h-3 w-3" /> Sample size below {MIN_SAMPLE_SIZE} trades — not enough to trust. Defaulting to average tier.
+                </p>
+              )}
+              <div className="mt-3 bg-black/40 border border-gray-800 rounded-lg p-3 flex items-center justify-between">
+                <span className="text-xs text-gray-400">This account will use:</span>
+                <span className="text-sm font-semibold text-yellow-400">
+                  {DIVISOR_TABLE[previewTier].range} tier → ÷{previewDivisor}
+                </span>
+              </div>
+            </div>
+
             <Field label="Master / Copied Account Number (optional)">
               <input value={newAccount.copiedAccountNumber} onChange={e => setNewAccount({ ...newAccount, copiedAccountNumber: e.target.value })} placeholder="If copying a master account, enter its account #"
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
             </Field>
+
             <button onClick={handleAddAccount} disabled={!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown}
               className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
               <Icon name="Save" className="h-4 w-4" /> Save Account
@@ -596,7 +752,7 @@ function Field({ label, children }) {
 
 // ---------------- ROOT: watches auth state ----------------
 function App() {
-  const [user, setUser] = useState(undefined); // undefined = loading, null = logged out
+  const [user, setUser] = useState(undefined);
   useEffect(() => {
     const unsub = auth.onAuthStateChanged(u => setUser(u));
     return unsub;
