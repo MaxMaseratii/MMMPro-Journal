@@ -42,17 +42,16 @@
 const { useState, useEffect } = React;
 
 // ---------------------------------------------------------------------
-// ICON — fixed so the SVG always fills its container exactly. Previously
-// the outer span had the size classes (h-4 w-4 etc) but the injected SVG
-// kept its own native width/height attributes, so it rendered oversized
-// and overflowed, throwing off alignment next to text everywhere.
+// ICON — SVG always fills its container exactly, so it never overflows
+// and throws off alignment next to text.
 // ---------------------------------------------------------------------
 const Icon = ({ name, className }) => {
   const ref = React.useRef(null);
   useEffect(() => {
     if (ref.current) {
       ref.current.innerHTML = '';
-      const svg = lucide.createElement(lucide[name]);
+      const iconFn = lucide[name] || lucide['HelpCircle'];
+      const svg = lucide.createElement(iconFn);
       svg.setAttribute('width', '100%');
       svg.setAttribute('height', '100%');
       svg.style.display = 'block';
@@ -71,13 +70,13 @@ const fmt = (n) => {
 // ---------------------------------------------------------------------
 // RTUC (Risk Tolerance Unit Capacity) TABLE — set by backtested win rate.
 // Challenge stays aggressive to clear the target fast. Funded & Live both
-// use the same conservative RTUC per tier — protecting real capital either
-// way, never derived by doubling the Challenge number.
+// use the same conservative RTUC per tier — protecting real capital
+// either way, never derived by doubling the Challenge number.
 // ---------------------------------------------------------------------
 const DIVISOR_TABLE = {
   scalper:  { label: '70%+ win rate (high-accuracy scalper)', range: '70%+',      challenge: 12, funded: 25, live: 25 },
-  reliable: { label: '55–69% win rate (reliable day trader)', range: '55–69%',    challenge: 18, funded: 35, live: 35 },
-  average:  { label: '45–54% win rate (average — default)',   range: '45–54%',    challenge: 25, funded: 50, live: 50 },
+  reliable: { label: '55-69% win rate (reliable day trader)', range: '55-69%',    challenge: 18, funded: 35, live: 35 },
+  average:  { label: '45-54% win rate (average - default)',   range: '45-54%',    challenge: 25, funded: 50, live: 50 },
   trend:    { label: 'Under 45% win rate (trend follower)',   range: '<45%',      challenge: 45, funded: 90, live: 90 },
 };
 
@@ -109,8 +108,8 @@ const computeStatus = (account, buffer, totalPnl) => {
 
 const STATUS_STYLES = {
   active:      { label: 'Active',       cls: 'bg-blue-500/15 text-blue-300 border-blue-500/30' },
-  passed:      { label: 'Passed ✓',      cls: 'bg-green-500/15 text-green-300 border-green-500/30' },
-  'target-hit':{ label: 'Target Hit ✓',  cls: 'bg-green-500/15 text-green-300 border-green-500/30' },
+  passed:      { label: 'Passed', cls: 'bg-green-500/15 text-green-300 border-green-500/30' },
+  'target-hit':{ label: 'Target Hit', cls: 'bg-green-500/15 text-green-300 border-green-500/30' },
   breached:    { label: 'Breached',     cls: 'bg-red-500/15 text-red-300 border-red-500/30' },
 };
 
@@ -208,24 +207,27 @@ function AuthScreen() {
 }
 
 // ---------------- RISK OF RUIN PROJECTION ----------------
-function RiskOfRuinCard({ currentBuffer, rtuc, accountType }) {
-  const checkpoints = [5, 10, 15, 20, 25, 30, 40, 50].filter(n => n <= rtuc * 2.5);
-  const rows = checkpoints.map(n => {
+function RiskOfRuinCard(props) {
+  const currentBuffer = props.currentBuffer;
+  const rtuc = props.rtuc;
+  const accountType = props.accountType;
+  const checkpoints = [5, 10, 15, 20, 25, 30, 40, 50].filter(function(n) { return n <= rtuc * 2.5; });
+  const rows = checkpoints.map(function(n) {
     const remaining = currentBuffer * Math.pow(1 - 1 / rtuc, n);
     const pctRemaining = currentBuffer > 0 ? (remaining / currentBuffer) * 100 : 0;
     const recoveryPct = remaining > 0 ? ((currentBuffer - remaining) / remaining) * 100 : null;
-    return { n, remaining, pctRemaining, recoveryPct };
+    return { n: n, remaining: remaining, pctRemaining: pctRemaining, recoveryPct: recoveryPct };
   });
 
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
       <div className="flex items-center gap-2 mb-1">
         <Icon name="TrendingDown" className="h-5 w-5 text-red-400" />
-        <h2 className="text-lg font-semibold text-white">Risk of Ruin — Consecutive Loss Projection</h2>
+        <h2 className="text-lg font-semibold text-white">Risk of Ruin - Consecutive Loss Projection</h2>
       </div>
       <p className="text-xs text-gray-500 mb-4">
-        Hypothetical: if every trade lost at the current RTU (buffer ÷ {rtuc} RTUC). "Gain needed to recover" is the
-        % return required on what's left just to climb back to today's buffer.
+        Hypothetical: if every trade lost at the current RTU (buffer / {rtuc} RTUC). "Gain needed to recover" is the
+        percent return required on what's left just to climb back to today's buffer.
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -238,68 +240,70 @@ function RiskOfRuinCard({ currentBuffer, rtuc, accountType }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map(r => (
-              <tr key={r.n} className="border-b border-gray-800/50 last:border-0">
-                <td className="py-2 pr-4 text-white font-medium">{r.n} losses</td>
-                <td className={`py-2 pr-4 font-semibold ${r.pctRemaining <= 20 ? 'text-red-400' : r.pctRemaining <= 50 ? 'text-yellow-400' : 'text-green-400'}`}>
-                  {fmt(r.remaining)}
-                </td>
-                <td className="py-2 pr-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-20 bg-gray-800 rounded-full h-1.5 overflow-hidden">
-                      <div className={`h-full rounded-full ${r.pctRemaining <= 20 ? 'bg-red-400' : r.pctRemaining <= 50 ? 'bg-yellow-400' : 'bg-green-400'}`}
-                        style={{ width: `${Math.max(r.pctRemaining, 2)}%` }}></div>
+            {rows.map(function(r) {
+              return (
+                <tr key={r.n} className="border-b border-gray-800/50 last:border-0">
+                  <td className="py-2 pr-4 text-white font-medium">{r.n} losses</td>
+                  <td className={"py-2 pr-4 font-semibold " + (r.pctRemaining <= 20 ? 'text-red-400' : r.pctRemaining <= 50 ? 'text-yellow-400' : 'text-green-400')}>
+                    {fmt(r.remaining)}
+                  </td>
+                  <td className="py-2 pr-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-20 bg-gray-800 rounded-full h-1.5 overflow-hidden">
+                        <div className={"h-full rounded-full " + (r.pctRemaining <= 20 ? 'bg-red-400' : r.pctRemaining <= 50 ? 'bg-yellow-400' : 'bg-green-400')}
+                          style={{ width: Math.max(r.pctRemaining, 2) + '%' }}></div>
+                      </div>
+                      <span className={"text-xs " + (r.pctRemaining <= 20 ? 'text-red-400' : r.pctRemaining <= 50 ? 'text-yellow-400' : 'text-green-400')}>
+                        {r.pctRemaining.toFixed(1)}%
+                      </span>
                     </div>
-                    <span className={`text-xs ${r.pctRemaining <= 20 ? 'text-red-400' : r.pctRemaining <= 50 ? 'text-yellow-400' : 'text-green-400'}`}>
-                      {r.pctRemaining.toFixed(1)}%
-                    </span>
-                  </div>
-                </td>
-                <td className="py-2">
-                  {r.recoveryPct === null ? (
-                    <span className="text-red-500 font-semibold">Account wiped</span>
-                  ) : (
-                    <span className={`font-semibold ${r.recoveryPct >= 100 ? 'text-red-400' : r.recoveryPct >= 40 ? 'text-yellow-400' : 'text-gray-300'}`}>
-                      +{r.recoveryPct.toFixed(1)}% needed
-                    </span>
-                  )}
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td className="py-2">
+                    {r.recoveryPct === null ? (
+                      <span className="text-red-500 font-semibold">Account wiped</span>
+                    ) : (
+                      <span className={"font-semibold " + (r.recoveryPct >= 100 ? 'text-red-400' : r.recoveryPct >= 40 ? 'text-yellow-400' : 'text-gray-300')}>
+                        +{r.recoveryPct.toFixed(1)}% needed
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
       <p className="text-xs text-gray-600 mt-3">
         {accountType === 'challenge'
-          ? 'Challenge uses a tighter RTUC to clear the target faster — the trade-off is a losing streak erodes the buffer, and recovery gets steep, quicker.'
-          : 'Funded and Live use a wider RTUC on purpose — the buffer erodes slower and recovery math stays gentler under a bad streak, protecting real capital.'}
+          ? 'Challenge uses a tighter RTUC to clear the target faster - the trade-off is a losing streak erodes the buffer, and recovery gets steep, quicker.'
+          : 'Funded and Live use a wider RTUC on purpose - the buffer erodes slower and recovery math stays gentler under a bad streak, protecting real capital.'}
       </p>
     </div>
   );
 }
 
 // ---------------- DAILY TRADE EXECUTION MATRIX ----------------
-function DailyTradeMatrix({ riskUnit, rewardRatio }) {
-  const risk = riskUnit;
-  const rr = parseFloat(rewardRatio) || 2;
+function DailyTradeMatrix(props) {
+  const risk = props.riskUnit;
+  const rr = parseFloat(props.rewardRatio) || 2;
   const reward = risk * rr;
 
   const scenarios = [
-    { name: 'A — Perfect',  trades: ['W', 'W', '–'], pnl: 2 * reward },
-    { name: 'B — Recovery', trades: ['L', 'W', 'W'], pnl: -risk + 2 * reward },
-    { name: 'C — Neutral',  trades: ['L', 'W', 'L'], pnl: reward - 2 * risk },
-    { name: 'D — Save',     trades: ['W', 'L', 'L'], pnl: reward - 2 * risk },
-    { name: 'E — Worst',    trades: ['L', 'L', '–'], pnl: -2 * risk },
+    { name: 'A - Perfect',  trades: ['W', 'W', '-'], pnl: 2 * reward },
+    { name: 'B - Recovery', trades: ['L', 'W', 'W'], pnl: -risk + 2 * reward },
+    { name: 'C - Neutral',  trades: ['L', 'W', 'L'], pnl: reward - 2 * risk },
+    { name: 'D - Save',     trades: ['W', 'L', 'L'], pnl: reward - 2 * risk },
+    { name: 'E - Worst',    trades: ['L', 'L', '-'], pnl: -2 * risk },
   ];
 
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
       <div className="flex items-center gap-2 mb-1">
-        <Icon name="Grid3x3" className="h-5 w-5 text-yellow-400" />
+        <Icon name="LayoutGrid" className="h-5 w-5 text-yellow-400" />
         <h2 className="text-lg font-semibold text-white">Daily Trade Execution Matrix</h2>
       </div>
       <p className="text-xs text-gray-500 mb-4">
-        Max 3 trades/day — stop immediately at 2 wins (DRT satisfied) or 2 losses (DRT exhausted). Every possible way today
+        Max 3 trades/day - stop immediately at 2 wins (DRT satisfied) or 2 losses (DRT exhausted). Every possible way today
         can play out, based on your current RTU ({fmt(risk)}) and {rr}:1 reward.
       </p>
       <div className="overflow-x-auto">
@@ -314,22 +318,26 @@ function DailyTradeMatrix({ riskUnit, rewardRatio }) {
             </tr>
           </thead>
           <tbody>
-            {scenarios.map((s, i) => (
-              <tr key={i} className="border-b border-gray-800/50 last:border-0">
-                <td className={`py-2 pr-4 font-medium ${s.pnl > 0 ? 'text-green-400' : s.pnl < 0 ? 'text-red-400' : 'text-gray-300'}`}>{s.name}</td>
-                {s.trades.map((t, ti) => (
-                  <td key={ti} className="py-2 pr-4">
-                    {t === '–' ? <span className="text-gray-700">–</span> :
-                      <span className={t === 'W' ? 'text-green-400 font-semibold' : 'text-red-400 font-semibold'}>
-                        {t} {t === 'W' ? `+${fmt(reward)}` : `-${fmt(risk)}`}
-                      </span>}
+            {scenarios.map(function(s, i) {
+              return (
+                <tr key={i} className="border-b border-gray-800/50 last:border-0">
+                  <td className={"py-2 pr-4 font-medium " + (s.pnl > 0 ? 'text-green-400' : s.pnl < 0 ? 'text-red-400' : 'text-gray-300')}>{s.name}</td>
+                  {s.trades.map(function(t, ti) {
+                    return (
+                      <td key={ti} className="py-2 pr-4">
+                        {t === '-' ? <span className="text-gray-700">-</span> :
+                          <span className={t === 'W' ? 'text-green-400 font-semibold' : 'text-red-400 font-semibold'}>
+                            {t} {t === 'W' ? '+' + fmt(reward) : '-' + fmt(risk)}
+                          </span>}
+                      </td>
+                    );
+                  })}
+                  <td className={"py-2 font-bold " + (s.pnl > 0 ? 'text-green-400' : s.pnl < 0 ? 'text-red-400' : 'text-gray-300')}>
+                    {s.pnl >= 0 ? '+' : ''}{fmt(s.pnl)}
                   </td>
-                ))}
-                <td className={`py-2 font-bold ${s.pnl > 0 ? 'text-green-400' : s.pnl < 0 ? 'text-red-400' : 'text-gray-300'}`}>
-                  {s.pnl >= 0 ? '+' : ''}{fmt(s.pnl)}
-                </td>
-              </tr>
-            ))}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -338,9 +346,10 @@ function DailyTradeMatrix({ riskUnit, rewardRatio }) {
 }
 
 // ---------------- STRATEGY RULES DISPLAY ----------------
-function StrategyCard({ account }) {
-  const longRules = (account.longRules || []).filter(r => r && r.trim());
-  const shortRules = (account.shortRules || []).filter(r => r && r.trim());
+function StrategyCard(props) {
+  const account = props.account;
+  const longRules = (account.longRules || []).filter(function(r) { return r && r.trim(); });
+  const shortRules = (account.shortRules || []).filter(function(r) { return r && r.trim(); });
   if (!account.strategyName && longRules.length === 0 && shortRules.length === 0) return null;
 
   return (
@@ -356,11 +365,13 @@ function StrategyCard({ account }) {
           </p>
           {longRules.length === 0 ? <p className="text-xs text-gray-600">No rules defined.</p> : (
             <ul className="space-y-1.5">
-              {longRules.map((r, i) => (
-                <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
-                  <span className="text-green-400 mt-0.5 leading-none">•</span><span>{r}</span>
-                </li>
-              ))}
+              {longRules.map(function(r, i) {
+                return (
+                  <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                    <span className="text-green-400 mt-0.5 leading-none">*</span><span>{r}</span>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
@@ -370,11 +381,13 @@ function StrategyCard({ account }) {
           </p>
           {shortRules.length === 0 ? <p className="text-xs text-gray-600">No rules defined.</p> : (
             <ul className="space-y-1.5">
-              {shortRules.map((r, i) => (
-                <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
-                  <span className="text-red-400 mt-0.5 leading-none">•</span><span>{r}</span>
-                </li>
-              ))}
+              {shortRules.map(function(r, i) {
+                return (
+                  <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
+                    <span className="text-red-400 mt-0.5 leading-none">*</span><span>{r}</span>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
@@ -384,7 +397,8 @@ function StrategyCard({ account }) {
 }
 
 // ---------------- MAIN JOURNAL ----------------
-function MMMJournal({ user }) {
+function MMMJournal(props) {
+  const user = props.user;
   const [accounts, setAccounts] = useState([]);
   const [entries, setEntries] = useState([]);
   const [activeAccountId, setActiveAccountId] = useState(null);
@@ -397,39 +411,39 @@ function MMMJournal({ user }) {
   const accountsRef = db.collection('users').doc(user.uid).collection('accounts');
   const entriesRef = db.collection('users').doc(user.uid).collection('entries');
 
-  useEffect(() => {
-    const unsub = accountsRef.orderBy('createdAt', 'asc').onSnapshot(snap => {
-      const list = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  useEffect(function() {
+    const unsub = accountsRef.orderBy('createdAt', 'asc').onSnapshot(function(snap) {
+      const list = snap.docs.map(function(d) { return Object.assign({ id: d.id }, d.data()); });
       setAccounts(list);
       if (list.length && !activeAccountId) setActiveAccountId(list[0].id);
     });
     return unsub;
   }, [user.uid]);
 
-  useEffect(() => {
-    const unsub = entriesRef.orderBy('date', 'desc').onSnapshot(snap => {
-      setEntries(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+  useEffect(function() {
+    const unsub = entriesRef.orderBy('date', 'desc').onSnapshot(function(snap) {
+      setEntries(snap.docs.map(function(d) { return Object.assign({ id: d.id }, d.data()); }));
     });
     return unsub;
   }, [user.uid]);
 
-  const activeAccount = accounts.find(a => a.id === activeAccountId);
-  const accountEntries = entries.filter(e => e.accountId === activeAccountId);
+  const activeAccount = accounts.find(function(a) { return a.id === activeAccountId; });
+  const accountEntries = entries.filter(function(e) { return e.accountId === activeAccountId; });
   const rtuc = activeAccount ? getRTUC(activeAccount) : DIVISOR_TABLE.average.challenge;
 
-  const calcBufferHistory = (account, accEntries) => {
+  const calcBufferHistory = function(account, accEntries) {
     if (!account) return [];
     const d = getRTUC(account);
-    const chronological = [...accEntries].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const chronological = accEntries.slice().sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
     let buffer = parseFloat(account.maxDrawdown) || 0;
     const history = [];
-    chronological.forEach(entry => {
-      const signedPnl = entry.trades.reduce((s, t) => {
+    chronological.forEach(function(entry) {
+      const signedPnl = entry.trades.reduce(function(s, t) {
         const val = Math.abs(parseFloat(t.pnl) || 0);
         return s + (t.result === 'win' ? val : -val);
       }, 0);
       buffer = buffer + signedPnl;
-      history.push({ date: entry.date, buffer, pnl: signedPnl, riskPerTrade: Math.max(buffer, 0) / d });
+      history.push({ date: entry.date, buffer: buffer, pnl: signedPnl, riskPerTrade: Math.max(buffer, 0) / d });
     });
     return history;
   };
@@ -441,42 +455,46 @@ function MMMJournal({ user }) {
   const nextTierAt = (microsUnlocked + 1) * 1000;
   const distToNextTier = nextTierAt - currentBuffer;
 
-  const totalPnl = accountEntries.reduce((sum, e) => sum + e.trades.reduce((s, t) => {
-    const val = Math.abs(parseFloat(t.pnl) || 0);
-    return s + (t.result === 'win' ? val : -val);
-  }, 0), 0);
+  const totalPnl = accountEntries.reduce(function(sum, e) {
+    return sum + e.trades.reduce(function(s, t) {
+      const val = Math.abs(parseFloat(t.pnl) || 0);
+      return s + (t.result === 'win' ? val : -val);
+    }, 0);
+  }, 0);
 
-  const winTrades = accountEntries.flatMap(e => e.trades).filter(t => t.result === 'win').length;
-  const lossTrades = accountEntries.flatMap(e => e.trades).filter(t => t.result === 'loss').length;
+  const winTrades = accountEntries.flatMap(function(e) { return e.trades; }).filter(function(t) { return t.result === 'win'; }).length;
+  const lossTrades = accountEntries.flatMap(function(e) { return e.trades; }).filter(function(t) { return t.result === 'loss'; }).length;
   const totalTrades = winTrades + lossTrades;
   const winRate = totalTrades > 0 ? (winTrades / totalTrades) * 100 : 0;
   const activeStatus = activeAccount ? computeStatus(activeAccount, currentBuffer, totalPnl) : 'active';
 
-  const getAccountStatus = (acc) => {
-    const accE = entries.filter(e => e.accountId === acc.id);
+  const getAccountStatus = function(acc) {
+    const accE = entries.filter(function(e) { return e.accountId === acc.id; });
     const hist = calcBufferHistory(acc, accE);
     const buf = hist.length > 0 ? hist[hist.length - 1].buffer : (parseFloat(acc.maxDrawdown) || 0);
-    const pnl = accE.reduce((sum, e) => sum + e.trades.reduce((s, t) => {
-      const val = Math.abs(parseFloat(t.pnl) || 0);
-      return s + (t.result === 'win' ? val : -val);
-    }, 0), 0);
+    const pnl = accE.reduce(function(sum, e) {
+      return sum + e.trades.reduce(function(s, t) {
+        const val = Math.abs(parseFloat(t.pnl) || 0);
+        return s + (t.result === 'win' ? val : -val);
+      }, 0);
+    }, 0);
     return computeStatus(acc, buf, pnl);
   };
 
-  const rulesForDirection = (direction) => {
+  const rulesForDirection = function(direction) {
     if (!activeAccount) return [];
     const list = direction === 'long' ? activeAccount.longRules : activeAccount.shortRules;
-    return (list || []).filter(r => r && r.trim());
+    return (list || []).filter(function(r) { return r && r.trim(); });
   };
 
-  const biasAligns = (bias, direction) => {
+  const biasAligns = function(bias, direction) {
     if (bias === 'neutral') return null;
     if (bias === 'bullish') return direction === 'long';
     if (bias === 'bearish') return direction === 'short';
     return null;
   };
 
-  const handleAddAccount = async () => {
+  const handleAddAccount = async function() {
     if (!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown) return;
     const tier = determineTier(newAccount.backtestWinRate, newAccount.backtestSampleSize);
     const doc = await accountsRef.add({
@@ -492,8 +510,8 @@ function MMMJournal({ user }) {
       backtestSampleSize: newAccount.backtestSampleSize ? parseInt(newAccount.backtestSampleSize) : null,
       winRateTier: tier,
       strategyName: newAccount.strategyName || '',
-      longRules: newAccount.longRules.filter(r => r && r.trim()),
-      shortRules: newAccount.shortRules.filter(r => r && r.trim()),
+      longRules: newAccount.longRules.filter(function(r) { return r && r.trim(); }),
+      shortRules: newAccount.shortRules.filter(function(r) { return r && r.trim(); }),
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
     setActiveAccountId(doc.id);
@@ -501,9 +519,8 @@ function MMMJournal({ user }) {
     setShowAddAccount(false);
   };
 
-  const handleStartFundedFromChallenge = (challengeAcc) => {
-    setNewAccount({
-      ...emptyAccountForm,
+  const handleStartFundedFromChallenge = function(challengeAcc) {
+    setNewAccount(Object.assign({}, emptyAccountForm, {
       accountType: 'funded',
       name: challengeAcc.name.replace(/challenge/i, '').trim() + ' - Funded',
       startingBalance: challengeAcc.startingBalance,
@@ -515,53 +532,66 @@ function MMMJournal({ user }) {
       longRules: challengeAcc.longRules && challengeAcc.longRules.length ? challengeAcc.longRules : [''],
       shortRules: challengeAcc.shortRules && challengeAcc.shortRules.length ? challengeAcc.shortRules : [''],
       linkedFromId: challengeAcc.id,
-    });
+    }));
     setShowAddAccount(true);
   };
 
-  const handleDeleteAccount = async (id) => {
+  const handleDeleteAccount = async function(id) {
     if (!confirm('Delete this account and all its journal entries?')) return;
     const batchEntries = await entriesRef.where('accountId', '==', id).get();
     const batch = db.batch();
-    batchEntries.forEach(d => batch.delete(d.ref));
+    batchEntries.forEach(function(d) { batch.delete(d.ref); });
     batch.delete(accountsRef.doc(id));
     await batch.commit();
     if (activeAccountId === id) setActiveAccountId(null);
   };
 
-  const addRuleRow = (field) => setNewAccount({ ...newAccount, [field]: [...newAccount[field], ''] });
-  const updateRuleRow = (field, idx, value) => {
-    const list = [...newAccount[field]];
+  const addRuleRow = function(field) {
+    const updated = {};
+    updated[field] = newAccount[field].concat(['']);
+    setNewAccount(Object.assign({}, newAccount, updated));
+  };
+  const updateRuleRow = function(field, idx, value) {
+    const list = newAccount[field].slice();
     list[idx] = value;
-    setNewAccount({ ...newAccount, [field]: list });
+    const updated = {};
+    updated[field] = list;
+    setNewAccount(Object.assign({}, newAccount, updated));
   };
-  const removeRuleRow = (field, idx) => setNewAccount({ ...newAccount, [field]: newAccount[field].filter((_, i) => i !== idx) });
+  const removeRuleRow = function(field, idx) {
+    const updated = {};
+    updated[field] = newAccount[field].filter(function(_, i) { return i !== idx; });
+    setNewAccount(Object.assign({}, newAccount, updated));
+  };
 
-  // 3-trade max, stop at 2 wins or 2 losses (DRT)
-  const addTradeRow = () => {
-    const wins = newEntry.trades.filter(t => t.result === 'win').length;
-    const losses = newEntry.trades.filter(t => t.result === 'loss').length;
+  const addTradeRow = function() {
+    const wins = newEntry.trades.filter(function(t) { return t.result === 'win'; }).length;
+    const losses = newEntry.trades.filter(function(t) { return t.result === 'loss'; }).length;
     if (newEntry.trades.length >= 3 || wins >= 2 || losses >= 2) return;
-    setNewEntry({ ...newEntry, trades: [...newEntry.trades, { result: 'win', pnl: '', direction: 'long', rulesChecked: [] }] });
+    setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.concat([{ result: 'win', pnl: '', direction: 'long', rulesChecked: [] }]) }));
   };
-  const removeTradeRow = (idx) => setNewEntry({ ...newEntry, trades: newEntry.trades.filter((_, i) => i !== idx) });
-  const updateTradeRow = (idx, field, value) => {
-    const trades = [...newEntry.trades];
-    trades[idx] = { ...trades[idx], [field]: value };
+  const removeTradeRow = function(idx) {
+    setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.filter(function(_, i) { return i !== idx; }) }));
+  };
+  const updateTradeRow = function(idx, field, value) {
+    const trades = newEntry.trades.slice();
+    trades[idx] = Object.assign({}, trades[idx]);
+    trades[idx][field] = value;
     if (field === 'direction') trades[idx].rulesChecked = [];
-    setNewEntry({ ...newEntry, trades });
+    setNewEntry(Object.assign({}, newEntry, { trades: trades }));
   };
-  const toggleRuleChecked = (tradeIdx, ruleText) => {
-    const trades = [...newEntry.trades];
+  const toggleRuleChecked = function(tradeIdx, ruleText) {
+    const trades = newEntry.trades.slice();
+    trades[tradeIdx] = Object.assign({}, trades[tradeIdx]);
     const current = trades[tradeIdx].rulesChecked || [];
-    trades[tradeIdx].rulesChecked = current.includes(ruleText)
-      ? current.filter(r => r !== ruleText)
-      : [...current, ruleText];
-    setNewEntry({ ...newEntry, trades });
+    trades[tradeIdx].rulesChecked = current.indexOf(ruleText) !== -1
+      ? current.filter(function(r) { return r !== ruleText; })
+      : current.concat([ruleText]);
+    setNewEntry(Object.assign({}, newEntry, { trades: trades }));
   };
 
-  const handleSaveEntry = async () => {
-    const validTrades = newEntry.trades.filter(t => t.pnl !== '');
+  const handleSaveEntry = async function() {
+    const validTrades = newEntry.trades.filter(function(t) { return t.pnl !== ''; });
     if (validTrades.length === 0 || !activeAccountId) return;
     await entriesRef.add({
       accountId: activeAccountId,
@@ -574,14 +604,14 @@ function MMMJournal({ user }) {
     setShowAddEntry(false);
   };
 
-  const handleDeleteEntry = async (id) => { await entriesRef.doc(id).delete(); };
+  const handleDeleteEntry = async function(id) { await entriesRef.doc(id).delete(); };
 
   const previewTier = determineTier(newAccount.backtestWinRate, newAccount.backtestSampleSize);
   const previewRTUC = DIVISOR_TABLE[previewTier][newAccount.accountType] || DIVISOR_TABLE[previewTier].average;
   const sampleTooSmall = newAccount.backtestSampleSize && parseInt(newAccount.backtestSampleSize) < MIN_SAMPLE_SIZE;
 
-  const entryWins = newEntry.trades.filter(t => t.result === 'win').length;
-  const entryLosses = newEntry.trades.filter(t => t.result === 'loss').length;
+  const entryWins = newEntry.trades.filter(function(t) { return t.result === 'win'; }).length;
+  const entryLosses = newEntry.trades.filter(function(t) { return t.result === 'loss'; }).length;
 
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
@@ -593,10 +623,10 @@ function MMMJournal({ user }) {
               MMM Pro Journal
             </h1>
             <p className="text-gray-500 text-sm mt-1">
-              {user.displayName || user.email} · <button onClick={() => auth.signOut()} className="text-red-400 hover:underline">Sign out</button>
+              {user.displayName || user.email} - <button onClick={function() { auth.signOut(); }} className="text-red-400 hover:underline">Sign out</button>
             </p>
           </div>
-          <button onClick={() => { setNewAccount(emptyAccountForm); setShowAddAccount(true); }}
+          <button onClick={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }}
             className="flex items-center gap-1.5 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-yellow-300 hover:to-yellow-500 transition">
             <Icon name="Plus" className="h-4 w-4" /><span>Add Account</span>
           </button>
@@ -607,9 +637,9 @@ function MMMJournal({ user }) {
           <p className="text-sm text-yellow-100/80">
             <span className="text-yellow-400 font-semibold">System: </span>
             <span className="text-white font-medium">RTUC</span> (Risk Tolerance Unit Capacity) is set by your backtested win rate (30+ trades).
-            <span className="text-white font-medium"> RTU</span> = your dollar risk per trade = buffer ÷ RTUC.
+            <span className="text-white font-medium"> RTU</span> = your dollar risk per trade = buffer / RTUC.
             <span className="text-white font-medium"> DRT</span> (Daily Risk Tolerance) caps you at 2 RTU lost or 2 RTU won, max 3 trades/day.
-            No verified backtest defaults to the 45–54% average tier.
+            No verified backtest defaults to the 45-54% average tier.
           </p>
         </div>
 
@@ -621,16 +651,19 @@ function MMMJournal({ user }) {
         ) : (
           <React.Fragment>
             <div className="flex gap-2 overflow-x-auto pb-1">
-              {accounts.map(acc => {
+              {accounts.map(function(acc) {
                 const st = getAccountStatus(acc);
                 return (
-                  <button key={acc.id} onClick={() => setActiveAccountId(acc.id)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition border ${activeAccountId === acc.id ? 'bg-yellow-500/15 border-yellow-400/50 text-yellow-300' : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:border-gray-700'}`}>
+                  <button key={acc.id} onClick={function() { setActiveAccountId(acc.id); }}
+                    className={"flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition border " + (activeAccountId === acc.id ? 'bg-yellow-500/15 border-yellow-400/50 text-yellow-300' : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:border-gray-700')}>
                     <span>{acc.name}</span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${ACCOUNT_BADGE_CLS[acc.accountType] || ACCOUNT_BADGE_CLS.challenge}`}>
-                      {ACCOUNT_TYPES.find(t => t.key === acc.accountType)?.label || 'Challenge'}
+                    <span className={"text-[10px] px-1.5 py-0.5 rounded " + (ACCOUNT_BADGE_CLS[acc.accountType] || ACCOUNT_BADGE_CLS.challenge)}>
+                      {(function() {
+                        const found = ACCOUNT_TYPES.find(function(t) { return t.key === acc.accountType; });
+                        return found ? found.label : 'Challenge';
+                      })()}
                     </span>
-                    {st !== 'active' && <span className={`w-1.5 h-1.5 rounded-full ${st === 'breached' ? 'bg-red-400' : 'bg-green-400'}`}></span>}
+                    {st !== 'active' && <span className={"w-1.5 h-1.5 rounded-full " + (st === 'breached' ? 'bg-red-400' : 'bg-green-400')}></span>}
                   </button>
                 );
               })}
@@ -645,7 +678,7 @@ function MMMJournal({ user }) {
                       <p className="text-red-300 font-semibold text-sm">Account Breached</p>
                       <p className="text-red-200/70 text-xs mt-1">Buffer fully consumed. Open a new challenge to try again.</p>
                     </div>
-                    <button onClick={() => { setNewAccount(emptyAccountForm); setShowAddAccount(true); }}
+                    <button onClick={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }}
                       className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-1.5 rounded-lg border border-red-500/40 flex-shrink-0">
                       Open New Account
                     </button>
@@ -656,9 +689,9 @@ function MMMJournal({ user }) {
                     <Icon name="Trophy" className="h-5 w-5 text-green-400 mt-0.5" />
                     <div className="flex-1">
                       <p className="text-green-300 font-semibold text-sm">Challenge Passed!</p>
-                      <p className="text-green-200/70 text-xs mt-1">Start tracking the funded account — it gets its own conservative RTUC.</p>
+                      <p className="text-green-200/70 text-xs mt-1">Start tracking the funded account - it gets its own conservative RTUC.</p>
                     </div>
-                    <button onClick={() => handleStartFundedFromChallenge(activeAccount)}
+                    <button onClick={function() { handleStartFundedFromChallenge(activeAccount); }}
                       className="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/40 flex-shrink-0">
                       Start Funded Account
                     </button>
@@ -679,25 +712,28 @@ function MMMJournal({ user }) {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <StatCard label="Current Buffer" value={fmt(currentBuffer)} icon="Shield"
                     color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
-                  <StatCard label="RTU — Risk Per Trade" value={fmt(riskPerTrade)} icon="Target" color="text-blue-400" sub={`${rtuc} RTUC`} />
+                  <StatCard label="RTU - Risk Per Trade" value={fmt(riskPerTrade)} icon="Target" color="text-blue-400" sub={rtuc + " RTUC"} />
                   <StatCard label="Total P&L" value={fmt(totalPnl)} icon={totalPnl >= 0 ? "TrendingUp" : "TrendingDown"} color={totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
-                  <StatCard label="Win Rate" value={`${winRate.toFixed(1)}%`} icon="DollarSign" color={winRate >= 50 ? 'text-green-400' : 'text-red-400'} sub={`${winTrades}W / ${lossTrades}L`} />
+                  <StatCard label="Win Rate" value={winRate.toFixed(1) + "%"} icon="DollarSign" color={winRate >= 50 ? 'text-green-400' : 'text-red-400'} sub={winTrades + "W / " + lossTrades + "L"} />
                 </div>
 
                 <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
                     <div className="flex items-center gap-2">
                       <Icon name="Zap" className="h-5 w-5 text-yellow-400" />
-                      <h2 className="text-lg font-semibold text-white">Position Sizing — Live</h2>
+                      <h2 className="text-lg font-semibold text-white">Position Sizing - Live</h2>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${STATUS_STYLES[activeStatus].cls}`}>{STATUS_STYLES[activeStatus].label}</span>
-                      <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${ACCOUNT_BADGE_CLS[activeAccount.accountType]} border border-current/30`}>
-                        {ACCOUNT_TYPES.find(t => t.key === activeAccount.accountType)?.label} · {rtuc} RTUC
+                      <span className={"text-xs px-2.5 py-1 rounded-full font-medium border " + STATUS_STYLES[activeStatus].cls}>{STATUS_STYLES[activeStatus].label}</span>
+                      <span className={"text-xs px-2.5 py-1 rounded-full font-medium " + ACCOUNT_BADGE_CLS[activeAccount.accountType] + " border border-current/30"}>
+                        {(function() {
+                          const found = ACCOUNT_TYPES.find(function(t) { return t.key === activeAccount.accountType; });
+                          return found ? found.label : '';
+                        })()} - {rtuc} RTUC
                       </span>
                       <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
                         Tier: {DIVISOR_TABLE[activeAccount.winRateTier || 'average'].range}
-                        {activeAccount.backtestSampleSize ? ` (${activeAccount.backtestSampleSize} trades)` : ' (default)'}
+                        {activeAccount.backtestSampleSize ? " (" + activeAccount.backtestSampleSize + " trades)" : ' (default)'}
                       </span>
                     </div>
                   </div>
@@ -726,12 +762,12 @@ function MMMJournal({ user }) {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                   <div className="text-sm text-gray-500">
                     <span>Start: <span className="text-white">{fmt(activeAccount.startingBalance)}</span></span>
-                    <span> · Max DD: <span className="text-white">{fmt(activeAccount.maxDrawdown)}</span></span>
-                    <span> · Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span></span>
-                    {activeAccount.copiedAccountNumber && <span> · Copy of: <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></span>}
-                    <button onClick={() => handleDeleteAccount(activeAccount.id)} className="ml-3 text-red-400/70 hover:text-red-400 text-xs underline">delete account</button>
+                    <span> - Max DD: <span className="text-white">{fmt(activeAccount.maxDrawdown)}</span></span>
+                    <span> - Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span></span>
+                    {activeAccount.copiedAccountNumber && <span> - Copy of: <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></span>}
+                    <button onClick={function() { handleDeleteAccount(activeAccount.id); }} className="ml-3 text-red-400/70 hover:text-red-400 text-xs underline">delete account</button>
                   </div>
-                  <button onClick={() => { setNewEntry(emptyEntryForm()); setShowAddEntry(true); }}
+                  <button onClick={function() { setNewEntry(emptyEntryForm()); setShowAddEntry(true); }}
                     className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-green-400 hover:to-emerald-500 transition">
                     <Icon name="Plus" className="h-4 w-4" /><span>Log Today's Trades</span>
                   </button>
@@ -744,57 +780,57 @@ function MMMJournal({ user }) {
                   {accountEntries.length === 0 ? (
                     <div className="text-center py-12 border border-dashed border-gray-800 rounded-xl text-gray-500 text-sm">No entries yet.</div>
                   ) : (
-                    [...accountEntries].sort((a,b) => new Date(b.date) - new Date(a.date)).map(entry => {
-                      const dayPnl = entry.trades.reduce((s, t) => {
+                    accountEntries.slice().sort(function(a,b) { return new Date(b.date) - new Date(a.date); }).map(function(entry) {
+                      const dayPnl = entry.trades.reduce(function(s, t) {
                         const val = Math.abs(parseFloat(t.pnl) || 0);
                         return s + (t.result === 'win' ? val : -val);
                       }, 0);
-                      const bufferAtDate = bufferHistory.find(b => b.date === entry.date);
+                      const bufferAtDate = bufferHistory.find(function(b) { return b.date === entry.date; });
                       const isExpanded = expandedEntry === entry.id;
-                      const biasInfo = BIAS_OPTIONS.find(b => b.key === entry.dailyBias) || BIAS_OPTIONS[2];
+                      const biasInfo = BIAS_OPTIONS.find(function(b) { return b.key === entry.dailyBias; }) || BIAS_OPTIONS[2];
                       return (
                         <div key={entry.id} className="bg-gray-900/60 border border-gray-800 rounded-xl overflow-hidden">
-                          <button onClick={() => setExpandedEntry(isExpanded ? null : entry.id)}
+                          <button onClick={function() { setExpandedEntry(isExpanded ? null : entry.id); }}
                             className="w-full flex items-center justify-between p-4 hover:bg-gray-800/30 transition">
                             <div className="flex items-center gap-3">
-                              <div className={`w-2 h-2 rounded-full ${dayPnl >= 0 ? 'bg-green-400' : 'bg-red-400'}`}></div>
+                              <div className={"w-2 h-2 rounded-full " + (dayPnl >= 0 ? 'bg-green-400' : 'bg-red-400')}></div>
                               <span className="text-white font-medium">{entry.date}</span>
-                              <span className={`text-[10px] px-1.5 py-0.5 rounded border ${biasInfo.cls} flex items-center gap-1`}>
+                              <span className={"text-[10px] px-1.5 py-0.5 rounded border " + biasInfo.cls + " flex items-center gap-1"}>
                                 <Icon name={biasInfo.icon} className="h-3 w-3" /><span>{biasInfo.label}</span>
                               </span>
                               <span className="text-xs text-gray-500">{entry.trades.length} trade{entry.trades.length !== 1 ? 's' : ''}</span>
                             </div>
                             <div className="flex items-center gap-4">
-                              <span className={`font-semibold ${dayPnl >= 0 ? 'text-green-400' : 'text-red-400'}`}>{dayPnl >= 0 ? '+' : ''}{fmt(dayPnl)}</span>
+                              <span className={"font-semibold " + (dayPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{dayPnl >= 0 ? '+' : ''}{fmt(dayPnl)}</span>
                               <Icon name={isExpanded ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500" />
                             </div>
                           </button>
                           {isExpanded && (
                             <div className="px-4 pb-4 space-y-2 border-t border-gray-800 pt-3">
-                              {entry.trades.map((t, i) => {
+                              {entry.trades.map(function(t, i) {
                                 const val = Math.abs(parseFloat(t.pnl) || 0);
                                 const aligned = biasAligns(entry.dailyBias, t.direction);
                                 const applicableRules = t.direction === 'long' ? (activeAccount.longRules || []) : (activeAccount.shortRules || []);
-                                const applicableCount = applicableRules.filter(r => r && r.trim()).length;
+                                const applicableCount = applicableRules.filter(function(r) { return r && r.trim(); }).length;
                                 const checkedCount = (t.rulesChecked || []).length;
                                 return (
                                   <div key={i} className="bg-black/30 rounded-lg px-3 py-2 space-y-1">
                                     <div className="flex items-center justify-between text-sm">
                                       <div className="flex items-center gap-2">
                                         <span className="text-gray-400">Trade {i + 1}</span>
-                                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${t.direction === 'long' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'}`}>
+                                        <span className={"text-[10px] px-1.5 py-0.5 rounded " + (t.direction === 'long' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400')}>
                                           {t.direction === 'long' ? 'LONG' : 'SHORT'}
                                         </span>
                                         {aligned !== null && (
-                                          <span className={`text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1 ${aligned ? 'bg-green-500/15 text-green-400' : 'bg-orange-500/15 text-orange-400'}`}>
+                                          <span className={"text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1 " + (aligned ? 'bg-green-500/15 text-green-400' : 'bg-orange-500/15 text-orange-400')}>
                                             <Icon name={aligned ? "CheckCircle" : "AlertTriangle"} className="h-2.5 w-2.5" />
                                             <span>{aligned ? 'With trend' : 'Against bias'}</span>
                                           </span>
                                         )}
                                       </div>
                                       <div className="flex items-center gap-2">
-                                        <span className={`font-medium px-2 py-0.5 rounded ${t.result === 'win' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'}`}>{t.result === 'win' ? 'WIN' : 'LOSS'}</span>
-                                        <span className={`font-semibold ${t.result === 'win' ? 'text-green-400' : 'text-red-400'}`}>{t.result === 'win' ? '+' : '-'}{fmt(val)}</span>
+                                        <span className={"font-medium px-2 py-0.5 rounded " + (t.result === 'win' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400')}>{t.result === 'win' ? 'WIN' : 'LOSS'}</span>
+                                        <span className={"font-semibold " + (t.result === 'win' ? 'text-green-400' : 'text-red-400')}>{t.result === 'win' ? '+' : '-'}{fmt(val)}</span>
                                       </div>
                                     </div>
                                     {applicableCount > 0 && (
@@ -807,7 +843,7 @@ function MMMJournal({ user }) {
                               })}
                               {entry.notes && <p className="text-xs text-gray-500 italic mt-2">"{entry.notes}"</p>}
                               {bufferAtDate && <p className="text-xs text-gray-600 mt-2">Buffer after this day: <span className="text-gray-400">{fmt(bufferAtDate.buffer)}</span></p>}
-                              <button onClick={() => handleDeleteEntry(entry.id)} className="text-xs text-red-400/70 hover:text-red-400 flex items-center gap-1.5 mt-2">
+                              <button onClick={function() { handleDeleteEntry(entry.id); }} className="text-xs text-red-400/70 hover:text-red-400 flex items-center gap-1.5 mt-2">
                                 <Icon name="Trash2" className="h-3.5 w-3.5" /><span>Delete entry</span>
                               </button>
                             </div>
@@ -824,41 +860,43 @@ function MMMJournal({ user }) {
       </div>
 
       {showAddAccount && (
-        <Modal onClose={() => setShowAddAccount(false)} title={newAccount.linkedFromId ? "Start Funded Account" : "Add Trading Account"} size="lg">
+        <Modal onClose={function() { setShowAddAccount(false); }} title={newAccount.linkedFromId ? "Start Funded Account" : "Add Trading Account"} size="lg">
           <div className="space-y-4">
             <div>
               <label className="block text-sm text-gray-400 mb-1">Account Type</label>
               <div className="flex gap-2">
-                {ACCOUNT_TYPES.map(t => (
-                  <button key={t.key} onClick={() => setNewAccount({ ...newAccount, accountType: t.key })}
-                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition border ${newAccount.accountType === t.key ? t.activeCls : 'bg-gray-800 text-gray-500 border-gray-700'}`}>
-                    {t.label}
-                  </button>
-                ))}
+                {ACCOUNT_TYPES.map(function(t) {
+                  return (
+                    <button key={t.key} onClick={function() { setNewAccount(Object.assign({}, newAccount, { accountType: t.key })); }}
+                      className={"flex-1 py-2.5 rounded-lg text-sm font-medium transition border " + (newAccount.accountType === t.key ? t.activeCls : 'bg-gray-800 text-gray-500 border-gray-700')}>
+                      {t.label}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             <Field label="Account Name">
-              <input value={newAccount.name} onChange={e => setNewAccount({ ...newAccount, name: e.target.value })} placeholder="e.g. FTMO 100k Challenge"
+              <input value={newAccount.name} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { name: e.target.value })); }} placeholder="e.g. FTMO 100k Challenge"
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
             </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Starting Balance">
-                <input type="number" value={newAccount.startingBalance} onChange={e => setNewAccount({ ...newAccount, startingBalance: e.target.value })} placeholder="100000"
+                <input type="number" value={newAccount.startingBalance} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { startingBalance: e.target.value })); }} placeholder="100000"
                   className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
               </Field>
               <Field label="Max Drawdown ($)">
-                <input type="number" value={newAccount.maxDrawdown} onChange={e => setNewAccount({ ...newAccount, maxDrawdown: e.target.value })} placeholder="5000"
+                <input type="number" value={newAccount.maxDrawdown} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { maxDrawdown: e.target.value })); }} placeholder="5000"
                   className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
               </Field>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Profit Target ($)">
-                <input type="number" value={newAccount.profitTarget} onChange={e => setNewAccount({ ...newAccount, profitTarget: e.target.value })} placeholder="10000"
+                <input type="number" value={newAccount.profitTarget} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { profitTarget: e.target.value })); }} placeholder="10000"
                   className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
               </Field>
               <Field label="Reward:Risk Ratio">
-                <input type="number" step="0.1" value={newAccount.rewardRatio} onChange={e => setNewAccount({ ...newAccount, rewardRatio: e.target.value })} placeholder="2"
+                <input type="number" step="0.1" value={newAccount.rewardRatio} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { rewardRatio: e.target.value })); }} placeholder="2"
                   className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
               </Field>
             </div>
@@ -868,32 +906,32 @@ function MMMJournal({ user }) {
                 <Icon name="BarChart3" className="h-4 w-4" /><span>Strategy Backtest (sets your RTUC)</span>
               </p>
               <p className="text-xs text-gray-500 mb-3">
-                Need at least {MIN_SAMPLE_SIZE} backtested trades to count. Otherwise defaults to the 45–54% average tier.
+                Need at least {MIN_SAMPLE_SIZE} backtested trades to count. Otherwise defaults to the 45-54% average tier.
               </p>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Backtest Win Rate (%)">
-                  <input type="number" value={newAccount.backtestWinRate} onChange={e => setNewAccount({ ...newAccount, backtestWinRate: e.target.value })} placeholder="e.g. 58"
+                  <input type="number" value={newAccount.backtestWinRate} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { backtestWinRate: e.target.value })); }} placeholder="e.g. 58"
                     className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
                 </Field>
                 <Field label="Sample Size (# of trades)">
-                  <input type="number" value={newAccount.backtestSampleSize} onChange={e => setNewAccount({ ...newAccount, backtestSampleSize: e.target.value })} placeholder={`min ${MIN_SAMPLE_SIZE}`}
+                  <input type="number" value={newAccount.backtestSampleSize} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { backtestSampleSize: e.target.value })); }} placeholder={"min " + MIN_SAMPLE_SIZE}
                     className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
                 </Field>
               </div>
               {sampleTooSmall && (
                 <p className="text-xs text-orange-400 mt-2 flex items-center gap-1.5">
-                  <Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>Sample below {MIN_SAMPLE_SIZE} trades — defaulting to average tier.</span>
+                  <Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>Sample below {MIN_SAMPLE_SIZE} trades - defaulting to average tier.</span>
                 </p>
               )}
               <div className="mt-3 bg-black/40 border border-gray-800 rounded-lg p-3 flex items-center justify-between">
                 <span className="text-xs text-gray-400">This account will use:</span>
-                <span className="text-sm font-semibold text-yellow-400">{DIVISOR_TABLE[previewTier].range} tier → {previewRTUC} RTUC</span>
+                <span className="text-sm font-semibold text-yellow-400">{DIVISOR_TABLE[previewTier].range} tier - {previewRTUC} RTUC</span>
               </div>
             </div>
 
             <div className="border-t border-gray-800 pt-4 space-y-4">
               <Field label="Strategy Name">
-                <input value={newAccount.strategyName} onChange={e => setNewAccount({ ...newAccount, strategyName: e.target.value })} placeholder="e.g. MMM Order Flow Breakout"
+                <input value={newAccount.strategyName} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { strategyName: e.target.value })); }} placeholder="e.g. MMM Order Flow Breakout"
                   className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
               </Field>
 
@@ -903,16 +941,18 @@ function MMMJournal({ user }) {
                     <Icon name="TrendingUp" className="h-3.5 w-3.5" /><span>Long Setup Rules</span>
                   </label>
                   <div className="space-y-2">
-                    {newAccount.longRules.map((rule, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5">
-                        <input value={rule} onChange={e => updateRuleRow('longRules', idx, e.target.value)} placeholder={`Rule ${idx + 1}`}
-                          className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
-                        {newAccount.longRules.length > 1 && (
-                          <button onClick={() => removeRuleRow('longRules', idx)} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>
-                        )}
-                      </div>
-                    ))}
-                    <button onClick={() => addRuleRow('longRules')} className="text-xs text-green-400 hover:text-green-300 flex items-center gap-1.5">
+                    {newAccount.longRules.map(function(rule, idx) {
+                      return (
+                        <div key={idx} className="flex items-center gap-1.5">
+                          <input value={rule} onChange={function(e) { updateRuleRow('longRules', idx, e.target.value); }} placeholder={"Rule " + (idx + 1)}
+                            className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
+                          {newAccount.longRules.length > 1 && (
+                            <button onClick={function() { removeRuleRow('longRules', idx); }} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>
+                          )}
+                        </div>
+                      );
+                    })}
+                    <button onClick={function() { addRuleRow('longRules'); }} className="text-xs text-green-400 hover:text-green-300 flex items-center gap-1.5">
                       <Icon name="Plus" className="h-3 w-3" /><span>Add rule</span>
                     </button>
                   </div>
@@ -922,16 +962,18 @@ function MMMJournal({ user }) {
                     <Icon name="TrendingDown" className="h-3.5 w-3.5" /><span>Short Setup Rules</span>
                   </label>
                   <div className="space-y-2">
-                    {newAccount.shortRules.map((rule, idx) => (
-                      <div key={idx} className="flex items-center gap-1.5">
-                        <input value={rule} onChange={e => updateRuleRow('shortRules', idx, e.target.value)} placeholder={`Rule ${idx + 1}`}
-                          className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
-                        {newAccount.shortRules.length > 1 && (
-                          <button onClick={() => removeRuleRow('shortRules', idx)} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>
-                        )}
-                      </div>
-                    ))}
-                    <button onClick={() => addRuleRow('shortRules')} className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1.5">
+                    {newAccount.shortRules.map(function(rule, idx) {
+                      return (
+                        <div key={idx} className="flex items-center gap-1.5">
+                          <input value={rule} onChange={function(e) { updateRuleRow('shortRules', idx, e.target.value); }} placeholder={"Rule " + (idx + 1)}
+                            className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
+                          {newAccount.shortRules.length > 1 && (
+                            <button onClick={function() { removeRuleRow('shortRules', idx); }} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>
+                          )}
+                        </div>
+                      );
+                    })}
+                    <button onClick={function() { addRuleRow('shortRules'); }} className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1.5">
                       <Icon name="Plus" className="h-3 w-3" /><span>Add rule</span>
                     </button>
                   </div>
@@ -940,7 +982,7 @@ function MMMJournal({ user }) {
             </div>
 
             <Field label="Master / Copied Account Number (optional)">
-              <input value={newAccount.copiedAccountNumber} onChange={e => setNewAccount({ ...newAccount, copiedAccountNumber: e.target.value })} placeholder="If copying a master account, enter its account #"
+              <input value={newAccount.copiedAccountNumber} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { copiedAccountNumber: e.target.value })); }} placeholder="If copying a master account, enter its account #"
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
             </Field>
 
@@ -953,68 +995,70 @@ function MMMJournal({ user }) {
       )}
 
       {showAddEntry && activeAccount && (
-        <Modal onClose={() => setShowAddEntry(false)} title="Log Today's Trades" size="lg">
+        <Modal onClose={function() { setShowAddEntry(false); }} title="Log Today's Trades" size="lg">
           <div className="space-y-4">
             <Field label="Date">
-              <input type="date" value={newEntry.date} onChange={e => setNewEntry({ ...newEntry, date: e.target.value })}
+              <input type="date" value={newEntry.date} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { date: e.target.value })); }}
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
             </Field>
 
             <div>
               <label className="block text-sm text-gray-400 mb-1.5">Daily Bias (which way is the trend?)</label>
               <div className="flex gap-2">
-                {BIAS_OPTIONS.map(b => (
-                  <button key={b.key} onClick={() => setNewEntry({ ...newEntry, dailyBias: b.key })}
-                    className={`flex-1 py-2 rounded-lg text-sm font-medium transition border flex items-center justify-center gap-1.5 ${newEntry.dailyBias === b.key ? b.cls : 'bg-gray-800 text-gray-500 border-gray-700'}`}>
-                    <Icon name={b.icon} className="h-3.5 w-3.5" /><span>{b.label}</span>
-                  </button>
-                ))}
+                {BIAS_OPTIONS.map(function(b) {
+                  return (
+                    <button key={b.key} onClick={function() { setNewEntry(Object.assign({}, newEntry, { dailyBias: b.key })); }}
+                      className={"flex-1 py-2 rounded-lg text-sm font-medium transition border flex items-center justify-center gap-1.5 " + (newEntry.dailyBias === b.key ? b.cls : 'bg-gray-800 text-gray-500 border-gray-700')}>
+                      <Icon name={b.icon} className="h-3.5 w-3.5" /><span>{b.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             <div className="space-y-3">
               <label className="text-sm text-gray-400">Trades</label>
-              {newEntry.trades.map((trade, idx) => {
+              {newEntry.trades.map(function(trade, idx) {
                 const applicableRules = rulesForDirection(trade.direction);
                 const aligned = biasAligns(newEntry.dailyBias, trade.direction);
                 return (
                   <div key={idx} className="bg-gray-800/40 border border-gray-700 rounded-lg p-3 space-y-2">
                     <div className="flex items-center gap-2">
-                      <button onClick={() => updateTradeRow(idx, 'direction', 'long')}
-                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition ${trade.direction === 'long' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700'}`}>
+                      <button onClick={function() { updateTradeRow(idx, 'direction', 'long'); }}
+                        className={"px-2.5 py-1.5 rounded-lg text-xs font-medium transition " + (trade.direction === 'long' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')}>
                         Long
                       </button>
-                      <button onClick={() => updateTradeRow(idx, 'direction', 'short')}
-                        className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition ${trade.direction === 'short' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700'}`}>
+                      <button onClick={function() { updateTradeRow(idx, 'direction', 'short'); }}
+                        className={"px-2.5 py-1.5 rounded-lg text-xs font-medium transition " + (trade.direction === 'short' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')}>
                         Short
                       </button>
                       {aligned !== null && (
-                        <span className={`text-[10px] px-2 py-1 rounded flex items-center gap-1 ${aligned ? 'bg-green-500/15 text-green-400' : 'bg-orange-500/15 text-orange-400'}`}>
+                        <span className={"text-[10px] px-2 py-1 rounded flex items-center gap-1 " + (aligned ? 'bg-green-500/15 text-green-400' : 'bg-orange-500/15 text-orange-400')}>
                           <Icon name={aligned ? "CheckCircle" : "AlertTriangle"} className="h-2.5 w-2.5" />
                           <span>{aligned ? 'With trend' : 'Against bias'}</span>
                         </span>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
-                      <button onClick={() => updateTradeRow(idx, 'result', 'win')}
-                        className={`px-3 py-2 rounded-lg text-sm font-medium transition ${trade.result === 'win' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700'}`}>Win</button>
-                      <button onClick={() => updateTradeRow(idx, 'result', 'loss')}
-                        className={`px-3 py-2 rounded-lg text-sm font-medium transition ${trade.result === 'loss' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700'}`}>Loss</button>
-                      <input type="number" placeholder="P&L amount" value={trade.pnl} onChange={e => updateTradeRow(idx, 'pnl', e.target.value)}
+                      <button onClick={function() { updateTradeRow(idx, 'result', 'win'); }}
+                        className={"px-3 py-2 rounded-lg text-sm font-medium transition " + (trade.result === 'win' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')}>Win</button>
+                      <button onClick={function() { updateTradeRow(idx, 'result', 'loss'); }}
+                        className={"px-3 py-2 rounded-lg text-sm font-medium transition " + (trade.result === 'loss' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')}>Loss</button>
+                      <input type="number" placeholder="P&L amount" value={trade.pnl} onChange={function(e) { updateTradeRow(idx, 'pnl', e.target.value); }}
                         className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
                       {newEntry.trades.length > 1 && (
-                        <button onClick={() => removeTradeRow(idx)} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-4 w-4" /></button>
+                        <button onClick={function() { removeTradeRow(idx); }} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-4 w-4" /></button>
                       )}
                     </div>
                     {applicableRules.length > 0 && (
                       <div className="bg-black/30 rounded-lg p-2.5 space-y-1.5">
                         <p className="text-[11px] text-gray-500 uppercase tracking-wide">Did you follow your {trade.direction} rules?</p>
-                        {applicableRules.map((rule, ri) => {
-                          const checked = (trade.rulesChecked || []).includes(rule);
+                        {applicableRules.map(function(rule, ri) {
+                          const checked = (trade.rulesChecked || []).indexOf(rule) !== -1;
                           return (
-                            <button key={ri} onClick={() => toggleRuleChecked(idx, rule)}
+                            <button key={ri} onClick={function() { toggleRuleChecked(idx, rule); }}
                               className="w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white">
-                              <Icon name={checked ? "CheckSquare" : "Square"} className={`h-4 w-4 flex-shrink-0 ${checked ? 'text-green-400' : 'text-gray-600'}`} />
+                              <Icon name={checked ? "CheckSquare" : "Square"} className={"h-4 w-4 flex-shrink-0 " + (checked ? 'text-green-400' : 'text-gray-600')} />
                               <span>{rule}</span>
                             </button>
                           );
@@ -1026,10 +1070,10 @@ function MMMJournal({ user }) {
               })}
 
               {entryWins >= 2 && (
-                <p className="text-xs text-green-400 flex items-center gap-1.5"><Icon name="CheckCircle" className="h-3.5 w-3.5" /><span>2 wins reached — DRT satisfied, stop for today.</span></p>
+                <p className="text-xs text-green-400 flex items-center gap-1.5"><Icon name="CheckCircle" className="h-3.5 w-3.5" /><span>2 wins reached - DRT satisfied, stop for today.</span></p>
               )}
               {entryLosses >= 2 && (
-                <p className="text-xs text-red-400 flex items-center gap-1.5"><Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>2 losses reached — DRT exhausted, stop for today.</span></p>
+                <p className="text-xs text-red-400 flex items-center gap-1.5"><Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>2 losses reached - DRT exhausted, stop for today.</span></p>
               )}
               {newEntry.trades.length >= 3 && entryWins < 2 && entryLosses < 2 && (
                 <p className="text-xs text-yellow-400">3-trade max reached for today.</p>
@@ -1042,10 +1086,10 @@ function MMMJournal({ user }) {
             </div>
 
             <Field label="Notes (optional)">
-              <textarea value={newEntry.notes} onChange={e => setNewEntry({ ...newEntry, notes: e.target.value })} placeholder="What went well? What to fix tomorrow?"
+              <textarea value={newEntry.notes} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { notes: e.target.value })); }} placeholder="What went well? What to fix tomorrow?"
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-20 focus:border-yellow-400/50 outline-none resize-none"></textarea>
             </Field>
-            <button onClick={handleSaveEntry} disabled={newEntry.trades.every(t => t.pnl === '')}
+            <button onClick={handleSaveEntry} disabled={newEntry.trades.every(function(t) { return t.pnl === ''; })}
               className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5">
               <Icon name="Save" className="h-4 w-4" /><span>Save Entry</span>
             </button>
@@ -1056,29 +1100,55 @@ function MMMJournal({ user }) {
   );
 }
 
-function StatCard({ label, value, icon, color, sub }) {
+function StatCard(props) {
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-xl p-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs text-gray-500 uppercase tracking-wide">{label}</span>
-        <Icon name={icon} className={`h-4 w-4 ${color}`} />
+        <span className="text-xs text-gray-500 uppercase tracking-wide">{props.label}</span>
+        <Icon name={props.icon} className={"h-4 w-4 " + props.color} />
       </div>
-      <div className={`text-xl font-bold ${color}`}>{value}</div>
-      {sub && <div className="text-xs text-gray-600 mt-0.5">{sub}</div>}
+      <div className={"text-xl font-bold " + props.color}>{props.value}</div>
+      {props.sub && <div className="text-xs text-gray-600 mt-0.5">{props.sub}</div>}
     </div>
   );
 }
 
-function Modal({ onClose, title, children, size = 'md' }) {
+function Modal(props) {
+  const size = props.size || 'md';
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-black bg-opacity-80" onClick={onClose}></div>
-      <div className={`relative bg-black border border-yellow-500/20 rounded-2xl p-6 w-full ${size === 'lg' ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto shadow-2xl`}>
+      <div className="fixed inset-0 bg-black bg-opacity-80" onClick={props.onClose}></div>
+      <div className={"relative bg-black border border-yellow-500/20 rounded-2xl p-6 w-full " + (size === 'lg' ? 'max-w-lg' : 'max-w-md') + " max-h-[90vh] overflow-y-auto shadow-2xl"}>
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-lg font-bold text-white">{title}</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-white flex-shrink-0"><Icon name="X" className="h-5 w-5" /></button>
+          <h3 className="text-lg font-bold text-white">{props.title}</h3>
+          <button onClick={props.onClose} className="text-gray-500 hover:text-white flex-shrink-0"><Icon name="X" className="h-5 w-5" /></button>
         </div>
-        {children}
+        {props.children}
       </div>
     </div>
   );
+}
+
+function Field(props) {
+  return (<div><label className="block text-sm text-gray-400 mb-1">{props.label}</label>{props.children}</div>);
+}
+
+// ---------------- ROOT ----------------
+function App() {
+  const [user, setUser] = useState(undefined);
+  useEffect(function() {
+    const unsub = auth.onAuthStateChanged(function(u) { setUser(u); });
+    return unsub;
+  }, []);
+
+  if (user === undefined) {
+    return <div className="min-h-screen bg-black flex items-center justify-center text-yellow-400">Loading...</div>;
+  }
+  return user ? <MMMJournal user={user} /> : <AuthScreen />;
+}
+
+const rootEl = ReactDOM.createRoot(document.getElementById('root'));
+rootEl.render(<App />);
+</script>
+</body>
+</html>
