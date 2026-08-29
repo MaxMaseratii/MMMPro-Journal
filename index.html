@@ -41,16 +41,25 @@
 <script type="text/babel">
 const { useState, useEffect } = React;
 
+// ---------------------------------------------------------------------
+// ICON — fixed so the SVG always fills its container exactly. Previously
+// the outer span had the size classes (h-4 w-4 etc) but the injected SVG
+// kept its own native width/height attributes, so it rendered oversized
+// and overflowed, throwing off alignment next to text everywhere.
+// ---------------------------------------------------------------------
 const Icon = ({ name, className }) => {
   const ref = React.useRef(null);
   useEffect(() => {
     if (ref.current) {
       ref.current.innerHTML = '';
       const svg = lucide.createElement(lucide[name]);
+      svg.setAttribute('width', '100%');
+      svg.setAttribute('height', '100%');
+      svg.style.display = 'block';
       ref.current.appendChild(svg);
     }
   }, [name]);
-  return <span ref={ref} className={className}></span>;
+  return <span ref={ref} className={`inline-flex items-center justify-center flex-shrink-0 ${className || ''}`}></span>;
 };
 
 const fmt = (n) => {
@@ -60,11 +69,10 @@ const fmt = (n) => {
 };
 
 // ---------------------------------------------------------------------
-// WIN-RATE TIERED SURVIVABILITY TABLE
-// Challenge: aggressive-but-controlled, clear the target fast.
-// Funded & Live: BOTH protect real capital (funded payout eligibility /
-// live personal money), so they share the same conservative divisor per
-// tier — never derived by doubling the challenge number.
+// RTUC (Risk Tolerance Unit Capacity) TABLE — set by backtested win rate.
+// Challenge stays aggressive to clear the target fast. Funded & Live both
+// use the same conservative RTUC per tier — protecting real capital either
+// way, never derived by doubling the Challenge number.
 // ---------------------------------------------------------------------
 const DIVISOR_TABLE = {
   scalper:  { label: '70%+ win rate (high-accuracy scalper)', range: '70%+',      challenge: 12, funded: 25, live: 25 },
@@ -85,7 +93,7 @@ const determineTier = (winRate, sampleSize) => {
   return 'trend';
 };
 
-const getDivisor = (account) => {
+const getRTUC = (account) => {
   const tier = DIVISOR_TABLE[account.winRateTier] ? account.winRateTier : 'average';
   return DIVISOR_TABLE[tier][account.accountType] || DIVISOR_TABLE[tier].average;
 };
@@ -100,10 +108,10 @@ const computeStatus = (account, buffer, totalPnl) => {
 };
 
 const STATUS_STYLES = {
-  active:     { label: 'Active',        cls: 'bg-blue-500/15 text-blue-300 border-blue-500/30' },
-  passed:     { label: 'Passed ✓',       cls: 'bg-green-500/15 text-green-300 border-green-500/30' },
+  active:      { label: 'Active',       cls: 'bg-blue-500/15 text-blue-300 border-blue-500/30' },
+  passed:      { label: 'Passed ✓',      cls: 'bg-green-500/15 text-green-300 border-green-500/30' },
   'target-hit':{ label: 'Target Hit ✓',  cls: 'bg-green-500/15 text-green-300 border-green-500/30' },
-  breached:   { label: 'Breached',      cls: 'bg-red-500/15 text-red-300 border-red-500/30' },
+  breached:    { label: 'Breached',     cls: 'bg-red-500/15 text-red-300 border-red-500/30' },
 };
 
 const ACCOUNT_TYPES = [
@@ -125,7 +133,7 @@ const BIAS_OPTIONS = [
 ];
 
 const emptyAccountForm = {
-  name: '', startingBalance: '', maxDrawdown: '', profitTarget: '',
+  name: '', startingBalance: '', maxDrawdown: '', profitTarget: '', rewardRatio: '2',
   accountType: 'challenge', copiedAccountNumber: '', linkedFromId: null,
   backtestWinRate: '', backtestSampleSize: '', winRateTier: 'average',
   strategyName: '', longRules: [''], shortRules: ['']
@@ -200,12 +208,10 @@ function AuthScreen() {
 }
 
 // ---------------- RISK OF RUIN PROJECTION ----------------
-// remaining = referenceBuffer * (1 - 1/divisor) ^ n
-// recoveryPct = % gain needed on the REMAINING amount to climb back to referenceBuffer
-function RiskOfRuinCard({ currentBuffer, divisor, accountType }) {
-  const checkpoints = [5, 10, 15, 20, 25, 30, 40, 50].filter(n => n <= divisor * 2.5);
+function RiskOfRuinCard({ currentBuffer, rtuc, accountType }) {
+  const checkpoints = [5, 10, 15, 20, 25, 30, 40, 50].filter(n => n <= rtuc * 2.5);
   const rows = checkpoints.map(n => {
-    const remaining = currentBuffer * Math.pow(1 - 1 / divisor, n);
+    const remaining = currentBuffer * Math.pow(1 - 1 / rtuc, n);
     const pctRemaining = currentBuffer > 0 ? (remaining / currentBuffer) * 100 : 0;
     const recoveryPct = remaining > 0 ? ((currentBuffer - remaining) / remaining) * 100 : null;
     return { n, remaining, pctRemaining, recoveryPct };
@@ -218,8 +224,8 @@ function RiskOfRuinCard({ currentBuffer, divisor, accountType }) {
         <h2 className="text-lg font-semibold text-white">Risk of Ruin — Consecutive Loss Projection</h2>
       </div>
       <p className="text-xs text-gray-500 mb-4">
-        Hypothetical: if every trade lost at the current max risk (buffer ÷ {divisor}). "Gain needed to recover" is the
-        % return required on what's left just to climb back to today's buffer — not the amount lost.
+        Hypothetical: if every trade lost at the current RTU (buffer ÷ {rtuc} RTUC). "Gain needed to recover" is the
+        % return required on what's left just to climb back to today's buffer.
       </p>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -265,9 +271,68 @@ function RiskOfRuinCard({ currentBuffer, divisor, accountType }) {
       </div>
       <p className="text-xs text-gray-600 mt-3">
         {accountType === 'challenge'
-          ? 'Challenge accounts use a tighter divisor to clear the target faster — the trade-off is a losing streak erodes the buffer, and recovery gets steep, quicker.'
-          : 'Funded and Live accounts use a wider divisor on purpose — the buffer erodes slower and the recovery math stays gentler under a bad streak, protecting real capital.'}
+          ? 'Challenge uses a tighter RTUC to clear the target faster — the trade-off is a losing streak erodes the buffer, and recovery gets steep, quicker.'
+          : 'Funded and Live use a wider RTUC on purpose — the buffer erodes slower and recovery math stays gentler under a bad streak, protecting real capital.'}
       </p>
+    </div>
+  );
+}
+
+// ---------------- DAILY TRADE EXECUTION MATRIX ----------------
+function DailyTradeMatrix({ riskUnit, rewardRatio }) {
+  const risk = riskUnit;
+  const rr = parseFloat(rewardRatio) || 2;
+  const reward = risk * rr;
+
+  const scenarios = [
+    { name: 'A — Perfect',  trades: ['W', 'W', '–'], pnl: 2 * reward },
+    { name: 'B — Recovery', trades: ['L', 'W', 'W'], pnl: -risk + 2 * reward },
+    { name: 'C — Neutral',  trades: ['L', 'W', 'L'], pnl: reward - 2 * risk },
+    { name: 'D — Save',     trades: ['W', 'L', 'L'], pnl: reward - 2 * risk },
+    { name: 'E — Worst',    trades: ['L', 'L', '–'], pnl: -2 * risk },
+  ];
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-1">
+        <Icon name="Grid3x3" className="h-5 w-5 text-yellow-400" />
+        <h2 className="text-lg font-semibold text-white">Daily Trade Execution Matrix</h2>
+      </div>
+      <p className="text-xs text-gray-500 mb-4">
+        Max 3 trades/day — stop immediately at 2 wins (DRT satisfied) or 2 losses (DRT exhausted). Every possible way today
+        can play out, based on your current RTU ({fmt(risk)}) and {rr}:1 reward.
+      </p>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-left text-gray-500 text-xs uppercase tracking-wide border-b border-gray-800">
+              <th className="pb-2 pr-4">Scenario</th>
+              <th className="pb-2 pr-4">Trade 1</th>
+              <th className="pb-2 pr-4">Trade 2</th>
+              <th className="pb-2 pr-4">Trade 3</th>
+              <th className="pb-2">Daily P&L</th>
+            </tr>
+          </thead>
+          <tbody>
+            {scenarios.map((s, i) => (
+              <tr key={i} className="border-b border-gray-800/50 last:border-0">
+                <td className={`py-2 pr-4 font-medium ${s.pnl > 0 ? 'text-green-400' : s.pnl < 0 ? 'text-red-400' : 'text-gray-300'}`}>{s.name}</td>
+                {s.trades.map((t, ti) => (
+                  <td key={ti} className="py-2 pr-4">
+                    {t === '–' ? <span className="text-gray-700">–</span> :
+                      <span className={t === 'W' ? 'text-green-400 font-semibold' : 'text-red-400 font-semibold'}>
+                        {t} {t === 'W' ? `+${fmt(reward)}` : `-${fmt(risk)}`}
+                      </span>}
+                  </td>
+                ))}
+                <td className={`py-2 font-bold ${s.pnl > 0 ? 'text-green-400' : s.pnl < 0 ? 'text-red-400' : 'text-gray-300'}`}>
+                  {s.pnl >= 0 ? '+' : ''}{fmt(s.pnl)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
@@ -286,28 +351,28 @@ function StrategyCard({ account }) {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-black/40 border border-green-800/40 rounded-xl p-4">
-          <p className="text-xs uppercase tracking-wide text-green-400 font-semibold mb-2 flex items-center gap-1">
-            <Icon name="TrendingUp" className="h-3.5 w-3.5" /> Long Setup Rules
+          <p className="text-xs uppercase tracking-wide text-green-400 font-semibold mb-2 flex items-center gap-1.5">
+            <Icon name="TrendingUp" className="h-3.5 w-3.5" /><span>Long Setup Rules</span>
           </p>
           {longRules.length === 0 ? <p className="text-xs text-gray-600">No rules defined.</p> : (
             <ul className="space-y-1.5">
               {longRules.map((r, i) => (
                 <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
-                  <span className="text-green-400 mt-0.5">•</span>{r}
+                  <span className="text-green-400 mt-0.5 leading-none">•</span><span>{r}</span>
                 </li>
               ))}
             </ul>
           )}
         </div>
         <div className="bg-black/40 border border-red-800/40 rounded-xl p-4">
-          <p className="text-xs uppercase tracking-wide text-red-400 font-semibold mb-2 flex items-center gap-1">
-            <Icon name="TrendingDown" className="h-3.5 w-3.5" /> Short Setup Rules
+          <p className="text-xs uppercase tracking-wide text-red-400 font-semibold mb-2 flex items-center gap-1.5">
+            <Icon name="TrendingDown" className="h-3.5 w-3.5" /><span>Short Setup Rules</span>
           </p>
           {shortRules.length === 0 ? <p className="text-xs text-gray-600">No rules defined.</p> : (
             <ul className="space-y-1.5">
               {shortRules.map((r, i) => (
                 <li key={i} className="text-sm text-gray-300 flex items-start gap-2">
-                  <span className="text-red-400 mt-0.5">•</span>{r}
+                  <span className="text-red-400 mt-0.5 leading-none">•</span><span>{r}</span>
                 </li>
               ))}
             </ul>
@@ -350,11 +415,11 @@ function MMMJournal({ user }) {
 
   const activeAccount = accounts.find(a => a.id === activeAccountId);
   const accountEntries = entries.filter(e => e.accountId === activeAccountId);
-  const divisor = activeAccount ? getDivisor(activeAccount) : DIVISOR_TABLE.average.challenge;
+  const rtuc = activeAccount ? getRTUC(activeAccount) : DIVISOR_TABLE.average.challenge;
 
   const calcBufferHistory = (account, accEntries) => {
     if (!account) return [];
-    const d = getDivisor(account);
+    const d = getRTUC(account);
     const chronological = [...accEntries].sort((a, b) => new Date(a.date) - new Date(b.date));
     let buffer = parseFloat(account.maxDrawdown) || 0;
     const history = [];
@@ -371,7 +436,7 @@ function MMMJournal({ user }) {
 
   const bufferHistory = activeAccount ? calcBufferHistory(activeAccount, accountEntries) : [];
   const currentBuffer = bufferHistory.length > 0 ? bufferHistory[bufferHistory.length - 1].buffer : (activeAccount ? parseFloat(activeAccount.maxDrawdown) || 0 : 0);
-  const riskPerTrade = Math.max(currentBuffer, 0) / divisor;
+  const riskPerTrade = Math.max(currentBuffer, 0) / rtuc;
   const microsUnlocked = Math.max(1, Math.floor(Math.max(currentBuffer, 0) / 1000));
   const nextTierAt = (microsUnlocked + 1) * 1000;
   const distToNextTier = nextTierAt - currentBuffer;
@@ -398,7 +463,6 @@ function MMMJournal({ user }) {
     return computeStatus(acc, buf, pnl);
   };
 
-  // --- Account rule lists / lookups for the checklist ---
   const rulesForDirection = (direction) => {
     if (!activeAccount) return [];
     const list = direction === 'long' ? activeAccount.longRules : activeAccount.shortRules;
@@ -420,6 +484,7 @@ function MMMJournal({ user }) {
       startingBalance: parseFloat(newAccount.startingBalance),
       maxDrawdown: parseFloat(newAccount.maxDrawdown),
       profitTarget: parseFloat(newAccount.profitTarget) || 0,
+      rewardRatio: parseFloat(newAccount.rewardRatio) || 2,
       accountType: newAccount.accountType,
       copiedAccountNumber: newAccount.copiedAccountNumber || '',
       linkedFromId: newAccount.linkedFromId || null,
@@ -442,6 +507,7 @@ function MMMJournal({ user }) {
       accountType: 'funded',
       name: challengeAcc.name.replace(/challenge/i, '').trim() + ' - Funded',
       startingBalance: challengeAcc.startingBalance,
+      rewardRatio: challengeAcc.rewardRatio || 2,
       backtestWinRate: challengeAcc.backtestWinRate || '',
       backtestSampleSize: challengeAcc.backtestSampleSize || '',
       winRateTier: challengeAcc.winRateTier || 'average',
@@ -463,7 +529,6 @@ function MMMJournal({ user }) {
     if (activeAccountId === id) setActiveAccountId(null);
   };
 
-  // --- newAccount rule list helpers ---
   const addRuleRow = (field) => setNewAccount({ ...newAccount, [field]: [...newAccount[field], ''] });
   const updateRuleRow = (field, idx, value) => {
     const list = [...newAccount[field]];
@@ -472,13 +537,18 @@ function MMMJournal({ user }) {
   };
   const removeRuleRow = (field, idx) => setNewAccount({ ...newAccount, [field]: newAccount[field].filter((_, i) => i !== idx) });
 
-  // --- newEntry trade helpers ---
-  const addTradeRow = () => setNewEntry({ ...newEntry, trades: [...newEntry.trades, { result: 'win', pnl: '', direction: 'long', rulesChecked: [] }] });
+  // 3-trade max, stop at 2 wins or 2 losses (DRT)
+  const addTradeRow = () => {
+    const wins = newEntry.trades.filter(t => t.result === 'win').length;
+    const losses = newEntry.trades.filter(t => t.result === 'loss').length;
+    if (newEntry.trades.length >= 3 || wins >= 2 || losses >= 2) return;
+    setNewEntry({ ...newEntry, trades: [...newEntry.trades, { result: 'win', pnl: '', direction: 'long', rulesChecked: [] }] });
+  };
   const removeTradeRow = (idx) => setNewEntry({ ...newEntry, trades: newEntry.trades.filter((_, i) => i !== idx) });
   const updateTradeRow = (idx, field, value) => {
     const trades = [...newEntry.trades];
     trades[idx] = { ...trades[idx], [field]: value };
-    if (field === 'direction') trades[idx].rulesChecked = []; // reset checklist when direction changes
+    if (field === 'direction') trades[idx].rulesChecked = [];
     setNewEntry({ ...newEntry, trades });
   };
   const toggleRuleChecked = (tradeIdx, ruleText) => {
@@ -507,8 +577,11 @@ function MMMJournal({ user }) {
   const handleDeleteEntry = async (id) => { await entriesRef.doc(id).delete(); };
 
   const previewTier = determineTier(newAccount.backtestWinRate, newAccount.backtestSampleSize);
-  const previewDivisor = DIVISOR_TABLE[previewTier][newAccount.accountType] || DIVISOR_TABLE[previewTier].average;
+  const previewRTUC = DIVISOR_TABLE[previewTier][newAccount.accountType] || DIVISOR_TABLE[previewTier].average;
   const sampleTooSmall = newAccount.backtestSampleSize && parseInt(newAccount.backtestSampleSize) < MIN_SAMPLE_SIZE;
+
+  const entryWins = newEntry.trades.filter(t => t.result === 'win').length;
+  const entryLosses = newEntry.trades.filter(t => t.result === 'loss').length;
 
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
@@ -524,18 +597,19 @@ function MMMJournal({ user }) {
             </p>
           </div>
           <button onClick={() => { setNewAccount(emptyAccountForm); setShowAddAccount(true); }}
-            className="flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-yellow-300 hover:to-yellow-500 transition">
-            <Icon name="Plus" className="h-4 w-4" /> Add Account
+            className="flex items-center gap-1.5 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-yellow-300 hover:to-yellow-500 transition">
+            <Icon name="Plus" className="h-4 w-4" /><span>Add Account</span>
           </button>
         </div>
 
         <div className="border border-yellow-500/30 bg-gradient-to-r from-yellow-500/10 to-transparent rounded-xl p-4 flex items-start gap-3">
-          <Icon name="Zap" className="h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+          <Icon name="Zap" className="h-5 w-5 text-yellow-400 mt-0.5" />
           <p className="text-sm text-yellow-100/80">
-            <span className="text-yellow-400 font-semibold">Golden Rule: </span>
-            Your divisor is set by your backtested win rate (30+ trades). <span className="text-white font-medium">Challenge</span> stays aggressive to clear the target;
-            <span className="text-white font-medium"> Funded and Live</span> both use the same conservative divisor for a tier — real capital protection either way.
-            No verified backtest defaults to the <span className="text-white font-medium">45–54% average tier</span>.
+            <span className="text-yellow-400 font-semibold">System: </span>
+            <span className="text-white font-medium">RTUC</span> (Risk Tolerance Unit Capacity) is set by your backtested win rate (30+ trades).
+            <span className="text-white font-medium"> RTU</span> = your dollar risk per trade = buffer ÷ RTUC.
+            <span className="text-white font-medium"> DRT</span> (Daily Risk Tolerance) caps you at 2 RTU lost or 2 RTU won, max 3 trades/day.
+            No verified backtest defaults to the 45–54% average tier.
           </p>
         </div>
 
@@ -552,7 +626,7 @@ function MMMJournal({ user }) {
                 return (
                   <button key={acc.id} onClick={() => setActiveAccountId(acc.id)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition border ${activeAccountId === acc.id ? 'bg-yellow-500/15 border-yellow-400/50 text-yellow-300' : 'bg-gray-900 border-gray-800 text-gray-400 hover:text-white hover:border-gray-700'}`}>
-                    {acc.name}
+                    <span>{acc.name}</span>
                     <span className={`text-[10px] px-1.5 py-0.5 rounded ${ACCOUNT_BADGE_CLS[acc.accountType] || ACCOUNT_BADGE_CLS.challenge}`}>
                       {ACCOUNT_TYPES.find(t => t.key === acc.accountType)?.label || 'Challenge'}
                     </span>
@@ -566,7 +640,7 @@ function MMMJournal({ user }) {
               <React.Fragment>
                 {activeStatus === 'breached' && (
                   <div className="border border-red-500/40 bg-red-500/10 rounded-xl p-4 flex items-start gap-3">
-                    <Icon name="AlertTriangle" className="h-5 w-5 text-red-400 mt-0.5 flex-shrink-0" />
+                    <Icon name="AlertTriangle" className="h-5 w-5 text-red-400 mt-0.5" />
                     <div className="flex-1">
                       <p className="text-red-300 font-semibold text-sm">Account Breached</p>
                       <p className="text-red-200/70 text-xs mt-1">Buffer fully consumed. Open a new challenge to try again.</p>
@@ -579,10 +653,10 @@ function MMMJournal({ user }) {
                 )}
                 {activeStatus === 'passed' && (
                   <div className="border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3">
-                    <Icon name="Trophy" className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+                    <Icon name="Trophy" className="h-5 w-5 text-green-400 mt-0.5" />
                     <div className="flex-1">
                       <p className="text-green-300 font-semibold text-sm">Challenge Passed!</p>
-                      <p className="text-green-200/70 text-xs mt-1">Start tracking the funded account — it gets its own conservative divisor.</p>
+                      <p className="text-green-200/70 text-xs mt-1">Start tracking the funded account — it gets its own conservative RTUC.</p>
                     </div>
                     <button onClick={() => handleStartFundedFromChallenge(activeAccount)}
                       className="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/40 flex-shrink-0">
@@ -592,7 +666,7 @@ function MMMJournal({ user }) {
                 )}
                 {activeStatus === 'target-hit' && (
                   <div className="border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3">
-                    <Icon name="DollarSign" className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+                    <Icon name="DollarSign" className="h-5 w-5 text-green-400 mt-0.5" />
                     <div>
                       <p className="text-green-300 font-semibold text-sm">Target Hit</p>
                       <p className="text-green-200/70 text-xs mt-1">
@@ -605,7 +679,7 @@ function MMMJournal({ user }) {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <StatCard label="Current Buffer" value={fmt(currentBuffer)} icon="Shield"
                     color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
-                  <StatCard label={`Risk Per Trade (÷${divisor})`} value={fmt(riskPerTrade)} icon="Target" color="text-blue-400" />
+                  <StatCard label="RTU — Risk Per Trade" value={fmt(riskPerTrade)} icon="Target" color="text-blue-400" sub={`${rtuc} RTUC`} />
                   <StatCard label="Total P&L" value={fmt(totalPnl)} icon={totalPnl >= 0 ? "TrendingUp" : "TrendingDown"} color={totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
                   <StatCard label="Win Rate" value={`${winRate.toFixed(1)}%`} icon="DollarSign" color={winRate >= 50 ? 'text-green-400' : 'text-red-400'} sub={`${winTrades}W / ${lossTrades}L`} />
                 </div>
@@ -619,7 +693,7 @@ function MMMJournal({ user }) {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${STATUS_STYLES[activeStatus].cls}`}>{STATUS_STYLES[activeStatus].label}</span>
                       <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${ACCOUNT_BADGE_CLS[activeAccount.accountType]} border border-current/30`}>
-                        {ACCOUNT_TYPES.find(t => t.key === activeAccount.accountType)?.label} · ÷{divisor}
+                        {ACCOUNT_TYPES.find(t => t.key === activeAccount.accountType)?.label} · {rtuc} RTUC
                       </span>
                       <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
                         Tier: {DIVISOR_TABLE[activeAccount.winRateTier || 'average'].range}
@@ -633,7 +707,7 @@ function MMMJournal({ user }) {
                       <div className="text-2xl font-bold text-yellow-400">{microsUnlocked} Micro{microsUnlocked > 1 ? 's' : ''}</div>
                     </div>
                     <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
-                      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">Max Risk / Trade</div>
+                      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1">RTU (Max Risk / Trade)</div>
                       <div className="text-2xl font-bold text-blue-400">{fmt(riskPerTrade)}</div>
                     </div>
                     <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
@@ -643,27 +717,29 @@ function MMMJournal({ user }) {
                   </div>
                 </div>
 
-                <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} divisor={divisor} accountType={activeAccount.accountType} />
+                <DailyTradeMatrix riskUnit={riskPerTrade} rewardRatio={activeAccount.rewardRatio} />
+
+                <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} rtuc={rtuc} accountType={activeAccount.accountType} />
 
                 <StrategyCard account={activeAccount} />
 
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                   <div className="text-sm text-gray-500">
-                    Start: <span className="text-white">{fmt(activeAccount.startingBalance)}</span> ·
-                    Max DD: <span className="text-white">{fmt(activeAccount.maxDrawdown)}</span> ·
-                    Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span>
-                    {activeAccount.copiedAccountNumber && <React.Fragment> · Copy of: <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></React.Fragment>}
+                    <span>Start: <span className="text-white">{fmt(activeAccount.startingBalance)}</span></span>
+                    <span> · Max DD: <span className="text-white">{fmt(activeAccount.maxDrawdown)}</span></span>
+                    <span> · Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span></span>
+                    {activeAccount.copiedAccountNumber && <span> · Copy of: <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></span>}
                     <button onClick={() => handleDeleteAccount(activeAccount.id)} className="ml-3 text-red-400/70 hover:text-red-400 text-xs underline">delete account</button>
                   </div>
                   <button onClick={() => { setNewEntry(emptyEntryForm()); setShowAddEntry(true); }}
-                    className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-green-400 hover:to-emerald-500 transition">
-                    <Icon name="Plus" className="h-4 w-4" /> Log Today's Trades
+                    className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-green-400 hover:to-emerald-500 transition">
+                    <Icon name="Plus" className="h-4 w-4" /><span>Log Today's Trades</span>
                   </button>
                 </div>
 
                 <div className="space-y-3">
                   <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <Icon name="Calendar" className="h-5 w-5 text-yellow-400" /> Trade History
+                    <Icon name="Calendar" className="h-5 w-5 text-yellow-400" /><span>Trade History</span>
                   </h2>
                   {accountEntries.length === 0 ? (
                     <div className="text-center py-12 border border-dashed border-gray-800 rounded-xl text-gray-500 text-sm">No entries yet.</div>
@@ -684,7 +760,7 @@ function MMMJournal({ user }) {
                               <div className={`w-2 h-2 rounded-full ${dayPnl >= 0 ? 'bg-green-400' : 'bg-red-400'}`}></div>
                               <span className="text-white font-medium">{entry.date}</span>
                               <span className={`text-[10px] px-1.5 py-0.5 rounded border ${biasInfo.cls} flex items-center gap-1`}>
-                                <Icon name={biasInfo.icon} className="h-3 w-3" />{biasInfo.label}
+                                <Icon name={biasInfo.icon} className="h-3 w-3" /><span>{biasInfo.label}</span>
                               </span>
                               <span className="text-xs text-gray-500">{entry.trades.length} trade{entry.trades.length !== 1 ? 's' : ''}</span>
                             </div>
@@ -712,7 +788,7 @@ function MMMJournal({ user }) {
                                         {aligned !== null && (
                                           <span className={`text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1 ${aligned ? 'bg-green-500/15 text-green-400' : 'bg-orange-500/15 text-orange-400'}`}>
                                             <Icon name={aligned ? "CheckCircle" : "AlertTriangle"} className="h-2.5 w-2.5" />
-                                            {aligned ? 'With trend' : 'Against bias'}
+                                            <span>{aligned ? 'With trend' : 'Against bias'}</span>
                                           </span>
                                         )}
                                       </div>
@@ -731,8 +807,8 @@ function MMMJournal({ user }) {
                               })}
                               {entry.notes && <p className="text-xs text-gray-500 italic mt-2">"{entry.notes}"</p>}
                               {bufferAtDate && <p className="text-xs text-gray-600 mt-2">Buffer after this day: <span className="text-gray-400">{fmt(bufferAtDate.buffer)}</span></p>}
-                              <button onClick={() => handleDeleteEntry(entry.id)} className="text-xs text-red-400/70 hover:text-red-400 flex items-center gap-1 mt-2">
-                                <Icon name="Trash2" className="h-3 w-3" /> Delete entry
+                              <button onClick={() => handleDeleteEntry(entry.id)} className="text-xs text-red-400/70 hover:text-red-400 flex items-center gap-1.5 mt-2">
+                                <Icon name="Trash2" className="h-3.5 w-3.5" /><span>Delete entry</span>
                               </button>
                             </div>
                           )}
@@ -776,14 +852,20 @@ function MMMJournal({ user }) {
                   className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
               </Field>
             </div>
-            <Field label="Profit Target ($)">
-              <input type="number" value={newAccount.profitTarget} onChange={e => setNewAccount({ ...newAccount, profitTarget: e.target.value })} placeholder="10000"
-                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
-            </Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Profit Target ($)">
+                <input type="number" value={newAccount.profitTarget} onChange={e => setNewAccount({ ...newAccount, profitTarget: e.target.value })} placeholder="10000"
+                  className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+              </Field>
+              <Field label="Reward:Risk Ratio">
+                <input type="number" step="0.1" value={newAccount.rewardRatio} onChange={e => setNewAccount({ ...newAccount, rewardRatio: e.target.value })} placeholder="2"
+                  className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+              </Field>
+            </div>
 
             <div className="border-t border-gray-800 pt-4">
-              <p className="text-sm text-yellow-400 font-medium mb-1 flex items-center gap-2">
-                <Icon name="BarChart3" className="h-4 w-4" /> Strategy Backtest (sets your risk divisor)
+              <p className="text-sm text-yellow-400 font-medium mb-1 flex items-center gap-1.5">
+                <Icon name="BarChart3" className="h-4 w-4" /><span>Strategy Backtest (sets your RTUC)</span>
               </p>
               <p className="text-xs text-gray-500 mb-3">
                 Need at least {MIN_SAMPLE_SIZE} backtested trades to count. Otherwise defaults to the 45–54% average tier.
@@ -799,13 +881,13 @@ function MMMJournal({ user }) {
                 </Field>
               </div>
               {sampleTooSmall && (
-                <p className="text-xs text-orange-400 mt-2 flex items-center gap-1">
-                  <Icon name="AlertTriangle" className="h-3 w-3" /> Sample below {MIN_SAMPLE_SIZE} trades — defaulting to average tier.
+                <p className="text-xs text-orange-400 mt-2 flex items-center gap-1.5">
+                  <Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>Sample below {MIN_SAMPLE_SIZE} trades — defaulting to average tier.</span>
                 </p>
               )}
               <div className="mt-3 bg-black/40 border border-gray-800 rounded-lg p-3 flex items-center justify-between">
                 <span className="text-xs text-gray-400">This account will use:</span>
-                <span className="text-sm font-semibold text-yellow-400">{DIVISOR_TABLE[previewTier].range} tier → ÷{previewDivisor}</span>
+                <span className="text-sm font-semibold text-yellow-400">{DIVISOR_TABLE[previewTier].range} tier → {previewRTUC} RTUC</span>
               </div>
             </div>
 
@@ -817,8 +899,8 @@ function MMMJournal({ user }) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-green-400 mb-1.5 flex items-center gap-1">
-                    <Icon name="TrendingUp" className="h-3.5 w-3.5" /> Long Setup Rules
+                  <label className="block text-sm text-green-400 mb-1.5 flex items-center gap-1.5">
+                    <Icon name="TrendingUp" className="h-3.5 w-3.5" /><span>Long Setup Rules</span>
                   </label>
                   <div className="space-y-2">
                     {newAccount.longRules.map((rule, idx) => (
@@ -826,18 +908,18 @@ function MMMJournal({ user }) {
                         <input value={rule} onChange={e => updateRuleRow('longRules', idx, e.target.value)} placeholder={`Rule ${idx + 1}`}
                           className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
                         {newAccount.longRules.length > 1 && (
-                          <button onClick={() => removeRuleRow('longRules', idx)} className="text-gray-500 hover:text-red-400"><Icon name="X" className="h-3.5 w-3.5" /></button>
+                          <button onClick={() => removeRuleRow('longRules', idx)} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>
                         )}
                       </div>
                     ))}
-                    <button onClick={() => addRuleRow('longRules')} className="text-xs text-green-400 hover:text-green-300 flex items-center gap-1">
-                      <Icon name="Plus" className="h-3 w-3" /> Add rule
+                    <button onClick={() => addRuleRow('longRules')} className="text-xs text-green-400 hover:text-green-300 flex items-center gap-1.5">
+                      <Icon name="Plus" className="h-3 w-3" /><span>Add rule</span>
                     </button>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm text-red-400 mb-1.5 flex items-center gap-1">
-                    <Icon name="TrendingDown" className="h-3.5 w-3.5" /> Short Setup Rules
+                  <label className="block text-sm text-red-400 mb-1.5 flex items-center gap-1.5">
+                    <Icon name="TrendingDown" className="h-3.5 w-3.5" /><span>Short Setup Rules</span>
                   </label>
                   <div className="space-y-2">
                     {newAccount.shortRules.map((rule, idx) => (
@@ -845,12 +927,12 @@ function MMMJournal({ user }) {
                         <input value={rule} onChange={e => updateRuleRow('shortRules', idx, e.target.value)} placeholder={`Rule ${idx + 1}`}
                           className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
                         {newAccount.shortRules.length > 1 && (
-                          <button onClick={() => removeRuleRow('shortRules', idx)} className="text-gray-500 hover:text-red-400"><Icon name="X" className="h-3.5 w-3.5" /></button>
+                          <button onClick={() => removeRuleRow('shortRules', idx)} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>
                         )}
                       </div>
                     ))}
-                    <button onClick={() => addRuleRow('shortRules')} className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1">
-                      <Icon name="Plus" className="h-3 w-3" /> Add rule
+                    <button onClick={() => addRuleRow('shortRules')} className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1.5">
+                      <Icon name="Plus" className="h-3 w-3" /><span>Add rule</span>
                     </button>
                   </div>
                 </div>
@@ -863,8 +945,8 @@ function MMMJournal({ user }) {
             </Field>
 
             <button onClick={handleAddAccount} disabled={!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown}
-              className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-              <Icon name="Save" className="h-4 w-4" /> Save Account
+              className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5">
+              <Icon name="Save" className="h-4 w-4" /><span>Save Account</span>
             </button>
           </div>
         </Modal>
@@ -884,7 +966,7 @@ function MMMJournal({ user }) {
                 {BIAS_OPTIONS.map(b => (
                   <button key={b.key} onClick={() => setNewEntry({ ...newEntry, dailyBias: b.key })}
                     className={`flex-1 py-2 rounded-lg text-sm font-medium transition border flex items-center justify-center gap-1.5 ${newEntry.dailyBias === b.key ? b.cls : 'bg-gray-800 text-gray-500 border-gray-700'}`}>
-                    <Icon name={b.icon} className="h-3.5 w-3.5" /> {b.label}
+                    <Icon name={b.icon} className="h-3.5 w-3.5" /><span>{b.label}</span>
                   </button>
                 ))}
               </div>
@@ -909,7 +991,7 @@ function MMMJournal({ user }) {
                       {aligned !== null && (
                         <span className={`text-[10px] px-2 py-1 rounded flex items-center gap-1 ${aligned ? 'bg-green-500/15 text-green-400' : 'bg-orange-500/15 text-orange-400'}`}>
                           <Icon name={aligned ? "CheckCircle" : "AlertTriangle"} className="h-2.5 w-2.5" />
-                          {aligned ? 'With trend' : 'Against bias'}
+                          <span>{aligned ? 'With trend' : 'Against bias'}</span>
                         </span>
                       )}
                     </div>
@@ -921,7 +1003,7 @@ function MMMJournal({ user }) {
                       <input type="number" placeholder="P&L amount" value={trade.pnl} onChange={e => updateTradeRow(idx, 'pnl', e.target.value)}
                         className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
                       {newEntry.trades.length > 1 && (
-                        <button onClick={() => removeTradeRow(idx)} className="text-gray-500 hover:text-red-400"><Icon name="X" className="h-4 w-4" /></button>
+                        <button onClick={() => removeTradeRow(idx)} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-4 w-4" /></button>
                       )}
                     </div>
                     {applicableRules.length > 0 && (
@@ -933,7 +1015,7 @@ function MMMJournal({ user }) {
                             <button key={ri} onClick={() => toggleRuleChecked(idx, rule)}
                               className="w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white">
                               <Icon name={checked ? "CheckSquare" : "Square"} className={`h-4 w-4 flex-shrink-0 ${checked ? 'text-green-400' : 'text-gray-600'}`} />
-                              {rule}
+                              <span>{rule}</span>
                             </button>
                           );
                         })}
@@ -942,8 +1024,20 @@ function MMMJournal({ user }) {
                   </div>
                 );
               })}
-              <button onClick={addTradeRow} className="text-sm text-yellow-400 hover:text-yellow-300 flex items-center gap-1 mt-1">
-                <Icon name="Plus" className="h-3 w-3" /> Add another trade
+
+              {entryWins >= 2 && (
+                <p className="text-xs text-green-400 flex items-center gap-1.5"><Icon name="CheckCircle" className="h-3.5 w-3.5" /><span>2 wins reached — DRT satisfied, stop for today.</span></p>
+              )}
+              {entryLosses >= 2 && (
+                <p className="text-xs text-red-400 flex items-center gap-1.5"><Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>2 losses reached — DRT exhausted, stop for today.</span></p>
+              )}
+              {newEntry.trades.length >= 3 && entryWins < 2 && entryLosses < 2 && (
+                <p className="text-xs text-yellow-400">3-trade max reached for today.</p>
+              )}
+
+              <button onClick={addTradeRow} disabled={newEntry.trades.length >= 3 || entryWins >= 2 || entryLosses >= 2}
+                className="text-sm text-yellow-400 hover:text-yellow-300 flex items-center gap-1.5 mt-1 disabled:opacity-30 disabled:cursor-not-allowed">
+                <Icon name="Plus" className="h-3 w-3" /><span>Add another trade</span>
               </button>
             </div>
 
@@ -952,8 +1046,8 @@ function MMMJournal({ user }) {
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-20 focus:border-yellow-400/50 outline-none resize-none"></textarea>
             </Field>
             <button onClick={handleSaveEntry} disabled={newEntry.trades.every(t => t.pnl === '')}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-              <Icon name="Save" className="h-4 w-4" /> Save Entry
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5">
+              <Icon name="Save" className="h-4 w-4" /><span>Save Entry</span>
             </button>
           </div>
         </Modal>
@@ -982,34 +1076,9 @@ function Modal({ onClose, title, children, size = 'md' }) {
       <div className={`relative bg-black border border-yellow-500/20 rounded-2xl p-6 w-full ${size === 'lg' ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto shadow-2xl`}>
         <div className="flex items-center justify-between mb-5">
           <h3 className="text-lg font-bold text-white">{title}</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-white"><Icon name="X" className="h-5 w-5" /></button>
+          <button onClick={onClose} className="text-gray-500 hover:text-white flex-shrink-0"><Icon name="X" className="h-5 w-5" /></button>
         </div>
         {children}
       </div>
     </div>
   );
-}
-
-function Field({ label, children }) {
-  return (<div><label className="block text-sm text-gray-400 mb-1">{label}</label>{children}</div>);
-}
-
-// ---------------- ROOT ----------------
-function App() {
-  const [user, setUser] = useState(undefined);
-  useEffect(() => {
-    const unsub = auth.onAuthStateChanged(u => setUser(u));
-    return unsub;
-  }, []);
-
-  if (user === undefined) {
-    return <div className="min-h-screen bg-black flex items-center justify-center text-yellow-400">Loading...</div>;
-  }
-  return user ? <MMMJournal user={user} /> : <AuthScreen />;
-}
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
-</script>
-</body>
-</html>
