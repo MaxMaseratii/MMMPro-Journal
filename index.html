@@ -130,9 +130,20 @@ const NO_TRADE_REASONS = [
   { key: 'other', label: 'Other' },
 ];
 
+// Drawdown Type governs how the account's floor is calculated:
+// - static: floor never moves, fixed relative to starting capital.
+// - eod: floor trails up to the highest END-OF-DAY closing pool value.
+// - intraday: floor trails up to the highest pool value reached at ANY point,
+//   including mid-day between trades (computed at trade-level granularity).
+const DRAWDOWN_TYPES = [
+  { key: 'static', short: 'Static', label: 'Static (fixed from starting capital)' },
+  { key: 'eod', short: 'EOD Trailing', label: 'EOD Trailing (trails end-of-day close)' },
+  { key: 'intraday', short: 'Intraday Trailing', label: 'Intraday Trailing (trails every trade)' },
+];
+
 const emptyAccountForm = {
   name: '', startingBalance: '', maxDrawdown: '', profitTarget: '', rewardRatio: '2',
-  accountType: 'challenge', copiedAccountNumber: '', linkedFromId: null,
+  accountType: 'challenge', drawdownType: 'static', copiedAccountNumber: '', linkedFromId: null,
   backtestWinRate: '', backtestSampleSize: '', winRateTier: 'average',
   strategyName: '', longRules: [''], shortRules: [''],
   accountCost: '', activationCost: '', resetCost: ''
@@ -225,7 +236,7 @@ function SystemExplainer() {
         <div className="px-4 pb-4 space-y-3 text-sm text-gray-300 border-t border-yellow-500/20 pt-3">
           <div>
             <p className="text-yellow-400 font-semibold mb-1">TRA - Total RTU Allocation</p>
-            <p className="text-gray-400">How many "lives" your account has before it's fully exhausted. It's a count, not a dollar figure. Set once when you add the account, based on your backtested win rate (30+ trades). A 45-54% win rate gets 25 TRA on a Challenge account.</p>
+            <p className="text-gray-400">How many "lives" your account has before it's fully exhausted. It's a count, not a dollar figure. Set once when you add the account, based on your win rate (30+ backtested trades). A 45-54% win rate gets 25 TRA on a Challenge account.</p>
           </div>
           <div>
             <p className="text-blue-400 font-semibold mb-1">RTU - Risk Tolerance Unit</p>
@@ -234,6 +245,10 @@ function SystemExplainer() {
           <div>
             <p className="text-red-400 font-semibold mb-1">DRT - Daily Risk Tolerance</p>
             <p className="text-gray-400">Your daily circuit breaker, measured in RTUs. Fixed at 2 RTU lost (stop - you're down 2 RTU today) or 2 RTU won (stop - protect the gain), max 3 trades either way.</p>
+          </div>
+          <div>
+            <p className="text-purple-400 font-semibold mb-1">Drawdown Type</p>
+            <p className="text-gray-400">Static: your loss limit is fixed from your starting capital forever. EOD Trailing: your loss limit rises to follow your highest end-of-day closing balance. Intraday Trailing: your loss limit follows your highest balance at any point, even mid-day between trades. This changes when the app marks an account as breached.</p>
           </div>
         </div>
       )}
@@ -456,7 +471,6 @@ function TradingPlanSummaryGrid(props) {
   );
 }
 
-// 6-box combined Costs + Payouts + Profitability summary
 function CostsAndPayoutsCard(props) {
   const account = props.account;
   const totalCosts = (parseFloat(account.accountCost) || 0) + (parseFloat(account.activationCost) || 0) + (parseFloat(account.resetCost) || 0);
@@ -481,7 +495,6 @@ function CostsAndPayoutsCard(props) {
   );
 }
 
-// Add-payout form + dated list only (summary numbers now live in CostsAndPayoutsCard above)
 function PayoutLedger(props) {
   const account = props.account;
   const onAddPayout = props.onAddPayout;
@@ -719,17 +732,36 @@ function MMMJournal(props) {
   const accountEntries = entries.filter(function(e) { return e.accountId === activeAccountId; });
   const tra = activeAccount ? getTRA(activeAccount) : TRA_TABLE.average.challenge;
 
+  // Buffer history now honors Drawdown Type:
+  // - static: floor never moves (peak stays fixed at maxDrawdown baseline forever)
+  // - eod: floor trails up to the highest END-OF-DAY closing pool
+  // - intraday: floor trails up to the highest pool value at trade-level granularity
   const calcBufferHistory = function(account, accEntries) {
     if (!account) return [];
     const d = getTRA(account);
+    const dtype = account.drawdownType || 'static';
+    const maxDD = parseFloat(account.maxDrawdown) || 0;
     const traded = accEntries.filter(function(e) { return e.tradedToday !== 'no'; });
     const chronological = traded.slice().sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
-    let buffer = parseFloat(account.maxDrawdown) || 0;
+    let pool = maxDD;
+    let peak = maxDD;
     const history = [];
     chronological.forEach(function(entry) {
-      const signedPnl = entry.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
-      buffer = buffer + signedPnl;
-      history.push({ date: entry.date, buffer: buffer, pnl: signedPnl, riskPerTrade: Math.max(buffer, 0) / d });
+      const dayPnl = entry.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+      if (dtype === 'intraday') {
+        entry.trades.forEach(function(t) {
+          const val = Math.abs(parseFloat(t.pnl) || 0);
+          pool = pool + (t.result === 'win' ? val : -val);
+          if (pool > peak) peak = pool;
+        });
+      } else {
+        pool = pool + dayPnl;
+        if (dtype === 'eod' && pool > peak) peak = pool;
+        // static: peak never updates, stays at maxDD forever
+      }
+      const floor = peak - maxDD;
+      const buffer = pool - floor;
+      history.push({ date: entry.date, buffer: buffer, pnl: dayPnl, riskPerTrade: Math.max(buffer, 0) / d });
     });
     return history;
   };
@@ -783,6 +815,7 @@ function MMMJournal(props) {
       profitTarget: parseFloat(newAccount.profitTarget) || 0,
       rewardRatio: parseFloat(newAccount.rewardRatio) || 2,
       accountType: newAccount.accountType,
+      drawdownType: newAccount.drawdownType || 'static',
       copiedAccountNumber: newAccount.copiedAccountNumber || '',
       linkedFromId: newAccount.linkedFromId || null,
       backtestWinRate: newAccount.backtestWinRate ? parseFloat(newAccount.backtestWinRate) : null,
@@ -809,6 +842,7 @@ function MMMJournal(props) {
       name: challengeAcc.name.replace(/challenge/i, '').trim() + ' - Funded',
       startingBalance: challengeAcc.startingBalance,
       rewardRatio: challengeAcc.rewardRatio || 2,
+      drawdownType: challengeAcc.drawdownType || 'static',
       backtestWinRate: challengeAcc.backtestWinRate || '',
       backtestSampleSize: challengeAcc.backtestSampleSize || '',
       winRateTier: challengeAcc.winRateTier || 'average',
@@ -946,6 +980,7 @@ function MMMJournal(props) {
             <div className="text-sm text-gray-500 bg-black/30 rounded-lg px-4 py-2.5">
               <span>Start: <span className="text-white">{fmt(activeAccount.startingBalance)}</span></span>
               <span> - Drawdown Allocated: <span className="text-white">{fmt(activeAccount.maxDrawdown)}</span></span>
+              <span> - Drawdown Type: <span className="text-white">{(DRAWDOWN_TYPES.find(function(dt) { return dt.key === (activeAccount.drawdownType || 'static'); }) || {}).short}</span></span>
               <span> - Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span></span>
               {activeAccount.copiedAccountNumber && <span> - Copy of: <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></span>}
               <button onClick={function() { handleDeleteAccount(activeAccount.id); }} className="ml-3 text-red-400/70 hover:text-red-400 text-xs underline">delete account</button>
@@ -1006,7 +1041,10 @@ function MMMJournal(props) {
                         {(function() { const f = ACCOUNT_TYPES.find(function(t) { return t.key === activeAccount.accountType; }); return f ? f.label : ''; })()} - {tra} TRA
                       </span>
                       <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
-                        Tier: {TRA_TABLE[activeAccount.winRateTier || 'average'].range}{activeAccount.backtestSampleSize ? " (" + activeAccount.backtestSampleSize + " trades)" : ' (default)'}
+                        Win Rate: {TRA_TABLE[activeAccount.winRateTier || 'average'].range}{activeAccount.backtestSampleSize ? " (" + activeAccount.backtestSampleSize + " trades)" : ' (default)'}
+                      </span>
+                      <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                        {(DRAWDOWN_TYPES.find(function(dt) { return dt.key === (activeAccount.drawdownType || 'static'); }) || {}).short}
                       </span>
                     </div>
                   </div>
@@ -1136,19 +1174,26 @@ function MMMJournal(props) {
               <Field label="Starting Balance"><input type="number" value={newAccount.startingBalance} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { startingBalance: e.target.value })); }} placeholder="100000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
               <Field label="Drawdown Allocated ($)"><input type="number" value={newAccount.maxDrawdown} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { maxDrawdown: e.target.value })); }} placeholder="5000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
             </div>
+            <Field label="Drawdown Type">
+              <select value={newAccount.drawdownType} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { drawdownType: e.target.value })); }}
+                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
+                {DRAWDOWN_TYPES.map(function(dt) { return (<option key={dt.key} value={dt.key}>{dt.label}</option>); })}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">This decides how your account can be marked breached. See "What does this mean?" above for details.</p>
+            </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Profit Target ($)"><input type="number" value={newAccount.profitTarget} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { profitTarget: e.target.value })); }} placeholder="10000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
               <Field label="Reward:Risk Ratio"><input type="number" step="0.1" value={newAccount.rewardRatio} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { rewardRatio: e.target.value })); }} placeholder="2" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
             </div>
             <div className="border-t border-gray-800 pt-4">
-              <p className="text-sm text-yellow-400 font-medium mb-1 flex items-center gap-1.5"><Icon name="BarChart3" className="h-4 w-4" /><span>Strategy Backtest (sets your TRA)</span></p>
-              <p className="text-xs text-gray-500 mb-3">Need at least {MIN_SAMPLE_SIZE} backtested trades. Otherwise defaults to 45-54% average tier.</p>
+              <p className="text-sm text-yellow-400 font-medium mb-1 flex items-center gap-1.5"><Icon name="BarChart3" className="h-4 w-4" /><span>Strategy Backtest - tell us your win rate</span></p>
+              <p className="text-xs text-gray-500 mb-3">Enter your strategy's win rate from backtesting or live history. This decides how many risk units (TRA) your account gets - a higher win rate needs fewer units, since long losing streaks are less likely. You need at least {MIN_SAMPLE_SIZE} backtested trades for this to count. With fewer, we default to a cautious 45-54% win rate.</p>
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Backtest Win Rate (%)"><input type="number" value={newAccount.backtestWinRate} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { backtestWinRate: e.target.value })); }} placeholder="e.g. 58" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
                 <Field label="Sample Size"><input type="number" value={newAccount.backtestSampleSize} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { backtestSampleSize: e.target.value })); }} placeholder={"min " + MIN_SAMPLE_SIZE} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
               </div>
               {sampleTooSmall && (<p className="text-xs text-orange-400 mt-2 flex items-center gap-1.5"><Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>Sample below {MIN_SAMPLE_SIZE} trades - defaulting to average tier.</span></p>)}
-              <div className="mt-3 bg-black/40 border border-gray-800 rounded-lg p-3 flex items-center justify-between"><span className="text-xs text-gray-400">This account will use:</span><span className="text-sm font-semibold text-yellow-400">{TRA_TABLE[previewTier].range} tier - {previewTRA} TRA</span></div>
+              <div className="mt-3 bg-black/40 border border-gray-800 rounded-lg p-3 flex items-center justify-between"><span className="text-xs text-gray-400">This account will use:</span><span className="text-sm font-semibold text-yellow-400">{TRA_TABLE[previewTier].range} Win Rate - {previewTRA} TRA</span></div>
             </div>
             <div className="border-t border-gray-800 pt-4 space-y-4">
               <Field label="Strategy Name"><input value={newAccount.strategyName} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { strategyName: e.target.value })); }} placeholder="e.g. MMM Order Flow Breakout" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
@@ -1174,7 +1219,7 @@ function MMMJournal(props) {
               </div>
             </div>
             <div className="border-t border-gray-800 pt-4">
-              <p className="text-sm text-yellow-400 font-medium mb-2 flex items-center gap-1.5"><Icon name="Receipt" className="h-4 w-4" /><span>Costs (optional - payouts are added later, per date, from the account page)</span></p>
+              <p className="text-sm text-yellow-400 font-medium mb-2 flex items-center gap-1.5"><Icon name="Receipt" className="h-4 w-4" /><span>Costs</span></p>
               <div className="grid grid-cols-3 gap-3">
                 <Field label="Account/Challenge Cost ($)"><input type="number" value={newAccount.accountCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { accountCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
                 <Field label="Activation Cost ($)"><input type="number" value={newAccount.activationCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { activationCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
