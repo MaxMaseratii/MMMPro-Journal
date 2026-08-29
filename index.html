@@ -7,6 +7,7 @@
 <link rel="apple-touch-icon" href="">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MMM Journal">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -35,6 +36,12 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
+  // Explicit LOCAL persistence: keeps the session alive across app closes
+  // and reopens, including when launched as a Home Screen shortcut on iPhone
+  // (standalone PWA mode can otherwise run in a separate storage context).
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(e) {
+    console.error('Auth persistence error:', e);
+  });
 </script>
 
 <script type="text/babel">
@@ -213,29 +220,43 @@ function AuthScreen() {
   );
 }
 
-// White dot = total users who've ever opened the app. Green dot = users
-// with a heartbeat in the last 60 seconds. Requires a `presence` Firestore
-// collection with a readable-by-any-authed-user rule (see setup notes).
+// White dot = total registered users (presence docs ever created). Green dot
+// = users active in the last 60s. Auto-retries on listener error instead of
+// silently dying (previous version would flash once then go blank forever).
 function UserCounters() {
   const [total, setTotal] = useState(null);
   const [online, setOnline] = useState(null);
 
   useEffect(function() {
-    const unsub = db.collection('presence').onSnapshot(function(snap) {
-      const now = Date.now();
-      let onlineCount = 0;
-      snap.forEach(function(doc) {
-        const data = doc.data();
-        const lastSeen = data.lastSeen && data.lastSeen.toMillis ? data.lastSeen.toMillis() : 0;
-        if (now - lastSeen < 60000) onlineCount++;
+    let unsub = null;
+    let retryTimer = null;
+
+    function subscribe() {
+      unsub = db.collection('presence').onSnapshot(function(snap) {
+        const now = Date.now();
+        let onlineCount = 0;
+        snap.forEach(function(doc) {
+          const data = doc.data();
+          const lastSeen = data.lastSeen && data.lastSeen.toMillis ? data.lastSeen.toMillis() : now;
+          if (now - lastSeen < 60000) onlineCount++;
+        });
+        setTotal(snap.size);
+        setOnline(onlineCount);
+      }, function(err) {
+        console.error('presence listener error:', err.code, err.message);
+        setTotal(null);
+        setOnline(null);
+        if (unsub) { unsub(); unsub = null; }
+        retryTimer = setTimeout(subscribe, 5000);
       });
-      setTotal(snap.size);
-      setOnline(onlineCount);
-    }, function() {
-      setTotal(null);
-      setOnline(null);
-    });
-    return unsub;
+    }
+
+    subscribe();
+
+    return function() {
+      if (unsub) unsub();
+      if (retryTimer) clearTimeout(retryTimer);
+    };
   }, []);
 
   if (total === null) return null;
@@ -404,8 +425,6 @@ function RiskOfRuinCard(props) {
   );
 }
 
-// Now shows real dollar amounts per W/L cell (not just letters), so it
-// always reflects this account's actual current RTU and reward.
 function DailyTradeMatrix(props) {
   const risk = props.riskUnit;
   const rr = parseFloat(props.rewardRatio) || 2;
@@ -509,9 +528,6 @@ function TradingPlanSummaryGrid(props) {
   );
 }
 
-// Reset Cost only shown when Breached. Activation Cost only shown when
-// Passed, Target Hit, or the account is Funded/Live (implying activation
-// already happened).
 function CostsAndPayoutsCard(props) {
   const account = props.account;
   const status = props.status;
@@ -772,11 +788,12 @@ function MMMJournal(props) {
     return unsub;
   }, [user.uid]);
 
-  // Presence heartbeat: writes own doc, refreshed every 20s while app is open.
   useEffect(function() {
     const ref = db.collection('presence').doc(user.uid);
     const beat = function() {
-      ref.set({ lastSeen: firebase.firestore.FieldValue.serverTimestamp(), email: user.email || '' }, { merge: true }).catch(function() {});
+      ref.set({ lastSeen: firebase.firestore.FieldValue.serverTimestamp(), email: user.email || '' }, { merge: true }).catch(function(e) {
+        console.error('presence heartbeat error:', e.code, e.message);
+      });
     };
     beat();
     const interval = setInterval(beat, 20000);
@@ -1006,7 +1023,6 @@ function MMMJournal(props) {
   const lastEntryForActive = accountEntries.length > 0 ? accountEntries.slice().sort(function(a, b) { return new Date(b.date) - new Date(a.date); })[0] : null;
   const daysSinceLastLog = lastEntryForActive ? Math.floor((new Date() - new Date(lastEntryForActive.date)) / (1000 * 60 * 60 * 24)) : null;
 
-  // Accounts eligible to be linked-from, based on the type being created
   const linkableAccounts = newAccount.accountType === 'funded'
     ? accounts.filter(function(a) { return a.accountType === 'challenge'; })
     : newAccount.accountType === 'live'
