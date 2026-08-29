@@ -130,11 +130,6 @@ const NO_TRADE_REASONS = [
   { key: 'other', label: 'Other' },
 ];
 
-// Drawdown Type governs how the account's floor is calculated:
-// - static: floor never moves, fixed relative to starting capital.
-// - eod: floor trails up to the highest END-OF-DAY closing pool value.
-// - intraday: floor trails up to the highest pool value reached at ANY point,
-//   including mid-day between trades (computed at trade-level granularity).
 const DRAWDOWN_TYPES = [
   { key: 'static', short: 'Static', label: 'Static (fixed from starting capital)' },
   { key: 'eod', short: 'EOD Trailing', label: 'EOD Trailing (trails end-of-day close)' },
@@ -143,13 +138,13 @@ const DRAWDOWN_TYPES = [
 
 const emptyAccountForm = {
   name: '', startingBalance: '', maxDrawdown: '', profitTarget: '', rewardRatio: '2',
-  accountType: 'challenge', drawdownType: 'static', copiedAccountNumber: '', linkedFromId: null,
+  accountType: 'challenge', drawdownType: 'static', copiedAccountNumber: '', linkedFromId: null, linkedFromLabel: '',
   backtestWinRate: '', backtestSampleSize: '', winRateTier: 'average',
   strategyName: '', longRules: [''], shortRules: [''],
   accountCost: '', activationCost: '', resetCost: ''
 };
 
-const emptyEntryForm = function() {
+const emptyEntryForm = function(defaultRisk, defaultMicros) {
   return {
     date: new Date().toISOString().split('T')[0],
     tradedToday: 'yes',
@@ -157,7 +152,9 @@ const emptyEntryForm = function() {
     noTradeNotes: '',
     dailyBias: 'neutral',
     exercised: false,
-    trades: [{ result: 'win', pnl: '', direction: 'long', rulesChecked: [], positionSize: '', riskAmount: '', htfLtf: false }],
+    trades: [{ result: 'win', pnl: '', direction: 'long', rulesChecked: [],
+      positionSize: defaultMicros ? String(defaultMicros) : '',
+      riskAmount: defaultRisk ? defaultRisk.toFixed(2) : '', htfLtf: false }],
     notes: ''
   };
 };
@@ -216,6 +213,45 @@ function AuthScreen() {
   );
 }
 
+// White dot = total users who've ever opened the app. Green dot = users
+// with a heartbeat in the last 60 seconds. Requires a `presence` Firestore
+// collection with a readable-by-any-authed-user rule (see setup notes).
+function UserCounters() {
+  const [total, setTotal] = useState(null);
+  const [online, setOnline] = useState(null);
+
+  useEffect(function() {
+    const unsub = db.collection('presence').onSnapshot(function(snap) {
+      const now = Date.now();
+      let onlineCount = 0;
+      snap.forEach(function(doc) {
+        const data = doc.data();
+        const lastSeen = data.lastSeen && data.lastSeen.toMillis ? data.lastSeen.toMillis() : 0;
+        if (now - lastSeen < 60000) onlineCount++;
+      });
+      setTotal(snap.size);
+      setOnline(onlineCount);
+    }, function() {
+      setTotal(null);
+      setOnline(null);
+    });
+    return unsub;
+  }, []);
+
+  if (total === null) return null;
+
+  return (
+    <span className="inline-flex items-center gap-2 ml-2 align-middle">
+      <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+        <span className="w-2 h-2 rounded-full bg-white"></span>{total}
+      </span>
+      <span className="inline-flex items-center gap-1 text-xs text-gray-400">
+        <span className="w-2 h-2 rounded-full bg-green-400"></span>{online}
+      </span>
+    </span>
+  );
+}
+
 function SystemExplainer() {
   const [open, setOpen] = useState(false);
   return (
@@ -236,19 +272,19 @@ function SystemExplainer() {
         <div className="px-4 pb-4 space-y-3 text-sm text-gray-300 border-t border-yellow-500/20 pt-3">
           <div>
             <p className="text-yellow-400 font-semibold mb-1">TRA - Total RTU Allocation</p>
-            <p className="text-gray-400">How many "lives" your account has before it's fully exhausted. It's a count, not a dollar figure. Set once when you add the account, based on your win rate (30+ backtested trades). A 45-54% win rate gets 25 TRA on a Challenge account.</p>
+            <p className="text-gray-400">How many "lives" your account has before it's fully exhausted. Set once when you add the account, based on your win rate (30+ backtested trades).</p>
           </div>
           <div>
             <p className="text-blue-400 font-semibold mb-1">RTU - Risk Tolerance Unit</p>
-            <p className="text-gray-400">The dollar cost of one single life. RTU = current buffer / TRA. Example: $500 buffer / 25 TRA = $20 RTU. As your buffer grows from wins or shrinks from losses, RTU recalculates automatically - same life-count, but each life is worth more or less.</p>
+            <p className="text-gray-400">The dollar cost of one single life. RTU = current buffer / TRA. Recalculates automatically as your buffer changes.</p>
           </div>
           <div>
             <p className="text-red-400 font-semibold mb-1">DRT - Daily Risk Tolerance</p>
-            <p className="text-gray-400">Your daily circuit breaker, measured in RTUs. Fixed at 2 RTU lost (stop - you're down 2 RTU today) or 2 RTU won (stop - protect the gain), max 3 trades either way.</p>
+            <p className="text-gray-400">Your daily circuit breaker, measured in RTUs. 2 RTU lost or 2 RTU won, max 3 trades either way.</p>
           </div>
           <div>
             <p className="text-purple-400 font-semibold mb-1">Drawdown Type</p>
-            <p className="text-gray-400">Static: your loss limit is fixed from your starting capital forever. EOD Trailing: your loss limit rises to follow your highest end-of-day closing balance. Intraday Trailing: your loss limit follows your highest balance at any point, even mid-day between trades. This changes when the app marks an account as breached.</p>
+            <p className="text-gray-400">Static: fixed loss limit forever. EOD Trailing: loss limit follows your highest end-of-day close. Intraday Trailing: follows your highest balance at any point.</p>
           </div>
         </div>
       )}
@@ -368,6 +404,8 @@ function RiskOfRuinCard(props) {
   );
 }
 
+// Now shows real dollar amounts per W/L cell (not just letters), so it
+// always reflects this account's actual current RTU and reward.
 function DailyTradeMatrix(props) {
   const risk = props.riskUnit;
   const rr = parseFloat(props.rewardRatio) || 2;
@@ -383,14 +421,14 @@ function DailyTradeMatrix(props) {
     <div className="bg-black/40 border border-gray-800 rounded-xl p-4">
       <div className="flex items-center gap-2 mb-1">
         <Icon name="LayoutGrid" className="h-4 w-4 text-yellow-400" />
-        <h3 className="text-sm font-semibold text-white">Daily Trade Execution Matrix (reference)</h3>
+        <h3 className="text-sm font-semibold text-white">Daily Trade Execution Matrix - your actual risk</h3>
       </div>
-      <p className="text-xs text-gray-500 mb-3">Max 3 trades - stop at 2 wins or 2 losses. Based on RTU {fmt(risk)} and {rr}:1 reward.</p>
+      <p className="text-xs text-gray-500 mb-3">Max 3 trades - stop at 2 wins or 2 losses. Built from this account's real RTU ({fmt(risk)}) and {rr}:1 reward ({fmt(reward)}).</p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
             <tr className="text-left text-gray-500 uppercase tracking-wide border-b border-gray-800">
-              <th className="pb-1.5 pr-3">Scenario</th><th className="pb-1.5 pr-3">T1</th><th className="pb-1.5 pr-3">T2</th><th className="pb-1.5 pr-3">T3</th><th className="pb-1.5">P&amp;L</th>
+              <th className="pb-1.5 pr-3">Scenario</th><th className="pb-1.5 pr-3">Trade 1</th><th className="pb-1.5 pr-3">Trade 2</th><th className="pb-1.5 pr-3">Trade 3</th><th className="pb-1.5">Daily P&amp;L</th>
             </tr>
           </thead>
           <tbody>
@@ -400,7 +438,7 @@ function DailyTradeMatrix(props) {
                   <td className={"py-1.5 pr-3 font-medium " + (s.pnl > 0 ? 'text-green-400' : s.pnl < 0 ? 'text-red-400' : 'text-gray-300')}>{s.name}</td>
                   {s.trades.map(function(t, ti) {
                     return (<td key={ti} className="py-1.5 pr-3">{t === '-' ? <span className="text-gray-700">-</span> :
-                      <span className={t === 'W' ? 'text-green-400 font-semibold' : 'text-red-400 font-semibold'}>{t}</span>}</td>);
+                      <span className={t === 'W' ? 'text-green-400 font-semibold' : 'text-red-400 font-semibold'}>{t} {t === 'W' ? '+' + fmt(reward) : '-' + fmt(risk)}</span>}</td>);
                   })}
                   <td className={"py-1.5 font-bold " + (s.pnl > 0 ? 'text-green-400' : s.pnl < 0 ? 'text-red-400' : 'text-gray-300')}>{s.pnl >= 0 ? '+' : ''}{fmt(s.pnl)}</td>
                 </tr>
@@ -471,8 +509,14 @@ function TradingPlanSummaryGrid(props) {
   );
 }
 
+// Reset Cost only shown when Breached. Activation Cost only shown when
+// Passed, Target Hit, or the account is Funded/Live (implying activation
+// already happened).
 function CostsAndPayoutsCard(props) {
   const account = props.account;
+  const status = props.status;
+  const showActivation = status === 'passed' || status === 'target-hit' || account.accountType !== 'challenge';
+  const showReset = status === 'breached';
   const totalCosts = (parseFloat(account.accountCost) || 0) + (parseFloat(account.activationCost) || 0) + (parseFloat(account.resetCost) || 0);
   const payouts = account.payouts || [];
   const totalPayouts = payouts.reduce(function(s, p) { return s + (parseFloat(p.amount) || 0); }, 0);
@@ -483,10 +527,10 @@ function CostsAndPayoutsCard(props) {
         <Icon name="Receipt" className="h-5 w-5 text-yellow-400" />
         <h2 className="text-lg font-semibold text-white">Costs</h2>
       </div>
-      <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-        <MiniStat label="Account/Challenge Cost" value={fmt(account.accountCost)} color="text-red-400" />
-        <MiniStat label="Activation Cost" value={fmt(account.activationCost)} color="text-red-400" />
-        <MiniStat label="Reset Cost" value={fmt(account.resetCost)} color="text-red-400" />
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+        <MiniStat label="Challenge Cost" value={fmt(account.accountCost)} color="text-red-400" />
+        {showActivation && <MiniStat label="Activation Cost" value={fmt(account.activationCost)} color="text-red-400" />}
+        {showReset && <MiniStat label="Reset Cost" value={fmt(account.resetCost)} color="text-red-400" />}
         <MiniStat label="Total Costs" value={fmt(totalCosts)} color="text-red-400" />
         <MiniStat label="Total Payouts" value={fmt(totalPayouts)} color="text-green-400" />
         <MiniStat label="Net Profitability" value={fmt(profitability)} color={profitability >= 0 ? 'text-green-400' : 'text-red-400'} />
@@ -707,7 +751,7 @@ function MMMJournal(props) {
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [expandedEntry, setExpandedEntry] = useState(null);
   const [newAccount, setNewAccount] = useState(emptyAccountForm);
-  const [newEntry, setNewEntry] = useState(emptyEntryForm());
+  const [newEntry, setNewEntry] = useState(emptyEntryForm(0, 1));
 
   const accountsRef = db.collection('users').doc(user.uid).collection('accounts');
   const entriesRef = db.collection('users').doc(user.uid).collection('entries');
@@ -728,14 +772,21 @@ function MMMJournal(props) {
     return unsub;
   }, [user.uid]);
 
+  // Presence heartbeat: writes own doc, refreshed every 20s while app is open.
+  useEffect(function() {
+    const ref = db.collection('presence').doc(user.uid);
+    const beat = function() {
+      ref.set({ lastSeen: firebase.firestore.FieldValue.serverTimestamp(), email: user.email || '' }, { merge: true }).catch(function() {});
+    };
+    beat();
+    const interval = setInterval(beat, 20000);
+    return function() { clearInterval(interval); };
+  }, [user.uid]);
+
   const activeAccount = accounts.find(function(a) { return a.id === activeAccountId; });
   const accountEntries = entries.filter(function(e) { return e.accountId === activeAccountId; });
   const tra = activeAccount ? getTRA(activeAccount) : TRA_TABLE.average.challenge;
 
-  // Buffer history now honors Drawdown Type:
-  // - static: floor never moves (peak stays fixed at maxDrawdown baseline forever)
-  // - eod: floor trails up to the highest END-OF-DAY closing pool
-  // - intraday: floor trails up to the highest pool value at trade-level granularity
   const calcBufferHistory = function(account, accEntries) {
     if (!account) return [];
     const d = getTRA(account);
@@ -757,7 +808,6 @@ function MMMJournal(props) {
       } else {
         pool = pool + dayPnl;
         if (dtype === 'eod' && pool > peak) peak = pool;
-        // static: peak never updates, stays at maxDD forever
       }
       const floor = peak - maxDD;
       const buffer = pool - floor;
@@ -818,6 +868,7 @@ function MMMJournal(props) {
       drawdownType: newAccount.drawdownType || 'static',
       copiedAccountNumber: newAccount.copiedAccountNumber || '',
       linkedFromId: newAccount.linkedFromId || null,
+      linkedFromLabel: newAccount.linkedFromLabel || '',
       backtestWinRate: newAccount.backtestWinRate ? parseFloat(newAccount.backtestWinRate) : null,
       backtestSampleSize: newAccount.backtestSampleSize ? parseInt(newAccount.backtestSampleSize) : null,
       winRateTier: tier,
@@ -850,6 +901,7 @@ function MMMJournal(props) {
       longRules: challengeAcc.longRules && challengeAcc.longRules.length ? challengeAcc.longRules : [''],
       shortRules: challengeAcc.shortRules && challengeAcc.shortRules.length ? challengeAcc.shortRules : [''],
       linkedFromId: challengeAcc.id,
+      linkedFromLabel: challengeAcc.name + ' #' + challengeAcc.accountNumber,
     }));
     setShowAddAccount(true);
   };
@@ -892,7 +944,8 @@ function MMMJournal(props) {
     const wins = newEntry.trades.filter(function(t) { return t.result === 'win'; }).length;
     const losses = newEntry.trades.filter(function(t) { return t.result === 'loss'; }).length;
     if (newEntry.trades.length >= 3 || wins >= 2 || losses >= 2) return;
-    setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.concat([{ result: 'win', pnl: '', direction: 'long', rulesChecked: [], positionSize: '', riskAmount: '', htfLtf: false }]) }));
+    setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.concat([{ result: 'win', pnl: '', direction: 'long', rulesChecked: [],
+      positionSize: String(microsUnlocked), riskAmount: riskPerTrade.toFixed(2), htfLtf: false }]) }));
   };
   const removeTradeRow = function(idx) {
     setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.filter(function(_, i) { return i !== idx; }) }));
@@ -921,7 +974,7 @@ function MMMJournal(props) {
         noTradeReason: newEntry.noTradeReason, notes: newEntry.noTradeNotes,
         dailyBias: 'neutral', exercised: newEntry.exercised, trades: []
       });
-      setNewEntry(emptyEntryForm());
+      setNewEntry(emptyEntryForm(riskPerTrade, microsUnlocked));
       setShowAddEntry(false);
       return;
     }
@@ -938,7 +991,7 @@ function MMMJournal(props) {
       dailyBias: newEntry.dailyBias, exercised: newEntry.exercised,
       trades: stampedTrades, notes: newEntry.notes, matrixAdherent: matrixAdherent
     });
-    setNewEntry(emptyEntryForm());
+    setNewEntry(emptyEntryForm(riskPerTrade, microsUnlocked));
     setShowAddEntry(false);
   };
 
@@ -953,6 +1006,13 @@ function MMMJournal(props) {
   const lastEntryForActive = accountEntries.length > 0 ? accountEntries.slice().sort(function(a, b) { return new Date(b.date) - new Date(a.date); })[0] : null;
   const daysSinceLastLog = lastEntryForActive ? Math.floor((new Date() - new Date(lastEntryForActive.date)) / (1000 * 60 * 60 * 24)) : null;
 
+  // Accounts eligible to be linked-from, based on the type being created
+  const linkableAccounts = newAccount.accountType === 'funded'
+    ? accounts.filter(function(a) { return a.accountType === 'challenge'; })
+    : newAccount.accountType === 'live'
+      ? accounts.filter(function(a) { return a.accountType === 'funded'; })
+      : [];
+
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
@@ -961,7 +1021,10 @@ function MMMJournal(props) {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">MMM Pro Journal</h1>
-              <p className="text-gray-500 text-sm mt-1">{user.displayName || user.email} - <button onClick={function() { auth.signOut(); }} className="text-red-400 hover:underline">Sign out</button></p>
+              <p className="text-gray-500 text-sm mt-1 flex items-center flex-wrap">
+                <span>{user.displayName || user.email} - <button onClick={function() { auth.signOut(); }} className="text-red-400 hover:underline">Sign out</button></span>
+                <UserCounters />
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <div className="flex bg-gray-900 border border-gray-800 rounded-lg p-1">
@@ -982,6 +1045,7 @@ function MMMJournal(props) {
               <span> - Drawdown Allocated: <span className="text-white">{fmt(activeAccount.maxDrawdown)}</span></span>
               <span> - Drawdown Type: <span className="text-white">{(DRAWDOWN_TYPES.find(function(dt) { return dt.key === (activeAccount.drawdownType || 'static'); }) || {}).short}</span></span>
               <span> - Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span></span>
+              {activeAccount.linkedFromLabel && <span> - Promoted from: <span className="text-yellow-400">{activeAccount.linkedFromLabel}</span></span>}
               {activeAccount.copiedAccountNumber && <span> - Copy of: <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></span>}
               <button onClick={function() { handleDeleteAccount(activeAccount.id); }} className="ml-3 text-red-400/70 hover:text-red-400 text-xs underline">delete account</button>
             </div>
@@ -1057,7 +1121,7 @@ function MMMJournal(props) {
                   <TradingPlanSummaryGrid account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} />
                 </div>
 
-                <CostsAndPayoutsCard account={activeAccount} />
+                <CostsAndPayoutsCard account={activeAccount} status={activeStatus} />
                 <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} />
 
                 <EquityCurveBlock accounts={accounts} entries={entries} />
@@ -1070,7 +1134,7 @@ function MMMJournal(props) {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="Calendar" className="h-5 w-5 text-yellow-400" /><span>Trade History</span></h2>
-                      <button onClick={function() { setNewEntry(emptyEntryForm()); setShowAddEntry(true); }}
+                      <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, microsUnlocked)); setShowAddEntry(true); }}
                         className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-green-400 hover:to-emerald-500 transition">
                         <Icon name="Plus" className="h-3.5 w-3.5" /><span>Daily Log</span>
                       </button>
@@ -1165,10 +1229,25 @@ function MMMJournal(props) {
               <label className="block text-sm text-gray-400 mb-1">Account Type</label>
               <div className="flex gap-2">
                 {ACCOUNT_TYPES.map(function(t) {
-                  return (<button key={t.key} onClick={function() { setNewAccount(Object.assign({}, newAccount, { accountType: t.key })); }} className={"flex-1 py-2.5 rounded-lg text-sm font-medium transition border " + (newAccount.accountType === t.key ? t.activeCls : 'bg-gray-800 text-gray-500 border-gray-700')}>{t.label}</button>);
+                  return (<button key={t.key} onClick={function() { setNewAccount(Object.assign({}, newAccount, { accountType: t.key, linkedFromId: null, linkedFromLabel: '' })); }} className={"flex-1 py-2.5 rounded-lg text-sm font-medium transition border " + (newAccount.accountType === t.key ? t.activeCls : 'bg-gray-800 text-gray-500 border-gray-700')}>{t.label}</button>);
                 })}
               </div>
             </div>
+
+            {(newAccount.accountType === 'funded' || newAccount.accountType === 'live') && (
+              <Field label={"Link to existing " + (newAccount.accountType === 'funded' ? 'Challenge' : 'Funded') + " account (optional)"}>
+                <select value={newAccount.linkedFromId || ''} onChange={function(e) {
+                    const id = e.target.value;
+                    if (!id) { setNewAccount(Object.assign({}, newAccount, { linkedFromId: null, linkedFromLabel: '' })); return; }
+                    const found = linkableAccounts.find(function(a) { return a.id === id; });
+                    setNewAccount(Object.assign({}, newAccount, { linkedFromId: id, linkedFromLabel: found ? found.name + ' #' + found.accountNumber : '' }));
+                  }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
+                  <option value="">Standalone - already passed elsewhere, just logging it here</option>
+                  {linkableAccounts.map(function(a) { return (<option key={a.id} value={a.id}>{a.name} #{a.accountNumber}</option>); })}
+                </select>
+              </Field>
+            )}
+
             <Field label="Account Name"><input value={newAccount.name} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { name: e.target.value })); }} placeholder="e.g. FTMO 100k Challenge" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Starting Balance"><input type="number" value={newAccount.startingBalance} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { startingBalance: e.target.value })); }} placeholder="100000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
@@ -1179,7 +1258,6 @@ function MMMJournal(props) {
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
                 {DRAWDOWN_TYPES.map(function(dt) { return (<option key={dt.key} value={dt.key}>{dt.label}</option>); })}
               </select>
-              <p className="text-xs text-gray-500 mt-1">This decides how your account can be marked breached. See "What does this mean?" above for details.</p>
             </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Profit Target ($)"><input type="number" value={newAccount.profitTarget} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { profitTarget: e.target.value })); }} placeholder="10000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
@@ -1221,7 +1299,7 @@ function MMMJournal(props) {
             <div className="border-t border-gray-800 pt-4">
               <p className="text-sm text-yellow-400 font-medium mb-2 flex items-center gap-1.5"><Icon name="Receipt" className="h-4 w-4" /><span>Costs</span></p>
               <div className="grid grid-cols-3 gap-3">
-                <Field label="Account/Challenge Cost ($)"><input type="number" value={newAccount.accountCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { accountCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+                <Field label="Challenge Cost ($)"><input type="number" value={newAccount.accountCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { accountCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
                 <Field label="Activation Cost ($)"><input type="number" value={newAccount.activationCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { activationCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
                 <Field label="Reset Cost ($)"><input type="number" value={newAccount.resetCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { resetCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
               </div>
@@ -1280,7 +1358,10 @@ function MMMJournal(props) {
                 <DailyTradeMatrix riskUnit={riskPerTrade} rewardRatio={activeAccount.rewardRatio} />
 
                 <div className="space-y-3">
-                  <label className="text-sm text-gray-400">Trades</label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm text-gray-400">Trades</label>
+                    <span className="text-xs text-gray-500">Current RTU: <span className="text-blue-400 font-medium">{fmt(riskPerTrade)}</span> - {microsUnlocked} Micro{microsUnlocked > 1 ? 's' : ''} unlocked</span>
+                  </div>
                   {newEntry.trades.map(function(trade, idx) {
                     const applicableRules = rulesForDirection(trade.direction);
                     const aligned = biasAligns(newEntry.dailyBias, trade.direction);
