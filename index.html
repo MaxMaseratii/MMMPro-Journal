@@ -36,9 +36,6 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
-  // Explicit LOCAL persistence: keeps the session alive across app closes
-  // and reopens, including when launched as a Home Screen shortcut on iPhone
-  // (standalone PWA mode can otherwise run in a separate storage context).
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(function(e) {
     console.error('Auth persistence error:', e);
   });
@@ -69,29 +66,70 @@ const fmt = function(n) {
   return sign + "$" + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
 
-const TRA_TABLE = {
-  scalper:  { label: '70%+ win rate (high-accuracy scalper)', range: '70%+',      challenge: 12, funded: 25, live: 25 },
-  reliable: { label: '55-69% win rate (reliable day trader)', range: '55-69%',    challenge: 18, funded: 35, live: 35 },
-  average:  { label: '45-54% win rate (average - default)',   range: '45-54%',    challenge: 25, funded: 50, live: 50 },
-  trend:    { label: 'Under 45% win rate (trend follower)',   range: '<45%',      challenge: 45, funded: 90, live: 90 },
+// ---------------------------------------------------------------------
+// THE MAXMILLIONS INSTITUTIONAL TRADING CHARTER - CORE RISK ENGINE
+// ---------------------------------------------------------------------
+
+// Phase 1 (Challenge) and Phase 2 (Funded) run Speed Mode at 10% risk.
+// Phase 3 (Live) runs Preservation Mode at 2% risk. Fixed by account type.
+const PHASE_CONFIG = {
+  challenge: { mode: 'Speed Mode',        riskPct: 0.10, label: 'Phase 1 - Evaluation' },
+  funded:    { mode: 'Speed Mode',        riskPct: 0.10, label: 'Phase 2 - Funded Cash Run' },
+  live:      { mode: 'Preservation Mode', riskPct: 0.02, label: 'Phase 3 - Live Consolidation' },
 };
 
-const MIN_SAMPLE_SIZE = 30;
+const FIXED_RR = 2.5;
 
-const determineTier = function(winRate, sampleSize) {
-  const wr = parseFloat(winRate);
-  const ss = parseInt(sampleSize);
-  if (!wr || !ss || ss < MIN_SAMPLE_SIZE) return 'average';
-  if (wr >= 70) return 'scalper';
-  if (wr >= 55) return 'reliable';
-  if (wr >= 45) return 'average';
-  return 'trend';
+function getRiskAmount(accountType, buffer) {
+  const cfg = PHASE_CONFIG[accountType] || PHASE_CONFIG.challenge;
+  return Math.max(buffer, 0) * cfg.riskPct;
+}
+
+// Capital Sizing Lock: your available Capital chooses your contract tier.
+// Nano requires $100, Micro requires $1,000, Mini requires $10,000.
+const CAPITAL_TIERS = [
+  { key: 'nano',  floor: 100,   label: 'Nano' },
+  { key: 'micro', floor: 1000,  label: 'Micro' },
+  { key: 'mini',  floor: 10000, label: 'Mini' },
+];
+
+function getContractPlan(buffer) {
+  const b = Math.max(buffer, 0);
+  if (b < 100) return { tier: 'none', count: 0, label: 'Below $100 - no trade unlocked' };
+  let tier = CAPITAL_TIERS[0];
+  for (let i = CAPITAL_TIERS.length - 1; i >= 0; i--) {
+    if (b >= CAPITAL_TIERS[i].floor) { tier = CAPITAL_TIERS[i]; break; }
+  }
+  const count = Math.floor(b / tier.floor);
+  return { tier: tier.key, count: count, label: count + ' ' + tier.label + (count > 1 ? 's' : '') };
+}
+
+// Market specs. Nano and Micro point values are per the Charter.
+// Mini point values are the standard, long-established CME E-mini
+// multipliers (NQ/ES/RTY/YM), which scale the same 10x pattern.
+const MARKET_SPECS = {
+  nasdaq100:   { label: 'Nasdaq 100',   nanoTicker: 'NNQ',  nanoPt: 0.20, microTicker: 'MNQ', microPt: 2.00, miniTicker: 'NQ',  miniPt: 20.00 },
+  sp500:       { label: 'S&P 500',      nanoTicker: 'NES',  nanoPt: 0.50, microTicker: 'MES', microPt: 5.00, miniTicker: 'ES',  miniPt: 50.00 },
+  russell2000: { label: 'Russell 2000', nanoTicker: 'N2K',  nanoPt: 0.50, microTicker: 'M2K', microPt: 5.00, miniTicker: 'RTY', miniPt: 50.00 },
+  dow:         { label: 'Dow Jones',    nanoTicker: 'NDOW', nanoPt: 0.05, microTicker: 'MYM', microPt: 0.50, miniTicker: 'YM',  miniPt: 5.00 },
 };
 
-const getTRA = function(account) {
-  const tier = TRA_TABLE[account.winRateTier] ? account.winRateTier : 'average';
-  return TRA_TABLE[tier][account.accountType] || TRA_TABLE[tier].average;
-};
+// Locked Maximum Stop Loss: since capital tiers and point-values scale by
+// the same 10x factor, the stop-loss ceiling in POINTS never changes for
+// a given market and phase, no matter how large the account grows.
+function getMaxStopPoints(marketKey, accountType) {
+  const cfg = PHASE_CONFIG[accountType] || PHASE_CONFIG.challenge;
+  const spec = MARKET_SPECS[marketKey] || MARKET_SPECS.nasdaq100;
+  return cfg.riskPct * (100 / spec.nanoPt);
+}
+
+function getTickerForTier(marketKey, tier) {
+  const spec = MARKET_SPECS[marketKey] || MARKET_SPECS.nasdaq100;
+  if (tier === 'nano') return spec.nanoTicker;
+  if (tier === 'micro') return spec.microTicker;
+  if (tier === 'mini') return spec.miniTicker;
+  return '-';
+}
 
 const computeStatus = function(account, buffer, totalPnl) {
   const target = parseFloat(account.profitTarget) || 0;
@@ -143,15 +181,22 @@ const DRAWDOWN_TYPES = [
   { key: 'intraday', short: 'Intraday Trailing', label: 'Intraday Trailing (trails every trade)' },
 ];
 
+const MARKET_OPTIONS = [
+  { key: 'nasdaq100', label: 'Nasdaq 100' },
+  { key: 'sp500', label: 'S&P 500' },
+  { key: 'russell2000', label: 'Russell 2000' },
+  { key: 'dow', label: 'Dow Jones' },
+];
+
 const emptyAccountForm = {
-  name: '', startingBalance: '', maxDrawdown: '', profitTarget: '', rewardRatio: '2',
-  accountType: 'challenge', drawdownType: 'static', copiedAccountNumber: '', linkedFromId: null, linkedFromLabel: '',
-  backtestWinRate: '', backtestSampleSize: '', winRateTier: 'average',
+  name: '', startingBalance: '', maxDrawdown: '', profitTarget: '',
+  accountType: 'challenge', market: 'nasdaq100', drawdownType: 'static',
+  copiedAccountNumber: '', linkedFromId: null, linkedFromLabel: '',
   strategyName: '', longRules: [''], shortRules: [''],
   accountCost: '', activationCost: '', resetCost: ''
 };
 
-const emptyEntryForm = function(defaultRisk, defaultMicros) {
+const emptyEntryForm = function(defaultRisk, defaultContracts) {
   return {
     date: new Date().toISOString().split('T')[0],
     tradedToday: 'yes',
@@ -160,7 +205,7 @@ const emptyEntryForm = function(defaultRisk, defaultMicros) {
     dailyBias: 'neutral',
     exercised: false,
     trades: [{ result: 'win', pnl: '', direction: 'long', rulesChecked: [],
-      positionSize: defaultMicros ? String(defaultMicros) : '',
+      positionSize: defaultContracts ? String(defaultContracts) : '',
       riskAmount: defaultRisk ? defaultRisk.toFixed(2) : '', htfLtf: false }],
     notes: ''
   };
@@ -220,9 +265,6 @@ function AuthScreen() {
   );
 }
 
-// White dot = total registered users (presence docs ever created). Green dot
-// = users active in the last 60s. Auto-retries on listener error instead of
-// silently dying (previous version would flash once then go blank forever).
 function UserCounters() {
   const [total, setTotal] = useState(null);
   const [online, setOnline] = useState(null);
@@ -281,9 +323,10 @@ function SystemExplainer() {
         <Icon name="Zap" className="h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0" />
         <div className="flex-1">
           <p className="text-sm text-yellow-100/80">
-            <span className="text-yellow-400 font-semibold">System: </span>
-            <span className="text-white font-medium">TRA</span> is set by backtested win rate. <span className="text-white font-medium">RTU</span> = buffer / TRA.
-            <span className="text-white font-medium"> DRT</span> caps you at 2 RTU lost or 2 RTU won, max 3 trades/day.
+            <span className="text-yellow-400 font-semibold">Charter: </span>
+            Risk is fixed by Phase - <span className="text-white font-medium">10% Speed Mode</span> (Challenge / Funded) or
+            <span className="text-white font-medium"> 2% Preservation Mode</span> (Live). Every trade targets a locked
+            <span className="text-white font-medium"> 2.5:1</span> reward-to-risk. Max 3 trades/day, tie-breaker mandatory on a 1-1 split.
             <span className="text-yellow-400 underline ml-1">{open ? 'Hide details' : 'What does this mean?'}</span>
           </p>
         </div>
@@ -292,20 +335,20 @@ function SystemExplainer() {
       {open && (
         <div className="px-4 pb-4 space-y-3 text-sm text-gray-300 border-t border-yellow-500/20 pt-3">
           <div>
-            <p className="text-yellow-400 font-semibold mb-1">TRA - Total RTU Allocation</p>
-            <p className="text-gray-400">How many "lives" your account has before it's fully exhausted. Set once when you add the account, based on your win rate (30+ backtested trades).</p>
+            <p className="text-yellow-400 font-semibold mb-1">Capital = Drawdown Buffer</p>
+            <p className="text-gray-400">Your Capital is strictly your drawdown buffer, not the nominal account size. Risk is calculated as a fixed percentage of this buffer.</p>
           </div>
           <div>
-            <p className="text-blue-400 font-semibold mb-1">RTU - Risk Tolerance Unit</p>
-            <p className="text-gray-400">The dollar cost of one single life. RTU = current buffer / TRA. Recalculates automatically as your buffer changes.</p>
+            <p className="text-blue-400 font-semibold mb-1">Capital Sizing Lock</p>
+            <p className="text-gray-400">You don't choose your contract size - your Capital does. $100 unlocks 1 Nano, $1,000 unlocks 1 Micro, $10,000 unlocks 1 Mini. The base unit is $10 of risk per Nano.</p>
           </div>
           <div>
-            <p className="text-red-400 font-semibold mb-1">DRT - Daily Risk Tolerance</p>
-            <p className="text-gray-400">Your daily circuit breaker, measured in RTUs. 2 RTU lost or 2 RTU won, max 3 trades either way.</p>
+            <p className="text-red-400 font-semibold mb-1">Locked Maximum Stop Loss</p>
+            <p className="text-gray-400">Because capital tiers and point-values scale together, your max stop in points never changes for a market and phase, no matter how large the account grows. If the chart needs a wider stop than your budget, you skip the trade.</p>
           </div>
           <div>
-            <p className="text-purple-400 font-semibold mb-1">Drawdown Type</p>
-            <p className="text-gray-400">Static: fixed loss limit forever. EOD Trailing: loss limit follows your highest end-of-day close. Intraday Trailing: follows your highest balance at any point.</p>
+            <p className="text-purple-400 font-semibold mb-1">Daily Execution Matrix</p>
+            <p className="text-gray-400">2 losses = circuit breaker, day over. 2 wins = greed filter, day over. A 1-1 split forces a mandatory Trade 3 tie-breaker - you cannot walk away early on a tie.</p>
           </div>
         </div>
       )}
@@ -367,11 +410,11 @@ function AccountGroupNav(props) {
 
 function RiskOfRuinCard(props) {
   const currentBuffer = props.currentBuffer;
-  const tra = props.tra;
+  const divisor = props.divisor;
   const accountType = props.accountType;
-  const checkpoints = [5, 10, 15, 20, 25, 30, 40, 50].filter(function(n) { return n <= tra * 2.5; });
+  const checkpoints = [5, 10, 15, 20, 25, 30, 40, 50].filter(function(n) { return n <= divisor * 2.5; });
   const rows = checkpoints.map(function(n) {
-    const remaining = currentBuffer * Math.pow(1 - 1 / tra, n);
+    const remaining = currentBuffer * Math.pow(1 - 1 / divisor, n);
     const pctRemaining = currentBuffer > 0 ? (remaining / currentBuffer) * 100 : 0;
     const recoveryPct = remaining > 0 ? ((currentBuffer - remaining) / remaining) * 100 : null;
     return { n: n, remaining: remaining, pctRemaining: pctRemaining, recoveryPct: recoveryPct };
@@ -383,7 +426,7 @@ function RiskOfRuinCard(props) {
         <Icon name="TrendingDown" className="h-5 w-5 text-red-400" />
         <h2 className="text-lg font-semibold text-white">Risk of Ruin - Consecutive Loss Projection &amp; Gain to Recover</h2>
       </div>
-      <p className="text-xs text-gray-500 mb-4">Hypothetical: if every trade lost at the current RTU (buffer / {tra} TRA).</p>
+      <p className="text-xs text-gray-500 mb-4">Hypothetical: if every trade lost at the fixed Charter risk% for this phase.</p>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -419,7 +462,7 @@ function RiskOfRuinCard(props) {
         </table>
       </div>
       <p className="text-xs text-gray-600 mt-3">
-        {accountType === 'challenge' ? 'Challenge uses a tighter TRA to clear the target faster.' : 'Funded and Live use a wider TRA to protect real capital.'}
+        {accountType === 'live' ? 'Live runs Preservation Mode (2%) - the buffer erodes much slower, protecting real capital.' : 'Challenge and Funded run Speed Mode (10%) - faster progress, faster erosion under a bad streak.'}
       </p>
     </div>
   );
@@ -427,8 +470,7 @@ function RiskOfRuinCard(props) {
 
 function DailyTradeMatrix(props) {
   const risk = props.riskUnit;
-  const rr = parseFloat(props.rewardRatio) || 2;
-  const reward = risk * rr;
+  const reward = risk * FIXED_RR;
   const scenarios = [
     { name: 'A - Perfect',  trades: ['W', 'W', '-'], pnl: 2 * reward },
     { name: 'B - Recovery', trades: ['L', 'W', 'W'], pnl: -risk + 2 * reward },
@@ -442,7 +484,7 @@ function DailyTradeMatrix(props) {
         <Icon name="LayoutGrid" className="h-4 w-4 text-yellow-400" />
         <h3 className="text-sm font-semibold text-white">Daily Trade Execution Matrix - your actual risk</h3>
       </div>
-      <p className="text-xs text-gray-500 mb-3">Max 3 trades - stop at 2 wins or 2 losses. Built from this account's real RTU ({fmt(risk)}) and {rr}:1 reward ({fmt(reward)}).</p>
+      <p className="text-xs text-gray-500 mb-3">Max 3 trades - stop at 2 wins or 2 losses, mandatory Trade 3 on a tie. Built from this account's real risk ({fmt(risk)}) at locked 2.5:1 reward ({fmt(reward)}).</p>
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
@@ -508,8 +550,7 @@ function MiniStat(props) {
 function TradingPlanSummaryGrid(props) {
   const account = props.account;
   const rtu = props.riskPerTrade;
-  const rr = parseFloat(account.rewardRatio) || 2;
-  const winPerTrade = rtu * rr;
+  const winPerTrade = rtu * FIXED_RR;
   const minWinRate = (rtu + winPerTrade) > 0 ? (rtu / (rtu + winPerTrade)) * 100 : 0;
   const winsToTarget = winPerTrade > 0 ? Math.ceil((parseFloat(account.profitTarget) || 0) / winPerTrade) : 0;
   const remaining = (parseFloat(account.profitTarget) || 0) - props.totalPnl;
@@ -517,13 +558,13 @@ function TradingPlanSummaryGrid(props) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       <MiniStat label="Win / Trade" value={fmt(winPerTrade)} color="text-green-400" />
-      <MiniStat label="RR Ratio" value={rr + ":1"} color="text-purple-400" />
+      <MiniStat label="RR Ratio (locked)" value={FIXED_RR + ":1"} color="text-purple-400" />
       <MiniStat label="Breakeven Win Rate" value={minWinRate.toFixed(1) + "%"} color="text-purple-400" />
       <MiniStat label="Wins to Hit Target" value={winsToTarget + " wins"} color="text-purple-400" />
       <MiniStat label="Max Trades / Day" value="3" color="text-white" />
       <MiniStat label="Max Losses / Day" value="2" color="text-red-400" />
       <MiniStat label="Remaining to Target" value={fmt(Math.max(0, remaining))} color="text-yellow-400" />
-      <MiniStat label="Drawdown Allocated" value={fmt(account.maxDrawdown)} color="text-yellow-400" />
+      <MiniStat label="Capital (Buffer)" value={fmt(account.maxDrawdown)} color="text-yellow-400" />
     </div>
   );
 }
@@ -636,8 +677,8 @@ function computeTradeAdherence(trade, entry, account) {
   if (trade.riskAmount !== '' && trade.riskAmount !== undefined && trade.expectedRisk) {
     factors.push(Math.abs(parseFloat(trade.riskAmount)) <= trade.expectedRisk * 1.1 ? 1 : 0);
   }
-  if (trade.positionSize !== '' && trade.positionSize !== undefined && trade.expectedMicros) {
-    factors.push(parseFloat(trade.positionSize) <= trade.expectedMicros ? 1 : 0);
+  if (trade.positionSize !== '' && trade.positionSize !== undefined && trade.expectedContracts) {
+    factors.push(parseFloat(trade.positionSize) <= trade.expectedContracts ? 1 : 0);
   }
   if (typeof entry.matrixAdherent === 'boolean') factors.push(entry.matrixAdherent ? 1 : 0);
   if (typeof trade.htfLtf === 'boolean') factors.push(trade.htfLtf ? 1 : 0);
@@ -802,11 +843,9 @@ function MMMJournal(props) {
 
   const activeAccount = accounts.find(function(a) { return a.id === activeAccountId; });
   const accountEntries = entries.filter(function(e) { return e.accountId === activeAccountId; });
-  const tra = activeAccount ? getTRA(activeAccount) : TRA_TABLE.average.challenge;
 
   const calcBufferHistory = function(account, accEntries) {
     if (!account) return [];
-    const d = getTRA(account);
     const dtype = account.drawdownType || 'static';
     const maxDD = parseFloat(account.maxDrawdown) || 0;
     const traded = accEntries.filter(function(e) { return e.tradedToday !== 'no'; });
@@ -828,17 +867,19 @@ function MMMJournal(props) {
       }
       const floor = peak - maxDD;
       const buffer = pool - floor;
-      history.push({ date: entry.date, buffer: buffer, pnl: dayPnl, riskPerTrade: Math.max(buffer, 0) / d });
+      history.push({ date: entry.date, buffer: buffer, pnl: dayPnl });
     });
     return history;
   };
 
   const bufferHistory = activeAccount ? calcBufferHistory(activeAccount, accountEntries) : [];
   const currentBuffer = bufferHistory.length > 0 ? bufferHistory[bufferHistory.length - 1].buffer : (activeAccount ? parseFloat(activeAccount.maxDrawdown) || 0 : 0);
-  const riskPerTrade = Math.max(currentBuffer, 0) / tra;
-  const microsUnlocked = Math.max(1, Math.floor(Math.max(currentBuffer, 0) / 1000));
-  const nextTierAt = (microsUnlocked + 1) * 1000;
-  const distToNextTier = nextTierAt - currentBuffer;
+  const activeCfg = activeAccount ? (PHASE_CONFIG[activeAccount.accountType] || PHASE_CONFIG.challenge) : PHASE_CONFIG.challenge;
+  const riskPerTrade = getRiskAmount(activeAccount ? activeAccount.accountType : 'challenge', currentBuffer);
+  const contractPlan = getContractPlan(currentBuffer);
+  const maxStopPoints = activeAccount ? getMaxStopPoints(activeAccount.market || 'nasdaq100', activeAccount.accountType) : 0;
+  const activeTicker = activeAccount ? getTickerForTier(activeAccount.market || 'nasdaq100', contractPlan.tier) : '-';
+  const ruinDivisor = activeCfg.riskPct > 0 ? 1 / activeCfg.riskPct : 10;
 
   const tradedAccountEntries = accountEntries.filter(function(e) { return e.tradedToday !== 'no'; });
   const totalPnl = tradedAccountEntries.reduce(function(sum, e) { return sum + e.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0); }, 0);
@@ -872,7 +913,6 @@ function MMMJournal(props) {
 
   const handleAddAccount = async function() {
     if (!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown) return;
-    const tier = determineTier(newAccount.backtestWinRate, newAccount.backtestSampleSize);
     const existingOfType = accounts.filter(function(a) { return a.accountType === newAccount.accountType; }).length;
     const doc = await accountsRef.add({
       name: newAccount.name,
@@ -880,15 +920,12 @@ function MMMJournal(props) {
       startingBalance: parseFloat(newAccount.startingBalance),
       maxDrawdown: parseFloat(newAccount.maxDrawdown),
       profitTarget: parseFloat(newAccount.profitTarget) || 0,
-      rewardRatio: parseFloat(newAccount.rewardRatio) || 2,
       accountType: newAccount.accountType,
+      market: newAccount.market || 'nasdaq100',
       drawdownType: newAccount.drawdownType || 'static',
       copiedAccountNumber: newAccount.copiedAccountNumber || '',
       linkedFromId: newAccount.linkedFromId || null,
       linkedFromLabel: newAccount.linkedFromLabel || '',
-      backtestWinRate: newAccount.backtestWinRate ? parseFloat(newAccount.backtestWinRate) : null,
-      backtestSampleSize: newAccount.backtestSampleSize ? parseInt(newAccount.backtestSampleSize) : null,
-      winRateTier: tier,
       strategyName: newAccount.strategyName || '',
       longRules: newAccount.longRules.filter(function(r) { return r && r.trim(); }),
       shortRules: newAccount.shortRules.filter(function(r) { return r && r.trim(); }),
@@ -907,13 +944,10 @@ function MMMJournal(props) {
   const handleStartFundedFromChallenge = function(challengeAcc) {
     setNewAccount(Object.assign({}, emptyAccountForm, {
       accountType: 'funded',
+      market: challengeAcc.market || 'nasdaq100',
       name: challengeAcc.name.replace(/challenge/i, '').trim() + ' - Funded',
       startingBalance: challengeAcc.startingBalance,
-      rewardRatio: challengeAcc.rewardRatio || 2,
       drawdownType: challengeAcc.drawdownType || 'static',
-      backtestWinRate: challengeAcc.backtestWinRate || '',
-      backtestSampleSize: challengeAcc.backtestSampleSize || '',
-      winRateTier: challengeAcc.winRateTier || 'average',
       strategyName: challengeAcc.strategyName || '',
       longRules: challengeAcc.longRules && challengeAcc.longRules.length ? challengeAcc.longRules : [''],
       shortRules: challengeAcc.shortRules && challengeAcc.shortRules.length ? challengeAcc.shortRules : [''],
@@ -957,12 +991,15 @@ function MMMJournal(props) {
     setNewAccount(Object.assign({}, newAccount, updated));
   };
 
+  const filledTrades = newEntry.trades.filter(function(t) { return t.pnl !== ''; });
+  const filledWins = filledTrades.filter(function(t) { return t.result === 'win'; }).length;
+  const filledLosses = filledTrades.filter(function(t) { return t.result === 'loss'; }).length;
+  const isTie = filledTrades.length === 2 && filledWins === 1 && filledLosses === 1;
+
   const addTradeRow = function() {
-    const wins = newEntry.trades.filter(function(t) { return t.result === 'win'; }).length;
-    const losses = newEntry.trades.filter(function(t) { return t.result === 'loss'; }).length;
-    if (newEntry.trades.length >= 3 || wins >= 2 || losses >= 2) return;
+    if (newEntry.trades.length >= 3 || filledWins >= 2 || filledLosses >= 2) return;
     setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.concat([{ result: 'win', pnl: '', direction: 'long', rulesChecked: [],
-      positionSize: String(microsUnlocked), riskAmount: riskPerTrade.toFixed(2), htfLtf: false }]) }));
+      positionSize: String(contractPlan.count), riskAmount: riskPerTrade.toFixed(2), htfLtf: false }]) }));
   };
   const removeTradeRow = function(idx) {
     setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.filter(function(_, i) { return i !== idx; }) }));
@@ -991,34 +1028,28 @@ function MMMJournal(props) {
         noTradeReason: newEntry.noTradeReason, notes: newEntry.noTradeNotes,
         dailyBias: 'neutral', exercised: newEntry.exercised, trades: []
       });
-      setNewEntry(emptyEntryForm(riskPerTrade, microsUnlocked));
+      setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count));
       setShowAddEntry(false);
       return;
     }
-    const validTrades = newEntry.trades.filter(function(t) { return t.pnl !== ''; });
-    if (validTrades.length === 0) return;
-    const wins = validTrades.filter(function(t) { return t.result === 'win'; }).length;
-    const losses = validTrades.filter(function(t) { return t.result === 'loss'; }).length;
-    const matrixAdherent = validTrades.length <= 3 && wins <= 2 && losses <= 2;
-    const stampedTrades = validTrades.map(function(t) {
-      return Object.assign({}, t, { expectedRisk: riskPerTrade, expectedMicros: microsUnlocked });
+    if (filledTrades.length === 0) return;
+    if (isTie) return;
+    const wins = filledTrades.filter(function(t) { return t.result === 'win'; }).length;
+    const losses = filledTrades.filter(function(t) { return t.result === 'loss'; }).length;
+    const matrixAdherent = filledTrades.length <= 3 && wins <= 2 && losses <= 2 && !(filledTrades.length === 2 && wins === 1 && losses === 1);
+    const stampedTrades = filledTrades.map(function(t) {
+      return Object.assign({}, t, { expectedRisk: riskPerTrade, expectedContracts: contractPlan.count });
     });
     await entriesRef.add({
       accountId: activeAccountId, date: newEntry.date, tradedToday: 'yes',
       dailyBias: newEntry.dailyBias, exercised: newEntry.exercised,
       trades: stampedTrades, notes: newEntry.notes, matrixAdherent: matrixAdherent
     });
-    setNewEntry(emptyEntryForm(riskPerTrade, microsUnlocked));
+    setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count));
     setShowAddEntry(false);
   };
 
   const handleDeleteEntry = async function(id) { await entriesRef.doc(id).delete(); };
-
-  const previewTier = determineTier(newAccount.backtestWinRate, newAccount.backtestSampleSize);
-  const previewTRA = TRA_TABLE[previewTier][newAccount.accountType] || TRA_TABLE[previewTier].average;
-  const sampleTooSmall = newAccount.backtestSampleSize && parseInt(newAccount.backtestSampleSize) < MIN_SAMPLE_SIZE;
-  const entryWins = newEntry.trades.filter(function(t) { return t.result === 'win'; }).length;
-  const entryLosses = newEntry.trades.filter(function(t) { return t.result === 'loss'; }).length;
 
   const lastEntryForActive = accountEntries.length > 0 ? accountEntries.slice().sort(function(a, b) { return new Date(b.date) - new Date(a.date); })[0] : null;
   const daysSinceLastLog = lastEntryForActive ? Math.floor((new Date() - new Date(lastEntryForActive.date)) / (1000 * 60 * 60 * 24)) : null;
@@ -1028,6 +1059,9 @@ function MMMJournal(props) {
     : newAccount.accountType === 'live'
       ? accounts.filter(function(a) { return a.accountType === 'funded'; })
       : [];
+
+  const newAccountPreviewCfg = PHASE_CONFIG[newAccount.accountType] || PHASE_CONFIG.challenge;
+  const newAccountMaxStop = getMaxStopPoints(newAccount.market, newAccount.accountType);
 
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
@@ -1058,8 +1092,9 @@ function MMMJournal(props) {
           {activeAccount && (
             <div className="text-sm text-gray-500 bg-black/30 rounded-lg px-4 py-2.5">
               <span>Start: <span className="text-white">{fmt(activeAccount.startingBalance)}</span></span>
-              <span> - Drawdown Allocated: <span className="text-white">{fmt(activeAccount.maxDrawdown)}</span></span>
+              <span> - Capital (Buffer): <span className="text-white">{fmt(activeAccount.maxDrawdown)}</span></span>
               <span> - Drawdown Type: <span className="text-white">{(DRAWDOWN_TYPES.find(function(dt) { return dt.key === (activeAccount.drawdownType || 'static'); }) || {}).short}</span></span>
+              <span> - Market: <span className="text-white">{(MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label}</span></span>
               <span> - Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span></span>
               {activeAccount.linkedFromLabel && <span> - Promoted from: <span className="text-yellow-400">{activeAccount.linkedFromLabel}</span></span>}
               {activeAccount.copiedAccountNumber && <span> - Copy of: <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></span>}
@@ -1106,8 +1141,8 @@ function MMMJournal(props) {
                 )}
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  <StatCard label="Current Buffer" value={fmt(currentBuffer)} icon="Shield" color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
-                  <StatCard label="RTU - Risk Per Trade" value={fmt(riskPerTrade)} icon="Target" color="text-blue-400" sub={tra + " TRA"} />
+                  <StatCard label="Current Capital (Buffer)" value={fmt(currentBuffer)} icon="Shield" color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
+                  <StatCard label="Risk Per Trade" value={fmt(riskPerTrade)} icon="Target" color="text-blue-400" sub={activeCfg.mode + " (" + (activeCfg.riskPct * 100) + "%)"} />
                   <StatCard label="Total P&L" value={fmt(totalPnl)} icon={totalPnl >= 0 ? "TrendingUp" : "TrendingDown"} color={totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
                   <StatCard label="Win Rate" value={winRate.toFixed(1) + "%"} icon="DollarSign" color={winRate >= 50 ? 'text-green-400' : 'text-red-400'} sub={winTrades + "W / " + lossTrades + "L"} />
                 </div>
@@ -1118,21 +1153,21 @@ function MMMJournal(props) {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className={"text-xs px-2.5 py-1 rounded-full font-medium border " + STATUS_STYLES[activeStatus].cls}>{STATUS_STYLES[activeStatus].label}</span>
                       <span className={"text-xs px-2.5 py-1 rounded-full font-medium " + ACCOUNT_BADGE_CLS[activeAccount.accountType] + " border border-current/30"}>
-                        {(function() { const f = ACCOUNT_TYPES.find(function(t) { return t.key === activeAccount.accountType; }); return f ? f.label : ''; })()} - {tra} TRA
+                        {activeCfg.label}
                       </span>
                       <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
-                        Win Rate: {TRA_TABLE[activeAccount.winRateTier || 'average'].range}{activeAccount.backtestSampleSize ? " (" + activeAccount.backtestSampleSize + " trades)" : ' (default)'}
+                        {activeCfg.mode} - {(activeCfg.riskPct * 100)}% Risk
                       </span>
                       <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
-                        {(DRAWDOWN_TYPES.find(function(dt) { return dt.key === (activeAccount.drawdownType || 'static'); }) || {}).short}
+                        {(MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label} - {activeTicker}
                       </span>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-                    <MiniStat label="Contracts Unlocked" value={microsUnlocked + " Micro" + (microsUnlocked > 1 ? 's' : '')} color="text-yellow-400" />
-                    <MiniStat label="RTU (Max Risk / Trade)" value={fmt(riskPerTrade)} color="text-blue-400" />
-                    <MiniStat label="Daily Target (2 wins)" value={fmt(riskPerTrade * (parseFloat(activeAccount.rewardRatio) || 2) * 2)} color="text-green-400" />
-                    <MiniStat label="Next Tier" value={fmt(Math.max(0, distToNextTier))} color="text-purple-400" />
+                    <MiniStat label="Contracts Unlocked" value={contractPlan.label} color="text-yellow-400" />
+                    <MiniStat label="Risk / Trade" value={fmt(riskPerTrade)} color="text-blue-400" />
+                    <MiniStat label="Locked Max Stop" value={maxStopPoints.toFixed(0) + " pts"} color="text-red-400" />
+                    <MiniStat label="Daily Target (2 wins)" value={fmt(riskPerTrade * FIXED_RR * 2)} color="text-green-400" />
                   </div>
                   <TradingPlanSummaryGrid account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} />
                 </div>
@@ -1150,7 +1185,7 @@ function MMMJournal(props) {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="Calendar" className="h-5 w-5 text-yellow-400" /><span>Trade History</span></h2>
-                      <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, microsUnlocked)); setShowAddEntry(true); }}
+                      <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setShowAddEntry(true); }}
                         className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-green-400 hover:to-emerald-500 transition">
                         <Icon name="Plus" className="h-3.5 w-3.5" /><span>Daily Log</span>
                       </button>
@@ -1230,7 +1265,7 @@ function MMMJournal(props) {
 
                 <PerAccountBreakdown accounts={accounts} entries={entries} />
 
-                <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} tra={tra} accountType={activeAccount.accountType} />
+                <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} divisor={ruinDivisor} accountType={activeAccount.accountType} />
                 <StrategyCard account={activeAccount} />
               </React.Fragment>
             )}
@@ -1242,12 +1277,13 @@ function MMMJournal(props) {
         <Modal onClose={function() { setShowAddAccount(false); }} title={newAccount.linkedFromId ? "Start Funded Account" : "Add Trading Account"} size="lg">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Account Type</label>
+              <label className="block text-sm text-gray-400 mb-1">Account Type (Phase)</label>
               <div className="flex gap-2">
                 {ACCOUNT_TYPES.map(function(t) {
                   return (<button key={t.key} onClick={function() { setNewAccount(Object.assign({}, newAccount, { accountType: t.key, linkedFromId: null, linkedFromLabel: '' })); }} className={"flex-1 py-2.5 rounded-lg text-sm font-medium transition border " + (newAccount.accountType === t.key ? t.activeCls : 'bg-gray-800 text-gray-500 border-gray-700')}>{t.label}</button>);
                 })}
               </div>
+              <p className="text-xs text-gray-500 mt-1">{PHASE_CONFIG[newAccount.accountType].label} - {PHASE_CONFIG[newAccount.accountType].mode} ({(PHASE_CONFIG[newAccount.accountType].riskPct * 100)}% risk)</p>
             </div>
 
             {(newAccount.accountType === 'funded' || newAccount.accountType === 'live') && (
@@ -1264,31 +1300,34 @@ function MMMJournal(props) {
               </Field>
             )}
 
-            <Field label="Account Name"><input value={newAccount.name} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { name: e.target.value })); }} placeholder="e.g. FTMO 100k Challenge" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+            <Field label="Account Name"><input value={newAccount.name} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { name: e.target.value })); }} placeholder="e.g. Phidias 1" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Starting Balance"><input type="number" value={newAccount.startingBalance} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { startingBalance: e.target.value })); }} placeholder="100000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
-              <Field label="Drawdown Allocated ($)"><input type="number" value={newAccount.maxDrawdown} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { maxDrawdown: e.target.value })); }} placeholder="5000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+              <Field label="Capital / Buffer ($)"><input type="number" value={newAccount.maxDrawdown} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { maxDrawdown: e.target.value })); }} placeholder="500" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
             </div>
-            <Field label="Drawdown Type">
-              <select value={newAccount.drawdownType} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { drawdownType: e.target.value })); }}
-                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
-                {DRAWDOWN_TYPES.map(function(dt) { return (<option key={dt.key} value={dt.key}>{dt.label}</option>); })}
-              </select>
-            </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Profit Target ($)"><input type="number" value={newAccount.profitTarget} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { profitTarget: e.target.value })); }} placeholder="10000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
-              <Field label="Reward:Risk Ratio"><input type="number" step="0.1" value={newAccount.rewardRatio} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { rewardRatio: e.target.value })); }} placeholder="2" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+              <Field label="Drawdown Type">
+                <select value={newAccount.drawdownType} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { drawdownType: e.target.value })); }}
+                  className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
+                  {DRAWDOWN_TYPES.map(function(dt) { return (<option key={dt.key} value={dt.key}>{dt.label}</option>); })}
+                </select>
+              </Field>
+              <Field label="Market">
+                <select value={newAccount.market} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { market: e.target.value })); }}
+                  className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
+                  {MARKET_OPTIONS.map(function(m) { return (<option key={m.key} value={m.key}>{m.label}</option>); })}
+                </select>
+              </Field>
             </div>
-            <div className="border-t border-gray-800 pt-4">
-              <p className="text-sm text-yellow-400 font-medium mb-1 flex items-center gap-1.5"><Icon name="BarChart3" className="h-4 w-4" /><span>Strategy Backtest - tell us your win rate</span></p>
-              <p className="text-xs text-gray-500 mb-3">Enter your strategy's win rate from backtesting or live history. This decides how many risk units (TRA) your account gets - a higher win rate needs fewer units, since long losing streaks are less likely. You need at least {MIN_SAMPLE_SIZE} backtested trades for this to count. With fewer, we default to a cautious 45-54% win rate.</p>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Backtest Win Rate (%)"><input type="number" value={newAccount.backtestWinRate} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { backtestWinRate: e.target.value })); }} placeholder="e.g. 58" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
-                <Field label="Sample Size"><input type="number" value={newAccount.backtestSampleSize} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { backtestSampleSize: e.target.value })); }} placeholder={"min " + MIN_SAMPLE_SIZE} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
-              </div>
-              {sampleTooSmall && (<p className="text-xs text-orange-400 mt-2 flex items-center gap-1.5"><Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>Sample below {MIN_SAMPLE_SIZE} trades - defaulting to average tier.</span></p>)}
-              <div className="mt-3 bg-black/40 border border-gray-800 rounded-lg p-3 flex items-center justify-between"><span className="text-xs text-gray-400">This account will use:</span><span className="text-sm font-semibold text-yellow-400">{TRA_TABLE[previewTier].range} Win Rate - {previewTRA} TRA</span></div>
+            <Field label="Profit Target ($)"><input type="number" value={newAccount.profitTarget} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { profitTarget: e.target.value })); }} placeholder="1500" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+
+            <div className="mt-1 bg-black/40 border border-gray-800 rounded-lg p-3 grid grid-cols-2 gap-2 text-xs">
+              <div className="text-gray-400">Phase: <span className="text-yellow-400 font-medium">{newAccountPreviewCfg.label}</span></div>
+              <div className="text-gray-400">Mode: <span className="text-yellow-400 font-medium">{newAccountPreviewCfg.mode} ({(newAccountPreviewCfg.riskPct * 100)}%)</span></div>
+              <div className="text-gray-400">Locked Max Stop: <span className="text-red-400 font-medium">{newAccountMaxStop.toFixed(0)} points</span></div>
+              <div className="text-gray-400">RR Target: <span className="text-purple-400 font-medium">{FIXED_RR}:1 (locked)</span></div>
             </div>
+
             <div className="border-t border-gray-800 pt-4 space-y-4">
               <Field label="Strategy Name"><input value={newAccount.strategyName} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { strategyName: e.target.value })); }} placeholder="e.g. MMM Order Flow Breakout" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1371,12 +1410,12 @@ function MMMJournal(props) {
                   </div>
                 </div>
 
-                <DailyTradeMatrix riskUnit={riskPerTrade} rewardRatio={activeAccount.rewardRatio} />
+                <DailyTradeMatrix riskUnit={riskPerTrade} />
 
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between flex-wrap gap-1">
                     <label className="text-sm text-gray-400">Trades</label>
-                    <span className="text-xs text-gray-500">Current RTU: <span className="text-blue-400 font-medium">{fmt(riskPerTrade)}</span> - {microsUnlocked} Micro{microsUnlocked > 1 ? 's' : ''} unlocked</span>
+                    <span className="text-xs text-gray-500">Risk: <span className="text-blue-400 font-medium">{fmt(riskPerTrade)}</span> - {contractPlan.label} ({activeTicker}) - Max stop: <span className="text-red-400 font-medium">{maxStopPoints.toFixed(0)} pts</span></span>
                   </div>
                   {newEntry.trades.map(function(trade, idx) {
                     const applicableRules = rulesForDirection(trade.direction);
@@ -1395,7 +1434,7 @@ function MMMJournal(props) {
                           {newEntry.trades.length > 1 && (<button onClick={function() { removeTradeRow(idx); }} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-4 w-4" /></button>)}
                         </div>
                         <div className="grid grid-cols-2 gap-2">
-                          <input type="number" placeholder="Position size (micros)" value={trade.positionSize} onChange={function(e) { updateTradeRow(idx, 'positionSize', e.target.value); }} className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
+                          <input type="number" placeholder="Contracts" value={trade.positionSize} onChange={function(e) { updateTradeRow(idx, 'positionSize', e.target.value); }} className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
                           <input type="number" placeholder="$ Risked on this trade" value={trade.riskAmount} onChange={function(e) { updateTradeRow(idx, 'riskAmount', e.target.value); }} className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
                         </div>
                         <button onClick={function() { updateTradeRow(idx, 'htfLtf', !trade.htfLtf); }} className="w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white">
@@ -1413,14 +1452,15 @@ function MMMJournal(props) {
                       </div>
                     );
                   })}
-                  {entryWins >= 2 && (<p className="text-xs text-green-400 flex items-center gap-1.5"><Icon name="CheckCircle" className="h-3.5 w-3.5" /><span>2 wins reached - DRT satisfied, stop for today.</span></p>)}
-                  {entryLosses >= 2 && (<p className="text-xs text-red-400 flex items-center gap-1.5"><Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>2 losses reached - DRT exhausted, stop for today.</span></p>)}
-                  {newEntry.trades.length >= 3 && entryWins < 2 && entryLosses < 2 && (<p className="text-xs text-yellow-400">3-trade max reached for today.</p>)}
-                  <button onClick={addTradeRow} disabled={newEntry.trades.length >= 3 || entryWins >= 2 || entryLosses >= 2} className="text-sm text-yellow-400 hover:text-yellow-300 flex items-center gap-1.5 mt-1 disabled:opacity-30 disabled:cursor-not-allowed"><Icon name="Plus" className="h-3 w-3" /><span>Add another trade</span></button>
+                  {filledLosses >= 2 && (<p className="text-xs text-red-400 flex items-center gap-1.5"><Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>Circuit Breaker - 2 losses. Day over.</span></p>)}
+                  {filledWins >= 2 && (<p className="text-xs text-green-400 flex items-center gap-1.5"><Icon name="CheckCircle" className="h-3.5 w-3.5" /><span>Greed Filter - 2 wins. Day over.</span></p>)}
+                  {isTie && (<p className="text-xs text-yellow-400 flex items-center gap-1.5"><Icon name="Scale" className="h-3.5 w-3.5" /><span>Tie-Breaker required - Trade 3 is mandatory before you can save today's log.</span></p>)}
+                  {filledTrades.length >= 3 && (<p className="text-xs text-gray-400">Day over - Trade 3 result stands.</p>)}
+                  <button onClick={addTradeRow} disabled={newEntry.trades.length >= 3 || filledWins >= 2 || filledLosses >= 2} className="text-sm text-yellow-400 hover:text-yellow-300 flex items-center gap-1.5 mt-1 disabled:opacity-30 disabled:cursor-not-allowed"><Icon name="Plus" className="h-3 w-3" /><span>Add another trade</span></button>
                 </div>
 
                 <Field label="Notes (optional)"><textarea value={newEntry.notes} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { notes: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-20 focus:border-yellow-400/50 outline-none resize-none"></textarea></Field>
-                <button onClick={handleSaveEntry} disabled={newEntry.trades.every(function(t) { return t.pnl === ''; })} className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"><Icon name="Save" className="h-4 w-4" /><span>Save Entry</span></button>
+                <button onClick={handleSaveEntry} disabled={filledTrades.length === 0 || isTie} className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"><Icon name="Save" className="h-4 w-4" /><span>Save Entry</span></button>
               </React.Fragment>
             )}
           </div>
