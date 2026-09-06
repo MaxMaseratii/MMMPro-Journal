@@ -44,17 +44,24 @@
 <script type="text/babel">
 const { useState, useEffect } = React;
 
+// Hardened Icon component: if a Lucide icon name doesn't exist or errors,
+// this catches it and renders nothing for that icon instead of crashing
+// the whole app (which is what "page goes black" was caused by).
 const Icon = ({ name, className }) => {
   const ref = React.useRef(null);
   useEffect(function() {
-    if (ref.current) {
+    if (!ref.current) return;
+    try {
       ref.current.innerHTML = '';
       const iconFn = lucide[name] || lucide['HelpCircle'];
+      if (!iconFn) return;
       const svg = lucide.createElement(iconFn);
       svg.setAttribute('width', '100%');
       svg.setAttribute('height', '100%');
       svg.style.display = 'block';
       ref.current.appendChild(svg);
+    } catch (err) {
+      console.error('Icon render failed for name:', name, err);
     }
   }, [name]);
   return <span ref={ref} className={"inline-flex items-center justify-center flex-shrink-0 " + (className || '')}></span>;
@@ -120,10 +127,6 @@ function getTickerForTier(marketKey, tier) {
   if (tier === 'mini') return spec.miniTicker;
   return '-';
 }
-
-// ---------------------------------------------------------------------
-// PROP FIRM RULES - consistency % cap and daily loss limit, both optional
-// ---------------------------------------------------------------------
 
 function getCumulativeProfitBefore(entries, accountId, dateStr) {
   return entries.filter(function(e) { return e.accountId === accountId && e.tradedToday !== 'no' && e.date < dateStr; })
@@ -361,7 +364,7 @@ function SystemExplainer() {
           </div>
           <div>
             <p className="text-orange-400 font-semibold mb-1">Prop Firm Rules (optional, per account)</p>
-            <p className="text-gray-400">Consistency % caps how much of your total profit a single day can represent. Daily Loss Limit is separate from your Capital and resets every day - some firms hard-breach it, others soft-breach (flatten and lock, account survives).</p>
+            <p className="text-gray-400">Consistency % caps how much of your total profit a single day can represent. Daily Loss Limit is separate from your Capital and resets every day - some firms hard-breach it, others soft-breach.</p>
           </div>
         </div>
       )}
