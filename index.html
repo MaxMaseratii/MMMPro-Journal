@@ -1369,4 +1369,427 @@ function MMMJournal(props) {
 
                 <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-                    <div className="flex items-center gap-2"><Icon name="LineChart" className="h-5 w-5
+                    <div className="flex items-center gap-2"><Icon name="LineChart" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Active Strategy</h2></div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={"text-xs px-2.5 py-1 rounded-full font-medium border " + STATUS_STYLES[activeStatus].cls}>{STATUS_STYLES[activeStatus].label}</span>
+                      <span className={"text-xs px-2.5 py-1 rounded-full font-medium " + ACCOUNT_BADGE_CLS[activeAccount.accountType] + " border border-current/30"}>
+                        {activeCfg.label}
+                      </span>
+                      <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                        {activeCfg.mode} - {(activeCfg.riskPct * 100)}% Risk
+                      </span>
+                      <span className="text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700">
+                        {(MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label} - {activeTicker}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                    <MiniStat label="Contracts Unlocked" value={contractPlan.label} color="text-yellow-400" />
+                    <MiniStat label="Risk / Trade" value={fmt(riskPerTrade)} color="text-blue-400" />
+                    <MiniStat label="Locked Max Stop" value={maxStopPoints.toFixed(0) + " pts"} color="text-red-400" />
+                    <MiniStat label="Daily Target (2 wins)" value={fmt(riskPerTrade * activeRR * 2)} color="text-green-400" />
+                  </div>
+                  <TradingPlanSummaryGrid account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} />
+                </div>
+
+                <PropFirmRulesCard account={activeAccount} entries={entries} />
+
+                <CostsAndPayoutsCard account={activeAccount} status={activeStatus} />
+                <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} />
+                <CsvImportExportCard account={activeAccount} accountEntries={accountEntries} entriesRef={entriesRef} />
+
+                <EquityCurveBlock accounts={accounts} entries={entries} />
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                  <div className="space-y-3">
+                    <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="LayoutDashboard" className="h-5 w-5 text-yellow-400" /><span>Performance Overview</span></h2>
+                    <OverviewStats accounts={accounts} entries={entries} />
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="Calendar" className="h-5 w-5 text-yellow-400" /><span>Trade History</span></h2>
+                      <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setShowAddEntry(true); }}
+                        className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-green-400 hover:to-emerald-500 transition">
+                        <Icon name="Plus" className="h-3.5 w-3.5" /><span>Daily Log</span>
+                      </button>
+                    </div>
+                    {accountEntries.length === 0 ? (
+                      <div className="text-center py-12 border border-dashed border-gray-800 rounded-xl text-gray-500 text-sm">No entries yet.</div>
+                    ) : (
+                      <div className="space-y-2">
+                      {accountEntries.slice().sort(function(a,b) { return new Date(b.date) - new Date(a.date); }).map(function(entry) {
+                        if (entry.tradedToday === 'no') {
+                          const reasonLabel = (NO_TRADE_REASONS.find(function(r) { return r.key === entry.noTradeReason; }) || {}).label || entry.noTradeReason;
+                          return (
+                            <div key={entry.id} className="bg-gray-900/40 border border-gray-800 rounded-xl p-3 flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-gray-600"></div>
+                                <span className="text-white text-sm font-medium">{entry.date}</span>
+                                <span className="text-xs px-1.5 py-0.5 rounded bg-gray-700 text-gray-300">No Trade - {reasonLabel}</span>
+                              </div>
+                              <button onClick={function() { handleDeleteEntry(entry.id); }} className="text-xs text-red-400/70 hover:text-red-400"><Icon name="Trash2" className="h-3.5 w-3.5" /></button>
+                            </div>
+                          );
+                        }
+                        const dayPnl = entry.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+                        const bufferAtDate = bufferHistory.find(function(b) { return b.date === entry.date; });
+                        const isExpanded = expandedEntry === entry.id;
+                        const biasInfo = BIAS_OPTIONS.find(function(b) { return b.key === entry.dailyBias; }) || BIAS_OPTIONS[2];
+                        return (
+                          <div key={entry.id} className="bg-gray-900/60 border border-gray-800 rounded-xl overflow-hidden">
+                            <button onClick={function() { setExpandedEntry(isExpanded ? null : entry.id); }} className="w-full flex items-center justify-between p-3 hover:bg-gray-800/30 transition">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <div className={"w-2 h-2 rounded-full " + (dayPnl >= 0 ? 'bg-green-400' : 'bg-red-400')}></div>
+                                <span className="text-white text-sm font-medium">{entry.date}</span>
+                                <span className={"text-[10px] px-1.5 py-0.5 rounded border " + biasInfo.cls + " flex items-center gap-1"}><Icon name={biasInfo.icon} className="h-3 w-3" /><span>{biasInfo.label}</span></span>
+                                {entry.exercised && <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300 flex items-center gap-1"><Icon name="Dumbbell" className="h-3 w-3" /><span>Exercised</span></span>}
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <span className={"font-semibold text-sm " + (dayPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{dayPnl >= 0 ? '+' : ''}{fmt(dayPnl)}</span>
+                                <Icon name={isExpanded ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500" />
+                              </div>
+                            </button>
+                            {isExpanded && (
+                              <div className="px-3 pb-3 space-y-2 border-t border-gray-800 pt-3">
+                                {entry.trades.map(function(t, i) {
+                                  const val = Math.abs(parseFloat(t.pnl) || 0);
+                                  const aligned = biasAligns(entry.dailyBias, t.direction);
+                                  const score = computeTradeAdherence(t, entry, activeAccount);
+                                  return (
+                                    <div key={i} className="bg-black/30 rounded-lg px-3 py-2 space-y-1">
+                                      <div className="flex items-center justify-between text-xs flex-wrap gap-1">
+                                        <div className="flex items-center gap-1.5 flex-wrap">
+                                          <span className="text-gray-400">Trade {i + 1}</span>
+                                          <span className={"text-[10px] px-1.5 py-0.5 rounded " + (t.direction === 'long' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400')}>{t.direction === 'long' ? 'LONG' : 'SHORT'}</span>
+                                          {aligned !== null && (<span className={"text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1 " + (aligned ? 'bg-green-500/15 text-green-400' : 'bg-orange-500/15 text-orange-400')}><Icon name={aligned ? "CheckCircle" : "AlertTriangle"} className="h-2.5 w-2.5" /><span>{aligned ? 'With trend' : 'Against bias'}</span></span>)}
+                                          {score !== null && (<span className={"text-[10px] px-1.5 py-0.5 rounded " + (score >= 0.7 ? 'bg-green-500/15 text-green-400' : score >= 0.4 ? 'bg-yellow-500/15 text-yellow-400' : 'bg-red-500/15 text-red-400')}>{(score * 100).toFixed(0)}%</span>)}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                          <span className={"font-medium px-1.5 py-0.5 rounded " + (t.result === 'win' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400')}>{t.result === 'win' ? 'WIN' : 'LOSS'}</span>
+                                          <span className={"font-semibold " + (t.result === 'win' ? 'text-green-400' : 'text-red-400')}>{t.result === 'win' ? '+' : '-'}{fmt(val)}</span>
+                                        </div>
+                                      </div>
+                                      {(t.positionSize || t.riskAmount) && (<p className="text-[10px] text-gray-500">Size: {t.positionSize || 'N/A'} - Risked: {t.riskAmount ? fmt(parseFloat(t.riskAmount)) : 'N/A'} - HTF/LTF: {t.htfLtf ? 'Yes' : 'No'}</p>)}
+                                    </div>
+                                  );
+                                })}
+                                {entry.notes && <p className="text-xs text-gray-500 italic mt-2">"{entry.notes}"</p>}
+                                {bufferAtDate && <p className="text-xs text-gray-600 mt-2">Buffer after this day: <span className="text-gray-400">{fmt(bufferAtDate.buffer)}</span></p>}
+                                <button onClick={function() { handleDeleteEntry(entry.id); }} className="text-xs text-red-400/70 hover:text-red-400 flex items-center gap-1.5 mt-2"><Icon name="Trash2" className="h-3.5 w-3.5" /><span>Delete entry</span></button>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <PerAccountBreakdown accounts={accounts} entries={entries} />
+                <DisciplineLeaderboard uid={user.uid} />
+
+                <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} divisor={ruinDivisor} accountType={activeAccount.accountType} />
+                <StrategyCard account={activeAccount} />
+              </React.Fragment>
+            )}
+          </React.Fragment>
+        )}
+      </div>
+
+      {showAddAccount && (
+        <Modal onClose={function() { setShowAddAccount(false); }} title={newAccount.linkedFromId ? "Start Funded Account" : "Add Trading Account"} size="lg">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Account Type (Phase)</label>
+              <div className="flex gap-2">
+                {ACCOUNT_TYPES.map(function(t) {
+                  return (<button key={t.key} onClick={function() { setNewAccount(Object.assign({}, newAccount, { accountType: t.key, linkedFromId: null, linkedFromLabel: '' })); }} className={"flex-1 py-2.5 rounded-lg text-sm font-medium transition border " + (newAccount.accountType === t.key ? t.activeCls : 'bg-gray-800 text-gray-500 border-gray-700')}>{t.label}</button>);
+                })}
+              </div>
+              <p className="text-xs text-gray-500 mt-1">{PHASE_CONFIG[newAccount.accountType].label} - {PHASE_CONFIG[newAccount.accountType].mode} ({(PHASE_CONFIG[newAccount.accountType].riskPct * 100)}% risk)</p>
+            </div>
+
+            {(newAccount.accountType === 'funded' || newAccount.accountType === 'live') && (
+              <Field label={"Link to existing " + (newAccount.accountType === 'funded' ? 'Challenge' : 'Funded') + " account (optional)"}>
+                <select value={newAccount.linkedFromId || ''} onChange={function(e) {
+                    const id = e.target.value;
+                    if (!id) { setNewAccount(Object.assign({}, newAccount, { linkedFromId: null, linkedFromLabel: '' })); return; }
+                    const found = linkableAccounts.find(function(a) { return a.id === id; });
+                    setNewAccount(Object.assign({}, newAccount, { linkedFromId: id, linkedFromLabel: found ? found.name + ' #' + found.accountNumber : '' }));
+                  }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
+                  <option value="">Standalone - already passed elsewhere, just logging it here</option>
+                  {linkableAccounts.map(function(a) { return (<option key={a.id} value={a.id}>{a.name} #{a.accountNumber}</option>); })}
+                </select>
+              </Field>
+            )}
+
+            <Field label="Account Name"><input value={newAccount.name} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { name: e.target.value })); }} placeholder="e.g. Phidias 1" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Starting Balance"><input type="number" value={newAccount.startingBalance} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { startingBalance: e.target.value })); }} placeholder="100000" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+              <Field label="Capital / Buffer ($)"><input type="number" value={newAccount.maxDrawdown} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { maxDrawdown: e.target.value })); }} placeholder="500" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Drawdown Type">
+                <select value={newAccount.drawdownType} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { drawdownType: e.target.value })); }}
+                  className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
+                  {DRAWDOWN_TYPES.map(function(dt) { return (<option key={dt.key} value={dt.key}>{dt.label}</option>); })}
+                </select>
+              </Field>
+              <Field label="Market">
+                <select value={newAccount.market} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { market: e.target.value })); }}
+                  className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
+                  {MARKET_OPTIONS.map(function(m) { return (<option key={m.key} value={m.key}>{m.label}</option>); })}
+                </select>
+              </Field>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Profit Target ($)"><input type="number" value={newAccount.profitTarget} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { profitTarget: e.target.value })); }} placeholder="1500" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+              <Field label={"Reward:Risk Ratio (min " + MIN_RR + ":1)"}>
+                <input type="number" step="0.1" min={MIN_RR} value={newAccount.rewardRatio}
+                  onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { rewardRatio: e.target.value })); }}
+                  placeholder="2.5" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                {parseFloat(newAccount.rewardRatio) < MIN_RR && newAccount.rewardRatio !== '' && (
+                  <p className="text-xs text-red-400 mt-1">Below minimum - will be locked to {MIN_RR}:1 on save.</p>
+                )}
+              </Field>
+            </div>
+
+            <div className="mt-1 bg-black/40 border border-gray-800 rounded-lg p-3 grid grid-cols-2 gap-2 text-xs">
+              <div className="text-gray-400">Phase: <span className="text-yellow-400 font-medium">{newAccountPreviewCfg.label}</span></div>
+              <div className="text-gray-400">Mode: <span className="text-yellow-400 font-medium">{newAccountPreviewCfg.mode} ({(newAccountPreviewCfg.riskPct * 100)}%)</span></div>
+              <div className="text-gray-400">Locked Max Stop: <span className="text-red-400 font-medium">{newAccountMaxStop.toFixed(0)} points</span></div>
+              <div className="text-gray-400">RR Target: <span className="text-purple-400 font-medium">{Math.max(parseFloat(newAccount.rewardRatio) || MIN_RR, MIN_RR)}:1</span></div>
+            </div>
+
+            <div className="border-t border-gray-800 pt-4 space-y-3">
+              <p className="text-sm text-yellow-400 font-medium flex items-center gap-1.5">
+                <Icon name="ShieldAlert" className="h-4 w-4" /><span>Prop Firm Rules (optional - leave blank if the firm has none)</span>
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Consistency Rule (%)">
+                  <input type="number" value={newAccount.consistencyPct}
+                    onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { consistencyPct: e.target.value })); }}
+                    placeholder="e.g. 40 - leave blank if none"
+                    className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                </Field>
+                <Field label="Daily Loss Limit ($)">
+                  <input type="number" value={newAccount.dailyLossLimit}
+                    onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { dailyLossLimit: e.target.value })); }}
+                    placeholder="e.g. 1000 - leave blank if none"
+                    className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                </Field>
+              </div>
+              {newAccount.dailyLossLimit && (
+                <Field label="Daily Loss Limit Type">
+                  <div className="flex gap-2">
+                    <button onClick={function() { setNewAccount(Object.assign({}, newAccount, { dllType: 'hard' })); }}
+                      className={"flex-1 py-2 rounded-lg text-sm font-medium border " + (newAccount.dllType === 'hard' ? 'bg-red-500/20 text-red-400 border-red-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}>
+                      Hard Breach (account terminated)
+                    </button>
+                    <button onClick={function() { setNewAccount(Object.assign({}, newAccount, { dllType: 'soft' })); }}
+                      className={"flex-1 py-2 rounded-lg text-sm font-medium border " + (newAccount.dllType === 'soft' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}>
+                      Soft Breach (flatten &amp; lock)
+                    </button>
+                  </div>
+                </Field>
+              )}
+              <p className="text-xs text-gray-500">Consistency rule caps how much of your total profit any single day can represent - checked at payout time. Daily Loss Limit is separate from your Capital and resets every day.</p>
+            </div>
+
+            <div className="border-t border-gray-800 pt-4 space-y-4">
+              <Field label="Strategy Name"><input value={newAccount.strategyName} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { strategyName: e.target.value })); }} placeholder="e.g. MMM Order Flow Breakout" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-green-400 mb-1.5 flex items-center gap-1.5"><Icon name="TrendingUp" className="h-3.5 w-3.5" /><span>Long Setup Rules</span></label>
+                  <div className="space-y-2">
+                    {newAccount.longRules.map(function(rule, idx) {
+                      return (<div key={idx} className="flex items-center gap-1.5"><input value={rule} onChange={function(e) { updateRuleRow('longRules', idx, e.target.value); }} placeholder={"Rule " + (idx + 1)} className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />{newAccount.longRules.length > 1 && (<button onClick={function() { removeRuleRow('longRules', idx); }} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>)}</div>);
+                    })}
+                    <button onClick={function() { addRuleRow('longRules'); }} className="text-xs text-green-400 hover:text-green-300 flex items-center gap-1.5"><Icon name="Plus" className="h-3 w-3" /><span>Add rule</span></button>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm text-red-400 mb-1.5 flex items-center gap-1.5"><Icon name="TrendingDown" className="h-3.5 w-3.5" /><span>Short Setup Rules</span></label>
+                  <div className="space-y-2">
+                    {newAccount.shortRules.map(function(rule, idx) {
+                      return (<div key={idx} className="flex items-center gap-1.5"><input value={rule} onChange={function(e) { updateRuleRow('shortRules', idx, e.target.value); }} placeholder={"Rule " + (idx + 1)} className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />{newAccount.shortRules.length > 1 && (<button onClick={function() { removeRuleRow('shortRules', idx); }} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>)}</div>);
+                    })}
+                    <button onClick={function() { addRuleRow('shortRules'); }} className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1.5"><Icon name="Plus" className="h-3 w-3" /><span>Add rule</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="border-t border-gray-800 pt-4">
+              <p className="text-sm text-yellow-400 font-medium mb-2 flex items-center gap-1.5"><Icon name="Receipt" className="h-4 w-4" /><span>Costs</span></p>
+              <div className="grid grid-cols-3 gap-3">
+                <Field label="Challenge Cost ($)"><input type="number" value={newAccount.accountCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { accountCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+                <Field label="Activation Cost ($)"><input type="number" value={newAccount.activationCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { activationCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+                <Field label="Reset Cost ($)"><input type="number" value={newAccount.resetCost} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { resetCost: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+              </div>
+            </div>
+            <Field label="Master / Copied Account Number (optional)"><input value={newAccount.copiedAccountNumber} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { copiedAccountNumber: e.target.value })); }} placeholder="If copying a master account" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+            <button onClick={handleAddAccount} disabled={!newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown} className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"><Icon name="Save" className="h-4 w-4" /><span>Save Account</span></button>
+          </div>
+        </Modal>
+      )}
+
+      {showAddEntry && activeAccount && (
+        <Modal onClose={function() { setShowAddEntry(false); }} title="Log Today's Trades" size="lg">
+          <div className="space-y-4">
+            <Field label="Date"><input type="date" value={newEntry.date} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { date: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1.5">Did you trade today?</label>
+              <div className="flex gap-2">
+                <button onClick={function() { setNewEntry(Object.assign({}, newEntry, { tradedToday: 'yes' })); }} className={"flex-1 py-2 rounded-lg text-sm font-medium border " + (newEntry.tradedToday === 'yes' ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}>Yes</button>
+                <button onClick={function() { setNewEntry(Object.assign({}, newEntry, { tradedToday: 'no' })); }} className={"flex-1 py-2 rounded-lg text-sm font-medium border " + (newEntry.tradedToday === 'no' ? 'bg-gray-500/30 text-gray-300 border-gray-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}>No</button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1.5">Physical exercise today?</label>
+              <div className="flex gap-2">
+                <button onClick={function() { setNewEntry(Object.assign({}, newEntry, { exercised: true })); }} className={"flex-1 py-2 rounded-lg text-sm font-medium border flex items-center justify-center gap-1.5 " + (newEntry.exercised ? 'bg-blue-500/20 text-blue-400 border-blue-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}><Icon name="Dumbbell" className="h-3.5 w-3.5" /><span>Yes</span></button>
+                <button onClick={function() { setNewEntry(Object.assign({}, newEntry, { exercised: false })); }} className={"flex-1 py-2 rounded-lg text-sm font-medium border " + (!newEntry.exercised ? 'bg-gray-500/30 text-gray-300 border-gray-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}>No</button>
+              </div>
+            </div>
+
+            {newEntry.tradedToday === 'no' ? (
+              <React.Fragment>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1.5">Reason</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {NO_TRADE_REASONS.map(function(r) {
+                      return (<button key={r.key} onClick={function() { setNewEntry(Object.assign({}, newEntry, { noTradeReason: r.key })); }} className={"py-2 rounded-lg text-xs font-medium border " + (newEntry.noTradeReason === r.key ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}>{r.label}</button>);
+                    })}
+                  </div>
+                </div>
+                <Field label="Notes (optional)"><textarea value={newEntry.noTradeNotes} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { noTradeNotes: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-16 focus:border-yellow-400/50 outline-none resize-none"></textarea></Field>
+                <button onClick={handleSaveEntry} disabled={!newEntry.noTradeReason} className="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"><Icon name="Save" className="h-4 w-4" /><span>Save No-Trade Day</span></button>
+              </React.Fragment>
+            ) : (
+              <React.Fragment>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-1.5">Daily Bias (which way is the trend?)</label>
+                  <div className="flex gap-2">
+                    {BIAS_OPTIONS.map(function(b) {
+                      return (<button key={b.key} onClick={function() { setNewEntry(Object.assign({}, newEntry, { dailyBias: b.key })); }} className={"flex-1 py-2 rounded-lg text-sm font-medium transition border flex items-center justify-center gap-1.5 " + (newEntry.dailyBias === b.key ? b.cls : 'bg-gray-800 text-gray-500 border-gray-700')}><Icon name={b.icon} className="h-3.5 w-3.5" /><span>{b.label}</span></button>);
+                    })}
+                  </div>
+                </div>
+
+                <DailyTradeMatrix riskUnit={riskPerTrade} rewardRatio={activeRR} />
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between flex-wrap gap-1">
+                    <label className="text-sm text-gray-400">Trades</label>
+                    <span className="text-xs text-gray-500">Risk: <span className="text-blue-400 font-medium">{fmt(riskPerTrade)}</span> - {contractPlan.label} ({activeTicker}) - Max stop: <span className="text-red-400 font-medium">{maxStopPoints.toFixed(0)} pts</span></span>
+                  </div>
+                  {newEntry.trades.map(function(trade, idx) {
+                    const applicableRules = rulesForDirection(trade.direction);
+                    const aligned = biasAligns(newEntry.dailyBias, trade.direction);
+                    return (
+                      <div key={idx} className="bg-gray-800/40 border border-gray-700 rounded-lg p-3 space-y-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <button onClick={function() { updateTradeRow(idx, 'direction', 'long'); }} className={"px-2.5 py-1.5 rounded-lg text-xs font-medium transition " + (trade.direction === 'long' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')}>Long</button>
+                          <button onClick={function() { updateTradeRow(idx, 'direction', 'short'); }} className={"px-2.5 py-1.5 rounded-lg text-xs font-medium transition " + (trade.direction === 'short' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')}>Short</button>
+                          {aligned !== null && (<span className={"text-[10px] px-2 py-1 rounded flex items-center gap-1 " + (aligned ? 'bg-green-500/15 text-green-400' : 'bg-orange-500/15 text-orange-400')}><Icon name={aligned ? "CheckCircle" : "AlertTriangle"} className="h-2.5 w-2.5" /><span>{aligned ? 'With trend' : 'Against bias'}</span></span>)}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button onClick={function() { updateTradeRow(idx, 'result', 'win'); }} className={"px-3 py-2 rounded-lg text-sm font-medium transition " + (trade.result === 'win' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')}>Win</button>
+                          <button onClick={function() { updateTradeRow(idx, 'result', 'loss'); }} className={"px-3 py-2 rounded-lg text-sm font-medium transition " + (trade.result === 'loss' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')}>Loss</button>
+                          <input type="number" placeholder="P&L amount" value={trade.pnl} onChange={function(e) { updateTradeRow(idx, 'pnl', e.target.value); }} className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                          {newEntry.trades.length > 1 && (<button onClick={function() { removeTradeRow(idx); }} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-4 w-4" /></button>)}
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <input type="number" placeholder="Contracts" value={trade.positionSize} onChange={function(e) { updateTradeRow(idx, 'positionSize', e.target.value); }} className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
+                          <input type="number" placeholder="$ Risked on this trade" value={trade.riskAmount} onChange={function(e) { updateTradeRow(idx, 'riskAmount', e.target.value); }} className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
+                        </div>
+                        <button onClick={function() { updateTradeRow(idx, 'htfLtf', !trade.htfLtf); }} className="w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white">
+                          <Icon name={trade.htfLtf ? "CheckSquare" : "Square"} className={"h-4 w-4 flex-shrink-0 " + (trade.htfLtf ? 'text-green-400' : 'text-gray-600')} /><span>HTF to LTF analysis done before this trade?</span>
+                        </button>
+                        {applicableRules.length > 0 && (
+                          <div className="bg-black/30 rounded-lg p-2.5 space-y-1.5">
+                            <p className="text-[11px] text-gray-500 uppercase tracking-wide">Did you follow your {trade.direction} rules?</p>
+                            {applicableRules.map(function(rule, ri) {
+                              const checked = (trade.rulesChecked || []).indexOf(rule) !== -1;
+                              return (<button key={ri} onClick={function() { toggleRuleChecked(idx, rule); }} className="w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white"><Icon name={checked ? "CheckSquare" : "Square"} className={"h-4 w-4 flex-shrink-0 " + (checked ? 'text-green-400' : 'text-gray-600')} /><span>{rule}</span></button>);
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {filledLosses >= 2 && (<p className="text-xs text-red-400 flex items-center gap-1.5"><Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>Circuit Breaker - 2 losses. Day over.</span></p>)}
+                  {filledWins >= 2 && (<p className="text-xs text-green-400 flex items-center gap-1.5"><Icon name="CheckCircle" className="h-3.5 w-3.5" /><span>Greed Filter - 2 wins. Day over.</span></p>)}
+                  {isTie && (<p className="text-xs text-yellow-400 flex items-center gap-1.5"><Icon name="Scale" className="h-3.5 w-3.5" /><span>Tie-Breaker required - Trade 3 is mandatory before you can save today's log.</span></p>)}
+                  {filledTrades.length >= 3 && (<p className="text-xs text-gray-400">Day over - Trade 3 result stands.</p>)}
+                  {consistencyCap !== null && filledPnlSigned > 0 && (
+                    <p className={"text-xs flex items-center gap-1.5 " + (overConsistency ? 'text-red-400' : 'text-gray-400')}>
+                      <Icon name={overConsistency ? "AlertTriangle" : "Info"} className="h-3.5 w-3.5" />
+                      <span>Today: {fmt(filledPnlSigned)} of {fmt(consistencyCap)} max allowed under your {activeAccount.consistencyPct}% consistency rule{overConsistency ? ' - exceeded, this day will need diluting by future profitable days' : ''}.</span>
+                    </p>
+                  )}
+                  {dllLimit !== null && (
+                    <p className={"text-xs flex items-center gap-1.5 " + (dllBreached ? 'text-red-400' : 'text-gray-400')}>
+                      <Icon name={dllBreached ? "AlertTriangle" : "Info"} className="h-3.5 w-3.5" />
+                      <span>Daily Loss Limit: {fmt(todaysLoss)} of {fmt(dllLimit)}{dllBreached ? (activeAccount.dllType === 'hard' ? ' - HARD BREACH, this would terminate the account' : ' - SOFT BREACH, firm would flatten and lock you out today') : ''}.</span>
+                    </p>
+                  )}
+                  <button onClick={addTradeRow} disabled={newEntry.trades.length >= 3 || filledWins >= 2 || filledLosses >= 2 || dllBreached} className="text-sm text-yellow-400 hover:text-yellow-300 flex items-center gap-1.5 mt-1 disabled:opacity-30 disabled:cursor-not-allowed"><Icon name="Plus" className="h-3 w-3" /><span>Add another trade</span></button>
+                </div>
+
+                <Field label="Notes (optional)"><textarea value={newEntry.notes} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { notes: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-20 focus:border-yellow-400/50 outline-none resize-none"></textarea></Field>
+                <button onClick={handleSaveEntry} disabled={filledTrades.length === 0 || isTie} className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"><Icon name="Save" className="h-4 w-4" /><span>Save Entry</span></button>
+              </React.Fragment>
+            )}
+          </div>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+function StatCard(props) {
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-xl p-4">
+      <div className="flex items-center justify-between mb-2"><span className="text-xs text-gray-500 uppercase tracking-wide">{props.label}</span><Icon name={props.icon} className={"h-4 w-4 " + props.color} /></div>
+      <div className={"text-xl font-bold " + props.color}>{props.value}</div>
+      {props.sub && <div className="text-xs text-gray-600 mt-0.5">{props.sub}</div>}
+    </div>
+  );
+}
+
+function Modal(props) {
+  const size = props.size || 'md';
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-80" onClick={props.onClose}></div>
+      <div className={"relative bg-black border border-yellow-500/20 rounded-2xl p-6 w-full " + (size === 'lg' ? 'max-w-lg' : 'max-w-md') + " max-h-[90vh] overflow-y-auto shadow-2xl"}>
+        <div className="flex items-center justify-between mb-5"><h3 className="text-lg font-bold text-white">{props.title}</h3><button onClick={props.onClose} className="text-gray-500 hover:text-white flex-shrink-0"><Icon name="X" className="h-5 w-5" /></button></div>
+        {props.children}
+      </div>
+    </div>
+  );
+}
+
+function Field(props) {
+  return (<div><label className="block text-sm text-gray-400 mb-1">{props.label}</label>{props.children}</div>);
+}
+
+function App() {
+  const [user, setUser] = useState(undefined);
+  useEffect(function() {
+    const unsub = auth.onAuthStateChanged(function(u) { setUser(u); });
+    return unsub;
+  }, []);
+  if (user === undefined) return <div className="min-h-screen bg-black flex items-center justify-center text-yellow-400">Loading...</div>;
+  return user ? <MMMJournal user={user} /> : <AuthScreen />;
+}
+
+const rootEl = ReactDOM.createRoot(document.getElementById('root'));
+rootEl.render(<App />);
+</script>
+</body>
+</html>
