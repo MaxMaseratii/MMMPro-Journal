@@ -815,6 +815,49 @@ function computeDisciplineScore(accounts, entries) {
   return { score: score, loggingConsistency: loggingConsistency, ruleScore: ruleScore, biasScore: biasScore, daysLogged: uniqueLoggedDays, daysSinceStart: daysSinceStart };
 }
 
+function OverviewStats(props) {
+  const accounts = props.accounts;
+  const entries = props.entries;
+  const d = computeOverviewData(accounts, entries);
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6 space-y-4">
+      <div className="flex items-center gap-2">
+        <Icon name="LayoutDashboard" className="h-5 w-5 text-yellow-400" />
+        <h2 className="text-lg font-semibold text-white">All Accounts, Combined</h2>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <MiniStat label="Total P&L" value={fmt(d.totalPnl)} color={d.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
+        <MiniStat label="Win Rate" value={d.totalTrades === 0 ? '-' : d.overallWinRate.toFixed(1) + '%'} color={d.totalTrades === 0 ? 'text-gray-500' : d.overallWinRate >= 50 ? 'text-green-400' : 'text-red-400'} />
+        <MiniStat label="Rule Adherence" value={d.ruleAdherencePct === null ? '-' : d.ruleAdherencePct.toFixed(1) + '%'} color="text-purple-400" />
+        <MiniStat label="Total Trades" value={String(d.totalTrades)} color="text-white" />
+        <MiniStat label="Total Costs" value={fmt(d.totalAllCosts)} color="text-red-400" />
+        <MiniStat label="Total Payouts" value={fmt(d.totalAllPayouts)} color="text-green-400" />
+      </div>
+      {(d.bestDay || d.worstDay) && (
+        <div className="grid grid-cols-2 gap-3 text-xs text-gray-400 pt-1">
+          {d.bestDay && <div>Best day: <span className="text-green-400 font-medium">{d.bestDay}</span> ({fmt(d.byDate[d.bestDay])})</div>}
+          {d.worstDay && <div>Worst day: <span className="text-red-400 font-medium">{d.worstDay}</span> ({fmt(d.byDate[d.worstDay])})</div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function EquityCurveBlock(props) {
+  const accounts = props.accounts;
+  const entries = props.entries;
+  const d = computeOverviewData(accounts, entries);
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-4">
+        <Icon name="LineChart" className="h-5 w-5 text-yellow-400" />
+        <h2 className="text-lg font-semibold text-white">Equity Curve - All Accounts</h2>
+      </div>
+      <EquityCurve points={d.equityPoints} />
+    </div>
+  );
+}
+
 function DisciplineLeaderboard(props) {
   const currentUid = props.uid;
   const [rows, setRows] = useState([]);
