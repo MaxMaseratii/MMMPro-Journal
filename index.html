@@ -142,6 +142,16 @@ function getConsistencyCap(account, cumulativeBefore) {
   return (p * cumulativeBefore) / (1 - p);
 }
 
+// Before you have any trading history, there is no real cap yet (math needs
+// past profit to work with). This gives a starter number instead of nothing,
+// based on your profit target, so the number on screen is always useful.
+function getConsistencyGuideline(account) {
+  const pct = parseFloat(account.consistencyPct);
+  const target = parseFloat(account.profitTarget) || 0;
+  if (!pct || pct <= 0 || pct >= 100 || target <= 0) return null;
+  return (pct / 100) * target;
+}
+
 const computeStatus = function(account, buffer, totalPnl) {
   const target = parseFloat(account.profitTarget) || 0;
   if (buffer <= 0) return 'breached';
@@ -620,7 +630,12 @@ function PropFirmRulesCard(props) {
   const todayStr = new Date().toISOString().split('T')[0];
   const cumBefore = getCumulativeProfitBefore(entries, account.id, todayStr);
   const cap = getConsistencyCap(account, cumBefore);
+  const guideline = getConsistencyGuideline(account);
   const dll = parseFloat(account.dailyLossLimit) || null;
+
+  const todaysEntry = entries.find(function(e) { return e.accountId === account.id && e.date === todayStr && e.tradedToday !== 'no'; });
+  const todaysPnl = todaysEntry ? todaysEntry.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0) : null;
+  const todayWithin = cap !== null && todaysPnl !== null ? todaysPnl <= cap : null;
 
   if (!account.consistencyPct && !dll) return null;
 
@@ -634,7 +649,7 @@ function PropFirmRulesCard(props) {
         {account.consistencyPct && (
           <React.Fragment>
             <MiniStat label="Consistency Rule" value={account.consistencyPct + "%"} color="text-purple-400" />
-            <MiniStat label="Max Profit Allowed Today" value={cap === null ? 'No baseline yet' : fmt(cap)} color="text-yellow-400" />
+            <MiniStat label="Max $ Allowed Today" value={cap !== null ? fmt(cap) : (guideline !== null ? fmt(guideline) : 'Add a profit target')} color="text-yellow-400" />
           </React.Fragment>
         )}
         {dll && (
@@ -645,7 +660,25 @@ function PropFirmRulesCard(props) {
         )}
       </div>
       {account.consistencyPct && (
-        <p className="text-xs text-gray-500 mt-3">Based on {fmt(cumBefore)} in cumulative profit before today. Updates automatically as you log more days.</p>
+        <div className="mt-3 space-y-1.5">
+          {cap === null ? (
+            guideline !== null ? (
+              <p className="text-xs text-gray-500">You have no profitable days logged yet, so this is a starter number: {fmt(guideline)} is {account.consistencyPct}% of your {fmt(parseFloat(account.profitTarget) || 0)} profit target. It switches to a real cap the moment you log your first profitable day.</p>
+            ) : (
+              <p className="text-xs text-gray-500">Add a profit target on this account and we'll give you a starter max-per-day number here, before you've even logged your first profitable day.</p>
+            )
+          ) : (
+            <p className="text-xs text-gray-500">
+              How this number is worked out: your {account.consistencyPct}% rule means no single day can be more than {account.consistencyPct}% of your total profit. Cumulative profit before today is <span className="text-white font-medium">{fmt(cumBefore)}</span>, so today's cap is <span className="text-yellow-400 font-medium">{fmt(cap)}</span> - the amount that would keep today at exactly {account.consistencyPct}% of the new total.
+            </p>
+          )}
+          {todayWithin !== null && (
+            <p className={"text-xs flex items-center gap-1.5 " + (todayWithin ? 'text-green-400' : 'text-red-400')}>
+              <Icon name={todayWithin ? "CheckCircle" : "AlertTriangle"} className="h-3.5 w-3.5" />
+              <span>Today's logged P&amp;L is {fmt(todaysPnl)} - {todayWithin ? 'within' : 'OVER'} the {fmt(cap)} cap.</span>
+            </p>
+          )}
+        </div>
       )}
     </div>
   );
@@ -1353,7 +1386,15 @@ function MMMJournal(props) {
             </div>
           </div>
           {accounts.length > 0 && (
-            <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={setActiveAccountId} getStatus={getAccountStatus} filter={accountFilter} />
+            <div className="flex items-center gap-2 flex-wrap">
+              <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={setActiveAccountId} getStatus={getAccountStatus} filter={accountFilter} />
+              {activeAccount && (
+                <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setShowAddEntry(true); }}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-gray-900 border-gray-800 text-gray-300 hover:border-yellow-500/40 hover:text-yellow-300 transition">
+                  <Icon name="CalendarPlus" className="h-3.5 w-3.5" /><span>Daily Log</span>
+                </button>
+              )}
+            </div>
           )}
           {activeAccount && (
             <div className="text-sm text-gray-500 bg-black/30 rounded-lg px-4 py-2.5">
@@ -1481,6 +1522,9 @@ function MMMJournal(props) {
                         const bufferAtDate = bufferHistory.find(function(b) { return b.date === entry.date; });
                         const isExpanded = expandedEntry === entry.id;
                         const biasInfo = BIAS_OPTIONS.find(function(b) { return b.key === entry.dailyBias; }) || BIAS_OPTIONS[2];
+                        const entryCumBefore = activeAccount.consistencyPct ? getCumulativeProfitBefore(entries, activeAccount.id, entry.date) : 0;
+                        const entryCap = activeAccount.consistencyPct ? getConsistencyCap(activeAccount, entryCumBefore) : null;
+                        const entryWithinConsistency = entryCap !== null ? dayPnl <= entryCap : null;
                         return (
                           <div key={entry.id} className="bg-gray-900/60 border border-gray-800 rounded-xl overflow-hidden">
                             <button onClick={function() { setExpandedEntry(isExpanded ? null : entry.id); }} className="w-full flex items-center justify-between p-3 hover:bg-gray-800/30 transition">
@@ -1489,6 +1533,12 @@ function MMMJournal(props) {
                                 <span className="text-white text-sm font-medium">{entry.date}</span>
                                 <span className={"text-[10px] px-1.5 py-0.5 rounded border " + biasInfo.cls + " flex items-center gap-1"}><Icon name={biasInfo.icon} className="h-3 w-3" /><span>{biasInfo.label}</span></span>
                                 {entry.exercised && <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300 flex items-center gap-1"><Icon name="Dumbbell" className="h-3 w-3" /><span>Exercised</span></span>}
+                                {entryWithinConsistency !== null && (
+                                  <span className={"text-[10px] px-1.5 py-0.5 rounded border flex items-center gap-1 " + (entryWithinConsistency ? 'bg-green-500/15 text-green-400 border-green-500/30' : 'bg-red-500/15 text-red-400 border-red-500/30')}>
+                                    <Icon name={entryWithinConsistency ? "CheckCircle" : "AlertTriangle"} className="h-3 w-3" />
+                                    <span>{entryWithinConsistency ? 'Within consistency' : 'Over consistency'}</span>
+                                  </span>
+                                )}
                               </div>
                               <div className="flex items-center gap-3">
                                 <span className={"font-semibold text-sm " + (dayPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{dayPnl >= 0 ? '+' : ''}{fmt(dayPnl)}</span>
@@ -1521,6 +1571,11 @@ function MMMJournal(props) {
                                 })}
                                 {entry.notes && <p className="text-xs text-gray-500 italic mt-2">"{entry.notes}"</p>}
                                 {bufferAtDate && <p className="text-xs text-gray-600 mt-2">Buffer after this day: <span className="text-gray-400">{fmt(bufferAtDate.buffer)}</span></p>}
+                                {entryCap !== null && (
+                                  <p className={"text-xs mt-1 " + (entryWithinConsistency ? 'text-gray-500' : 'text-red-400')}>
+                                    Consistency check: cumulative profit before this day was {fmt(entryCumBefore)}, so the {activeAccount.consistencyPct}% cap for this day was {fmt(entryCap)} - this day made {fmt(dayPnl)}, which is {entryWithinConsistency ? 'within the cap' : 'OVER the cap and would need diluting by future profitable days'}.
+                                  </p>
+                                )}
                                 <button onClick={function() { handleDeleteEntry(entry.id); }} className="text-xs text-red-400/70 hover:text-red-400 flex items-center gap-1.5 mt-2"><Icon name="Trash2" className="h-3.5 w-3.5" /><span>Delete entry</span></button>
                               </div>
                             )}
