@@ -96,9 +96,11 @@ const CAPITAL_TIERS = [
   { key: 'mini',  floor: 10000, label: 'Mini' },
 ];
 
-function getContractPlan(buffer) {
+function getContractPlan(buffer, marketKey) {
   const b = Math.max(buffer, 0);
-  if (b < 100) return { tier: 'none', count: 0, label: 'Below $100 - no trade unlocked' };
+  const spec = MARKET_SPECS[marketKey] || MARKET_SPECS.nasdaq100;
+  const minBuffer = spec.minBuffer || 100;
+  if (b < minBuffer) return { tier: 'none', count: 0, label: 'Below $' + minBuffer.toLocaleString() + ' - no trade unlocked' };
   let tier = CAPITAL_TIERS[0];
   for (let i = CAPITAL_TIERS.length - 1; i >= 0; i--) {
     if (b >= CAPITAL_TIERS[i].floor) { tier = CAPITAL_TIERS[i]; break; }
@@ -112,19 +114,25 @@ const MARKET_SPECS = {
   sp500:       { label: 'S&P 500',      nanoTicker: 'NES',  nanoPt: 0.50, microTicker: 'MES', microPt: 5.00, miniTicker: 'ES',  miniPt: 50.00 },
   russell2000: { label: 'Russell 2000', nanoTicker: 'N2K',  nanoPt: 0.50, microTicker: 'M2K', microPt: 5.00, miniTicker: 'RTY', miniPt: 50.00 },
   dow:         { label: 'Dow Jones',    nanoTicker: 'NDOW', nanoPt: 0.05, microTicker: 'MYM', microPt: 0.50, miniTicker: 'YM',  miniPt: 5.00 },
+  gold:        { label: 'Gold',         nanoTicker: '1OZ',  nanoPt: 1.00, microTicker: 'MGC', microPt: 10.00, miniTicker: 'GC', miniPt: 100.00 },
+  crudeoil:    { label: 'Crude Oil',    nanoTicker: 'TCL',  nanoPt: 10.00, microTicker: 'MCL', microPt: 100.00, miniTicker: 'CL', miniPt: 1000.00 },
+  // Silver has no $100 nano contract - the smallest tradable size (SIC) needs a $1,000 buffer minimum.
+  silver:      { label: 'Silver',       nanoTicker: null,   nanoPt: null, microTicker: 'SIC', microPt: 100.00, miniTicker: 'SIL', miniPt: 1000.00, minBuffer: 1000 },
 };
 
 function getMaxStopPoints(marketKey, accountType) {
   const cfg = PHASE_CONFIG[accountType] || PHASE_CONFIG.challenge;
   const spec = MARKET_SPECS[marketKey] || MARKET_SPECS.nasdaq100;
-  return cfg.riskPct * (100 / spec.nanoPt);
+  if (spec.nanoTicker && spec.nanoPt) return cfg.riskPct * (100 / spec.nanoPt);
+  // No nano tier (Silver): base the locked stop on the smallest tier that exists, the $1,000 micro.
+  return cfg.riskPct * (1000 / spec.microPt);
 }
 
 function getTickerForTier(marketKey, tier) {
   const spec = MARKET_SPECS[marketKey] || MARKET_SPECS.nasdaq100;
-  if (tier === 'nano') return spec.nanoTicker;
-  if (tier === 'micro') return spec.microTicker;
-  if (tier === 'mini') return spec.miniTicker;
+  if (tier === 'nano') return spec.nanoTicker || '-';
+  if (tier === 'micro') return spec.microTicker || '-';
+  if (tier === 'mini') return spec.miniTicker || '-';
   return '-';
 }
 
@@ -207,6 +215,9 @@ const MARKET_OPTIONS = [
   { key: 'sp500', label: 'S&P 500' },
   { key: 'russell2000', label: 'Russell 2000' },
   { key: 'dow', label: 'Dow Jones' },
+  { key: 'gold', label: 'Gold' },
+  { key: 'crudeoil', label: 'Crude Oil' },
+  { key: 'silver', label: 'Silver (min. $1,000 buffer)' },
 ];
 
 const emptyAccountForm = {
@@ -1161,7 +1172,7 @@ function MMMJournal(props) {
   const currentBuffer = bufferHistory.length > 0 ? bufferHistory[bufferHistory.length - 1].buffer : (activeAccount ? parseFloat(activeAccount.maxDrawdown) || 0 : 0);
   const activeCfg = activeAccount ? (PHASE_CONFIG[activeAccount.accountType] || PHASE_CONFIG.challenge) : PHASE_CONFIG.challenge;
   const riskPerTrade = getRiskAmount(activeAccount ? activeAccount.accountType : 'challenge', currentBuffer);
-  const contractPlan = getContractPlan(currentBuffer);
+  const contractPlan = getContractPlan(currentBuffer, activeAccount ? (activeAccount.market || 'nasdaq100') : 'nasdaq100');
   const maxStopPoints = activeAccount ? getMaxStopPoints(activeAccount.market || 'nasdaq100', activeAccount.accountType) : 0;
   const activeTicker = activeAccount ? getTickerForTier(activeAccount.market || 'nasdaq100', contractPlan.tier) : '-';
   const ruinDivisor = activeCfg.riskPct > 0 ? 1 / activeCfg.riskPct : 10;
