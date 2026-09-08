@@ -593,6 +593,8 @@ function TradingPlanSummaryGrid(props) {
   const minWinRate = (rtu + winPerTrade) > 0 ? (rtu / (rtu + winPerTrade)) * 100 : 0;
   const winsToTarget = winPerTrade > 0 ? Math.ceil((parseFloat(account.profitTarget) || 0) / winPerTrade) : 0;
   const remaining = (parseFloat(account.profitTarget) || 0) - props.totalPnl;
+  const avgTradesPerDay = props.avgTradesPerDay || 0;
+  const maxTradesInDay = props.maxTradesInDay || 0;
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -600,8 +602,10 @@ function TradingPlanSummaryGrid(props) {
       <MiniStat label="RR Ratio" value={rr + ":1"} color="text-purple-400" />
       <MiniStat label="Breakeven Win Rate" value={minWinRate.toFixed(1) + "%"} color="text-purple-400" />
       <MiniStat label="Wins to Hit Target" value={winsToTarget + " wins"} color="text-purple-400" />
-      <MiniStat label="Max Trades / Day" value="3" color="text-white" />
+      <MiniStat label="Max Trades / Day (Rule)" value="3" color="text-white" />
       <MiniStat label="Max Losses / Day" value="2" color="text-red-400" />
+      <MiniStat label="Avg Trades Taken / Day" value={avgTradesPerDay.toFixed(1)} color="text-blue-400" />
+      <MiniStat label="Most Trades Taken (Day)" value={String(maxTradesInDay)} color="text-blue-400" />
       <MiniStat label="Remaining to Target" value={fmt(Math.max(0, remaining))} color="text-yellow-400" />
       <MiniStat label="Capital (Buffer)" value={fmt(account.maxDrawdown)} color="text-yellow-400" />
     </div>
@@ -635,61 +639,71 @@ function CostsAndPayoutsCard(props) {
   );
 }
 
-function PropFirmRulesCard(props) {
+// Consistency Required / Max Profit Allowed / Daily Loss Limit stats, meant to be
+// dropped straight into the Active Strategy card's stat grid alongside its other MiniStats.
+function PropFirmRuleStats(props) {
   const account = props.account;
   const entries = props.entries;
+  const dll = parseFloat(account.dailyLossLimit) || null;
+  if (!account.consistencyPct && !dll) return null;
+
   const todayStr = new Date().toISOString().split('T')[0];
   const cumBefore = getCumulativeProfitBefore(entries, account.id, todayStr);
   const cap = getConsistencyCap(account, cumBefore);
   const guideline = getConsistencyGuideline(account);
-  const dll = parseFloat(account.dailyLossLimit) || null;
+
+  return (
+    <React.Fragment>
+      {account.consistencyPct && (
+        <React.Fragment>
+          <MiniStat label="Consistency Required" value={account.consistencyPct + "%"} color="text-purple-400" />
+          <MiniStat label="Max Profit Allowed / Day" value={cap !== null ? fmt(cap) : (guideline !== null ? fmt(guideline) : 'Add a profit target')} color="text-yellow-400" />
+        </React.Fragment>
+      )}
+      {dll && (
+        <React.Fragment>
+          <MiniStat label="Daily Loss Limit" value={fmt(dll)} color="text-red-400" />
+          <MiniStat label="DLL Type" value={account.dllType === 'hard' ? 'Hard Breach' : 'Soft Breach'} color={account.dllType === 'hard' ? 'text-red-400' : 'text-yellow-400'} />
+        </React.Fragment>
+      )}
+    </React.Fragment>
+  );
+}
+
+// The explanatory text and today's within/over check, meant to sit below the
+// Active Strategy card's stat grid, right under PropFirmRuleStats.
+function PropFirmRuleNote(props) {
+  const account = props.account;
+  const entries = props.entries;
+  if (!account.consistencyPct) return null;
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const cumBefore = getCumulativeProfitBefore(entries, account.id, todayStr);
+  const cap = getConsistencyCap(account, cumBefore);
+  const guideline = getConsistencyGuideline(account);
 
   const todaysEntry = entries.find(function(e) { return e.accountId === account.id && e.date === todayStr && e.tradedToday !== 'no'; });
   const todaysPnl = todaysEntry ? todaysEntry.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0) : null;
   const todayWithin = cap !== null && todaysPnl !== null ? todaysPnl <= cap : null;
 
-  if (!account.consistencyPct && !dll) return null;
-
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Icon name="ShieldAlert" className="h-5 w-5 text-yellow-400" />
-        <h2 className="text-lg font-semibold text-white">Prop Firm Rules</h2>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {account.consistencyPct && (
-          <React.Fragment>
-            <MiniStat label="Consistency Rule" value={account.consistencyPct + "%"} color="text-purple-400" />
-            <MiniStat label="Max $ Allowed Today" value={cap !== null ? fmt(cap) : (guideline !== null ? fmt(guideline) : 'Add a profit target')} color="text-yellow-400" />
-          </React.Fragment>
-        )}
-        {dll && (
-          <React.Fragment>
-            <MiniStat label="Daily Loss Limit" value={fmt(dll)} color="text-red-400" />
-            <MiniStat label="DLL Type" value={account.dllType === 'hard' ? 'Hard Breach' : 'Soft Breach'} color={account.dllType === 'hard' ? 'text-red-400' : 'text-yellow-400'} />
-          </React.Fragment>
-        )}
-      </div>
-      {account.consistencyPct && (
-        <div className="mt-3 space-y-1.5">
-          {cap === null ? (
-            guideline !== null ? (
-              <p className="text-xs text-gray-500">You have no profitable days logged yet, so this is a starter number: {fmt(guideline)} is {account.consistencyPct}% of your {fmt(parseFloat(account.profitTarget) || 0)} profit target. It switches to a real cap the moment you log your first profitable day.</p>
-            ) : (
-              <p className="text-xs text-gray-500">Add a profit target on this account and we'll give you a starter max-per-day number here, before you've even logged your first profitable day.</p>
-            )
-          ) : (
-            <p className="text-xs text-gray-500">
-              How this number is worked out: your {account.consistencyPct}% rule means no single day can be more than {account.consistencyPct}% of your total profit. Cumulative profit before today is <span className="text-white font-medium">{fmt(cumBefore)}</span>, so today's cap is <span className="text-yellow-400 font-medium">{fmt(cap)}</span> - the amount that would keep today at exactly {account.consistencyPct}% of the new total.
-            </p>
-          )}
-          {todayWithin !== null && (
-            <p className={"text-xs flex items-center gap-1.5 " + (todayWithin ? 'text-green-400' : 'text-red-400')}>
-              <Icon name={todayWithin ? "CheckCircle" : "AlertTriangle"} className="h-3.5 w-3.5" />
-              <span>Today's logged P&amp;L is {fmt(todaysPnl)} - {todayWithin ? 'within' : 'OVER'} the {fmt(cap)} cap.</span>
-            </p>
-          )}
-        </div>
+    <div className="mt-3 space-y-1.5">
+      {cap === null ? (
+        guideline !== null ? (
+          <p className="text-xs text-gray-500">You have no profitable days logged yet, so this is a starter number: {fmt(guideline)} is {account.consistencyPct}% of your {fmt(parseFloat(account.profitTarget) || 0)} profit target. It switches to a real cap the moment you log your first profitable day.</p>
+        ) : (
+          <p className="text-xs text-gray-500">Add a profit target on this account and we'll give you a starter max-per-day number here, before you've even logged your first profitable day.</p>
+        )
+      ) : (
+        <p className="text-xs text-gray-500">
+          How this number is worked out: your {account.consistencyPct}% rule means no single day can be more than {account.consistencyPct}% of your total profit. Cumulative profit before today is <span className="text-white font-medium">{fmt(cumBefore)}</span>, so today's cap is <span className="text-yellow-400 font-medium">{fmt(cap)}</span> - the amount that would keep today at exactly {account.consistencyPct}% of the new total.
+        </p>
+      )}
+      {todayWithin !== null && (
+        <p className={"text-xs flex items-center gap-1.5 " + (todayWithin ? 'text-green-400' : 'text-red-400')}>
+          <Icon name={todayWithin ? "CheckCircle" : "AlertTriangle"} className="h-3.5 w-3.5" />
+          <span>Today's logged P&amp;L is {fmt(todaysPnl)} - {todayWithin ? 'within' : 'OVER'} the {fmt(cap)} cap.</span>
+        </p>
       )}
     </div>
   );
@@ -1004,40 +1018,34 @@ async function importCSV(text, accountId, entriesRef) {
   return dates.length;
 }
 
-function CsvImportExportCard(props) {
+// CSV import as an entry method inside the Add Entry modal (Export CSV lives
+// next to the Daily Log button in Trade History instead - it's a read action,
+// not a way of logging an entry).
+function CsvImportFields(props) {
   const account = props.account;
-  const accountEntries = props.accountEntries;
   const entriesRef = props.entriesRef;
+  const onDone = props.onDone;
   const [status, setStatus] = useState('');
   const fileRef = React.useRef(null);
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Icon name="FileSpreadsheet" className="h-5 w-5 text-yellow-400" />
-        <h2 className="text-lg font-semibold text-white">CSV Import / Export</h2>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        <button onClick={function() { downloadCSV(toCSV(accountEntries), account.name + '-trades.csv'); }}
-          className="flex items-center gap-1.5 bg-blue-500/20 text-blue-400 border border-blue-500/40 px-4 py-2 rounded-lg text-sm font-medium">
-          <Icon name="Download" className="h-4 w-4" /><span>Export CSV</span>
-        </button>
-        <button onClick={function() { fileRef.current.click(); }}
-          className="flex items-center gap-1.5 bg-green-500/20 text-green-400 border border-green-500/40 px-4 py-2 rounded-lg text-sm font-medium">
-          <Icon name="Upload" className="h-4 w-4" /><span>Import CSV</span>
-        </button>
-        <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={async function(e) {
-          const file = e.target.files[0];
-          if (!file) return;
-          setStatus('Importing...');
-          const text = await file.text();
-          const count = await importCSV(text, account.id, entriesRef);
-          setStatus('Imported ' + count + ' day(s).');
-          e.target.value = '';
-        }} />
-      </div>
-      {status && <p className="text-xs text-gray-400 mt-2">{status}</p>}
-      <p className="text-xs text-gray-600 mt-2">Import expects the same column format the export produces - safest to edit an exported file rather than build one from scratch.</p>
+    <div className="space-y-3">
+      <p className="text-xs text-gray-500">Import a CSV of trades for {account.name} instead of entering them one by one. Expects the same column format as an exported file - export a day first if you need a template.</p>
+      <button onClick={function() { fileRef.current.click(); }}
+        className="w-full flex items-center justify-center gap-1.5 bg-blue-500/20 text-blue-400 border border-blue-500/40 px-4 py-2.5 rounded-lg text-sm font-medium">
+        <Icon name="Upload" className="h-4 w-4" /><span>Choose CSV File</span>
+      </button>
+      <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        setStatus('Importing...');
+        const text = await file.text();
+        const count = await importCSV(text, account.id, entriesRef);
+        setStatus('Imported ' + count + ' day(s).');
+        e.target.value = '';
+        if (onDone) setTimeout(onDone, 900);
+      }} />
+      {status && <p className="text-xs text-gray-400">{status}</p>}
     </div>
   );
 }
@@ -1088,6 +1096,7 @@ function MMMJournal(props) {
   const [activeAccountId, setActiveAccountId] = useState(null);
   const [showAddAccount, setShowAddAccount] = useState(false);
   const [showAddEntry, setShowAddEntry] = useState(false);
+  const [entryMethod, setEntryMethod] = useState('manual');
   const [expandedEntry, setExpandedEntry] = useState(null);
   const [newAccount, setNewAccount] = useState(emptyAccountForm);
   const [newEntry, setNewEntry] = useState(emptyEntryForm(0, 1));
@@ -1184,6 +1193,8 @@ function MMMJournal(props) {
   const lossTrades = tradedAccountEntries.flatMap(function(e) { return e.trades; }).filter(function(t) { return t.result === 'loss'; }).length;
   const totalTrades = winTrades + lossTrades;
   const winRate = totalTrades > 0 ? (winTrades / totalTrades) * 100 : 0;
+  const avgTradesPerDay = tradedAccountEntries.length > 0 ? totalTrades / tradedAccountEntries.length : 0;
+  const maxTradesInDay = tradedAccountEntries.reduce(function(max, e) { return Math.max(max, e.trades.length); }, 0);
   const activeStatus = activeAccount ? computeStatus(activeAccount, currentBuffer, totalPnl) : 'active';
 
   const getAccountStatus = function(acc) {
@@ -1400,7 +1411,7 @@ function MMMJournal(props) {
             <div className="flex items-center gap-2 flex-wrap">
               <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={setActiveAccountId} getStatus={getAccountStatus} filter={accountFilter} />
               {activeAccount && (
-                <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setShowAddEntry(true); }}
+                <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setEntryMethod('manual'); setShowAddEntry(true); }}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-gray-900 border-gray-800 text-gray-300 hover:border-yellow-500/40 hover:text-yellow-300 transition">
                   <Icon name="CalendarPlus" className="h-3.5 w-3.5" /><span>Daily Log</span>
                 </button>
@@ -1486,15 +1497,16 @@ function MMMJournal(props) {
                     <MiniStat label="Risk / Trade" value={fmt(riskPerTrade)} color="text-blue-400" />
                     <MiniStat label="Locked Max Stop" value={maxStopPoints.toFixed(0) + " pts"} color="text-red-400" />
                     <MiniStat label="Daily Target (2 wins)" value={fmt(riskPerTrade * activeRR * 2)} color="text-green-400" />
+                    <PropFirmRuleStats account={activeAccount} entries={entries} />
                   </div>
-                  <TradingPlanSummaryGrid account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} />
+                  <TradingPlanSummaryGrid account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} avgTradesPerDay={avgTradesPerDay} maxTradesInDay={maxTradesInDay} />
+                  <PropFirmRuleNote account={activeAccount} entries={entries} />
                 </div>
 
-                <PropFirmRulesCard account={activeAccount} entries={entries} />
+                <PerAccountBreakdown accounts={accounts} entries={entries} />
 
                 <CostsAndPayoutsCard account={activeAccount} status={activeStatus} />
                 <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} />
-                <CsvImportExportCard account={activeAccount} accountEntries={accountEntries} entriesRef={entriesRef} />
 
                 <EquityCurveBlock accounts={accounts} entries={entries} />
 
@@ -1504,12 +1516,18 @@ function MMMJournal(props) {
                     <OverviewStats accounts={accounts} entries={entries} />
                   </div>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
                       <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="Calendar" className="h-5 w-5 text-yellow-400" /><span>Trade History</span></h2>
-                      <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setShowAddEntry(true); }}
-                        className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-green-400 hover:to-emerald-500 transition">
-                        <Icon name="Plus" className="h-3.5 w-3.5" /><span>Daily Log</span>
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button onClick={function() { downloadCSV(toCSV(accountEntries), activeAccount.name + '-trades.csv'); }}
+                          className="flex items-center gap-1.5 bg-gray-900 border border-gray-800 text-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium hover:border-blue-500/40 hover:text-blue-300 transition">
+                          <Icon name="Download" className="h-3.5 w-3.5" /><span>Export CSV</span>
+                        </button>
+                        <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setEntryMethod('manual'); setShowAddEntry(true); }}
+                          className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-green-400 hover:to-emerald-500 transition">
+                          <Icon name="Plus" className="h-3.5 w-3.5" /><span>Daily Log</span>
+                        </button>
+                      </div>
                     </div>
                     {accountEntries.length === 0 ? (
                       <div className="text-center py-12 border border-dashed border-gray-800 rounded-xl text-gray-500 text-sm">No entries yet.</div>
@@ -1598,7 +1616,6 @@ function MMMJournal(props) {
                   </div>
                 </div>
 
-                <PerAccountBreakdown accounts={accounts} entries={entries} />
                 <DisciplineLeaderboard uid={user.uid} />
 
                 <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} divisor={ruinDivisor} accountType={activeAccount.accountType} />
@@ -1749,6 +1766,18 @@ function MMMJournal(props) {
       {showAddEntry && activeAccount && (
         <Modal onClose={function() { setShowAddEntry(false); }} title="Log Today's Trades" size="lg">
           <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1.5">Entry Method</label>
+              <div className="flex gap-2">
+                <button onClick={function() { setEntryMethod('manual'); }} className={"flex-1 py-2 rounded-lg text-sm font-medium border flex items-center justify-center gap-1.5 " + (entryMethod === 'manual' ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}><Icon name="PenLine" className="h-3.5 w-3.5" /><span>Manual Entry</span></button>
+                <button onClick={function() { setEntryMethod('csv'); }} className={"flex-1 py-2 rounded-lg text-sm font-medium border flex items-center justify-center gap-1.5 " + (entryMethod === 'csv' ? 'bg-blue-500/20 text-blue-400 border-blue-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}><Icon name="Upload" className="h-3.5 w-3.5" /><span>Import CSV</span></button>
+              </div>
+            </div>
+
+            {entryMethod === 'csv' ? (
+              <CsvImportFields account={activeAccount} entriesRef={entriesRef} onDone={function() { setShowAddEntry(false); }} />
+            ) : (
+              <React.Fragment>
             <Field label="Date"><input type="date" value={newEntry.date} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { date: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
 
             <div>
@@ -1854,6 +1883,8 @@ function MMMJournal(props) {
 
                 <Field label="Notes (optional)"><textarea value={newEntry.notes} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { notes: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-20 focus:border-yellow-400/50 outline-none resize-none"></textarea></Field>
                 <button onClick={handleSaveEntry} disabled={filledTrades.length === 0 || isTie} className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"><Icon name="Save" className="h-4 w-4" /><span>Save Entry</span></button>
+              </React.Fragment>
+            )}
               </React.Fragment>
             )}
           </div>
