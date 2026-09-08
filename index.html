@@ -597,18 +597,16 @@ function TradingPlanSummaryGrid(props) {
   const maxTradesInDay = props.maxTradesInDay || 0;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <React.Fragment>
       <MiniStat label="Win / Trade" value={fmt(winPerTrade)} color="text-green-400" />
       <MiniStat label="RR Ratio" value={rr + ":1"} color="text-purple-400" />
       <MiniStat label="Breakeven Win Rate" value={minWinRate.toFixed(1) + "%"} color="text-purple-400" />
       <MiniStat label="Wins to Hit Target" value={winsToTarget + " wins"} color="text-purple-400" />
-      <MiniStat label="Max Trades / Day (Rule)" value="3" color="text-white" />
-      <MiniStat label="Max Losses / Day" value="2" color="text-red-400" />
       <MiniStat label="Avg Trades Taken / Day" value={avgTradesPerDay.toFixed(1)} color="text-blue-400" />
       <MiniStat label="Most Trades Taken (Day)" value={String(maxTradesInDay)} color="text-blue-400" />
       <MiniStat label="Remaining to Target" value={fmt(Math.max(0, remaining))} color="text-yellow-400" />
       <MiniStat label="Capital (Buffer)" value={fmt(account.maxDrawdown)} color="text-yellow-400" />
-    </div>
+    </React.Fragment>
   );
 }
 
@@ -654,18 +652,10 @@ function PropFirmRuleStats(props) {
 
   return (
     <React.Fragment>
-      {account.consistencyPct && (
-        <React.Fragment>
-          <MiniStat label="Consistency Required" value={account.consistencyPct + "%"} color="text-purple-400" />
-          <MiniStat label="Max Profit Allowed / Day" value={cap !== null ? fmt(cap) : (guideline !== null ? fmt(guideline) : 'Add a profit target')} color="text-yellow-400" />
-        </React.Fragment>
-      )}
-      {dll && (
-        <React.Fragment>
-          <MiniStat label="Daily Loss Limit" value={fmt(dll)} color="text-red-400" />
-          <MiniStat label="DLL Type" value={account.dllType === 'hard' ? 'Hard Breach' : 'Soft Breach'} color={account.dllType === 'hard' ? 'text-red-400' : 'text-yellow-400'} />
-        </React.Fragment>
-      )}
+      <MiniStat label="Consistency Required" value={account.consistencyPct ? account.consistencyPct + "%" : 'Not set'} color="text-purple-400" />
+      <MiniStat label="Max Profit Allowed / Day" value={account.consistencyPct ? (cap !== null ? fmt(cap) : (guideline !== null ? fmt(guideline) : 'Add a profit target')) : '-'} color="text-yellow-400" />
+      <MiniStat label="Daily Loss Limit" value={dll ? fmt(dll) : 'Not set'} color="text-red-400" />
+      <MiniStat label="DLL Type" value={dll ? (account.dllType === 'hard' ? 'Hard Breach' : 'Soft Breach') : '-'} color={dll && account.dllType === 'hard' ? 'text-red-400' : 'text-yellow-400'} />
     </React.Fragment>
   );
 }
@@ -918,17 +908,83 @@ function EquityCurveBlock(props) {
 
 function DisciplineLeaderboard(props) {
   const currentUid = props.uid;
+  const currentName = props.currentName;
   const [rows, setRows] = useState([]);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(function() {
-    const unsub = db.collection('leaderboard').orderBy('disciplineScore', 'desc').limit(200)
-      .onSnapshot(function(snap) {
-        setRows(snap.docs.map(function(d) { return Object.assign({ uid: d.id }, d.data()); }));
-      }, function(e) { console.error('leaderboard read error:', e.code, e.message); });
-    return unsub;
-  }, []);
+    let cancelled = false;
 
-  if (rows.length === 0) return null;
+    // Build the leaderboard straight from what's actually sitting in Firestore -
+    // every registered user's accounts and entries - rather than waiting for each
+    // person's own browser to write a leaderboard doc. That way someone who set
+    // up their accounts last week and hasn't opened the app since still shows up.
+    async function loadAll() {
+      try {
+        const [namesSnap, accountsSnap, entriesSnap] = await Promise.all([
+          db.collection('leaderboard').get(),
+          db.collectionGroup('accounts').get(),
+          db.collectionGroup('entries').get()
+        ]);
+
+        const namesByUid = {};
+        namesSnap.forEach(function(d) {
+          const data = d.data();
+          if (data.displayName) namesByUid[d.id] = data.displayName;
+        });
+
+        const accountsByUid = {};
+        accountsSnap.forEach(function(d) {
+          const uid = d.ref.parent.parent ? d.ref.parent.parent.id : null;
+          if (!uid) return;
+          if (!accountsByUid[uid]) accountsByUid[uid] = [];
+          accountsByUid[uid].push(Object.assign({ id: d.id }, d.data()));
+        });
+
+        const entriesByUid = {};
+        entriesSnap.forEach(function(d) {
+          const uid = d.ref.parent.parent ? d.ref.parent.parent.id : null;
+          if (!uid) return;
+          if (!entriesByUid[uid]) entriesByUid[uid] = [];
+          entriesByUid[uid].push(Object.assign({ id: d.id }, d.data()));
+        });
+
+        const allUids = Array.from(new Set(Object.keys(accountsByUid).concat(Object.keys(entriesByUid))));
+        const computed = allUids.map(function(uid) {
+          const disc = computeDisciplineScore(accountsByUid[uid] || [], entriesByUid[uid] || []);
+          if (!disc) return null;
+          const displayName = uid === currentUid && currentName ? currentName : (namesByUid[uid] || ('Trader-' + uid.slice(0, 4)));
+          return { uid: uid, displayName: displayName, disciplineScore: disc.score };
+        }).filter(function(r) { return r !== null; });
+
+        computed.sort(function(a, b) { return b.disciplineScore - a.disciplineScore; });
+
+        if (!cancelled) { setRows(computed); setLoadError(false); }
+      } catch (e) {
+        console.error('leaderboard aggregate read error:', e.code, e.message);
+        if (!cancelled) setLoadError(true);
+      }
+    }
+
+    loadAll();
+    const interval = setInterval(loadAll, 60000);
+    return function() { cancelled = true; clearInterval(interval); };
+  }, [currentUid, currentName]);
+
+  if (rows.length === 0) {
+    if (loadError) {
+      return (
+        <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-2">
+            <Icon name="Award" className="h-5 w-5 text-yellow-400" />
+            <h2 className="text-lg font-semibold text-white">Discipline Leaderboard</h2>
+          </div>
+          <p className="text-xs text-red-400">Couldn't load everyone's data - this needs a Firestore rules update to allow reading across users. Check the browser console for the exact error.</p>
+        </div>
+      );
+    }
+    return null;
+  }
 
   const myIndex = rows.findIndex(function(r) { return r.uid === currentUid; });
   const myPercentile = myIndex >= 0 ? Math.max(1, Math.round(((myIndex + 1) / rows.length) * 100)) : null;
@@ -1492,16 +1548,18 @@ function MMMJournal(props) {
                       </span>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <MiniStat label="Contracts Unlocked" value={contractPlan.label} color="text-yellow-400" />
                     <MiniStat label="Risk / Trade" value={fmt(riskPerTrade)} color="text-blue-400" />
                     <MiniStat label="Locked Max Stop" value={maxStopPoints.toFixed(0) + " pts"} color="text-red-400" />
                     <MiniStat label="Daily Target (2 wins)" value={fmt(riskPerTrade * activeRR * 2)} color="text-green-400" />
                     <PropFirmRuleStats account={activeAccount} entries={entries} />
+                    <TradingPlanSummaryGrid account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} avgTradesPerDay={avgTradesPerDay} maxTradesInDay={maxTradesInDay} />
                   </div>
-                  <TradingPlanSummaryGrid account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} avgTradesPerDay={avgTradesPerDay} maxTradesInDay={maxTradesInDay} />
                   <PropFirmRuleNote account={activeAccount} entries={entries} />
                 </div>
+
+                <DisciplineLeaderboard uid={user.uid} currentName={user.displayName || user.email} />
 
                 <PerAccountBreakdown accounts={accounts} entries={entries} />
 
@@ -1615,8 +1673,6 @@ function MMMJournal(props) {
                     )}
                   </div>
                 </div>
-
-                <DisciplineLeaderboard uid={user.uid} />
 
                 <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} divisor={ruinDivisor} accountType={activeAccount.accountType} />
                 <StrategyCard account={activeAccount} />
