@@ -298,6 +298,54 @@ function AuthScreen() {
   );
 }
 
+function EditableName(props) {
+  const user = props.user;
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [override, setOverride] = useState(null);
+  const [saving, setSaving] = useState(false);
+
+  const currentLabel = override || user.displayName || user.email;
+
+  const startEdit = function() {
+    setDraft(override || user.displayName || '');
+    setEditing(true);
+  };
+
+  const save = async function() {
+    const trimmed = draft.trim();
+    if (!trimmed) return;
+    setSaving(true);
+    try {
+      await auth.currentUser.updateProfile({ displayName: trimmed });
+      await db.collection('leaderboard').doc(user.uid).set({ displayName: trimmed }, { merge: true });
+      setOverride(trimmed);
+      setEditing(false);
+    } catch (e) {
+      console.error('name update error:', e.code, e.message);
+    }
+    setSaving(false);
+  };
+
+  if (editing) {
+    return (
+      <span className="inline-flex items-center gap-1.5">
+        <input value={draft} onChange={function(e) { setDraft(e.target.value); }} placeholder="Your name"
+          className="bg-gray-800 border border-gray-700 text-white rounded px-2 py-0.5 text-sm w-32 focus:border-yellow-400/50 outline-none" />
+        <button onClick={save} disabled={saving || !draft.trim()} className="text-green-400 hover:underline disabled:opacity-40 text-sm">Save</button>
+        <button onClick={function() { setEditing(false); }} className="text-gray-500 hover:text-gray-300 text-sm">Cancel</button>
+      </span>
+    );
+  }
+
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span>{currentLabel}</span>
+      <button onClick={startEdit} className="text-gray-500 hover:text-yellow-400" title="Edit display name"><Icon name="Pencil" className="h-3 w-3" /></button>
+    </span>
+  );
+}
+
 function UserCounters() {
   const [total, setTotal] = useState(null);
   const [online, setOnline] = useState(null);
@@ -911,6 +959,7 @@ function DisciplineLeaderboard(props) {
   const currentName = props.currentName;
   const [rows, setRows] = useState([]);
   const [loadError, setLoadError] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(function() {
     let cancelled = false;
@@ -990,29 +1039,42 @@ function DisciplineLeaderboard(props) {
   const myPercentile = myIndex >= 0 ? Math.max(1, Math.round(((myIndex + 1) / rows.length) * 100)) : null;
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Icon name="Award" className="h-5 w-5 text-yellow-400" />
-        <h2 className="text-lg font-semibold text-white">Discipline Leaderboard</h2>
-      </div>
-      {myPercentile !== null && (
-        <div className="mb-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 text-sm">
-          <span className="text-yellow-400 font-semibold">You are in the top {myPercentile}%</span>
-          <span className="text-gray-400"> - rank {myIndex + 1} of {rows.length} - score {rows[myIndex].disciplineScore.toFixed(1)}</span>
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden">
+      <button onClick={function() { setOpen(!open); }} className="w-full flex items-center justify-between p-6 text-left">
+        <div className="flex items-center gap-2">
+          <Icon name="Award" className="h-5 w-5 text-yellow-400" />
+          <h2 className="text-lg font-semibold text-white">Discipline Leaderboard</h2>
+          <span className="text-xs text-gray-500">({rows.length} trader{rows.length !== 1 ? 's' : ''})</span>
+        </div>
+        <div className="flex items-center gap-3">
+          {myPercentile !== null && (
+            <span className="text-xs text-yellow-400 font-medium hidden sm:inline">Rank {myIndex + 1} of {rows.length} - top {myPercentile}%</span>
+          )}
+          <Icon name={open ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500" />
+        </div>
+      </button>
+      {open && (
+        <div className="px-6 pb-6">
+          {myPercentile !== null && (
+            <div className="mb-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 text-sm">
+              <span className="text-yellow-400 font-semibold">You are in the top {myPercentile}%</span>
+              <span className="text-gray-400"> - rank {myIndex + 1} of {rows.length} - score {rows[myIndex].disciplineScore.toFixed(1)}</span>
+            </div>
+          )}
+          <div className="space-y-1.5 max-h-96 overflow-y-auto pr-1">
+            {rows.map(function(r, i) {
+              const isMe = r.uid === currentUid;
+              return (
+                <div key={r.uid} className={"flex items-center justify-between text-sm rounded-lg px-3 py-2 " + (isMe ? 'bg-yellow-500/15 border border-yellow-500/30' : 'bg-black/30')}>
+                  <span className="text-gray-400">#{i + 1}</span>
+                  <span className={"flex-1 ml-3 " + (isMe ? 'text-yellow-300 font-semibold' : 'text-white')}>{r.displayName}{isMe ? ' (you)' : ''}</span>
+                  <span className="text-green-400 font-semibold">{r.disciplineScore.toFixed(1)}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
-      <div className="space-y-1.5">
-        {rows.slice(0, 10).map(function(r, i) {
-          const isMe = r.uid === currentUid;
-          return (
-            <div key={r.uid} className={"flex items-center justify-between text-sm rounded-lg px-3 py-2 " + (isMe ? 'bg-yellow-500/15 border border-yellow-500/30' : 'bg-black/30')}>
-              <span className="text-gray-400">#{i + 1}</span>
-              <span className={"flex-1 ml-3 " + (isMe ? 'text-yellow-300 font-semibold' : 'text-white')}>{r.displayName}{isMe ? ' (you)' : ''}</span>
-              <span className="text-green-400 font-semibold">{r.disciplineScore.toFixed(1)}</span>
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 }
@@ -1459,7 +1521,7 @@ function MMMJournal(props) {
             <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">MMM Pro Journal</h1>
               <p className="text-gray-500 text-sm mt-1 flex items-center flex-wrap">
-                <span>{user.displayName || user.email} - <button onClick={function() { auth.signOut(); }} className="text-red-400 hover:underline">Sign out</button></span>
+                <span><EditableName user={user} /> - <button onClick={function() { auth.signOut(); }} className="text-red-400 hover:underline">Sign out</button></span>
                 <UserCounters />
               </p>
             </div>
