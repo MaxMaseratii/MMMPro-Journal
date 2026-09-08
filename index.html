@@ -1188,6 +1188,16 @@ function MMMJournal(props) {
     return function() { clearInterval(interval); };
   }, [user.uid]);
 
+  // Records the person's display name the moment they log in, regardless of
+  // whether they have any trading accounts yet. Without this, someone who
+  // signed up with a real name but hasn't set up an account never gets that
+  // name saved anywhere the leaderboard can read it, and shows as Trader-XXXX.
+  useEffect(function() {
+    db.collection('leaderboard').doc(user.uid).set({
+      displayName: user.displayName || ('Trader-' + user.uid.slice(0, 4)),
+    }, { merge: true }).catch(function(e) { console.error('leaderboard name write error:', e.code, e.message); });
+  }, [user.uid, user.displayName]);
+
   useEffect(function() {
     const disc = computeDisciplineScore(accounts, entries);
     if (!disc) return;
