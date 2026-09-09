@@ -473,11 +473,39 @@ const emptyEntryForm = function(defaultRisk, defaultContracts) {
     noTradeNotes: '',
     dailyBias: 'neutral',
     exercised: false,
+    strategyId: 'default',
     trades: [{ result: 'win', pnl: '', direction: 'long', rulesChecked: [],
       positionSize: defaultContracts ? String(defaultContracts) : '',
       riskAmount: defaultRisk ? defaultRisk.toFixed(2) : '', htfLtf: false }],
     notes: ''
   };
+};
+
+// A strategy is a named set of long/short entry rules. Older accounts only ever
+// had one rule set stored directly on the account - this treats that as an
+// implicit "Default Strategy" so nothing breaks, while accounts.strategies
+// (once someone adds more) holds any additional named strategies.
+const getStrategies = function(account) {
+  const extra = account.strategies || [];
+  const defaultStrategy = {
+    id: 'default',
+    name: account.strategyName || 'Default Strategy',
+    longRules: account.longRules || [],
+    shortRules: account.shortRules || [],
+  };
+  return [defaultStrategy].concat(extra);
+};
+
+const emptyStrategyForm = { name: '', longRules: [''], shortRules: [''] };
+
+// Resolves the actual rule list for a trade based on which strategy was
+// selected for that day (entry.strategyId), not just the account's single
+// legacy rule set - so multiple named strategies can coexist on one account.
+const getApplicableRules = function(trade, entry, account) {
+  const strategies = getStrategies(account);
+  const strategy = strategies.find(function(s) { return s.id === (entry.strategyId || 'default'); }) || strategies[0];
+  const rules = trade.direction === 'long' ? (strategy.longRules || []) : (strategy.shortRules || []);
+  return rules.filter(function(r) { return r && r.trim(); });
 };
 
 function AuthScreen(props) {
@@ -743,6 +771,7 @@ function RiskOfRuinCard(props) {
   const currentBuffer = props.currentBuffer;
   const divisor = props.divisor;
   const accountType = props.accountType;
+  const [open, setOpen] = useState(false);
   const checkpoints = [5, 10, 15, 20, 25, 30, 40, 50].filter(function(n) { return n <= divisor * 2.5; });
   const rows = checkpoints.map(function(n) {
     const remaining = currentBuffer * Math.pow(1 - 1 / divisor, n);
@@ -752,11 +781,19 @@ function RiskOfRuinCard(props) {
   });
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
-      <div className="flex items-center gap-2 mb-1">
-        <Icon name="TrendingDown" className="h-5 w-5 text-red-400" />
-        <h2 className="text-lg font-semibold text-white">Risk of Ruin - Consecutive Loss Projection &amp; Gain to Recover</h2>
-      </div>
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden">
+      <button onClick={function() { setOpen(!open); }} className="w-full flex items-center justify-between p-6 text-left">
+        <div className="flex items-center gap-2">
+          <Icon name="TrendingDown" className="h-5 w-5 text-red-400" />
+          <div>
+            <h2 className="text-lg font-semibold text-white">Risk of Ruin</h2>
+            <p className="text-xs text-gray-500">Consecutive loss projection &amp; gain needed to recover</p>
+          </div>
+        </div>
+        <Icon name={open ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500 flex-shrink-0" />
+      </button>
+      {open && (
+        <div className="px-6 pb-6">
       <p className="text-xs text-gray-500 mb-4">Hypothetical: if every trade lost at the fixed Charter risk% for this phase.</p>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
@@ -795,6 +832,8 @@ function RiskOfRuinCard(props) {
       <p className="text-xs text-gray-600 mt-3">
         {accountType === 'live' ? 'Live runs Preservation Mode (2%) - the buffer erodes much slower, protecting real capital.' : 'Challenge and Funded run Speed Mode (10%) - faster progress, faster erosion under a bad streak.'}
       </p>
+        </div>
+      )}
     </div>
   );
 }
@@ -919,31 +958,43 @@ function BreachReviewCard(props) {
 
 function StrategyCard(props) {
   const account = props.account;
-  const longRules = (account.longRules || []).filter(function(r) { return r && r.trim(); });
-  const shortRules = (account.shortRules || []).filter(function(r) { return r && r.trim(); });
-  if (!account.strategyName && longRules.length === 0 && shortRules.length === 0) return null;
+  const strategies = getStrategies(account).filter(function(s) {
+    const hasLong = (s.longRules || []).filter(function(r) { return r && r.trim(); }).length > 0;
+    const hasShort = (s.shortRules || []).filter(function(r) { return r && r.trim(); }).length > 0;
+    return hasLong || hasShort || s.id !== 'default';
+  });
+  if (strategies.length === 0) return null;
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
-      <div className="flex items-center gap-2 mb-4">
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6 space-y-6">
+      <div className="flex items-center gap-2">
         <Icon name="BookOpen" className="h-5 w-5 text-yellow-400" />
-        <h2 className="text-lg font-semibold text-white">{account.strategyName || 'Strategy Rules'}</h2>
+        <h2 className="text-lg font-semibold text-white">Strategy Rules</h2>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-black/40 border border-green-800/40 rounded-xl p-4">
-          <p className="text-xs uppercase tracking-wide text-green-400 font-semibold mb-2 flex items-center gap-1.5">
-            <Icon name="TrendingUp" className="h-3.5 w-3.5" /><span>Long Setup Rules</span>
-          </p>
-          {longRules.length === 0 ? <p className="text-xs text-gray-600">No rules defined.</p> :
-            <ul className="space-y-1.5">{longRules.map(function(r, i) { return (<li key={i} className="text-sm text-gray-300 flex items-start gap-2"><span className="text-green-400 mt-0.5 leading-none">*</span><span>{r}</span></li>); })}</ul>}
-        </div>
-        <div className="bg-black/40 border border-red-800/40 rounded-xl p-4">
-          <p className="text-xs uppercase tracking-wide text-red-400 font-semibold mb-2 flex items-center gap-1.5">
-            <Icon name="TrendingDown" className="h-3.5 w-3.5" /><span>Short Setup Rules</span>
-          </p>
-          {shortRules.length === 0 ? <p className="text-xs text-gray-600">No rules defined.</p> :
-            <ul className="space-y-1.5">{shortRules.map(function(r, i) { return (<li key={i} className="text-sm text-gray-300 flex items-start gap-2"><span className="text-red-400 mt-0.5 leading-none">*</span><span>{r}</span></li>); })}</ul>}
-        </div>
-      </div>
+      {strategies.map(function(strategy) {
+        const longRules = (strategy.longRules || []).filter(function(r) { return r && r.trim(); });
+        const shortRules = (strategy.shortRules || []).filter(function(r) { return r && r.trim(); });
+        return (
+          <div key={strategy.id}>
+            <p className="text-sm font-medium text-white mb-2">{strategy.name}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-black/40 border border-green-800/40 rounded-xl p-4">
+                <p className="text-xs uppercase tracking-wide text-green-400 font-semibold mb-2 flex items-center gap-1.5">
+                  <Icon name="TrendingUp" className="h-3.5 w-3.5" /><span>Long Setup Rules</span>
+                </p>
+                {longRules.length === 0 ? <p className="text-xs text-gray-600">No rules defined.</p> :
+                  <ul className="space-y-1.5">{longRules.map(function(r, i) { return (<li key={i} className="text-sm text-gray-300 flex items-start gap-2"><span className="text-green-400 mt-0.5 leading-none">*</span><span>{r}</span></li>); })}</ul>}
+              </div>
+              <div className="bg-black/40 border border-red-800/40 rounded-xl p-4">
+                <p className="text-xs uppercase tracking-wide text-red-400 font-semibold mb-2 flex items-center gap-1.5">
+                  <Icon name="TrendingDown" className="h-3.5 w-3.5" /><span>Short Setup Rules</span>
+                </p>
+                {shortRules.length === 0 ? <p className="text-xs text-gray-600">No rules defined.</p> :
+                  <ul className="space-y-1.5">{shortRules.map(function(r, i) { return (<li key={i} className="text-sm text-gray-300 flex items-start gap-2"><span className="text-red-400 mt-0.5 leading-none">*</span><span>{r}</span></li>); })}</ul>}
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -1138,7 +1189,7 @@ function EquityCurve(props) {
 
 function computeTradeAdherence(trade, entry, account) {
   const factors = [];
-  const applicableRules = (trade.direction === 'long' ? (account.longRules || []) : (account.shortRules || [])).filter(function(r) { return r && r.trim(); });
+  const applicableRules = getApplicableRules(trade, entry, account);
   if (applicableRules.length > 0) factors.push((trade.rulesChecked || []).length / applicableRules.length);
   if (entry.dailyBias && entry.dailyBias !== 'neutral') {
     const aligned = (entry.dailyBias === 'bullish' && trade.direction === 'long') || (entry.dailyBias === 'bearish' && trade.direction === 'short');
@@ -1160,7 +1211,7 @@ function computeTradeAdherence(trade, entry, account) {
 // questions instead of one blended number - each becomes its own trackable line
 // on the discipline checklist (entry rules, risk size, lot size, bias, HTF/LTF).
 function computeTradeDisciplineFactors(trade, entry, account) {
-  const applicableRules = (trade.direction === 'long' ? (account.longRules || []) : (account.shortRules || [])).filter(function(r) { return r && r.trim(); });
+  const applicableRules = getApplicableRules(trade, entry, account);
   const rulesFrac = applicableRules.length > 0 ? (trade.rulesChecked || []).length / applicableRules.length : null;
 
   // "No over-risk" checks two things, not one: did you log a risk amount within
@@ -1380,6 +1431,7 @@ function EquityCurveBlock(props) {
 function DisciplineChecklistCard(props) {
   const accounts = props.accounts;
   const entries = props.entries;
+  const [open, setOpen] = useState(false);
   const disc = computeDisciplineScore(accounts, entries);
   if (!disc) return null;
   const c = disc.checklist;
@@ -1395,30 +1447,53 @@ function DisciplineChecklistCard(props) {
     { label: 'Completed HTF to LTF analysis before entry?', value: c.htfPct },
     { label: 'Traded in the direction of your daily bias?', value: c.biasPct },
   ];
+  const withData = questions.filter(function(q) { return q.value !== null && q.value !== undefined; });
+  const passing = withData.filter(function(q) { return q.value >= 70; });
+
+  const scoreColor = disc.score >= 70 ? '#4ade80' : disc.score >= 40 ? '#facc15' : '#f87171';
+  const scoreTextCls = disc.score >= 70 ? 'text-green-400' : disc.score >= 40 ? 'text-yellow-400' : 'text-red-400';
+  const ringCirc = 97.4;
+  const ringDash = Math.max(0, Math.min(100, disc.score)) / 100 * ringCirc;
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
-      <div className="flex items-center gap-2 mb-1">
-        <Icon name="ListChecks" className="h-5 w-5 text-yellow-400" />
-        <h2 className="text-lg font-semibold text-white">Your Discipline Checklist</h2>
-      </div>
-      <p className="text-xs text-gray-500 mb-4">Overall score: <span className="text-yellow-400 font-semibold">{disc.score.toFixed(1)}</span> - each question below only counts once you have data for it, so a question you haven't triggered yet won't drag your score down.</p>
-      <div className="space-y-1.5">
-        {questions.map(function(q, i) {
-          const hasData = q.value !== null && q.value !== undefined;
-          return (
-            <div key={i} className="flex items-center justify-between text-sm bg-black/30 rounded-lg px-3 py-2">
-              <div>
-                <span className="text-gray-300">{q.label}</span>
-                {q.sub && <span className="text-gray-600 text-xs ml-2">({q.sub})</span>}
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden">
+      <button onClick={function() { setOpen(!open); }} className="w-full flex items-center justify-between p-6 text-left">
+        <div className="flex items-center gap-3">
+          <div className="relative w-12 h-12 flex-shrink-0">
+            <svg viewBox="0 0 36 36" className="w-12 h-12 -rotate-90">
+              <circle cx="18" cy="18" r="15.5" fill="none" stroke="#1f2937" strokeWidth="3" />
+              <circle cx="18" cy="18" r="15.5" fill="none" stroke={scoreColor} strokeWidth="3" strokeDasharray={ringDash + " " + ringCirc} strokeLinecap="round" />
+            </svg>
+            <span className={"absolute inset-0 flex items-center justify-center text-xs font-bold " + scoreTextCls}>{disc.score.toFixed(0)}</span>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-white">Your Discipline Checklist</h2>
+            <p className="text-xs text-gray-500">{passing.length} of {withData.length} tracked questions above 70%</p>
+          </div>
+        </div>
+        <Icon name={open ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500 flex-shrink-0" />
+      </button>
+      {open && (
+        <div className="px-6 pb-6 space-y-3">
+          <p className="text-xs text-gray-500 -mt-1 mb-1">Each question only counts once you have data for it, so one you haven't triggered yet won't drag your score down.</p>
+          {questions.map(function(q, i) {
+            const hasData = q.value !== null && q.value !== undefined;
+            const barColor = !hasData ? 'bg-gray-700' : q.value >= 70 ? 'bg-green-400' : q.value >= 40 ? 'bg-yellow-400' : 'bg-red-400';
+            const textColor = !hasData ? 'text-gray-600' : q.value >= 70 ? 'text-green-400' : q.value >= 40 ? 'text-yellow-400' : 'text-red-400';
+            return (
+              <div key={i}>
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="text-gray-300">{q.label}{q.sub && <span className="text-gray-600 ml-1">({q.sub})</span>}</span>
+                  <span className={textColor + " font-semibold flex-shrink-0 ml-2"}>{hasData ? q.value.toFixed(0) + '%' : 'No data yet'}</span>
+                </div>
+                <div className="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden">
+                  <div className={"h-full rounded-full transition-all " + barColor} style={{ width: (hasData ? q.value : 0) + '%' }}></div>
+                </div>
               </div>
-              <span className={hasData ? (q.value >= 70 ? 'text-green-400 font-semibold' : q.value >= 40 ? 'text-yellow-400 font-semibold' : 'text-red-400 font-semibold') : 'text-gray-600 text-xs'}>
-                {hasData ? q.value.toFixed(0) + '%' : 'No data yet'}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -1638,7 +1713,7 @@ function CsvImportFields(props) {
 }
 
 function PerAccountBreakdown(props) {
-  const accounts = props.accounts;
+  const accounts = props.accounts.filter(function(a) { return computeAccountStatus(a, props.entries) !== 'breached'; });
   const entries = props.entries;
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
@@ -1669,7 +1744,7 @@ function PerAccountBreakdown(props) {
             </div>
           );
         })}
-        {accounts.length === 0 && <p className="text-sm text-gray-500 text-center py-4">No accounts yet.</p>}
+        {accounts.length === 0 && <p className="text-sm text-gray-500 text-center py-4">{props.accounts.length > 0 ? 'All accounts are breached - check the Breached tab.' : 'No accounts yet.'}</p>}
       </div>
     </div>
   );
@@ -1685,6 +1760,8 @@ function MMMJournal(props) {
   const [activeAccountId, setActiveAccountId] = useState(null);
   const [showAddAccount, setShowAddAccount] = useState(false);
   const [showAddEntry, setShowAddEntry] = useState(false);
+  const [showManageStrategies, setShowManageStrategies] = useState(false);
+  const [newStrategy, setNewStrategy] = useState(emptyStrategyForm);
   const [entryMethod, setEntryMethod] = useState('manual');
   const [expandedEntry, setExpandedEntry] = useState(null);
   const [newAccount, setNewAccount] = useState(emptyAccountForm);
@@ -1780,7 +1857,9 @@ function MMMJournal(props) {
 
   const rulesForDirection = function(direction) {
     if (!activeAccount) return [];
-    const list = direction === 'long' ? activeAccount.longRules : activeAccount.shortRules;
+    const strategies = getStrategies(activeAccount);
+    const strategy = strategies.find(function(s) { return s.id === (newEntry.strategyId || 'default'); }) || strategies[0];
+    const list = direction === 'long' ? strategy.longRules : strategy.shortRules;
     return (list || []).filter(function(r) { return r && r.trim(); });
   };
 
@@ -1862,6 +1941,43 @@ function MMMJournal(props) {
     await accountsRef.doc(activeAccount.id).update({ market: newMarket });
   };
 
+  const handleAddStrategy = async function() {
+    if (!newStrategy.name.trim()) return;
+    const strategy = {
+      id: 'strat_' + Date.now(),
+      name: newStrategy.name.trim(),
+      longRules: newStrategy.longRules.filter(function(r) { return r && r.trim(); }),
+      shortRules: newStrategy.shortRules.filter(function(r) { return r && r.trim(); }),
+    };
+    await accountsRef.doc(activeAccount.id).update({
+      strategies: firebase.firestore.FieldValue.arrayUnion(strategy)
+    });
+    setNewStrategy(emptyStrategyForm);
+  };
+
+  const handleDeleteStrategy = async function(strategyId) {
+    const remaining = (activeAccount.strategies || []).filter(function(s) { return s.id !== strategyId; });
+    await accountsRef.doc(activeAccount.id).update({ strategies: remaining });
+  };
+
+  const addStrategyRuleRow = function(field) {
+    const updated = {};
+    updated[field] = newStrategy[field].concat(['']);
+    setNewStrategy(Object.assign({}, newStrategy, updated));
+  };
+  const updateStrategyRuleRow = function(field, idx, value) {
+    const list = newStrategy[field].slice();
+    list[idx] = value;
+    const updated = {};
+    updated[field] = list;
+    setNewStrategy(Object.assign({}, newStrategy, updated));
+  };
+  const removeStrategyRuleRow = function(field, idx) {
+    const updated = {};
+    updated[field] = newStrategy[field].filter(function(_, i) { return i !== idx; });
+    setNewStrategy(Object.assign({}, newStrategy, updated));
+  };
+
   const addRuleRow = function(field) {
     const updated = {};
     updated[field] = newAccount[field].concat(['']);
@@ -1923,7 +2039,7 @@ function MMMJournal(props) {
       await entriesRef.add({
         accountId: activeAccountId, date: newEntry.date, tradedToday: 'no',
         noTradeReason: newEntry.noTradeReason, notes: newEntry.noTradeNotes,
-        dailyBias: 'neutral', exercised: newEntry.exercised, trades: []
+        dailyBias: 'neutral', exercised: newEntry.exercised, strategyId: newEntry.strategyId || 'default', trades: []
       });
       setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count));
       setShowAddEntry(false);
@@ -1939,7 +2055,7 @@ function MMMJournal(props) {
     });
     await entriesRef.add({
       accountId: activeAccountId, date: newEntry.date, tradedToday: 'yes',
-      dailyBias: newEntry.dailyBias, exercised: newEntry.exercised,
+      dailyBias: newEntry.dailyBias, exercised: newEntry.exercised, strategyId: newEntry.strategyId || 'default',
       trades: stampedTrades, notes: newEntry.notes, matrixAdherent: matrixAdherent
     });
     setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count));
@@ -2064,7 +2180,9 @@ function MMMJournal(props) {
 
                 <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-                    <div className="flex items-center gap-2"><Icon name="LineChart" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Active Strategy</h2></div>
+                    <div className="flex items-center gap-2"><Icon name="LineChart" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Active Strategy</h2>
+                      <button onClick={function() { setNewStrategy(emptyStrategyForm); setShowManageStrategies(true); }} className="text-xs text-yellow-400/80 hover:text-yellow-300 underline">Manage strategies</button>
+                    </div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className={"text-xs px-2.5 py-1 rounded-full font-medium border " + STATUS_STYLES[activeStatus].cls}>{STATUS_STYLES[activeStatus].label}</span>
                       <span className={"text-xs px-2.5 py-1 rounded-full font-medium " + ACCOUNT_BADGE_CLS[activeAccount.accountType] + " border border-current/30"}>
@@ -2350,6 +2468,57 @@ function MMMJournal(props) {
         </Modal>
       )}
 
+      {showManageStrategies && activeAccount && (
+        <Modal onClose={function() { setShowManageStrategies(false); }} title="Manage Strategies" size="lg">
+          <div className="space-y-5">
+            <div>
+              <p className="text-sm text-gray-400 mb-2">Existing strategies</p>
+              <div className="space-y-2">
+                {getStrategies(activeAccount).map(function(s) {
+                  return (
+                    <div key={s.id} className="bg-black/30 border border-gray-800 rounded-lg p-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-white font-medium text-sm">{s.name}</span>
+                        {s.id !== 'default' && (
+                          <button onClick={function() { handleDeleteStrategy(s.id); }} className="text-red-400/70 hover:text-red-400"><Icon name="Trash2" className="h-3.5 w-3.5" /></button>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">{(s.longRules || []).filter(function(r) { return r && r.trim(); }).length} long rule(s) - {(s.shortRules || []).filter(function(r) { return r && r.trim(); }).length} short rule(s)</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="border-t border-gray-800 pt-4 space-y-4">
+              <p className="text-sm text-yellow-400 font-medium">Add a new strategy</p>
+              <Field label="Strategy Name"><input value={newStrategy.name} onChange={function(e) { setNewStrategy(Object.assign({}, newStrategy, { name: e.target.value })); }} placeholder="e.g. Reversal Scalp" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-green-400 mb-1.5 flex items-center gap-1.5"><Icon name="TrendingUp" className="h-3.5 w-3.5" /><span>Long Setup Rules</span></label>
+                  <div className="space-y-2">
+                    {newStrategy.longRules.map(function(rule, idx) {
+                      return (<div key={idx} className="flex items-center gap-1.5"><input value={rule} onChange={function(e) { updateStrategyRuleRow('longRules', idx, e.target.value); }} placeholder={"Rule " + (idx + 1)} className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />{newStrategy.longRules.length > 1 && (<button onClick={function() { removeStrategyRuleRow('longRules', idx); }} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>)}</div>);
+                    })}
+                    <button onClick={function() { addStrategyRuleRow('longRules'); }} className="text-xs text-green-400 hover:text-green-300 flex items-center gap-1.5"><Icon name="Plus" className="h-3 w-3" /><span>Add rule</span></button>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm text-red-400 mb-1.5 flex items-center gap-1.5"><Icon name="TrendingDown" className="h-3.5 w-3.5" /><span>Short Setup Rules</span></label>
+                  <div className="space-y-2">
+                    {newStrategy.shortRules.map(function(rule, idx) {
+                      return (<div key={idx} className="flex items-center gap-1.5"><input value={rule} onChange={function(e) { updateStrategyRuleRow('shortRules', idx, e.target.value); }} placeholder={"Rule " + (idx + 1)} className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />{newStrategy.shortRules.length > 1 && (<button onClick={function() { removeStrategyRuleRow('shortRules', idx); }} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>)}</div>);
+                    })}
+                    <button onClick={function() { addStrategyRuleRow('shortRules'); }} className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1.5"><Icon name="Plus" className="h-3 w-3" /><span>Add rule</span></button>
+                  </div>
+                </div>
+              </div>
+              <button onClick={handleAddStrategy} disabled={!newStrategy.name.trim()} className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"><Icon name="Save" className="h-4 w-4" /><span>Add Strategy</span></button>
+            </div>
+          </div>
+        </Modal>
+      )}
+
       {showAddEntry && activeAccount && (
         <Modal onClose={function() { setShowAddEntry(false); }} title="Log Today's Trades" size="lg">
           <div className="space-y-4">
@@ -2398,6 +2567,14 @@ function MMMJournal(props) {
               </React.Fragment>
             ) : (
               <React.Fragment>
+                {getStrategies(activeAccount).length > 1 && (
+                  <Field label="Strategy used today">
+                    <select value={newEntry.strategyId || 'default'} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { strategyId: e.target.value })); }}
+                      className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
+                      {getStrategies(activeAccount).map(function(s) { return (<option key={s.id} value={s.id}>{s.name}</option>); })}
+                    </select>
+                  </Field>
+                )}
                 <div>
                   <label className="block text-sm text-gray-400 mb-1.5">Daily Bias (which way is the trend?)</label>
                   <div className="flex gap-2">
