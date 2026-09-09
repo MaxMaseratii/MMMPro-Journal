@@ -165,6 +165,7 @@ const TRANSLATIONS = {
   "Stayed within your risk per trade (no over-risk)?": { fr: "Êtes-vous resté dans votre risque par transaction (pas de surisque) ?", es: "¿Te mantuviste dentro de tu riesgo por operación (sin exceso de riesgo)?", ht: "Èske ou te rete nan risk pou chak tranzaksyon (san twòp risk)?" },
   "Stayed within your unlocked contract size (no over-lot)?": { fr: "Êtes-vous resté dans la taille de contrat débloquée (pas de surtaille) ?", es: "¿Te mantuviste dentro del tamaño de contrato desbloqueado (sin exceso de lote)?", ht: "Èske ou te rete nan gwosè kontra ki debloke a (san twòp lo)?" },
   "Respected the Daily Execution Matrix?": { fr: "Avez-vous respecté la matrice d'exécution quotidienne ?", es: "¿Respetaste la matriz de ejecución diaria?", ht: "Èske ou te respekte matris egzekisyon chak jou a?" },
+  "Stayed within your max daily loss (2x risk per trade)?": { fr: "Êtes-vous resté dans votre perte maximale quotidienne (2x le risque par transaction) ?", es: "¿Te mantuviste dentro de tu pérdida máxima diaria (2x el riesgo por operación)?", ht: "Èske ou te rete nan pèt maksimòm chak jou (2x risk pou chak tranzaksyon)?" },
   "Completed HTF to LTF analysis before entry?": { fr: "Avez-vous terminé l'analyse HTF vers LTF avant d'entrer ?", es: "¿Completaste el análisis de HTF a LTF antes de entrar?", ht: "Èske ou te fini analiz HTF a LTF anvan ou antre?" },
   "Traded in the direction of your daily bias?": { fr: "Avez-vous négocié dans le sens de votre biais quotidien ?", es: "¿Operaste en la dirección de tu sesgo diario?", ht: "Èske ou te fè tranzaksyon nan direksyon bias ou chak jou a?" },
   "No data yet": { fr: "Pas encore de données", es: "Sin datos aún", ht: "Poko gen done" },
@@ -1088,7 +1089,21 @@ function computeTradeAdherence(trade, entry, account) {
 function computeTradeDisciplineFactors(trade, entry, account) {
   const applicableRules = (trade.direction === 'long' ? (account.longRules || []) : (account.shortRules || [])).filter(function(r) { return r && r.trim(); });
   const rulesFrac = applicableRules.length > 0 ? (trade.rulesChecked || []).length / applicableRules.length : null;
-  const riskOk = (trade.riskAmount !== '' && trade.riskAmount !== undefined && trade.expectedRisk) ? (Math.abs(parseFloat(trade.riskAmount)) <= trade.expectedRisk * 1.1) : null;
+
+  // "No over-risk" checks two things, not one: did you log a risk amount within
+  // your locked budget, AND did the trade actually lose more than that budget
+  // once it closed. A trader who logs a small riskAmount but takes a much
+  // bigger real loss (stop not honored, slippage, moving the stop) shouldn't
+  // pass this just because the number they typed looked fine.
+  let riskOk = null;
+  if (trade.riskAmount !== '' && trade.riskAmount !== undefined && trade.expectedRisk) {
+    riskOk = Math.abs(parseFloat(trade.riskAmount)) <= trade.expectedRisk * 1.1;
+  }
+  if (trade.result === 'loss' && trade.expectedRisk && trade.pnl !== '' && trade.pnl !== undefined) {
+    const realizedLossOk = Math.abs(parseFloat(trade.pnl)) <= trade.expectedRisk * 1.1;
+    riskOk = riskOk === null ? realizedLossOk : (riskOk && realizedLossOk);
+  }
+
   const sizeOk = (trade.positionSize !== '' && trade.positionSize !== undefined && trade.expectedContracts) ? (parseFloat(trade.positionSize) <= trade.expectedContracts) : null;
   const biasOk = (entry.dailyBias && entry.dailyBias !== 'neutral') ? ((entry.dailyBias === 'bullish' && trade.direction === 'long') || (entry.dailyBias === 'bearish' && trade.direction === 'short')) : null;
   const htfDone = typeof trade.htfLtf === 'boolean' ? trade.htfLtf : null;
@@ -1108,6 +1123,21 @@ function computeDisciplineChecklist(accounts, entries) {
   const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no'; });
   const matrixDays = tradedEntries.filter(function(e) { return typeof e.matrixAdherent === 'boolean'; });
   const matrixPct = matrixDays.length > 0 ? (matrixDays.filter(function(e) { return e.matrixAdherent; }).length / matrixDays.length) * 100 : null;
+
+  // Your max loss for a day is capped by the matrix's circuit breaker (2 losses,
+  // each at your locked risk per trade) - e.g. $100 risk x 2 = $200 max. A day
+  // that lost more than that isn't just "one over-risk trade", it's the specific
+  // failure mode of blowing straight through the daily circuit breaker.
+  let dailyCapOkCount = 0, dailyCapTotal = 0;
+  tradedEntries.forEach(function(e) {
+    const dayPnl = e.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+    const expectedRisk = e.trades.length > 0 ? e.trades[0].expectedRisk : null;
+    if (dayPnl < 0 && expectedRisk) {
+      dailyCapTotal++;
+      if (Math.abs(dayPnl) <= expectedRisk * 2 * 1.1) dailyCapOkCount++;
+    }
+  });
+  const dailyLossCapPct = dailyCapTotal > 0 ? (dailyCapOkCount / dailyCapTotal) * 100 : null;
 
   const allTrades = tradedEntries.flatMap(function(e) { return e.trades.map(function(t) { return { trade: t, entry: e }; }); });
 
@@ -1134,6 +1164,7 @@ function computeDisciplineChecklist(accounts, entries) {
     riskDisciplinePct: riskTotal > 0 ? (riskOkCount / riskTotal) * 100 : null,
     lotDisciplinePct: sizeTotal > 0 ? (sizeOkCount / sizeTotal) * 100 : null,
     matrixPct: matrixPct,
+    dailyLossCapPct: dailyLossCapPct,
     biasPct: biasTotal > 0 ? (biasOkCount / biasTotal) * 100 : null,
     htfPct: htfTotal > 0 ? (htfOkCount / htfTotal) * 100 : null
   };
@@ -1216,14 +1247,15 @@ function computeDisciplineScore(accounts, entries) {
   // lot size, the daily matrix, HTF/LTF analysis, bias alignment - only gets
   // folded in once there's actual data to judge, so a consistent newcomer with
   // no trades yet isn't dragged down by questions that don't apply to them yet.
-  const parts = [{ weight: 0.30, value: loggingConsistency }];
-  if (checklist.exercisePct !== null) parts.push({ weight: 0.12, value: checklist.exercisePct });
-  if (checklist.entryRulesPct !== null) parts.push({ weight: 0.15, value: checklist.entryRulesPct });
-  if (checklist.riskDisciplinePct !== null) parts.push({ weight: 0.10, value: checklist.riskDisciplinePct });
-  if (checklist.lotDisciplinePct !== null) parts.push({ weight: 0.08, value: checklist.lotDisciplinePct });
-  if (checklist.matrixPct !== null) parts.push({ weight: 0.10, value: checklist.matrixPct });
-  if (checklist.htfPct !== null) parts.push({ weight: 0.08, value: checklist.htfPct });
-  if (checklist.biasPct !== null) parts.push({ weight: 0.07, value: checklist.biasPct });
+  const parts = [{ weight: 0.28, value: loggingConsistency }];
+  if (checklist.exercisePct !== null) parts.push({ weight: 0.10, value: checklist.exercisePct });
+  if (checklist.entryRulesPct !== null) parts.push({ weight: 0.13, value: checklist.entryRulesPct });
+  if (checklist.riskDisciplinePct !== null) parts.push({ weight: 0.12, value: checklist.riskDisciplinePct });
+  if (checklist.lotDisciplinePct !== null) parts.push({ weight: 0.07, value: checklist.lotDisciplinePct });
+  if (checklist.matrixPct !== null) parts.push({ weight: 0.08, value: checklist.matrixPct });
+  if (checklist.dailyLossCapPct !== null) parts.push({ weight: 0.10, value: checklist.dailyLossCapPct });
+  if (checklist.htfPct !== null) parts.push({ weight: 0.06, value: checklist.htfPct });
+  if (checklist.biasPct !== null) parts.push({ weight: 0.06, value: checklist.biasPct });
   const totalWeight = parts.reduce(function(s, p) { return s + p.weight; }, 0);
   const score = parts.reduce(function(s, p) { return s + p.value * p.weight; }, 0) / totalWeight;
   return { score: score, loggingConsistency: loggingConsistency, checklist: checklist, daysLogged: uniqueLoggedDays, daysSinceStart: daysSinceStart };
@@ -1286,6 +1318,7 @@ function DisciplineChecklistCard(props) {
     { label: 'Stayed within your risk per trade (no over-risk)?', value: c.riskDisciplinePct },
     { label: 'Stayed within your unlocked contract size (no over-lot)?', value: c.lotDisciplinePct },
     { label: 'Respected the Daily Execution Matrix?', value: c.matrixPct },
+    { label: 'Stayed within your max daily loss (2x risk per trade)?', value: c.dailyLossCapPct },
     { label: 'Completed HTF to LTF analysis before entry?', value: c.htfPct },
     { label: 'Traded in the direction of your daily bias?', value: c.biasPct },
   ];
@@ -1637,6 +1670,7 @@ function MMMJournal(props) {
       riskDisciplinePct: disc.checklist.riskDisciplinePct,
       lotDisciplinePct: disc.checklist.lotDisciplinePct,
       matrixPct: disc.checklist.matrixPct,
+      dailyLossCapPct: disc.checklist.dailyLossCapPct,
       htfPct: disc.checklist.htfPct,
       biasPct: disc.checklist.biasPct,
       daysLogged: disc.daysLogged,
