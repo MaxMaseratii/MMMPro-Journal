@@ -74,6 +74,200 @@ const fmt = function(n) {
 };
 
 // ---------------------------------------------------------------------
+// TRANSLATIONS - keyed by the exact English string as it appears on screen.
+// The translator (below) walks the live page and swaps matched text/placeholder
+// values, so most of the app's visible copy stays translatable without every
+// JSX string needing to be rewritten as a lookup call.
+// ---------------------------------------------------------------------
+const LANGUAGES = [
+  { code: 'en', label: 'English' },
+  { code: 'fr', label: 'Français' },
+  { code: 'es', label: 'Español' },
+  { code: 'ht', label: 'Kreyòl Ayisyen' },
+];
+
+const TRANSLATIONS = {
+  "MMM Pro Journal": { fr: "Journal MMM Pro", es: "Diario MMM Pro", ht: "Jounal MMM Pro" },
+  "Sign in to your account": { fr: "Connectez-vous à votre compte", es: "Inicia sesión en tu cuenta", ht: "Konekte sou kont ou" },
+  "Create your account": { fr: "Créez votre compte", es: "Crea tu cuenta", ht: "Kreye kont ou" },
+  "Your name": { fr: "Votre nom", es: "Tu nombre", ht: "Non ou" },
+  "Email": { fr: "E-mail", es: "Correo electrónico", ht: "Imel" },
+  "Password": { fr: "Mot de passe", es: "Contraseña", ht: "Modpas" },
+  "Sign In": { fr: "Se connecter", es: "Iniciar sesión", ht: "Konekte" },
+  "Create Account": { fr: "Créer un compte", es: "Crear cuenta", ht: "Kreye kont" },
+  "Please wait...": { fr: "Veuillez patienter...", es: "Espera por favor...", ht: "Tanpri tann..." },
+  "Sign up": { fr: "S'inscrire", es: "Regístrate", ht: "Enskri" },
+  "Sign in": { fr: "Se connecter", es: "Inicia sesión", ht: "Konekte" },
+  "Sign out": { fr: "Se déconnecter", es: "Cerrar sesión", ht: "Dekonekte" },
+  "Loading...": { fr: "Chargement...", es: "Cargando...", ht: "Ap chaje..." },
+  "Edit display name": { fr: "Modifier le nom affiché", es: "Editar nombre visible", ht: "Chanje non ki afiche" },
+  "Active Only": { fr: "Actifs uniquement", es: "Solo activos", ht: "Sèlman aktif" },
+  "All Accounts": { fr: "Tous les comptes", es: "Todas las cuentas", ht: "Tout kont" },
+  "Add Account": { fr: "Ajouter un compte", es: "Agregar cuenta", ht: "Ajoute yon kont" },
+  "Daily Log": { fr: "Journal quotidien", es: "Registro diario", ht: "Jounal chak jou" },
+  "Export CSV": { fr: "Exporter CSV", es: "Exportar CSV", ht: "Ekspòte CSV" },
+  "Start: ": { fr: "Début : ", es: "Inicio: ", ht: "Kòmansman: " },
+  "Target: ": { fr: "Objectif : ", es: "Objetivo: ", ht: "Objektif: " },
+  "Active Strategy": { fr: "Stratégie active", es: "Estrategia activa", ht: "Estrateji aktif" },
+  "Current Capital (Buffer)": { fr: "Capital actuel (tampon)", es: "Capital actual (colchón)", ht: "Kapital aktyèl (tanpon)" },
+  "Risk Per Trade": { fr: "Risque par transaction", es: "Riesgo por operación", ht: "Risk pou chak tranzaksyon" },
+  "Total P&L": { fr: "P&L total", es: "P&L total", ht: "P&L total" },
+  "Win Rate": { fr: "Taux de réussite", es: "Tasa de victorias", ht: "Pousantaj viktwa" },
+  "Contracts Unlocked": { fr: "Contrats débloqués", es: "Contratos desbloqueados", ht: "Kontra ki debloke" },
+  "Risk / Trade": { fr: "Risque / transaction", es: "Riesgo / operación", ht: "Risk / Tranzaksyon" },
+  "Locked Max Stop": { fr: "Stop max verrouillé", es: "Stop máximo fijo", ht: "Estòp maksimòm fikse" },
+  "Daily Target (2 wins)": { fr: "Objectif quotidien (2 gains)", es: "Meta diaria (2 ganancias)", ht: "Objektif chak jou (2 viktwa)" },
+  "Consistency Required": { fr: "Cohérence requise", es: "Consistencia requerida", ht: "Konsistans obligatwa" },
+  "Max Profit Allowed / Day": { fr: "Profit max autorisé / jour", es: "Ganancia máxima permitida / día", ht: "Pwofi maksimòm otorize / jou" },
+  "Daily Loss Limit": { fr: "Limite de perte quotidienne", es: "Límite de pérdida diaria", ht: "Limit pèt chak jou" },
+  "DLL Type": { fr: "Type de LPQ", es: "Tipo de LPD", ht: "Tip LPJ" },
+  "Win / Trade": { fr: "Gain / transaction", es: "Ganancia / operación", ht: "Genyen / Tranzaksyon" },
+  "RR Ratio": { fr: "Ratio R/R", es: "Ratio R/R", ht: "Rapò R/R" },
+  "Breakeven Win Rate": { fr: "Taux de réussite d'équilibre", es: "Tasa de equilibrio", ht: "Pousantaj balans" },
+  "Wins to Hit Target": { fr: "Gains pour atteindre l'objectif", es: "Ganancias para llegar a la meta", ht: "Viktwa pou rive nan objektif" },
+  "Avg Trades Taken / Day": { fr: "Moy. transactions / jour", es: "Prom. operaciones / día", ht: "Mwayèn tranzaksyon / jou" },
+  "Most Trades Taken (Day)": { fr: "Max de transactions (jour)", es: "Máx. operaciones (día)", ht: "Pi plis tranzaksyon (jou)" },
+  "Remaining to Target": { fr: "Restant pour l'objectif", es: "Restante para la meta", ht: "Rès pou rive nan objektif" },
+  "Capital (Buffer)": { fr: "Capital (tampon)", es: "Capital (colchón)", ht: "Kapital (tanpon)" },
+  "Costs": { fr: "Coûts", es: "Costos", ht: "Depans" },
+  "Total Costs": { fr: "Coûts totaux", es: "Costos totales", ht: "Total depans" },
+  "Total Payouts": { fr: "Paiements totaux", es: "Pagos totales", ht: "Total peman" },
+  "Net Profitability": { fr: "Rentabilité nette", es: "Rentabilidad neta", ht: "Pwofitabilite nèt" },
+  "Payout Ledger": { fr: "Registre des paiements", es: "Registro de pagos", ht: "Rejis peman" },
+  "Add Payout": { fr: "Ajouter un paiement", es: "Agregar pago", ht: "Ajoute peman" },
+  "No payouts recorded yet.": { fr: "Aucun paiement enregistré pour l'instant.", es: "Aún no hay pagos registrados.", ht: "Poko gen okenn peman ki anrejistre." },
+  "Per-Account Breakdown": { fr: "Répartition par compte", es: "Desglose por cuenta", ht: "Detay pa kont" },
+  "No accounts yet.": { fr: "Aucun compte pour l'instant.", es: "Aún no hay cuentas.", ht: "Poko gen kont." },
+  "No accounts yet. Add one to start tracking your buffer.": { fr: "Aucun compte pour l'instant. Ajoutez-en un pour suivre votre tampon.", es: "Aún no hay cuentas. Agrega una para empezar a seguir tu colchón.", ht: "Poko gen kont. Ajoute youn pou kòmanse swiv tanpon ou." },
+  "Performance Overview": { fr: "Aperçu des performances", es: "Resumen de rendimiento", ht: "Apèsi pèfòmans" },
+  "All Accounts, Combined": { fr: "Tous les comptes, combinés", es: "Todas las cuentas, combinadas", ht: "Tout kont, konbine" },
+  "Rule Adherence": { fr: "Respect des règles", es: "Cumplimiento de reglas", ht: "Respekte règ yo" },
+  "Total Trades": { fr: "Transactions totales", es: "Operaciones totales", ht: "Total tranzaksyon" },
+  "Best day: ": { fr: "Meilleur jour : ", es: "Mejor día: ", ht: "Pi bon jou: " },
+  "Worst day: ": { fr: "Pire jour : ", es: "Peor día: ", ht: "Pi move jou: " },
+  "Trade History": { fr: "Historique des transactions", es: "Historial de operaciones", ht: "Istwa tranzaksyon" },
+  "No entries yet.": { fr: "Aucune entrée pour l'instant.", es: "Aún no hay entradas.", ht: "Poko gen antre." },
+  "Delete entry": { fr: "Supprimer l'entrée", es: "Eliminar entrada", ht: "Efase antre a" },
+  "Trade 1": { fr: "Transaction 1", es: "Operación 1", ht: "Tranzaksyon 1" },
+  "Trade 2": { fr: "Transaction 2", es: "Operación 2", ht: "Tranzaksyon 2" },
+  "Trade 3": { fr: "Transaction 3", es: "Operación 3", ht: "Tranzaksyon 3" },
+  "Win": { fr: "Gain", es: "Ganancia", ht: "Genyen" },
+  "Loss": { fr: "Perte", es: "Pérdida", ht: "Pèdi" },
+  "Long": { fr: "Long", es: "Largo", ht: "Long" },
+  "Short": { fr: "Court", es: "Corto", ht: "Kout" },
+  "Buffer after this day: ": { fr: "Tampon après ce jour : ", es: "Colchón después de este día: ", ht: "Tanpon apre jou sa a: " },
+  "Discipline Leaderboard": { fr: "Classement de la discipline", es: "Tabla de disciplina", ht: "Klasman disiplin" },
+  "Your Discipline Checklist": { fr: "Votre liste de discipline", es: "Tu lista de disciplina", ht: "Lis disiplin ou" },
+  "Overall score: ": { fr: "Score global : ", es: "Puntuación general: ", ht: "Nòt jeneral: " },
+  "Logged every day since you started?": { fr: "Avez-vous enregistré chaque jour depuis le début ?", es: "¿Registraste todos los días desde que empezaste?", ht: "Èske ou anrejistre chak jou depi ou kòmanse?" },
+  "Did physical exercise?": { fr: "Avez-vous fait de l'exercice physique ?", es: "¿Hiciste ejercicio físico?", ht: "Èske ou te fè egzèsis fizik?" },
+  "Followed your written entry rules?": { fr: "Avez-vous suivi vos règles d'entrée écrites ?", es: "¿Seguiste tus reglas de entrada escritas?", ht: "Èske ou te swiv règ antre ekri ou yo?" },
+  "Stayed within your risk per trade (no over-risk)?": { fr: "Êtes-vous resté dans votre risque par transaction (pas de surisque) ?", es: "¿Te mantuviste dentro de tu riesgo por operación (sin exceso de riesgo)?", ht: "Èske ou te rete nan risk pou chak tranzaksyon (san twòp risk)?" },
+  "Stayed within your unlocked contract size (no over-lot)?": { fr: "Êtes-vous resté dans la taille de contrat débloquée (pas de surtaille) ?", es: "¿Te mantuviste dentro del tamaño de contrato desbloqueado (sin exceso de lote)?", ht: "Èske ou te rete nan gwosè kontra ki debloke a (san twòp lo)?" },
+  "Respected the Daily Execution Matrix?": { fr: "Avez-vous respecté la matrice d'exécution quotidienne ?", es: "¿Respetaste la matriz de ejecución diaria?", ht: "Èske ou te respekte matris egzekisyon chak jou a?" },
+  "Completed HTF to LTF analysis before entry?": { fr: "Avez-vous terminé l'analyse HTF vers LTF avant d'entrer ?", es: "¿Completaste el análisis de HTF a LTF antes de entrar?", ht: "Èske ou te fini analiz HTF a LTF anvan ou antre?" },
+  "Traded in the direction of your daily bias?": { fr: "Avez-vous négocié dans le sens de votre biais quotidien ?", es: "¿Operaste en la dirección de tu sesgo diario?", ht: "Èske ou te fè tranzaksyon nan direksyon bias ou chak jou a?" },
+  "No data yet": { fr: "Pas encore de données", es: "Sin datos aún", ht: "Poko gen done" },
+  "Risk of Ruin - Consecutive Loss Projection & Gain to Recover": { fr: "Risque de ruine - Projection de pertes consécutives et gain pour récupérer", es: "Riesgo de ruina - Proyección de pérdidas consecutivas y ganancia para recuperar", ht: "Risk Riwin - Pwojeksyon Pèt Youn Apre Lòt ak Genyen pou Rekipere" },
+  "Consecutive Losses": { fr: "Pertes consécutives", es: "Pérdidas consecutivas", ht: "Pèt Youn Apre Lòt" },
+  "Buffer Remaining": { fr: "Tampon restant", es: "Colchón restante", ht: "Tanpon ki rete" },
+  "Gain Needed to Recover": { fr: "Gain nécessaire pour récupérer", es: "Ganancia necesaria para recuperar", ht: "Genyen ki nesesè pou rekipere" },
+  "Account wiped": { fr: "Compte anéanti", es: "Cuenta liquidada", ht: "Kont efase nèt" },
+  "Daily Trade Execution Matrix - your actual risk": { fr: "Matrice d'exécution quotidienne - votre risque réel", es: "Matriz de ejecución diaria - tu riesgo real", ht: "Matris Egzekisyon Chak Jou - risk reyèl ou" },
+  "Scenario": { fr: "Scénario", es: "Escenario", ht: "Senaryo" },
+  "Long Setup Rules": { fr: "Règles de configuration longue", es: "Reglas de configuración larga", ht: "Règ pou Long" },
+  "Short Setup Rules": { fr: "Règles de configuration courte", es: "Reglas de configuración corta", ht: "Règ pou Kout" },
+  "No rules defined.": { fr: "Aucune règle définie.", es: "No hay reglas definidas.", ht: "Pa gen règ ki defini." },
+  "Log Today's Trades": { fr: "Enregistrer les transactions d'aujourd'hui", es: "Registrar las operaciones de hoy", ht: "Anrejistre tranzaksyon jodi a" },
+  "Entry Method": { fr: "Méthode de saisie", es: "Método de entrada", ht: "Metòd Antre" },
+  "Manual Entry": { fr: "Saisie manuelle", es: "Entrada manual", ht: "Antre Manyèl" },
+  "Import CSV": { fr: "Importer CSV", es: "Importar CSV", ht: "Enpòte CSV" },
+  "Choose CSV File": { fr: "Choisir un fichier CSV", es: "Elegir archivo CSV", ht: "Chwazi Fichye CSV" },
+  "Date": { fr: "Date", es: "Fecha", ht: "Dat" },
+  "Did you trade today?": { fr: "Avez-vous négocié aujourd'hui ?", es: "¿Operaste hoy?", ht: "Èske ou te fè tranzaksyon jodi a?" },
+  "Yes": { fr: "Oui", es: "Sí", ht: "Wi" },
+  "No": { fr: "Non", es: "No", ht: "Non" },
+  "Physical exercise today?": { fr: "Exercice physique aujourd'hui ?", es: "¿Ejercicio físico hoy?", ht: "Egzèsis fizik jodi a?" },
+  "Reason": { fr: "Raison", es: "Razón", ht: "Rezon" },
+  "No Setup Found": { fr: "Aucune configuration trouvée", es: "No se encontró configuración", ht: "Pa Jwenn Setup" },
+  "Did Not Trade": { fr: "N'a pas négocié", es: "No operó", ht: "Pa Fè Tranzaksyon" },
+  "Other": { fr: "Autre", es: "Otro", ht: "Lòt" },
+  "Save No-Trade Day": { fr: "Enregistrer jour sans transaction", es: "Guardar día sin operar", ht: "Anrejistre Jou San Tranzaksyon" },
+  "Save Entry": { fr: "Enregistrer l'entrée", es: "Guardar entrada", ht: "Anrejistre Antre" },
+  "Save Account": { fr: "Enregistrer le compte", es: "Guardar cuenta", ht: "Anrejistre Kont" },
+  "Save": { fr: "Enregistrer", es: "Guardar", ht: "Anrejistre" },
+  "Cancel": { fr: "Annuler", es: "Cancelar", ht: "Anile" },
+  "Add Trading Account": { fr: "Ajouter un compte de trading", es: "Agregar cuenta de trading", ht: "Ajoute Kont Tranzaksyon" },
+  "Start Funded Account": { fr: "Démarrer un compte financé", es: "Iniciar cuenta financiada", ht: "Kòmanse Kont Finanse" },
+  "Account Name": { fr: "Nom du compte", es: "Nombre de la cuenta", ht: "Non Kont" },
+  "Starting Balance": { fr: "Solde de départ", es: "Saldo inicial", ht: "Balans Depa" },
+  "Capital / Buffer ($)": { fr: "Capital / Tampon ($)", es: "Capital / Colchón ($)", ht: "Kapital / Tanpon ($)" },
+  "Drawdown Type": { fr: "Type de retrait", es: "Tipo de drawdown", ht: "Tip Drawdown" },
+  "Market": { fr: "Marché", es: "Mercado", ht: "Mache" },
+  "Profit Target ($)": { fr: "Objectif de profit ($)", es: "Meta de ganancia ($)", ht: "Objektif Pwofi ($)" },
+  "Consistency Rule (%)": { fr: "Règle de cohérence (%)", es: "Regla de consistencia (%)", ht: "Règ Konsistans (%)" },
+  "Daily Loss Limit ($)": { fr: "Limite de perte quotidienne ($)", es: "Límite de pérdida diaria ($)", ht: "Limit Pèt Chak Jou ($)" },
+  "Daily Loss Limit Type": { fr: "Type de limite de perte quotidienne", es: "Tipo de límite de pérdida diaria", ht: "Tip Limit Pèt Chak Jou" },
+  "Strategy Name": { fr: "Nom de la stratégie", es: "Nombre de la estrategia", ht: "Non Estrateji" },
+  "Add rule": { fr: "Ajouter une règle", es: "Agregar regla", ht: "Ajoute règ" },
+  "Challenge Cost ($)": { fr: "Coût du challenge ($)", es: "Costo del desafío ($)", ht: "Pri Defi ($)" },
+  "Activation Cost ($)": { fr: "Coût d'activation ($)", es: "Costo de activación ($)", ht: "Pri Aktivasyon ($)" },
+  "Reset Cost ($)": { fr: "Coût de réinitialisation ($)", es: "Costo de reinicio ($)", ht: "Pri Reyajiste" },
+  "Master / Copied Account Number (optional)": { fr: "Numéro de compte maître / copié (facultatif)", es: "Número de cuenta maestra / copiada (opcional)", ht: "Nimewo Kont Mèt / Kopye (opsyonèl)" },
+  "How was your day? (thoughts, emotions, anything on your mind)": { fr: "Comment s'est passée votre journée ? (pensées, émotions, tout ce qui vous préoccupe)", es: "¿Cómo estuvo tu día? (pensamientos, emociones, lo que tengas en mente)", ht: "Kijan jounen ou te ye? (panse, emosyon, nenpòt bagay nan tèt ou)" },
+  "Add another trade": { fr: "Ajouter une autre transaction", es: "Agregar otra operación", ht: "Ajoute yon lòt tranzaksyon" },
+  "Circuit Breaker - 2 losses. Day over.": { fr: "Coupe-circuit - 2 pertes. Journée terminée.", es: "Interruptor - 2 pérdidas. Día terminado.", ht: "Kout Sikwi - 2 pèt. Jounen fini." },
+  "Greed Filter - 2 wins. Day over.": { fr: "Filtre de cupidité - 2 gains. Journée terminée.", es: "Filtro de codicia - 2 ganancias. Día terminado.", ht: "Filtè Konvwatiz - 2 genyen. Jounen fini." },
+  "Day over - Trade 3 result stands.": { fr: "Journée terminée - le résultat de la transaction 3 est final.", es: "Día terminado - el resultado de la operación 3 es final.", ht: "Jounen fini - rezilta Tranzaksyon 3 la kanpe." },
+};
+
+let originalTextMap = null;
+
+function applyTranslation(lang) {
+  if (typeof document === 'undefined') return;
+  const root = document.getElementById('root');
+  if (!root) return;
+  if (!originalTextMap) originalTextMap = new WeakMap();
+
+  const translateValue = function(original) {
+    const key = original.trim();
+    if (!key) return original;
+    const entry = TRANSLATIONS[key];
+    if (!entry) return original;
+    if (lang === 'en') return original;
+    return entry[lang] || original;
+  };
+
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+  let node;
+  while ((node = walker.nextNode())) {
+    if (!originalTextMap.has(node)) originalTextMap.set(node, node.nodeValue);
+    const original = originalTextMap.get(node);
+    const translated = translateValue(original);
+    if (node.nodeValue !== translated) node.nodeValue = translated;
+  }
+
+  const placeholderEls = root.querySelectorAll('[placeholder]');
+  placeholderEls.forEach(function(el) {
+    if (!originalTextMap.has(el)) originalTextMap.set(el, el.getAttribute('placeholder'));
+    const original = originalTextMap.get(el);
+    const translated = translateValue(original);
+    if (el.getAttribute('placeholder') !== translated) el.setAttribute('placeholder', translated);
+  });
+}
+
+function LanguageSwitcher(props) {
+  const language = props.language;
+  const setLanguage = props.setLanguage;
+  return (
+    <select value={language} onChange={function(e) { setLanguage(e.target.value); }}
+      className="bg-gray-900 border border-gray-800 text-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-yellow-400/50 outline-none">
+      {LANGUAGES.map(function(l) { return (<option key={l.code} value={l.code}>{l.label}</option>); })}
+    </select>
+  );
+}
+
+
 // THE MAXMILLIONS INSTITUTIONAL TRADING CHARTER - CORE RISK ENGINE
 // ---------------------------------------------------------------------
 
@@ -244,7 +438,9 @@ const emptyEntryForm = function(defaultRisk, defaultContracts) {
   };
 };
 
-function AuthScreen() {
+function AuthScreen(props) {
+  const language = props.language;
+  const setLanguage = props.setLanguage;
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -272,6 +468,7 @@ function AuthScreen() {
   return (
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-sm bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-8">
+        <div className="flex justify-end mb-3"><LanguageSwitcher language={language} setLanguage={setLanguage} /></div>
         <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent text-center mb-1">MMM Pro Journal</h1>
         <p className="text-gray-500 text-sm text-center mb-6">{mode === 'login' ? 'Sign in to your account' : 'Create your account'}</p>
         {mode === 'signup' && (
@@ -837,6 +1034,63 @@ function computeTradeAdherence(trade, entry, account) {
   return factors.reduce(function(s, f) { return s + f; }, 0) / factors.length;
 }
 
+// Same underlying signals as computeTradeAdherence, but kept as separate named
+// questions instead of one blended number - each becomes its own trackable line
+// on the discipline checklist (entry rules, risk size, lot size, bias, HTF/LTF).
+function computeTradeDisciplineFactors(trade, entry, account) {
+  const applicableRules = (trade.direction === 'long' ? (account.longRules || []) : (account.shortRules || [])).filter(function(r) { return r && r.trim(); });
+  const rulesFrac = applicableRules.length > 0 ? (trade.rulesChecked || []).length / applicableRules.length : null;
+  const riskOk = (trade.riskAmount !== '' && trade.riskAmount !== undefined && trade.expectedRisk) ? (Math.abs(parseFloat(trade.riskAmount)) <= trade.expectedRisk * 1.1) : null;
+  const sizeOk = (trade.positionSize !== '' && trade.positionSize !== undefined && trade.expectedContracts) ? (parseFloat(trade.positionSize) <= trade.expectedContracts) : null;
+  const biasOk = (entry.dailyBias && entry.dailyBias !== 'neutral') ? ((entry.dailyBias === 'bullish' && trade.direction === 'long') || (entry.dailyBias === 'bearish' && trade.direction === 'short')) : null;
+  const htfDone = typeof trade.htfLtf === 'boolean' ? trade.htfLtf : null;
+  return { rulesFrac: rulesFrac, riskOk: riskOk, sizeOk: sizeOk, biasOk: biasOk, htfDone: htfDone };
+}
+
+// Rolls every trade's factors up into one set of pass-rates across all of a
+// person's accounts - the actual "specific list of questions" behind the
+// discipline score. Each question only counts once there's real data for it.
+function computeDisciplineChecklist(accounts, entries) {
+  const accountsById = {};
+  accounts.forEach(function(a) { accountsById[a.id] = a; });
+
+  const exerciseDays = entries.filter(function(e) { return typeof e.exercised === 'boolean'; });
+  const exercisePct = exerciseDays.length > 0 ? (exerciseDays.filter(function(e) { return e.exercised; }).length / exerciseDays.length) * 100 : null;
+
+  const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no'; });
+  const matrixDays = tradedEntries.filter(function(e) { return typeof e.matrixAdherent === 'boolean'; });
+  const matrixPct = matrixDays.length > 0 ? (matrixDays.filter(function(e) { return e.matrixAdherent; }).length / matrixDays.length) * 100 : null;
+
+  const allTrades = tradedEntries.flatMap(function(e) { return e.trades.map(function(t) { return { trade: t, entry: e }; }); });
+
+  let rulesSum = 0, rulesCount = 0;
+  let riskOkCount = 0, riskTotal = 0;
+  let sizeOkCount = 0, sizeTotal = 0;
+  let biasOkCount = 0, biasTotal = 0;
+  let htfOkCount = 0, htfTotal = 0;
+
+  allTrades.forEach(function(pair) {
+    const account = accountsById[pair.entry.accountId];
+    if (!account) return;
+    const f = computeTradeDisciplineFactors(pair.trade, pair.entry, account);
+    if (f.rulesFrac !== null) { rulesSum += f.rulesFrac; rulesCount++; }
+    if (f.riskOk !== null) { riskTotal++; if (f.riskOk) riskOkCount++; }
+    if (f.sizeOk !== null) { sizeTotal++; if (f.sizeOk) sizeOkCount++; }
+    if (f.biasOk !== null) { biasTotal++; if (f.biasOk) biasOkCount++; }
+    if (f.htfDone !== null) { htfTotal++; if (f.htfDone) htfOkCount++; }
+  });
+
+  return {
+    exercisePct: exercisePct,
+    entryRulesPct: rulesCount > 0 ? (rulesSum / rulesCount) * 100 : null,
+    riskDisciplinePct: riskTotal > 0 ? (riskOkCount / riskTotal) * 100 : null,
+    lotDisciplinePct: sizeTotal > 0 ? (sizeOkCount / sizeTotal) * 100 : null,
+    matrixPct: matrixPct,
+    biasPct: biasTotal > 0 ? (biasOkCount / biasTotal) * 100 : null,
+    htfPct: htfTotal > 0 ? (htfOkCount / htfTotal) * 100 : null
+  };
+}
+
 function computeOverviewData(accounts, entries) {
   const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no'; });
   const allTrades = tradedEntries.flatMap(function(e) {
@@ -884,31 +1138,39 @@ function computeOverviewData(accounts, entries) {
 
 function computeDisciplineScore(accounts, entries) {
   if (accounts.length === 0) return null;
-  const firstCreated = accounts.reduce(function(min, a) {
-    const t = a.createdAt && a.createdAt.toMillis ? a.createdAt.toMillis() : Date.now();
-    return min === null || t < min ? t : min;
-  }, null);
-  const daysSinceStart = Math.max(1, Math.ceil((Date.now() - firstCreated) / (1000 * 60 * 60 * 24)));
-  const uniqueLoggedDays = new Set(entries.map(function(e) { return e.date; })).size;
+  const loggedDates = entries.map(function(e) { return e.date; }).filter(Boolean);
+  const uniqueLoggedDays = new Set(loggedDates).size;
+  // "Since start" means since the person's first logged day, not their account
+  // creation date - a dormant gap between setting up an account and actually
+  // beginning to log shouldn't count against someone's consistency.
+  let daysSinceStart = 1;
+  if (loggedDates.length > 0) {
+    const earliestLoggedDate = loggedDates.reduce(function(min, d) { return d < min ? d : min; });
+    const msSinceFirstLog = Date.now() - new Date(earliestLoggedDate + 'T00:00:00').getTime();
+    daysSinceStart = Math.max(1, Math.floor(msSinceFirstLog / (1000 * 60 * 60 * 24)) + 1);
+  }
   const loggingConsistency = Math.min(100, (uniqueLoggedDays / daysSinceStart) * 100);
 
-  const d = computeOverviewData(accounts, entries);
-  const ruleScore = d.ruleAdherencePct === null ? 0 : d.ruleAdherencePct;
+  const checklist = computeDisciplineChecklist(accounts, entries);
 
-  const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no'; });
-  const allTrades = tradedEntries.flatMap(function(e) { return e.trades.map(function(t) { return Object.assign({}, t, { entry: e }); }); });
-  let biasApplicable = 0, biasAligned = 0;
-  allTrades.forEach(function(t) {
-    if (t.entry.dailyBias && t.entry.dailyBias !== 'neutral') {
-      biasApplicable++;
-      const aligned = (t.entry.dailyBias === 'bullish' && t.direction === 'long') || (t.entry.dailyBias === 'bearish' && t.direction === 'short');
-      if (aligned) biasAligned++;
-    }
-  });
-  const biasScore = biasApplicable > 0 ? (biasAligned / biasApplicable) * 100 : 0;
-
-  const score = (loggingConsistency * 0.4) + (ruleScore * 0.4) + (biasScore * 0.2);
-  return { score: score, loggingConsistency: loggingConsistency, ruleScore: ruleScore, biasScore: biasScore, daysLogged: uniqueLoggedDays, daysSinceStart: daysSinceStart };
+  // Showing up every day since you started is the main thing being measured here -
+  // a trader on day 1 who logs today is exactly as consistent as a trader on day 14
+  // who has logged every day, so logging consistency carries the most weight and
+  // is always present. Every other question - exercise, entry rules, risk size,
+  // lot size, the daily matrix, HTF/LTF analysis, bias alignment - only gets
+  // folded in once there's actual data to judge, so a consistent newcomer with
+  // no trades yet isn't dragged down by questions that don't apply to them yet.
+  const parts = [{ weight: 0.30, value: loggingConsistency }];
+  if (checklist.exercisePct !== null) parts.push({ weight: 0.12, value: checklist.exercisePct });
+  if (checklist.entryRulesPct !== null) parts.push({ weight: 0.15, value: checklist.entryRulesPct });
+  if (checklist.riskDisciplinePct !== null) parts.push({ weight: 0.10, value: checklist.riskDisciplinePct });
+  if (checklist.lotDisciplinePct !== null) parts.push({ weight: 0.08, value: checklist.lotDisciplinePct });
+  if (checklist.matrixPct !== null) parts.push({ weight: 0.10, value: checklist.matrixPct });
+  if (checklist.htfPct !== null) parts.push({ weight: 0.08, value: checklist.htfPct });
+  if (checklist.biasPct !== null) parts.push({ weight: 0.07, value: checklist.biasPct });
+  const totalWeight = parts.reduce(function(s, p) { return s + p.weight; }, 0);
+  const score = parts.reduce(function(s, p) { return s + p.value * p.weight; }, 0) / totalWeight;
+  return { score: score, loggingConsistency: loggingConsistency, checklist: checklist, daysLogged: uniqueLoggedDays, daysSinceStart: daysSinceStart };
 }
 
 function OverviewStats(props) {
@@ -950,6 +1212,51 @@ function EquityCurveBlock(props) {
         <h2 className="text-lg font-semibold text-white">Equity Curve - All Accounts</h2>
       </div>
       <EquityCurve points={d.equityPoints} />
+    </div>
+  );
+}
+
+function DisciplineChecklistCard(props) {
+  const accounts = props.accounts;
+  const entries = props.entries;
+  const disc = computeDisciplineScore(accounts, entries);
+  if (!disc) return null;
+  const c = disc.checklist;
+
+  const questions = [
+    { label: 'Logged every day since you started?', value: disc.loggingConsistency, sub: disc.daysLogged + ' of ' + disc.daysSinceStart + ' days' },
+    { label: 'Did physical exercise?', value: c.exercisePct },
+    { label: 'Followed your written entry rules?', value: c.entryRulesPct },
+    { label: 'Stayed within your risk per trade (no over-risk)?', value: c.riskDisciplinePct },
+    { label: 'Stayed within your unlocked contract size (no over-lot)?', value: c.lotDisciplinePct },
+    { label: 'Respected the Daily Execution Matrix?', value: c.matrixPct },
+    { label: 'Completed HTF to LTF analysis before entry?', value: c.htfPct },
+    { label: 'Traded in the direction of your daily bias?', value: c.biasPct },
+  ];
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-1">
+        <Icon name="ListChecks" className="h-5 w-5 text-yellow-400" />
+        <h2 className="text-lg font-semibold text-white">Your Discipline Checklist</h2>
+      </div>
+      <p className="text-xs text-gray-500 mb-4">Overall score: <span className="text-yellow-400 font-semibold">{disc.score.toFixed(1)}</span> - each question below only counts once you have data for it, so a question you haven't triggered yet won't drag your score down.</p>
+      <div className="space-y-1.5">
+        {questions.map(function(q, i) {
+          const hasData = q.value !== null && q.value !== undefined;
+          return (
+            <div key={i} className="flex items-center justify-between text-sm bg-black/30 rounded-lg px-3 py-2">
+              <div>
+                <span className="text-gray-300">{q.label}</span>
+                {q.sub && <span className="text-gray-600 text-xs ml-2">({q.sub})</span>}
+              </div>
+              <span className={hasData ? (q.value >= 70 ? 'text-green-400 font-semibold' : q.value >= 40 ? 'text-yellow-400 font-semibold' : 'text-red-400 font-semibold') : 'text-gray-600 text-xs'}>
+                {hasData ? q.value.toFixed(0) + '%' : 'No data yet'}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -1208,6 +1515,8 @@ function PerAccountBreakdown(props) {
 
 function MMMJournal(props) {
   const user = props.user;
+  const language = props.language;
+  const setLanguage = props.setLanguage;
   const [accountFilter, setAccountFilter] = useState('active');
   const [accounts, setAccounts] = useState([]);
   const [entries, setEntries] = useState([]);
@@ -1267,8 +1576,13 @@ function MMMJournal(props) {
       displayName: user.displayName || ('Trader-' + user.uid.slice(0, 4)),
       disciplineScore: disc.score,
       loggingConsistency: disc.loggingConsistency,
-      ruleScore: disc.ruleScore,
-      biasScore: disc.biasScore,
+      exercisePct: disc.checklist.exercisePct,
+      entryRulesPct: disc.checklist.entryRulesPct,
+      riskDisciplinePct: disc.checklist.riskDisciplinePct,
+      lotDisciplinePct: disc.checklist.lotDisciplinePct,
+      matrixPct: disc.checklist.matrixPct,
+      htfPct: disc.checklist.htfPct,
+      biasPct: disc.checklist.biasPct,
       daysLogged: disc.daysLogged,
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true }).catch(function(e) { console.error('leaderboard write error:', e.code, e.message); });
@@ -1526,6 +1840,7 @@ function MMMJournal(props) {
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <LanguageSwitcher language={language} setLanguage={setLanguage} />
               <div className="flex bg-gray-900 border border-gray-800 rounded-lg p-1">
                 <button onClick={function() { setAccountFilter('active'); }} className={"px-3 py-1.5 rounded-md text-xs font-medium " + (accountFilter === 'active' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')}>Active Only</button>
                 <button onClick={function() { setAccountFilter('all'); }} className={"px-3 py-1.5 rounded-md text-xs font-medium " + (accountFilter === 'all' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')}>All Accounts</button>
@@ -1631,6 +1946,7 @@ function MMMJournal(props) {
                   <PropFirmRuleNote account={activeAccount} entries={entries} />
                 </div>
 
+                <DisciplineChecklistCard accounts={accounts} entries={entries} />
                 <DisciplineLeaderboard uid={user.uid} currentName={user.displayName || user.email} />
 
                 <PerAccountBreakdown accounts={accounts} entries={entries} />
@@ -1934,7 +2250,7 @@ function MMMJournal(props) {
                     })}
                   </div>
                 </div>
-                <Field label="Notes (optional)"><textarea value={newEntry.noTradeNotes} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { noTradeNotes: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-16 focus:border-yellow-400/50 outline-none resize-none"></textarea></Field>
+                <Field label="How was your day? (thoughts, emotions, anything on your mind)"><textarea value={newEntry.noTradeNotes} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { noTradeNotes: e.target.value })); }} placeholder="Frustrated I didn't find a setup, but glad I didn't force a trade..." className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-16 focus:border-yellow-400/50 outline-none resize-none"></textarea></Field>
                 <button onClick={handleSaveEntry} disabled={!newEntry.noTradeReason} className="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"><Icon name="Save" className="h-4 w-4" /><span>Save No-Trade Day</span></button>
               </React.Fragment>
             ) : (
@@ -2009,7 +2325,7 @@ function MMMJournal(props) {
                   <button onClick={addTradeRow} disabled={newEntry.trades.length >= 3 || filledWins >= 2 || filledLosses >= 2 || dllBreached} className="text-sm text-yellow-400 hover:text-yellow-300 flex items-center gap-1.5 mt-1 disabled:opacity-30 disabled:cursor-not-allowed"><Icon name="Plus" className="h-3 w-3" /><span>Add another trade</span></button>
                 </div>
 
-                <Field label="Notes (optional)"><textarea value={newEntry.notes} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { notes: e.target.value })); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-20 focus:border-yellow-400/50 outline-none resize-none"></textarea></Field>
+                <Field label="How was your day? (thoughts, emotions, anything on your mind)"><textarea value={newEntry.notes} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { notes: e.target.value })); }} placeholder="How did it feel taking these trades? Any pressure, doubt, confidence..." className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-20 focus:border-yellow-400/50 outline-none resize-none"></textarea></Field>
                 <button onClick={handleSaveEntry} disabled={filledTrades.length === 0 || isTie} className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"><Icon name="Save" className="h-4 w-4" /><span>Save Entry</span></button>
               </React.Fragment>
             )}
@@ -2051,12 +2367,27 @@ function Field(props) {
 
 function App() {
   const [user, setUser] = useState(undefined);
+  const [language, setLanguage] = useState(function() {
+    try { return localStorage.getItem('mmm-language') || 'en'; } catch (e) { return 'en'; }
+  });
+
   useEffect(function() {
     const unsub = auth.onAuthStateChanged(function(u) { setUser(u); });
     return unsub;
   }, []);
+
+  useEffect(function() {
+    try { localStorage.setItem('mmm-language', language); } catch (e) {}
+    applyTranslation(language);
+    const root = document.getElementById('root');
+    if (!root) return;
+    const observer = new MutationObserver(function() { applyTranslation(language); });
+    observer.observe(root, { childList: true, subtree: true, characterData: true });
+    return function() { observer.disconnect(); };
+  }, [language, user]);
+
   if (user === undefined) return <div className="min-h-screen bg-black flex items-center justify-center text-yellow-400">Loading...</div>;
-  return user ? <MMMJournal user={user} /> : <AuthScreen />;
+  return user ? <MMMJournal user={user} language={language} setLanguage={setLanguage} /> : <AuthScreen language={language} setLanguage={setLanguage} />;
 }
 
 const rootEl = ReactDOM.createRoot(document.getElementById('root'));
