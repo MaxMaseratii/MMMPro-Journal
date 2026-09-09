@@ -363,6 +363,46 @@ const computeStatus = function(account, buffer, totalPnl) {
   return 'active';
 };
 
+// Pure, top-level so both the component and aggregate calculations (which need to
+// know if an account is breached before deciding whether to count its trades) can
+// use the exact same math as what's shown on screen.
+const calcBufferHistory = function(account, accEntries) {
+  if (!account) return [];
+  const dtype = account.drawdownType || 'static';
+  const maxDD = parseFloat(account.maxDrawdown) || 0;
+  const traded = accEntries.filter(function(e) { return e.tradedToday !== 'no'; });
+  const chronological = traded.slice().sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+  let pool = maxDD;
+  let peak = maxDD;
+  const history = [];
+  chronological.forEach(function(entry) {
+    const dayPnl = entry.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+    if (dtype === 'intraday') {
+      entry.trades.forEach(function(t) {
+        const val = Math.abs(parseFloat(t.pnl) || 0);
+        pool = pool + (t.result === 'win' ? val : -val);
+        if (pool > peak) peak = pool;
+      });
+    } else {
+      pool = pool + dayPnl;
+      if (dtype === 'eod' && pool > peak) peak = pool;
+    }
+    const floor = peak - maxDD;
+    const buffer = pool - floor;
+    history.push({ date: entry.date, buffer: buffer, pnl: dayPnl });
+  });
+  return history;
+};
+
+const computeAccountStatus = function(account, allEntries) {
+  const accE = allEntries.filter(function(e) { return e.accountId === account.id; });
+  const hist = calcBufferHistory(account, accE);
+  const buf = hist.length > 0 ? hist[hist.length - 1].buffer : (parseFloat(account.maxDrawdown) || 0);
+  const traded = accE.filter(function(e) { return e.tradedToday !== 'no'; });
+  const pnl = traded.reduce(function(sum, e) { return sum + e.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0); }, 0);
+  return computeStatus(account, buf, pnl);
+};
+
 const isArchived = function(account, status) {
   return status === 'breached' || account.archived === true;
 };
@@ -384,6 +424,7 @@ const ACCOUNT_BADGE_CLS = {
   challenge: 'bg-purple-500/20 text-purple-300',
   funded: 'bg-emerald-500/20 text-emerald-300',
   live: 'bg-cyan-500/20 text-cyan-300',
+  breached: 'bg-red-500/20 text-red-300',
 };
 
 const BIAS_OPTIONS = [
@@ -641,8 +682,11 @@ function SystemExplainer() {
 function t_border(key) {
   if (key === 'challenge') return 'bg-purple-500/10 border-purple-500/40';
   if (key === 'funded') return 'bg-emerald-500/10 border-emerald-500/40';
+  if (key === 'breached') return 'bg-red-500/10 border-red-500/40';
   return 'bg-cyan-500/10 border-cyan-500/40';
 }
+
+const NAV_GROUPS = ACCOUNT_TYPES.concat([{ key: 'breached', label: 'Breached', activeCls: 'bg-red-500/20 text-red-400 border-red-500/40' }]);
 
 function AccountGroupNav(props) {
   const accounts = props.accounts;
@@ -654,17 +698,21 @@ function AccountGroupNav(props) {
 
   return (
     <div className="flex flex-col sm:flex-row gap-2 flex-wrap">
-      {ACCOUNT_TYPES.map(function(type) {
-        const allOfType = accounts.filter(function(a) { return a.accountType === type.key; });
-        const group = filter === 'all' ? allOfType : allOfType.filter(function(a) { return !isArchived(a, getStatus(a)); });
-        const activeInGroup = allOfType.filter(function(a) { return !isArchived(a, getStatus(a)); }).length;
+      {NAV_GROUPS.map(function(type) {
+        const isBreachedGroup = type.key === 'breached';
+        const allOfType = isBreachedGroup
+          ? accounts.filter(function(a) { return getStatus(a) === 'breached'; })
+          : accounts.filter(function(a) { return a.accountType === type.key && getStatus(a) !== 'breached'; });
+        const group = isBreachedGroup ? allOfType : (filter === 'all' ? allOfType : allOfType.filter(function(a) { return !isArchived(a, getStatus(a)); }));
+        const activeInGroup = isBreachedGroup ? allOfType.length : allOfType.filter(function(a) { return !isArchived(a, getStatus(a)); }).length;
         const isOpen = openGroup === type.key;
+        if (isBreachedGroup && allOfType.length === 0) return null;
         return (
           <div key={type.key} className="relative">
             <button onClick={function() { setOpenGroup(isOpen ? null : type.key); }}
               className={"flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition " + (isOpen ? t_border(type.key) : 'bg-gray-900 border-gray-800 text-gray-300 hover:border-gray-700')}>
               <span className={"px-1.5 py-0.5 rounded text-xs font-semibold " + ACCOUNT_BADGE_CLS[type.key]}>{type.label}</span>
-              <span className="text-xs text-gray-500">({activeInGroup} Active)</span>
+              <span className="text-xs text-gray-500">({activeInGroup}{isBreachedGroup ? '' : ' Active'})</span>
               <Icon name={isOpen ? "ChevronUp" : "ChevronDown"} className="h-3.5 w-3.5 text-gray-500" />
             </button>
             {isOpen && (
@@ -1092,7 +1140,15 @@ function computeDisciplineChecklist(accounts, entries) {
 }
 
 function computeOverviewData(accounts, entries) {
-  const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no'; });
+  // Costs and payouts are real money already spent or received - they count for
+  // every account regardless of status. Trading performance (P&L, win rate, equity
+  // curve) only reflects accounts that are still active, so a blown account's
+  // losses don't keep dragging down numbers that are supposed to represent where
+  // things stand right now.
+  const breachedIds = {};
+  accounts.forEach(function(a) { if (computeAccountStatus(a, entries) === 'breached') breachedIds[a.id] = true; });
+
+  const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no' && !breachedIds[e.accountId]; });
   const allTrades = tradedEntries.flatMap(function(e) {
     return e.trades.map(function(t) { return Object.assign({}, t, { date: e.date, accountId: e.accountId, entry: e }); });
   });
@@ -1591,34 +1647,6 @@ function MMMJournal(props) {
   const activeAccount = accounts.find(function(a) { return a.id === activeAccountId; });
   const accountEntries = entries.filter(function(e) { return e.accountId === activeAccountId; });
 
-  const calcBufferHistory = function(account, accEntries) {
-    if (!account) return [];
-    const dtype = account.drawdownType || 'static';
-    const maxDD = parseFloat(account.maxDrawdown) || 0;
-    const traded = accEntries.filter(function(e) { return e.tradedToday !== 'no'; });
-    const chronological = traded.slice().sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
-    let pool = maxDD;
-    let peak = maxDD;
-    const history = [];
-    chronological.forEach(function(entry) {
-      const dayPnl = entry.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
-      if (dtype === 'intraday') {
-        entry.trades.forEach(function(t) {
-          const val = Math.abs(parseFloat(t.pnl) || 0);
-          pool = pool + (t.result === 'win' ? val : -val);
-          if (pool > peak) peak = pool;
-        });
-      } else {
-        pool = pool + dayPnl;
-        if (dtype === 'eod' && pool > peak) peak = pool;
-      }
-      const floor = peak - maxDD;
-      const buffer = pool - floor;
-      history.push({ date: entry.date, buffer: buffer, pnl: dayPnl });
-    });
-    return history;
-  };
-
   const bufferHistory = activeAccount ? calcBufferHistory(activeAccount, accountEntries) : [];
   const currentBuffer = bufferHistory.length > 0 ? bufferHistory[bufferHistory.length - 1].buffer : (activeAccount ? parseFloat(activeAccount.maxDrawdown) || 0 : 0);
   const activeCfg = activeAccount ? (PHASE_CONFIG[activeAccount.accountType] || PHASE_CONFIG.challenge) : PHASE_CONFIG.challenge;
@@ -1640,12 +1668,7 @@ function MMMJournal(props) {
   const activeStatus = activeAccount ? computeStatus(activeAccount, currentBuffer, totalPnl) : 'active';
 
   const getAccountStatus = function(acc) {
-    const accE = entries.filter(function(e) { return e.accountId === acc.id; });
-    const hist = calcBufferHistory(acc, accE);
-    const buf = hist.length > 0 ? hist[hist.length - 1].buffer : (parseFloat(acc.maxDrawdown) || 0);
-    const traded = accE.filter(function(e) { return e.tradedToday !== 'no'; });
-    const pnl = traded.reduce(function(sum, e) { return sum + e.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0); }, 0);
-    return computeStatus(acc, buf, pnl);
+    return computeAccountStatus(acc, entries);
   };
 
   const rulesForDirection = function(direction) {
