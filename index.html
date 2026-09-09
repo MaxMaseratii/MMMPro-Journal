@@ -1887,7 +1887,7 @@ function MMMJournal(props) {
           {activeAccount && (
             <div className="text-sm text-gray-500 bg-black/30 rounded-lg px-4 py-2.5">
               <span>Start: <span className="text-white">{fmt(activeAccount.startingBalance)}</span></span>
-              <span> - Capital (Buffer): <span className="text-white">{fmt(activeAccount.maxDrawdown)}</span></span>
+              <span> - Capital (Buffer) Today: <span className="text-white">{fmt(currentBuffer)}</span> <span className="text-gray-600">(started at {fmt(activeAccount.maxDrawdown)})</span></span>
               <span> - Drawdown Type: <span className="text-white">{(DRAWDOWN_TYPES.find(function(dt) { return dt.key === (activeAccount.drawdownType || 'static'); }) || {}).short}</span></span>
               <span> - Market: <span className="text-white">{(MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label}</span></span>
               <span> - Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span></span>
