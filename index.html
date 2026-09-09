@@ -24,6 +24,16 @@
 <div id="root"></div>
 
 <script>
+  if (typeof firebase === 'undefined') {
+    document.getElementById('root').innerHTML =
+      '<div style="min-height:100vh;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;padding:24px;font-family:sans-serif;text-align:center;">' +
+      '<div style="max-width:420px;">' +
+      '<h1 style="color:#facc15;font-size:20px;margin-bottom:12px;">Couldn\'t load required scripts</h1>' +
+      '<p style="color:#9ca3af;font-size:14px;line-height:1.5;">This app couldn\'t load Firebase from Google\'s servers. This is almost always caused by an ad blocker or privacy extension (uBlock Origin, Brave Shields, AdGuard, etc.) blocking requests to <code>gstatic.com</code>.</p>' +
+      '<p style="color:#9ca3af;font-size:14px;line-height:1.5;margin-top:10px;">Try disabling your ad blocker for this site, or open the page in a private/incognito window, then refresh.</p>' +
+      '</div></div>';
+    throw new Error('Firebase SDK failed to load - likely blocked by an ad blocker or network filter.');
+  }
   const firebaseConfig = {
     apiKey: "AIzaSyDcrEEhcY6kHLQxZ7RQ37KmAcCDPgol0gg",
     authDomain: "mmm-pro-journal.firebaseapp.com",
@@ -1774,7 +1784,14 @@ function MMMJournal(props) {
     const unsub = accountsRef.orderBy('createdAt', 'asc').onSnapshot(function(snap) {
       const list = snap.docs.map(function(d) { return Object.assign({ id: d.id }, d.data()); });
       setAccounts(list);
-      if (list.length && !activeAccountId) setActiveAccountId(list[0].id);
+      // Functional updater so this always sees the real current selection, not
+      // whatever activeAccountId happened to be when this listener was first set
+      // up - otherwise every snapshot update (like adding a new account) would
+      // silently reset the selection back to the oldest account in the list.
+      setActiveAccountId(function(prev) {
+        if (prev && list.some(function(a) { return a.id === prev; })) return prev;
+        return list.length ? list[0].id : null;
+      });
     });
     return unsub;
   }, [user.uid]);
