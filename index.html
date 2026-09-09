@@ -844,6 +844,79 @@ function DailyTradeMatrix(props) {
   );
 }
 
+// Shown once an account is breached - a specific, honest recap using the exact
+// same discipline checklist as the rest of the app, scoped to just this account,
+// plus a look at the actual day the buffer hit zero.
+function BreachReviewCard(props) {
+  const account = props.account;
+  const accountEntries = props.accountEntries;
+  const bufferHistory = props.bufferHistory;
+
+  const checklist = computeDisciplineChecklist([account], accountEntries);
+  const items = [
+    { label: 'Followed your written entry rules', value: checklist.entryRulesPct },
+    { label: 'Stayed within your risk per trade', value: checklist.riskDisciplinePct },
+    { label: 'Stayed within your max daily loss (2x risk)', value: checklist.dailyLossCapPct },
+    { label: 'Stayed within your unlocked contract size', value: checklist.lotDisciplinePct },
+    { label: 'Respected the Daily Execution Matrix', value: checklist.matrixPct },
+    { label: 'Completed HTF to LTF analysis before entry', value: checklist.htfPct },
+    { label: 'Traded in the direction of your daily bias', value: checklist.biasPct },
+  ].filter(function(i) { return i.value !== null; });
+
+  const wentWell = items.filter(function(i) { return i.value >= 70; });
+  const toWorkOn = items.filter(function(i) { return i.value < 70; });
+
+  const breachDay = bufferHistory.length > 0 ? bufferHistory[bufferHistory.length - 1] : null;
+  const breachEntry = breachDay ? accountEntries.find(function(e) { return e.date === breachDay.date; }) : null;
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-red-500/30 rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-1">
+        <Icon name="FileSearch" className="h-5 w-5 text-red-400" />
+        <h2 className="text-lg font-semibold text-white">Breach Review</h2>
+      </div>
+      <p className="text-xs text-gray-500 mb-4">A specific look at what happened on this account - not a punishment, just the facts so the next one goes differently.</p>
+
+      {breachDay && (
+        <div className="bg-black/30 rounded-lg p-3 mb-4">
+          <p className="text-xs text-gray-400 mb-1">The day the buffer hit zero: <span className="text-white font-medium">{breachDay.date}</span></p>
+          <p className={"text-sm font-semibold " + (breachDay.pnl < 0 ? 'text-red-400' : 'text-gray-300')}>{breachDay.pnl >= 0 ? '+' : ''}{fmt(breachDay.pnl)} that day</p>
+          {breachEntry && breachEntry.trades && breachEntry.trades.length > 0 && (
+            <p className="text-xs text-gray-500 mt-1">{breachEntry.trades.length} trade{breachEntry.trades.length !== 1 ? 's' : ''} logged that day - {breachEntry.trades.filter(function(t) { return t.result === 'loss'; }).length} loss{breachEntry.trades.filter(function(t) { return t.result === 'loss'; }).length !== 1 ? 'es' : ''}.</p>
+          )}
+        </div>
+      )}
+
+      {items.length === 0 ? (
+        <p className="text-xs text-gray-500">Not enough logged trades on this account to build a review yet.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-green-400 font-semibold mb-2">What went well</p>
+            {wentWell.length === 0 ? <p className="text-xs text-gray-600">Nothing cleared 70% on this account.</p> : (
+              <div className="space-y-1.5">
+                {wentWell.map(function(i, idx) {
+                  return (<div key={idx} className="flex items-center justify-between text-xs bg-black/30 rounded-lg px-2.5 py-1.5"><span className="text-gray-300">{i.label}</span><span className="text-green-400 font-semibold">{i.value.toFixed(0)}%</span></div>);
+                })}
+              </div>
+            )}
+          </div>
+          <div>
+            <p className="text-xs uppercase tracking-wide text-red-400 font-semibold mb-2">What to work on</p>
+            {toWorkOn.length === 0 ? <p className="text-xs text-gray-600">Nothing fell below 70% on this account.</p> : (
+              <div className="space-y-1.5">
+                {toWorkOn.map(function(i, idx) {
+                  return (<div key={idx} className="flex items-center justify-between text-xs bg-black/30 rounded-lg px-2.5 py-1.5"><span className="text-gray-300">{i.label}</span><span className="text-red-400 font-semibold">{i.value.toFixed(0)}%</span></div>);
+                })}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function StrategyCard(props) {
   const account = props.account;
   const longRules = (account.longRules || []).filter(function(r) { return r && r.trim(); });
@@ -1785,6 +1858,10 @@ function MMMJournal(props) {
     });
   };
 
+  const handleChangeMarket = async function(newMarket) {
+    await accountsRef.doc(activeAccount.id).update({ market: newMarket });
+  };
+
   const addRuleRow = function(field) {
     const updated = {};
     updated[field] = newAccount[field].concat(['']);
@@ -1919,11 +1996,17 @@ function MMMJournal(props) {
             </div>
           )}
           {activeAccount && (
-            <div className="text-sm text-gray-500 bg-black/30 rounded-lg px-4 py-2.5">
-              <span>Start: <span className="text-white">{fmt(activeAccount.startingBalance)}</span></span>
-              <span> - Capital (Buffer) Today: <span className="text-white">{fmt(currentBuffer)}</span> <span className="text-gray-600">(started at {fmt(activeAccount.maxDrawdown)})</span></span>
+            <div className="text-sm text-gray-500 bg-black/30 rounded-lg px-4 py-2.5 flex flex-wrap items-center gap-x-1">
+              <span>Name: <span className="text-white font-medium">{activeAccount.name}</span></span>
+              <span> - Capital: <span className="text-white">{fmt(activeAccount.startingBalance)}</span></span>
+              <span> - Drawdown: <span className={(currentBuffer - (parseFloat(activeAccount.maxDrawdown) || 0)) < 0 ? 'text-red-400' : 'text-white'}>{fmt(currentBuffer - (parseFloat(activeAccount.maxDrawdown) || 0))}</span> <span className="text-gray-600">(started at {fmt(activeAccount.maxDrawdown)})</span></span>
               <span> - Drawdown Type: <span className="text-white">{(DRAWDOWN_TYPES.find(function(dt) { return dt.key === (activeAccount.drawdownType || 'static'); }) || {}).short}</span></span>
-              <span> - Market: <span className="text-white">{(MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label}</span></span>
+              <span className="inline-flex items-center gap-1"> - Market:
+                <select value={activeAccount.market || 'nasdaq100'} onChange={function(e) { handleChangeMarket(e.target.value); }}
+                  className="bg-gray-900 border border-gray-700 text-white rounded px-1.5 py-0.5 text-xs focus:border-yellow-400/50 outline-none">
+                  {MARKET_OPTIONS.map(function(m) { return (<option key={m.key} value={m.key}>{m.label}</option>); })}
+                </select>
+              </span>
               <span> - Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span></span>
               {activeAccount.linkedFromLabel && <span> - Promoted from: <span className="text-yellow-400">{activeAccount.linkedFromLabel}</span></span>}
               {activeAccount.copiedAccountNumber && <span> - Copy of: <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></span>}
@@ -1949,6 +2032,9 @@ function MMMJournal(props) {
                     <button onClick={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }} className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-1.5 rounded-lg border border-red-500/40 flex-shrink-0">Open New Account</button>
                   </div>
                 )}
+                {activeStatus === 'breached' && (
+                  <BreachReviewCard account={activeAccount} accountEntries={accountEntries} bufferHistory={bufferHistory} />
+                )}
                 {activeStatus === 'passed' && (
                   <div className="border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3">
                     <Icon name="Trophy" className="h-5 w-5 text-green-400 mt-0.5" />
@@ -1970,7 +2056,7 @@ function MMMJournal(props) {
                 )}
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  <StatCard label="Current Capital (Buffer)" value={fmt(currentBuffer)} icon="Shield" color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
+                  <StatCard label="Current Capital (Buffer)" value={fmt(Math.max(currentBuffer, 0))} icon="Shield" color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
                   <StatCard label="Risk Per Trade" value={fmt(riskPerTrade)} icon="Target" color="text-blue-400" sub={activeCfg.mode + " (" + (activeCfg.riskPct * 100) + "%)"} />
                   <StatCard label="Total P&L" value={fmt(totalPnl)} icon={totalPnl >= 0 ? "TrendingUp" : "TrendingDown"} color={totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
                   <StatCard label="Win Rate" value={totalTrades === 0 ? '-' : winRate.toFixed(1) + "%"} icon="DollarSign" color={totalTrades === 0 ? 'text-gray-500' : winRate >= 50 ? 'text-green-400' : 'text-red-400'} sub={totalTrades === 0 ? 'No trades yet' : winTrades + "W / " + lossTrades + "L"} />
