@@ -13,9 +13,9 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="./firebase-vendor/firebase-app-compat.js"></script>
+<script src="./firebase-vendor/firebase-auth-compat.js"></script>
+<script src="./firebase-vendor/firebase-firestore-compat.js"></script>
 <style>
   body { background:#000; margin:0; font-family: 'Inter', system-ui, sans-serif; }
 </style>
@@ -27,12 +27,12 @@
   if (typeof firebase === 'undefined') {
     document.getElementById('root').innerHTML =
       '<div style="min-height:100vh;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;padding:24px;font-family:sans-serif;text-align:center;">' +
-      '<div style="max-width:420px;">' +
+      '<div style="max-width:460px;">' +
       '<h1 style="color:#facc15;font-size:20px;margin-bottom:12px;">Couldn\'t load required scripts</h1>' +
-      '<p style="color:#9ca3af;font-size:14px;line-height:1.5;">This app couldn\'t load Firebase from Google\'s servers. This is almost always caused by an ad blocker or privacy extension (uBlock Origin, Brave Shields, AdGuard, etc.) blocking requests to <code>gstatic.com</code>.</p>' +
-      '<p style="color:#9ca3af;font-size:14px;line-height:1.5;margin-top:10px;">Try disabling your ad blocker for this site, or open the page in a private/incognito window, then refresh.</p>' +
+      '<p style="color:#9ca3af;font-size:14px;line-height:1.5;">This app expects a <code>firebase-vendor</code> folder (with firebase-app-compat.js, firebase-auth-compat.js, and firebase-firestore-compat.js) sitting next to this HTML file. It looks like that folder is missing or didn\'t upload correctly.</p>' +
+      '<p style="color:#9ca3af;font-size:14px;line-height:1.5;margin-top:10px;">Make sure the <code>firebase-vendor</code> folder was uploaded to your GitHub repo alongside this file, in the same directory.</p>' +
       '</div></div>';
-    throw new Error('Firebase SDK failed to load - likely blocked by an ad blocker or network filter.');
+    throw new Error('Firebase SDK failed to load - check that the firebase-vendor folder was uploaded alongside this file.');
   }
   const firebaseConfig = {
     apiKey: "AIzaSyDcrEEhcY6kHLQxZ7RQ37KmAcCDPgol0gg",
@@ -761,7 +761,7 @@ function AccountGroupNav(props) {
                   const st = getStatus(acc);
                   const archived = isArchived(acc, st);
                   return (
-                    <button key={acc.id} onClick={function() { onSelect(acc.id); setOpenGroup(null); }}
+                    <button key={acc.id} onClick={function() { onSelect(acc.id, isBreachedGroup); setOpenGroup(null); }}
                       className={"w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-left " + (archived ? 'opacity-40 ' : '') + (activeAccountId === acc.id ? 'bg-yellow-500/15 text-yellow-300' : 'text-gray-300 hover:bg-gray-900')}>
                       <span>{acc.name} #{acc.accountNumber}</span>
                       {archived && <span className="text-[10px] text-red-400">Archived</span>}
@@ -1768,6 +1768,8 @@ function MMMJournal(props) {
   const [accounts, setAccounts] = useState([]);
   const [entries, setEntries] = useState([]);
   const [activeAccountId, setActiveAccountId] = useState(null);
+  const [hasManualSelection, setHasManualSelection] = useState(false);
+  const [viewingBreached, setViewingBreached] = useState(false);
   const [showAddAccount, setShowAddAccount] = useState(false);
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [showManageStrategies, setShowManageStrategies] = useState(false);
@@ -1802,6 +1804,19 @@ function MMMJournal(props) {
     });
     return unsub;
   }, [user.uid]);
+
+  // Until the user has actually clicked an account themselves, the default
+  // selection should prefer a live account over a breached one - otherwise
+  // whichever account happens to be oldest (breached or not) becomes the
+  // default view, which is exactly the "why am I looking at a breached
+  // account I never chose" problem this fixes.
+  useEffect(function() {
+    if (hasManualSelection) return;
+    if (accounts.length === 0) return;
+    const nonBreached = accounts.find(function(a) { return computeAccountStatus(a, entries) !== 'breached'; });
+    setViewingBreached(false);
+    setActiveAccountId(nonBreached ? nonBreached.id : null);
+  }, [accounts, entries, hasManualSelection]);
 
   useEffect(function() {
     const ref = db.collection('presence').doc(user.uid);
@@ -1867,6 +1882,7 @@ function MMMJournal(props) {
   const avgTradesPerDay = tradedAccountEntries.length > 0 ? totalTrades / tradedAccountEntries.length : 0;
   const maxTradesInDay = tradedAccountEntries.reduce(function(max, e) { return Math.max(max, e.trades.length); }, 0);
   const activeStatus = activeAccount ? computeStatus(activeAccount, currentBuffer, totalPnl) : 'active';
+  const shouldShowAccountDetail = activeAccount && (accountFilter !== 'active' || activeStatus !== 'breached' || viewingBreached);
 
   const getAccountStatus = function(acc) {
     return computeAccountStatus(acc, entries);
@@ -1916,6 +1932,8 @@ function MMMJournal(props) {
       archived: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     });
+    setHasManualSelection(true);
+    setViewingBreached(false);
     setActiveAccountId(doc.id);
     setNewAccount(emptyAccountForm);
     setShowAddAccount(false);
@@ -2119,8 +2137,8 @@ function MMMJournal(props) {
           </div>
           {accounts.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
-              <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={setActiveAccountId} getStatus={getAccountStatus} filter={accountFilter} />
-              {activeAccount && (
+              <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={function(id, fromBreachedTab) { setHasManualSelection(true); setViewingBreached(!!fromBreachedTab); setActiveAccountId(id); }} getStatus={getAccountStatus} filter={accountFilter} />
+              {shouldShowAccountDetail && (
                 <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setEntryMethod('manual'); setShowAddEntry(true); }}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-gray-900 border-gray-800 text-gray-300 hover:border-yellow-500/40 hover:text-yellow-300 transition">
                   <Icon name="CalendarPlus" className="h-3.5 w-3.5" /><span>Daily Log</span>
@@ -2128,7 +2146,7 @@ function MMMJournal(props) {
               )}
             </div>
           )}
-          {activeAccount && (
+          {shouldShowAccountDetail && (
             <div className="text-sm text-gray-500 bg-black/30 rounded-lg px-4 py-2.5 flex flex-wrap items-center gap-x-1">
               <span>Name: <span className="text-white font-medium">{activeAccount.name}</span></span>
               <span> - Capital: <span className="text-white">{fmt(activeAccount.startingBalance)}</span></span>
@@ -2153,6 +2171,13 @@ function MMMJournal(props) {
           <div className="text-center py-20 border border-dashed border-gray-700 rounded-2xl">
             <Icon name="Shield" className="h-10 w-10 text-gray-600 mx-auto mb-3" />
             <p className="text-gray-500">No accounts yet. Add one to start tracking your buffer.</p>
+          </div>
+        ) : !shouldShowAccountDetail ? (
+          <div className="text-center py-20 border border-dashed border-gray-700 rounded-2xl">
+            <Icon name="Shield" className="h-10 w-10 text-gray-600 mx-auto mb-3" />
+            <p className="text-gray-500">No active accounts right now.</p>
+            <p className="text-gray-600 text-sm mt-1">Add a new account to get started, or check the Breached tab to review what happened.</p>
+            <button onClick={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }} className="mt-4 inline-flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-green-400 hover:to-emerald-500 transition"><Icon name="Plus" className="h-4 w-4" /><span>Add Account</span></button>
           </div>
         ) : (
           <React.Fragment>
