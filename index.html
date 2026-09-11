@@ -1988,6 +1988,12 @@ function MMMJournal(props) {
     await accountsRef.doc(activeAccount.id).update({ market: newMarket });
   };
 
+  const handleBackToActive = function() {
+    setViewingBreached(false);
+    const nonBreached = accounts.find(function(a) { return computeAccountStatus(a, entries) !== 'breached'; });
+    setActiveAccountId(nonBreached ? nonBreached.id : null);
+  };
+
   const handleAddStrategy = async function() {
     if (!newStrategy.name.trim()) return;
     const strategy = {
@@ -2199,6 +2205,7 @@ function MMMJournal(props) {
                   <div className="border border-red-500/40 bg-red-500/10 rounded-xl p-4 flex items-start gap-3">
                     <Icon name="AlertTriangle" className="h-5 w-5 text-red-400 mt-0.5" />
                     <div className="flex-1"><p className="text-red-300 font-semibold text-sm">Account Breached</p><p className="text-red-200/70 text-xs mt-1">Buffer fully consumed. This account is now archived.</p></div>
+                    <button onClick={handleBackToActive} className="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded-lg border border-gray-700 flex-shrink-0">Back to Active</button>
                     <button onClick={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }} className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-1.5 rounded-lg border border-red-500/40 flex-shrink-0">Open New Account</button>
                   </div>
                 )}
