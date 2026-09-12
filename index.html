@@ -13,8 +13,12 @@
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  body { background:#000; margin:0; font-family: 'Inter', system-ui, sans-serif; }
+  body { background:#000; margin:0; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .num { font-family: 'JetBrains Mono', ui-monospace, monospace; font-feature-settings: "tnum"; letter-spacing: -0.02em; }
 </style>
 </head>
 <body>
@@ -93,6 +97,40 @@ const fmt = function(n) {
   if (n === null || n === undefined || isNaN(n)) return '$0.00';
   const sign = n < 0 ? '-' : '';
   return sign + "$" + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
+const VIEW_MODES = [
+  { key: 'dollars', label: 'Dollars' },
+  { key: 'percent', label: 'Percentage' },
+  { key: 'rmultiple', label: 'R-Multiple' },
+  { key: 'points', label: 'Points' },
+  { key: 'privacy', label: 'Privacy' },
+];
+
+// Renders the same underlying $ amount through whichever lens the person has
+// selected, without needing separate calculations stored anywhere - context
+// carries the account's current risk-per-trade, buffer, and point value so
+// Percentage/R-Multiple/Points stay meaningful even as those numbers change.
+const fmtView = function(amount, viewMode, context) {
+  if (amount === null || amount === undefined || isNaN(amount)) amount = 0;
+  const ctx = context || {};
+  if (viewMode === 'privacy') return amount >= 0 ? '••••' : '-••••';
+  if (viewMode === 'percent') {
+    const base = ctx.buffer;
+    if (!base) return '-';
+    return (amount >= 0 ? '+' : '') + ((amount / base) * 100).toFixed(1) + '%';
+  }
+  if (viewMode === 'rmultiple') {
+    const risk = ctx.risk;
+    if (!risk) return '-';
+    return (amount >= 0 ? '+' : '') + (amount / risk).toFixed(2) + 'R';
+  }
+  if (viewMode === 'points') {
+    const pt = ctx.pointValue;
+    if (!pt) return '-';
+    return (amount >= 0 ? '+' : '') + (amount / pt).toFixed(1) + ' pts';
+  }
+  return fmt(amount);
 };
 
 // ---------------------------------------------------------------------
@@ -1022,7 +1060,13 @@ function StrategyCard(props) {
 }
 
 function MiniStat(props) {
-  return (<div className="bg-black/40 border border-gray-800 rounded-xl p-2.5"><div className="text-[9px] text-gray-500 uppercase tracking-wide mb-1 leading-tight">{props.label}</div><div className={"text-base font-bold " + props.color}>{props.value}</div></div>);
+  const accentBorder = (props.color || '').replace(/text-/g, 'border-');
+  return (
+    <div className={"bg-black/30 border border-gray-800/80 border-l-2 rounded-lg pl-3 pr-2.5 py-2 " + accentBorder}>
+      <div className="text-[11px] text-gray-500 leading-tight mb-0.5">{props.label}</div>
+      <div className={"num text-[15px] font-semibold " + props.color}>{props.value}</div>
+    </div>
+  );
 }
 
 function TradingPlanSummaryGrid(props) {
@@ -1232,6 +1276,26 @@ function computeTradeAdherence(trade, entry, account) {
 // Same underlying signals as computeTradeAdherence, but kept as separate named
 // questions instead of one blended number - each becomes its own trackable line
 // on the discipline checklist (entry rules, risk size, lot size, bias, HTF/LTF).
+// Rule-based auto-tags, not an AI model - straightforward pattern checks
+// against data you already log (trade order in the day, prior result that
+// day, bias match, risk/rule compliance). Labeled honestly as automated
+// tagging rather than "AI" since no model inference is actually happening.
+const computeTradeTags = function(trade, tradeIndex, allTradesInDay, entry, account) {
+  const tags = [];
+  if (tradeIndex >= 2) tags.push('Overtrade');
+  if (tradeIndex > 0 && allTradesInDay[tradeIndex - 1] && allTradesInDay[tradeIndex - 1].result === 'loss') tags.push('Revenge Trade');
+  if (entry.dailyBias && entry.dailyBias !== 'neutral') {
+    const aligned = (entry.dailyBias === 'bullish' && trade.direction === 'long') || (entry.dailyBias === 'bearish' && trade.direction === 'short');
+    if (!aligned) tags.push('Against Bias');
+  }
+  const factors = computeTradeDisciplineFactors(trade, entry, account);
+  if (factors.riskOk === false) tags.push('Over-Risk');
+  if (factors.sizeOk === false) tags.push('Over-Lot');
+  if (factors.rulesFrac !== null && factors.rulesFrac === 1) tags.push('Rules Followed');
+  if (factors.htfDone === false) tags.push('No HTF Check');
+  return tags;
+};
+
 function computeTradeDisciplineFactors(trade, entry, account) {
   const applicableRules = getApplicableRules(trade, entry, account);
   const rulesFrac = applicableRules.length > 0 ? (trade.rulesChecked || []).length / applicableRules.length : null;
@@ -1338,6 +1402,16 @@ function computeOverviewData(accounts, entries) {
   const overallWinRate = totalTrades > 0 ? (winCount / totalTrades) * 100 : 0;
   const totalPnl = allTrades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
 
+  // Standard trading metrics: profit factor (gross profit / gross loss - above
+  // 1.0 means profitable), average win/loss size, and expectancy (what you
+  // should expect to make per trade on average, blending win rate and size).
+  const grossProfit = allTrades.filter(function(t) { return t.result === 'win'; }).reduce(function(s, t) { return s + Math.abs(parseFloat(t.pnl) || 0); }, 0);
+  const grossLoss = allTrades.filter(function(t) { return t.result === 'loss'; }).reduce(function(s, t) { return s + Math.abs(parseFloat(t.pnl) || 0); }, 0);
+  const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : null;
+  const avgWin = winCount > 0 ? grossProfit / winCount : null;
+  const avgLoss = lossCount > 0 ? grossLoss / lossCount : null;
+  const expectancy = totalTrades > 0 ? (totalPnl / totalTrades) : null;
+
   const scores = [];
   allTrades.forEach(function(t) {
     const acc = accountsById[t.accountId];
@@ -1363,10 +1437,13 @@ function computeOverviewData(accounts, entries) {
     if (bestDay === null || byDate[d] > byDate[bestDay]) bestDay = d;
     if (worstDay === null || byDate[d] < byDate[worstDay]) worstDay = d;
   });
+  const greenDays = sortedDates.filter(function(d) { return byDate[d] > 0; }).length;
+  const dayWinRate = sortedDates.length > 0 ? (greenDays / sortedDates.length) * 100 : null;
 
   return { totalPnl: totalPnl, overallWinRate: overallWinRate, totalTrades: totalTrades, ruleAdherencePct: ruleAdherencePct,
     totalAllCosts: totalAllCosts, totalAllPayouts: totalAllPayouts, equityPoints: equityPoints,
-    bestDay: bestDay, worstDay: worstDay, byDate: byDate };
+    bestDay: bestDay, worstDay: worstDay, byDate: byDate,
+    profitFactor: profitFactor, avgWin: avgWin, avgLoss: avgLoss, expectancy: expectancy, dayWinRate: dayWinRate };
 }
 
 function computeDisciplineScore(accounts, entries) {
@@ -1417,9 +1494,14 @@ function OverviewStats(props) {
         <Icon name="LayoutDashboard" className="h-5 w-5 text-yellow-400" />
         <h2 className="text-lg font-semibold text-white">All Accounts, Combined</h2>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <MiniStat label="Total P&L" value={fmt(d.totalPnl)} color={d.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
         <MiniStat label="Win Rate" value={d.totalTrades === 0 ? '-' : d.overallWinRate.toFixed(1) + '%'} color={d.totalTrades === 0 ? 'text-gray-500' : d.overallWinRate >= 50 ? 'text-green-400' : 'text-red-400'} />
+        <MiniStat label="Profit Factor" value={d.profitFactor === null ? '-' : d.profitFactor.toFixed(2)} color={d.profitFactor === null ? 'text-gray-500' : d.profitFactor >= 1 ? 'text-green-400' : 'text-red-400'} />
+        <MiniStat label="Day Win Rate" value={d.dayWinRate === null ? '-' : d.dayWinRate.toFixed(0) + '%'} color={d.dayWinRate === null ? 'text-gray-500' : d.dayWinRate >= 50 ? 'text-green-400' : 'text-red-400'} />
+        <MiniStat label="Avg Win" value={d.avgWin === null ? '-' : fmt(d.avgWin)} color="text-green-400" />
+        <MiniStat label="Avg Loss" value={d.avgLoss === null ? '-' : fmt(d.avgLoss)} color="text-red-400" />
+        <MiniStat label="Expectancy / Trade" value={d.expectancy === null ? '-' : fmt(d.expectancy)} color={d.expectancy === null ? 'text-gray-500' : d.expectancy >= 0 ? 'text-green-400' : 'text-red-400'} />
         <MiniStat label="Rule Adherence" value={d.ruleAdherencePct === null ? '-' : d.ruleAdherencePct.toFixed(1) + '%'} color="text-purple-400" />
         <MiniStat label="Total Trades" value={String(d.totalTrades)} color="text-white" />
         <MiniStat label="Total Costs" value={fmt(d.totalAllCosts)} color="text-red-400" />
@@ -1429,6 +1511,169 @@ function OverviewStats(props) {
         <div className="grid grid-cols-2 gap-3 text-xs text-gray-400 pt-1">
           {d.bestDay && <div>Best day: <span className="text-green-400 font-medium">{d.bestDay}</span> ({fmt(d.byDate[d.bestDay])})</div>}
           {d.worstDay && <div>Worst day: <span className="text-red-400 font-medium">{d.worstDay}</span> ({fmt(d.byDate[d.worstDay])})</div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TradingCalendar(props) {
+  const accounts = props.accounts;
+  const entries = props.entries;
+  const viewMode = props.viewMode || 'dollars';
+  const viewContext = props.viewContext || {};
+  const [monthOffset, setMonthOffset] = useState(0);
+  const d = computeOverviewData(accounts, entries);
+
+  const now = new Date();
+  const viewDate = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const startWeekday = viewDate.getDay();
+  const monthLabel = viewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const pad2 = function(n) { return n < 10 ? '0' + n : '' + n; };
+  const dateKey = function(day) { return year + '-' + pad2(month + 1) + '-' + pad2(day); };
+
+  const cells = [];
+  for (let i = 0; i < startWeekday; i++) cells.push(null);
+  for (let day = 1; day <= daysInMonth; day++) cells.push(day);
+
+  let monthTotal = 0, greenDays = 0, redDays = 0;
+  cells.forEach(function(day) {
+    if (!day) return;
+    const pnl = d.byDate[dateKey(day)];
+    if (pnl === undefined) return;
+    monthTotal += pnl;
+    if (pnl > 0) greenDays++; else if (pnl < 0) redDays++;
+  });
+
+  const maxAbs = Math.max.apply(null, cells.filter(function(day) { return day && d.byDate[dateKey(day)] !== undefined; }).map(function(day) { return Math.abs(d.byDate[dateKey(day)]); }).concat([1]));
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Icon name="Calendar" className="h-5 w-5 text-yellow-400" />
+          <h2 className="text-lg font-semibold text-white">Trading Calendar</h2>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-gray-500">{greenDays} green - {redDays} red</span>
+          <div className="flex items-center gap-1">
+            <button onClick={function() { setMonthOffset(monthOffset - 1); }} className="text-gray-500 hover:text-white p-1"><Icon name="ChevronLeft" className="h-4 w-4" /></button>
+            <span className="text-sm text-white font-medium w-32 text-center num">{monthLabel}</span>
+            <button onClick={function() { setMonthOffset(Math.min(monthOffset + 1, 0)); }} disabled={monthOffset >= 0} className="text-gray-500 hover:text-white disabled:opacity-20 p-1"><Icon name="ChevronRight" className="h-4 w-4" /></button>
+          </div>
+        </div>
+      </div>
+      <div className="flex items-center justify-between mb-2">
+        <span className={"num text-sm font-semibold " + (monthTotal >= 0 ? 'text-green-400' : 'text-red-400')}>{viewMode === 'privacy' ? '••••' : (monthTotal >= 0 ? '+' : '') + fmt(monthTotal)} this month</span>
+      </div>
+      <div className="grid grid-cols-7 gap-1.5 text-center text-[10px] text-gray-600 mb-1.5">
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(function(lbl, i) { return (<div key={i}>{lbl}</div>); })}
+      </div>
+      <div className="grid grid-cols-7 gap-1.5">
+        {cells.map(function(day, i) {
+          if (!day) return <div key={i}></div>;
+          const key = dateKey(day);
+          const pnl = d.byDate[key];
+          const hasData = pnl !== undefined;
+          const intensity = hasData ? Math.min(Math.abs(pnl) / maxAbs, 1) : 0;
+          const bg = !hasData ? '#111827' : pnl > 0 ? 'rgba(74, 222, 128, ' + (0.18 + intensity * 0.62) + ')' : pnl < 0 ? 'rgba(248, 113, 113, ' + (0.18 + intensity * 0.62) + ')' : '#374151';
+          return (
+            <div key={i} className="aspect-square rounded-md flex flex-col items-center justify-center border border-gray-800/60 px-0.5" style={{ backgroundColor: bg }}>
+              <span className="text-[10px] text-gray-400 leading-none">{day}</span>
+              {hasData && <span className="num text-[9px] font-semibold text-white leading-tight mt-0.5">{viewMode === 'privacy' ? '••' : fmtView(pnl, viewMode, viewContext).replace('.00', '')}</span>}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// A small, honest set of reports - built from data you already log, not padded
+// out to hit a number. Each one groups your trades by a dimension you already
+// track and shows win rate and P&L for each group.
+function ReportsCard(props) {
+  const accounts = props.accounts;
+  const entries = props.entries;
+  const [open, setOpen] = useState(false);
+  const [activeReport, setActiveReport] = useState('weekday');
+
+  const accountsById = {};
+  accounts.forEach(function(a) { accountsById[a.id] = a; });
+  const breachedIds = {};
+  accounts.forEach(function(a) { if (computeAccountStatus(a, entries) === 'breached') breachedIds[a.id] = true; });
+  const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no' && !breachedIds[e.accountId]; });
+  const allTrades = tradedEntries.flatMap(function(e) {
+    return e.trades.map(function(t) { return Object.assign({}, t, { date: e.date, accountId: e.accountId, entry: e }); });
+  });
+
+  const groupBy = function(keyFn) {
+    const groups = {};
+    allTrades.forEach(function(t) {
+      const key = keyFn(t);
+      if (key === null || key === undefined) return;
+      if (!groups[key]) groups[key] = { wins: 0, losses: 0, pnl: 0 };
+      const v = Math.abs(parseFloat(t.pnl) || 0);
+      groups[key].pnl += t.result === 'win' ? v : -v;
+      if (t.result === 'win') groups[key].wins++; else groups[key].losses++;
+    });
+    return groups;
+  };
+
+  const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const reports = {
+    weekday: { label: 'By Day of Week', order: WEEKDAY_NAMES, groups: groupBy(function(t) { return WEEKDAY_NAMES[new Date(t.date + 'T00:00:00').getDay()]; }) },
+    bias: { label: 'By Daily Bias', order: ['Bullish', 'Bearish', 'Neutral/Range'], groups: groupBy(function(t) { return (BIAS_OPTIONS.find(function(b) { return b.key === t.entry.dailyBias; }) || {}).label || null; }) },
+    market: { label: 'By Market', order: null, groups: groupBy(function(t) { const acc = accountsById[t.accountId]; return acc ? (MARKET_SPECS[acc.market || 'nasdaq100'] || {}).label : null; }) },
+    strategy: { label: 'By Strategy', order: null, groups: groupBy(function(t) { const acc = accountsById[t.accountId]; if (!acc) return null; const strategies = getStrategies(acc); const s = strategies.find(function(s) { return s.id === (t.entry.strategyId || 'default'); }); return s ? s.name : null; }) },
+  };
+
+  const current = reports[activeReport];
+  const keys = current.order ? current.order.filter(function(k) { return current.groups[k]; }) : Object.keys(current.groups).sort(function(a, b) { return current.groups[b].pnl - current.groups[a].pnl; });
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden">
+      <button onClick={function() { setOpen(!open); }} className="w-full flex items-center justify-between p-6 text-left">
+        <div className="flex items-center gap-2">
+          <Icon name="BarChart3" className="h-5 w-5 text-yellow-400" />
+          <div>
+            <h2 className="text-lg font-semibold text-white">Reports</h2>
+            <p className="text-xs text-gray-500">Win rate and P&amp;L broken down by weekday, bias, market, and strategy</p>
+          </div>
+        </div>
+        <Icon name={open ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500 flex-shrink-0" />
+      </button>
+      {open && (
+        <div className="px-6 pb-6">
+          <div className="flex gap-2 mb-3 flex-wrap">
+            {Object.keys(reports).map(function(key) {
+              return (<button key={key} onClick={function() { setActiveReport(key); }} className={"px-3 py-1.5 rounded-lg text-xs font-medium border transition " + (activeReport === key ? 'bg-yellow-500/15 text-yellow-300 border-yellow-500/30' : 'bg-gray-900 text-gray-400 border-gray-800 hover:border-gray-700')}>{reports[key].label}</button>);
+            })}
+          </div>
+          {keys.length === 0 ? (
+            <p className="text-xs text-gray-600">Not enough logged trades for this report yet.</p>
+          ) : (
+            <div className="space-y-1.5">
+              {keys.map(function(key) {
+                const g = current.groups[key];
+                const total = g.wins + g.losses;
+                const wr = total > 0 ? (g.wins / total) * 100 : 0;
+                return (
+                  <div key={key} className="flex items-center justify-between text-sm bg-black/30 rounded-lg px-3 py-2">
+                    <span className="text-gray-300">{key}</span>
+                    <div className="flex items-center gap-4">
+                      <span className="text-xs text-gray-500">{total} trade{total !== 1 ? 's' : ''}</span>
+                      <span className={"num text-xs " + (wr >= 50 ? 'text-green-400' : 'text-red-400')}>{wr.toFixed(0)}% WR</span>
+                      <span className={"num font-semibold " + (g.pnl >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(g.pnl)}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -1486,7 +1731,7 @@ function DisciplineChecklistCard(props) {
               <circle cx="18" cy="18" r="15.5" fill="none" stroke="#1f2937" strokeWidth="3" />
               <circle cx="18" cy="18" r="15.5" fill="none" stroke={scoreColor} strokeWidth="3" strokeDasharray={ringDash + " " + ringCirc} strokeLinecap="round" />
             </svg>
-            <span className={"absolute inset-0 flex items-center justify-center text-xs font-bold " + scoreTextCls}>{disc.score.toFixed(0)}</span>
+            <span className={"num absolute inset-0 flex items-center justify-center text-xs font-bold " + scoreTextCls}>{disc.score.toFixed(0)}</span>
           </div>
           <div>
             <h2 className="text-lg font-semibold text-white">Your Discipline Checklist</h2>
@@ -1634,7 +1879,7 @@ function DisciplineLeaderboard(props) {
                 <div key={r.uid} className={"flex items-center justify-between text-sm rounded-lg px-3 py-2 " + (isMe ? 'bg-yellow-500/15 border border-yellow-500/30' : 'bg-black/30')}>
                   <span className="text-gray-400">#{i + 1}</span>
                   <span className={"flex-1 ml-3 " + (isMe ? 'text-yellow-300 font-semibold' : 'text-white')}>{r.displayName}{isMe ? ' (you)' : ''}</span>
-                  <span className="text-green-400 font-semibold">{r.disciplineScore.toFixed(1)}</span>
+                  <span className="num text-green-400 font-semibold">{r.disciplineScore.toFixed(1)}</span>
                 </div>
               );
             })}
@@ -1644,6 +1889,144 @@ function DisciplineLeaderboard(props) {
     </div>
   );
 }
+
+// Verified against real CME contract specs (point value = $ per 1.00 price move).
+const TICKER_POINT_VALUES = {
+  MES: 5, ES: 50,
+  MNQ: 2, NQ: 20,
+  M2K: 5, RTY: 50,
+  MYM: 0.5, YM: 5,
+  MGC: 10, GC: 100,
+  SIL: 1000, SI: 5000,
+  MCL: 100, CL: 1000,
+};
+
+const getPointValueForContract = function(contractOrProduct) {
+  const upper = (contractOrProduct || '').toUpperCase();
+  const roots = Object.keys(TICKER_POINT_VALUES).sort(function(a, b) { return b.length - a.length; });
+  for (let i = 0; i < roots.length; i++) {
+    if (upper.indexOf(roots[i]) === 0) return TICKER_POINT_VALUES[roots[i]];
+  }
+  return null;
+};
+
+// Minimal but correct CSV parser - handles quoted fields that may contain commas.
+const parseCsvRows = function(text) {
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else inQuotes = false; }
+      else field += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ',') { row.push(field); field = ''; }
+      else if (c === '\n' || c === '\r') {
+        if (c === '\r' && text[i + 1] === '\n') i++;
+        row.push(field); field = '';
+        if (row.length > 1 || row[0] !== '') rows.push(row);
+        row = [];
+      } else field += c;
+    }
+  }
+  if (field !== '' || row.length > 0) { row.push(field); rows.push(row); }
+  return rows;
+};
+
+// Weighted-average position matching per contract: opens a position, adds to
+// it on same-direction fills, and realizes P&L against the average entry
+// price as opposing fills close or flip it. This is the standard approach
+// broker-import tools use to turn a per-fill order export into round-turn
+// trades without needing strict per-lot FIFO bookkeeping.
+const buildTradovateTrades = function(fills) {
+  const byContract = {};
+  fills.forEach(function(f) {
+    if (!byContract[f.contract]) byContract[f.contract] = [];
+    byContract[f.contract].push(f);
+  });
+
+  const roundTurns = [];
+  Object.keys(byContract).forEach(function(contract) {
+    const list = byContract[contract].slice().sort(function(a, b) { return a.time - b.time; });
+    const pointValue = getPointValueForContract(contract) || getPointValueForContract(list[0].product);
+    let posQty = 0, avgEntryPrice = 0, entryTime = null;
+    list.forEach(function(f) {
+      const signedQty = f.side === 'Buy' ? f.qty : -f.qty;
+      if (posQty === 0) {
+        posQty = signedQty; avgEntryPrice = f.price; entryTime = f.time;
+      } else if ((posQty > 0 && signedQty > 0) || (posQty < 0 && signedQty < 0)) {
+        const newQty = posQty + signedQty;
+        avgEntryPrice = (avgEntryPrice * Math.abs(posQty) + f.price * Math.abs(signedQty)) / Math.abs(newQty);
+        posQty = newQty;
+      } else {
+        const closingQty = Math.min(Math.abs(posQty), Math.abs(signedQty));
+        const direction = posQty > 0 ? 'long' : 'short';
+        const pnlPoints = direction === 'long' ? (f.price - avgEntryPrice) : (avgEntryPrice - f.price);
+        const pnl = pointValue !== null ? pnlPoints * pointValue * closingQty : null;
+        roundTurns.push({ contract: contract, product: f.product, direction: direction, qty: closingQty, entryPrice: avgEntryPrice, exitPrice: f.price, openTime: entryTime, closeTime: f.time, pnl: pnl });
+        const remaining = Math.abs(signedQty) - closingQty;
+        posQty = posQty > 0 ? posQty - closingQty : posQty + closingQty;
+        if (remaining > 0) { posQty = f.side === 'Buy' ? remaining : -remaining; avgEntryPrice = f.price; entryTime = f.time; }
+        else if (posQty === 0) { avgEntryPrice = 0; entryTime = null; }
+      }
+    });
+  });
+  return roundTurns;
+};
+
+// Parses a Tradovate Reports > Orders CSV export into round-turn trades
+// grouped by the day each trade closed. Returns skipped counts so the import
+// preview can be honest about anything it couldn't price or understand.
+const parseTradovateCsv = function(text) {
+  const rows = parseCsvRows(text).filter(function(r) { return r.length > 1; });
+  if (rows.length < 2) return { byDate: {}, skipped: 0, totalTrades: 0, error: 'No data rows found in this file.' };
+  const header = rows[0].map(function(h) { return h.trim(); });
+  const idx = {};
+  header.forEach(function(h, i) { idx[h] = i; });
+  const findCol = function(names) {
+    for (let i = 0; i < names.length; i++) { if (idx[names[i]] !== undefined) return idx[names[i]]; }
+    return -1;
+  };
+  const statusIdx = findCol(['Status']);
+  const bsIdx = findCol(['B/S']);
+  const contractIdx = findCol(['Contract']);
+  const productIdx = findCol(['Product']);
+  const qtyIdx = findCol(['Filled Qty', 'filledQty']);
+  const priceIdx = findCol(['Avg Fill Price', 'avgPrice']);
+  const timeIdx = findCol(['Fill Time', 'Timestamp']);
+
+  if (bsIdx < 0 || contractIdx < 0 || qtyIdx < 0 || priceIdx < 0 || timeIdx < 0) {
+    return { byDate: {}, skipped: 0, totalTrades: 0, error: "This doesn't look like a Tradovate Orders export. In Tradovate, go to Reports > Orders (not Performance) and download the CSV." };
+  }
+
+  const fills = [];
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (statusIdx >= 0 && r[statusIdx] && r[statusIdx].trim() !== 'Filled') continue;
+    const qty = parseFloat(r[qtyIdx]);
+    const price = parseFloat(r[priceIdx]);
+    const side = (r[bsIdx] || '').trim();
+    const contract = (r[contractIdx] || '').trim();
+    const product = productIdx >= 0 ? (r[productIdx] || '').trim() : contract;
+    const timeStr = r[timeIdx];
+    if (!qty || !price || !side || !contract || !timeStr) continue;
+    const time = new Date(timeStr).getTime();
+    if (isNaN(time)) continue;
+    fills.push({ contract: contract, product: product, side: side, qty: qty, price: price, time: time });
+  }
+
+  const roundTurns = buildTradovateTrades(fills);
+  const priced = roundTurns.filter(function(rt) { return rt.pnl !== null; });
+  const skipped = roundTurns.length - priced.length;
+  const byDate = {};
+  priced.forEach(function(rt) {
+    const dateKey = new Date(rt.closeTime).toISOString().split('T')[0];
+    if (!byDate[dateKey]) byDate[dateKey] = [];
+    byDate[dateKey].push(rt);
+  });
+  return { byDate: byDate, skipped: skipped, totalTrades: priced.length, error: null };
+};
 
 function toCSV(entries) {
   const header = ['date','tradedToday','noTradeReason','dailyBias','exercised','direction','result','pnl','positionSize','riskAmount','htfLtf','notes'];
@@ -1760,8 +2143,8 @@ function PerAccountBreakdown(props) {
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-gray-500">{accTrades.length} trades</span>
-                <span className={accWinRate >= 50 ? 'text-green-400' : 'text-red-400'}>{accWinRate.toFixed(0)}% WR</span>
-                <span className={"font-semibold " + (accPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(accPnl)}</span>
+                <span className={"num " + (accWinRate >= 50 ? 'text-green-400' : 'text-red-400')}>{accWinRate.toFixed(0)}% WR</span>
+                <span className={"num font-semibold " + (accPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(accPnl)}</span>
               </div>
             </div>
           );
@@ -1777,6 +2160,7 @@ function MMMJournal(props) {
   const language = props.language;
   const setLanguage = props.setLanguage;
   const [accountFilter, setAccountFilter] = useState('active');
+  const [viewMode, setViewMode] = useState('dollars');
   const [accounts, setAccounts] = useState([]);
   const [entries, setEntries] = useState([]);
   const [activeAccountId, setActiveAccountId] = useState(null);
@@ -1785,6 +2169,10 @@ function MMMJournal(props) {
   const [showAddAccount, setShowAddAccount] = useState(false);
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [showManageStrategies, setShowManageStrategies] = useState(false);
+  const [showImportBroker, setShowImportBroker] = useState(false);
+  const [brokerImportPreview, setBrokerImportPreview] = useState(null);
+  const [brokerImportError, setBrokerImportError] = useState('');
+  const [brokerImportBusy, setBrokerImportBusy] = useState(false);
   const [newStrategy, setNewStrategy] = useState(emptyStrategyForm);
   const [entryMethod, setEntryMethod] = useState('manual');
   const [expandedEntry, setExpandedEntry] = useState(null);
@@ -1880,6 +2268,14 @@ function MMMJournal(props) {
   const activeCfg = activeAccount ? (PHASE_CONFIG[activeAccount.accountType] || PHASE_CONFIG.challenge) : PHASE_CONFIG.challenge;
   const riskPerTrade = getRiskAmount(activeAccount ? activeAccount.accountType : 'challenge', currentBuffer);
   const contractPlan = getContractPlan(currentBuffer, activeAccount ? (activeAccount.market || 'nasdaq100') : 'nasdaq100');
+  const activePointValue = (function() {
+    if (!activeAccount) return null;
+    const spec = MARKET_SPECS[activeAccount.market || 'nasdaq100'] || MARKET_SPECS.nasdaq100;
+    if (contractPlan.tier === 'nano') return spec.nanoPt;
+    if (contractPlan.tier === 'micro') return spec.microPt;
+    if (contractPlan.tier === 'mini') return spec.miniPt;
+    return null;
+  })();
   const maxStopPoints = activeAccount ? getMaxStopPoints(activeAccount.market || 'nasdaq100', activeAccount.accountType) : 0;
   const activeTicker = activeAccount ? getTickerForTier(activeAccount.market || 'nasdaq100', contractPlan.tier) : '-';
   const ruinDivisor = activeCfg.riskPct > 0 ? 1 / activeCfg.riskPct : 10;
@@ -1992,6 +2388,46 @@ function MMMJournal(props) {
     setViewingBreached(false);
     const nonBreached = accounts.find(function(a) { return computeAccountStatus(a, entries) !== 'breached'; });
     setActiveAccountId(nonBreached ? nonBreached.id : null);
+  };
+
+  const handleBrokerFileSelect = function(file) {
+    setBrokerImportError('');
+    setBrokerImportPreview(null);
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const result = parseTradovateCsv(e.target.result);
+      if (result.error) { setBrokerImportError(result.error); return; }
+      if (result.totalTrades === 0) { setBrokerImportError('No fillable trades found in this file.'); return; }
+      setBrokerImportPreview(result);
+    };
+    reader.onerror = function() { setBrokerImportError('Could not read that file.'); };
+    reader.readAsText(file);
+  };
+
+  const handleConfirmBrokerImport = async function() {
+    if (!brokerImportPreview || !activeAccountId) return;
+    setBrokerImportBusy(true);
+    try {
+      const dates = Object.keys(brokerImportPreview.byDate);
+      for (let i = 0; i < dates.length; i++) {
+        const date = dates[i];
+        const dayTrades = brokerImportPreview.byDate[date];
+        const trades = dayTrades.map(function(rt) {
+          return { result: rt.pnl >= 0 ? 'win' : 'loss', pnl: Math.abs(rt.pnl).toFixed(2), direction: rt.direction, rulesChecked: [], positionSize: String(rt.qty), riskAmount: '', htfLtf: false };
+        });
+        await entriesRef.add({
+          accountId: activeAccountId, date: date, tradedToday: 'yes',
+          dailyBias: 'neutral', exercised: false, strategyId: 'default',
+          trades: trades, notes: 'Imported from Tradovate', matrixAdherent: trades.length <= 3
+        });
+      }
+      setBrokerImportPreview(null);
+      setShowImportBroker(false);
+    } catch (e) {
+      setBrokerImportError('Import failed partway through: ' + e.message + '. Days already written are saved - check Trade History before re-importing to avoid duplicates.');
+    }
+    setBrokerImportBusy(false);
   };
 
   const handleAddStrategy = async function() {
@@ -2133,20 +2569,24 @@ function MMMJournal(props) {
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4 pb-5 border-b border-gray-900">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">MMM Pro Journal</h1>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent tracking-tight">MMM Pro Journal</h1>
               <p className="text-gray-500 text-sm mt-1 flex items-center flex-wrap">
                 <span><EditableName user={user} /> - <button onClick={function() { auth.signOut(); }} className="text-red-400 hover:underline">Sign out</button></span>
                 <UserCounters />
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <select value={viewMode} onChange={function(e) { setViewMode(e.target.value); }}
+                className="bg-gray-900 border border-gray-800 text-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-yellow-400/50 outline-none">
+                {VIEW_MODES.map(function(v) { return (<option key={v.key} value={v.key}>{v.label}</option>); })}
+              </select>
               <LanguageSwitcher language={language} setLanguage={setLanguage} />
               <div className="flex bg-gray-900 border border-gray-800 rounded-lg p-1">
-                <button onClick={function() { setViewingBreached(false); setAccountFilter('active'); }} className={"px-3 py-1.5 rounded-md text-xs font-medium " + (accountFilter === 'active' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')}>Active Only</button>
-                <button onClick={function() { setAccountFilter('all'); }} className={"px-3 py-1.5 rounded-md text-xs font-medium " + (accountFilter === 'all' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')}>All Accounts</button>
+                <button onClick={function() { setViewingBreached(false); setAccountFilter('active'); }} className={"px-3 py-1.5 rounded-md text-xs font-medium transition " + (accountFilter === 'active' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')}>Active Only</button>
+                <button onClick={function() { setAccountFilter('all'); }} className={"px-3 py-1.5 rounded-md text-xs font-medium transition " + (accountFilter === 'all' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')}>All Accounts</button>
               </div>
               <button onClick={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }} className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-green-400 hover:to-emerald-500 transition">
                 <Icon name="Plus" className="h-4 w-4" /><span>Add Account</span>
@@ -2158,28 +2598,54 @@ function MMMJournal(props) {
               <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={function(id, fromBreachedTab) { setHasManualSelection(true); setViewingBreached(!!fromBreachedTab); setActiveAccountId(id); }} getStatus={getAccountStatus} filter={accountFilter} />
               {shouldShowAccountDetail && (
                 <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setEntryMethod('manual'); setShowAddEntry(true); }}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-gray-900 border-gray-800 text-gray-300 hover:border-yellow-500/40 hover:text-yellow-300 transition">
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-yellow-500/10 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/15 transition">
                   <Icon name="CalendarPlus" className="h-3.5 w-3.5" /><span>Daily Log</span>
+                </button>
+              )}
+              {shouldShowAccountDetail && (
+                <button onClick={function() { setBrokerImportError(''); setBrokerImportPreview(null); setShowImportBroker(true); }}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-gray-900 border-gray-800 text-gray-300 hover:border-blue-500/40 hover:text-blue-300 transition">
+                  <Icon name="Upload" className="h-3.5 w-3.5" /><span>Import from Tradovate</span>
                 </button>
               )}
             </div>
           )}
           {shouldShowAccountDetail && (
-            <div className="text-sm text-gray-500 bg-black/30 rounded-lg px-4 py-2.5 flex flex-wrap items-center gap-x-1">
-              <span>Name: <span className="text-white font-medium">{activeAccount.name}</span></span>
-              <span> - Capital: <span className="text-white">{fmt(activeAccount.startingBalance)}</span></span>
-              <span> - Drawdown: <span className={(currentBuffer - (parseFloat(activeAccount.maxDrawdown) || 0)) < 0 ? 'text-red-400' : 'text-white'}>{fmt(currentBuffer - (parseFloat(activeAccount.maxDrawdown) || 0))}</span> <span className="text-gray-600">(started at {fmt(activeAccount.maxDrawdown)})</span></span>
-              <span> - Drawdown Type: <span className="text-white">{(DRAWDOWN_TYPES.find(function(dt) { return dt.key === (activeAccount.drawdownType || 'static'); }) || {}).short}</span></span>
-              <span className="inline-flex items-center gap-1"> - Market:
-                <select value={activeAccount.market || 'nasdaq100'} onChange={function(e) { handleChangeMarket(e.target.value); }}
-                  className="bg-gray-900 border border-gray-700 text-white rounded px-1.5 py-0.5 text-xs focus:border-yellow-400/50 outline-none">
-                  {MARKET_OPTIONS.map(function(m) { return (<option key={m.key} value={m.key}>{m.label}</option>); })}
-                </select>
-              </span>
-              <span> - Target: <span className="text-white">{fmt(activeAccount.profitTarget)}</span></span>
-              {activeAccount.linkedFromLabel && <span> - Promoted from: <span className="text-yellow-400">{activeAccount.linkedFromLabel}</span></span>}
-              {activeAccount.copiedAccountNumber && <span> - Copy of: <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></span>}
-              <button onClick={function() { handleDeleteAccount(activeAccount.id); }} className="ml-3 text-red-400/70 hover:text-red-400 text-xs underline">delete account</button>
+            <div className="bg-gradient-to-br from-gray-900/60 to-black border border-gray-800 rounded-xl px-5 py-4">
+              <div className="flex items-center justify-between mb-3.5">
+                <h3 className="text-white font-semibold">{activeAccount.name}</h3>
+                <div className="flex items-center gap-3">
+                  {activeAccount.linkedFromLabel && <span className="text-xs text-gray-500">Promoted from <span className="text-yellow-400">{activeAccount.linkedFromLabel}</span></span>}
+                  {activeAccount.copiedAccountNumber && <span className="text-xs text-gray-500">Copy of <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></span>}
+                  <button onClick={function() { handleDeleteAccount(activeAccount.id); }} className="text-xs text-gray-600 hover:text-red-400 transition">Delete account</button>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div>
+                  <div className="text-[11px] text-gray-500 mb-0.5">Capital</div>
+                  <div className="num text-white font-semibold">{fmt(activeAccount.startingBalance)}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] text-gray-500 mb-0.5">Drawdown</div>
+                  <div className={"num font-semibold " + ((currentBuffer - (parseFloat(activeAccount.maxDrawdown) || 0)) < 0 ? 'text-red-400' : 'text-white')}>{fmt(currentBuffer - (parseFloat(activeAccount.maxDrawdown) || 0))}</div>
+                  <div className="text-[11px] text-gray-600">from {fmt(activeAccount.maxDrawdown)}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] text-gray-500 mb-0.5">Drawdown type</div>
+                  <div className="text-white font-semibold text-sm">{(DRAWDOWN_TYPES.find(function(dt) { return dt.key === (activeAccount.drawdownType || 'static'); }) || {}).short}</div>
+                </div>
+                <div>
+                  <div className="text-[11px] text-gray-500 mb-0.5">Market</div>
+                  <select value={activeAccount.market || 'nasdaq100'} onChange={function(e) { handleChangeMarket(e.target.value); }}
+                    className="bg-gray-900 border border-gray-700 text-white rounded-md px-2 py-1 text-sm focus:border-yellow-400/50 outline-none w-full">
+                    {MARKET_OPTIONS.map(function(m) { return (<option key={m.key} value={m.key}>{m.label}</option>); })}
+                  </select>
+                </div>
+                <div>
+                  <div className="text-[11px] text-gray-500 mb-0.5">Target</div>
+                  <div className="num text-white font-semibold">{fmt(activeAccount.profitTarget)}</div>
+                </div>
+              </div>
             </div>
           )}
           <SystemExplainer />
@@ -2235,7 +2701,7 @@ function MMMJournal(props) {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <StatCard label="Current Capital (Buffer)" value={fmt(Math.max(currentBuffer, 0))} icon="Shield" color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
                   <StatCard label="Risk Per Trade" value={fmt(riskPerTrade)} icon="Target" color="text-blue-400" sub={activeCfg.mode + " (" + (activeCfg.riskPct * 100) + "%)"} />
-                  <StatCard label="Total P&L" value={fmt(totalPnl)} icon={totalPnl >= 0 ? "TrendingUp" : "TrendingDown"} color={totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
+                  <StatCard label="Total P&L" value={fmtView(totalPnl, viewMode, { buffer: parseFloat(activeAccount.maxDrawdown) || 0, risk: riskPerTrade, pointValue: activePointValue })} icon={totalPnl >= 0 ? "TrendingUp" : "TrendingDown"} color={totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
                   <StatCard label="Win Rate" value={totalTrades === 0 ? '-' : winRate.toFixed(1) + "%"} icon="DollarSign" color={totalTrades === 0 ? 'text-gray-500' : winRate >= 50 ? 'text-green-400' : 'text-red-400'} sub={totalTrades === 0 ? 'No trades yet' : winTrades + "W / " + lossTrades + "L"} />
                 </div>
 
@@ -2268,35 +2734,31 @@ function MMMJournal(props) {
                   <PropFirmRuleNote account={activeAccount} entries={entries} />
                 </div>
 
-                <DisciplineChecklistCard accounts={accounts} entries={entries} />
-                <DisciplineLeaderboard uid={user.uid} currentName={user.displayName || user.email} />
+                <div>
+                  <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-3"><Icon name="LayoutDashboard" className="h-5 w-5 text-yellow-400" /><span>Performance Overview</span></h2>
+                  <OverviewStats accounts={accounts} entries={entries} />
+                </div>
 
-                <PerAccountBreakdown accounts={accounts} entries={entries} />
+                <TradingCalendar accounts={accounts} entries={entries} viewMode={viewMode} viewContext={{ buffer: parseFloat(activeAccount.maxDrawdown) || 0, risk: riskPerTrade, pointValue: activePointValue }} />
 
-                <CostsAndPayoutsCard account={activeAccount} status={activeStatus} />
-                <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} />
+                <ReportsCard accounts={accounts} entries={entries} />
 
                 <EquityCurveBlock accounts={accounts} entries={entries} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                  <div className="space-y-3">
-                    <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="LayoutDashboard" className="h-5 w-5 text-yellow-400" /><span>Performance Overview</span></h2>
-                    <OverviewStats accounts={accounts} entries={entries} />
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between flex-wrap gap-2">
-                      <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="Calendar" className="h-5 w-5 text-yellow-400" /><span>Trade History</span></h2>
-                      <div className="flex items-center gap-2">
-                        <button onClick={function() { downloadCSV(toCSV(accountEntries), activeAccount.name + '-trades.csv'); }}
-                          className="flex items-center gap-1.5 bg-gray-900 border border-gray-800 text-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium hover:border-blue-500/40 hover:text-blue-300 transition">
-                          <Icon name="Download" className="h-3.5 w-3.5" /><span>Export CSV</span>
-                        </button>
-                        <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setEntryMethod('manual'); setShowAddEntry(true); }}
-                          className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-green-400 hover:to-emerald-500 transition">
-                          <Icon name="Plus" className="h-3.5 w-3.5" /><span>Daily Log</span>
-                        </button>
-                      </div>
+                <div>
+                  <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
+                    <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="Calendar" className="h-5 w-5 text-yellow-400" /><span>Trade History</span></h2>
+                    <div className="flex items-center gap-2">
+                      <button onClick={function() { downloadCSV(toCSV(accountEntries), activeAccount.name + '-trades.csv'); }}
+                        className="flex items-center gap-1.5 bg-gray-900 border border-gray-800 text-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium hover:border-blue-500/40 hover:text-blue-300 transition">
+                        <Icon name="Download" className="h-3.5 w-3.5" /><span>Export CSV</span>
+                      </button>
+                      <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setEntryMethod('manual'); setShowAddEntry(true); }}
+                        className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-green-400 hover:to-emerald-500 transition">
+                        <Icon name="Plus" className="h-3.5 w-3.5" /><span>Daily Log</span>
+                      </button>
                     </div>
+                  </div>
                     {accountEntries.length === 0 ? (
                       <div className="text-center py-12 border border-dashed border-gray-800 rounded-xl text-gray-500 text-sm">No entries yet.</div>
                     ) : (
@@ -2338,7 +2800,7 @@ function MMMJournal(props) {
                                 )}
                               </div>
                               <div className="flex items-center gap-3">
-                                <span className={"font-semibold text-sm " + (dayPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{dayPnl >= 0 ? '+' : ''}{fmt(dayPnl)}</span>
+                                <span className={"num font-semibold text-sm " + (dayPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{dayPnl >= 0 ? '+' : ''}{fmt(dayPnl)}</span>
                                 <Icon name={isExpanded ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500" />
                               </div>
                             </button>
@@ -2348,6 +2810,7 @@ function MMMJournal(props) {
                                   const val = Math.abs(parseFloat(t.pnl) || 0);
                                   const aligned = biasAligns(entry.dailyBias, t.direction);
                                   const score = computeTradeAdherence(t, entry, activeAccount);
+                                  const tags = computeTradeTags(t, i, entry.trades, entry, activeAccount);
                                   return (
                                     <div key={i} className="bg-black/30 rounded-lg px-3 py-2 space-y-1">
                                       <div className="flex items-center justify-between text-xs flex-wrap gap-1">
@@ -2363,6 +2826,14 @@ function MMMJournal(props) {
                                         </div>
                                       </div>
                                       {(t.positionSize || t.riskAmount) && (<p className="text-[10px] text-gray-500">Size: {t.positionSize || 'N/A'} - Risked: {t.riskAmount ? fmt(parseFloat(t.riskAmount)) : 'N/A'} - HTF/LTF: {t.htfLtf ? 'Yes' : 'No'}</p>)}
+                                      {tags.length > 0 && (
+                                        <div className="flex items-center gap-1 flex-wrap pt-0.5">
+                                          {tags.map(function(tag, ti) {
+                                            const isGood = tag === 'Rules Followed';
+                                            return (<span key={ti} className={"text-[9px] px-1.5 py-0.5 rounded-full border " + (isGood ? 'bg-green-500/10 text-green-400 border-green-500/30' : 'bg-orange-500/10 text-orange-300 border-orange-500/30')}>{tag}</span>);
+                                          })}
+                                        </div>
+                                      )}
                                     </div>
                                   );
                                 })}
@@ -2382,7 +2853,14 @@ function MMMJournal(props) {
                       </div>
                     )}
                   </div>
-                </div>
+
+                <DisciplineChecklistCard accounts={accounts} entries={entries} />
+                <DisciplineLeaderboard uid={user.uid} currentName={user.displayName || user.email} />
+
+                <PerAccountBreakdown accounts={accounts} entries={entries} />
+
+                <CostsAndPayoutsCard account={activeAccount} status={activeStatus} />
+                <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} />
 
                 <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} divisor={ruinDivisor} accountType={activeAccount.accountType} />
                 <StrategyCard account={activeAccount} />
@@ -2580,6 +3058,58 @@ function MMMJournal(props) {
         </Modal>
       )}
 
+      {showImportBroker && activeAccount && (
+        <Modal onClose={function() { setShowImportBroker(false); }} title="Import from Tradovate" size="lg">
+          <div className="space-y-4">
+            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 text-xs text-blue-200 space-y-1">
+              <p>In Tradovate, go to <span className="text-white font-medium">Reports {'>'} Orders</span> (not Performance), set your date range, and download the CSV.</p>
+              <p className="text-blue-300/70">This reconstructs round-turn trades from your fills, using verified CME point values for ES/MES, NQ/MNQ, RTY/M2K, YM/MYM, GC/MGC, SI/SIL, and CL/MCL. Commissions aren't included since Tradovate doesn't export them.</p>
+            </div>
+
+            {!brokerImportPreview && (
+              <div>
+                <label className="block text-sm text-gray-400 mb-1.5">Tradovate Orders CSV</label>
+                <input type="file" accept=".csv" onChange={function(e) { handleBrokerFileSelect(e.target.files[0]); }}
+                  className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-gray-700 file:text-gray-300" />
+              </div>
+            )}
+
+            {brokerImportError && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-xs text-red-300">{brokerImportError}</div>
+            )}
+
+            {brokerImportPreview && (
+              <div className="space-y-3">
+                <div className="bg-black/30 rounded-lg p-3 text-sm">
+                  <p className="text-white font-medium mb-1">{brokerImportPreview.totalTrades} trade{brokerImportPreview.totalTrades !== 1 ? 's' : ''} found across {Object.keys(brokerImportPreview.byDate).length} day{Object.keys(brokerImportPreview.byDate).length !== 1 ? 's' : ''}</p>
+                  {brokerImportPreview.skipped > 0 && <p className="text-xs text-yellow-400">{brokerImportPreview.skipped} trade{brokerImportPreview.skipped !== 1 ? 's' : ''} skipped - unrecognized contract, couldn't price.</p>}
+                  <p className="text-xs text-gray-500 mt-1">Will be added to <span className="text-white">{activeAccount.name}</span> as {Object.keys(brokerImportPreview.byDate).length} new daily log entries with bias set to Neutral (edit any day afterward if needed).</p>
+                </div>
+                <div className="max-h-48 overflow-y-auto space-y-1.5">
+                  {Object.keys(brokerImportPreview.byDate).sort().map(function(date) {
+                    const dayTrades = brokerImportPreview.byDate[date];
+                    const dayPnl = dayTrades.reduce(function(s, t) { return s + t.pnl; }, 0);
+                    return (
+                      <div key={date} className="flex items-center justify-between text-xs bg-black/30 rounded-lg px-3 py-2">
+                        <span className="text-gray-300">{date}</span>
+                        <span className="text-gray-500">{dayTrades.length} trade{dayTrades.length !== 1 ? 's' : ''}</span>
+                        <span className={"num font-semibold " + (dayPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(dayPnl)}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={function() { setBrokerImportPreview(null); }} className="flex-1 bg-gray-800 text-gray-300 py-2.5 rounded-lg font-medium hover:bg-gray-700 transition">Choose Different File</button>
+                  <button onClick={handleConfirmBrokerImport} disabled={brokerImportBusy} className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 flex items-center justify-center gap-1.5">
+                    {brokerImportBusy ? <span>Importing...</span> : (<React.Fragment><Icon name="Upload" className="h-4 w-4" /><span>Confirm Import</span></React.Fragment>)}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
+
       {showAddEntry && activeAccount && (
         <Modal onClose={function() { setShowAddEntry(false); }} title="Log Today's Trades" size="lg">
           <div className="space-y-4">
@@ -2722,9 +3252,14 @@ function MMMJournal(props) {
 function StatCard(props) {
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-xl p-4">
-      <div className="flex items-center justify-between mb-2"><span className="text-xs text-gray-500 uppercase tracking-wide">{props.label}</span><Icon name={props.icon} className={"h-4 w-4 " + props.color} /></div>
-      <div className={"text-xl font-bold " + props.color}>{props.value}</div>
-      {props.sub && <div className="text-xs text-gray-600 mt-0.5">{props.sub}</div>}
+      <div className="flex items-start justify-between mb-3">
+        <span className="text-xs text-gray-500">{props.label}</span>
+        <div className={"h-7 w-7 rounded-full flex items-center justify-center bg-current/10 flex-shrink-0 " + props.color}>
+          <Icon name={props.icon} className={"h-3.5 w-3.5 " + props.color} />
+        </div>
+      </div>
+      <div className={"num text-2xl font-bold " + props.color}>{props.value}</div>
+      {props.sub && <div className="text-xs text-gray-600 mt-1">{props.sub}</div>}
     </div>
   );
 }
