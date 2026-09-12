@@ -2281,6 +2281,25 @@ function MMMJournal(props) {
   const ruinDivisor = activeCfg.riskPct > 0 ? 1 / activeCfg.riskPct : 10;
   const activeRR = activeAccount ? Math.max(parseFloat(activeAccount.rewardRatio) || MIN_RR, MIN_RR) : MIN_RR;
 
+  // Risk tolerance: the Charter's math (riskPerTrade, contractPlan) is always
+  // the ceiling - the most a trader is ever allowed to risk. A trader can
+  // choose to trade smaller than that ceiling if the full amount would risk
+  // triggering revenge trading or emotional strain, but never larger. When
+  // set, lot size is recalculated to fit inside the smaller dollar amount
+  // using the same stop distance, rather than just capping the dollar figure
+  // and leaving the lot size at the full-risk tier.
+  const riskToleranceRaw = activeAccount && activeAccount.riskTolerance ? parseFloat(activeAccount.riskTolerance) : null;
+  const effectiveRiskPerTrade = (riskToleranceRaw && riskToleranceRaw > 0) ? Math.min(riskToleranceRaw, riskPerTrade) : riskPerTrade;
+  const toleranceIsActive = effectiveRiskPerTrade < riskPerTrade;
+  const effectiveContracts = (function() {
+    if (!toleranceIsActive || !activePointValue || !maxStopPoints) return contractPlan.count;
+    const fit = Math.floor(effectiveRiskPerTrade / (maxStopPoints * activePointValue));
+    return Math.max(1, Math.min(contractPlan.count, fit));
+  })();
+  const effectiveDailyCap = effectiveRiskPerTrade * 2;
+  const effectiveTierLabel = (CAPITAL_TIERS.find(function(t) { return t.key === contractPlan.tier; }) || {}).label || '';
+  const effectiveContractLabel = contractPlan.tier === 'none' ? contractPlan.label : effectiveContracts + ' ' + effectiveTierLabel + (effectiveContracts > 1 ? 's' : '');
+
   const tradedAccountEntries = accountEntries.filter(function(e) { return e.tradedToday !== 'no'; });
   const totalPnl = tradedAccountEntries.reduce(function(sum, e) { return sum + e.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0); }, 0);
   const winTrades = tradedAccountEntries.flatMap(function(e) { return e.trades; }).filter(function(t) { return t.result === 'win'; }).length;
@@ -2382,6 +2401,19 @@ function MMMJournal(props) {
 
   const handleChangeMarket = async function(newMarket) {
     await accountsRef.doc(activeAccount.id).update({ market: newMarket });
+  };
+
+  const handleChangeRiskTolerance = async function(value) {
+    const num = parseFloat(value);
+    if (value === '' || value === null) {
+      await accountsRef.doc(activeAccount.id).update({ riskTolerance: null });
+      return;
+    }
+    if (isNaN(num) || num <= 0) return;
+    // Clamp to the system max - the general calculation is always the ceiling,
+    // a trader can only choose to trade smaller than it, never larger.
+    const clamped = Math.min(num, riskPerTrade);
+    await accountsRef.doc(activeAccount.id).update({ riskTolerance: clamped });
   };
 
   const handleBackToActive = function() {
@@ -2501,7 +2533,7 @@ function MMMJournal(props) {
   const addTradeRow = function() {
     if (newEntry.trades.length >= 3 || filledWins >= 2 || filledLosses >= 2 || dllBreached) return;
     setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.concat([{ result: 'win', pnl: '', direction: 'long', rulesChecked: [],
-      positionSize: String(contractPlan.count), riskAmount: riskPerTrade.toFixed(2), htfLtf: false }]) }));
+      positionSize: String(effectiveContracts), riskAmount: effectiveRiskPerTrade.toFixed(2), htfLtf: false }]) }));
   };
   const removeTradeRow = function(idx) {
     setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.filter(function(_, i) { return i !== idx; }) }));
@@ -2530,7 +2562,7 @@ function MMMJournal(props) {
         noTradeReason: newEntry.noTradeReason, notes: newEntry.noTradeNotes,
         dailyBias: 'neutral', exercised: newEntry.exercised, strategyId: newEntry.strategyId || 'default', trades: []
       });
-      setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count));
+      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts));
       setShowAddEntry(false);
       return;
     }
@@ -2540,14 +2572,14 @@ function MMMJournal(props) {
     const losses = filledTrades.filter(function(t) { return t.result === 'loss'; }).length;
     const matrixAdherent = filledTrades.length <= 3 && wins <= 2 && losses <= 2 && !(filledTrades.length === 2 && wins === 1 && losses === 1);
     const stampedTrades = filledTrades.map(function(t) {
-      return Object.assign({}, t, { expectedRisk: riskPerTrade, expectedContracts: contractPlan.count });
+      return Object.assign({}, t, { expectedRisk: effectiveRiskPerTrade, expectedContracts: effectiveContracts });
     });
     await entriesRef.add({
       accountId: activeAccountId, date: newEntry.date, tradedToday: 'yes',
       dailyBias: newEntry.dailyBias, exercised: newEntry.exercised, strategyId: newEntry.strategyId || 'default',
       trades: stampedTrades, notes: newEntry.notes, matrixAdherent: matrixAdherent
     });
-    setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count));
+    setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts));
     setShowAddEntry(false);
   };
 
@@ -2597,7 +2629,7 @@ function MMMJournal(props) {
             <div className="flex items-center gap-2 flex-wrap">
               <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={function(id, fromBreachedTab) { setHasManualSelection(true); setViewingBreached(!!fromBreachedTab); setActiveAccountId(id); }} getStatus={getAccountStatus} filter={accountFilter} />
               {shouldShowAccountDetail && (
-                <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setEntryMethod('manual'); setShowAddEntry(true); }}
+                <button onClick={function() { setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts)); setEntryMethod('manual'); setShowAddEntry(true); }}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-yellow-500/10 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/15 transition">
                   <Icon name="CalendarPlus" className="h-3.5 w-3.5" /><span>Daily Log</span>
                 </button>
@@ -2700,8 +2732,8 @@ function MMMJournal(props) {
 
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <StatCard label="Current Capital (Buffer)" value={fmt(Math.max(currentBuffer, 0))} icon="Shield" color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
-                  <StatCard label="Risk Per Trade" value={fmt(riskPerTrade)} icon="Target" color="text-blue-400" sub={activeCfg.mode + " (" + (activeCfg.riskPct * 100) + "%)"} />
-                  <StatCard label="Total P&L" value={fmtView(totalPnl, viewMode, { buffer: parseFloat(activeAccount.maxDrawdown) || 0, risk: riskPerTrade, pointValue: activePointValue })} icon={totalPnl >= 0 ? "TrendingUp" : "TrendingDown"} color={totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
+                  <StatCard label="Risk Per Trade" value={fmt(effectiveRiskPerTrade)} icon="Target" color="text-blue-400" sub={toleranceIsActive ? "Tolerance (system max " + fmt(riskPerTrade) + ")" : activeCfg.mode + " (" + (activeCfg.riskPct * 100) + "%)"} />
+                  <StatCard label="Total P&L" value={fmtView(totalPnl, viewMode, { buffer: parseFloat(activeAccount.maxDrawdown) || 0, risk: effectiveRiskPerTrade, pointValue: activePointValue })} icon={totalPnl >= 0 ? "TrendingUp" : "TrendingDown"} color={totalPnl >= 0 ? 'text-green-400' : 'text-red-400'} />
                   <StatCard label="Win Rate" value={totalTrades === 0 ? '-' : winRate.toFixed(1) + "%"} icon="DollarSign" color={totalTrades === 0 ? 'text-gray-500' : winRate >= 50 ? 'text-green-400' : 'text-red-400'} sub={totalTrades === 0 ? 'No trades yet' : winTrades + "W / " + lossTrades + "L"} />
                 </div>
 
@@ -2724,13 +2756,25 @@ function MMMJournal(props) {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <MiniStat label="Contracts Unlocked" value={contractPlan.label} color="text-yellow-400" />
-                    <MiniStat label="Risk / Trade" value={fmt(riskPerTrade)} color="text-blue-400" />
+                    <MiniStat label="Contracts Unlocked" value={effectiveContractLabel} color="text-yellow-400" />
+                    <MiniStat label="Risk / Trade" value={fmt(effectiveRiskPerTrade)} color="text-blue-400" />
                     <MiniStat label="Locked Max Stop" value={maxStopPoints.toFixed(0) + " pts"} color="text-red-400" />
-                    <MiniStat label="Daily Target (2 wins)" value={fmt(riskPerTrade * activeRR * 2)} color="text-green-400" />
+                    <MiniStat label="Daily Target (2 wins)" value={fmt(effectiveRiskPerTrade * activeRR * 2)} color="text-green-400" />
+                    <MiniStat label="Max Loss / Day" value={fmt(effectiveDailyCap)} color="text-red-400" />
+                    <div className="bg-black/30 border border-gray-800/80 border-l-2 border-l-purple-400 rounded-lg pl-3 pr-2.5 py-2">
+                      <div className="text-[11px] text-gray-500 leading-tight mb-1">Risk tolerance ($/trade)</div>
+                      <input type="number" min="1" max={riskPerTrade} step="1"
+                        value={activeAccount.riskTolerance || ''}
+                        placeholder={fmt(riskPerTrade) + ' (system max)'}
+                        onChange={function(e) { handleChangeRiskTolerance(e.target.value); }}
+                        className="w-full bg-transparent text-purple-300 text-[15px] font-semibold outline-none placeholder-gray-600 num" />
+                    </div>
                     <PropFirmRuleStats account={activeAccount} entries={entries} />
-                    <TradingPlanSummaryGrid account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} avgTradesPerDay={avgTradesPerDay} maxTradesInDay={maxTradesInDay} />
+                    <TradingPlanSummaryGrid account={activeAccount} riskPerTrade={effectiveRiskPerTrade} totalPnl={totalPnl} avgTradesPerDay={avgTradesPerDay} maxTradesInDay={maxTradesInDay} />
                   </div>
+                  {toleranceIsActive && (
+                    <p className="text-xs text-purple-300/80 mt-2 flex items-center gap-1.5"><Icon name="Shield" className="h-3.5 w-3.5 flex-shrink-0" /><span>Trading below the system max by choice - capped at {fmt(effectiveRiskPerTrade)}/trade instead of the full {fmt(riskPerTrade)} the Charter allows. Clear the field to go back to the system max.</span></p>
+                  )}
                   <PropFirmRuleNote account={activeAccount} entries={entries} />
                 </div>
 
@@ -2739,7 +2783,7 @@ function MMMJournal(props) {
                   <OverviewStats accounts={accounts} entries={entries} />
                 </div>
 
-                <TradingCalendar accounts={accounts} entries={entries} viewMode={viewMode} viewContext={{ buffer: parseFloat(activeAccount.maxDrawdown) || 0, risk: riskPerTrade, pointValue: activePointValue }} />
+                <TradingCalendar accounts={accounts} entries={entries} viewMode={viewMode} viewContext={{ buffer: parseFloat(activeAccount.maxDrawdown) || 0, risk: effectiveRiskPerTrade, pointValue: activePointValue }} />
 
                 <ReportsCard accounts={accounts} entries={entries} />
 
@@ -2753,7 +2797,7 @@ function MMMJournal(props) {
                         className="flex items-center gap-1.5 bg-gray-900 border border-gray-800 text-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium hover:border-blue-500/40 hover:text-blue-300 transition">
                         <Icon name="Download" className="h-3.5 w-3.5" /><span>Export CSV</span>
                       </button>
-                      <button onClick={function() { setNewEntry(emptyEntryForm(riskPerTrade, contractPlan.count)); setEntryMethod('manual'); setShowAddEntry(true); }}
+                      <button onClick={function() { setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts)); setEntryMethod('manual'); setShowAddEntry(true); }}
                         className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-green-400 hover:to-emerald-500 transition">
                         <Icon name="Plus" className="h-3.5 w-3.5" /><span>Daily Log</span>
                       </button>
@@ -3175,12 +3219,12 @@ function MMMJournal(props) {
                   </div>
                 </div>
 
-                <DailyTradeMatrix riskUnit={riskPerTrade} rewardRatio={activeRR} />
+                <DailyTradeMatrix riskUnit={effectiveRiskPerTrade} rewardRatio={activeRR} />
 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between flex-wrap gap-1">
                     <label className="text-sm text-gray-400">Trades</label>
-                    <span className="text-xs text-gray-500">Risk: <span className="text-blue-400 font-medium">{fmt(riskPerTrade)}</span> - {contractPlan.label} ({activeTicker}) - Max stop: <span className="text-red-400 font-medium">{maxStopPoints.toFixed(0)} pts</span></span>
+                    <span className="text-xs text-gray-500">Risk: <span className="text-blue-400 font-medium">{fmt(effectiveRiskPerTrade)}</span> - {effectiveContractLabel} ({activeTicker}) - Max stop: <span className="text-red-400 font-medium">{maxStopPoints.toFixed(0)} pts</span></span>
                   </div>
                   {newEntry.trades.map(function(trade, idx) {
                     const applicableRules = rulesForDirection(trade.direction);
