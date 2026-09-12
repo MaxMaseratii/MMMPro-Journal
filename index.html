@@ -457,6 +457,11 @@ const calcBufferHistory = function(account, accEntries) {
 
 const computeAccountStatus = function(account, allEntries) {
   const accE = allEntries.filter(function(e) { return e.accountId === account.id; });
+  // A brand-new account with no logged days at all cannot possibly be
+  // breached - breaching only happens through logged trading losses over
+  // time, so this guards against ever mis-flagging a fresh account as
+  // breached due to any data quirk in the buffer calculation.
+  if (accE.length === 0) return 'active';
   const hist = calcBufferHistory(account, accE);
   const buf = hist.length > 0 ? hist[hist.length - 1].buffer : (parseFloat(account.maxDrawdown) || 0);
   const traded = accE.filter(function(e) { return e.tradedToday !== 'no'; });
@@ -1027,19 +1032,31 @@ function BreachReviewCard(props) {
 
 function StrategyCard(props) {
   const account = props.account;
+  const onManage = props.onManage;
   const strategies = getStrategies(account).filter(function(s) {
     const hasLong = (s.longRules || []).filter(function(r) { return r && r.trim(); }).length > 0;
     const hasShort = (s.shortRules || []).filter(function(r) { return r && r.trim(); }).length > 0;
     return hasLong || hasShort || s.id !== 'default';
   });
-  if (strategies.length === 0) return null;
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6 space-y-6">
-      <div className="flex items-center gap-2">
-        <Icon name="BookOpen" className="h-5 w-5 text-yellow-400" />
-        <h2 className="text-lg font-semibold text-white">Strategy Rules</h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Icon name="BookOpen" className="h-5 w-5 text-yellow-400" />
+          <h2 className="text-lg font-semibold text-white">Strategy Rules</h2>
+        </div>
+        <button onClick={onManage} className="flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/15 px-3 py-1.5 rounded-lg text-sm font-medium transition">
+          <Icon name="Plus" className="h-3.5 w-3.5" /><span>Add Strategy</span>
+        </button>
       </div>
-      {strategies.map(function(strategy) {
+      {strategies.length === 0 ? (
+        <div className="text-center py-8 border border-dashed border-gray-800 rounded-xl">
+          <Icon name="BookOpen" className="h-8 w-8 text-gray-700 mx-auto mb-2" />
+          <p className="text-gray-500 text-sm">No strategies defined yet.</p>
+          <p className="text-gray-600 text-xs mt-1">Add one with its own Long/Short entry rules - you'll pick which strategy you used each time you log a day.</p>
+        </div>
+      ) : (
+      strategies.map(function(strategy) {
         const longRules = (strategy.longRules || []).filter(function(r) { return r && r.trim(); });
         const shortRules = (strategy.shortRules || []).filter(function(r) { return r && r.trim(); });
         return (
@@ -1063,7 +1080,8 @@ function StrategyCard(props) {
             </div>
           </div>
         );
-      })}
+      })
+      )}
     </div>
   );
 }
@@ -2179,6 +2197,8 @@ function MMMJournal(props) {
   const [showAddAccount, setShowAddAccount] = useState(false);
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [showManageStrategies, setShowManageStrategies] = useState(false);
+  const [riskToleranceDraft, setRiskToleranceDraft] = useState('');
+  const [riskToleranceDraftAccountId, setRiskToleranceDraftAccountId] = useState(null);
   const [showImportBroker, setShowImportBroker] = useState(false);
   const [brokerImportPreview, setBrokerImportPreview] = useState(null);
   const [brokerImportError, setBrokerImportError] = useState('');
@@ -2757,10 +2777,16 @@ function MMMJournal(props) {
                   <StatCard label="Win Rate" value={totalTrades === 0 ? '-' : winRate.toFixed(1) + "%"} icon="DollarSign" color={totalTrades === 0 ? 'text-gray-500' : winRate >= 50 ? 'text-green-400' : 'text-red-400'} sub={totalTrades === 0 ? 'No trades yet' : winTrades + "W / " + lossTrades + "L"} />
                 </div>
 
+                {riskToleranceDraftAccountId !== activeAccountId && (function() {
+                  setRiskToleranceDraftAccountId(activeAccountId);
+                  setRiskToleranceDraft(activeAccount && activeAccount.riskTolerance ? String(activeAccount.riskTolerance) : '');
+                  return null;
+                })()}
+
                 <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
                   <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
-                    <div className="flex items-center gap-2"><Icon name="LineChart" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Active Strategy</h2>
-                      <button onClick={function() { setNewStrategy(emptyStrategyForm); setShowManageStrategies(true); }} className="text-xs text-yellow-400/80 hover:text-yellow-300 underline">Manage strategies</button>
+                    <div className="flex items-center gap-2"><Icon name="LineChart" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Dashboard</h2>
+                      <span className="text-xs text-gray-500">general calculation</span>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className={"text-xs px-2.5 py-1 rounded-full font-medium border " + STATUS_STYLES[activeStatus].cls}>{STATUS_STYLES[activeStatus].label}</span>
@@ -2776,26 +2802,55 @@ function MMMJournal(props) {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <MiniStat label="Contracts Unlocked" value={effectiveContractLabel} color="text-yellow-400" />
-                    <MiniStat label="Risk / Trade" value={fmt(effectiveRiskPerTrade)} color="text-blue-400" />
+                    <MiniStat label="Contracts Unlocked (max)" value={contractPlan.label} color="text-yellow-400" />
+                    <MiniStat label="Risk / Trade (max)" value={fmt(riskPerTrade)} color="text-blue-400" />
                     <MiniStat label="Locked Max Stop" value={maxStopPoints.toFixed(0) + " pts"} color="text-red-400" />
-                    <MiniStat label="Daily Target (2 wins)" value={fmt(effectiveRiskPerTrade * activeRR * 2)} color="text-green-400" />
-                    <MiniStat label="Max Loss / Day" value={fmt(effectiveDailyCap)} color="text-red-400" />
-                    <div className="bg-black/30 border border-gray-800/80 border-l-2 border-l-purple-400 rounded-lg pl-3 pr-2.5 py-2">
-                      <div className="text-[11px] text-gray-500 leading-tight mb-1">Risk tolerance ($/trade)</div>
-                      <input type="number" min="1" max={riskPerTrade} step="1"
-                        value={activeAccount.riskTolerance || ''}
-                        placeholder={fmt(riskPerTrade) + ' (system max)'}
-                        onChange={function(e) { handleChangeRiskTolerance(e.target.value); }}
-                        className="w-full bg-transparent text-purple-300 text-[15px] font-semibold outline-none placeholder-gray-600 num" />
-                    </div>
+                    <MiniStat label="Daily Target (max, 2 wins)" value={fmt(riskPerTrade * activeRR * 2)} color="text-green-400" />
+                    <MiniStat label="Max Loss / Day (max)" value={fmt(riskPerTrade * 2)} color="text-red-400" />
                     <PropFirmRuleStats account={activeAccount} entries={entries} />
                     <TradingPlanSummaryGrid account={activeAccount} riskPerTrade={effectiveRiskPerTrade} totalPnl={totalPnl} avgTradesPerDay={avgTradesPerDay} maxTradesInDay={maxTradesInDay} />
                   </div>
-                  {toleranceIsActive && (
-                    <p className="text-xs text-purple-300/80 mt-2 flex items-center gap-1.5"><Icon name="Shield" className="h-3.5 w-3.5 flex-shrink-0" /><span>Trading below the system max by choice - capped at {fmt(effectiveRiskPerTrade)}/trade instead of the full {fmt(riskPerTrade)} the Charter allows. Clear the field to go back to the system max.</span></p>
-                  )}
                   <PropFirmRuleNote account={activeAccount} entries={entries} />
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-950/40 to-black border border-purple-800/40 rounded-2xl p-6">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Icon name="Shield" className="h-5 w-5 text-purple-400" />
+                    <h2 className="text-lg font-semibold text-white">Personal Risk Tolerance</h2>
+                  </div>
+                  <p className="text-xs text-gray-500 mb-4">The amount you can lose per trade without it triggering revenge trading or feeling bad about yourself. Can only go at or below the system max above ({fmt(riskPerTrade)}/trade) - never above it. This becomes your actual default risk everywhere in the app.</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1.5">Your risk tolerance ($ per trade)</label>
+                      <input type="number" min="1" max={riskPerTrade} step="1"
+                        value={riskToleranceDraft}
+                        placeholder={fmt(riskPerTrade) + ' (system max)'}
+                        onChange={function(e) { setRiskToleranceDraft(e.target.value); }}
+                        onBlur={function() { handleChangeRiskTolerance(riskToleranceDraft); }}
+                        onKeyDown={function(e) { if (e.key === 'Enter') { handleChangeRiskTolerance(riskToleranceDraft); e.target.blur(); } }}
+                        className="w-full bg-black/40 border border-purple-700/40 text-purple-200 text-lg font-semibold rounded-lg px-3 py-2 outline-none focus:border-purple-400/60 num" />
+                      <p className="text-xs text-gray-600 mt-1.5">Type a number and press Enter, or click away to apply. Clear the field to go back to the system max.</p>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="bg-black/30 border border-purple-800/30 rounded-lg px-3 py-2.5 text-center">
+                        <div className="text-[11px] text-gray-500 mb-1">Your risk/trade</div>
+                        <div className="num text-lg font-bold text-purple-300">{fmt(effectiveRiskPerTrade)}</div>
+                      </div>
+                      <div className="bg-black/30 border border-purple-800/30 rounded-lg px-3 py-2.5 text-center">
+                        <div className="text-[11px] text-gray-500 mb-1">Your lot size</div>
+                        <div className="num text-lg font-bold text-purple-300">{effectiveContractLabel}</div>
+                      </div>
+                      <div className="bg-black/30 border border-purple-800/30 rounded-lg px-3 py-2.5 text-center">
+                        <div className="text-[11px] text-gray-500 mb-1">Your max loss/day</div>
+                        <div className="num text-lg font-bold text-purple-300">{fmt(effectiveDailyCap)}</div>
+                      </div>
+                    </div>
+                  </div>
+                  {toleranceIsActive ? (
+                    <p className="text-xs text-purple-300/80 mt-3 flex items-center gap-1.5"><Icon name="CheckCircle" className="h-3.5 w-3.5 flex-shrink-0" /><span>Active - trading below the system max by choice.</span></p>
+                  ) : (
+                    <p className="text-xs text-gray-600 mt-3">Not set - currently using the full system max shown in Dashboard above.</p>
+                  )}
                 </div>
 
                 <div>
@@ -2946,7 +3001,7 @@ function MMMJournal(props) {
                 )}
 
                 {activePage === 'strategy' && (
-                  <StrategyCard account={activeAccount} />
+                  <StrategyCard account={activeAccount} onManage={function() { setNewStrategy(emptyStrategyForm); setShowManageStrategies(true); }} />
                 )}
               </React.Fragment>
             )}
@@ -3054,29 +3109,6 @@ function MMMJournal(props) {
               <p className="text-xs text-gray-500">Consistency rule caps how much of your total profit any single day can represent - checked at payout time. Daily Loss Limit is separate from your Capital and resets every day.</p>
             </div>
 
-            <div className="border-t border-gray-800 pt-4 space-y-4">
-              <Field label="Strategy Name"><input value={newAccount.strategyName} onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { strategyName: e.target.value })); }} placeholder="e.g. MMM Order Flow Breakout" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" /></Field>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm text-green-400 mb-1.5 flex items-center gap-1.5"><Icon name="TrendingUp" className="h-3.5 w-3.5" /><span>Long Setup Rules</span></label>
-                  <div className="space-y-2">
-                    {newAccount.longRules.map(function(rule, idx) {
-                      return (<div key={idx} className="flex items-center gap-1.5"><input value={rule} onChange={function(e) { updateRuleRow('longRules', idx, e.target.value); }} placeholder={"Rule " + (idx + 1)} className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />{newAccount.longRules.length > 1 && (<button onClick={function() { removeRuleRow('longRules', idx); }} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>)}</div>);
-                    })}
-                    <button onClick={function() { addRuleRow('longRules'); }} className="text-xs text-green-400 hover:text-green-300 flex items-center gap-1.5"><Icon name="Plus" className="h-3 w-3" /><span>Add rule</span></button>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm text-red-400 mb-1.5 flex items-center gap-1.5"><Icon name="TrendingDown" className="h-3.5 w-3.5" /><span>Short Setup Rules</span></label>
-                  <div className="space-y-2">
-                    {newAccount.shortRules.map(function(rule, idx) {
-                      return (<div key={idx} className="flex items-center gap-1.5"><input value={rule} onChange={function(e) { updateRuleRow('shortRules', idx, e.target.value); }} placeholder={"Rule " + (idx + 1)} className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />{newAccount.shortRules.length > 1 && (<button onClick={function() { removeRuleRow('shortRules', idx); }} className="text-gray-500 hover:text-red-400 flex-shrink-0"><Icon name="X" className="h-3.5 w-3.5" /></button>)}</div>);
-                    })}
-                    <button onClick={function() { addRuleRow('shortRules'); }} className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1.5"><Icon name="Plus" className="h-3 w-3" /><span>Add rule</span></button>
-                  </div>
-                </div>
-              </div>
-            </div>
             <div className="border-t border-gray-800 pt-4">
               <p className="text-sm text-yellow-400 font-medium mb-2 flex items-center gap-1.5"><Icon name="Receipt" className="h-4 w-4" /><span>Costs</span></p>
               <div className="grid grid-cols-3 gap-3">
@@ -3242,14 +3274,12 @@ function MMMJournal(props) {
               </React.Fragment>
             ) : (
               <React.Fragment>
-                {getStrategies(activeAccount).length > 1 && (
-                  <Field label="Strategy used today">
-                    <select value={newEntry.strategyId || 'default'} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { strategyId: e.target.value })); }}
-                      className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
-                      {getStrategies(activeAccount).map(function(s) { return (<option key={s.id} value={s.id}>{s.name}</option>); })}
-                    </select>
-                  </Field>
-                )}
+                <Field label="Strategy used today">
+                  <select value={newEntry.strategyId || 'default'} onChange={function(e) { setNewEntry(Object.assign({}, newEntry, { strategyId: e.target.value })); }}
+                    className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none">
+                    {getStrategies(activeAccount).map(function(s) { return (<option key={s.id} value={s.id}>{s.name}</option>); })}
+                  </select>
+                </Field>
                 <div>
                   <label className="block text-sm text-gray-400 mb-1.5">Daily Bias (which way is the trend?)</label>
                   <div className="flex gap-2">
