@@ -777,6 +777,15 @@ function t_border(key) {
 
 const NAV_GROUPS = ACCOUNT_TYPES.concat([{ key: 'breached', label: 'Breached', activeCls: 'bg-red-500/20 text-red-400 border-red-500/40' }]);
 
+const PAGE_TABS = [
+  { key: 'overview', label: 'Overview', icon: 'LayoutDashboard' },
+  { key: 'history', label: 'Trade History', icon: 'Calendar' },
+  { key: 'reports', label: 'Reports', icon: 'BarChart3' },
+  { key: 'discipline', label: 'Discipline', icon: 'ListChecks' },
+  { key: 'finances', label: 'Finances', icon: 'DollarSign' },
+  { key: 'strategy', label: 'Strategy', icon: 'BookOpen' },
+];
+
 function AccountGroupNav(props) {
   const accounts = props.accounts;
   const activeAccountId = props.activeAccountId;
@@ -2161,6 +2170,7 @@ function MMMJournal(props) {
   const setLanguage = props.setLanguage;
   const [accountFilter, setAccountFilter] = useState('active');
   const [viewMode, setViewMode] = useState('dollars');
+  const [activePage, setActivePage] = useState('overview');
   const [accounts, setAccounts] = useState([]);
   const [entries, setEntries] = useState([]);
   const [activeAccountId, setActiveAccountId] = useState(null);
@@ -2627,7 +2637,7 @@ function MMMJournal(props) {
           </div>
           {accounts.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
-              <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={function(id, fromBreachedTab) { setHasManualSelection(true); setViewingBreached(!!fromBreachedTab); setActiveAccountId(id); }} getStatus={getAccountStatus} filter={accountFilter} />
+              <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={function(id, fromBreachedTab) { setHasManualSelection(true); setViewingBreached(!!fromBreachedTab); setActiveAccountId(id); setActivePage('overview'); }} getStatus={getAccountStatus} filter={accountFilter} />
               {shouldShowAccountDetail && (
                 <button onClick={function() { setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts)); setEntryMethod('manual'); setShowAddEntry(true); }}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-yellow-500/10 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/15 transition">
@@ -2707,9 +2717,6 @@ function MMMJournal(props) {
                     <button onClick={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }} className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-1.5 rounded-lg border border-red-500/40 flex-shrink-0">Open New Account</button>
                   </div>
                 )}
-                {activeStatus === 'breached' && (
-                  <BreachReviewCard account={activeAccount} accountEntries={accountEntries} bufferHistory={bufferHistory} />
-                )}
                 {activeStatus === 'passed' && (
                   <div className="border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3">
                     <Icon name="Trophy" className="h-5 w-5 text-green-400 mt-0.5" />
@@ -2730,6 +2737,19 @@ function MMMJournal(props) {
                   </div>
                 )}
 
+                <div className="flex gap-1 border-b border-gray-900 overflow-x-auto">
+                  {PAGE_TABS.map(function(tab) {
+                    return (
+                      <button key={tab.key} onClick={function() { setActivePage(tab.key); }}
+                        className={"flex items-center gap-1.5 px-3.5 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition " + (activePage === tab.key ? 'border-yellow-400 text-yellow-300' : 'border-transparent text-gray-500 hover:text-gray-300')}>
+                        <Icon name={tab.icon} className="h-3.5 w-3.5" /><span>{tab.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {activePage === 'overview' && (
+                <React.Fragment>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <StatCard label="Current Capital (Buffer)" value={fmt(Math.max(currentBuffer, 0))} icon="Shield" color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
                   <StatCard label="Risk Per Trade" value={fmt(effectiveRiskPerTrade)} icon="Target" color="text-blue-400" sub={toleranceIsActive ? "Tolerance (system max " + fmt(riskPerTrade) + ")" : activeCfg.mode + " (" + (activeCfg.riskPct * 100) + "%)"} />
@@ -2785,10 +2805,11 @@ function MMMJournal(props) {
 
                 <TradingCalendar accounts={accounts} entries={entries} viewMode={viewMode} viewContext={{ buffer: parseFloat(activeAccount.maxDrawdown) || 0, risk: effectiveRiskPerTrade, pointValue: activePointValue }} />
 
-                <ReportsCard accounts={accounts} entries={entries} />
-
                 <EquityCurveBlock accounts={accounts} entries={entries} />
+                </React.Fragment>
+                )}
 
+                {activePage === 'history' && (
                 <div>
                   <div className="flex items-center justify-between flex-wrap gap-2 mb-3">
                     <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="Calendar" className="h-5 w-5 text-yellow-400" /><span>Trade History</span></h2>
@@ -2897,17 +2918,36 @@ function MMMJournal(props) {
                       </div>
                     )}
                   </div>
+                )}
 
+                {activePage === 'reports' && (
+                <React.Fragment>
+                <ReportsCard accounts={accounts} entries={entries} />
+                <PerAccountBreakdown accounts={accounts} entries={entries} />
+                </React.Fragment>
+                )}
+
+                {activePage === 'discipline' && (
+                <React.Fragment>
+                {activeStatus === 'breached' && (
+                  <BreachReviewCard account={activeAccount} accountEntries={accountEntries} bufferHistory={bufferHistory} />
+                )}
                 <DisciplineChecklistCard accounts={accounts} entries={entries} />
                 <DisciplineLeaderboard uid={user.uid} currentName={user.displayName || user.email} />
+                </React.Fragment>
+                )}
 
-                <PerAccountBreakdown accounts={accounts} entries={entries} />
-
+                {activePage === 'finances' && (
+                <React.Fragment>
                 <CostsAndPayoutsCard account={activeAccount} status={activeStatus} />
                 <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} />
-
                 <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} divisor={ruinDivisor} accountType={activeAccount.accountType} />
-                <StrategyCard account={activeAccount} />
+                </React.Fragment>
+                )}
+
+                {activePage === 'strategy' && (
+                  <StrategyCard account={activeAccount} />
+                )}
               </React.Fragment>
             )}
           </React.Fragment>
