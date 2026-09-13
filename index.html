@@ -2199,6 +2199,7 @@ function MMMJournal(props) {
   const [showManageStrategies, setShowManageStrategies] = useState(false);
   const [riskToleranceDraft, setRiskToleranceDraft] = useState('');
   const [riskToleranceDraftAccountId, setRiskToleranceDraftAccountId] = useState(null);
+  const [confirmedTolerance, setConfirmedTolerance] = useState(undefined);
   const [showImportBroker, setShowImportBroker] = useState(false);
   const [brokerImportPreview, setBrokerImportPreview] = useState(null);
   const [brokerImportError, setBrokerImportError] = useState('');
@@ -2318,7 +2319,7 @@ function MMMJournal(props) {
   // set, lot size is recalculated to fit inside the smaller dollar amount
   // using the same stop distance, rather than just capping the dollar figure
   // and leaving the lot size at the full-risk tier.
-  const riskToleranceRaw = activeAccount && activeAccount.riskTolerance ? parseFloat(activeAccount.riskTolerance) : null;
+  const riskToleranceRaw = confirmedTolerance !== undefined ? confirmedTolerance : (activeAccount && activeAccount.riskTolerance ? parseFloat(activeAccount.riskTolerance) : null);
   const effectiveRiskPerTrade = (riskToleranceRaw && riskToleranceRaw > 0) ? Math.min(riskToleranceRaw, riskPerTrade) : riskPerTrade;
   const toleranceIsActive = effectiveRiskPerTrade < riskPerTrade;
   const effectiveContracts = (function() {
@@ -2436,6 +2437,8 @@ function MMMJournal(props) {
   const handleChangeRiskTolerance = async function(value) {
     const num = parseFloat(value);
     if (value === '' || value === null) {
+      setConfirmedTolerance(null);
+      setRiskToleranceDraft('');
       await accountsRef.doc(activeAccount.id).update({ riskTolerance: null });
       return;
     }
@@ -2443,6 +2446,11 @@ function MMMJournal(props) {
     // Clamp to the system max - the general calculation is always the ceiling,
     // a trader can only choose to trade smaller than it, never larger.
     const clamped = Math.min(num, riskPerTrade);
+    // Update local state immediately so the dashboard reflects the change right
+    // away, rather than waiting on the Firestore write/listener round trip -
+    // the write below still persists it for next session.
+    setConfirmedTolerance(clamped);
+    setRiskToleranceDraft(String(clamped));
     await accountsRef.doc(activeAccount.id).update({ riskTolerance: clamped });
   };
 
@@ -2780,6 +2788,7 @@ function MMMJournal(props) {
                 {riskToleranceDraftAccountId !== activeAccountId && (function() {
                   setRiskToleranceDraftAccountId(activeAccountId);
                   setRiskToleranceDraft(activeAccount && activeAccount.riskTolerance ? String(activeAccount.riskTolerance) : '');
+                  setConfirmedTolerance(undefined);
                   return null;
                 })()}
 
@@ -2822,14 +2831,20 @@ function MMMJournal(props) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                     <div>
                       <label className="block text-xs text-gray-500 mb-1.5">Your risk tolerance ($ per trade)</label>
-                      <input type="number" min="1" max={riskPerTrade} step="1"
-                        value={riskToleranceDraft}
-                        placeholder={fmt(riskPerTrade) + ' (system max)'}
-                        onChange={function(e) { setRiskToleranceDraft(e.target.value); }}
-                        onBlur={function() { handleChangeRiskTolerance(riskToleranceDraft); }}
-                        onKeyDown={function(e) { if (e.key === 'Enter') { handleChangeRiskTolerance(riskToleranceDraft); e.target.blur(); } }}
-                        className="w-full bg-black/40 border border-purple-700/40 text-purple-200 text-lg font-semibold rounded-lg px-3 py-2 outline-none focus:border-purple-400/60 num" />
-                      <p className="text-xs text-gray-600 mt-1.5">Type a number and press Enter, or click away to apply. Clear the field to go back to the system max.</p>
+                      <div className="flex gap-2">
+                        <input type="number" min="1" max={riskPerTrade} step="1"
+                          value={riskToleranceDraft}
+                          placeholder={fmt(riskPerTrade) + ' (system max)'}
+                          onChange={function(e) { setRiskToleranceDraft(e.target.value); }}
+                          onBlur={function() { handleChangeRiskTolerance(riskToleranceDraft); }}
+                          onKeyDown={function(e) { if (e.key === 'Enter') { handleChangeRiskTolerance(riskToleranceDraft); e.target.blur(); } }}
+                          className="flex-1 bg-black/40 border border-purple-700/40 text-purple-200 text-lg font-semibold rounded-lg px-3 py-2 outline-none focus:border-purple-400/60 num" />
+                        <button onClick={function() { handleChangeRiskTolerance(riskToleranceDraft); }}
+                          className="bg-purple-500/20 border border-purple-500/40 text-purple-300 hover:bg-purple-500/30 px-4 rounded-lg text-sm font-semibold transition flex-shrink-0">
+                          Confirm
+                        </button>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-1.5">Type a number and click Confirm (or press Enter). Clear the field and confirm to go back to the system max.</p>
                     </div>
                     <div className="grid grid-cols-3 gap-2">
                       <div className="bg-black/30 border border-purple-800/30 rounded-lg px-3 py-2.5 text-center">
