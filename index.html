@@ -2200,6 +2200,7 @@ function MMMJournal(props) {
   const [riskToleranceDraft, setRiskToleranceDraft] = useState('');
   const [riskToleranceDraftAccountId, setRiskToleranceDraftAccountId] = useState(null);
   const [confirmedTolerance, setConfirmedTolerance] = useState(undefined);
+  const [riskToleranceStatus, setRiskToleranceStatus] = useState(null);
   const [showImportBroker, setShowImportBroker] = useState(false);
   const [brokerImportPreview, setBrokerImportPreview] = useState(null);
   const [brokerImportError, setBrokerImportError] = useState('');
@@ -2339,7 +2340,7 @@ function MMMJournal(props) {
   const winRate = totalTrades > 0 ? (winTrades / totalTrades) * 100 : 0;
   const avgTradesPerDay = tradedAccountEntries.length > 0 ? totalTrades / tradedAccountEntries.length : 0;
   const maxTradesInDay = tradedAccountEntries.reduce(function(max, e) { return Math.max(max, e.trades.length); }, 0);
-  const activeStatus = activeAccount ? computeStatus(activeAccount, currentBuffer, totalPnl) : 'active';
+  const activeStatus = activeAccount ? (accountEntries.length === 0 ? 'active' : computeStatus(activeAccount, currentBuffer, totalPnl)) : 'active';
   const shouldShowAccountDetail = activeAccount && (accountFilter !== 'active' || activeStatus !== 'breached' || viewingBreached);
 
   const getAccountStatus = function(acc) {
@@ -2435,23 +2436,38 @@ function MMMJournal(props) {
   };
 
   const handleChangeRiskTolerance = async function(value) {
-    const num = parseFloat(value);
-    if (value === '' || value === null) {
-      setConfirmedTolerance(null);
-      setRiskToleranceDraft('');
-      await accountsRef.doc(activeAccount.id).update({ riskTolerance: null });
+    setRiskToleranceStatus(null);
+    if (riskPerTrade <= 0) {
+      setRiskToleranceStatus({ type: 'error', text: "Can't set a tolerance yet - this account's system max risk per trade is $0 (check the buffer/account setup)." });
       return;
     }
-    if (isNaN(num) || num <= 0) return;
-    // Clamp to the system max - the general calculation is always the ceiling,
-    // a trader can only choose to trade smaller than it, never larger.
-    const clamped = Math.min(num, riskPerTrade);
-    // Update local state immediately so the dashboard reflects the change right
-    // away, rather than waiting on the Firestore write/listener round trip -
-    // the write below still persists it for next session.
-    setConfirmedTolerance(clamped);
-    setRiskToleranceDraft(String(clamped));
-    await accountsRef.doc(activeAccount.id).update({ riskTolerance: clamped });
+    const num = parseFloat(value);
+    try {
+      if (value === '' || value === null) {
+        setConfirmedTolerance(null);
+        setRiskToleranceDraft('');
+        await accountsRef.doc(activeAccount.id).update({ riskTolerance: null });
+        setRiskToleranceStatus({ type: 'success', text: 'Cleared - back to system max.' });
+        return;
+      }
+      if (isNaN(num) || num <= 0) {
+        setRiskToleranceStatus({ type: 'error', text: 'Enter a number greater than 0.' });
+        return;
+      }
+      // Clamp to the system max - the general calculation is always the ceiling,
+      // a trader can only choose to trade smaller than it, never larger.
+      const clamped = Math.min(num, riskPerTrade);
+      // Update local state immediately so the dashboard reflects the change right
+      // away, rather than waiting on the Firestore write/listener round trip -
+      // the write below still persists it for next session.
+      setConfirmedTolerance(clamped);
+      setRiskToleranceDraft(String(clamped));
+      await accountsRef.doc(activeAccount.id).update({ riskTolerance: clamped });
+      setRiskToleranceStatus({ type: 'success', text: 'Saved - now using ' + fmt(clamped) + '/trade.' });
+    } catch (e) {
+      console.error('Risk tolerance save failed:', e.code, e.message);
+      setRiskToleranceStatus({ type: 'error', text: "Couldn't save: " + (e.message || 'unknown error') + '. Your change is showing locally but was not persisted - try again.' });
+    }
   };
 
   const handleBackToActive = function() {
@@ -2789,6 +2805,7 @@ function MMMJournal(props) {
                   setRiskToleranceDraftAccountId(activeAccountId);
                   setRiskToleranceDraft(activeAccount && activeAccount.riskTolerance ? String(activeAccount.riskTolerance) : '');
                   setConfirmedTolerance(undefined);
+                  setRiskToleranceStatus(null);
                   return null;
                 })()}
 
@@ -2845,6 +2862,9 @@ function MMMJournal(props) {
                         </button>
                       </div>
                       <p className="text-xs text-gray-600 mt-1.5">Type a number and click Confirm (or press Enter). Clear the field and confirm to go back to the system max.</p>
+                      {riskToleranceStatus && (
+                        <p className={"text-xs mt-1.5 font-medium " + (riskToleranceStatus.type === 'error' ? 'text-red-400' : 'text-green-400')}>{riskToleranceStatus.text}</p>
+                      )}
                     </div>
                     <div className="grid grid-cols-3 gap-2">
                       <div className="bg-black/30 border border-purple-800/30 rounded-lg px-3 py-2.5 text-center">
