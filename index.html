@@ -391,6 +391,16 @@ function getTickerForTier(marketKey, tier) {
   return '-';
 }
 
+// Many prop firms (e.g. MFFU's Rapid EOD) require a minimum number of days
+// actually traded before a pass/payout request is even eligible, separate
+// from whether the profit target has been hit - counts unique trading days
+// for this specific account.
+function getTradingDaysCount(entries, accountId) {
+  const dates = entries.filter(function(e) { return e.accountId === accountId && e.tradedToday !== 'no'; })
+    .map(function(e) { return e.date; });
+  return new Set(dates).size;
+}
+
 function getCumulativeProfitBefore(entries, accountId, dateStr) {
   return entries.filter(function(e) { return e.accountId === accountId && e.tradedToday !== 'no' && e.date < dateStr; })
     .reduce(function(sum, e) {
@@ -527,7 +537,7 @@ const emptyAccountForm = {
   copiedAccountNumber: '', linkedFromId: null, linkedFromLabel: '',
   strategyName: '', longRules: [''], shortRules: [''],
   accountCost: '', activationCost: '', resetCost: '',
-  consistencyPct: '', dailyLossLimit: '', dllType: 'hard'
+  consistencyPct: '', dailyLossLimit: '', dllType: 'hard', minTradingDays: ''
 };
 
 const emptyEntryForm = function(defaultRisk, defaultContracts) {
@@ -960,6 +970,43 @@ function DailyTradeMatrix(props) {
 // Shown once an account is breached - a specific, honest recap using the exact
 // same discipline checklist as the rest of the app, scoped to just this account,
 // plus a look at the actual day the buffer hit zero.
+// Shows up only when the consistency rule is actually being violated right now
+// - the forward-looking "Max Profit Allowed / Day" stat tells you what's safe
+// to make today, but once a day's already over the limit, the fix isn't to
+// undo that day - it's to earn more elsewhere so the ratio rebalances. This
+// computes exactly how much more, verified against a real trader's account:
+// $1,800 best day on $3,400 total at a 50% limit needs exactly $200 more.
+function ConsistencyRebalanceWidget(props) {
+  const account = props.account;
+  const accountEntries = props.accountEntries;
+  if (!account.consistencyPct) return null;
+  const pct = parseFloat(account.consistencyPct) / 100;
+  if (!pct || pct <= 0 || pct >= 1) return null;
+
+  const d = computeOverviewData([account], accountEntries);
+  if (!d.bestDay || d.totalPnl <= 0) return null;
+  const bestDayPnl = d.byDate[d.bestDay] || 0;
+  if (bestDayPnl <= 0) return null;
+
+  const currentRatio = bestDayPnl / d.totalPnl;
+  if (currentRatio <= pct) return null;
+
+  const additionalNeeded = Math.max(0, bestDayPnl / pct - d.totalPnl);
+
+  return (
+    <div className="border border-orange-500/40 bg-orange-500/10 rounded-xl p-4 flex items-start gap-3">
+      <Icon name="TrendingUp" className="h-5 w-5 text-orange-400 mt-0.5 flex-shrink-0" />
+      <div>
+        <p className="text-orange-300 font-semibold text-sm">Best day is over your consistency limit</p>
+        <p className="text-orange-200/80 text-xs mt-1">
+          Your best day (<span className="num">{fmt(bestDayPnl)}</span>) is currently <span className="num">{(currentRatio * 100).toFixed(1)}%</span> of your total profit - over your {account.consistencyPct}% limit.
+          You don't need to undo that day - make <span className="num text-white font-semibold">{fmt(additionalNeeded)}</span> more in total profit (from other days) and the ratio rebalances back into compliance on its own.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function BreachReviewCard(props) {
   const account = props.account;
   const accountEntries = props.accountEntries;
@@ -1154,12 +1201,14 @@ function PropFirmRuleStats(props) {
   const account = props.account;
   const entries = props.entries;
   const dll = parseFloat(account.dailyLossLimit) || null;
-  if (!account.consistencyPct && !dll) return null;
+  const minDays = account.minTradingDays ? parseFloat(account.minTradingDays) : null;
+  if (!account.consistencyPct && !dll && !minDays) return null;
 
   const todayStr = new Date().toISOString().split('T')[0];
   const cumBefore = getCumulativeProfitBefore(entries, account.id, todayStr);
   const cap = getConsistencyCap(account, cumBefore);
   const guideline = getConsistencyGuideline(account);
+  const daysTraded = minDays ? getTradingDaysCount(entries, account.id) : 0;
 
   return (
     <React.Fragment>
@@ -1167,6 +1216,9 @@ function PropFirmRuleStats(props) {
       <MiniStat label="Max Profit Allowed / Day" value={account.consistencyPct ? (cap !== null ? fmt(cap) : (guideline !== null ? fmt(guideline) : 'Add a profit target')) : '-'} color="text-yellow-400" />
       <MiniStat label="Daily Loss Limit" value={dll ? fmt(dll) : 'Not set'} color="text-red-400" />
       <MiniStat label="DLL Type" value={dll ? (account.dllType === 'hard' ? 'Hard Breach' : 'Soft Breach') : '-'} color={dll && account.dllType === 'hard' ? 'text-red-400' : 'text-yellow-400'} />
+      {minDays !== null && (
+        <MiniStat label="Trading Days (min)" value={daysTraded + " of " + minDays} color={daysTraded >= minDays ? 'text-green-400' : 'text-yellow-400'} />
+      )}
     </React.Fragment>
   );
 }
@@ -2294,6 +2346,9 @@ function MMMJournal(props) {
 
   const activeAccount = accounts.find(function(a) { return a.id === activeAccountId; });
   const accountEntries = entries.filter(function(e) { return e.accountId === activeAccountId; });
+  const tradingDaysCount = activeAccount ? getTradingDaysCount(entries, activeAccount.id) : 0;
+  const minTradingDaysNeeded = activeAccount && activeAccount.minTradingDays ? parseFloat(activeAccount.minTradingDays) : null;
+  const daysStillNeeded = minTradingDaysNeeded ? Math.max(0, minTradingDaysNeeded - tradingDaysCount) : 0;
 
   const bufferHistory = activeAccount ? calcBufferHistory(activeAccount, accountEntries) : [];
   const currentBuffer = bufferHistory.length > 0 ? bufferHistory[bufferHistory.length - 1].buffer : (activeAccount ? parseFloat(activeAccount.maxDrawdown) || 0 : 0);
@@ -2385,6 +2440,7 @@ function MMMJournal(props) {
       activationCost: parseFloat(newAccount.activationCost) || 0,
       resetCost: parseFloat(newAccount.resetCost) || 0,
       consistencyPct: newAccount.consistencyPct ? parseFloat(newAccount.consistencyPct) : null,
+      minTradingDays: newAccount.minTradingDays ? parseFloat(newAccount.minTradingDays) : null,
       dailyLossLimit: newAccount.dailyLossLimit ? parseFloat(newAccount.dailyLossLimit) : null,
       dllType: newAccount.dllType || 'hard',
       payouts: [],
@@ -2764,14 +2820,26 @@ function MMMJournal(props) {
                 {activeStatus === 'passed' && (
                   <div className="border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3">
                     <Icon name="Trophy" className="h-5 w-5 text-green-400 mt-0.5" />
-                    <div className="flex-1"><p className="text-green-300 font-semibold text-sm">Challenge Passed!</p><p className="text-green-200/70 text-xs mt-1">Start tracking the funded account.</p></div>
+                    <div className="flex-1">
+                      <p className="text-green-300 font-semibold text-sm">Challenge Passed!</p>
+                      <p className="text-green-200/70 text-xs mt-1">Start tracking the funded account.</p>
+                      {daysStillNeeded > 0 && (
+                        <p className="text-yellow-300 text-xs mt-1 flex items-center gap-1"><Icon name="AlertTriangle" className="h-3 w-3 flex-shrink-0" /><span>Target hit, but this firm requires {minTradingDaysNeeded} trading days minimum - you're at {tradingDaysCount}. {daysStillNeeded} more day{daysStillNeeded !== 1 ? 's' : ''} needed before you can actually request the pass.</span></p>
+                      )}
+                    </div>
                     <button onClick={function() { handleStartFundedFromChallenge(activeAccount); }} className="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/40 flex-shrink-0">Start Funded Account</button>
                   </div>
                 )}
                 {activeStatus === 'target-hit' && (
                   <div className="border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3">
                     <Icon name="DollarSign" className="h-5 w-5 text-green-400 mt-0.5" />
-                    <div><p className="text-green-300 font-semibold text-sm">Target Hit</p><p className="text-green-200/70 text-xs mt-1">{activeAccount.accountType === 'funded' ? 'Ready for payout.' : 'Profit target reached.'}</p></div>
+                    <div>
+                      <p className="text-green-300 font-semibold text-sm">Target Hit</p>
+                      <p className="text-green-200/70 text-xs mt-1">{activeAccount.accountType === 'funded' ? 'Ready for payout.' : 'Profit target reached.'}</p>
+                      {daysStillNeeded > 0 && (
+                        <p className="text-yellow-300 text-xs mt-1 flex items-center gap-1"><Icon name="AlertTriangle" className="h-3 w-3 flex-shrink-0" /><span>But this firm requires {minTradingDaysNeeded} trading days minimum - you're at {tradingDaysCount}. {daysStillNeeded} more day{daysStillNeeded !== 1 ? 's' : ''} needed before this actually qualifies.</span></p>
+                      )}
+                    </div>
                   </div>
                 )}
                 {daysSinceLastLog !== null && daysSinceLastLog >= 1 && activeStatus === 'active' && (
@@ -2838,6 +2906,8 @@ function MMMJournal(props) {
                   </div>
                   <PropFirmRuleNote account={activeAccount} entries={entries} />
                 </div>
+
+                <ConsistencyRebalanceWidget account={activeAccount} accountEntries={accountEntries} />
 
                 <div className="bg-gradient-to-br from-purple-950/40 to-black border border-purple-800/40 rounded-2xl p-6">
                   <div className="flex items-center gap-2 mb-1">
@@ -3118,6 +3188,12 @@ function MMMJournal(props) {
                   <input type="number" value={newAccount.consistencyPct}
                     onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { consistencyPct: e.target.value })); }}
                     placeholder="e.g. 40 - leave blank if none"
+                    className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                </Field>
+                <Field label="Min Trading Days">
+                  <input type="number" value={newAccount.minTradingDays}
+                    onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { minTradingDays: e.target.value })); }}
+                    placeholder="e.g. 4 - leave blank if none"
                     className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
                 </Field>
                 <Field label="Daily Loss Limit ($)">
