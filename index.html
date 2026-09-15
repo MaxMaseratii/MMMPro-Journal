@@ -551,7 +551,7 @@ const emptyEntryForm = function(defaultRisk, defaultContracts) {
     strategyId: 'default',
     trades: [{ result: 'win', pnl: '', direction: 'long', rulesChecked: [],
       positionSize: defaultContracts ? String(defaultContracts) : '',
-      riskAmount: defaultRisk ? defaultRisk.toFixed(2) : '', htfLtf: false }],
+      riskAmount: defaultRisk ? defaultRisk.toFixed(2) : '', htfLtf: false, chartUrl: '' }],
     notes: ''
   };
 };
@@ -2643,7 +2643,7 @@ function MMMJournal(props) {
   const addTradeRow = function() {
     if (newEntry.trades.length >= 3 || filledWins >= 2 || filledLosses >= 2 || dllBreached) return;
     setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.concat([{ result: 'win', pnl: '', direction: 'long', rulesChecked: [],
-      positionSize: String(effectiveContracts), riskAmount: effectiveRiskPerTrade.toFixed(2), htfLtf: false }]) }));
+      positionSize: String(effectiveContracts), riskAmount: effectiveRiskPerTrade.toFixed(2), htfLtf: false, chartUrl: '' }]) }));
   };
   const removeTradeRow = function(idx) {
     setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.filter(function(_, i) { return i !== idx; }) }));
@@ -3051,6 +3051,7 @@ function MMMJournal(props) {
                                         </div>
                                       </div>
                                       {(t.positionSize || t.riskAmount) && (<p className="text-[10px] text-gray-500">Size: {t.positionSize || 'N/A'} - Risked: {t.riskAmount ? fmt(parseFloat(t.riskAmount)) : 'N/A'} - HTF/LTF: {t.htfLtf ? 'Yes' : 'No'}</p>)}
+                                      {t.chartUrl && (<a href={t.chartUrl} target="_blank" rel="noopener noreferrer" className="text-[10px] text-blue-400 hover:text-blue-300 flex items-center gap-1 mt-0.5"><Icon name="Link" className="h-2.5 w-2.5" /><span>View chart</span></a>)}
                                       {tags.length > 0 && (
                                         <div className="flex items-center gap-1 flex-wrap pt-0.5">
                                           {tags.map(function(tag, ti) {
@@ -3430,6 +3431,10 @@ function MMMJournal(props) {
                         <button onClick={function() { updateTradeRow(idx, 'htfLtf', !trade.htfLtf); }} className="w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white">
                           <Icon name={trade.htfLtf ? "CheckSquare" : "Square"} className={"h-4 w-4 flex-shrink-0 " + (trade.htfLtf ? 'text-green-400' : 'text-gray-600')} /><span>HTF to LTF analysis done before this trade?</span>
                         </button>
+                        <div className="flex items-center gap-1.5">
+                          <Icon name="Link" className="h-3.5 w-3.5 text-gray-500 flex-shrink-0" />
+                          <input type="url" placeholder="TradingView chart link (optional)" value={trade.chartUrl || ''} onChange={function(e) { updateTradeRow(idx, 'chartUrl', e.target.value); }} className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-xs focus:border-yellow-400/50 outline-none" />
+                        </div>
                         {applicableRules.length > 0 && (
                           <div className="bg-black/30 rounded-lg p-2.5 space-y-1.5">
                             <p className="text-[11px] text-gray-500 uppercase tracking-wide">Did you follow your {trade.direction} rules?</p>
