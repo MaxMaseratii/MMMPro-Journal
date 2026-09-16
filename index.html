@@ -4,10 +4,16 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>MMM Pro Journal</title>
-<link rel="apple-touch-icon" href="">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+<link rel="apple-touch-icon" href="./logo-icon-180-opaque.png">
+<meta name="theme-color" content="#1a3e6f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="MMM Journal">
+<meta name="apple-mobile-web-app-title" content="MMM Pro Journal">
+<meta name="mobile-web-app-capable" content="yes">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
@@ -317,6 +323,56 @@ function applyTranslation(lang) {
   });
 }
 
+function InstallAppModal(props) {
+  const onClose = props.onClose;
+  const [platform, setPlatform] = useState('iphone');
+
+  const steps = platform === 'iphone' ? [
+    { title: 'Open this page in Safari', body: 'Must be Safari - Chrome on iPhone cannot add a home-screen app.' },
+    { title: 'Tap the Share button', body: 'The square with an arrow up, at the bottom of Safari.' },
+    { title: 'Scroll and tap "Add to Home Screen"', body: 'It\'s further down the share sheet.' },
+    { title: 'Name it and tap Add', body: 'The gold M icon appears on your home screen, opening like a real app.' },
+  ] : [
+    { title: 'Open this page in Chrome', body: 'Samsung Internet has the same option under its menu.' },
+    { title: 'Tap the three-dot menu', body: 'Top right of the browser.' },
+    { title: 'Tap "Add to Home screen" or "Install app"', body: 'Either option works the same way.' },
+    { title: 'Tap Add', body: 'The gold M icon appears with your other apps.' },
+  ];
+
+  return (
+    <Modal onClose={onClose} title="Put MMM Pro Journal on Your Phone" size="md">
+      <div className="space-y-4">
+        <p className="text-xs text-gray-500">Optional. Adds a home-screen icon so the app opens full-screen, like a real app - no browser bar. Do this from the browser, not from a downloaded file.</p>
+        <div className="flex bg-gray-900 border border-gray-800 rounded-lg p-1">
+          <button onClick={function() { setPlatform('iphone'); }} className={"flex-1 py-2 rounded-md text-sm font-medium transition flex items-center justify-center gap-1.5 " + (platform === 'iphone' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')}>
+            <Icon name="Smartphone" className="h-3.5 w-3.5" /><span>iPhone</span>
+          </button>
+          <button onClick={function() { setPlatform('android'); }} className={"flex-1 py-2 rounded-md text-sm font-medium transition flex items-center justify-center gap-1.5 " + (platform === 'android' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')}>
+            <Icon name="Smartphone" className="h-3.5 w-3.5" /><span>Android</span>
+          </button>
+        </div>
+        <div className="space-y-3">
+          {steps.map(function(step, i) {
+            return (
+              <div key={i} className="flex gap-3">
+                <div className="h-7 w-7 rounded-full bg-yellow-500/15 border border-yellow-500/30 text-yellow-300 text-sm font-bold flex items-center justify-center flex-shrink-0">{i + 1}</div>
+                <div>
+                  <p className="text-white text-sm font-medium">{step.title}</p>
+                  <p className="text-gray-500 text-xs mt-0.5">{step.body}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex items-center gap-3 bg-black/30 rounded-lg p-3">
+          <img src="./logo-icon-192.png" alt="MMM Pro Journal icon" className="h-10 w-10 rounded-xl flex-shrink-0" />
+          <p className="text-xs text-gray-500">This is the icon you're looking for once it's added.</p>
+        </div>
+      </div>
+    </Modal>
+  );
+}
+
 function LanguageSwitcher(props) {
   const language = props.language;
   const setLanguage = props.setLanguage;
@@ -591,6 +647,7 @@ function AuthScreen(props) {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
+  const [showInstall, setShowInstall] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async function() {
@@ -635,7 +692,11 @@ function AuthScreen(props) {
             {mode === 'login' ? 'Sign up' : 'Sign in'}
           </button>
         </p>
+        <button onClick={function() { setShowInstall(true); }} className="w-full text-center text-xs text-gray-600 hover:text-gray-400 mt-4 flex items-center justify-center gap-1.5">
+          <Icon name="Smartphone" className="h-3 w-3" /><span>Put MMM Pro Journal on your phone</span>
+        </button>
       </div>
+      {showInstall && <InstallAppModal onClose={function() { setShowInstall(false); }} />}
     </div>
   );
 }
@@ -2249,6 +2310,7 @@ function MMMJournal(props) {
   const [showAddAccount, setShowAddAccount] = useState(false);
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [showManageStrategies, setShowManageStrategies] = useState(false);
+  const [showInstall, setShowInstall] = useState(false);
   const [riskToleranceDraft, setRiskToleranceDraft] = useState('');
   const [riskToleranceDraftAccountId, setRiskToleranceDraftAccountId] = useState(null);
   const [confirmedTolerance, setConfirmedTolerance] = useState(undefined);
@@ -2721,6 +2783,9 @@ function MMMJournal(props) {
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <button onClick={function() { setShowInstall(true); }} title="Put MMM Pro Journal on your phone" className="bg-gray-900 border border-gray-800 text-gray-400 hover:text-yellow-300 hover:border-yellow-500/40 rounded-lg p-1.5 transition">
+                <Icon name="Smartphone" className="h-4 w-4" />
+              </button>
               <select value={viewMode} onChange={function(e) { setViewMode(e.target.value); }}
                 className="bg-gray-900 border border-gray-800 text-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-yellow-400/50 outline-none">
                 {VIEW_MODES.map(function(v) { return (<option key={v.key} value={v.key}>{v.label}</option>); })}
@@ -3285,6 +3350,8 @@ function MMMJournal(props) {
           </div>
         </Modal>
       )}
+
+      {showInstall && <InstallAppModal onClose={function() { setShowInstall(false); }} />}
 
       {showImportBroker && activeAccount && (
         <Modal onClose={function() { setShowImportBroker(false); }} title="Import from Tradovate" size="lg">
