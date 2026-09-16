@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dr. Max Personal Work-out Program</title>
+<title>DrMax Work-Out</title>
 <meta name="theme-color" content="#0B1220">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Dr Max">
+<meta name="apple-mobile-web-app-title" content="DrMax">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B1220'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-size='52' font-family='Arial' font-weight='800' fill='%23F2B705'%3EM%3C/text%3E%3C/svg%3E">
 <link rel="icon" type="image/png" sizes="192x192" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B1220'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-size='52' font-family='Arial' font-weight='800' fill='%23F2B705'%3EM%3C/text%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.json">
@@ -228,13 +228,38 @@
     background:#081018;border-radius:10px;padding:6px;margin:10px 0 4px;
   }
   .install-pic img{width:100%;height:auto;display:block;border-radius:6px;}
+
+
+  .path-bar{background:var(--bg-elev);border:1px solid var(--card-border);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px;}
+  .path-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;}
+  .path-lbl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.04em;}
+  .path-now{font-size:14px;font-weight:800;}
+  .path-msg{font-size:12.5px;color:var(--text-dim);line-height:1.45;margin-top:8px;}
+  .path-msg b{color:var(--text);}
+  @media(max-width:520px){.path-row{grid-template-columns:repeat(2,1fr);}}
+  .prog-card{
+    background:var(--card);border:1px solid var(--card-border);border-radius:var(--radius);
+    padding:14px;margin-bottom:12px;
+  }
+  .prog-card.active-prog{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);}
+  .prog-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;}
+  .prog-name{font-weight:800;font-size:16px;margin:0 0 4px;}
+  .prog-goal{font-size:13px;color:var(--text);line-height:1.45;margin:0 0 8px;}
+  .prog-meta{font-size:12px;color:var(--text-dim);margin:0 0 10px;line-height:1.4;}
+  .use-btn{
+    background:var(--accent);color:#1a1204;border:none;border-radius:10px;
+    padding:8px 12px;font-weight:800;font-size:12px;cursor:pointer;white-space:nowrap;
+  }
+  .use-btn.on{background:var(--good);color:#062a0d;}
+  .tab-btn{font-size:12px;}
+
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <h1>Dr. Max Personal Work-out Program</h1>
-    <p>5:00 AM wake &middot; V-taper split &middot; food, water &amp; training on one page</p>
+    <h1>DrMax Work-Out</h1>
+    <p id="headerSub">Choose a plan &middot; train at 5 AM &middot; food and water included</p>
   </header>
 
   <div class="sleep-bar">
@@ -257,9 +282,11 @@
     </div>
   </div>
 
+  <div class="path-bar" id="pathBar"></div>
   <div class="tabs">
     <button class="tab-btn active" id="tabTodayBtn" onclick="showTab('today')">Workout</button>
     <button class="tab-btn" id="tabFuelBtn" onclick="showTab('fuel')">Fuel</button>
+    <button class="tab-btn" id="tabPlansBtn" onclick="showTab('plans')">Plans</button>
     <button class="tab-btn" id="tabProgressBtn" onclick="showTab('progress')">Month</button>
     <button class="tab-btn" id="tabPhoneBtn" onclick="showTab('phone')">Phone</button>
   </div>
@@ -352,6 +379,15 @@
     </div>
   </div>
 
+
+  <div id="tabPlans" style="display:none;">
+    <div class="fuel-card">
+      <h3>Choose your program</h3>
+      <p>Same tracker, different map. Pick the look and the life you want. You can switch later — ticks stay saved per plan.</p>
+    </div>
+    <div id="planList"></div>
+  </div>
+
   <div id="tabProgress" style="display:none;">
     <div class="streak-card">
       <div>
@@ -387,7 +423,7 @@
       <div class="install-hero">
         <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230B1220'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-size='52' font-family='Arial' font-weight='800' fill='%23F2B705'%3EM%3C/text%3E%3C/svg%3E" alt="Dr Max app icon">
         <div>
-          <h3 style="margin:0 0 4px;">Put it on your home screen</h3>
+          <h3 style="margin:0 0 4px;">Add DrMax Work-Out to your home screen</h3>
           <p style="margin:0;">Opens full-screen like an app, with this gold M icon. First open the page in the phone browser — not as a raw file from Downloads.</p>
         </div>
       </div>
@@ -400,7 +436,7 @@
         <li><span class="step-num">1</span><span>Open this page in <b>Safari</b>.</span></li>
         <li><span class="step-num">2</span><span>Tap the <b>Share</b> button (square with an arrow up) at the bottom.</span></li>
         <li><span class="step-num">3</span><span>Scroll the sheet and tap <b>Add to Home Screen</b>.</span></li>
-        <li><span class="step-num">4</span><span>Name it <b>Dr Max</b> and tap <b>Add</b>. The gold M lands on your home screen.</span></li>
+        <li><span class="step-num">4</span><span>Name it <b>DrMax</b> and tap <b>Add</b>. The gold M lands on your home screen.</span></li>
       </ol>
       <div class="install-pic"><img src="" id="picIphone" alt="iPhone add to home screen steps"></div>
     </div>
@@ -448,92 +484,704 @@ async function storeSet(key,val){
 }
 
 /* ---------- Exercise data ---------- */
-const WEEK = [
-  { name:'Sunday', title:'Rest Day', type:'rest', exercises:[] },
-  { name:'Monday', title:'Back Width', type:'train', exercises:[
-    {id:'mon1',name:'Wide-Grip Lat Pulldown',sets:4,reps:'10-12',rest:'90s',weight:'35-45 kg',pattern:'pull',
-     cue:'Sit down, grab the bar wide, pull it down to your chest, let it go back up slow.',muscles:['Lats','Biceps']},
-    {id:'mon2',name:'Pull-Ups',sets:4,reps:'max',rest:'90s',weight:'Bodyweight',pattern:'pull',
-     cue:'Hang from the bar, pull your chin above it, lower back down slow.',muscles:['Lats','Biceps']},
-    {id:'mon3',name:'Single-Arm Dumbbell Row',sets:3,reps:'10-12/side',rest:'75s',weight:'18-22 kg',pattern:'row',
-     cue:'Knee on a bench, pull the dumbbell up to your hip, lower it slow.',muscles:['Lats','Rear Delts']},
-    {id:'mon4',name:'Straight-Arm Pulldown',sets:3,reps:'12-15',rest:'60s',weight:'15-20 kg',pattern:'pull',
-     cue:'Keep arms straight, push the bar down to your thighs using your back, not your arms.',muscles:['Lats']},
-    {id:'mon5',name:'Face Pulls',sets:3,reps:'15',rest:'60s',weight:'10-15 kg',pattern:'raise',
-     cue:'Pull the rope to your face, elbows high, squeeze your shoulder blades together.',muscles:['Rear Delts','Traps']},
-    {id:'mon6',name:'Standing Stomach Vacuum',sets:3,reps:'15-20s hold',rest:'30s',weight:'Bodyweight',pattern:'core',
-     cue:'Blow all your air out, then suck your belly in hard like it touches your spine. Hold it.',muscles:['Deep Abs']},
-  ]},
-  { name:'Tuesday', title:'Shoulders + Core', type:'train', exercises:[
-    {id:'tue1',name:'Seated Dumbbell Overhead Press',sets:4,reps:'8-10',rest:'90s',weight:'16-20 kg ea',pattern:'push',
-     cue:'Sit tall, push both dumbbells straight up over your head, lower to shoulder height.',muscles:['Shoulders','Triceps']},
-    {id:'tue2',name:'Dumbbell Lateral Raise',sets:4,reps:'12-15',rest:'60s',weight:'6-8 kg ea',pattern:'raise',
-     cue:'Arms slightly bent, lift dumbbells out to the side to shoulder height, lower slow.',muscles:['Side Delts']},
-    {id:'tue3',name:'Cable Lateral Raise',sets:3,reps:'15',rest:'60s',weight:'5-7 kg',pattern:'raise',
-     cue:'Same move as the dumbbell raise, but the cable keeps tension the whole way.',muscles:['Side Delts']},
-    {id:'tue4',name:'Rear Delt Cable Fly',sets:3,reps:'15',rest:'60s',weight:'5-7 kg',pattern:'fly',
-     cue:'Cross the cables in front, pull your arms out wide like opening curtains.',muscles:['Rear Delts']},
-    {id:'tue5',name:'Plank',sets:3,reps:'45-60s',rest:'45s',weight:'Bodyweight',pattern:'core',
-     cue:'Hold your body straight like a plank of wood, resting on forearms and toes.',muscles:['Abs']},
-    {id:'tue6',name:'Hanging Leg Raise',sets:3,reps:'12-15',rest:'60s',weight:'Bodyweight',pattern:'core',
-     cue:'Hang from the bar, lift your legs up straight in front of you, lower slow.',muscles:['Lower Abs']},
-    {id:'tue7',name:'Side Plank',sets:3,reps:'30s/side',rest:'30s',weight:'Bodyweight',pattern:'core',
-     cue:'Lie on your side, prop up on one forearm, lift your hips into a straight line.',muscles:['Obliques']},
-  ]},
-  { name:'Wednesday', title:'Legs', type:'train', exercises:[
-    {id:'wed1',name:'Barbell Back Squat',sets:4,reps:'8-10',rest:'2 min',weight:'40-50 kg',pattern:'squat',
-     cue:'Bar on your back, sit down like sitting in a chair, stand back up.',muscles:['Quads','Glutes']},
-    {id:'wed2',name:'Romanian Deadlift',sets:3,reps:'10',rest:'90s',weight:'40-50 kg',pattern:'hinge',
-     cue:'Bar in front of your thighs, push your hips back, lower the bar down your legs, stand back up.',muscles:['Hamstrings','Glutes']},
-    {id:'wed3',name:'Leg Press',sets:3,reps:'12',rest:'90s',weight:'60-80 kg',pattern:'squat',
-     cue:'Sit in the machine, push the platform away with your feet, let it come back slow.',muscles:['Quads','Glutes']},
-    {id:'wed4',name:'Walking Lunges',sets:3,reps:'12/leg',rest:'60s',weight:'10-12 kg ea',pattern:'squat',
-     cue:'Step forward, drop your back knee toward the floor, push up and step through.',muscles:['Quads','Glutes']},
-    {id:'wed5',name:'Standing Calf Raise',sets:4,reps:'15',rest:'45s',weight:'BW +15-20 kg',pattern:'calf',
-     cue:'Rise up onto your toes as high as you can, lower back down slow.',muscles:['Calves']},
-  ]},
-  { name:'Thursday', title:'Holland Park &mdash; Active Recovery', type:'train', exercises:[
-    {id:'thu1',name:'Pull-Ups',sets:4,reps:'max',rest:'90s',weight:'Bodyweight',pattern:'pull',
-     cue:'Hang from the bar, pull your chin above it, lower back down slow.',muscles:['Lats','Biceps']},
-    {id:'thu2',name:'Parallel Bar Dips',sets:3,reps:'10-12',rest:'90s',weight:'Bodyweight',pattern:'dip',
-     cue:'Hold yourself up on the bars, lower your body until elbows bend 90 degrees, push back up.',muscles:['Chest','Triceps']},
-    {id:'thu3',name:'Hanging Leg Raise',sets:3,reps:'12-15',rest:'60s',weight:'Bodyweight',pattern:'core',
-     cue:'Hang from the bar, lift your legs up straight in front of you, lower slow.',muscles:['Lower Abs']},
-    {id:'thu4',name:'Incline Push-Ups',sets:3,reps:'15',rest:'60s',weight:'Bodyweight',pattern:'push',
-     cue:'Hands on a bench or rail, lower your chest to it, push back up.',muscles:['Chest','Triceps']},
-    {id:'thu5',name:'Plank',sets:3,reps:'45-60s',rest:'45s',weight:'Bodyweight',pattern:'core',
-     cue:'Hold your body straight like a plank of wood, resting on forearms and toes.',muscles:['Abs']},
-  ]},
-  { name:'Friday', title:'Back Thickness + Biceps', type:'train', exercises:[
-    {id:'fri1',name:'Barbell / T-Bar Row',sets:4,reps:'10',rest:'90s',weight:'30-40 kg',pattern:'row',
-     cue:'Bend forward, pull the bar up to your stomach, lower it slow.',muscles:['Lats','Biceps']},
-    {id:'fri2',name:'Seated Cable Row',sets:3,reps:'12',rest:'75s',weight:'35-45 kg',pattern:'row',
-     cue:'Sit tall, pull the handle to your stomach, squeeze your back, return slow.',muscles:['Lats','Biceps']},
-    {id:'fri3',name:'Chest-Supported Row',sets:3,reps:'12',rest:'75s',weight:'20-24 kg ea',pattern:'row',
-     cue:'Chest on the pad, pull the dumbbells up to your sides, lower slow.',muscles:['Lats','Biceps']},
-    {id:'fri4',name:'Barbell Curl',sets:3,reps:'10-12',rest:'60s',weight:'15-20 kg',pattern:'curl',
-     cue:'Arms at your sides, curl the bar up to your shoulders, lower slow.',muscles:['Biceps']},
-    {id:'fri5',name:'Incline Dumbbell Curl',sets:3,reps:'12',rest:'60s',weight:'8-10 kg ea',pattern:'curl',
-     cue:'Sit back on an incline bench, curl the dumbbells up, lower slow.',muscles:['Biceps']},
-  ]},
-  { name:'Saturday', title:'Chest + Triceps + Core', type:'train', exercises:[
-    {id:'sat1',name:'Flat Dumbbell Bench Press',sets:4,reps:'8-10',rest:'90s',weight:'20-24 kg ea',pattern:'push',
-     cue:'Lie flat, push the dumbbells straight up over your chest, lower slow.',muscles:['Chest','Triceps']},
-    {id:'sat2',name:'Incline Dumbbell Press',sets:3,reps:'10',rest:'90s',weight:'16-20 kg ea',pattern:'push',
-     cue:'Same as bench press, but on an incline bench to hit upper chest more.',muscles:['Upper Chest','Shoulders']},
-    {id:'sat3',name:'Cable Chest Fly',sets:3,reps:'12-15',rest:'60s',weight:'10-12 kg',pattern:'fly',
-     cue:'Arms wide, bring the handles together in front of your chest like a hug.',muscles:['Chest']},
-    {id:'sat4',name:'Tricep Rope Pushdown',sets:3,reps:'12-15',rest:'60s',weight:'15-20 kg',pattern:'pushdown',
-     cue:'Elbows locked at your sides, push the rope down until your arms are straight.',muscles:['Triceps']},
-    {id:'sat5',name:'Overhead Tricep Extension',sets:3,reps:'12',rest:'60s',weight:'12-15 kg',pattern:'pushdown',
-     cue:'Hold the weight behind your head, straighten your arms up, lower slow.',muscles:['Triceps']},
-    {id:'sat6',name:'Standing Stomach Vacuum',sets:3,reps:'15-20s hold',rest:'30s',weight:'Bodyweight',pattern:'core',
-     cue:'Blow all your air out, then suck your belly in hard like it touches your spine. Hold it.',muscles:['Deep Abs']},
-  ]},
+function E(img,name,sets,reps,rest,weight,cue,muscles){
+  return {id:name.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'-'+img, img, name, sets, reps, rest, weight, cue, muscles};
+}
+const restDay = { title:'Rest Day', type:'rest', exercises:[] };
+
+const PROGRAMS = [
+  {
+    id:'vtaper',
+    name:'Dr Max V-Taper',
+    days:'6 days · ~75 min',
+    level:'Intermediate',
+    goal:'Wider shoulders and back, tighter waist — the V shape in a T-shirt.',
+    best:'You already lift a bit and want looks more than a powerlifting total.',
+    week:[
+      restDay,
+      { title:'Back Width', type:'train', exercises:[
+        E('mon1','Wide-Grip Lat Pulldown',4,'10-12','90s','35-45 kg','Sit down, grab the bar wide, pull it down to your chest, let it go back up slow.',['Lats','Biceps']),
+        E('mon2','Pull-Ups',4,'max','90s','Bodyweight','Hang from the bar, pull your chin above it, lower back down slow.',['Lats','Biceps']),
+        E('mon3','Single-Arm Dumbbell Row',3,'10-12/side','75s','18-22 kg','Knee on a bench, pull the dumbbell up to your hip, lower it slow.',['Lats','Rear Delts']),
+        E('mon4','Straight-Arm Pulldown',3,'12-15','60s','15-20 kg','Keep arms straight, push the bar down to your thighs using your back, not your arms.',['Lats']),
+        E('mon5','Face Pulls',3,'15','60s','10-15 kg','Pull the rope to your face, elbows high, squeeze your shoulder blades together.',['Rear Delts','Traps']),
+        E('mon6','Standing Stomach Vacuum',3,'15-20s hold','30s','Bodyweight','Blow all your air out, then suck your belly in hard like it touches your spine. Hold it.',['Deep Abs']),
+      ]},
+      { title:'Shoulders + Core', type:'train', exercises:[
+        E('tue1','Seated Dumbbell Overhead Press',4,'8-10','90s','16-20 kg ea','Sit tall, push both dumbbells straight up over your head, lower to shoulder height.',['Shoulders','Triceps']),
+        E('tue2','Dumbbell Lateral Raise',4,'12-15','60s','6-8 kg ea','Arms slightly bent, lift dumbbells out to the side to shoulder height, lower slow.',['Side Delts']),
+        E('tue3','Cable Lateral Raise',3,'15','60s','5-7 kg','Same move as the dumbbell raise, but the cable keeps tension the whole way.',['Side Delts']),
+        E('tue4','Rear Delt Cable Fly',3,'15','60s','5-7 kg','Cross the cables in front, pull your arms out wide like opening curtains.',['Rear Delts']),
+        E('tue5','Plank',3,'45-60s','45s','Bodyweight','Hold your body straight like a plank of wood, resting on forearms and toes.',['Abs']),
+        E('tue6','Hanging Leg Raise',3,'12-15','60s','Bodyweight','Hang from the bar, lift your legs up straight in front of you, lower slow.',['Lower Abs']),
+        E('tue7','Side Plank',3,'30s/side','30s','Bodyweight','Lie on your side, prop up on one forearm, lift your hips into a straight line.',['Obliques']),
+      ]},
+      { title:'Legs', type:'train', exercises:[
+        E('wed1','Barbell Back Squat',4,'8-10','2 min','40-50 kg','Bar on your back, sit down like sitting in a chair, stand back up.',['Quads','Glutes']),
+        E('wed2','Romanian Deadlift',3,'10','90s','40-50 kg','Bar in front of your thighs, push your hips back, lower the bar down your legs, stand back up.',['Hamstrings','Glutes']),
+        E('wed3','Leg Press',3,'12','90s','60-80 kg','Sit in the machine, push the platform away with your feet, let it come back slow.',['Quads','Glutes']),
+        E('wed4','Walking Lunges',3,'12/leg','60s','10-12 kg ea','Step forward, drop your back knee toward the floor, push up and step through.',['Quads','Glutes']),
+        E('wed5','Standing Calf Raise',4,'15','45s','BW +15-20 kg','Rise up onto your toes as high as you can, lower back down slow.',['Calves']),
+      ]},
+      { title:'Park / Active Recovery', type:'train', exercises:[
+        E('thu1','Pull-Ups',4,'max','90s','Bodyweight','Hang from the bar, pull your chin above it, lower back down slow.',['Lats','Biceps']),
+        E('thu2','Parallel Bar Dips',3,'10-12','90s','Bodyweight','Hold yourself up on the bars, lower until elbows bend 90 degrees, push back up.',['Chest','Triceps']),
+        E('thu3','Hanging Leg Raise',3,'12-15','60s','Bodyweight','Hang from the bar, lift your legs up straight in front of you, lower slow.',['Lower Abs']),
+        E('thu4','Incline Push-Ups',3,'15','60s','Bodyweight','Hands on a bench or rail, lower your chest to it, push back up.',['Chest','Triceps']),
+        E('thu5','Plank',3,'45-60s','45s','Bodyweight','Hold your body straight like a plank of wood, resting on forearms and toes.',['Abs']),
+      ]},
+      { title:'Back Thickness + Biceps', type:'train', exercises:[
+        E('fri1','Barbell / T-Bar Row',4,'10','90s','30-40 kg','Bend forward, pull the bar up to your stomach, lower it slow.',['Lats','Biceps']),
+        E('fri2','Seated Cable Row',3,'12','75s','35-45 kg','Sit tall, pull the handle to your stomach, squeeze your back, return slow.',['Lats','Biceps']),
+        E('fri3','Chest-Supported Row',3,'12','75s','20-24 kg ea','Chest on the pad, pull the dumbbells up to your sides, lower slow.',['Lats','Biceps']),
+        E('fri4','Barbell Curl',3,'10-12','60s','15-20 kg','Arms at your sides, curl the bar up to your shoulders, lower slow.',['Biceps']),
+        E('fri5','Incline Dumbbell Curl',3,'12','60s','8-10 kg ea','Sit back on an incline bench, curl the dumbbells up, lower slow.',['Biceps']),
+      ]},
+      { title:'Chest + Triceps + Core', type:'train', exercises:[
+        E('sat1','Flat Dumbbell Bench Press',4,'8-10','90s','20-24 kg ea','Lie flat, push the dumbbells straight up over your chest, lower slow.',['Chest','Triceps']),
+        E('sat2','Incline Dumbbell Press',3,'10','90s','16-20 kg ea','Same as bench press, but on an incline bench to hit upper chest more.',['Upper Chest','Shoulders']),
+        E('sat3','Cable Chest Fly',3,'12-15','60s','10-12 kg','Arms wide, bring the handles together in front of your chest like a hug.',['Chest']),
+        E('sat4','Tricep Rope Pushdown',3,'12-15','60s','15-20 kg','Elbows locked at your sides, push the rope down until your arms are straight.',['Triceps']),
+        E('sat5','Overhead Tricep Extension',3,'12','60s','12-15 kg','Hold the weight behind your head, straighten your arms up, lower slow.',['Triceps']),
+        E('sat6','Standing Stomach Vacuum',3,'15-20s hold','30s','Bodyweight','Blow all your air out, then suck your belly in hard like it touches your spine. Hold it.',['Deep Abs']),
+      ]},
+    ]
+  },
+  {
+    id:'ppl',
+    name:'Push / Pull / Legs',
+    days:'6 days · 60-75 min',
+    level:'Intermediate',
+    goal:'Build muscle all over with two hits per body part each week.',
+    best:'You can train most days and want a classic gym split that grows chest, back, and legs together.',
+    week:[
+      restDay,
+      { title:'Push A — Chest + Shoulders', type:'train', exercises:[
+        E('sat1','Flat Dumbbell Bench Press',4,'8-10','90s','20-24 kg ea','Lie flat, push the dumbbells straight up over your chest, lower slow.',['Chest','Triceps']),
+        E('tue1','Seated Dumbbell Overhead Press',3,'8-10','90s','16-20 kg ea','Sit tall, press both dumbbells over your head, lower to the shoulders.',['Shoulders','Triceps']),
+        E('sat2','Incline Dumbbell Press',3,'10','90s','16-20 kg ea','Incline bench, press up over the upper chest.',['Upper Chest','Shoulders']),
+        E('tue2','Dumbbell Lateral Raise',3,'12-15','60s','6-8 kg ea','Lift out to the sides to shoulder height, lower slow.',['Side Delts']),
+        E('sat4','Tricep Rope Pushdown',3,'12-15','60s','15-20 kg','Elbows pinned, push the rope down until arms are straight.',['Triceps']),
+      ]},
+      { title:'Pull A — Back + Biceps', type:'train', exercises:[
+        E('mon2','Pull-Ups',4,'max','90s','Bodyweight','Pull your chin over the bar, lower slow.',['Lats','Biceps']),
+        E('fri1','Barbell / T-Bar Row',4,'8-10','90s','30-40 kg','Bend forward, pull the bar to your stomach.',['Lats','Biceps']),
+        E('mon1','Wide-Grip Lat Pulldown',3,'10-12','75s','35-45 kg','Wide grip, pull the bar to your chest.',['Lats','Biceps']),
+        E('mon5','Face Pulls',3,'15','60s','10-15 kg','Pull the rope to your face, elbows high.',['Rear Delts','Traps']),
+        E('fri4','Barbell Curl',3,'10-12','60s','15-20 kg','Curl the bar to your shoulders, lower slow.',['Biceps']),
+      ]},
+      { title:'Legs A', type:'train', exercises:[
+        E('wed1','Barbell Back Squat',4,'6-8','2 min','40-55 kg','Bar on your back, sit down, stand up.',['Quads','Glutes']),
+        E('wed2','Romanian Deadlift',3,'8-10','90s','40-50 kg','Hips back, bar slides down the legs, stand tall.',['Hamstrings','Glutes']),
+        E('wed3','Leg Press',3,'12','90s','60-80 kg','Push the platform away, come back slow.',['Quads','Glutes']),
+        E('wed5','Standing Calf Raise',4,'12-15','45s','BW +15-20 kg','Up onto the toes, lower slow.',['Calves']),
+      ]},
+      { title:'Push B', type:'train', exercises:[
+        E('sat2','Incline Dumbbell Press',4,'8-10','90s','16-20 kg ea','Incline press for the upper chest.',['Upper Chest','Shoulders']),
+        E('thu2','Parallel Bar Dips',3,'8-12','90s','Bodyweight','Lower to 90 degrees, press up.',['Chest','Triceps']),
+        E('tue3','Cable Lateral Raise',3,'15','60s','5-7 kg','Raise out to the side against the cable.',['Side Delts']),
+        E('sat3','Cable Chest Fly',3,'12-15','60s','10-12 kg','Hug the cables together in front of your chest.',['Chest']),
+        E('sat5','Overhead Tricep Extension',3,'12','60s','12-15 kg','Weight behind the head, straighten the arms.',['Triceps']),
+      ]},
+      { title:'Pull B', type:'train', exercises:[
+        E('fri2','Seated Cable Row',4,'10-12','75s','35-45 kg','Pull to the stomach, squeeze the back.',['Lats','Biceps']),
+        E('mon3','Single-Arm Dumbbell Row',3,'10-12/side','75s','18-22 kg','Row the dumbbell to the hip.',['Lats','Rear Delts']),
+        E('mon4','Straight-Arm Pulldown',3,'12-15','60s','15-20 kg','Straight arms, push the bar to the thighs.',['Lats']),
+        E('tue4','Rear Delt Cable Fly',3,'15','60s','5-7 kg','Open the cables like curtains.',['Rear Delts']),
+        E('fri5','Incline Dumbbell Curl',3,'12','60s','8-10 kg ea','Incline bench, curl both dumbbells.',['Biceps']),
+      ]},
+      { title:'Legs B', type:'train', exercises:[
+        E('wed3','Leg Press',4,'10-12','90s','70-90 kg','Controlled presses, no locking out hard.',['Quads','Glutes']),
+        E('wed4','Walking Lunges',3,'12/leg','75s','10-12 kg ea','Long steps, back knee toward the floor.',['Quads','Glutes']),
+        E('wed2','Romanian Deadlift',3,'10','90s','40-50 kg','Hinge, feel the hamstrings stretch.',['Hamstrings','Glutes']),
+        E('wed5','Standing Calf Raise',4,'15','45s','BW +15-20 kg','Full range on the calves.',['Calves']),
+      ]},
+    ]
+  },
+  {
+    id:'fullbody',
+    name:'Full Body 3× Week',
+    days:'3 days · 60 min',
+    level:'Beginner',
+    goal:'Get stronger and add muscle with only three sessions. Easy to stay consistent.',
+    best:'New to the gym, busy weeks, or coming back after time off.',
+    week:[
+      restDay,
+      { title:'Full Body A', type:'train', exercises:[
+        E('wed1','Barbell Back Squat',3,'8-10','2 min','30-45 kg','Sit down, stand up. This is the main lift today.',['Quads','Glutes']),
+        E('sat1','Flat Dumbbell Bench Press',3,'8-10','90s','16-22 kg ea','Press over the chest, lower slow.',['Chest','Triceps']),
+        E('fri2','Seated Cable Row',3,'10-12','75s','30-40 kg','Pull to the stomach, squeeze.',['Lats','Biceps']),
+        E('tue2','Dumbbell Lateral Raise',2,'12-15','60s','5-7 kg ea','Out to the sides for the shoulders.',['Side Delts']),
+        E('tue5','Plank',3,'30-45s','45s','Bodyweight','Straight body, breathe.',['Abs']),
+      ]},
+      restDay,
+      { title:'Full Body B', type:'train', exercises:[
+        E('wed2','Romanian Deadlift',3,'8-10','2 min','35-45 kg','Hips back, bar down the legs.',['Hamstrings','Glutes']),
+        E('tue1','Seated Dumbbell Overhead Press',3,'8-10','90s','12-18 kg ea','Press over the head.',['Shoulders','Triceps']),
+        E('mon2','Pull-Ups',3,'max','90s','Bodyweight','Use a band or machine if you need help.',['Lats','Biceps']),
+        E('wed4','Walking Lunges',2,'10/leg','60s','8-10 kg ea','Short controlled steps.',['Quads','Glutes']),
+        E('tue6','Hanging Leg Raise',3,'10-12','60s','Bodyweight','Raise the legs, no swinging.',['Lower Abs']),
+      ]},
+      restDay,
+      { title:'Full Body C', type:'train', exercises:[
+        E('wed3','Leg Press',3,'10-12','90s','50-70 kg','Push through the mid-foot.',['Quads','Glutes']),
+        E('sat2','Incline Dumbbell Press',3,'10','90s','14-18 kg ea','Upper chest press.',['Upper Chest','Shoulders']),
+        E('mon3','Single-Arm Dumbbell Row',3,'10/side','75s','14-20 kg','Row to the hip, one side at a time.',['Lats','Rear Delts']),
+        E('fri4','Barbell Curl',2,'10-12','60s','12-16 kg','Curl without swinging.',['Biceps']),
+        E('sat4','Tricep Rope Pushdown',2,'12-15','60s','12-18 kg','Push down, squeeze the triceps.',['Triceps']),
+      ]},
+    ]
+  },
+  {
+    id:'upperlower',
+    name:'Upper / Lower',
+    days:'4 days · 60-75 min',
+    level:'Beginner–Intermediate',
+    goal:'Muscle and strength with four days and two rest days that actually recover you.',
+    best:'You can train Mon/Tue and Thu/Fri and want a simple long-term split.',
+    week:[
+      restDay,
+      { title:'Upper A', type:'train', exercises:[
+        E('sat1','Flat Dumbbell Bench Press',4,'8-10','90s','20-24 kg ea','Main chest press.',['Chest','Triceps']),
+        E('fri1','Barbell / T-Bar Row',4,'8-10','90s','30-40 kg','Main back row.',['Lats','Biceps']),
+        E('tue1','Seated Dumbbell Overhead Press',3,'8-10','90s','14-18 kg ea','Press overhead.',['Shoulders']),
+        E('mon1','Wide-Grip Lat Pulldown',3,'10-12','75s','35-45 kg','Pull to the chest.',['Lats']),
+        E('fri4','Barbell Curl',2,'10-12','60s','15-18 kg','Curl strict.',['Biceps']),
+        E('sat4','Tricep Rope Pushdown',2,'12-15','60s','15-20 kg','Pushdowns for arms.',['Triceps']),
+      ]},
+      { title:'Lower A', type:'train', exercises:[
+        E('wed1','Barbell Back Squat',4,'6-8','2 min','40-55 kg','Heavy squat day.',['Quads','Glutes']),
+        E('wed2','Romanian Deadlift',3,'8-10','90s','40-50 kg','Hinge for the back of the legs.',['Hamstrings','Glutes']),
+        E('wed4','Walking Lunges',3,'10/leg','75s','10-12 kg ea','Single-leg work.',['Quads','Glutes']),
+        E('wed5','Standing Calf Raise',4,'12-15','45s','BW +15 kg','Calves last.',['Calves']),
+        E('tue5','Plank',3,'45s','45s','Bodyweight','Brace the middle.',['Abs']),
+      ]},
+      restDay,
+      { title:'Upper B', type:'train', exercises:[
+        E('sat2','Incline Dumbbell Press',4,'8-10','90s','16-20 kg ea','Upper chest focus.',['Upper Chest']),
+        E('fri2','Seated Cable Row',4,'10-12','75s','35-45 kg','Row to the waist.',['Lats']),
+        E('tue2','Dumbbell Lateral Raise',3,'12-15','60s','6-8 kg ea','Side delts.',['Side Delts']),
+        E('mon5','Face Pulls',3,'15','60s','10-15 kg','Rear delts and posture.',['Rear Delts']),
+        E('thu2','Parallel Bar Dips',3,'8-12','90s','Bodyweight','Chest and triceps.',['Chest','Triceps']),
+      ]},
+      { title:'Lower B', type:'train', exercises:[
+        E('wed3','Leg Press',4,'10-12','90s','70-90 kg','Volume for the legs.',['Quads','Glutes']),
+        E('wed2','Romanian Deadlift',3,'10','90s','40-50 kg','Hamstrings again, lighter.',['Hamstrings']),
+        E('wed5','Standing Calf Raise',4,'15','45s','BW +15 kg','Full calf range.',['Calves']),
+        E('tue6','Hanging Leg Raise',3,'12','60s','Bodyweight','Lower abs.',['Lower Abs']),
+        E('mon6','Standing Stomach Vacuum',3,'15-20s hold','30s','Bodyweight','Pull the waist in.',['Deep Abs']),
+      ]},
+    ]
+  },
+  {
+    id:'fivefive',
+    name:'5×5 Strength',
+    days:'3 days · 45-60 min',
+    level:'Beginner',
+    goal:'Get noticeably stronger on squat, press, and row. Simple numbers, add a little weight each week.',
+    best:'You care more about strength than pump. Good first serious barbell plan.',
+    week:[
+      restDay,
+      { title:'Strength A', type:'train', exercises:[
+        E('wed1','Barbell Back Squat',5,'5','2-3 min','Work up to a hard 5','Five sets of five. Same weight. Next week add 2.5 kg if all reps were clean.',['Quads','Glutes']),
+        E('sat1','Flat Dumbbell Bench Press',5,'5','2 min','Work up to a hard 5','Five clean presses. No bounce off the chest.',['Chest','Triceps']),
+        E('fri1','Barbell / T-Bar Row',5,'5','2 min','Work up to a hard 5','Row to the stomach, no jerking.',['Lats','Biceps']),
+        E('tue5','Plank',3,'40s','45s','Bodyweight','Stay tight after the heavy work.',['Abs']),
+      ]},
+      restDay,
+      { title:'Strength B', type:'train', exercises:[
+        E('wed1','Barbell Back Squat',5,'5','2-3 min','Work up to a hard 5','Squat again. This plan squats three times a week on purpose.',['Quads','Glutes']),
+        E('tue1','Seated Dumbbell Overhead Press',5,'5','2 min','Work up to a hard 5','Press a strict five.',['Shoulders','Triceps']),
+        E('wed2','Romanian Deadlift',5,'5','2-3 min','Work up to a hard 5','Hinge. Keep the back flat.',['Hamstrings','Glutes']),
+        E('mon5','Face Pulls',3,'15','60s','Light','Shoulder health after pressing.',['Rear Delts']),
+      ]},
+      restDay,
+      { title:'Strength A2', type:'train', exercises:[
+        E('wed1','Barbell Back Squat',5,'5','2-3 min','Work up to a hard 5','Third squat day of the week.',['Quads','Glutes']),
+        E('sat1','Flat Dumbbell Bench Press',5,'5','2 min','Work up to a hard 5','Repeat Monday press.',['Chest','Triceps']),
+        E('fri1','Barbell / T-Bar Row',5,'5','2 min','Work up to a hard 5','Repeat Monday row.',['Lats','Biceps']),
+        E('wed5','Standing Calf Raise',3,'12','45s','BW +15 kg','Easy extra work.',['Calves']),
+      ]},
+    ]
+  },
+  {
+    id:'brosplit',
+    name:'Classic Bro Split',
+    days:'5 days · 60 min',
+    level:'Intermediate',
+    goal:'One body part a day so you can chase a pump and extra arm or chest work.',
+    best:'You like bodybuilding-style sessions and can live with training five weekdays.',
+    week:[
+      restDay,
+      { title:'Chest', type:'train', exercises:[
+        E('sat1','Flat Dumbbell Bench Press',4,'8-10','90s','20-24 kg ea','Main chest press.',['Chest']),
+        E('sat2','Incline Dumbbell Press',3,'10','90s','16-20 kg ea','Upper chest.',['Upper Chest']),
+        E('sat3','Cable Chest Fly',3,'12-15','60s','10-12 kg','Squeeze at the middle.',['Chest']),
+        E('thu4','Incline Push-Ups',2,'15','60s','Bodyweight','Burnout.',['Chest']),
+      ]},
+      { title:'Back', type:'train', exercises:[
+        E('mon2','Pull-Ups',4,'max','90s','Bodyweight','Width first.',['Lats']),
+        E('fri1','Barbell / T-Bar Row',4,'8-10','90s','30-40 kg','Thickness.',['Lats']),
+        E('fri2','Seated Cable Row',3,'12','75s','35-45 kg','Squeeze the mid-back.',['Lats']),
+        E('mon4','Straight-Arm Pulldown',3,'12-15','60s','15-20 kg','Lats without the arms taking over.',['Lats']),
+      ]},
+      { title:'Shoulders', type:'train', exercises:[
+        E('tue1','Seated Dumbbell Overhead Press',4,'8-10','90s','16-20 kg ea','Main press.',['Shoulders']),
+        E('tue2','Dumbbell Lateral Raise',4,'12-15','60s','6-8 kg ea','Side delts make the width.',['Side Delts']),
+        E('tue4','Rear Delt Cable Fly',3,'15','60s','5-7 kg','Rear delts.',['Rear Delts']),
+        E('mon5','Face Pulls',3,'15','60s','10-15 kg','Posture and shoulders.',['Rear Delts','Traps']),
+      ]},
+      { title:'Legs', type:'train', exercises:[
+        E('wed1','Barbell Back Squat',4,'8-10','2 min','40-50 kg','Main squat.',['Quads','Glutes']),
+        E('wed2','Romanian Deadlift',3,'10','90s','40-50 kg','Hinge.',['Hamstrings']),
+        E('wed3','Leg Press',3,'12','90s','60-80 kg','Extra quad work.',['Quads']),
+        E('wed5','Standing Calf Raise',4,'15','45s','BW +15 kg','Calves.',['Calves']),
+      ]},
+      { title:'Arms + Core', type:'train', exercises:[
+        E('fri4','Barbell Curl',4,'10-12','60s','15-20 kg','Biceps.',['Biceps']),
+        E('fri5','Incline Dumbbell Curl',3,'12','60s','8-10 kg ea','Long-head biceps.',['Biceps']),
+        E('sat4','Tricep Rope Pushdown',4,'12-15','60s','15-20 kg','Triceps.',['Triceps']),
+        E('sat5','Overhead Tricep Extension',3,'12','60s','12-15 kg','Long head of the triceps.',['Triceps']),
+        E('tue6','Hanging Leg Raise',3,'12-15','60s','Bodyweight','Abs to finish.',['Lower Abs']),
+      ]},
+    ]
+  },
+  {
+    id:'fatloss',
+    name:'Fat-Loss Gym Circuit',
+    days:'4 days · 40-50 min',
+    level:'All levels',
+    goal:'Hold muscle while dropping fat. Shorter rest, higher reps, still real lifting.',
+    best:'You want the waist down without living on a treadmill. Keep the protein high on the Fuel tab.',
+    week:[
+      restDay,
+      { title:'Circuit A — Push + Legs', type:'train', exercises:[
+        E('wed1','Barbell Back Squat',3,'12','60s','Lighter than strength days','Keep moving. Breathe at the top.',['Quads','Glutes']),
+        E('sat1','Flat Dumbbell Bench Press',3,'12','60s','Moderate','No long rest.',['Chest']),
+        E('wed4','Walking Lunges',3,'12/leg','45s','Light dumbbells','Walk them out.',['Quads']),
+        E('tue2','Dumbbell Lateral Raise',3,'15','45s','Light','Shoulders without going heavy.',['Side Delts']),
+        E('tue5','Plank',3,'40s','30s','Bodyweight','Stay in the circuit.',['Abs']),
+      ]},
+      restDay,
+      { title:'Circuit B — Pull + Core', type:'train', exercises:[
+        E('mon2','Pull-Ups',3,'max','60s','Band ok','Keep the rest short.',['Lats']),
+        E('fri2','Seated Cable Row',3,'12-15','60s','Moderate','Squeeze and go again.',['Lats']),
+        E('wed2','Romanian Deadlift',3,'12','60s','Moderate','Hinge, not a yank.',['Hamstrings']),
+        E('fri4','Barbell Curl',3,'12-15','45s','Light','Arms, then next move.',['Biceps']),
+        E('tue6','Hanging Leg Raise',3,'12','45s','Bodyweight','No swing.',['Lower Abs']),
+      ]},
+      restDay,
+      { title:'Circuit C — Full mix', type:'train', exercises:[
+        E('wed3','Leg Press',3,'15','60s','Moderate','High reps.',['Quads']),
+        E('tue1','Seated Dumbbell Overhead Press',3,'12','60s','Moderate','Press, then move on.',['Shoulders']),
+        E('thu2','Parallel Bar Dips',3,'10-12','60s','Bodyweight','Chest and arms.',['Chest','Triceps']),
+        E('mon5','Face Pulls',3,'15','45s','Light','Shoulder health.',['Rear Delts']),
+        E('tue7','Side Plank',3,'25s/side','30s','Bodyweight','Finish the waist.',['Obliques']),
+      ]},
+      { title:'Optional easy day', type:'train', exercises:[
+        E('thu4','Incline Push-Ups',3,'15','45s','Bodyweight','Easy press.',['Chest']),
+        E('wed4','Walking Lunges',3,'10/leg','45s','Bodyweight','Walk.',['Quads']),
+        E('tue5','Plank',3,'45s','30s','Bodyweight','Hold.',['Abs']),
+        E('mon6','Standing Stomach Vacuum',4,'20s hold','20s','Bodyweight','Waist work.',['Deep Abs']),
+      ]},
+    ]
+  },
+  {
+    id:'stretchresist',
+    name:'Stretch + Resistance',
+    days:'4 days · 50-60 min',
+    level:'All levels',
+    goal:'Get stronger and stay mobile in the same session — lift, then open the hips, chest, and hamstrings so you do not stiffen up.',
+    best:'Desk job, tight hips, or you skip stretching and pay for it the next morning. Resistance first while you are fresh, stretch after.',
+    week:[
+      { title:'Rest + easy walk', type:'rest', exercises:[] },
+      { title:'Lower body + hip mobility', type:'train', exercises:[
+        E('wed1','Barbell Back Squat',4,'8-10','2 min','40-50 kg','Main strength. Sit down, stand up. Full depth you can control.',['Quads','Glutes']),
+        E('wed2','Romanian Deadlift',3,'8-10','90s','40-50 kg','Hips back, hamstrings load, stand tall.',['Hamstrings','Glutes']),
+        E('wed4','Walking Lunges',3,'10/leg','60s','10-12 kg ea','Long step, back knee toward the floor.',['Quads','Glutes']),
+        E('wed5','Standing Calf Raise',3,'12-15','45s','BW +15 kg','Up onto the toes, lower slow.',['Calves']),
+        E('wed2','Standing hamstring stretch',2,'30s/side','20s','Bodyweight','Heel on a low step, hinge forward from the hips, long spine. Do not bounce.',['Hamstrings']),
+        E('wed4','Half-kneeling hip flexor stretch',2,'30s/side','20s','Bodyweight','Back knee down, squeeze that glute, shift hips forward until the front of the hip opens.',['Hip Flexors']),
+        E('tue5','World’s greatest stretch hold',2,'20s/side','20s','Bodyweight','Lunge, both hands inside the front foot, twist the chest open toward that knee.',['Hips','T-Spine']),
+      ]},
+      { title:'Push + chest opener', type:'train', exercises:[
+        E('sat1','Flat Dumbbell Bench Press',4,'8-10','90s','20-24 kg ea','Press over the chest, lower slow.',['Chest','Triceps']),
+        E('tue1','Seated Dumbbell Overhead Press',3,'8-10','90s','16-20 kg ea','Press over the head, ribs down.',['Shoulders','Triceps']),
+        E('tue2','Dumbbell Lateral Raise',3,'12-15','60s','6-8 kg ea','Out to the sides, no swinging.',['Side Delts']),
+        E('sat4','Tricep Rope Pushdown',3,'12-15','60s','15-20 kg','Elbows pinned, straighten the arms.',['Triceps']),
+        E('sat3','Doorway chest stretch',2,'30s','20s','Bodyweight','Forearm on the door frame, step through until the pec opens. Soft elbow.',['Chest']),
+        E('tue1','Overhead tricep / lat stretch',2,'25s/side','20s','Bodyweight','Elbow to the sky, other hand pulls it over, lean slightly away.',['Lats','Triceps']),
+        E('tue7','Side-lying open book',2,'8/side slow','20s','Bodyweight','Knees stacked, open the top arm across the floor and follow it with your eyes.',['T-Spine']),
+      ]},
+      { title:'Rest + walk or easy cycle', type:'rest', exercises:[] },
+      { title:'Pull + posture mobility', type:'train', exercises:[
+        E('mon2','Pull-Ups',4,'max','90s','Bodyweight','Chin over the bar, lower slow.',['Lats','Biceps']),
+        E('fri2','Seated Cable Row',4,'10-12','75s','35-45 kg','Pull to the stomach, chest proud.',['Lats','Biceps']),
+        E('mon5','Face Pulls',3,'15','60s','10-15 kg','Rope to the face, elbows high — this is lifting and posture work.',['Rear Delts','Traps']),
+        E('fri4','Barbell Curl',3,'10-12','60s','15-20 kg','Curl without swinging.',['Biceps']),
+        E('mon5','Band or cable face-pull stretch hold',2,'20s','20s','Light','End-range squeeze, then ease off.',['Rear Delts']),
+        E('tue4','Cross-body rear-delt stretch',2,'25s/side','20s','Bodyweight','Bring one arm across the chest, pull it in with the other.',['Rear Delts']),
+        E('tue5','Child’s pose to cobra flow',2,'5 slow breaths','20s','Bodyweight','Sit back to the heels, then slide forward and lift the chest. Easy range only.',['Back','Hips']),
+      ]},
+      { title:'Full mix + long stretch', type:'train', exercises:[
+        E('wed3','Leg Press',3,'10-12','90s','60-80 kg','Controlled presses.',['Quads','Glutes']),
+        E('sat2','Incline Dumbbell Press',3,'10','90s','16-20 kg ea','Upper chest.',['Upper Chest']),
+        E('mon3','Single-Arm Dumbbell Row',3,'10/side','75s','18-22 kg','Row to the hip.',['Lats']),
+        E('tue5','Plank',3,'40s','30s','Bodyweight','Brace.',['Abs']),
+        E('mon6','Standing Stomach Vacuum',3,'15-20s hold','20s','Bodyweight','All air out, belly to the spine.',['Deep Abs']),
+        E('wed4','Couch stretch (hip flexor)',2,'40s/side','20s','Bodyweight','Back foot on a sofa, front knee at 90, squeeze the back glute.',['Hip Flexors']),
+        E('tue6','Seated straddle hamstring stretch',2,'30s','20s','Bodyweight','Sit tall, hinge toward one foot, then the middle. No bounce.',['Hamstrings','Adductors']),
+      ]},
+      { title:'Optional mobility only', type:'train', exercises:[
+        E('tue5','Cat-cow',2,'8 slow','20s','Bodyweight','On all fours, round then arch. Match the breath.',['Spine']),
+        E('wed2','Forward fold',2,'40s','20s','Bodyweight','Soft knees, hang, let the back of the legs open.',['Hamstrings']),
+        E('sat3','Doorway chest stretch',2,'30s/side','20s','Bodyweight','Open the chest after a week of pressing.',['Chest']),
+        E('tue7','Side Plank',2,'20s/side','20s','Bodyweight','Light strength inside the stretch day.',['Obliques']),
+        E('mon6','Standing Stomach Vacuum',3,'20s hold','20s','Bodyweight','Finish with the waist.',['Deep Abs']),
+      ]},
+    ]
+  },
+  ,
+  {
+    id:'home',
+    name:'Home Bodyweight',
+    days:'4 days · 30-40 min',
+    level:'Beginner',
+    goal:'Get fitter and tighter with no gym. A bar or a doorframe helps for pull-ups.',
+    best:'Travel, no membership, or early mornings at home before 5:30.',
+    week:[
+      restDay,
+      { title:'Home Push + Core', type:'train', exercises:[
+        E('thu4','Incline Push-Ups',4,'10-15','60s','Bodyweight','Hands on a sofa or bench if the floor is too hard.',['Chest','Triceps']),
+        E('tue1','Pike / Kneeling Press substitute',3,'10','60s','Bodyweight','Hips high, press like a shoulder press into the floor or a wall.',['Shoulders']),
+        E('tue2','Arm-raise laterals (bottles ok)',3,'15','45s','Water bottles','Same path as a lateral raise.',['Side Delts']),
+        E('tue5','Plank',3,'30-45s','30s','Bodyweight','Hold a straight line.',['Abs']),
+        E('tue7','Side Plank',3,'20s/side','20s','Bodyweight','Each side.',['Obliques']),
+      ]},
+      restDay,
+      { title:'Home Pull + Legs', type:'train', exercises:[
+        E('mon2','Pull-Ups or Door-row',4,'max','75s','Bodyweight','If no bar, row under a sturdy table.',['Lats','Biceps']),
+        E('wed4','Walking Lunges',4,'12/leg','60s','Bodyweight','Hallway lunges.',['Quads','Glutes']),
+        E('wed2','Hip hinge good-morning',3,'12','60s','Bodyweight','Hands on temples, hips back, stand tall.',['Hamstrings']),
+        E('wed5','Calf Raise on a step',4,'15','30s','Bodyweight','Up, pause, down.',['Calves']),
+        E('mon6','Standing Stomach Vacuum',3,'20s hold','20s','Bodyweight','Suck the waist in.',['Deep Abs']),
+      ]},
+      restDay,
+      { title:'Home Full Mix', type:'train', exercises:[
+        E('thu2','Chair / Bench Dips',3,'10-12','60s','Bodyweight','Hands on a chair behind you, lower and press.',['Triceps','Chest']),
+        E('thu4','Incline Push-Ups',3,'12-15','45s','Bodyweight','Second press session.',['Chest']),
+        E('wed1','Chair squat',4,'12-15','60s','Bodyweight','Sit to a chair, stand without using your hands.',['Quads','Glutes']),
+        E('tue6','Lying leg raise',3,'12-15','45s','Bodyweight','On your back if you cannot hang.',['Lower Abs']),
+        E('tue5','Plank',3,'40s','30s','Bodyweight','Finish tight.',['Abs']),
+      ]},
+    ]
+  },,
+
+  {
+    id:'glute',
+    name:'Women · Glute & Fit',
+    days:'4 days · 40-55 min',
+    level:'Beginner to Pro',
+    goal:'Grow the glutes, tighten the waist, and stay athletic — gym machines or a living-room floor.',
+    best:'Home or gym. Hip hinge + lunges + bridges are the growth work. Levels add sets and time, not random new circus moves.',
+    week:[
+      { title:'Rest · walk 20-30 min', type:'rest', exercises:[] },
+      { title:'Glute strength A', type:'train', exercises:[
+        E('wed1','Squat or chair squat',4,'10-12','90s','Gym bar / home bodyweight','Gym: back squat. Home: sit to a chair and stand without hands. Depth you can control.',['Glutes','Quads']),
+        E('wed2','Romanian Deadlift or hip hinge',4,'10','90s','Bar or 2 bags','Push hips back, feel the back of the legs, stand tall. Soft knees.',['Glutes','Hamstrings']),
+        E('wed4','Walking Lunges or reverse lunges',3,'10/leg','75s','Dumbbells or none','Long step, front heel down, back knee toward the floor.',['Glutes','Quads']),
+        E('tue5','Glute bridge / hip thrust',4,'12-15','60s','Bodyweight or bar','Shoulders on the floor or sofa, drive hips up, squeeze 2 seconds at the top.',['Glutes']),
+        E('mon6','Standing Stomach Vacuum',3,'15-20s hold','20s','Bodyweight','All air out, belly to the spine. Keeps the waist tight while the glutes grow.',['Deep Abs']),
+      ]},
+      { title:'Upper + posture', type:'train', exercises:[
+        E('thu4','Incline or knee push-ups',3,'10-15','60s','Bodyweight','Hands on a bench or sofa if the floor is too hard.',['Chest','Triceps']),
+        E('mon3','Single-arm row (bag or DB)',3,'12/side','60s','8-16 kg or a backpack','Row to the hip, pause.',['Lats']),
+        E('tue2','Lateral raise (bottles ok)',3,'12-15','45s','2-6 kg','Out to the sides for shoulder shape.',['Side Delts']),
+        E('mon5','Face pulls or band pull-apart',3,'15','45s','Light','Elbows high, squeeze the upper back.',['Rear Delts']),
+        E('tue5','Plank',3,'30-45s','30s','Bodyweight','Straight line from head to heels.',['Abs']),
+      ]},
+      { title:'Rest · stretch hips 10 min', type:'rest', exercises:[] },
+      { title:'Glute strength B', type:'train', exercises:[
+        E('tue5','Hip thrust or sofa bridge',4,'10-12','90s','Bar or bodyweight','This is the growth lift. Full squeeze at the top every rep.',['Glutes']),
+        E('wed3','Step-up or split squat',3,'10/leg','75s','Bench / chair','Whole foot on the step, drive through the heel.',['Glutes','Quads']),
+        E('wed2','Romanian Deadlift',3,'10','90s','Moderate','Second hinge day of the week.',['Hamstrings','Glutes']),
+        E('wed5','Glute kickback (cable or floor)',3,'12/side','45s','Light','Hips square, heel toward the ceiling, no arching the lower back.',['Glutes']),
+        E('tue7','Side plank + clam',2,'20s + 12/side','30s','Bodyweight','Side plank then knees bent, open the top knee.',['Glutes','Obliques']),
+      ]},
+      { title:'Conditioning + shape', type:'train', exercises:[
+        E('wed4','Walking Lunges',3,'12/leg','60s','Light','Keep the chest tall.',['Glutes','Quads']),
+        E('thu4','Push-ups',3,'8-15','60s','Bodyweight','Quality over number.',['Chest']),
+        E('fri2','Band or cable row',3,'12-15','60s','Moderate','Squeeze the back.',['Lats']),
+        E('tue6','Lying leg raise or dead bug',3,'12','45s','Bodyweight','Low abs without yanking the neck.',['Lower Abs']),
+        E('wed2','Hamstring stretch + couch stretch',2,'30s/side','20s','Bodyweight','After the work: hinge stretch, then hip-flexor couch stretch.',['Hips']),
+      ]},
+      { title:'Optional easy walk + vacuum', type:'train', exercises:[
+        E('wed4','Easy 20-min walk + 2 min stairs',1,'20 min','—','None','This still counts as showing up.',['Glutes']),
+        E('mon6','Standing Stomach Vacuum',4,'20s hold','20s','Bodyweight','Waist work on the easy day.',['Deep Abs']),
+        E('tue5','Glute bridge pulse',3,'20 pulses','30s','Bodyweight','Short pulses at the top.',['Glutes']),
+      ]},
+    ]
+  },
 ];
 
-const EX_IMAGES = window.EX_IMAGES || {};
+let activeProgramId = 'vtaper';
+function currentProgram(){
+  return PROGRAMS.find(p=>p.id===activeProgramId) || PROGRAMS[0];
+}
+function WEEK(){
+  const w = currentProgram().week;
+  return w.map((day,i)=>({ name:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][i], ...day }));
+}
 
+
+const LEVELS = [
+  { id:'beginner', name:'Beginner', sessions:12, minutes:240, weeksHint:'about 3–4 weeks',
+    setsAdj:-1, objective:'Learn the moves, finish every session, build the habit.' },
+  { id:'semi', name:'Semi-pro', sessions:20, minutes:500, weeksHint:'about 5–6 more weeks',
+    setsAdj:0, objective:'Add load or reps. Same exercises, cleaner form, less rest-cheating.' },
+  { id:'pro', name:'Pro', sessions:null, minutes:null, weeksHint:'this is the training life',
+    setsAdj:1, objective:'Keep showing up. Beat last month’s sessions and minutes. You are not stuck — you are maintaining the standard.' },
+];
+
+let activeLevelId = 'beginner';
+function currentLevel(){ return LEVELS.find(l=>l.id===activeLevelId) || LEVELS[0]; }
+function nextLevel(){
+  const i = LEVELS.findIndex(l=>l.id===activeLevelId);
+  return i>=0 && i<LEVELS.length-1 ? LEVELS[i+1] : null;
+}
+function progKey(){ return activeProgramId+'|'+activeLevelId; }
+async function getPath(){
+  const raw = await storeGet('path:'+activeProgramId);
+  return raw ? JSON.parse(raw) : { level:'beginner', sessions:0, seconds:0, started:dateKeyOf(new Date()), history:[] };
+}
+async function setPath(p){ await storeSet('path:'+activeProgramId, JSON.stringify(p)); }
+
+function applyLevel(ex){
+  const adj = currentLevel().setsAdj;
+  const sets = Math.max(2, (ex.sets||3)+adj);
+  return Object.assign({}, ex, { sets });
+}
+
+async function noteSessionIfComplete(){
+  const plan = WEEK()[viewedDate.getDay()];
+  if(!plan || plan.type!=='train' || !plan.exercises.length) return;
+  const ym = monthKeyOf(viewedDate);
+  const dd = String(viewedDate.getDate());
+  const monthData = await getMonthData(ym);
+  const done = (monthData[dd]||[]).length;
+  if(done < plan.exercises.length) return;
+  const path = await getPath();
+  const stamp = dateKeyOf(viewedDate)+'|'+progKey();
+  if(path.history && path.history.includes(stamp)) return;
+  path.history = path.history || [];
+  path.history.push(stamp);
+  path.sessions = (path.sessions||0)+1;
+  const mins = estimateSessionMinutes(plan);
+  path.seconds = (path.seconds||0)+mins*60;
+  const lvl = currentLevel();
+  const nxt = nextLevel();
+  if(nxt && path.sessions >= lvl.sessions && (path.seconds/60) >= lvl.minutes){
+    path.level = nxt.id;
+    path.sessions = 0;
+    path.seconds = 0;
+    path.started = dateKeyOf(new Date());
+    path.promotedOn = dateKeyOf(new Date());
+    activeLevelId = nxt.id;
+    await storeSet('level:'+activeProgramId, nxt.id);
+  }
+  await setPath(path);
+  renderPathBar();
+}
+
+function estimateSessionMinutes(plan){
+  // rough: work sets * 0.7 min + rest parsed
+  let m = 8; // warm-up
+  (plan.exercises||[]).forEach(ex=>{
+    const sets = applyLevel(ex).sets;
+    const rest = parseInt(String(ex.rest),10);
+    m += sets * 0.6 + (Number.isFinite(rest)? rest/60 : 1)*sets;
+  });
+  return Math.round(Math.min(90, Math.max(20, m)));
+}
+
+async function renderPathBar(){
+  const el = document.getElementById('pathBar');
+  if(!el) return;
+  const path = await getPath();
+  activeLevelId = path.level || 'beginner';
+  const lvl = currentLevel();
+  const nxt = nextLevel();
+  const mins = Math.round((path.seconds||0)/60);
+  const sessions = path.sessions||0;
+  if(!nxt){
+    el.innerHTML = `<div class="path-now">${lvl.name}</div>
+      <div class="path-msg">Objective: ${lvl.objective} You have <b>${sessions}</b> sessions and <b>${mins} min</b> on Pro in this program.</div>`;
+    return;
+  }
+  const sNeed = lvl.sessions;
+  const mNeed = lvl.minutes;
+  const sPct = Math.min(100, Math.round(sessions/sNeed*100));
+  const leftS = Math.max(0, sNeed-sessions);
+  const trainDays = WEEK().filter(d=>d.type==='train').length || 3;
+  const weeksLeft = Math.ceil(leftS / trainDays);
+  const daysLeft = weeksLeft * 7;
+  el.innerHTML = `
+    <div class="path-row">
+      <div><div class="path-lbl">Level</div><div class="path-now">${lvl.name}</div></div>
+      <div><div class="path-lbl">Next</div><div class="path-now">${nxt.name}</div></div>
+      <div><div class="path-lbl">Sessions</div><div class="path-now">${sessions}/${sNeed}</div></div>
+      <div><div class="path-lbl">Time</div><div class="path-now">${mins}/${mNeed} min</div></div>
+    </div>
+    <div class="progress-outer"><div class="progress-inner" style="width:${sPct}%"></div></div>
+    <div class="path-msg">Objective: <b>${lvl.objective}</b><br>
+    Finish <b>${leftS}</b> more training days to reach ${nxt.name}
+    (${lvl.weeksHint} if you show up). About <b>${daysLeft} calendar days</b> at this plan’s pace.
+    You will not stay a beginner by default — the bar is visible.</div>`;
+}
+
+const EX_IMAGES_FILES = {
+  fri1: 'images/fri1.jpg',
+  fri2: 'images/fri2.jpg',
+  fri3: 'images/fri3.jpg',
+  fri4: 'images/fri4.jpg',
+  fri5: 'images/fri5.jpg',
+  mon1: 'images/mon1.jpg',
+  mon2: 'images/mon2.jpg',
+  mon3: 'images/mon3.jpg',
+  mon4: 'images/mon4.jpg',
+  mon5: 'images/mon5.jpg',
+  mon6: 'images/mon6.jpg',
+  sat1: 'images/sat1.jpg',
+  sat2: 'images/sat2.jpg',
+  sat3: 'images/sat3.jpg',
+  sat4: 'images/sat4.jpg',
+  sat5: 'images/sat5.jpg',
+  sat6: 'images/sat6.jpg',
+  thu1: 'images/thu1.jpg',
+  thu2: 'images/thu2.jpg',
+  thu3: 'images/thu3.jpg',
+  thu4: 'images/thu4.jpg',
+  thu5: 'images/thu5.jpg',
+  tue1: 'images/tue1.jpg',
+  tue2: 'images/tue2.jpg',
+  tue3: 'images/tue3.jpg',
+  tue4: 'images/tue4.jpg',
+  tue5: 'images/tue5.jpg',
+  tue6: 'images/tue6.jpg',
+  tue7: 'images/tue7.jpg',
+  wed1: 'images/wed1.jpg',
+  wed2: 'images/wed2.jpg',
+  wed3: 'images/wed3.jpg',
+  wed4: 'images/wed4.jpg',
+  wed5: 'images/wed5.jpg'
+};
+
+const LEVELS = [
+  { id:'beginner', name:'Beginner', sessions:12, minutes:240, weeksHint:'about 3–4 weeks',
+    setsAdj:-1, objective:'Learn the moves, finish every session, build the habit.' },
+  { id:'semi', name:'Semi-pro', sessions:20, minutes:500, weeksHint:'about 5–6 more weeks',
+    setsAdj:0, objective:'Add load or reps. Same exercises, cleaner form, less rest-cheating.' },
+  { id:'pro', name:'Pro', sessions:null, minutes:null, weeksHint:'this is the training life',
+    setsAdj:1, objective:'Keep showing up. Beat last month’s sessions and minutes. You are not stuck — you are maintaining the standard.' },
+];
+
+let activeLevelId = 'beginner';
+function currentLevel(){ return LEVELS.find(l=>l.id===activeLevelId) || LEVELS[0]; }
+function nextLevel(){
+  const i = LEVELS.findIndex(l=>l.id===activeLevelId);
+  return i>=0 && i<LEVELS.length-1 ? LEVELS[i+1] : null;
+}
+function progKey(){ return activeProgramId+'|'+activeLevelId; }
+async function getPath(){
+  const raw = await storeGet('path:'+activeProgramId);
+  return raw ? JSON.parse(raw) : { level:'beginner', sessions:0, seconds:0, started:dateKeyOf(new Date()), history:[] };
+}
+async function setPath(p){ await storeSet('path:'+activeProgramId, JSON.stringify(p)); }
+
+function applyLevel(ex){
+  const adj = currentLevel().setsAdj;
+  const sets = Math.max(2, (ex.sets||3)+adj);
+  return Object.assign({}, ex, { sets });
+}
+
+async function noteSessionIfComplete(){
+  const plan = WEEK()[viewedDate.getDay()];
+  if(!plan || plan.type!=='train' || !plan.exercises.length) return;
+  const ym = monthKeyOf(viewedDate);
+  const dd = String(viewedDate.getDate());
+  const monthData = await getMonthData(ym);
+  const done = (monthData[dd]||[]).length;
+  if(done < plan.exercises.length) return;
+  const path = await getPath();
+  const stamp = dateKeyOf(viewedDate)+'|'+progKey();
+  if(path.history && path.history.includes(stamp)) return;
+  path.history = path.history || [];
+  path.history.push(stamp);
+  path.sessions = (path.sessions||0)+1;
+  const mins = estimateSessionMinutes(plan);
+  path.seconds = (path.seconds||0)+mins*60;
+  const lvl = currentLevel();
+  const nxt = nextLevel();
+  if(nxt && path.sessions >= lvl.sessions && (path.seconds/60) >= lvl.minutes){
+    path.level = nxt.id;
+    path.sessions = 0;
+    path.seconds = 0;
+    path.started = dateKeyOf(new Date());
+    path.promotedOn = dateKeyOf(new Date());
+    activeLevelId = nxt.id;
+    await storeSet('level:'+activeProgramId, nxt.id);
+  }
+  await setPath(path);
+  renderPathBar();
+}
+
+function estimateSessionMinutes(plan){
+  // rough: work sets * 0.7 min + rest parsed
+  let m = 8; // warm-up
+  (plan.exercises||[]).forEach(ex=>{
+    const sets = applyLevel(ex).sets;
+    const rest = parseInt(String(ex.rest),10);
+    m += sets * 0.6 + (Number.isFinite(rest)? rest/60 : 1)*sets;
+  });
+  return Math.round(Math.min(90, Math.max(20, m)));
+}
+
+async function renderPathBar(){
+  const el = document.getElementById('pathBar');
+  if(!el) return;
+  const path = await getPath();
+  activeLevelId = path.level || 'beginner';
+  const lvl = currentLevel();
+  const nxt = nextLevel();
+  const mins = Math.round((path.seconds||0)/60);
+  const sessions = path.sessions||0;
+  if(!nxt){
+    el.innerHTML = `<div class="path-now">${lvl.name}</div>
+      <div class="path-msg">Objective: ${lvl.objective} You have <b>${sessions}</b> sessions and <b>${mins} min</b> on Pro in this program.</div>`;
+    return;
+  }
+  const sNeed = lvl.sessions;
+  const mNeed = lvl.minutes;
+  const sPct = Math.min(100, Math.round(sessions/sNeed*100));
+  const leftS = Math.max(0, sNeed-sessions);
+  const trainDays = WEEK().filter(d=>d.type==='train').length || 3;
+  const weeksLeft = Math.ceil(leftS / trainDays);
+  const daysLeft = weeksLeft * 7;
+  el.innerHTML = `
+    <div class="path-row">
+      <div><div class="path-lbl">Level</div><div class="path-now">${lvl.name}</div></div>
+      <div><div class="path-lbl">Next</div><div class="path-now">${nxt.name}</div></div>
+      <div><div class="path-lbl">Sessions</div><div class="path-now">${sessions}/${sNeed}</div></div>
+      <div><div class="path-lbl">Time</div><div class="path-now">${mins}/${mNeed} min</div></div>
+    </div>
+    <div class="progress-outer"><div class="progress-inner" style="width:${sPct}%"></div></div>
+    <div class="path-msg">Objective: <b>${lvl.objective}</b><br>
+    Finish <b>${leftS}</b> more training days to reach ${nxt.name}
+    (${lvl.weeksHint} if you show up). About <b>${daysLeft} calendar days</b> at this plan’s pace.
+    You will not stay a beginner by default — the bar is visible.</div>`;
+}
+
+const EX_IMAGES = Object.assign({}, EX_IMAGES_FILES, window.EX_IMAGES || {});
 function youtubeSearchUrl(name){
   const q = encodeURIComponent(name + ' exercise form tutorial');
   return `https://www.youtube.com/results?search_query=${q}`;
@@ -558,21 +1206,64 @@ async function setMonthData(ym,data){
 function showTab(which){
   document.getElementById('tabToday').style.display = which==='today' ? '' : 'none';
   document.getElementById('tabFuel').style.display = which==='fuel' ? '' : 'none';
+  const plans = document.getElementById('tabPlans');
+  if(plans) plans.style.display = which==='plans' ? '' : 'none';
   document.getElementById('tabProgress').style.display = which==='progress' ? '' : 'none';
   document.getElementById('tabPhone').style.display = which==='phone' ? '' : 'none';
   document.getElementById('tabTodayBtn').classList.toggle('active', which==='today');
   document.getElementById('tabFuelBtn').classList.toggle('active', which==='fuel');
+  const pb = document.getElementById('tabPlansBtn');
+  if(pb) pb.classList.toggle('active', which==='plans');
   document.getElementById('tabProgressBtn').classList.toggle('active', which==='progress');
   document.getElementById('tabPhoneBtn').classList.toggle('active', which==='phone');
   if(which==='progress') renderCalendar();
   if(which==='fuel') renderWater();
+  if(which==='plans') renderPlans();
 }
-document.addEventListener('DOMContentLoaded', ()=>{
-  const a=document.getElementById('picIphone'); if(a && window.installIphone) a.src=window.installIphone;
-  const b=document.getElementById('picAndroid'); if(b && window.installAndroid) b.src=window.installAndroid;
-  const c=document.getElementById('picIcon'); if(c && window.icon) c.src=window.icon;
-});
 
+async function loadProgram(){
+  const saved = await storeGet('programId');
+  if(saved && PROGRAMS.some(p=>p.id===saved)) activeProgramId = saved;
+  const savedL = await storeGet('level:'+activeProgramId);
+  if(savedL) activeLevelId = savedL;
+  const path = await getPath();
+  activeLevelId = path.level || activeLevelId;
+  const p = currentProgram();
+  const sub = document.getElementById('headerSub');
+  if(sub) sub.textContent = p.name + ' · ' + currentLevel().name + ' · ' + p.days;
+  renderPathBar();
+}
+async function chooseProgram(id){
+  activeProgramId = id;
+  await storeSet('programId', id);
+  renderPlans();
+  renderToday();
+  const savedL = await storeGet('level:'+activeProgramId);
+  if(savedL) activeLevelId = savedL;
+  const path = await getPath();
+  activeLevelId = path.level || activeLevelId;
+  const p = currentProgram();
+  const sub = document.getElementById('headerSub');
+  if(sub) sub.textContent = p.name + ' · ' + currentLevel().name + ' · ' + p.days;
+  renderPathBar();
+  showTab('today');
+  renderPathBar();
+}
+function renderPlans(){
+  const box = document.getElementById('planList');
+  if(!box) return;
+  box.innerHTML = PROGRAMS.map(p=>`
+    <div class="prog-card ${p.id===activeProgramId?'active-prog':''}">
+      <div class="prog-top">
+        <div>
+          <h3 class="prog-name">${p.name}</h3>
+          <p class="prog-goal">${p.goal}</p>
+          <p class="prog-meta"><b style="color:var(--text)">${p.days}</b> · ${p.level}<br>${p.best}</p>
+        </div>
+        <button class="use-btn ${p.id===activeProgramId?'on':''}" onclick="chooseProgram('${p.id}')">${p.id===activeProgramId?'Using':'Use this'}</button>
+      </div>
+    </div>`).join('');
+}
 
 const WATER_GLASSES = 8;
 const WATER_ML = 400;
@@ -609,7 +1300,7 @@ async function toggleWater(i){
 }
 
 async function renderToday(){
-  const plan = WEEK[viewedDate.getDay()];
+  const plan = WEEK()[viewedDate.getDay()];
   const isToday = sameDay(viewedDate, new Date());
   document.getElementById('dowLabel').innerHTML = plan.name + (isToday ? ' <span class="today-pill">TODAY</span>' : '');
   document.getElementById('dateLabel').textContent = viewedDate.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
@@ -630,11 +1321,12 @@ async function renderToday(){
     return;
   }
 
-  document.getElementById('dayCount').textContent = `${checked.size} / ${plan.exercises.length} done`;
+  const leveled = plan.exercises.map(applyLevel);
+  document.getElementById('dayCount').textContent = `${checked.size} / ${leveled.length} done`;
   const pct = plan.exercises.length ? Math.round((checked.size/plan.exercises.length)*100) : 0;
   document.getElementById('progressBar').style.width = pct+'%';
 
-  plan.exercises.forEach(ex=>{
+  leveled.forEach(ex=>{
     const isDone = checked.has(ex.id);
     const card = document.createElement('div');
     card.className = 'ex-card' + (isDone ? ' done' : '');
@@ -645,7 +1337,7 @@ async function renderToday(){
           <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleExercise('${ex.id}', this.checked)">
         </div>
       </div>
-      ${EX_IMAGES[ex.id] ? `<div class="ex-diagram"><img src="${EX_IMAGES[ex.id]}" alt="${ex.name} diagram" loading="lazy"></div>` : ''}
+      ${(EX_IMAGES[ex.img]||EX_IMAGES[ex.id]) ? `<div class="ex-diagram"><img src="${(EX_IMAGES[ex.img]||EX_IMAGES[ex.id])}" alt="${ex.name} diagram" loading="lazy"></div>` : ''}
       <div class="cue-text">${ex.cue}</div>
       <div class="muscle-row">${ex.muscles.map(m=>`<span class="muscle-chip">${m}</span>`).join('')}</div>
       <div class="ex-meta">
@@ -699,7 +1391,7 @@ async function renderCalendar(){
 
   for(let day=1; day<=daysInMonth; day++){
     const d = new Date(year, month, day);
-    const plan = WEEK[d.getDay()];
+    const plan = WEEK()[d.getDay()];
     const doneArr = monthData[String(day)] || [];
     const total = plan.exercises.length;
     const isPast = d < new Date(today.getFullYear(),today.getMonth(),today.getDate());
@@ -735,7 +1427,7 @@ async function computeStreak(){
   while(true){
     const ym = monthKeyOf(cursor);
     if(!cache[ym]) cache[ym] = await getMonthData(ym);
-    const plan = WEEK[cursor.getDay()];
+    const plan = WEEK()[cursor.getDay()];
     const doneArr = cache[ym][String(cursor.getDate())] || [];
     const total = plan.exercises.length;
 
