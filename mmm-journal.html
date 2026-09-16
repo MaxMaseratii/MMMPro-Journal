@@ -105,6 +105,46 @@ const fmt = function(n) {
   return sign + "$" + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
 
+const tradeSignedPnl = function(t) {
+  if (!t) return 0;
+  const raw = parseFloat(t.pnl);
+  if (!isFinite(raw)) return 0;
+  if (raw < 0) return raw;
+  if (t.result === 'loss') return -Math.abs(raw);
+  if (t.result === 'win') return Math.abs(raw);
+  return raw;
+};
+const entryDayPnl = function(entry) {
+  if (!entry || !entry.trades || !entry.trades.length) return 0;
+  return entry.trades.reduce(function(s, x) { return s + tradeSignedPnl(x); }, 0);
+};
+const moneyRound = function(n) { return Math.round((Number(n) + Number.EPSILON) * 100) / 100; };
+const pad2 = function(n) { return n < 10 ? '0' + n : '' + n; };
+const localDateKey = function(d) {
+  if (!(d instanceof Date) || isNaN(d.getTime())) return '';
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+};
+const parseSessionDateKey = function(s) {
+  if (!s) return '';
+  const m = String(s).trim().match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+  if (!m) return '';
+  let y = parseInt(m[3], 10);
+  if (y < 100) y += 2000;
+  return y + '-' + pad2(parseInt(m[1], 10)) + '-' + pad2(parseInt(m[2], 10));
+};
+const parseTradovateDateTime = function(s) {
+  if (!s) return null;
+  const str = String(s).trim();
+  const m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
+  if (!m) {
+    const d = new Date(str);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  let y = parseInt(m[3], 10);
+  if (y < 100) y += 2000;
+  return new Date(y, parseInt(m[1], 10) - 1, parseInt(m[2], 10), parseInt(m[4] || '0', 10), parseInt(m[5] || '0', 10), parseInt(m[6] || '0', 10));
+};
+
 const VIEW_MODES = [
   { key: 'dollars', label: 'Dollars' },
   { key: 'percent', label: 'Percentage' },
@@ -459,9 +499,7 @@ function getTradingDaysCount(entries, accountId) {
 
 function getCumulativeProfitBefore(entries, accountId, dateStr) {
   return entries.filter(function(e) { return e.accountId === accountId && e.tradedToday !== 'no' && e.date < dateStr; })
-    .reduce(function(sum, e) {
-      return sum + e.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
-    }, 0);
+    .reduce(function(sum, e) { return sum + entryDayPnl(e); }, 0);
 }
 
 function getConsistencyCap(account, cumulativeBefore) {
@@ -503,11 +541,11 @@ const calcBufferHistory = function(account, accEntries) {
   let peak = maxDD;
   const history = [];
   chronological.forEach(function(entry) {
-    const dayPnl = entry.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+    const dayPnl = entryDayPnl(entry);
     if (dtype === 'intraday') {
       entry.trades.forEach(function(t) {
-        const val = Math.abs(parseFloat(t.pnl) || 0);
-        pool = pool + (t.result === 'win' ? val : -val);
+        const val = tradeSignedPnl(t);
+        pool = pool + val;
         if (pool > peak) peak = pool;
       });
     } else {
@@ -531,7 +569,7 @@ const computeAccountStatus = function(account, allEntries) {
   const hist = calcBufferHistory(account, accE);
   const buf = hist.length > 0 ? hist[hist.length - 1].buffer : (parseFloat(account.maxDrawdown) || 0);
   const traded = accE.filter(function(e) { return e.tradedToday !== 'no'; });
-  const pnl = traded.reduce(function(sum, e) { return sum + e.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0); }, 0);
+  const pnl = traded.reduce(function(sum, e) { return sum + entryDayPnl(e); }, 0);
   return computeStatus(account, buf, pnl);
 };
 
@@ -1324,7 +1362,7 @@ function PropFirmRuleNote(props) {
   const guideline = getConsistencyGuideline(account);
 
   const todaysEntry = entries.find(function(e) { return e.accountId === account.id && e.date === todayStr && e.tradedToday !== 'no'; });
-  const todaysPnl = todaysEntry ? todaysEntry.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0) : null;
+  const todaysPnl = todaysEntry ? entryDayPnl(todaysEntry) : null;
   const todayWithin = cap !== null && todaysPnl !== null ? todaysPnl <= cap : null;
 
   return (
@@ -1519,7 +1557,7 @@ function computeDisciplineChecklist(accounts, entries) {
   // failure mode of blowing straight through the daily circuit breaker.
   let dailyCapOkCount = 0, dailyCapTotal = 0;
   tradedEntries.forEach(function(e) {
-    const dayPnl = e.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+    const dayPnl = entryDayPnl(e);
     const expectedRisk = e.trades.length > 0 ? e.trades[0].expectedRisk : null;
     if (dayPnl < 0 && expectedRisk) {
       dailyCapTotal++;
@@ -1565,10 +1603,12 @@ function computeOverviewData(accounts, entries) {
   // curve) only reflects accounts that are still active, so a blown account's
   // losses don't keep dragging down numbers that are supposed to represent where
   // things stand right now.
+  const accountIds = {};
+  accounts.forEach(function(a) { accountIds[a.id] = true; });
   const breachedIds = {};
   accounts.forEach(function(a) { if (computeAccountStatus(a, entries) === 'breached') breachedIds[a.id] = true; });
 
-  const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no' && !breachedIds[e.accountId]; });
+  const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no' && accountIds[e.accountId] && !breachedIds[e.accountId]; });
   const allTrades = tradedEntries.flatMap(function(e) {
     return e.trades.map(function(t) { return Object.assign({}, t, { date: e.date, accountId: e.accountId, entry: e }); });
   });
@@ -1579,13 +1619,13 @@ function computeOverviewData(accounts, entries) {
   const lossCount = allTrades.filter(function(t) { return t.result === 'loss'; }).length;
   const totalTrades = winCount + lossCount;
   const overallWinRate = totalTrades > 0 ? (winCount / totalTrades) * 100 : 0;
-  const totalPnl = allTrades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+  const totalPnl = allTrades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
 
   // Standard trading metrics: profit factor (gross profit / gross loss - above
   // 1.0 means profitable), average win/loss size, and expectancy (what you
   // should expect to make per trade on average, blending win rate and size).
-  const grossProfit = allTrades.filter(function(t) { return t.result === 'win'; }).reduce(function(s, t) { return s + Math.abs(parseFloat(t.pnl) || 0); }, 0);
-  const grossLoss = allTrades.filter(function(t) { return t.result === 'loss'; }).reduce(function(s, t) { return s + Math.abs(parseFloat(t.pnl) || 0); }, 0);
+  const grossProfit = allTrades.reduce(function(s, t) { const v = tradeSignedPnl(t); return s + (v > 0 ? v : 0); }, 0);
+  const grossLoss = allTrades.reduce(function(s, t) { const v = tradeSignedPnl(t); return s + (v < 0 ? -v : 0); }, 0);
   const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : null;
   const avgWin = winCount > 0 ? grossProfit / winCount : null;
   const avgLoss = lossCount > 0 ? grossLoss / lossCount : null;
@@ -1605,7 +1645,7 @@ function computeOverviewData(accounts, entries) {
 
   const byDate = {};
   tradedEntries.forEach(function(e) {
-    const dayPnl = e.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+    const dayPnl = entryDayPnl(e);
     byDate[e.date] = (byDate[e.date] || 0) + dayPnl;
   });
   const sortedDates = Object.keys(byDate).sort(function(a, b) { return new Date(a) - new Date(b); });
@@ -1784,7 +1824,7 @@ function ReportsCard(props) {
   accounts.forEach(function(a) { accountsById[a.id] = a; });
   const breachedIds = {};
   accounts.forEach(function(a) { if (computeAccountStatus(a, entries) === 'breached') breachedIds[a.id] = true; });
-  const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no' && !breachedIds[e.accountId]; });
+  const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no' && accountsById[e.accountId] && !breachedIds[e.accountId]; });
   const allTrades = tradedEntries.flatMap(function(e) {
     return e.trades.map(function(t) { return Object.assign({}, t, { date: e.date, accountId: e.accountId, entry: e }); });
   });
@@ -1795,8 +1835,8 @@ function ReportsCard(props) {
       const key = keyFn(t);
       if (key === null || key === undefined) return;
       if (!groups[key]) groups[key] = { wins: 0, losses: 0, pnl: 0 };
-      const v = Math.abs(parseFloat(t.pnl) || 0);
-      groups[key].pnl += t.result === 'win' ? v : -v;
+      const v = tradeSignedPnl(t);
+      groups[key].pnl += v;
       if (t.result === 'win') groups[key].wins++; else groups[key].losses++;
     });
     return groups;
@@ -2162,8 +2202,8 @@ const buildTradovateTrades = function(fills) {
         const closingQty = Math.min(Math.abs(posQty), Math.abs(signedQty));
         const direction = posQty > 0 ? 'long' : 'short';
         const pnlPoints = direction === 'long' ? (f.price - avgEntryPrice) : (avgEntryPrice - f.price);
-        const pnl = pointValue !== null ? pnlPoints * pointValue * closingQty : null;
-        roundTurns.push({ contract: contract, product: f.product, direction: direction, qty: closingQty, entryPrice: avgEntryPrice, exitPrice: f.price, openTime: entryTime, closeTime: f.time, pnl: pnl });
+        const pnl = pointValue !== null ? moneyRound(pnlPoints * pointValue * closingQty) : null;
+        roundTurns.push({ contract: contract, product: f.product, direction: direction, qty: closingQty, entryPrice: avgEntryPrice, exitPrice: f.price, openTime: entryTime, closeTime: f.time, sessionDate: f.sessionDate || '', pnl: pnl });
         const remaining = Math.abs(signedQty) - closingQty;
         posQty = posQty > 0 ? posQty - closingQty : posQty + closingQty;
         if (remaining > 0) { posQty = f.side === 'Buy' ? remaining : -remaining; avgEntryPrice = f.price; entryTime = f.time; }
@@ -2204,16 +2244,18 @@ const parseTradovateCsv = function(text, commissionPerContract) {
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
     if (statusIdx >= 0 && r[statusIdx] && r[statusIdx].trim() !== 'Filled') continue;
-    const qty = parseFloat(r[qtyIdx]);
-    const price = parseFloat(r[priceIdx]);
+    const qty = parseFloat(String(r[qtyIdx] || '').replace(/,/g, ''));
+    const price = parseFloat(String(r[priceIdx] || '').replace(/,/g, ''));
     const side = (r[bsIdx] || '').trim();
     const contract = (r[contractIdx] || '').trim();
     const product = productIdx >= 0 ? (r[productIdx] || '').trim() : contract;
     const timeStr = r[timeIdx];
-    if (!qty || !price || !side || !contract || !timeStr) continue;
-    const time = new Date(timeStr).getTime();
-    if (isNaN(time)) continue;
-    fills.push({ contract: contract, product: product, side: side, qty: qty, price: price, time: time });
+    if (!(qty > 0) || !isFinite(price) || !side || !contract) continue;
+    const dt = parseTradovateDateTime(timeStr);
+    const time = dt ? dt.getTime() : i;
+    const dateIdx = (function(){ for (var names=['Date'], k=0;k<names.length;k++){ if (idx[names[k]]!==undefined) return idx[names[k]]; } return -1; })();
+    const sessionDate = dateIdx >= 0 ? parseSessionDateKey(r[dateIdx]) : (dt ? localDateKey(dt) : '');
+    fills.push({ contract: contract, product: product, side: side, qty: qty, price: price, time: time, sessionDate: sessionDate });
   }
 
   const roundTurns = buildTradovateTrades(fills);
@@ -2223,13 +2265,15 @@ const parseTradovateCsv = function(text, commissionPerContract) {
       // every downstream number (day totals, consistency %, buffer) reflects what
       // you actually kept, not the gross price-movement figure Tradovate's Orders
       // export alone would imply.
-      const net = rt.pnl - (commission * rt.qty);
-      return Object.assign({}, rt, { pnl: net, grossPnl: rt.pnl, commissionCharged: commission * rt.qty });
+      const charged = moneyRound(commission * rt.qty);
+      const net = moneyRound(rt.pnl - charged);
+      return Object.assign({}, rt, { pnl: net, grossPnl: rt.pnl, commissionCharged: charged });
     });
   const skipped = roundTurns.length - priced.length;
   const byDate = {};
   priced.forEach(function(rt) {
-    const dateKey = new Date(rt.closeTime).toISOString().split('T')[0];
+    const dateKey = rt.sessionDate || localDateKey(new Date(rt.closeTime));
+    if (!dateKey) return;
     if (!byDate[dateKey]) byDate[dateKey] = [];
     byDate[dateKey].push(rt);
   });
@@ -2338,7 +2382,7 @@ function PerAccountBreakdown(props) {
         {accounts.map(function(acc) {
           const accEntries = entries.filter(function(e) { return e.accountId === acc.id; });
           const accTrades = accEntries.filter(function(e) { return e.tradedToday !== 'no'; }).flatMap(function(e) { return e.trades; });
-          const accPnl = accTrades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+          const accPnl = accTrades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
           const accWins = accTrades.filter(function(t) { return t.result === 'win'; }).length;
           const accWinRate = accTrades.length > 0 ? (accWins / accTrades.length) * 100 : 0;
           return (
@@ -2554,7 +2598,7 @@ function MMMJournal(props) {
   const effectiveContractLabel = contractPlan.tier === 'none' ? contractPlan.label : effectiveContracts + ' ' + effectiveTierLabel + (effectiveContracts > 1 ? 's' : '');
 
   const tradedAccountEntries = accountEntries.filter(function(e) { return e.tradedToday !== 'no'; });
-  const totalPnl = tradedAccountEntries.reduce(function(sum, e) { return sum + e.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0); }, 0);
+  const totalPnl = tradedAccountEntries.reduce(function(sum, e) { return sum + entryDayPnl(e); }, 0);
   const winTrades = tradedAccountEntries.flatMap(function(e) { return e.trades; }).filter(function(t) { return t.result === 'win'; }).length;
   const lossTrades = tradedAccountEntries.flatMap(function(e) { return e.trades; }).filter(function(t) { return t.result === 'loss'; }).length;
   const totalTrades = winTrades + lossTrades;
@@ -2731,13 +2775,29 @@ function MMMJournal(props) {
         const date = dates[i];
         const dayTrades = brokerImportPreview.byDate[date];
         const trades = dayTrades.map(function(rt) {
-          return { result: rt.pnl >= 0 ? 'win' : 'loss', pnl: Math.abs(rt.pnl).toFixed(2), direction: rt.direction, rulesChecked: [], positionSize: String(rt.qty), riskAmount: '', htfLtf: false };
+          const signed = moneyRound(rt.pnl);
+          return { result: signed >= 0 ? 'win' : 'loss', pnl: Math.abs(signed).toFixed(2), direction: rt.direction, rulesChecked: [], positionSize: String(rt.qty), riskAmount: '', htfLtf: false };
         });
-        await entriesRef.add({
-          accountId: activeAccountId, date: date, tradedToday: 'yes',
-          dailyBias: 'neutral', exercised: false, strategyId: 'default',
-          trades: trades, notes: 'Imported from Tradovate', matrixAdherent: trades.length <= 3
+        const existingSameDay = entries.filter(function(e) {
+          return e.accountId === activeAccountId && e.date === date && e.tradedToday !== 'no';
         });
+        if (existingSameDay.length > 0) {
+          const keep = existingSameDay[0];
+          await entriesRef.doc(keep.id).update({
+            trades: trades,
+            notes: keep.notes || 'Imported from Tradovate',
+            matrixAdherent: trades.length <= 3
+          });
+          for (let d = 1; d < existingSameDay.length; d++) {
+            await entriesRef.doc(existingSameDay[d].id).delete();
+          }
+        } else {
+          await entriesRef.add({
+            accountId: activeAccountId, date: date, tradedToday: 'yes',
+            dailyBias: 'neutral', exercised: false, strategyId: 'default',
+            trades: trades, notes: 'Imported from Tradovate', matrixAdherent: trades.length <= 3
+          });
+        }
       }
       setBrokerImportPreview(null);
       setShowImportBroker(false);
@@ -2807,7 +2867,7 @@ function MMMJournal(props) {
   const filledLosses = filledTrades.filter(function(t) { return t.result === 'loss'; }).length;
   const isTie = filledTrades.length === 2 && filledWins === 1 && filledLosses === 1;
 
-  const filledPnlSigned = filledTrades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+  const filledPnlSigned = filledTrades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
   const cumBeforeThisDay = activeAccount ? getCumulativeProfitBefore(entries, activeAccount.id, newEntry.date) : 0;
   const consistencyCap = activeAccount ? getConsistencyCap(activeAccount, cumBeforeThisDay) : null;
   const overConsistency = consistencyCap !== null && filledPnlSigned > consistencyCap;
@@ -3185,7 +3245,7 @@ function MMMJournal(props) {
                             </div>
                           );
                         }
-                        const dayPnl = entry.trades.reduce(function(s, t) { const v = Math.abs(parseFloat(t.pnl) || 0); return s + (t.result === 'win' ? v : -v); }, 0);
+                        const dayPnl = entryDayPnl(entry);
                         const bufferAtDate = bufferHistory.find(function(b) { return b.date === entry.date; });
                         const isExpanded = expandedEntry === entry.id;
                         const biasInfo = BIAS_OPTIONS.find(function(b) { return b.key === entry.dailyBias; }) || BIAS_OPTIONS[2];
