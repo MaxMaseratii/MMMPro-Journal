@@ -868,10 +868,17 @@ function AccountGroupNav(props) {
   const onSelect = props.onSelect;
   const getStatus = props.getStatus;
   const filter = props.filter;
+  const selectedIds = props.selectedIds;
+  const onToggleAccount = props.onToggleAccount;
+  const onToggleGroup = props.onToggleGroup;
+  const onToggleAll = props.onToggleAll;
   const [openGroup, setOpenGroup] = useState(null);
 
+  const nonBreachedTotal = accounts.filter(function(a) { return getStatus(a) !== 'breached'; }).length;
+  const allSelectedCount = accounts.filter(function(a) { return selectedIds.has(a.id); }).length;
+
   return (
-    <div className="flex flex-col sm:flex-row gap-2 flex-wrap">
+    <div className="flex flex-col sm:flex-row gap-2 flex-wrap items-center">
       {NAV_GROUPS.map(function(type) {
         const isBreachedGroup = type.key === 'breached';
         const allOfType = isBreachedGroup
@@ -880,6 +887,8 @@ function AccountGroupNav(props) {
         const group = isBreachedGroup ? allOfType : (filter === 'all' ? allOfType : allOfType.filter(function(a) { return !isArchived(a, getStatus(a)); }));
         const activeInGroup = isBreachedGroup ? allOfType.length : allOfType.filter(function(a) { return !isArchived(a, getStatus(a)); }).length;
         const isOpen = openGroup === type.key;
+        const groupSelectedCount = group.filter(function(a) { return selectedIds.has(a.id); }).length;
+        const groupAllSelected = group.length > 0 && groupSelectedCount === group.length;
         if (isBreachedGroup && allOfType.length === 0) return null;
         return (
           <div key={type.key} className="relative">
@@ -887,20 +896,34 @@ function AccountGroupNav(props) {
               className={"flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition " + (isOpen ? t_border(type.key) : 'bg-gray-900 border-gray-800 text-gray-300 hover:border-gray-700')}>
               <span className={"px-1.5 py-0.5 rounded text-xs font-semibold " + ACCOUNT_BADGE_CLS[type.key]}>{type.label}</span>
               <span className="text-xs text-gray-500">({activeInGroup}{isBreachedGroup ? '' : ' Active'})</span>
+              {groupSelectedCount > 0 && <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300">{groupSelectedCount} in view</span>}
               <Icon name={isOpen ? "ChevronUp" : "ChevronDown"} className="h-3.5 w-3.5 text-gray-500" />
             </button>
             {isOpen && (
-              <div className="absolute z-40 mt-1 w-64 bg-black border border-gray-800 rounded-xl shadow-2xl p-2 max-h-72 overflow-y-auto">
+              <div className="absolute z-40 mt-1 w-72 bg-black border border-gray-800 rounded-xl shadow-2xl p-2 max-h-80 overflow-y-auto">
                 {group.length === 0 && <p className="text-xs text-gray-600 p-2">No {type.label.toLowerCase()} accounts to show.</p>}
+                {group.length > 0 && (
+                  <button onClick={function() { onToggleGroup(group.map(function(a) { return a.id; }), !groupAllSelected); }}
+                    className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:bg-gray-900 border-b border-gray-800 mb-1">
+                    <Icon name={groupAllSelected ? "CheckSquare" : "Square"} className={"h-3.5 w-3.5 flex-shrink-0 " + (groupAllSelected ? 'text-yellow-400' : 'text-gray-600')} />
+                    <span>Select all {type.label.toLowerCase()} for Overview/Equity Curve</span>
+                  </button>
+                )}
                 {group.map(function(acc) {
                   const st = getStatus(acc);
                   const archived = isArchived(acc, st);
+                  const checked = selectedIds.has(acc.id);
                   return (
-                    <button key={acc.id} onClick={function() { onSelect(acc.id, isBreachedGroup); setOpenGroup(null); }}
-                      className={"w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-left " + (archived ? 'opacity-40 ' : '') + (activeAccountId === acc.id ? 'bg-yellow-500/15 text-yellow-300' : 'text-gray-300 hover:bg-gray-900')}>
-                      <span>{acc.name} #{acc.accountNumber}</span>
-                      {archived && <span className="text-[10px] text-red-400">Archived</span>}
-                    </button>
+                    <div key={acc.id} className={"w-full flex items-center gap-1.5 px-1 py-0.5 rounded-lg " + (activeAccountId === acc.id ? 'bg-yellow-500/10' : '')}>
+                      <button onClick={function(e) { e.stopPropagation(); onToggleAccount(acc.id); }} className="p-1.5 flex-shrink-0" title="Include in Overview/Equity Curve">
+                        <Icon name={checked ? "CheckSquare" : "Square"} className={"h-3.5 w-3.5 " + (checked ? 'text-yellow-400' : 'text-gray-600')} />
+                      </button>
+                      <button onClick={function() { onSelect(acc.id, isBreachedGroup); setOpenGroup(null); }}
+                        className={"flex-1 flex items-center justify-between px-2 py-1.5 rounded-lg text-sm text-left " + (archived ? 'opacity-40 ' : '') + (activeAccountId === acc.id ? 'text-yellow-300' : 'text-gray-300 hover:bg-gray-900')}>
+                        <span>{acc.name} #{acc.accountNumber}</span>
+                        {archived && <span className="text-[10px] text-red-400">Archived</span>}
+                      </button>
+                    </div>
                   );
                 })}
               </div>
@@ -908,6 +931,10 @@ function AccountGroupNav(props) {
           </div>
         );
       })}
+      <button onClick={onToggleAll} className={"flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-medium transition " + (allSelectedCount === nonBreachedTotal && nonBreachedTotal > 0 ? 'bg-yellow-500/15 border-yellow-500/40 text-yellow-300' : 'bg-gray-900 border-gray-800 text-gray-400 hover:border-gray-700')}>
+        <Icon name={allSelectedCount === nonBreachedTotal && nonBreachedTotal > 0 ? "CheckSquare" : "Square"} className="h-3.5 w-3.5" />
+        <span>All Accounts ({allSelectedCount} in view)</span>
+      </button>
     </div>
   );
 }
@@ -1363,31 +1390,43 @@ function PayoutLedger(props) {
 
 function EquityCurve(props) {
   const points = props.points;
+  const floorPoints = props.floorPoints;
   if (!points || points.length < 2) return <p className="text-xs text-gray-600 py-6 text-center">Not enough data yet - log at least 2 days to see your equity curve.</p>;
   const w = 900, h = 220, pad = 30;
   const values = points.map(function(p) { return p.cum; });
-  const minV = Math.min(0, Math.min.apply(null, values));
-  const maxV = Math.max(0, Math.max.apply(null, values));
+  const floorValues = (floorPoints && floorPoints.length === points.length) ? floorPoints.map(function(p) { return p.cum; }) : [];
+  const allValues = values.concat(floorValues);
+  const minV = Math.min(0, Math.min.apply(null, allValues));
+  const maxV = Math.max(0, Math.max.apply(null, allValues));
   const range = (maxV - minV) || 1;
   const stepX = (w - pad * 2) / (points.length - 1);
+  const yFor = function(v) { return h - pad - ((v - minV) / range) * (h - pad * 2); };
   const coords = points.map(function(p, i) {
     const x = pad + i * stepX;
-    const y = h - pad - ((p.cum - minV) / range) * (h - pad * 2);
-    return { x: x, y: y, cum: p.cum, date: p.date };
+    return { x: x, y: yFor(p.cum), cum: p.cum, date: p.date };
   });
   const pathD = coords.map(function(c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
-  const zeroY = h - pad - ((0 - minV) / range) * (h - pad * 2);
+  let floorPathD = null, lastFloor = null;
+  if (floorValues.length === points.length) {
+    const floorCoords = floorPoints.map(function(p, i) { return { x: pad + i * stepX, y: yFor(p.cum), cum: p.cum }; });
+    floorPathD = floorCoords.map(function(c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
+    lastFloor = floorCoords[floorCoords.length - 1];
+  }
+  const zeroY = yFor(0);
   const last = coords[coords.length - 1];
   const lineColor = last.cum >= 0 ? '#4ade80' : '#f87171';
   return (
     <div className="overflow-x-auto">
       <svg viewBox={"0 0 " + w + " " + h} className="w-full" style={{ minWidth: '500px', height: '220px' }}>
         <line x1={pad} y1={zeroY} x2={w - pad} y2={zeroY} stroke="#374151" strokeDasharray="4 4" strokeWidth="1" />
+        {floorPathD && <path d={floorPathD} fill="none" stroke="#f87171" strokeWidth="1.5" strokeDasharray="5 3" />}
         <path d={pathD} fill="none" stroke={lineColor} strokeWidth="2" />
         <circle cx={last.x} cy={last.y} r="4" fill={lineColor} />
+        {lastFloor && <circle cx={lastFloor.x} cy={lastFloor.y} r="3" fill="#f87171" />}
         <text x={pad} y={h - 8} fill="#6b7280" fontSize="10">{coords[0].date}</text>
         <text x={w - pad} y={h - 8} fill="#6b7280" fontSize="10" textAnchor="end">{last.date}</text>
         <text x={last.x} y={last.y - 10} fill={lineColor} fontSize="11" fontWeight="600" textAnchor="end">{fmt(last.cum)}</text>
+        {lastFloor && <text x={lastFloor.x} y={lastFloor.y + 14} fill="#f87171" fontSize="10" fontWeight="600" textAnchor="end">Floor {fmt(lastFloor.cum)}</text>}
       </svg>
     </div>
   );
@@ -1824,13 +1863,33 @@ function EquityCurveBlock(props) {
   const accounts = props.accounts;
   const entries = props.entries;
   const d = computeOverviewData(accounts, entries);
+  const singleAccount = accounts.length === 1 ? accounts[0] : null;
+  let equityPointsForChart = d.equityPoints;
+  let floorPoints = null;
+  if (singleAccount) {
+    const accEntries = entries.filter(function(e) { return e.accountId === singleAccount.id; });
+    const hist = calcBufferHistory(singleAccount, accEntries);
+    let cum = 0;
+    const combined = hist.map(function(h) {
+      cum += h.pnl;
+      return { date: h.date, cum: cum, floor: cum - h.buffer };
+    });
+    equityPointsForChart = combined.map(function(c) { return { date: c.date, cum: c.cum }; });
+    floorPoints = combined.map(function(c) { return { date: c.date, cum: c.floor }; });
+  }
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
       <div className="flex items-center gap-2 mb-4">
         <Icon name="LineChart" className="h-5 w-5 text-yellow-400" />
-        <h2 className="text-lg font-semibold text-white">Equity Curve - All Accounts</h2>
+        <h2 className="text-lg font-semibold text-white">Equity Curve{singleAccount ? ' - ' + singleAccount.name : accounts.length > 0 ? ' - ' + accounts.length + ' Accounts Combined' : ''}</h2>
       </div>
-      <EquityCurve points={d.equityPoints} />
+      <EquityCurve points={equityPointsForChart} floorPoints={floorPoints} />
+      {singleAccount && floorPoints && floorPoints.length >= 2 && (
+        <p className="text-xs text-gray-500 mt-2 flex items-center gap-1.5"><span className="inline-block w-3 h-0.5 bg-red-400" style={{ borderTop: '1.5px dashed #f87171' }}></span><span>Red dashed line is your trailing drawdown floor - breach happens if your balance touches or crosses it.</span></p>
+      )}
+      {!singleAccount && accounts.length > 1 && (
+        <p className="text-xs text-gray-600 mt-2">The drawdown floor line only shows for a single selected account, since each account breaches independently - select just one above to see it.</p>
+      )}
     </div>
   );
 }
@@ -2118,7 +2177,8 @@ const buildTradovateTrades = function(fills) {
 // Parses a Tradovate Reports > Orders CSV export into round-turn trades
 // grouped by the day each trade closed. Returns skipped counts so the import
 // preview can be honest about anything it couldn't price or understand.
-const parseTradovateCsv = function(text) {
+const parseTradovateCsv = function(text, commissionPerContract) {
+  const commission = parseFloat(commissionPerContract) || 0;
   const rows = parseCsvRows(text).filter(function(r) { return r.length > 1; });
   if (rows.length < 2) return { byDate: {}, skipped: 0, totalTrades: 0, error: 'No data rows found in this file.' };
   const header = rows[0].map(function(h) { return h.trim(); });
@@ -2157,7 +2217,15 @@ const parseTradovateCsv = function(text) {
   }
 
   const roundTurns = buildTradovateTrades(fills);
-  const priced = roundTurns.filter(function(rt) { return rt.pnl !== null; });
+  const priced = roundTurns.filter(function(rt) { return rt.pnl !== null; })
+    .map(function(rt) {
+      // Commission is charged round-turn, per contract - subtracting it here means
+      // every downstream number (day totals, consistency %, buffer) reflects what
+      // you actually kept, not the gross price-movement figure Tradovate's Orders
+      // export alone would imply.
+      const net = rt.pnl - (commission * rt.qty);
+      return Object.assign({}, rt, { pnl: net, grossPnl: rt.pnl, commissionCharged: commission * rt.qty });
+    });
   const skipped = roundTurns.length - priced.length;
   const byDate = {};
   priced.forEach(function(rt) {
@@ -2306,10 +2374,14 @@ function MMMJournal(props) {
   const [entries, setEntries] = useState([]);
   const [activeAccountId, setActiveAccountId] = useState(null);
   const [hasManualSelection, setHasManualSelection] = useState(false);
+  const [selectedAccountIds, setSelectedAccountIds] = useState(new Set());
+  const [hasInitializedSelection, setHasInitializedSelection] = useState(false);
   const [viewingBreached, setViewingBreached] = useState(false);
   const [showAddAccount, setShowAddAccount] = useState(false);
   const [showAddEntry, setShowAddEntry] = useState(false);
   const [showManageStrategies, setShowManageStrategies] = useState(false);
+  const [brokerCsvText, setBrokerCsvText] = useState(null);
+  const [brokerCommission, setBrokerCommission] = useState('');
   const [showInstall, setShowInstall] = useState(false);
   const [riskToleranceDraft, setRiskToleranceDraft] = useState('');
   const [riskToleranceDraftAccountId, setRiskToleranceDraftAccountId] = useState(null);
@@ -2363,6 +2435,38 @@ function MMMJournal(props) {
     setViewingBreached(false);
     setActiveAccountId(nonBreached ? nonBreached.id : null);
   }, [accounts, entries, hasManualSelection]);
+
+  // Populates the Overview/Equity Curve selection once, the first time accounts
+  // load - after that, the user's own checkbox choices are never overridden,
+  // even if they deliberately deselect everything.
+  useEffect(function() {
+    if (hasInitializedSelection) return;
+    if (accounts.length === 0) return;
+    const nonBreached = accounts.filter(function(a) { return computeAccountStatus(a, entries) !== 'breached'; });
+    setSelectedAccountIds(new Set(nonBreached.map(function(a) { return a.id; })));
+    setHasInitializedSelection(true);
+  }, [accounts, entries, hasInitializedSelection]);
+
+  const toggleAccountSelection = function(id) {
+    setSelectedAccountIds(function(prev) {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+  const toggleGroupSelection = function(ids, select) {
+    setSelectedAccountIds(function(prev) {
+      const next = new Set(prev);
+      ids.forEach(function(id) { if (select) next.add(id); else next.delete(id); });
+      return next;
+    });
+  };
+  const toggleAllAccountSelection = function() {
+    const nonBreached = accounts.filter(function(a) { return getAccountStatus(a) !== 'breached'; });
+    const allSelected = nonBreached.length > 0 && nonBreached.every(function(a) { return selectedAccountIds.has(a.id); });
+    setSelectedAccountIds(allSelected ? new Set() : new Set(nonBreached.map(function(a) { return a.id; })));
+  };
+  const accountsForOverview = accounts.filter(function(a) { return selectedAccountIds.has(a.id); });
 
   useEffect(function() {
     const ref = db.collection('presence').doc(user.uid);
@@ -2512,6 +2616,7 @@ function MMMJournal(props) {
     setHasManualSelection(true);
     setViewingBreached(false);
     setActiveAccountId(doc.id);
+    setSelectedAccountIds(function(prev) { const next = new Set(prev); next.add(doc.id); return next; });
     setNewAccount(emptyAccountForm);
     setShowAddAccount(false);
   };
@@ -2600,13 +2705,21 @@ function MMMJournal(props) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
-      const result = parseTradovateCsv(e.target.result);
+      setBrokerCsvText(e.target.result);
+      const result = parseTradovateCsv(e.target.result, brokerCommission);
       if (result.error) { setBrokerImportError(result.error); return; }
       if (result.totalTrades === 0) { setBrokerImportError('No fillable trades found in this file.'); return; }
       setBrokerImportPreview(result);
     };
     reader.onerror = function() { setBrokerImportError('Could not read that file.'); };
     reader.readAsText(file);
+  };
+
+  const handleBrokerCommissionChange = function(value) {
+    setBrokerCommission(value);
+    if (!brokerCsvText) return;
+    const result = parseTradovateCsv(brokerCsvText, value);
+    if (!result.error && result.totalTrades > 0) setBrokerImportPreview(result);
   };
 
   const handleConfirmBrokerImport = async function() {
@@ -2802,7 +2915,7 @@ function MMMJournal(props) {
           </div>
           {accounts.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
-              <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={function(id, fromBreachedTab) { setHasManualSelection(true); setViewingBreached(!!fromBreachedTab); setActiveAccountId(id); setActivePage('overview'); }} getStatus={getAccountStatus} filter={accountFilter} />
+              <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={function(id, fromBreachedTab) { setHasManualSelection(true); setViewingBreached(!!fromBreachedTab); setActiveAccountId(id); setActivePage('overview'); }} getStatus={getAccountStatus} filter={accountFilter} selectedIds={selectedAccountIds} onToggleAccount={toggleAccountSelection} onToggleGroup={toggleGroupSelection} onToggleAll={toggleAllAccountSelection} />
               {shouldShowAccountDetail && (
                 <button onClick={function() { setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts)); setEntryMethod('manual'); setShowAddEntry(true); }}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-yellow-500/10 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/15 transition">
@@ -2810,7 +2923,7 @@ function MMMJournal(props) {
                 </button>
               )}
               {shouldShowAccountDetail && (
-                <button onClick={function() { setBrokerImportError(''); setBrokerImportPreview(null); setShowImportBroker(true); }}
+                <button onClick={function() { setBrokerImportError(''); setBrokerImportPreview(null); setBrokerCsvText(null); setBrokerCommission(''); setShowImportBroker(true); }}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-gray-900 border-gray-800 text-gray-300 hover:border-blue-500/40 hover:text-blue-300 transition">
                   <Icon name="Upload" className="h-3.5 w-3.5" /><span>Import from Tradovate</span>
                 </button>
@@ -3024,13 +3137,18 @@ function MMMJournal(props) {
                 </div>
 
                 <div>
-                  <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-3"><Icon name="LayoutDashboard" className="h-5 w-5 text-yellow-400" /><span>Performance Overview</span></h2>
-                  <OverviewStats accounts={accounts} entries={entries} />
+                  <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-1"><Icon name="LayoutDashboard" className="h-5 w-5 text-yellow-400" /><span>Performance Overview</span></h2>
+                  <p className="text-xs text-gray-600 mb-3">
+                    {accountsForOverview.length === 0 ? 'No accounts selected - check the boxes next to accounts above to include them here.' :
+                      accountsForOverview.length === accounts.filter(function(a) { return getAccountStatus(a) !== 'breached'; }).length ? 'Showing all accounts, combined.' :
+                      'Showing ' + accountsForOverview.length + ' selected account' + (accountsForOverview.length !== 1 ? 's' : '') + ': ' + accountsForOverview.map(function(a) { return a.name; }).join(', ')}
+                  </p>
+                  <OverviewStats accounts={accountsForOverview} entries={entries} />
                 </div>
 
-                <TradingCalendar accounts={accounts} entries={entries} viewMode={viewMode} viewContext={{ buffer: parseFloat(activeAccount.maxDrawdown) || 0, risk: effectiveRiskPerTrade, pointValue: activePointValue }} />
+                <TradingCalendar accounts={accountsForOverview} entries={entries} viewMode={viewMode} viewContext={{ buffer: parseFloat(activeAccount.maxDrawdown) || 0, risk: effectiveRiskPerTrade, pointValue: activePointValue }} />
 
-                <EquityCurveBlock accounts={accounts} entries={entries} />
+                <EquityCurveBlock accounts={accountsForOverview} entries={entries} />
                 </React.Fragment>
                 )}
 
@@ -3148,7 +3266,7 @@ function MMMJournal(props) {
 
                 {activePage === 'reports' && (
                 <React.Fragment>
-                <ReportsCard accounts={accounts} entries={entries} />
+                <ReportsCard accounts={accountsForOverview} entries={entries} />
                 <PerAccountBreakdown accounts={accounts} entries={entries} />
                 </React.Fragment>
                 )}
@@ -3358,7 +3476,15 @@ function MMMJournal(props) {
           <div className="space-y-4">
             <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 text-xs text-blue-200 space-y-1">
               <p>In Tradovate, go to <span className="text-white font-medium">Reports {'>'} Orders</span> (not Performance), set your date range, and download the CSV.</p>
-              <p className="text-blue-300/70">This reconstructs round-turn trades from your fills, using verified CME point values for ES/MES, NQ/MNQ, RTY/M2K, YM/MYM, GC/MGC, SI/SIL, and CL/MCL. Commissions aren't included since Tradovate doesn't export them.</p>
+              <p className="text-blue-300/70">This reconstructs round-turn trades from your fills, using verified CME point values for ES/MES, NQ/MNQ, RTY/M2K, YM/MYM, GC/MGC, SI/SIL, and CL/MCL. Tradovate's export doesn't include commissions - enter your round-turn rate below and it'll be subtracted per contract, so every number here reflects what you actually kept.</p>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-400 mb-1.5">Commission per contract, round-turn ($)</label>
+              <input type="number" min="0" step="0.01" placeholder="e.g. 1.30 - check your Tradovate fee schedule" value={brokerCommission}
+                onChange={function(e) { handleBrokerCommissionChange(e.target.value); }}
+                className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
+              <p className="text-xs text-gray-600 mt-1">Leave blank or 0 if you're not sure - you can re-enter this after uploading and the preview below updates automatically.</p>
             </div>
 
             {!brokerImportPreview && (
