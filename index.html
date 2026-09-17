@@ -1429,7 +1429,8 @@ function EquityCurve(props) {
   const coords = points.map(function(p, i) { return { x: xFor(i), y: yFor(p.cum), cum: p.cum, date: p.date }; });
   const pathD = coords.map(function(c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
   const last = coords[coords.length - 1];
-  const lineColor = last.cum >= 0 ? '#4ade80' : '#f87171';
+  const compareBase = (startingAmount !== null && startingAmount !== undefined) ? startingAmount : 0;
+  const lineColor = last.cum >= compareBase ? '#4ade80' : '#f87171';
 
   let floorPathD = null, lastFloor = null;
   if (hasFloor) {
@@ -1466,10 +1467,10 @@ function EquityCurve(props) {
         </svg>
       </div>
       <div className="flex items-center gap-4 flex-wrap mt-2 text-[11px] text-gray-500">
-        {startingAmount !== null && startingAmount !== undefined && <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #60a5fa' }}></span>Starting buffer ({fmt(startingAmount)})</span>}
+        {startingAmount !== null && startingAmount !== undefined && <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #60a5fa' }}></span>Starting balance ({fmt(startingAmount)})</span>}
         {hasFloor && <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #f87171' }}></span>Trailing floor - breach if Balance touches this</span>}
         {targetAmount !== null && targetAmount !== undefined && <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #facc15' }}></span>Target ({fmt(targetAmount)})</span>}
-        <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ background: lineColor }}></span>Balance (cumulative P&amp;L)</span>
+        <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ background: lineColor }}></span>Balance (account value)</span>
       </div>
     </div>
   );
@@ -1912,29 +1913,30 @@ function EquityCurveBlock(props) {
   const entries = props.entries;
   const d = computeOverviewData(accounts, entries);
   const singleAccount = accounts.length === 1 ? accounts[0] : null;
-  // Balance is cumulative P&L, same as it's shown everywhere else in the app
-  // (Total P&L stat, etc.) - not offset by the buffer. Floor is expressed in
-  // that same cumulative-P&L basis (peak P&L so far, minus the buffer), so it
-  // shares an axis meaningfully with Balance. Starting Amount and Target are
-  // shown as the literal numbers you set on the account - not adjusted by
-  // anything - since those are the numbers you actually recognize.
+  // Real account-dollar terms, matching what MFFU's own dashboard shows -
+  // Balance = starting balance + P&L (your actual account value), Floor =
+  // Balance - buffer (verified against MFFU's own "Max Drawdown" figure:
+  // $25,363.40 balance - $1,000 buffer = $24,363.40, exactly what their
+  // dashboard displayed). Target = starting balance + profit target. All
+  // three are numbers you'd actually recognize, not an abstracted scale.
   let equityPointsForChart = d.equityPoints;
   let floorPoints = null;
   let startingAmount = null;
   let targetAmount = null;
   if (singleAccount) {
-    const maxDD = parseFloat(singleAccount.maxDrawdown) || 0;
+    const startBal = parseFloat(singleAccount.startingBalance) || 0;
     const accEntries = entries.filter(function(e) { return e.accountId === singleAccount.id; });
     const hist = calcBufferHistory(singleAccount, accEntries);
     let cum = 0;
     const combined = hist.map(function(h) {
       cum += h.pnl;
-      return { date: h.date, cum: cum, floor: cum - h.buffer };
+      const balance = startBal + cum;
+      return { date: h.date, balance: balance, floor: balance - h.buffer };
     });
-    equityPointsForChart = combined.map(function(c) { return { date: c.date, cum: c.cum }; });
+    equityPointsForChart = combined.map(function(c) { return { date: c.date, cum: c.balance }; });
     floorPoints = combined.map(function(c) { return { date: c.date, cum: c.floor }; });
-    startingAmount = maxDD;
-    targetAmount = singleAccount.profitTarget ? parseFloat(singleAccount.profitTarget) : null;
+    startingAmount = startBal;
+    targetAmount = singleAccount.profitTarget ? startBal + parseFloat(singleAccount.profitTarget) : null;
   }
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
@@ -2273,7 +2275,7 @@ const parseTradovateCsv = function(text, commissionPerContract) {
   const dateIdx = findCol(['Date']);
 
   if (bsIdx < 0 || contractIdx < 0 || qtyIdx < 0 || priceIdx < 0 || timeIdx < 0) {
-    return { byDate: {}, skipped: 0, totalTrades: 0, error: "This doesn't look like a Tradovate Orders export. In Tradovate, go to Reports > Orders (not Performance) and download the CSV." };
+    return { byDate: {}, skipped: 0, totalTrades: 0, error: "This doesn't look like a Tradovate Orders export." };
   }
 
   const fills = [];
@@ -2311,6 +2313,96 @@ const parseTradovateCsv = function(text, commissionPerContract) {
     byDate[dateKey].push(rt);
   });
   return { byDate: byDate, skipped: skipped, totalTrades: priced.length, error: null };
+};
+
+// Tradovate's Performance export has each trade already matched entry-to-exit
+// by the broker itself (buyFillId/sellFillId paired, pnl pre-computed) - no
+// FIFO/weighted-average reconstruction needed, which also means it can't
+// diverge from Tradovate's own numbers the way rebuilding from raw Orders
+// fills sometimes can (e.g. a position closed via two separate partial fills
+// is already represented as two separate rows here, correctly).
+const parsePerformanceCsv = function(text, commissionPerContract) {
+  const commission = parseFloat(commissionPerContract) || 0;
+  const rows = parseCsvRows(text).filter(function(r) { return r.length > 1; });
+  if (rows.length < 2) return { byDate: {}, skipped: 0, totalTrades: 0, error: 'No data rows found in this file.' };
+  const header = rows[0].map(function(h) { return h.trim(); });
+  const idx = {};
+  header.forEach(function(h, i) { idx[h] = i; });
+  const findCol = function(names) {
+    for (let i = 0; i < names.length; i++) { if (idx[names[i]] !== undefined) return idx[names[i]]; }
+    return -1;
+  };
+  const symbolIdx = findCol(['symbol']);
+  const qtyIdx = findCol(['qty']);
+  const pnlIdx = findCol(['pnl']);
+  const boughtIdx = findCol(['boughtTimestamp']);
+  const soldIdx = findCol(['soldTimestamp']);
+
+  if (symbolIdx < 0 || qtyIdx < 0 || pnlIdx < 0 || boughtIdx < 0 || soldIdx < 0) {
+    return { byDate: {}, skipped: 0, totalTrades: 0, error: "This doesn't look like a Tradovate Performance export - it needs symbol, qty, pnl, boughtTimestamp, and soldTimestamp columns." };
+  }
+
+  // "$27.50" or "$(20.00)" for a loss - parenthesis means negative, not a minus sign.
+  const parseMoney = function(s) {
+    if (!s) return null;
+    const negative = s.indexOf('(') >= 0;
+    const num = parseFloat(s.replace(/[\$,()]/g, ''));
+    if (isNaN(num)) return null;
+    return negative ? -Math.abs(num) : num;
+  };
+  const toLocalDate = function(timestampStr) {
+    // "09/15/2026 14:30:34" - take the date portion directly as text, same
+    // trick as the Orders.csv Date column: it's already local/session time,
+    // no UTC conversion to accidentally shift the day.
+    if (!timestampStr) return null;
+    const datePart = timestampStr.trim().split(' ')[0];
+    const parts = datePart.split('/');
+    if (parts.length !== 3) return null;
+    const m = parts[0].padStart(2, '0'), d = parts[1].padStart(2, '0'), y = parts[2];
+    return y + '-' + m + '-' + d;
+  };
+
+  const priced = [];
+  let skipped = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    const symbol = (r[symbolIdx] || '').trim();
+    const qty = parseFloat(r[qtyIdx]);
+    const grossPnl = parseMoney(r[pnlIdx]);
+    const boughtStr = r[boughtIdx], soldStr = r[soldIdx];
+    if (!symbol || !qty || grossPnl === null || !boughtStr || !soldStr) { skipped++; continue; }
+    const boughtTime = new Date(boughtStr).getTime();
+    const soldTime = new Date(soldStr).getTime();
+    if (isNaN(boughtTime) || isNaN(soldTime)) { skipped++; continue; }
+    // Bought before sold = long (bought to open, sold to close). Sold before
+    // bought = short (sold to open, bought to close). The closing action's
+    // own timestamp is what determines which calendar day the trade lands on.
+    const direction = boughtTime < soldTime ? 'long' : 'short';
+    const closeDateStr = toLocalDate(direction === 'long' ? soldStr : boughtStr);
+    if (!closeDateStr) { skipped++; continue; }
+    const net = Math.round((grossPnl - (commission * qty)) * 100) / 100;
+    priced.push({ contract: symbol, product: symbol, direction: direction, qty: qty, pnl: net, grossPnl: grossPnl, commissionCharged: Math.round(commission * qty * 100) / 100, closeDateStr: closeDateStr });
+  }
+
+  const byDate = {};
+  priced.forEach(function(rt) {
+    if (!byDate[rt.closeDateStr]) byDate[rt.closeDateStr] = [];
+    byDate[rt.closeDateStr].push(rt);
+  });
+  return { byDate: byDate, skipped: skipped, totalTrades: priced.length, error: null };
+};
+
+// Looks at the header row to decide which parser fits - the person just
+// picks whichever file Tradovate gave them, no need to know the difference.
+const parseTradeFile = function(text, commissionPerContract) {
+  const firstLine = (text.split('\n')[0] || '').toLowerCase();
+  if (firstLine.indexOf('buyfillid') >= 0 || firstLine.indexOf('sellfillid') >= 0) {
+    return parsePerformanceCsv(text, commissionPerContract);
+  }
+  if (firstLine.indexOf('b/s') >= 0 || firstLine.indexOf('filled qty') >= 0) {
+    return parseTradovateCsv(text, commissionPerContract);
+  }
+  return { byDate: {}, skipped: 0, totalTrades: 0, error: "This doesn't look like a Tradovate Orders or Performance export. In Tradovate: Reports > Performance (recommended) or Reports > Orders." };
 };
 
 function toCSV(entries) {
@@ -2859,7 +2951,7 @@ function MMMJournal(props) {
     const reader = new FileReader();
     reader.onload = function(e) {
       setBrokerCsvText(e.target.result);
-      const result = parseTradovateCsv(e.target.result, brokerCommission);
+      const result = parseTradeFile(e.target.result, brokerCommission);
       if (result.error) { setBrokerImportError(result.error); return; }
       if (result.totalTrades === 0) { setBrokerImportError('No fillable trades found in this file.'); return; }
       setBrokerImportPreview(result);
@@ -2871,7 +2963,7 @@ function MMMJournal(props) {
   const handleBrokerCommissionChange = function(value) {
     setBrokerCommission(value);
     if (!brokerCsvText) return;
-    const result = parseTradovateCsv(brokerCsvText, value);
+    const result = parseTradeFile(brokerCsvText, value);
     if (!result.error && result.totalTrades > 0) setBrokerImportPreview(result);
   };
 
@@ -3664,8 +3756,9 @@ function MMMJournal(props) {
         <Modal onClose={function() { setShowImportBroker(false); }} title="Import from Tradovate" size="lg">
           <div className="space-y-4">
             <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 text-xs text-blue-200 space-y-1">
-              <p>In Tradovate, go to <span className="text-white font-medium">Reports {'>'} Orders</span> (not Performance), set your date range, and download the CSV.</p>
-              <p className="text-blue-300/70">This reconstructs round-turn trades from your fills, using verified CME point values for ES/MES, NQ/MNQ, RTY/M2K, YM/MYM, GC/MGC, SI/SIL, and CL/MCL. Tradovate's export doesn't include commissions - enter your round-turn rate below and it'll be subtracted per contract, so every number here reflects what you actually kept.</p>
+              <p><span className="text-white font-medium">Recommended: Reports {'>'} Performance.</span> Tradovate has already matched each trade's entry to its exit for you - this is the most reliable option, since nothing needs to be reconstructed on this end.</p>
+              <p className="text-blue-300/70">Also works: <span className="text-white">Reports {'>'} Orders</span> - this app reconstructs round-turns from the raw fills instead, using verified CME point values for ES/MES, NQ/MNQ, RTY/M2K, YM/MYM, GC/MGC, SI/SIL, and CL/MCL. Either file is auto-detected - just upload whichever one you have.</p>
+              <p className="text-blue-300/70">Neither export includes commissions - enter your round-turn rate below and it'll be subtracted per contract, so every number here reflects what you actually kept.</p>
             </div>
 
             <div>
