@@ -99,50 +99,19 @@ const Icon = ({ name, className }) => {
   return <span ref={ref} className={"inline-flex items-center justify-center flex-shrink-0 " + (className || '')}></span>;
 };
 
+// Single source of truth for a trade's signed P&L - every place that sums
+// trades (calendar, Total P&L, buffer/drawdown, reports, consistency) calls
+// this instead of repeating the abs()+sign-flip logic inline, so those can
+// never silently drift apart from each other.
+const tradeSignedPnl = function(t) {
+  const v = Math.abs(parseFloat(t.pnl) || 0);
+  return t.result === 'win' ? v : -v;
+};
+
 const fmt = function(n) {
   if (n === null || n === undefined || isNaN(n)) return '$0.00';
   const sign = n < 0 ? '-' : '';
   return sign + "$" + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-};
-
-const tradeSignedPnl = function(t) {
-  if (!t) return 0;
-  const raw = parseFloat(t.pnl);
-  if (!isFinite(raw)) return 0;
-  if (raw < 0) return raw;
-  if (t.result === 'loss') return -Math.abs(raw);
-  if (t.result === 'win') return Math.abs(raw);
-  return raw;
-};
-const entryDayPnl = function(entry) {
-  if (!entry || !entry.trades || !entry.trades.length) return 0;
-  return entry.trades.reduce(function(s, x) { return s + tradeSignedPnl(x); }, 0);
-};
-const moneyRound = function(n) { return Math.round((Number(n) + Number.EPSILON) * 100) / 100; };
-const pad2 = function(n) { return n < 10 ? '0' + n : '' + n; };
-const localDateKey = function(d) {
-  if (!(d instanceof Date) || isNaN(d.getTime())) return '';
-  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
-};
-const parseSessionDateKey = function(s) {
-  if (!s) return '';
-  const m = String(s).trim().match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
-  if (!m) return '';
-  let y = parseInt(m[3], 10);
-  if (y < 100) y += 2000;
-  return y + '-' + pad2(parseInt(m[1], 10)) + '-' + pad2(parseInt(m[2], 10));
-};
-const parseTradovateDateTime = function(s) {
-  if (!s) return null;
-  const str = String(s).trim();
-  const m = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})(?:[ T](\d{1,2}):(\d{2})(?::(\d{2}))?)?/);
-  if (!m) {
-    const d = new Date(str);
-    return isNaN(d.getTime()) ? null : d;
-  }
-  let y = parseInt(m[3], 10);
-  if (y < 100) y += 2000;
-  return new Date(y, parseInt(m[1], 10) - 1, parseInt(m[2], 10), parseInt(m[4] || '0', 10), parseInt(m[5] || '0', 10), parseInt(m[6] || '0', 10));
 };
 
 const VIEW_MODES = [
@@ -499,7 +468,9 @@ function getTradingDaysCount(entries, accountId) {
 
 function getCumulativeProfitBefore(entries, accountId, dateStr) {
   return entries.filter(function(e) { return e.accountId === accountId && e.tradedToday !== 'no' && e.date < dateStr; })
-    .reduce(function(sum, e) { return sum + entryDayPnl(e); }, 0);
+    .reduce(function(sum, e) {
+      return sum + e.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
+    }, 0);
 }
 
 function getConsistencyCap(account, cumulativeBefore) {
@@ -541,11 +512,11 @@ const calcBufferHistory = function(account, accEntries) {
   let peak = maxDD;
   const history = [];
   chronological.forEach(function(entry) {
-    const dayPnl = entryDayPnl(entry);
+    const dayPnl = entry.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
     if (dtype === 'intraday') {
       entry.trades.forEach(function(t) {
-        const val = tradeSignedPnl(t);
-        pool = pool + val;
+        const val = Math.abs(parseFloat(t.pnl) || 0);
+        pool = pool + (t.result === 'win' ? val : -val);
         if (pool > peak) peak = pool;
       });
     } else {
@@ -569,7 +540,7 @@ const computeAccountStatus = function(account, allEntries) {
   const hist = calcBufferHistory(account, accE);
   const buf = hist.length > 0 ? hist[hist.length - 1].buffer : (parseFloat(account.maxDrawdown) || 0);
   const traded = accE.filter(function(e) { return e.tradedToday !== 'no'; });
-  const pnl = traded.reduce(function(sum, e) { return sum + entryDayPnl(e); }, 0);
+  const pnl = traded.reduce(function(sum, e) { return sum + e.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0); }, 0);
   return computeStatus(account, buf, pnl);
 };
 
@@ -1362,7 +1333,7 @@ function PropFirmRuleNote(props) {
   const guideline = getConsistencyGuideline(account);
 
   const todaysEntry = entries.find(function(e) { return e.accountId === account.id && e.date === todayStr && e.tradedToday !== 'no'; });
-  const todaysPnl = todaysEntry ? entryDayPnl(todaysEntry) : null;
+  const todaysPnl = todaysEntry ? todaysEntry.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0) : null;
   const todayWithin = cap !== null && todaysPnl !== null ? todaysPnl <= cap : null;
 
   return (
@@ -1557,7 +1528,7 @@ function computeDisciplineChecklist(accounts, entries) {
   // failure mode of blowing straight through the daily circuit breaker.
   let dailyCapOkCount = 0, dailyCapTotal = 0;
   tradedEntries.forEach(function(e) {
-    const dayPnl = entryDayPnl(e);
+    const dayPnl = e.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
     const expectedRisk = e.trades.length > 0 ? e.trades[0].expectedRisk : null;
     if (dayPnl < 0 && expectedRisk) {
       dailyCapTotal++;
@@ -1604,10 +1575,13 @@ function computeOverviewData(accounts, entries) {
   // losses don't keep dragging down numbers that are supposed to represent where
   // things stand right now.
   const accountIds = {};
-  accounts.forEach(function(a) { accountIds[a.id] = true; });
   const breachedIds = {};
-  accounts.forEach(function(a) { if (computeAccountStatus(a, entries) === 'breached') breachedIds[a.id] = true; });
+  accounts.forEach(function(a) { accountIds[a.id] = true; if (computeAccountStatus(a, entries) === 'breached') breachedIds[a.id] = true; });
 
+  // Must check accountIds[e.accountId], not just exclude breached ones - entries
+  // is always the full, all-accounts array at every call site, so without this
+  // an entry from an account that isn't even in the selected/passed-in accounts
+  // list would still slip through and land on the wrong calendar day or total.
   const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no' && accountIds[e.accountId] && !breachedIds[e.accountId]; });
   const allTrades = tradedEntries.flatMap(function(e) {
     return e.trades.map(function(t) { return Object.assign({}, t, { date: e.date, accountId: e.accountId, entry: e }); });
@@ -1624,8 +1598,8 @@ function computeOverviewData(accounts, entries) {
   // Standard trading metrics: profit factor (gross profit / gross loss - above
   // 1.0 means profitable), average win/loss size, and expectancy (what you
   // should expect to make per trade on average, blending win rate and size).
-  const grossProfit = allTrades.reduce(function(s, t) { const v = tradeSignedPnl(t); return s + (v > 0 ? v : 0); }, 0);
-  const grossLoss = allTrades.reduce(function(s, t) { const v = tradeSignedPnl(t); return s + (v < 0 ? -v : 0); }, 0);
+  const grossProfit = allTrades.filter(function(t) { return t.result === 'win'; }).reduce(function(s, t) { return s + Math.abs(parseFloat(t.pnl) || 0); }, 0);
+  const grossLoss = allTrades.filter(function(t) { return t.result === 'loss'; }).reduce(function(s, t) { return s + Math.abs(parseFloat(t.pnl) || 0); }, 0);
   const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : null;
   const avgWin = winCount > 0 ? grossProfit / winCount : null;
   const avgLoss = lossCount > 0 ? grossLoss / lossCount : null;
@@ -1645,7 +1619,7 @@ function computeOverviewData(accounts, entries) {
 
   const byDate = {};
   tradedEntries.forEach(function(e) {
-    const dayPnl = entryDayPnl(e);
+    const dayPnl = e.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
     byDate[e.date] = (byDate[e.date] || 0) + dayPnl;
   });
   const sortedDates = Object.keys(byDate).sort(function(a, b) { return new Date(a) - new Date(b); });
@@ -1824,7 +1798,7 @@ function ReportsCard(props) {
   accounts.forEach(function(a) { accountsById[a.id] = a; });
   const breachedIds = {};
   accounts.forEach(function(a) { if (computeAccountStatus(a, entries) === 'breached') breachedIds[a.id] = true; });
-  const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no' && accountsById[e.accountId] && !breachedIds[e.accountId]; });
+  const tradedEntries = entries.filter(function(e) { return e.tradedToday !== 'no' && !breachedIds[e.accountId]; });
   const allTrades = tradedEntries.flatMap(function(e) {
     return e.trades.map(function(t) { return Object.assign({}, t, { date: e.date, accountId: e.accountId, entry: e }); });
   });
@@ -1835,8 +1809,8 @@ function ReportsCard(props) {
       const key = keyFn(t);
       if (key === null || key === undefined) return;
       if (!groups[key]) groups[key] = { wins: 0, losses: 0, pnl: 0 };
-      const v = tradeSignedPnl(t);
-      groups[key].pnl += v;
+      const v = Math.abs(parseFloat(t.pnl) || 0);
+      groups[key].pnl += t.result === 'win' ? v : -v;
       if (t.result === 'win') groups[key].wins++; else groups[key].losses++;
     });
     return groups;
@@ -2202,8 +2176,11 @@ const buildTradovateTrades = function(fills) {
         const closingQty = Math.min(Math.abs(posQty), Math.abs(signedQty));
         const direction = posQty > 0 ? 'long' : 'short';
         const pnlPoints = direction === 'long' ? (f.price - avgEntryPrice) : (avgEntryPrice - f.price);
-        const pnl = pointValue !== null ? moneyRound(pnlPoints * pointValue * closingQty) : null;
-        roundTurns.push({ contract: contract, product: f.product, direction: direction, qty: closingQty, entryPrice: avgEntryPrice, exitPrice: f.price, openTime: entryTime, closeTime: f.time, sessionDate: f.sessionDate || '', pnl: pnl });
+        const pnl = pointValue !== null ? Math.round(pnlPoints * pointValue * closingQty * 100) / 100 : null;
+        // closeDateStr comes from Tradovate's own Date column on the closing fill,
+        // not derived from the fill timestamp - a UTC conversion of the timestamp
+        // can land on the wrong calendar day depending on session/timezone offset.
+        roundTurns.push({ contract: contract, product: f.product, direction: direction, qty: closingQty, entryPrice: avgEntryPrice, exitPrice: f.price, openTime: entryTime, closeTime: f.time, closeDateStr: f.dateStr, pnl: pnl });
         const remaining = Math.abs(signedQty) - closingQty;
         posQty = posQty > 0 ? posQty - closingQty : posQty + closingQty;
         if (remaining > 0) { posQty = f.side === 'Buy' ? remaining : -remaining; avgEntryPrice = f.price; entryTime = f.time; }
@@ -2212,6 +2189,22 @@ const buildTradovateTrades = function(fills) {
     });
   });
   return roundTurns;
+};
+
+// Tradovate's Date column looks like "9/16/26" or "09/16/2026" - always local
+// session date, unlike the fill timestamp which can shift a day under UTC
+// conversion. Normalizes to YYYY-MM-DD to match how entries are keyed everywhere
+// else in the app.
+const normalizeTradovateDate = function(dateStr) {
+  if (!dateStr) return null;
+  const parts = dateStr.trim().split('/');
+  if (parts.length !== 3) return null;
+  let [m, d, y] = parts;
+  if (y.length === 2) y = '20' + y;
+  m = m.padStart(2, '0');
+  d = d.padStart(2, '0');
+  if (y.length !== 4 || isNaN(parseInt(m, 10)) || isNaN(parseInt(d, 10))) return null;
+  return y + '-' + m + '-' + d;
 };
 
 // Parses a Tradovate Reports > Orders CSV export into round-turn trades
@@ -2235,6 +2228,7 @@ const parseTradovateCsv = function(text, commissionPerContract) {
   const qtyIdx = findCol(['Filled Qty', 'filledQty']);
   const priceIdx = findCol(['Avg Fill Price', 'avgPrice']);
   const timeIdx = findCol(['Fill Time', 'Timestamp']);
+  const dateIdx = findCol(['Date']);
 
   if (bsIdx < 0 || contractIdx < 0 || qtyIdx < 0 || priceIdx < 0 || timeIdx < 0) {
     return { byDate: {}, skipped: 0, totalTrades: 0, error: "This doesn't look like a Tradovate Orders export. In Tradovate, go to Reports > Orders (not Performance) and download the CSV." };
@@ -2244,18 +2238,17 @@ const parseTradovateCsv = function(text, commissionPerContract) {
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
     if (statusIdx >= 0 && r[statusIdx] && r[statusIdx].trim() !== 'Filled') continue;
-    const qty = parseFloat(String(r[qtyIdx] || '').replace(/,/g, ''));
-    const price = parseFloat(String(r[priceIdx] || '').replace(/,/g, ''));
+    const qty = parseFloat(r[qtyIdx]);
+    const price = parseFloat(r[priceIdx]);
     const side = (r[bsIdx] || '').trim();
     const contract = (r[contractIdx] || '').trim();
     const product = productIdx >= 0 ? (r[productIdx] || '').trim() : contract;
     const timeStr = r[timeIdx];
-    if (!(qty > 0) || !isFinite(price) || !side || !contract) continue;
-    const dt = parseTradovateDateTime(timeStr);
-    const time = dt ? dt.getTime() : i;
-    const dateIdx = (function(){ for (var names=['Date'], k=0;k<names.length;k++){ if (idx[names[k]]!==undefined) return idx[names[k]]; } return -1; })();
-    const sessionDate = dateIdx >= 0 ? parseSessionDateKey(r[dateIdx]) : (dt ? localDateKey(dt) : '');
-    fills.push({ contract: contract, product: product, side: side, qty: qty, price: price, time: time, sessionDate: sessionDate });
+    if (!qty || !price || !side || !contract || !timeStr) continue;
+    const time = new Date(timeStr).getTime();
+    if (isNaN(time)) continue;
+    const dateStr = dateIdx >= 0 ? normalizeTradovateDate(r[dateIdx]) : null;
+    fills.push({ contract: contract, product: product, side: side, qty: qty, price: price, time: time, dateStr: dateStr || new Date(time).toISOString().split('T')[0] });
   }
 
   const roundTurns = buildTradovateTrades(fills);
@@ -2265,15 +2258,13 @@ const parseTradovateCsv = function(text, commissionPerContract) {
       // every downstream number (day totals, consistency %, buffer) reflects what
       // you actually kept, not the gross price-movement figure Tradovate's Orders
       // export alone would imply.
-      const charged = moneyRound(commission * rt.qty);
-      const net = moneyRound(rt.pnl - charged);
-      return Object.assign({}, rt, { pnl: net, grossPnl: rt.pnl, commissionCharged: charged });
+      const net = Math.round((rt.pnl - (commission * rt.qty)) * 100) / 100;
+      return Object.assign({}, rt, { pnl: net, grossPnl: rt.pnl, commissionCharged: Math.round(commission * rt.qty * 100) / 100 });
     });
   const skipped = roundTurns.length - priced.length;
   const byDate = {};
   priced.forEach(function(rt) {
-    const dateKey = rt.sessionDate || localDateKey(new Date(rt.closeTime));
-    if (!dateKey) return;
+    const dateKey = rt.closeDateStr;
     if (!byDate[dateKey]) byDate[dateKey] = [];
     byDate[dateKey].push(rt);
   });
@@ -2318,6 +2309,16 @@ function parseCSV(text) {
 
 async function importCSV(text, accountId, entriesRef) {
   const rows = parseCSV(text);
+  // A Tradovate Orders export has completely different columns (B/S, Filled Qty,
+  // Avg Fill Price...) - without this check, none of those match our expected
+  // "date"/"direction"/"result" fields, so every row silently collapses into one
+  // broken entry with an undefined date instead of failing loudly.
+  if (rows.length > 0 && rows[0].date === undefined) {
+    const looksLikeTradovate = rows[0]['B/S'] !== undefined || rows[0]['Filled Qty'] !== undefined || rows[0]['Avg Fill Price'] !== undefined;
+    throw new Error(looksLikeTradovate
+      ? "This looks like a Tradovate Orders export, not a journal CSV. Use the \"Import from Tradovate\" button in Trade History instead."
+      : "This file doesn't have the columns this importer expects (needs a \"date\" column at minimum). Use the CSV exported from this app's own \"Export CSV\" button as a template.");
+  }
   const byDate = {};
   rows.forEach(function(r) {
     if (!byDate[r.date]) byDate[r.date] = { date: r.date, tradedToday: r.tradedToday || 'yes', noTradeReason: r.noTradeReason || '', dailyBias: r.dailyBias || 'neutral', exercised: r.exercised === 'yes', trades: [], notes: r.notes || '' };
@@ -2358,11 +2359,16 @@ function CsvImportFields(props) {
         const file = e.target.files[0];
         if (!file) return;
         setStatus('Importing...');
-        const text = await file.text();
-        const count = await importCSV(text, account.id, entriesRef);
-        setStatus('Imported ' + count + ' day(s).');
-        e.target.value = '';
-        if (onDone) setTimeout(onDone, 900);
+        try {
+          const text = await file.text();
+          const count = await importCSV(text, account.id, entriesRef);
+          setStatus('Imported ' + count + ' day(s).');
+          e.target.value = '';
+          if (onDone) setTimeout(onDone, 900);
+        } catch (err) {
+          setStatus(err.message || 'Import failed.');
+          e.target.value = '';
+        }
       }} />
       {status && <p className="text-xs text-gray-400">{status}</p>}
     </div>
@@ -2598,7 +2604,7 @@ function MMMJournal(props) {
   const effectiveContractLabel = contractPlan.tier === 'none' ? contractPlan.label : effectiveContracts + ' ' + effectiveTierLabel + (effectiveContracts > 1 ? 's' : '');
 
   const tradedAccountEntries = accountEntries.filter(function(e) { return e.tradedToday !== 'no'; });
-  const totalPnl = tradedAccountEntries.reduce(function(sum, e) { return sum + entryDayPnl(e); }, 0);
+  const totalPnl = tradedAccountEntries.reduce(function(sum, e) { return sum + e.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0); }, 0);
   const winTrades = tradedAccountEntries.flatMap(function(e) { return e.trades; }).filter(function(t) { return t.result === 'win'; }).length;
   const lossTrades = tradedAccountEntries.flatMap(function(e) { return e.trades; }).filter(function(t) { return t.result === 'loss'; }).length;
   const totalTrades = winTrades + lossTrades;
@@ -2775,29 +2781,21 @@ function MMMJournal(props) {
         const date = dates[i];
         const dayTrades = brokerImportPreview.byDate[date];
         const trades = dayTrades.map(function(rt) {
-          const signed = moneyRound(rt.pnl);
-          return { result: signed >= 0 ? 'win' : 'loss', pnl: Math.abs(signed).toFixed(2), direction: rt.direction, rulesChecked: [], positionSize: String(rt.qty), riskAmount: '', htfLtf: false };
+          return { result: rt.pnl >= 0 ? 'win' : 'loss', pnl: Math.abs(rt.pnl).toFixed(2), direction: rt.direction, rulesChecked: [], positionSize: String(rt.qty), riskAmount: '', htfLtf: false };
         });
-        const existingSameDay = entries.filter(function(e) {
-          return e.accountId === activeAccountId && e.date === date && e.tradedToday !== 'no';
-        });
-        if (existingSameDay.length > 0) {
-          const keep = existingSameDay[0];
-          await entriesRef.doc(keep.id).update({
-            trades: trades,
-            notes: keep.notes || 'Imported from Tradovate',
-            matrixAdherent: trades.length <= 3
-          });
-          for (let d = 1; d < existingSameDay.length; d++) {
-            await entriesRef.doc(existingSameDay[d].id).delete();
-          }
-        } else {
-          await entriesRef.add({
-            accountId: activeAccountId, date: date, tradedToday: 'yes',
-            dailyBias: 'neutral', exercised: false, strategyId: 'default',
-            trades: trades, notes: 'Imported from Tradovate', matrixAdherent: trades.length <= 3
-          });
+        // Re-importing the same account+date must overwrite, not stack a second
+        // entry alongside the first - without this, importing the same file (or
+        // an overlapping date range) twice doubles or triples that day's total.
+        // This also cleans up any duplicates a prior import already created.
+        const existing = entries.filter(function(e) { return e.accountId === activeAccountId && e.date === date; });
+        for (let j = 0; j < existing.length; j++) {
+          await entriesRef.doc(existing[j].id).delete();
         }
+        await entriesRef.add({
+          accountId: activeAccountId, date: date, tradedToday: 'yes',
+          dailyBias: 'neutral', exercised: false, strategyId: 'default',
+          trades: trades, notes: 'Imported from Tradovate', matrixAdherent: trades.length <= 3
+        });
       }
       setBrokerImportPreview(null);
       setShowImportBroker(false);
@@ -3245,7 +3243,7 @@ function MMMJournal(props) {
                             </div>
                           );
                         }
-                        const dayPnl = entryDayPnl(entry);
+                        const dayPnl = entry.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
                         const bufferAtDate = bufferHistory.find(function(b) { return b.date === entry.date; });
                         const isExpanded = expandedEntry === entry.id;
                         const biasInfo = BIAS_OPTIONS.find(function(b) { return b.key === entry.dailyBias; }) || BIAS_OPTIONS[2];
@@ -3564,15 +3562,16 @@ function MMMJournal(props) {
                 <div className="bg-black/30 rounded-lg p-3 text-sm">
                   <p className="text-white font-medium mb-1">{brokerImportPreview.totalTrades} trade{brokerImportPreview.totalTrades !== 1 ? 's' : ''} found across {Object.keys(brokerImportPreview.byDate).length} day{Object.keys(brokerImportPreview.byDate).length !== 1 ? 's' : ''}</p>
                   {brokerImportPreview.skipped > 0 && <p className="text-xs text-yellow-400">{brokerImportPreview.skipped} trade{brokerImportPreview.skipped !== 1 ? 's' : ''} skipped - unrecognized contract, couldn't price.</p>}
-                  <p className="text-xs text-gray-500 mt-1">Will be added to <span className="text-white">{activeAccount.name}</span> as {Object.keys(brokerImportPreview.byDate).length} new daily log entries with bias set to Neutral (edit any day afterward if needed).</p>
+                  <p className="text-xs text-gray-500 mt-1">Added as new daily log entries with bias set to Neutral (edit any day afterward if needed). A day that already has entries for <span className="text-white">{activeAccount.name}</span> gets fully replaced, not duplicated.</p>
                 </div>
                 <div className="max-h-48 overflow-y-auto space-y-1.5">
                   {Object.keys(brokerImportPreview.byDate).sort().map(function(date) {
                     const dayTrades = brokerImportPreview.byDate[date];
                     const dayPnl = dayTrades.reduce(function(s, t) { return s + t.pnl; }, 0);
+                    const willOverwrite = accountEntries.some(function(e) { return e.date === date; });
                     return (
                       <div key={date} className="flex items-center justify-between text-xs bg-black/30 rounded-lg px-3 py-2">
-                        <span className="text-gray-300">{date}</span>
+                        <span className="text-gray-300">{date}{willOverwrite && <span className="text-yellow-400 ml-1.5">(overwrites existing)</span>}</span>
                         <span className="text-gray-500">{dayTrades.length} trade{dayTrades.length !== 1 ? 's' : ''}</span>
                         <span className={"num font-semibold " + (dayPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(dayPnl)}</span>
                       </div>
