@@ -1404,76 +1404,73 @@ function EquityCurve(props) {
   const targetAmount = props.targetAmount;
   if (!points || points.length < 2) return <p className="text-xs text-gray-600 py-6 text-center">Not enough data yet - log at least 2 days to see your equity curve.</p>;
 
-  const hasLeftSeries = floorPoints && floorPoints.length === points.length && startingAmount !== null && startingAmount !== undefined;
-  const w = 900, h = 260, padL = 58, padR = 58, padTop = 20, padBottom = 34;
+  const hasFloor = floorPoints && floorPoints.length === points.length;
+  const w = 900, h = 260, padL = 60, padR = 30, padTop = 24, padBottom = 34;
   const plotW = w - padL - padR;
   const plotTop = padTop, plotBottom = h - padBottom;
-
   const stepX = points.length > 1 ? plotW / (points.length - 1) : 0;
   const xFor = function(i) { return padL + i * stepX; };
 
-  // RIGHT axis: Actual (buffer + P&L), its own scale so its real movement is
-  // readable even though it shares a unit basis with the left-axis lines.
-  const actualValues = points.map(function(p) { return p.cum; });
-  let rMin = Math.min.apply(null, actualValues), rMax = Math.max.apply(null, actualValues);
-  const rPad = ((rMax - rMin) || Math.abs(rMax) || 1) * 0.15;
-  rMin -= rPad; rMax += rPad;
-  const yForRight = function(v) { return plotTop + (plotBottom - plotTop) * (1 - (v - rMin) / ((rMax - rMin) || 1)); };
-  const actualCoords = points.map(function(p, i) { return { x: xFor(i), y: yForRight(p.cum), cum: p.cum, date: p.date }; });
-  const actualPathD = actualCoords.map(function(c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
-  const lastActual = actualCoords[actualCoords.length - 1];
-  const lineColor = lastActual.cum >= startingAmount ? '#4ade80' : '#f87171';
+  // Everything - balance, floor, starting amount, target - is the exact same
+  // kind of number (dollars of P&L from where you started), so they all share
+  // one axis. Putting any of them on a separate scale makes their positions
+  // relative to each other meaningless on screen, even if the math underneath
+  // is technically correct - which is exactly what made the last version
+  // confusing: Start and Actual could visually cross with no real relationship.
+  let allValues = points.map(function(p) { return p.cum; });
+  if (hasFloor) allValues = allValues.concat(floorPoints.map(function(p) { return p.cum; }));
+  if (startingAmount !== null && startingAmount !== undefined) allValues.push(startingAmount);
+  if (targetAmount !== null && targetAmount !== undefined) allValues.push(targetAmount);
+  let vMin = Math.min.apply(null, allValues), vMax = Math.max.apply(null, allValues);
+  const vPad = ((vMax - vMin) || Math.abs(vMax) || 1) * 0.12;
+  vMin -= vPad; vMax += vPad;
+  const yFor = function(v) { return plotTop + (plotBottom - plotTop) * (1 - (v - vMin) / ((vMax - vMin) || 1)); };
 
-  let floorPathD = null, lastFloor = null, startY = null, targetY = null;
-  if (hasLeftSeries) {
-    // LEFT axis: Starting amount, trailing floor, and profit target - all in
-    // the same buffer-relative scale, so seeing the floor approach or cross
-    // the starting line is meaningful at a glance.
-    const leftValues = floorPoints.map(function(p) { return p.cum; }).concat([startingAmount]).concat(targetAmount !== null && targetAmount !== undefined ? [targetAmount] : []);
-    let lMin = Math.min.apply(null, leftValues), lMax = Math.max.apply(null, leftValues);
-    const lPad = ((lMax - lMin) || Math.abs(lMax) || 1) * 0.15;
-    lMin -= lPad; lMax += lPad;
-    const yForLeft = function(v) { return plotTop + (plotBottom - plotTop) * (1 - (v - lMin) / ((lMax - lMin) || 1)); };
-    const floorCoords = floorPoints.map(function(p, i) { return { x: xFor(i), y: yForLeft(p.cum) }; });
+  const coords = points.map(function(p, i) { return { x: xFor(i), y: yFor(p.cum), cum: p.cum, date: p.date }; });
+  const pathD = coords.map(function(c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
+  const last = coords[coords.length - 1];
+  const lineColor = last.cum >= 0 ? '#4ade80' : '#f87171';
+
+  let floorPathD = null, lastFloor = null;
+  if (hasFloor) {
+    const floorCoords = floorPoints.map(function(p, i) { return { x: xFor(i), y: yFor(p.cum) }; });
     floorPathD = floorCoords.map(function(c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
     lastFloor = floorCoords[floorCoords.length - 1];
-    startY = yForLeft(startingAmount);
-    targetY = targetAmount !== null && targetAmount !== undefined ? yForLeft(targetAmount) : null;
   }
+  const startY = (startingAmount !== null && startingAmount !== undefined) ? yFor(startingAmount) : null;
+  const targetY = (targetAmount !== null && targetAmount !== undefined) ? yFor(targetAmount) : null;
 
   return (
     <div>
       <div className="overflow-x-auto">
         <svg viewBox={"0 0 " + w + " " + h} className="w-full" style={{ minWidth: '500px', height: '260px' }}>
-          {hasLeftSeries && (
+          {startY !== null && (
             <React.Fragment>
               <line x1={padL} y1={startY} x2={w - padR} y2={startY} stroke="#60a5fa" strokeDasharray="3 3" strokeWidth="1" />
               <text x={padL - 6} y={startY + 3} fill="#60a5fa" fontSize="9" textAnchor="end">Start</text>
-              {targetY !== null && (
-                <React.Fragment>
-                  <line x1={padL} y1={targetY} x2={w - padR} y2={targetY} stroke="#facc15" strokeDasharray="3 3" strokeWidth="1" />
-                  <text x={padL - 6} y={targetY + 3} fill="#facc15" fontSize="9" textAnchor="end">Target</text>
-                </React.Fragment>
-              )}
-              <path d={floorPathD} fill="none" stroke="#f87171" strokeWidth="1.5" strokeDasharray="5 3" />
-              <circle cx={lastFloor.x} cy={lastFloor.y} r="3" fill="#f87171" />
             </React.Fragment>
           )}
-          <path d={actualPathD} fill="none" stroke={lineColor} strokeWidth="2.5" />
-          <circle cx={lastActual.x} cy={lastActual.y} r="4" fill={lineColor} />
-          <text x={padL} y={h - 10} fill="#6b7280" fontSize="10">{actualCoords[0].date}</text>
-          <text x={w - padR} y={h - 10} fill="#6b7280" fontSize="10" textAnchor="end">{lastActual.date}</text>
-          <text x={w - padR + 6} y={lastActual.y + 4} fill={lineColor} fontSize="10" fontWeight="600">{fmt(lastActual.cum)}</text>
+          {targetY !== null && (
+            <React.Fragment>
+              <line x1={padL} y1={targetY} x2={w - padR} y2={targetY} stroke="#facc15" strokeDasharray="3 3" strokeWidth="1" />
+              <text x={padL - 6} y={targetY + 3} fill="#facc15" fontSize="9" textAnchor="end">Target</text>
+            </React.Fragment>
+          )}
+          {floorPathD && <path d={floorPathD} fill="none" stroke="#f87171" strokeWidth="1.5" strokeDasharray="5 3" />}
+          {lastFloor && <circle cx={lastFloor.x} cy={lastFloor.y} r="3" fill="#f87171" />}
+          <path d={pathD} fill="none" stroke={lineColor} strokeWidth="2.5" />
+          <circle cx={last.x} cy={last.y} r="4" fill={lineColor} />
+          <text x={padL} y={h - 10} fill="#6b7280" fontSize="10">{coords[0].date}</text>
+          <text x={w - padR} y={h - 10} fill="#6b7280" fontSize="10" textAnchor="end">{last.date}</text>
+          <text x={last.x} y={last.y - 10} fill={lineColor} fontSize="11" fontWeight="600" textAnchor="end">{fmt(last.cum)}</text>
         </svg>
       </div>
-      {hasLeftSeries && (
-        <div className="flex items-center gap-4 flex-wrap mt-2 text-[11px] text-gray-500">
-          <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #60a5fa' }}></span>Starting amount ({fmt(startingAmount)})</span>
-          <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #f87171' }}></span>Trailing floor (breach if Actual touches this)</span>
-          {targetAmount !== null && targetAmount !== undefined && <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #facc15' }}></span>Target ({fmt(targetAmount)})</span>}
-          <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ background: lineColor }}></span>Actual - buffer + P&L (right axis)</span>
-        </div>
-      )}
+      <div className="flex items-center gap-4 flex-wrap mt-2 text-[11px] text-gray-500">
+        {startingAmount !== null && startingAmount !== undefined && <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #60a5fa' }}></span>Starting buffer ({fmt(startingAmount)})</span>}
+        {hasFloor && <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #f87171' }}></span>Trailing floor - breach if Balance touches this</span>}
+        {targetAmount !== null && targetAmount !== undefined && <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #facc15' }}></span>Target ({fmt(targetAmount)})</span>}
+        <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ background: lineColor }}></span>Balance (cumulative P&amp;L)</span>
+      </div>
     </div>
   );
 }
@@ -1915,9 +1912,12 @@ function EquityCurveBlock(props) {
   const entries = props.entries;
   const d = computeOverviewData(accounts, entries);
   const singleAccount = accounts.length === 1 ? accounts[0] : null;
-  // "Actual" plots buffer + P&L (not starting balance + P&L) - the buffer is
-  // the capital actually at risk, so that's what "total capital" means here,
-  // matching how every other buffer/floor calculation in this app is scaled.
+  // Balance is cumulative P&L, same as it's shown everywhere else in the app
+  // (Total P&L stat, etc.) - not offset by the buffer. Floor is expressed in
+  // that same cumulative-P&L basis (peak P&L so far, minus the buffer), so it
+  // shares an axis meaningfully with Balance. Starting Amount and Target are
+  // shown as the literal numbers you set on the account - not adjusted by
+  // anything - since those are the numbers you actually recognize.
   let equityPointsForChart = d.equityPoints;
   let floorPoints = null;
   let startingAmount = null;
@@ -1929,16 +1929,12 @@ function EquityCurveBlock(props) {
     let cum = 0;
     const combined = hist.map(function(h) {
       cum += h.pnl;
-      // pool = maxDD + cum ("buffer + P&L"); floor_pool = pool - buffer, using
-      // the same buffer figure calcBufferHistory already trusts elsewhere.
-      const pool = maxDD + cum;
-      const floorPool = pool - h.buffer;
-      return { date: h.date, pool: pool, floorPool: floorPool };
+      return { date: h.date, cum: cum, floor: cum - h.buffer };
     });
-    equityPointsForChart = combined.map(function(c) { return { date: c.date, cum: c.pool }; });
-    floorPoints = combined.map(function(c) { return { date: c.date, cum: c.floorPool }; });
+    equityPointsForChart = combined.map(function(c) { return { date: c.date, cum: c.cum }; });
+    floorPoints = combined.map(function(c) { return { date: c.date, cum: c.floor }; });
     startingAmount = maxDD;
-    targetAmount = singleAccount.profitTarget ? maxDD + parseFloat(singleAccount.profitTarget) : null;
+    targetAmount = singleAccount.profitTarget ? parseFloat(singleAccount.profitTarget) : null;
   }
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
@@ -2891,12 +2887,14 @@ function MMMJournal(props) {
           return { result: rt.pnl >= 0 ? 'win' : 'loss', pnl: Math.abs(rt.pnl).toFixed(2), direction: rt.direction, rulesChecked: [], positionSize: String(rt.qty), riskAmount: '', htfLtf: false };
         });
         // Re-importing the same account+date must overwrite, not stack a second
-        // entry alongside the first - without this, importing the same file (or
-        // an overlapping date range) twice doubles or triples that day's total.
-        // This also cleans up any duplicates a prior import already created.
-        const existing = entries.filter(function(e) { return e.accountId === activeAccountId && e.date === date; });
-        for (let j = 0; j < existing.length; j++) {
-          await entriesRef.doc(existing[j].id).delete();
+        // entry alongside the first. Querying Firestore directly here (not the
+        // local `entries` state) matters: that state comes from an async
+        // listener that can lag behind what's actually saved, especially right
+        // after a previous import - checking the local copy could miss
+        // entries that genuinely exist and let a duplicate through anyway.
+        const existingSnap = await entriesRef.where('accountId', '==', activeAccountId).where('date', '==', date).get();
+        for (let j = 0; j < existingSnap.docs.length; j++) {
+          await entriesRef.doc(existingSnap.docs[j].id).delete();
         }
         await entriesRef.add({
           accountId: activeAccountId, date: date, tradedToday: 'yes',
