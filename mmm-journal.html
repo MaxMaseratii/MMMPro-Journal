@@ -1400,43 +1400,80 @@ function PayoutLedger(props) {
 function EquityCurve(props) {
   const points = props.points;
   const floorPoints = props.floorPoints;
+  const startingAmount = props.startingAmount;
+  const targetAmount = props.targetAmount;
   if (!points || points.length < 2) return <p className="text-xs text-gray-600 py-6 text-center">Not enough data yet - log at least 2 days to see your equity curve.</p>;
-  const w = 900, h = 220, pad = 30;
-  const values = points.map(function(p) { return p.cum; });
-  const floorValues = (floorPoints && floorPoints.length === points.length) ? floorPoints.map(function(p) { return p.cum; }) : [];
-  const allValues = values.concat(floorValues);
-  const minV = Math.min(0, Math.min.apply(null, allValues));
-  const maxV = Math.max(0, Math.max.apply(null, allValues));
-  const range = (maxV - minV) || 1;
-  const stepX = (w - pad * 2) / (points.length - 1);
-  const yFor = function(v) { return h - pad - ((v - minV) / range) * (h - pad * 2); };
-  const coords = points.map(function(p, i) {
-    const x = pad + i * stepX;
-    return { x: x, y: yFor(p.cum), cum: p.cum, date: p.date };
-  });
-  const pathD = coords.map(function(c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
-  let floorPathD = null, lastFloor = null;
-  if (floorValues.length === points.length) {
-    const floorCoords = floorPoints.map(function(p, i) { return { x: pad + i * stepX, y: yFor(p.cum), cum: p.cum }; });
+
+  const hasLeftSeries = floorPoints && floorPoints.length === points.length && startingAmount !== null && startingAmount !== undefined;
+  const w = 900, h = 260, padL = 58, padR = 58, padTop = 20, padBottom = 34;
+  const plotW = w - padL - padR;
+  const plotTop = padTop, plotBottom = h - padBottom;
+
+  const stepX = points.length > 1 ? plotW / (points.length - 1) : 0;
+  const xFor = function(i) { return padL + i * stepX; };
+
+  // RIGHT axis: Actual (buffer + P&L), its own scale so its real movement is
+  // readable even though it shares a unit basis with the left-axis lines.
+  const actualValues = points.map(function(p) { return p.cum; });
+  let rMin = Math.min.apply(null, actualValues), rMax = Math.max.apply(null, actualValues);
+  const rPad = ((rMax - rMin) || Math.abs(rMax) || 1) * 0.15;
+  rMin -= rPad; rMax += rPad;
+  const yForRight = function(v) { return plotTop + (plotBottom - plotTop) * (1 - (v - rMin) / ((rMax - rMin) || 1)); };
+  const actualCoords = points.map(function(p, i) { return { x: xFor(i), y: yForRight(p.cum), cum: p.cum, date: p.date }; });
+  const actualPathD = actualCoords.map(function(c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
+  const lastActual = actualCoords[actualCoords.length - 1];
+  const lineColor = lastActual.cum >= startingAmount ? '#4ade80' : '#f87171';
+
+  let floorPathD = null, lastFloor = null, startY = null, targetY = null;
+  if (hasLeftSeries) {
+    // LEFT axis: Starting amount, trailing floor, and profit target - all in
+    // the same buffer-relative scale, so seeing the floor approach or cross
+    // the starting line is meaningful at a glance.
+    const leftValues = floorPoints.map(function(p) { return p.cum; }).concat([startingAmount]).concat(targetAmount !== null && targetAmount !== undefined ? [targetAmount] : []);
+    let lMin = Math.min.apply(null, leftValues), lMax = Math.max.apply(null, leftValues);
+    const lPad = ((lMax - lMin) || Math.abs(lMax) || 1) * 0.15;
+    lMin -= lPad; lMax += lPad;
+    const yForLeft = function(v) { return plotTop + (plotBottom - plotTop) * (1 - (v - lMin) / ((lMax - lMin) || 1)); };
+    const floorCoords = floorPoints.map(function(p, i) { return { x: xFor(i), y: yForLeft(p.cum) }; });
     floorPathD = floorCoords.map(function(c, i) { return (i === 0 ? 'M' : 'L') + c.x.toFixed(1) + ',' + c.y.toFixed(1); }).join(' ');
     lastFloor = floorCoords[floorCoords.length - 1];
+    startY = yForLeft(startingAmount);
+    targetY = targetAmount !== null && targetAmount !== undefined ? yForLeft(targetAmount) : null;
   }
-  const zeroY = yFor(0);
-  const last = coords[coords.length - 1];
-  const lineColor = last.cum >= 0 ? '#4ade80' : '#f87171';
+
   return (
-    <div className="overflow-x-auto">
-      <svg viewBox={"0 0 " + w + " " + h} className="w-full" style={{ minWidth: '500px', height: '220px' }}>
-        <line x1={pad} y1={zeroY} x2={w - pad} y2={zeroY} stroke="#374151" strokeDasharray="4 4" strokeWidth="1" />
-        {floorPathD && <path d={floorPathD} fill="none" stroke="#f87171" strokeWidth="1.5" strokeDasharray="5 3" />}
-        <path d={pathD} fill="none" stroke={lineColor} strokeWidth="2" />
-        <circle cx={last.x} cy={last.y} r="4" fill={lineColor} />
-        {lastFloor && <circle cx={lastFloor.x} cy={lastFloor.y} r="3" fill="#f87171" />}
-        <text x={pad} y={h - 8} fill="#6b7280" fontSize="10">{coords[0].date}</text>
-        <text x={w - pad} y={h - 8} fill="#6b7280" fontSize="10" textAnchor="end">{last.date}</text>
-        <text x={last.x} y={last.y - 10} fill={lineColor} fontSize="11" fontWeight="600" textAnchor="end">{fmt(last.cum)}</text>
-        {lastFloor && <text x={lastFloor.x} y={lastFloor.y + 14} fill="#f87171" fontSize="10" fontWeight="600" textAnchor="end">Floor {fmt(lastFloor.cum)}</text>}
-      </svg>
+    <div>
+      <div className="overflow-x-auto">
+        <svg viewBox={"0 0 " + w + " " + h} className="w-full" style={{ minWidth: '500px', height: '260px' }}>
+          {hasLeftSeries && (
+            <React.Fragment>
+              <line x1={padL} y1={startY} x2={w - padR} y2={startY} stroke="#60a5fa" strokeDasharray="3 3" strokeWidth="1" />
+              <text x={padL - 6} y={startY + 3} fill="#60a5fa" fontSize="9" textAnchor="end">Start</text>
+              {targetY !== null && (
+                <React.Fragment>
+                  <line x1={padL} y1={targetY} x2={w - padR} y2={targetY} stroke="#facc15" strokeDasharray="3 3" strokeWidth="1" />
+                  <text x={padL - 6} y={targetY + 3} fill="#facc15" fontSize="9" textAnchor="end">Target</text>
+                </React.Fragment>
+              )}
+              <path d={floorPathD} fill="none" stroke="#f87171" strokeWidth="1.5" strokeDasharray="5 3" />
+              <circle cx={lastFloor.x} cy={lastFloor.y} r="3" fill="#f87171" />
+            </React.Fragment>
+          )}
+          <path d={actualPathD} fill="none" stroke={lineColor} strokeWidth="2.5" />
+          <circle cx={lastActual.x} cy={lastActual.y} r="4" fill={lineColor} />
+          <text x={padL} y={h - 10} fill="#6b7280" fontSize="10">{actualCoords[0].date}</text>
+          <text x={w - padR} y={h - 10} fill="#6b7280" fontSize="10" textAnchor="end">{lastActual.date}</text>
+          <text x={w - padR + 6} y={lastActual.y + 4} fill={lineColor} fontSize="10" fontWeight="600">{fmt(lastActual.cum)}</text>
+        </svg>
+      </div>
+      {hasLeftSeries && (
+        <div className="flex items-center gap-4 flex-wrap mt-2 text-[11px] text-gray-500">
+          <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #60a5fa' }}></span>Starting amount ({fmt(startingAmount)})</span>
+          <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #f87171' }}></span>Trailing floor (breach if Actual touches this)</span>
+          {targetAmount !== null && targetAmount !== undefined && <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ borderTop: '1.5px dashed #facc15' }}></span>Target ({fmt(targetAmount)})</span>}
+          <span className="flex items-center gap-1.5"><span className="inline-block w-3 h-0.5" style={{ background: lineColor }}></span>Actual - buffer + P&L (right axis)</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -1878,18 +1915,30 @@ function EquityCurveBlock(props) {
   const entries = props.entries;
   const d = computeOverviewData(accounts, entries);
   const singleAccount = accounts.length === 1 ? accounts[0] : null;
+  // "Actual" plots buffer + P&L (not starting balance + P&L) - the buffer is
+  // the capital actually at risk, so that's what "total capital" means here,
+  // matching how every other buffer/floor calculation in this app is scaled.
   let equityPointsForChart = d.equityPoints;
   let floorPoints = null;
+  let startingAmount = null;
+  let targetAmount = null;
   if (singleAccount) {
+    const maxDD = parseFloat(singleAccount.maxDrawdown) || 0;
     const accEntries = entries.filter(function(e) { return e.accountId === singleAccount.id; });
     const hist = calcBufferHistory(singleAccount, accEntries);
     let cum = 0;
     const combined = hist.map(function(h) {
       cum += h.pnl;
-      return { date: h.date, cum: cum, floor: cum - h.buffer };
+      // pool = maxDD + cum ("buffer + P&L"); floor_pool = pool - buffer, using
+      // the same buffer figure calcBufferHistory already trusts elsewhere.
+      const pool = maxDD + cum;
+      const floorPool = pool - h.buffer;
+      return { date: h.date, pool: pool, floorPool: floorPool };
     });
-    equityPointsForChart = combined.map(function(c) { return { date: c.date, cum: c.cum }; });
-    floorPoints = combined.map(function(c) { return { date: c.date, cum: c.floor }; });
+    equityPointsForChart = combined.map(function(c) { return { date: c.date, cum: c.pool }; });
+    floorPoints = combined.map(function(c) { return { date: c.date, cum: c.floorPool }; });
+    startingAmount = maxDD;
+    targetAmount = singleAccount.profitTarget ? maxDD + parseFloat(singleAccount.profitTarget) : null;
   }
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
@@ -1897,12 +1946,9 @@ function EquityCurveBlock(props) {
         <Icon name="LineChart" className="h-5 w-5 text-yellow-400" />
         <h2 className="text-lg font-semibold text-white">Equity Curve{singleAccount ? ' - ' + singleAccount.name : accounts.length > 0 ? ' - ' + accounts.length + ' Accounts Combined' : ''}</h2>
       </div>
-      <EquityCurve points={equityPointsForChart} floorPoints={floorPoints} />
-      {singleAccount && floorPoints && floorPoints.length >= 2 && (
-        <p className="text-xs text-gray-500 mt-2 flex items-center gap-1.5"><span className="inline-block w-3 h-0.5 bg-red-400" style={{ borderTop: '1.5px dashed #f87171' }}></span><span>Red dashed line is your trailing drawdown floor - breach happens if your balance touches or crosses it.</span></p>
-      )}
+      <EquityCurve points={equityPointsForChart} floorPoints={floorPoints} startingAmount={startingAmount} targetAmount={targetAmount} />
       {!singleAccount && accounts.length > 1 && (
-        <p className="text-xs text-gray-600 mt-2">The drawdown floor line only shows for a single selected account, since each account breaches independently - select just one above to see it.</p>
+        <p className="text-xs text-gray-600 mt-2">The starting/floor/target lines only show for a single selected account, since each account's buffer and target are different numbers - select just one above to see them.</p>
       )}
     </div>
   );
@@ -2341,6 +2387,66 @@ async function importCSV(text, accountId, entriesRef) {
 // CSV import as an entry method inside the Add Entry modal (Export CSV lives
 // next to the Daily Log button in Trade History instead - it's a read action,
 // not a way of logging an entry).
+function DupeCleanupModal(props) {
+  const accountEntries = props.accountEntries;
+  const entriesRef = props.entriesRef;
+  const onClose = props.onClose;
+  const [busy, setBusy] = useState(null);
+
+  const byDate = {};
+  accountEntries.forEach(function(e) {
+    if (!byDate[e.date]) byDate[e.date] = [];
+    byDate[e.date].push(e);
+  });
+  const dupeDates = Object.keys(byDate).filter(function(d) { return byDate[d].length > 1; }).sort();
+
+  const keepThisOne = async function(date, keepId) {
+    setBusy(date);
+    const group = byDate[date];
+    for (let i = 0; i < group.length; i++) {
+      if (group[i].id !== keepId) await entriesRef.doc(group[i].id).delete();
+    }
+    setBusy(null);
+  };
+
+  return (
+    <Modal onClose={onClose} title="Clean Up Duplicate Days" size="lg">
+      <div className="space-y-4">
+        <p className="text-xs text-gray-500">Days with more than one entry - usually from re-importing the same broker file before the overwrite fix. Pick which copy to keep for each day; the others get deleted. Nothing is removed automatically.</p>
+        {dupeDates.length === 0 ? (
+          <p className="text-sm text-green-400 flex items-center gap-1.5"><Icon name="CheckCircle" className="h-4 w-4" /><span>No duplicate days found on this account.</span></p>
+        ) : (
+          <div className="space-y-4 max-h-96 overflow-y-auto">
+            {dupeDates.map(function(date) {
+              const group = byDate[date];
+              return (
+                <div key={date} className="border border-yellow-500/30 bg-yellow-500/5 rounded-lg p-3">
+                  <p className="text-sm text-white font-medium mb-2">{date} - {group.length} copies found</p>
+                  <div className="space-y-1.5">
+                    {group.map(function(entry) {
+                      const total = (entry.trades || []).reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
+                      return (
+                        <div key={entry.id} className="flex items-center justify-between bg-black/30 rounded-lg px-3 py-2 text-xs">
+                          <span className="text-gray-400">{(entry.trades || []).length} trade{(entry.trades || []).length !== 1 ? 's' : ''}</span>
+                          <span className={"num font-semibold " + (total >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(total)}</span>
+                          <button onClick={function() { keepThisOne(date, entry.id); }} disabled={busy === date}
+                            className="bg-green-500/20 hover:bg-green-500/30 text-green-300 px-3 py-1 rounded-lg font-medium disabled:opacity-40">
+                            {busy === date ? 'Working...' : 'Keep This One'}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
 function CsvImportFields(props) {
   const account = props.account;
   const entriesRef = props.entriesRef;
@@ -2438,6 +2544,7 @@ function MMMJournal(props) {
   const [confirmedTolerance, setConfirmedTolerance] = useState(undefined);
   const [riskToleranceStatus, setRiskToleranceStatus] = useState(null);
   const [showImportBroker, setShowImportBroker] = useState(false);
+  const [showDupeCleanup, setShowDupeCleanup] = useState(false);
   const [brokerImportPreview, setBrokerImportPreview] = useState(null);
   const [brokerImportError, setBrokerImportError] = useState('');
   const [brokerImportBusy, setBrokerImportBusy] = useState(false);
@@ -2986,6 +3093,18 @@ function MMMJournal(props) {
                   <Icon name="Upload" className="h-3.5 w-3.5" /><span>Import from Tradovate</span>
                 </button>
               )}
+              {shouldShowAccountDetail && (function() {
+                const seenDates = {};
+                let hasDupes = false;
+                accountEntries.forEach(function(e) { if (seenDates[e.date]) hasDupes = true; seenDates[e.date] = true; });
+                if (!hasDupes) return null;
+                return (
+                  <button onClick={function() { setShowDupeCleanup(true); }}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-red-500/10 border-red-500/40 text-red-300 hover:bg-red-500/20 transition">
+                    <Icon name="AlertTriangle" className="h-3.5 w-3.5" /><span>Duplicate Days Found - Clean Up</span>
+                  </button>
+                );
+              })()}
             </div>
           )}
           {shouldShowAccountDetail && (
@@ -3098,6 +3217,14 @@ function MMMJournal(props) {
 
                 {activePage === 'overview' && (
                 <React.Fragment>
+                {selectedAccountIds.size === 0 ? (
+                  <div className="text-center py-16 border border-dashed border-gray-700 rounded-2xl">
+                    <Icon name="Square" className="h-10 w-10 text-gray-600 mx-auto mb-3" />
+                    <p className="text-gray-400 font-medium">No accounts selected</p>
+                    <p className="text-gray-600 text-sm mt-1">Check the boxes next to accounts in the nav above to see their numbers here - the whole Overview stays at zero until something's selected.</p>
+                  </div>
+                ) : (
+                <React.Fragment>
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                   <StatCard label="Current Capital (Buffer)" value={fmt(Math.max(currentBuffer, 0))} icon="Shield" color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
                   <StatCard label="Risk Per Trade" value={fmt(effectiveRiskPerTrade)} icon="Target" color="text-blue-400" sub={toleranceIsActive ? "Tolerance (system max " + fmt(riskPerTrade) + ")" : activeCfg.mode + " (" + (activeCfg.riskPct * 100) + "%)"} />
@@ -3207,6 +3334,8 @@ function MMMJournal(props) {
                 <TradingCalendar accounts={accountsForOverview} entries={entries} viewMode={viewMode} viewContext={{ buffer: parseFloat(activeAccount.maxDrawdown) || 0, risk: effectiveRiskPerTrade, pointValue: activePointValue }} />
 
                 <EquityCurveBlock accounts={accountsForOverview} entries={entries} />
+                </React.Fragment>
+                )}
                 </React.Fragment>
                 )}
 
@@ -3528,6 +3657,10 @@ function MMMJournal(props) {
       )}
 
       {showInstall && <InstallAppModal onClose={function() { setShowInstall(false); }} />}
+
+      {showDupeCleanup && activeAccount && (
+        <DupeCleanupModal accountEntries={accountEntries} entriesRef={entriesRef} onClose={function() { setShowDupeCleanup(false); }} />
+      )}
 
       {showImportBroker && activeAccount && (
         <Modal onClose={function() { setShowImportBroker(false); }} title="Import from Tradovate" size="lg">
