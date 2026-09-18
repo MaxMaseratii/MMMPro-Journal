@@ -1823,6 +1823,90 @@ function TradingCalendar(props) {
 // A small, honest set of reports - built from data you already log, not padded
 // out to hit a number. Each one groups your trades by a dimension you already
 // track and shows win rate and P&L for each group.
+// Only trades imported from a broker file carry openTime/closeTime/prices -
+// manually-logged trades don't have that granularity, so this only shows
+// what's actually known, rather than inventing timestamps for hand-entered days.
+function ClosedTradesTable(props) {
+  const accountEntries = props.accountEntries;
+  const [open, setOpen] = useState(false);
+
+  const fmtTime = function(ms) {
+    if (!ms) return '-';
+    return new Date(ms).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
+  };
+  const fmtDuration = function(ms) {
+    if (!ms || ms < 0) return '-';
+    const totalSec = Math.round(ms / 1000);
+    const h = Math.floor(totalSec / 3600), m = Math.floor((totalSec % 3600) / 60), s = totalSec % 60;
+    let out = '';
+    if (h > 0) out += h + 'h ';
+    if (h > 0 || m > 0) out += m + 'm ';
+    out += s + 'sec';
+    return out.trim();
+  };
+
+  const rows = [];
+  accountEntries.forEach(function(e) {
+    (e.trades || []).forEach(function(t) {
+      if (!t.openTime || !t.closeTime) return;
+      rows.push(t);
+    });
+  });
+  rows.sort(function(a, b) { return b.closeTime - a.closeTime; });
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden">
+      <button onClick={function() { setOpen(!open); }} className="w-full flex items-center justify-between p-6 text-left">
+        <div className="flex items-center gap-2">
+          <Icon name="ListOrdered" className="h-5 w-5 text-yellow-400" />
+          <h2 className="text-lg font-semibold text-white">Closed Trades</h2>
+          <span className="text-xs text-gray-500">({rows.length})</span>
+        </div>
+        <Icon name={open ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500 flex-shrink-0" />
+      </button>
+      {open && (
+        <div className="px-6 pb-6 overflow-x-auto">
+          <table className="w-full text-sm whitespace-nowrap">
+            <thead>
+              <tr className="text-left text-gray-500 text-xs border-b border-gray-800">
+                <th className="pb-2 pr-4">Symbol</th>
+                <th className="pb-2 pr-4">Volume</th>
+                <th className="pb-2 pr-4">Open Time</th>
+                <th className="pb-2 pr-4">Avg Entry</th>
+                <th className="pb-2 pr-4">Bias</th>
+                <th className="pb-2 pr-4">Duration</th>
+                <th className="pb-2 pr-4">Close Time</th>
+                <th className="pb-2 pr-4">Avg Close</th>
+                <th className="pb-2 text-right">Profit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(function(t, i) {
+                const pnlVal = tradeSignedPnl(t);
+                return (
+                  <tr key={i} className="border-b border-gray-800/50 last:border-0">
+                    <td className="py-2 pr-4 text-white font-medium">{t.symbol || '-'}</td>
+                    <td className="py-2 pr-4 text-gray-300">{t.positionSize || '-'}</td>
+                    <td className="py-2 pr-4 text-gray-400">{fmtTime(t.openTime)}</td>
+                    <td className="py-2 pr-4 num text-gray-300">{t.entryPrice ? t.entryPrice.toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
+                    <td className="py-2 pr-4"><span className={"text-[10px] px-1.5 py-0.5 rounded font-semibold " + (t.direction === 'long' ? 'bg-blue-500/15 text-blue-300' : 'bg-red-500/15 text-red-300')}>{t.direction === 'long' ? 'LONG' : 'SHORT'}</span></td>
+                    <td className="py-2 pr-4 text-gray-400">{fmtDuration(t.closeTime - t.openTime)}</td>
+                    <td className="py-2 pr-4 text-gray-400">{fmtTime(t.closeTime)}</td>
+                    <td className="py-2 pr-4 num text-gray-300">{t.exitPrice ? t.exitPrice.toLocaleString(undefined, { minimumFractionDigits: 2 }) : '-'}</td>
+                    <td className={"py-2 num font-semibold text-right " + (pnlVal >= 0 ? 'text-green-400' : 'text-red-400')}>{pnlVal >= 0 ? '+' : ''}{fmt(pnlVal)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ReportsCard(props) {
   const accounts = props.accounts;
   const entries = props.entries;
@@ -2337,6 +2421,8 @@ const parsePerformanceCsv = function(text, commissionPerContract) {
   const pnlIdx = findCol(['pnl']);
   const boughtIdx = findCol(['boughtTimestamp']);
   const soldIdx = findCol(['soldTimestamp']);
+  const buyPriceIdx = findCol(['buyPrice']);
+  const sellPriceIdx = findCol(['sellPrice']);
 
   if (symbolIdx < 0 || qtyIdx < 0 || pnlIdx < 0 || boughtIdx < 0 || soldIdx < 0) {
     return { byDate: {}, skipped: 0, totalTrades: 0, error: "This doesn't look like a Tradovate Performance export - it needs symbol, qty, pnl, boughtTimestamp, and soldTimestamp columns." };
@@ -2381,7 +2467,13 @@ const parsePerformanceCsv = function(text, commissionPerContract) {
     const closeDateStr = toLocalDate(direction === 'long' ? soldStr : boughtStr);
     if (!closeDateStr) { skipped++; continue; }
     const net = Math.round((grossPnl - (commission * qty)) * 100) / 100;
-    priced.push({ contract: symbol, product: symbol, direction: direction, qty: qty, pnl: net, grossPnl: grossPnl, commissionCharged: Math.round(commission * qty * 100) / 100, closeDateStr: closeDateStr });
+    const openTime = direction === 'long' ? boughtTime : soldTime;
+    const closeTime = direction === 'long' ? soldTime : boughtTime;
+    const buyPrice = buyPriceIdx >= 0 ? parseFloat(r[buyPriceIdx]) : null;
+    const sellPrice = sellPriceIdx >= 0 ? parseFloat(r[sellPriceIdx]) : null;
+    const entryPrice = direction === 'long' ? buyPrice : sellPrice;
+    const exitPrice = direction === 'long' ? sellPrice : buyPrice;
+    priced.push({ contract: symbol, product: symbol, direction: direction, qty: qty, pnl: net, grossPnl: grossPnl, commissionCharged: Math.round(commission * qty * 100) / 100, closeDateStr: closeDateStr, openTime: openTime, closeTime: closeTime, entryPrice: entryPrice, exitPrice: exitPrice });
   }
 
   const byDate = {};
@@ -2976,7 +3068,7 @@ function MMMJournal(props) {
         const date = dates[i];
         const dayTrades = brokerImportPreview.byDate[date];
         const trades = dayTrades.map(function(rt) {
-          return { result: rt.pnl >= 0 ? 'win' : 'loss', pnl: Math.abs(rt.pnl).toFixed(2), direction: rt.direction, rulesChecked: [], positionSize: String(rt.qty), riskAmount: '', htfLtf: false };
+          return { result: rt.pnl >= 0 ? 'win' : 'loss', pnl: Math.abs(rt.pnl).toFixed(2), direction: rt.direction, rulesChecked: [], positionSize: String(rt.qty), riskAmount: '', htfLtf: false, openTime: rt.openTime || null, closeTime: rt.closeTime || null, symbol: rt.contract || null, entryPrice: (rt.entryPrice !== undefined && rt.entryPrice !== null && !isNaN(rt.entryPrice)) ? rt.entryPrice : null, exitPrice: (rt.exitPrice !== undefined && rt.exitPrice !== null && !isNaN(rt.exitPrice)) ? rt.exitPrice : null };
         });
         // Re-importing the same account+date must overwrite, not stack a second
         // entry alongside the first. Querying Firestore directly here (not the
@@ -3444,6 +3536,7 @@ function MMMJournal(props) {
                       </button>
                     </div>
                   </div>
+                  <ClosedTradesTable accountEntries={accountEntries} />
                     {accountEntries.length === 0 ? (
                       <div className="text-center py-12 border border-dashed border-gray-800 rounded-xl text-gray-500 text-sm">No entries yet.</div>
                     ) : (
