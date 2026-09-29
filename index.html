@@ -480,6 +480,64 @@ function getConsistencyCap(account, cumulativeBefore) {
   return (p * cumulativeBefore) / (1 - p);
 }
 
+// Tracks progress toward the NEXT payout. The first payout needs net profit
+// since the account went funded/live to clear the firm's "payout buffer" -
+// every payout after that only needs the smaller "subsequent" threshold,
+// measured from the date of the last payout actually logged. Also tracks the
+// firm's minimum qualifying trading days over that same window, since some
+// firms gate a payout on both money AND days at once. Returns null when this
+// account has no payout rules configured yet, or is a Challenge (no payouts).
+function getPayoutStatus(account, entries) {
+  if (!account || account.accountType === 'challenge') return null;
+  const buffer = parseFloat(account.payoutBuffer) || 0;
+  const threshold = parseFloat(account.payoutThreshold) || 0;
+  if (buffer <= 0 && threshold <= 0) return null;
+
+  const payouts = (account.payouts || []).slice().sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
+  const lastPayout = payouts.length ? payouts[payouts.length - 1] : null;
+  const windowStart = lastPayout ? lastPayout.date : null;
+  const isFirstPayout = !lastPayout;
+
+  const accEntries = entries.filter(function(e) { return e.accountId === account.id && e.tradedToday !== 'no'; });
+  const windowEntries = windowStart ? accEntries.filter(function(e) { return e.date > windowStart; }) : accEntries;
+
+  const netProfit = windowEntries.reduce(function(sum, e) {
+    return sum + e.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
+  }, 0);
+  const qualifyingDays = new Set(windowEntries.map(function(e) { return e.date; })).size;
+  const minDays = account.minQualifyingDays ? parseFloat(account.minQualifyingDays) : 0;
+
+  const targetAmount = isFirstPayout ? buffer : (threshold || buffer);
+  const amountRemaining = Math.max(0, targetAmount - netProfit);
+  const daysRemaining = Math.max(0, minDays - qualifyingDays);
+  const progressPct = targetAmount > 0 ? Math.min(100, (netProfit / targetAmount) * 100) : 0;
+  const moneyEligible = targetAmount > 0 ? netProfit >= targetAmount : true;
+  const daysEligible = minDays > 0 ? qualifyingDays >= minDays : true;
+  const eligible = moneyEligible && daysEligible;
+
+  const split = account.profitSplit ? parseFloat(account.profitSplit) : 100;
+  let estimatedPayout = netProfit > 0 ? netProfit * (split / 100) : 0;
+  const cap = account.payoutCap ? parseFloat(account.payoutCap) : null;
+  if (cap && estimatedPayout > cap) estimatedPayout = cap;
+
+  // Pace projection: average net $/trading day across this account's whole
+  // history, used to guess how many more sessions at that pace it takes to
+  // close the remaining gap - a rough ETA, not a promise.
+  const totalDays = new Set(accEntries.map(function(e) { return e.date; })).size;
+  const totalPnlAllTime = accEntries.reduce(function(sum, e) { return sum + e.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0); }, 0);
+  const avgPerDay = totalDays > 0 ? totalPnlAllTime / totalDays : 0;
+  const projectedDaysToTarget = amountRemaining > 0 && avgPerDay > 0 ? Math.ceil(amountRemaining / avgPerDay) : null;
+
+  return {
+    isFirstPayout: isFirstPayout, targetAmount: targetAmount, netProfit: netProfit,
+    amountRemaining: amountRemaining, progressPct: progressPct,
+    qualifyingDays: qualifyingDays, minDays: minDays, daysRemaining: daysRemaining,
+    moneyEligible: moneyEligible, daysEligible: daysEligible, eligible: eligible,
+    split: split, estimatedPayout: estimatedPayout, cap: cap,
+    projectedDaysToTarget: projectedDaysToTarget, lastPayoutDate: windowStart,
+  };
+}
+
 // Before you have any trading history, there is no real cap yet (math needs
 // past profit to work with). This gives a starter number instead of nothing,
 // based on your profit target, so the number on screen is always useful.
@@ -602,7 +660,8 @@ const emptyAccountForm = {
   copiedAccountNumber: '', linkedFromId: null, linkedFromLabel: '',
   strategyName: '', longRules: [''], shortRules: [''],
   accountCost: '', activationCost: '', resetCost: '',
-  consistencyPct: '', dailyLossLimit: '', dllType: 'hard', minTradingDays: ''
+  consistencyPct: '', dailyLossLimit: '', dllType: 'hard', minTradingDays: '',
+  payoutBuffer: '', payoutThreshold: '', profitSplit: '', minQualifyingDays: '', payoutCap: ''
 };
 
 const emptyEntryForm = function(defaultRisk, defaultContracts) {
@@ -1355,6 +1414,148 @@ function PropFirmRuleNote(props) {
           <span>Today's logged P&amp;L is {fmt(todaysPnl)} - {todayWithin ? 'within' : 'OVER'} the {fmt(cap)} cap.</span>
         </p>
       )}
+    </div>
+  );
+}
+
+function PayoutRulesForm(props) {
+  const account = props.account;
+  const onSave = props.onSave;
+  const onCancel = props.onCancel;
+  const [buffer, setBuffer] = useState(account.payoutBuffer ? String(account.payoutBuffer) : '');
+  const [threshold, setThreshold] = useState(account.payoutThreshold ? String(account.payoutThreshold) : '');
+  const [split, setSplit] = useState(account.profitSplit ? String(account.profitSplit) : '90');
+  const [minDays, setMinDays] = useState(account.minQualifyingDays ? String(account.minQualifyingDays) : '');
+  const [cap, setCap] = useState(account.payoutCap ? String(account.payoutCap) : '');
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="First Payout Buffer ($)">
+          <input type="number" value={buffer} onChange={function(e) { setBuffer(e.target.value); }} placeholder="e.g. 1100"
+            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
+        </Field>
+        <Field label="Each Payout After That ($)">
+          <input type="number" value={threshold} onChange={function(e) { setThreshold(e.target.value); }} placeholder="e.g. 500"
+            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
+        </Field>
+        <Field label="Your Profit Split (%)">
+          <input type="number" value={split} onChange={function(e) { setSplit(e.target.value); }} placeholder="e.g. 90"
+            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
+        </Field>
+        <Field label="Min Qualifying Days (optional)">
+          <input type="number" value={minDays} onChange={function(e) { setMinDays(e.target.value); }} placeholder="leave blank if none"
+            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
+        </Field>
+        <Field label="Payout Cap ($, optional)">
+          <input type="number" value={cap} onChange={function(e) { setCap(e.target.value); }} placeholder="leave blank if uncapped"
+            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
+        </Field>
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={function() {
+            onSave({
+              payoutBuffer: buffer ? parseFloat(buffer) : null,
+              payoutThreshold: threshold ? parseFloat(threshold) : null,
+              profitSplit: split ? parseFloat(split) : null,
+              minQualifyingDays: minDays ? parseFloat(minDays) : null,
+              payoutCap: cap ? parseFloat(cap) : null,
+            });
+          }}
+          disabled={!buffer && !threshold}
+          className="flex-1 bg-green-500/20 text-green-400 border border-green-500/40 py-2 rounded-lg text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed">
+          Save Payout Rules
+        </button>
+        {onCancel && <button onClick={onCancel} className="px-4 py-2 rounded-lg text-sm text-gray-400 border border-gray-700">Cancel</button>}
+      </div>
+    </div>
+  );
+}
+
+function PayoutTrackerCard(props) {
+  const account = props.account;
+  const entries = props.entries;
+  const onSaveRules = props.onSaveRules;
+  const [editing, setEditing] = useState(false);
+  if (!account || account.accountType === 'challenge') return null;
+
+  const hasRules = (parseFloat(account.payoutBuffer) || 0) > 0 || (parseFloat(account.payoutThreshold) || 0) > 0;
+
+  if (!hasRules || editing) {
+    return (
+      <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Icon name="Calendar" className="h-5 w-5 text-yellow-400" />
+          <h2 className="text-lg font-semibold text-white">Payout Rules</h2>
+        </div>
+        <p className="text-xs text-gray-500 mb-4">
+          {hasRules ? 'Update the payout rules for this account.' : "Set this account's payout rules once, and we'll track exactly how close you are to your next payout - and tell you the moment it's due."}
+        </p>
+        <PayoutRulesForm account={account}
+          onSave={function(rules) { onSaveRules(rules); setEditing(false); }}
+          onCancel={hasRules ? function() { setEditing(false); } : null} />
+      </div>
+    );
+  }
+
+  const status = getPayoutStatus(account, entries);
+  if (!status) return null;
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2">
+          <Icon name="Calendar" className="h-5 w-5 text-yellow-400" />
+          <h2 className="text-lg font-semibold text-white">Payout Tracker</h2>
+        </div>
+        <button onClick={function() { setEditing(true); }} className="text-xs text-gray-500 hover:text-gray-300 flex items-center gap-1">
+          <Icon name="Pencil" className="h-3.5 w-3.5" /><span>Edit Rules</span>
+        </button>
+      </div>
+
+      {status.eligible ? (
+        <div className="border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3 mb-4">
+          <Icon name="CheckCircle" className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-green-300 font-semibold text-sm">Payout Ready - Go Request It</p>
+            <p className="text-green-200/70 text-xs mt-1">
+              {status.isFirstPayout ? "Your first payout buffer is cleared." : "You've cleared this payout's threshold."} Log into your prop firm's own dashboard and submit the request there - this journal tracks it, it doesn't send it for you. Once it's paid, add it below in the Payout Ledger so the next one starts counting from today.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="border border-yellow-500/30 bg-yellow-500/10 rounded-xl p-4 flex items-start gap-3 mb-4">
+          <Icon name="Clock" className="h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-yellow-300 font-semibold text-sm">{status.isFirstPayout ? 'Building Your First Payout Buffer' : 'Building Toward Your Next Payout'}</p>
+            <p className="text-yellow-200/70 text-xs mt-1">
+              {!status.moneyEligible && (fmt(status.amountRemaining) + ' more net profit needed')}
+              {!status.moneyEligible && !status.daysEligible && ', and '}
+              {!status.daysEligible && (status.daysRemaining + ' more qualifying day' + (status.daysRemaining !== 1 ? 's' : ''))}
+              {'.'}
+              {status.projectedDaysToTarget && !status.moneyEligible ? (' At your current pace, about ' + status.projectedDaysToTarget + ' more trading day' + (status.projectedDaysToTarget !== 1 ? 's' : '') + '.') : ''}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <div className="mb-1 flex justify-between text-xs text-gray-500">
+        <span>{fmt(Math.max(0, status.netProfit))} of {fmt(status.targetAmount)} {status.isFirstPayout ? '(first payout buffer)' : '(since last payout)'}</span>
+        <span>{status.progressPct.toFixed(0)}%</span>
+      </div>
+      <div className="h-2.5 bg-gray-800 rounded-full overflow-hidden mb-4">
+        <div className={"h-full rounded-full " + (status.eligible ? 'bg-green-400' : 'bg-yellow-400')} style={{ width: Math.max(2, status.progressPct) + '%' }}></div>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <MiniStat label="Net Profit (this window)" value={fmt(status.netProfit)} color={status.netProfit >= 0 ? 'text-green-400' : 'text-red-400'} />
+        <MiniStat label="Needed" value={fmt(status.targetAmount)} color="text-yellow-400" />
+        {status.minDays > 0 && <MiniStat label="Qualifying Days" value={status.qualifyingDays + " of " + status.minDays} color={status.daysEligible ? 'text-green-400' : 'text-yellow-400'} />}
+        <MiniStat label="Your Split" value={status.split + "%"} color="text-purple-400" />
+        <MiniStat label="Est. Payout Now" value={fmt(status.estimatedPayout)} color="text-green-400" />
+        {status.cap ? <MiniStat label="Payout Cap" value={fmt(status.cap)} color="text-gray-400" /> : null}
+      </div>
     </div>
   );
 }
@@ -2852,6 +3053,7 @@ function MMMJournal(props) {
   const tradingDaysCount = activeAccount ? getTradingDaysCount(entries, activeAccount.id) : 0;
   const minTradingDaysNeeded = activeAccount && activeAccount.minTradingDays ? parseFloat(activeAccount.minTradingDays) : null;
   const daysStillNeeded = minTradingDaysNeeded ? Math.max(0, minTradingDaysNeeded - tradingDaysCount) : 0;
+  const payoutStatus = activeAccount ? getPayoutStatus(activeAccount, entries) : null;
 
   const bufferHistory = activeAccount ? calcBufferHistory(activeAccount, accountEntries) : [];
   const currentBuffer = bufferHistory.length > 0 ? bufferHistory[bufferHistory.length - 1].buffer : (activeAccount ? parseFloat(activeAccount.maxDrawdown) || 0 : 0);
@@ -2946,6 +3148,11 @@ function MMMJournal(props) {
       minTradingDays: newAccount.minTradingDays ? parseFloat(newAccount.minTradingDays) : null,
       dailyLossLimit: newAccount.dailyLossLimit ? parseFloat(newAccount.dailyLossLimit) : null,
       dllType: newAccount.dllType || 'hard',
+      payoutBuffer: newAccount.payoutBuffer ? parseFloat(newAccount.payoutBuffer) : null,
+      payoutThreshold: newAccount.payoutThreshold ? parseFloat(newAccount.payoutThreshold) : null,
+      profitSplit: newAccount.profitSplit ? parseFloat(newAccount.profitSplit) : null,
+      minQualifyingDays: newAccount.minQualifyingDays ? parseFloat(newAccount.minQualifyingDays) : null,
+      payoutCap: newAccount.payoutCap ? parseFloat(newAccount.payoutCap) : null,
       payouts: [],
       archived: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -2989,6 +3196,10 @@ function MMMJournal(props) {
     await accountsRef.doc(activeAccount.id).update({
       payouts: firebase.firestore.FieldValue.arrayUnion(payout)
     });
+  };
+
+  const handleSavePayoutRules = async function(rules) {
+    await accountsRef.doc(activeAccount.id).update(rules);
   };
 
   const handleChangeMarket = async function(newMarket) {
@@ -3379,6 +3590,16 @@ function MMMJournal(props) {
                     </div>
                   </div>
                 )}
+                {payoutStatus && payoutStatus.eligible && (
+                  <div className="border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3">
+                    <Icon name="Calendar" className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-green-300 font-semibold text-sm">Payout Due - {fmt(payoutStatus.estimatedPayout)} at your {payoutStatus.split}% split</p>
+                      <p className="text-green-200/70 text-xs mt-1">{payoutStatus.isFirstPayout ? "Your first payout buffer is cleared." : "You've cleared this payout's threshold."} Head to your prop firm's dashboard to request it, then log it on the Finances tab.</p>
+                    </div>
+                    <button onClick={function() { setActivePage('finances'); }} className="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/40 flex-shrink-0">View Payout Tracker</button>
+                  </div>
+                )}
                 {daysSinceLastLog !== null && daysSinceLastLog >= 1 && activeStatus === 'active' && (
                   <div className="border border-orange-500/30 bg-orange-500/10 rounded-xl p-3 flex items-center gap-3">
                     <Icon name="Clock" className="h-4 w-4 text-orange-400" />
@@ -3654,6 +3875,7 @@ function MMMJournal(props) {
                 {activePage === 'finances' && (
                 <React.Fragment>
                 <CostsAndPayoutsCard account={activeAccount} status={activeStatus} />
+                <PayoutTrackerCard account={activeAccount} entries={entries} onSaveRules={handleSavePayoutRules} />
                 <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} />
                 <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} divisor={ruinDivisor} accountType={activeAccount.accountType} />
                 </React.Fragment>
@@ -3773,6 +3995,37 @@ function MMMJournal(props) {
               )}
               <p className="text-xs text-gray-500">Consistency rule caps how much of your total profit any single day can represent - checked at payout time. Daily Loss Limit is separate from your Capital and resets every day.</p>
             </div>
+
+            {newAccount.accountType !== 'challenge' && (
+            <div className="border-t border-gray-800 pt-4 space-y-3">
+              <p className="text-sm text-yellow-400 font-medium flex items-center gap-1.5">
+                <Icon name="Calendar" className="h-4 w-4" /><span>Payout Rules (optional - can also be set later on the Finances tab)</span>
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="First Payout Buffer ($)">
+                  <input type="number" value={newAccount.payoutBuffer}
+                    onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { payoutBuffer: e.target.value })); }}
+                    placeholder="e.g. 1100" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                </Field>
+                <Field label="Each Payout After That ($)">
+                  <input type="number" value={newAccount.payoutThreshold}
+                    onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { payoutThreshold: e.target.value })); }}
+                    placeholder="e.g. 500" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                </Field>
+                <Field label="Your Profit Split (%)">
+                  <input type="number" value={newAccount.profitSplit}
+                    onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { profitSplit: e.target.value })); }}
+                    placeholder="e.g. 90" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                </Field>
+                <Field label="Min Qualifying Days">
+                  <input type="number" value={newAccount.minQualifyingDays}
+                    onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { minQualifyingDays: e.target.value })); }}
+                    placeholder="leave blank if none" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
+                </Field>
+              </div>
+              <p className="text-xs text-gray-500">First Payout Buffer is the net profit you need before your very first payout unlocks. Every payout after that only needs the smaller "each payout after" amount, counted from the date of your last payout.</p>
+            </div>
+            )}
 
             <div className="border-t border-gray-800 pt-4">
               <p className="text-sm text-yellow-400 font-medium mb-2 flex items-center gap-1.5"><Icon name="Receipt" className="h-4 w-4" /><span>Costs</span></p>
