@@ -1324,6 +1324,48 @@ function TradingPlanSummaryGrid(props) {
   );
 }
 
+// A reference-only rule of thumb (not part of the system's own risk math above
+// it): size each trade so the buffer could survive roughly 20-25 losing
+// trades in a row before it's gone, instead of just the system's own max.
+// Shown right under Personal Risk Tolerance so a trader can compare the two
+// and, optionally, one-click apply the suggested number as their tolerance.
+function TradeBudgetReference(props) {
+  const buffer = Math.max(parseFloat(props.buffer) || 0, 0);
+  const systemMaxRisk = parseFloat(props.systemMaxRisk) || 0;
+  const onApply = props.onApply;
+  if (buffer <= 0) return null;
+
+  const HIGH_COUNT = 20; // fewer survivable losers -> bigger $ per trade
+  const LOW_COUNT = 25;  // more survivable losers -> smaller $ per trade
+  const highRisk = buffer / HIGH_COUNT;
+  const lowRisk = buffer / LOW_COUNT;
+  const midRisk = Math.min((lowRisk + highRisk) / 2, systemMaxRisk);
+  const fitsUnderMax = systemMaxRisk > 0 && lowRisk <= systemMaxRisk;
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-5">
+      <div className="flex items-center gap-2 mb-1">
+        <Icon name="ListOrdered" className="h-5 w-5 text-blue-400" />
+        <h3 className="text-sm font-semibold text-white">Suggested Trade Budget (Reference)</h3>
+      </div>
+      <p className="text-xs text-gray-500 mb-3">A rule of thumb: size each trade so your buffer could survive about {HIGH_COUNT}-{LOW_COUNT} losing trades in a row before it's gone. This is just a reference - it changes nothing until you apply it below.</p>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3">
+        <MiniStat label={HIGH_COUNT + "-Trade Life"} value={fmt(highRisk) + "/trade"} color="text-blue-400" />
+        <MiniStat label={LOW_COUNT + "-Trade Life"} value={fmt(lowRisk) + "/trade"} color="text-blue-400" />
+        <MiniStat label="As % of Buffer" value={(100 / LOW_COUNT).toFixed(1) + "% - " + (100 / HIGH_COUNT).toFixed(1) + "%"} color="text-gray-400" />
+      </div>
+      {fitsUnderMax ? (
+        <button onClick={function() { onApply(midRisk.toFixed(2)); }}
+          className="text-xs bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 px-3 py-1.5 rounded-lg border border-blue-500/40">
+          Use {fmt(midRisk)}/trade as My Personal Risk Tolerance
+        </button>
+      ) : (
+        <p className="text-xs text-gray-600">Your system max ({fmt(systemMaxRisk)}/trade) is already tighter than this reference - you're already more conservative than a {LOW_COUNT}-trade life count.</p>
+      )}
+    </div>
+  );
+}
+
 function CostsAndPayoutsCard(props) {
   const account = props.account;
   const status = props.status;
@@ -3723,6 +3765,8 @@ function MMMJournal(props) {
                     <p className="text-xs text-gray-600 mt-3">Not set - currently using the full system max shown in Dashboard above.</p>
                   )}
                 </div>
+
+                <TradeBudgetReference buffer={currentBuffer} systemMaxRisk={riskPerTrade} onApply={handleChangeRiskTolerance} />
 
                 <div>
                   <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-1"><Icon name="LayoutDashboard" className="h-5 w-5 text-yellow-400" /><span>Performance Overview</span></h2>
