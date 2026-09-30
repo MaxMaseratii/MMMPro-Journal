@@ -3084,8 +3084,101 @@ const parsePerformanceCsv = function(text, commissionPerContract) {
   return { byDate: byDate, skipped: skipped, totalTrades: priced.length, error: null };
 };
 
+// Generic closed-trade CSV support for everything that isn't Tradovate -
+// NinjaTrader, TopstepX, ProjectX, MT4/5 trade history exports, ThinkOrSwim
+// and the rest all export one row per already-closed trade with some
+// spelling of a date column and some spelling of a P&L column. Rather than
+// guess at broker-specific fills/round-turn reconstruction (safe only for
+// Tradovate, where the point values have been verified), this matches by
+// column name against the common aliases each platform actually uses and
+// only proceeds when it can find both a date and a P&L column - anything
+// it can't confidently read is skipped and counted, never guessed at.
+const GENERIC_CSV_ALIASES = {
+  date: ['date', 'trade date', 'close date', 'closed date', 'exit date', 'date closed', 'time closed', 'exit time', 'closing time'],
+  pnl: ['pnl', 'p&l', 'p/l', 'net pnl', 'net p&l', 'net profit', 'profit', 'profit/loss', 'realized pnl', 'realized p&l', 'realized p/l', 'gain/loss', 'amount'],
+  direction: ['side', 'direction', 'type', 'buy/sell', 'action', 'position'],
+  qty: ['qty', 'quantity', 'size', 'contracts', 'lots', 'volume', 'shares'],
+  symbol: ['symbol', 'instrument', 'contract', 'ticker', 'market', 'product'],
+};
+
+const parseGenericTradesCsv = function(text, commissionPerContract) {
+  const commission = parseFloat(commissionPerContract) || 0;
+  const rows = parseCsvRows(text).filter(function(r) { return r.length > 1; });
+  if (rows.length < 2) return { byDate: {}, skipped: 0, totalTrades: 0, error: 'No data rows found in this file.' };
+  const header = rows[0].map(function(h) { return (h || '').trim().toLowerCase(); });
+  const findCol = function(aliasKey) {
+    const names = GENERIC_CSV_ALIASES[aliasKey];
+    for (let i = 0; i < names.length; i++) {
+      const at = header.indexOf(names[i]);
+      if (at >= 0) return at;
+    }
+    return -1;
+  };
+  const dateIdx = findCol('date');
+  const pnlIdx = findCol('pnl');
+  const dirIdx = findCol('direction');
+  const qtyIdx = findCol('qty');
+  const symbolIdx = findCol('symbol');
+
+  if (dateIdx < 0 || pnlIdx < 0) {
+    return { byDate: {}, skipped: 0, totalTrades: 0, error: "Couldn't find a date column and a P&L column in this file's header - this importer needs at least those two to read a trade history export." };
+  }
+
+  const parseMoney = function(s) {
+    if (s === undefined || s === null || s === '') return null;
+    const str = String(s).trim();
+    const negative = str.indexOf('(') >= 0 || str.indexOf('-') === 0;
+    const num = parseFloat(str.replace(/[\$,()]/g, '').replace(/^-/, ''));
+    if (isNaN(num)) return null;
+    return negative ? -Math.abs(num) : num;
+  };
+  const toLocalDate = function(raw) {
+    if (!raw) return null;
+    const str = String(raw).trim().split(' ')[0];
+    // Already ISO (yyyy-mm-dd)
+    if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.slice(0, 10);
+    // US-style m/d/yyyy or m/d/yy
+    const parts = str.split('/');
+    if (parts.length === 3) {
+      let y = parts[2];
+      if (y.length === 2) y = '20' + y;
+      return y + '-' + parts[0].padStart(2, '0') + '-' + parts[1].padStart(2, '0');
+    }
+    const d = new Date(raw);
+    if (!isNaN(d.getTime())) return d.toISOString().split('T')[0];
+    return null;
+  };
+
+  const priced = [];
+  let skipped = 0;
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    const dateStr = toLocalDate(r[dateIdx]);
+    const grossPnl = parseMoney(r[pnlIdx]);
+    if (!dateStr || grossPnl === null) { skipped++; continue; }
+    const qty = qtyIdx >= 0 ? (parseFloat(r[qtyIdx]) || 1) : 1;
+    const rawDir = (dirIdx >= 0 ? (r[dirIdx] || '') : '').toLowerCase();
+    const direction = (rawDir.indexOf('sell') >= 0 || rawDir.indexOf('short') >= 0) ? 'short' : 'long';
+    const symbol = symbolIdx >= 0 ? (r[symbolIdx] || '').trim() : '';
+    const net = Math.round((grossPnl - (commission * qty)) * 100) / 100;
+    priced.push({ contract: symbol, product: symbol, direction: direction, qty: qty, pnl: net, grossPnl: grossPnl, commissionCharged: Math.round(commission * qty * 100) / 100, closeDateStr: dateStr, openTime: null, closeTime: null, entryPrice: null, exitPrice: null });
+  }
+
+  const byDate = {};
+  priced.forEach(function(rt) {
+    if (!byDate[rt.closeDateStr]) byDate[rt.closeDateStr] = [];
+    byDate[rt.closeDateStr].push(rt);
+  });
+  return { byDate: byDate, skipped: skipped, totalTrades: priced.length, error: priced.length === 0 ? "Found a date and P&L column, but couldn't read a valid row from either - check the file isn't empty below the header." : null };
+};
+
 // Looks at the header row to decide which parser fits - the person just
-// picks whichever file Tradovate gave them, no need to know the difference.
+// picks whichever file their platform gave them, no need to know the
+// difference. Tradovate's two export types get broker-specific handling
+// (verified point values for its Orders/fills reconstruction); everything
+// else falls through to the generic date+P&L column matcher, which covers
+// NinjaTrader, TopstepX, ProjectX, MT4/5 and most other closed-trade
+// history exports.
 const parseTradeFile = function(text, commissionPerContract) {
   const firstLine = (text.split('\n')[0] || '').toLowerCase();
   if (firstLine.indexOf('buyfillid') >= 0 || firstLine.indexOf('sellfillid') >= 0) {
@@ -3094,7 +3187,7 @@ const parseTradeFile = function(text, commissionPerContract) {
   if (firstLine.indexOf('b/s') >= 0 || firstLine.indexOf('filled qty') >= 0) {
     return parseTradovateCsv(text, commissionPerContract);
   }
-  return { byDate: {}, skipped: 0, totalTrades: 0, error: "This doesn't look like a Tradovate Orders or Performance export. In Tradovate: Reports > Performance (recommended) or Reports > Orders." };
+  return parseGenericTradesCsv(text, commissionPerContract);
 };
 
 function toCSV(entries) {
@@ -3142,8 +3235,8 @@ async function importCSV(text, accountId, entriesRef) {
   if (rows.length > 0 && rows[0].date === undefined) {
     const looksLikeTradovate = rows[0]['B/S'] !== undefined || rows[0]['Filled Qty'] !== undefined || rows[0]['Avg Fill Price'] !== undefined;
     throw new Error(looksLikeTradovate
-      ? "This looks like a Tradovate Orders export, not a journal CSV. Use the \"Import from Tradovate\" button in Trade History instead."
-      : "This file doesn't have the columns this importer expects (needs a \"date\" column at minimum). Use the CSV exported from this app's own \"Export CSV\" button as a template.");
+      ? "This looks like a broker export, not a journal CSV. Use the \"Import Trades (CSV)\" button in Trade History instead - it reads broker files directly."
+      : "This file doesn't have the columns this importer expects (needs a \"date\" column at minimum). Use the CSV exported from this app's own \"Export CSV\" button as a template, or use the \"Import Trades (CSV)\" button in Trade History for a broker export.");
   }
   const byDate = {};
   rows.forEach(function(r) {
@@ -3894,7 +3987,7 @@ function MMMJournal(props) {
               {shouldShowAccountDetail && (
                 <button onClick={function() { setBrokerImportError(''); setBrokerImportPreview(null); setBrokerCsvText(null); setBrokerCommission(''); setShowImportBroker(true); }}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-gray-900 border-gray-800 text-gray-300 hover:border-blue-500/40 hover:text-blue-300 transition">
-                  <Icon name="Upload" className="h-3.5 w-3.5" /><span>Import from Tradovate</span>
+                  <Icon name="Upload" className="h-3.5 w-3.5" /><span>Import Trades (CSV)</span>
                 </button>
               )}
               {shouldShowAccountDetail && (function() {
@@ -4498,25 +4591,25 @@ function MMMJournal(props) {
       )}
 
       {showImportBroker && activeAccount && (
-        <Modal onClose={function() { setShowImportBroker(false); }} title="Import from Tradovate" size="lg">
+        <Modal onClose={function() { setShowImportBroker(false); }} title="Import Trades (CSV)" size="lg">
           <div className="space-y-4">
             <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 text-xs text-blue-200 space-y-1">
-              <p><span className="text-white font-medium">Recommended: Reports {'>'} Performance.</span> Tradovate has already matched each trade's entry to its exit for you - this is the most reliable option, since nothing needs to be reconstructed on this end.</p>
-              <p className="text-blue-300/70">Also works: <span className="text-white">Reports {'>'} Orders</span> - this app reconstructs round-turns from the raw fills instead, using verified CME point values for ES/MES, NQ/MNQ, RTY/M2K, YM/MYM, GC/MGC, SI/SIL, and CL/MCL. Either file is auto-detected - just upload whichever one you have.</p>
-              <p className="text-blue-300/70">Neither export includes commissions - enter your round-turn rate below and it'll be subtracted per contract, so every number here reflects what you actually kept.</p>
+              <p><span className="text-white font-medium">Tradovate:</span> Reports {'>'} Performance (recommended - already matched entry to exit) or Reports {'>'} Orders (reconstructed from raw fills using verified CME point values for ES/MES, NQ/MNQ, RTY/M2K, YM/MYM, GC/MGC, SI/SIL, and CL/MCL). Either file is auto-detected.</p>
+              <p className="text-blue-300/70">Any other platform: NinjaTrader, TopstepX, ProjectX, MT4/5, ThinkOrSwim and most others export a closed-trade history CSV with a date column and a P&L column per trade - upload it as-is and it's matched by column name automatically. Whatever the exchange rate or point value already baked into that P&L figure is what gets imported as-is.</p>
+              <p className="text-blue-300/70">If the export doesn't include commissions, enter your round-turn rate below and it'll be subtracted per contract, so every number here reflects what you actually kept.</p>
             </div>
 
             <div>
               <label className="block text-sm text-gray-400 mb-1.5">Commission per contract, round-turn ($)</label>
-              <input type="number" min="0" step="0.01" placeholder="e.g. 1.30 - check your Tradovate fee schedule" value={brokerCommission}
+              <input type="number" min="0" step="0.01" placeholder="e.g. 1.30 - check your broker's fee schedule" value={brokerCommission}
                 onChange={function(e) { handleBrokerCommissionChange(e.target.value); }}
                 className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
-              <p className="text-xs text-gray-600 mt-1">Leave blank or 0 if you're not sure - you can re-enter this after uploading and the preview below updates automatically.</p>
+              <p className="text-xs text-gray-600 mt-1">Leave blank or 0 if you're not sure, or if the P&L column is already net - you can re-enter this after uploading and the preview below updates automatically.</p>
             </div>
 
             {!brokerImportPreview && (
               <div>
-                <label className="block text-sm text-gray-400 mb-1.5">Tradovate Orders CSV</label>
+                <label className="block text-sm text-gray-400 mb-1.5">Trade History CSV</label>
                 <input type="file" accept=".csv" onChange={function(e) { handleBrokerFileSelect(e.target.files[0]); }}
                   className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-gray-700 file:text-gray-300" />
               </div>
