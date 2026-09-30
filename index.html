@@ -3,100 +3,193 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Max Maserati Trading | MMM Pro System</title>
-<meta name="description" content="Max Maserati Trading University - the MMM Pro system for ES/NQ futures traders. Learn the method, track every trade, and manage prop-firm risk the right way.">
+<title>MMM Trading | Max Maserati Model</title>
+<meta name="description" content="MMM - the Max Maserati Model. The trading education, the MMM Pro indicators, and the PropTrader-style journal for ES/NQ futures traders, in one place.">
 <link rel="icon" href="./favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
 <link rel="apple-touch-icon" href="./logo-icon-180-opaque.png">
-<meta name="theme-color" content="#1a3e6f">
+<meta name="theme-color" content="#0a0a0a">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-  body { background:#050914; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  :root{
+    --mmm-black: hsl(0,0%,4%);
+    --mmm-dark: hsl(0,0%,9%);
+    --mmm-surface: hsl(0,0%,12%);
+    --mmm-gold: hsl(45,100%,55%);
+    --mmm-gold-light: hsl(45,100%,65%);
+    --mmm-tiffany: hsl(180,70%,55%);
+    --mmm-tiffany-light: hsl(180,80%,65%);
+    --mmm-green: hsl(142,76%,36%);
+  }
+  body { background: var(--mmm-black); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   .num { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-  .grid-glow { background-image: radial-gradient(circle at 20% 0%, rgba(250,204,21,0.10), transparent 45%), radial-gradient(circle at 85% 15%, rgba(26,62,111,0.55), transparent 50%); }
-  .card-hover { transition: transform .2s ease, border-color .2s ease; }
-  .card-hover:hover { transform: translateY(-3px); border-color: rgba(250,204,21,0.4); }
+  .glow { background-image: radial-gradient(circle at 15% 15%, hsla(45,100%,55%,0.18), transparent 40%), radial-gradient(circle at 85% 20%, hsla(180,70%,55%,0.16), transparent 45%), radial-gradient(circle at 50% 100%, hsla(142,76%,36%,0.10), transparent 45%); }
+  .card-hover { transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+  .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 40px -10px hsla(45,100%,55%,0.25); }
+  .gold-text { background-image: linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .teal-text { background-image: linear-gradient(90deg, var(--mmm-tiffany), var(--mmm-tiffany-light)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .crown-badge { background: var(--mmm-black); border: 2px solid var(--mmm-tiffany); }
 </style>
 </head>
 <body class="text-white">
 
-<header class="sticky top-0 z-40 backdrop-blur bg-[#050914]/85 border-b border-white/10">
-  <div class="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-    <a href="./" class="flex items-center gap-2.5">
-      <img src="./logo-icon-192.png" alt="Max Maserati" class="h-9 w-9 rounded-lg" />
-      <span class="font-bold tracking-tight text-[15px] sm:text-base">Max Maserati <span class="text-yellow-400">Trading</span></span>
-    </a>
-    <nav class="hidden sm:flex items-center gap-7 text-sm font-medium text-gray-300">
-      <a href="#method" class="hover:text-white transition">The MMM Method</a>
-      <a href="./journal/" class="hover:text-white transition">Journal</a>
-      <a href="#socials" class="hover:text-white transition">Watch Live</a>
-    </nav>
-    <a href="./whop/" class="text-sm font-semibold bg-yellow-400 hover:bg-yellow-300 text-black px-4 py-2 rounded-lg transition">Join MMM Trading</a>
+<header class="sticky top-0 z-40 shadow-xl" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light), var(--mmm-gold));">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="h-[72px] flex items-center justify-between">
+      <a href="./" class="flex items-center gap-3">
+        <div class="crown-badge h-11 w-11 rounded-lg flex items-center justify-center shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--mmm-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7Zm3 15h14"/></svg>
+        </div>
+        <div class="flex flex-col leading-tight">
+          <span class="text-lg font-extrabold tracking-tight"><span class="text-black">MMM</span><span class="text-black/70"> Trading</span></span>
+          <span class="text-[11px] font-semibold text-black/70">Max Maserati Model</span>
+        </div>
+      </a>
+      <nav class="hidden md:flex items-center gap-7 text-sm font-semibold text-black/80">
+        <a href="#features" class="hover:text-black transition">Features</a>
+        <a href="#courses" class="hover:text-black transition">Courses</a>
+        <a href="./journal/" class="hover:text-black transition">Journal</a>
+        <a href="#socials" class="hover:text-black transition">Watch Live</a>
+      </nav>
+      <a href="./whop/" class="text-sm font-bold bg-black text-[color:var(--mmm-gold)] border-2 border-[color:var(--mmm-tiffany)] px-5 py-2.5 rounded-lg hover:bg-gray-900 transition">Join MMM Trading</a>
+    </div>
   </div>
 </header>
 
-<section class="grid-glow border-b border-white/10">
-  <div class="max-w-6xl mx-auto px-5 sm:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28 text-center">
-    <div class="inline-flex items-center gap-2 text-xs font-medium text-yellow-300 bg-yellow-400/10 border border-yellow-400/30 rounded-full px-3 py-1 mb-6">
-      <span class="h-1.5 w-1.5 rounded-full bg-yellow-400"></span> ES / NQ futures education
+<section class="glow relative overflow-hidden" style="background:linear-gradient(135deg, #050505, #0a0a0a 45%, hsl(180,45%,10%));">
+  <div class="relative max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-24 sm:pt-28 sm:pb-32 text-center">
+    <div class="inline-flex items-center gap-2 text-sm font-bold text-black px-5 py-2 rounded-full border-2 border-[color:var(--mmm-tiffany)] mb-8" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7Zm3 15h14v2H5z"/></svg>
+      ES / NQ Futures Trading System
     </div>
     <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.08]">
-      Read the structure.<br class="hidden sm:block"> Trade the <span class="text-yellow-400">MMM Pro</span> method.
+      <span class="gold-text">Master The MMM Method</span><br class="hidden sm:block">
+      With <span class="teal-text">Precision</span>
     </h1>
-    <p class="mt-6 text-lg text-gray-400 max-w-2xl mx-auto">
-      Max Maserati's own order-flow system for trading ES and NQ futures through prop-firm accounts - built on structure, timing, and a risk model that protects the buffer, not just the balance.
+    <p class="mt-6 text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
+      Max Maserati's order-flow system for ES and NQ futures. <span class="text-[color:var(--mmm-gold-light)] font-semibold">The MMM indicators</span>, a <span class="text-[color:var(--mmm-tiffany-light)] font-semibold">buffer-first risk model</span>, and a full <span class="text-[color:var(--mmm-green)] font-semibold">prop-firm journal</span> - all built to keep you funded, not just entered.
     </p>
-    <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
-      <a href="./whop/" class="w-full sm:w-auto text-center font-semibold bg-yellow-400 hover:bg-yellow-300 text-black px-7 py-3.5 rounded-xl transition">Join MMM Trading</a>
-      <a href="./journal/" class="w-full sm:w-auto text-center font-semibold bg-white/5 hover:bg-white/10 border border-white/15 px-7 py-3.5 rounded-xl transition">Open MMM Pro Journal</a>
+    <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+      <a href="./whop/" class="w-full sm:w-auto text-center font-bold text-black px-8 py-4 rounded-xl text-lg shadow-2xl hover:scale-[1.03] transition" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Join MMM Trading</a>
+      <a href="./journal/" class="w-full sm:w-auto text-center font-bold px-8 py-4 rounded-xl text-lg border-2 border-[color:var(--mmm-tiffany)] text-[color:var(--mmm-tiffany-light)] hover:bg-[color:var(--mmm-tiffany)] hover:text-black transition">Open MMM Pro Journal</a>
     </div>
   </div>
 </section>
 
-<section id="method" class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20">
-  <h2 class="text-2xl sm:text-3xl font-bold text-center">Three pieces, one system</h2>
-  <p class="text-gray-400 text-center mt-2 max-w-xl mx-auto">Everything Max teaches and everything you use every day fits under one roof.</p>
-  <div class="mt-12 grid sm:grid-cols-3 gap-5">
-    <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6">
-      <div class="h-10 w-10 rounded-lg bg-yellow-400/15 text-yellow-300 flex items-center justify-center font-bold mb-4">1</div>
-      <h3 class="font-semibold text-lg mb-2">Learn the Method</h3>
-      <p class="text-sm text-gray-400 leading-relaxed">The MMM Pro indicators and order-flow framework - how structure, timing and delivery line up into a trade, streamed live and taught step by step.</p>
+<section id="features" class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+  <div class="text-center mb-14">
+    <div class="inline-flex items-center gap-2 text-xs font-bold text-white px-4 py-1.5 rounded-full mb-5" style="background:linear-gradient(90deg, var(--mmm-tiffany), var(--mmm-tiffany-light)); color:#04211f;">
+      One System, Every Piece
     </div>
+    <h2 class="text-3xl sm:text-4xl font-extrabold">Built For <span class="gold-text">Prop Traders</span></h2>
+    <p class="text-gray-400 mt-3 max-w-xl mx-auto">Everything Max teaches and everything you trade with, under one roof.</p>
+  </div>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
     <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6">
-      <div class="h-10 w-10 rounded-lg bg-yellow-400/15 text-yellow-300 flex items-center justify-center font-bold mb-4">2</div>
-      <h3 class="font-semibold text-lg mb-2">Trade Prop Firm Accounts</h3>
-      <p class="text-sm text-gray-400 leading-relaxed">A buffer-first risk model - Challenge, Funded and Live accounts sized off what you can actually afford to lose, never off the account's face value.</p>
+      <div class="h-14 w-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg" style="background:linear-gradient(135deg, var(--mmm-gold), var(--mmm-gold-light));">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-2">The MMM Method</h3>
+      <p class="text-sm text-gray-400 leading-relaxed">MMM 1.0, 2.0, 3.0 and Perfect Entry - structure, confluence, and quality-gated entries taught step by step.</p>
     </div>
+
     <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6">
-      <div class="h-10 w-10 rounded-lg bg-yellow-400/15 text-yellow-300 flex items-center justify-center font-bold mb-4">3</div>
-      <h3 class="font-semibold text-lg mb-2">Track Every Trade</h3>
-      <p class="text-sm text-gray-400 leading-relaxed">MMM Pro Journal logs every account, every payout rule, and every day's discipline in one place - so nothing is a guess.</p>
+      <div class="h-14 w-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg" style="background:linear-gradient(135deg, var(--mmm-tiffany), var(--mmm-tiffany-light));">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-2">Daily Trading Plan</h3>
+      <p class="text-sm text-gray-400 leading-relaxed">A mental check-in and a written game plan before every session - risk, targets, and the setups you're allowed to take.</p>
     </div>
+
+    <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+      <div class="h-14 w-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg" style="background:linear-gradient(135deg, var(--mmm-green), hsl(142,76%,46%));">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-2">Target Projection</h3>
+      <p class="text-sm text-gray-400 leading-relaxed">Set a risk-per-trade and a goal, and see the day-by-day path to it - with risk-cutting on a loss and compounding on a win.</p>
+    </div>
+
+    <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+      <div class="h-14 w-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg" style="background:linear-gradient(135deg, var(--mmm-gold), var(--mmm-gold-light));">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><path d="M12 2a5 5 0 0 0-5 5c0 2 1 3 1 5a5 5 0 0 0 10 0c0-2 1-3 1-5a5 5 0 0 0-5-5Z"/><path d="M9 21h6M10 18h4"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-2">Discipline Tracker</h3>
+      <p class="text-sm text-gray-400 leading-relaxed">Log what went wrong, what went right, and tomorrow's plan - so rule breaks get caught before they cost the buffer.</p>
+    </div>
+
+    <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+      <div class="h-14 w-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg" style="background:linear-gradient(135deg, var(--mmm-tiffany), var(--mmm-tiffany-light));">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-2">Payout Tracker</h3>
+      <p class="text-sm text-gray-400 leading-relaxed">Threshold, streak, cycle-formula or two-leg - every prop-firm payout rule tracked and the moment a payout is actually due.</p>
+    </div>
+
+    <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+      <div class="h-14 w-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg" style="background:linear-gradient(135deg, var(--mmm-green), hsl(142,76%,46%));">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 3v18M3 8h18"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-2">CSV Trade Import</h3>
+      <p class="text-sm text-gray-400 leading-relaxed">Pull trades straight in from Tradovate, NinjaTrader, TopstepX, ProjectX and the rest - no manual entry.</p>
+    </div>
+
+    <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+      <div class="h-14 w-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg" style="background:linear-gradient(135deg, var(--mmm-gold), var(--mmm-gold-light));">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><path d="M4 19V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14l-3-2-3 2-3-2-3 2-3-2Z"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-2">Buffer-First Risk</h3>
+      <p class="text-sm text-gray-400 leading-relaxed">Challenge, Funded and Live accounts sized off what you can actually afford to lose - never off the account's face value.</p>
+    </div>
+
+    <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+      <div class="h-14 w-14 rounded-2xl flex items-center justify-center mb-5 shadow-lg" style="background:linear-gradient(135deg, var(--mmm-tiffany), var(--mmm-tiffany-light));">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+      </div>
+      <h3 class="font-bold text-lg mb-2">Watch Live</h3>
+      <p class="text-sm text-gray-400 leading-relaxed">Real ES/NQ sessions, streamed - see the method called live, not just explained after the fact.</p>
+    </div>
+
   </div>
 </section>
 
-<section class="border-y border-white/10 bg-white/[0.02]">
+<section id="courses" class="border-y border-white/10" style="background:linear-gradient(180deg, hsla(180,70%,10%,0.4), transparent);">
   <div class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20 grid sm:grid-cols-2 gap-10 items-center">
     <div>
-      <h2 class="text-2xl sm:text-3xl font-bold mb-4">MMM Pro Journal</h2>
-      <p class="text-gray-400 leading-relaxed mb-6">Every prop-firm account in one dashboard - buffer, lot size, consistency rules, equity curve, and a live payout tracker that tells you the moment a payout is actually due.</p>
-      <a href="./journal/" class="inline-block font-semibold bg-yellow-400 hover:bg-yellow-300 text-black px-6 py-3 rounded-xl transition">Open the Journal</a>
+      <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-4" style="background:hsla(45,100%,55%,0.12); color:var(--mmm-gold-light); border:1px solid hsla(45,100%,55%,0.3);">MMM Courses</div>
+      <h2 class="text-2xl sm:text-3xl font-extrabold mb-4">Learn the method, then trade it</h2>
+      <p class="text-gray-400 leading-relaxed mb-6">MMM 1.0, 2.0, 3.0 and Perfect Entry on Whop - the indicator suite, TradingView access, and the trading community, taught from the ground up.</p>
+      <a href="./whop/" class="inline-block font-bold text-black px-6 py-3 rounded-xl transition" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">See the Courses on Whop</a>
     </div>
-    <div class="bg-black/40 border border-white/10 rounded-2xl p-6 num text-sm text-gray-400 space-y-3">
-      <div class="flex justify-between border-b border-white/10 pb-3"><span>Current Capital (Buffer)</span><span class="text-green-400 font-semibold">$1,240.00</span></div>
-      <div class="flex justify-between border-b border-white/10 pb-3"><span>Risk Per Trade</span><span class="text-blue-400 font-semibold">$124.00</span></div>
-      <div class="flex justify-between border-b border-white/10 pb-3"><span>Payout Tracker</span><span class="text-yellow-400 font-semibold">82% to next payout</span></div>
-      <div class="flex justify-between"><span>Status</span><span class="text-green-400 font-semibold">Active</span></div>
+    <div class="bg-black/50 border border-white/10 rounded-2xl p-6 num text-sm text-gray-400 space-y-3">
+      <div class="flex justify-between border-b border-white/10 pb-3"><span>MMM 1.0</span><span style="color:var(--mmm-gold-light);" class="font-semibold">Structure &amp; Bias</span></div>
+      <div class="flex justify-between border-b border-white/10 pb-3"><span>MMM 2.0</span><span style="color:var(--mmm-tiffany-light);" class="font-semibold">+ Confluence</span></div>
+      <div class="flex justify-between border-b border-white/10 pb-3"><span>MMM 3.0</span><span class="text-green-400 font-semibold">Full System</span></div>
+      <div class="flex justify-between"><span>Perfect Entry</span><span style="color:var(--mmm-gold-light);" class="font-semibold">Entry Timing</span></div>
     </div>
+  </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20 grid sm:grid-cols-2 gap-10 items-center">
+  <div class="bg-black/50 border border-white/10 rounded-2xl p-6 num text-sm text-gray-400 space-y-3 order-2 sm:order-1">
+    <div class="flex justify-between border-b border-white/10 pb-3"><span>Current Capital (Buffer)</span><span class="text-green-400 font-semibold">$1,240.00</span></div>
+    <div class="flex justify-between border-b border-white/10 pb-3"><span>Risk Per Trade</span><span style="color:var(--mmm-tiffany-light);" class="font-semibold">$124.00</span></div>
+    <div class="flex justify-between border-b border-white/10 pb-3"><span>Payout Tracker</span><span style="color:var(--mmm-gold-light);" class="font-semibold">82% to next payout</span></div>
+    <div class="flex justify-between"><span>Status</span><span class="text-green-400 font-semibold">Active</span></div>
+  </div>
+  <div class="order-1 sm:order-2">
+    <h2 class="text-2xl sm:text-3xl font-extrabold mb-4">MMM Pro Journal</h2>
+    <p class="text-gray-400 leading-relaxed mb-6">Every prop-firm account in one dashboard - buffer, lot size, consistency rules, equity curve, projections, discipline log, and a live payout tracker that tells you the moment a payout is due.</p>
+    <a href="./journal/" class="inline-block font-bold px-6 py-3 rounded-xl border-2 transition" style="border-color:var(--mmm-tiffany); color:var(--mmm-tiffany-light);">Open the Journal</a>
   </div>
 </section>
 
 <section id="socials" class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20 text-center">
-  <h2 class="text-2xl sm:text-3xl font-bold">Watch Max trade live</h2>
+  <h2 class="text-2xl sm:text-3xl font-extrabold">Watch Max trade live</h2>
   <p class="text-gray-400 mt-2 mb-9">Live ES/NQ analysis and real-time calls, every session.</p>
   <div class="flex flex-wrap items-center justify-center gap-3 text-sm font-medium">
     <a href="https://twitch.tv" target="_blank" rel="noopener" class="bg-white/5 hover:bg-white/10 border border-white/15 px-5 py-2.5 rounded-full transition">Twitch</a>
@@ -109,13 +202,15 @@
 
 <footer class="border-t border-white/10">
   <div class="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-    <div class="flex items-center gap-2">
-      <img src="./logo-icon-192.png" alt="" class="h-6 w-6 rounded"/>
+    <div class="flex items-center gap-2.5">
+      <div class="crown-badge h-8 w-8 rounded-lg flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--mmm-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7Zm3 15h14"/></svg>
+      </div>
       <span>Max Maserati Trading University</span>
     </div>
     <div class="flex items-center gap-5">
       <a href="./journal/" class="hover:text-white transition">Journal</a>
-      <a href="./whop/" class="hover:text-white transition">Join</a>
+      <a href="./whop/" class="hover:text-white transition">Courses</a>
       <a href="mailto:infotrade@maxmaserati.com" class="hover:text-white transition">infotrade@maxmaserati.com</a>
     </div>
   </div>
