@@ -1,0 +1,17 @@
+{
+  "name": "MMM Pro Journal",
+  "short_name": "MMM Pro Journal",
+  "description": "Discipline-first trading journal for prop firm accounts.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1a3e6f",
+  "theme_color": "#1a3e6f",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "logo-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "logo-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "logo-icon-192-opaque.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "logo-icon-512-opaque.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
