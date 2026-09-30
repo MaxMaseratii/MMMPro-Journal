@@ -480,61 +480,159 @@ function getConsistencyCap(account, cumulativeBefore) {
   return (p * cumulativeBefore) / (1 - p);
 }
 
-// Tracks progress toward the NEXT payout. The first payout needs net profit
-// since the account went funded/live to clear the firm's "payout buffer" -
-// every payout after that only needs the smaller "subsequent" threshold,
-// measured from the date of the last payout actually logged. Also tracks the
-// firm's minimum qualifying trading days over that same window, since some
-// firms gate a payout on both money AND days at once. Returns null when this
-// account has no payout rules configured yet, or is a Challenge (no payouts).
+// The 4 confirmed real-world payout mechanisms, checked against actual prop
+// firm help-center wording (MFFU, Tradeify, Apex, TopStep, Phidias). Every
+// account picks exactly one - "simple" is the default so existing accounts
+// (saved before this taxonomy existed) keep working unchanged.
+const PAYOUT_TYPES = [
+  { key: 'simple', label: 'Simple Threshold', firms: 'MFFU Rapid EOD, DayTraders', desc: "Clear a buffer once, then a flat $ amount per payout after that - often uncapped." },
+  { key: 'streak', label: 'Winning-Days Streak', firms: 'Tradeify Flex, Apex, TopStep', desc: 'Log a set number of days each at or above a minimum profit, then the payout is a % of total profit (or a flat cap).' },
+  { key: 'formula', label: 'Cycle Formula + Buffer Floor', firms: 'Tradeify Daily', desc: "Payout = this cycle's profit x a multiplier, capped, and never lets the account dip below its buffer." },
+  { key: 'twoleg', label: 'Two-Leg Flat', firms: 'Phidias E2L', desc: 'Hit the same profit target twice - the first clears the eval, the second pays a flat cash amount plus live-account credit.' },
+];
+
+// Whether an account actually has enough of its chosen payout type's fields
+// filled in to compute anything - each type has its own "is this configured"
+// bar, since they don't share the same required fields.
+function payoutRulesConfigured(account) {
+  if (!account) return false;
+  const type = account.payoutType || 'simple';
+  if (type === 'streak') return (parseFloat(account.streakDays) || 0) > 0 && (parseFloat(account.streakPctOfTotal) || 0) > 0;
+  if (type === 'formula') return (parseFloat(account.formulaBuffer) || 0) > 0;
+  if (type === 'twoleg') return (parseFloat(account.twoLegTarget) || 0) > 0;
+  return (parseFloat(account.payoutBuffer) || 0) > 0 || (parseFloat(account.payoutThreshold) || 0) > 0;
+}
+
+// Tracks progress toward the NEXT payout, dispatched by the account's payout
+// type (see PAYOUT_TYPES above). Every branch returns the SAME shape -
+// { type, eligible, requestable, progressPct, progressLabel, note, split,
+// cap, isFirstPayout, liveCredit } - so the UI can render any of the 4
+// mechanisms generically. Returns null when this account has no payout rules
+// configured yet, or is a Challenge (no payouts on a Challenge).
 function getPayoutStatus(account, entries) {
   if (!account || account.accountType === 'challenge') return null;
-  const buffer = parseFloat(account.payoutBuffer) || 0;
-  const threshold = parseFloat(account.payoutThreshold) || 0;
-  if (buffer <= 0 && threshold <= 0) return null;
+  if (!payoutRulesConfigured(account)) return null;
 
+  const type = account.payoutType || 'simple';
   const payouts = (account.payouts || []).slice().sort(function(a, b) { return new Date(a.date) - new Date(b.date); });
   const lastPayout = payouts.length ? payouts[payouts.length - 1] : null;
   const windowStart = lastPayout ? lastPayout.date : null;
   const isFirstPayout = !lastPayout;
 
   const accEntries = entries.filter(function(e) { return e.accountId === account.id && e.tradedToday !== 'no'; });
-  const windowEntries = windowStart ? accEntries.filter(function(e) { return e.date > windowStart; }) : accEntries;
+  const cycleEntries = windowStart ? accEntries.filter(function(e) { return e.date > windowStart; }) : accEntries;
+  const dayPnl = function(e) { return e.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0); };
+  const cycleProfit = cycleEntries.reduce(function(s, e) { return s + dayPnl(e); }, 0);
+  const totalPnl = accEntries.reduce(function(s, e) { return s + dayPnl(e); }, 0);
 
-  const netProfit = windowEntries.reduce(function(sum, e) {
-    return sum + e.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
-  }, 0);
-  const qualifyingDays = new Set(windowEntries.map(function(e) { return e.date; })).size;
-  const minDays = account.minQualifyingDays ? parseFloat(account.minQualifyingDays) : 0;
+  // ---- Winning-Days Streak (Tradeify Flex, Apex, TopStep) ----
+  if (type === 'streak') {
+    const dayMin = parseFloat(account.streakDayMin) || 0;
+    const byDate = {};
+    cycleEntries.forEach(function(e) { byDate[e.date] = (byDate[e.date] || 0) + dayPnl(e); });
+    const qualifyingDays = Object.keys(byDate).filter(function(d) { return byDate[d] >= dayMin; }).length;
+    const need = parseInt(account.streakDays) || 0;
+    const daysEligible = need > 0 ? qualifyingDays >= need : true;
+    const pctAmount = totalPnl * ((parseFloat(account.streakPctOfTotal) || 0) / 100);
+    const cap = account.streakFlatCap ? parseFloat(account.streakFlatCap) : null;
+    const rawRequestable = cap !== null ? Math.min(Math.max(pctAmount, 0), cap) : Math.max(pctAmount, 0);
+    const eligible = daysEligible && rawRequestable > 0;
+    return {
+      type: type, eligible: eligible, requestable: eligible ? rawRequestable : 0,
+      progressPct: need > 0 ? Math.min(100, (qualifyingDays / need) * 100) : 0,
+      progressLabel: qualifyingDays + ' of ' + need + ' qualifying days (each >= ' + fmt(dayMin) + ')',
+      note: eligible
+        ? ('Streak cleared - ' + fmt(rawRequestable) + ' available (' + (parseFloat(account.streakPctOfTotal) || 0) + '% of total profit' + (cap !== null ? ', capped at ' + fmt(cap) : '') + ').')
+        : (qualifyingDays + ' of ' + need + ' qualifying days logged so far - each needs at least ' + fmt(dayMin) + ' net profit to count.'),
+      split: null, cap: cap, isFirstPayout: isFirstPayout, liveCredit: null,
+    };
+  }
 
+  // ---- Cycle Formula + Buffer Floor (Tradeify Daily) ----
+  if (type === 'formula') {
+    const buffer = parseFloat(account.formulaBuffer) || 0;
+    const bufferCleared = totalPnl >= buffer;
+    const mult = parseFloat(account.formulaMultiplier) || 2;
+    const raw = cycleProfit * mult;
+    const cap = account.formulaCap ? parseFloat(account.formulaCap) : null;
+    const minPay = parseFloat(account.formulaMinPayout) || 0;
+    let payable = cap !== null ? Math.min(Math.max(raw, 0), cap) : Math.max(raw, 0);
+    const currentBalance = (parseFloat(account.startingBalance) || 0) + totalPnl;
+    const bufferPoint = (parseFloat(account.startingBalance) || 0) + buffer;
+    payable = Math.min(payable, Math.max(currentBalance - bufferPoint, 0));
+    const eligible = bufferCleared && cycleProfit > 0 && payable >= minPay;
+    const amountRemaining = Math.max(0, buffer - totalPnl);
+    return {
+      type: type, eligible: eligible, requestable: eligible ? payable : 0,
+      progressPct: buffer > 0 ? Math.min(100, (totalPnl / buffer) * 100) : 0,
+      progressLabel: fmt(Math.max(0, totalPnl)) + ' of ' + fmt(buffer) + ' (buffer)',
+      note: !bufferCleared
+        ? (fmt(amountRemaining) + ' more net profit needed to clear the buffer.')
+        : (eligible
+          ? ('Cycle profit ' + fmt(cycleProfit) + ' x ' + mult + ' = ' + fmt(payable) + ' available.')
+          : ("Buffer cleared, but this cycle's payout (" + fmt(payable) + ') is below the ' + fmt(minPay) + ' minimum.')),
+      split: null, cap: cap, isFirstPayout: isFirstPayout, liveCredit: null,
+    };
+  }
+
+  // ---- Two-Leg Flat (Phidias E2L) ----
+  if (type === 'twoleg') {
+    const target = parseFloat(account.twoLegTarget) || 0;
+    const legsCleared = target > 0 ? Math.floor(totalPnl / target) : 0;
+    const eligible = legsCleared >= 2;
+    const cash = parseFloat(account.twoLegCashPayout) || 0;
+    const credit = parseFloat(account.twoLegLiveCredit) || 0;
+    return {
+      type: type, eligible: eligible, requestable: eligible ? cash : 0,
+      progressPct: target > 0 ? Math.min(100, (totalPnl / (target * 2)) * 100) : 0,
+      progressLabel: 'Leg ' + Math.min(legsCleared + 1, 2) + ' of 2',
+      note: legsCleared === 0
+        ? ('Leg 1 (eval): ' + fmt(Math.max(0, target - totalPnl)) + ' more needed.')
+        : (legsCleared === 1
+          ? ('Leg 1 cleared. Leg 2 (cash): ' + fmt(Math.max(0, target * 2 - totalPnl)) + ' more needed.')
+          : ('Both legs cleared - ' + fmt(cash) + ' cash + ' + fmt(credit) + ' live-account credit.')),
+      split: null, cap: null, isFirstPayout: isFirstPayout, liveCredit: credit,
+    };
+  }
+
+  // ---- Simple Threshold (MFFU Rapid EOD, DayTraders) - the default ----
+  const buffer = parseFloat(account.payoutBuffer) || 0;
+  const threshold = parseFloat(account.payoutThreshold) || 0;
   const targetAmount = isFirstPayout ? buffer : (threshold || buffer);
+  const netProfit = cycleProfit;
   const amountRemaining = Math.max(0, targetAmount - netProfit);
-  const daysRemaining = Math.max(0, minDays - qualifyingDays);
   const progressPct = targetAmount > 0 ? Math.min(100, (netProfit / targetAmount) * 100) : 0;
+  const minDays = account.minQualifyingDays ? parseFloat(account.minQualifyingDays) : 0;
+  const qualifyingDays = new Set(cycleEntries.map(function(e) { return e.date; })).size;
+  const daysRemaining = Math.max(0, minDays - qualifyingDays);
   const moneyEligible = targetAmount > 0 ? netProfit >= targetAmount : true;
   const daysEligible = minDays > 0 ? qualifyingDays >= minDays : true;
   const eligible = moneyEligible && daysEligible;
 
   const split = account.profitSplit ? parseFloat(account.profitSplit) : 100;
-  let estimatedPayout = netProfit > 0 ? netProfit * (split / 100) : 0;
+  let requestable = netProfit > 0 ? netProfit * (split / 100) : 0;
   const cap = account.payoutCap ? parseFloat(account.payoutCap) : null;
-  if (cap && estimatedPayout > cap) estimatedPayout = cap;
+  if (cap && requestable > cap) requestable = cap;
 
   // Pace projection: average net $/trading day across this account's whole
   // history, used to guess how many more sessions at that pace it takes to
   // close the remaining gap - a rough ETA, not a promise.
   const totalDays = new Set(accEntries.map(function(e) { return e.date; })).size;
-  const totalPnlAllTime = accEntries.reduce(function(sum, e) { return sum + e.trades.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0); }, 0);
-  const avgPerDay = totalDays > 0 ? totalPnlAllTime / totalDays : 0;
+  const avgPerDay = totalDays > 0 ? totalPnl / totalDays : 0;
   const projectedDaysToTarget = amountRemaining > 0 && avgPerDay > 0 ? Math.ceil(amountRemaining / avgPerDay) : null;
 
   return {
-    isFirstPayout: isFirstPayout, targetAmount: targetAmount, netProfit: netProfit,
-    amountRemaining: amountRemaining, progressPct: progressPct,
-    qualifyingDays: qualifyingDays, minDays: minDays, daysRemaining: daysRemaining,
-    moneyEligible: moneyEligible, daysEligible: daysEligible, eligible: eligible,
-    split: split, estimatedPayout: estimatedPayout, cap: cap,
-    projectedDaysToTarget: projectedDaysToTarget, lastPayoutDate: windowStart,
+    type: 'simple', eligible: eligible, requestable: eligible ? requestable : 0,
+    progressPct: progressPct,
+    progressLabel: fmt(Math.max(0, netProfit)) + ' of ' + fmt(targetAmount) + (isFirstPayout ? ' (first payout buffer)' : ' (since last payout)'),
+    note: !moneyEligible
+      ? (fmt(amountRemaining) + ' more net profit needed'
+        + (!daysEligible ? (', and ' + daysRemaining + ' more qualifying day' + (daysRemaining !== 1 ? 's' : '')) : '') + '.'
+        + (projectedDaysToTarget ? (' At your current pace, about ' + projectedDaysToTarget + ' more trading day' + (projectedDaysToTarget !== 1 ? 's' : '') + '.') : ''))
+      : (!daysEligible
+        ? (daysRemaining + ' more qualifying day' + (daysRemaining !== 1 ? 's' : '') + ' needed.')
+        : (isFirstPayout ? 'First payout buffer cleared.' : "This payout's threshold cleared.")),
+    split: split, cap: cap, isFirstPayout: isFirstPayout, liveCredit: null,
   };
 }
 
@@ -661,7 +759,10 @@ const emptyAccountForm = {
   strategyName: '', longRules: [''], shortRules: [''],
   accountCost: '', activationCost: '', resetCost: '',
   consistencyPct: '', dailyLossLimit: '', dllType: 'hard', minTradingDays: '',
-  payoutBuffer: '', payoutThreshold: '', profitSplit: '', minQualifyingDays: '', payoutCap: ''
+  payoutType: 'simple', payoutBuffer: '', payoutThreshold: '', profitSplit: '', minQualifyingDays: '', payoutCap: '',
+  streakDays: '', streakDayMin: '', streakPctOfTotal: '', streakFlatCap: '',
+  formulaBuffer: '', formulaMultiplier: '2', formulaCap: '', formulaMinPayout: '',
+  twoLegTarget: '', twoLegCashPayout: '', twoLegLiveCredit: ''
 };
 
 const emptyEntryForm = function(defaultRisk, defaultContracts) {
@@ -1460,52 +1561,121 @@ function PropFirmRuleNote(props) {
   );
 }
 
+function PayoutTypeSelector(props) {
+  const value = props.value;
+  const onChange = props.onChange;
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      {PAYOUT_TYPES.map(function(t) {
+        return (
+          <button key={t.key} type="button" onClick={function() { onChange(t.key); }}
+            className={"text-left p-2.5 rounded-lg border text-xs transition " + (value === t.key ? 'bg-yellow-500/15 border-yellow-500/50 text-yellow-200' : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600')}>
+            <div className="font-semibold">{t.label}</div>
+            <div className="text-[10px] text-gray-500 mt-0.5">{t.firms}</div>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// Renders the fields for whichever payout type is selected. `get`/`set` let
+// this be reused against two different state shapes - the Add Account
+// form's newAccount draft, and PayoutRulesForm's own local state - without
+// duplicating the field markup in both places.
+function PayoutTypeFieldset(props) {
+  const type = props.type;
+  const get = props.get;
+  const set = props.set;
+  const cls = "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none";
+
+  if (type === 'streak') {
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Qualifying Days Needed"><input type="number" value={get('streakDays')} onChange={function(e) { set('streakDays', e.target.value); }} placeholder="e.g. 5" className={cls} /></Field>
+        <Field label="Min Profit / Qualifying Day ($)"><input type="number" value={get('streakDayMin')} onChange={function(e) { set('streakDayMin', e.target.value); }} placeholder="e.g. 200" className={cls} /></Field>
+        <Field label="Payout (% of Total Profit)"><input type="number" value={get('streakPctOfTotal')} onChange={function(e) { set('streakPctOfTotal', e.target.value); }} placeholder="e.g. 50" className={cls} /></Field>
+        <Field label="Flat Cap ($, optional)"><input type="number" value={get('streakFlatCap')} onChange={function(e) { set('streakFlatCap', e.target.value); }} placeholder="leave blank if uncapped" className={cls} /></Field>
+      </div>
+    );
+  }
+  if (type === 'formula') {
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Buffer Before First Payout ($)"><input type="number" value={get('formulaBuffer')} onChange={function(e) { set('formulaBuffer', e.target.value); }} placeholder="e.g. 1000" className={cls} /></Field>
+        <Field label="Cycle Profit Multiplier"><input type="number" step="0.1" value={get('formulaMultiplier')} onChange={function(e) { set('formulaMultiplier', e.target.value); }} placeholder="e.g. 2" className={cls} /></Field>
+        <Field label="Payout Cap ($)"><input type="number" value={get('formulaCap')} onChange={function(e) { set('formulaCap', e.target.value); }} placeholder="e.g. 1500" className={cls} /></Field>
+        <Field label="Minimum Payout ($)"><input type="number" value={get('formulaMinPayout')} onChange={function(e) { set('formulaMinPayout', e.target.value); }} placeholder="e.g. 250" className={cls} /></Field>
+      </div>
+    );
+  }
+  if (type === 'twoleg') {
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Target Per Leg ($)"><input type="number" value={get('twoLegTarget')} onChange={function(e) { set('twoLegTarget', e.target.value); }} placeholder="e.g. 3000" className={cls} /></Field>
+        <Field label="Cash Payout ($)"><input type="number" value={get('twoLegCashPayout')} onChange={function(e) { set('twoLegCashPayout', e.target.value); }} placeholder="e.g. 1500" className={cls} /></Field>
+        <Field label="Live Account Credit ($)"><input type="number" value={get('twoLegLiveCredit')} onChange={function(e) { set('twoLegLiveCredit', e.target.value); }} placeholder="e.g. 50000" className={cls} /></Field>
+      </div>
+    );
+  }
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <Field label="First Payout Buffer ($)"><input type="number" value={get('payoutBuffer')} onChange={function(e) { set('payoutBuffer', e.target.value); }} placeholder="e.g. 1100" className={cls} /></Field>
+      <Field label="Each Payout After That ($)"><input type="number" value={get('payoutThreshold')} onChange={function(e) { set('payoutThreshold', e.target.value); }} placeholder="e.g. 500" className={cls} /></Field>
+      <Field label="Your Profit Split (%)"><input type="number" value={get('profitSplit')} onChange={function(e) { set('profitSplit', e.target.value); }} placeholder="e.g. 90" className={cls} /></Field>
+      <Field label="Min Qualifying Days (optional)"><input type="number" value={get('minQualifyingDays')} onChange={function(e) { set('minQualifyingDays', e.target.value); }} placeholder="leave blank if none" className={cls} /></Field>
+      <Field label="Payout Cap ($, optional)"><input type="number" value={get('payoutCap')} onChange={function(e) { set('payoutCap', e.target.value); }} placeholder="leave blank if uncapped" className={cls} /></Field>
+    </div>
+  );
+}
+
+const emptyPayoutFields = {
+  payoutBuffer: '', payoutThreshold: '', profitSplit: '90', minQualifyingDays: '', payoutCap: '',
+  streakDays: '', streakDayMin: '', streakPctOfTotal: '', streakFlatCap: '',
+  formulaBuffer: '', formulaMultiplier: '2', formulaCap: '', formulaMinPayout: '',
+  twoLegTarget: '', twoLegCashPayout: '', twoLegLiveCredit: '',
+};
+
 function PayoutRulesForm(props) {
   const account = props.account;
   const onSave = props.onSave;
   const onCancel = props.onCancel;
-  const [buffer, setBuffer] = useState(account.payoutBuffer ? String(account.payoutBuffer) : '');
-  const [threshold, setThreshold] = useState(account.payoutThreshold ? String(account.payoutThreshold) : '');
-  const [split, setSplit] = useState(account.profitSplit ? String(account.profitSplit) : '90');
-  const [minDays, setMinDays] = useState(account.minQualifyingDays ? String(account.minQualifyingDays) : '');
-  const [cap, setCap] = useState(account.payoutCap ? String(account.payoutCap) : '');
+  const [type, setType] = useState(account.payoutType || 'simple');
+  const [values, setValues] = useState(function() {
+    const v = Object.assign({}, emptyPayoutFields);
+    Object.keys(v).forEach(function(k) { if (account[k] !== undefined && account[k] !== null) v[k] = String(account[k]); });
+    return v;
+  });
+  const get = function(field) { return values[field]; };
+  const set = function(field, value) { setValues(Object.assign({}, values, { [field]: value })); };
+
+  const canSave =
+    type === 'streak' ? !!(values.streakDays && values.streakPctOfTotal) :
+    type === 'formula' ? !!values.formulaBuffer :
+    type === 'twoleg' ? !!values.twoLegTarget :
+    !!(values.payoutBuffer || values.payoutThreshold);
 
   return (
     <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="First Payout Buffer ($)">
-          <input type="number" value={buffer} onChange={function(e) { setBuffer(e.target.value); }} placeholder="e.g. 1100"
-            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
-        </Field>
-        <Field label="Each Payout After That ($)">
-          <input type="number" value={threshold} onChange={function(e) { setThreshold(e.target.value); }} placeholder="e.g. 500"
-            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
-        </Field>
-        <Field label="Your Profit Split (%)">
-          <input type="number" value={split} onChange={function(e) { setSplit(e.target.value); }} placeholder="e.g. 90"
-            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
-        </Field>
-        <Field label="Min Qualifying Days (optional)">
-          <input type="number" value={minDays} onChange={function(e) { setMinDays(e.target.value); }} placeholder="leave blank if none"
-            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
-        </Field>
-        <Field label="Payout Cap ($, optional)">
-          <input type="number" value={cap} onChange={function(e) { setCap(e.target.value); }} placeholder="leave blank if uncapped"
-            className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none" />
-        </Field>
-      </div>
+      <PayoutTypeSelector value={type} onChange={setType} />
+      <p className="text-xs text-gray-500">{(PAYOUT_TYPES.find(function(t) { return t.key === type; }) || {}).desc}</p>
+      <PayoutTypeFieldset type={type} get={get} set={set} />
       <div className="flex gap-2">
         <button
           onClick={function() {
+            const num = function(v) { return (v === '' || v === null || v === undefined) ? null : parseFloat(v); };
             onSave({
-              payoutBuffer: buffer ? parseFloat(buffer) : null,
-              payoutThreshold: threshold ? parseFloat(threshold) : null,
-              profitSplit: split ? parseFloat(split) : null,
-              minQualifyingDays: minDays ? parseFloat(minDays) : null,
-              payoutCap: cap ? parseFloat(cap) : null,
+              payoutType: type,
+              payoutBuffer: num(values.payoutBuffer), payoutThreshold: num(values.payoutThreshold),
+              profitSplit: num(values.profitSplit), minQualifyingDays: num(values.minQualifyingDays), payoutCap: num(values.payoutCap),
+              streakDays: num(values.streakDays), streakDayMin: num(values.streakDayMin),
+              streakPctOfTotal: num(values.streakPctOfTotal), streakFlatCap: num(values.streakFlatCap),
+              formulaBuffer: num(values.formulaBuffer), formulaMultiplier: num(values.formulaMultiplier),
+              formulaCap: num(values.formulaCap), formulaMinPayout: num(values.formulaMinPayout),
+              twoLegTarget: num(values.twoLegTarget), twoLegCashPayout: num(values.twoLegCashPayout), twoLegLiveCredit: num(values.twoLegLiveCredit),
             });
           }}
-          disabled={!buffer && !threshold}
+          disabled={!canSave}
           className="flex-1 bg-green-500/20 text-green-400 border border-green-500/40 py-2 rounded-lg text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed">
           Save Payout Rules
         </button>
@@ -1522,7 +1692,7 @@ function PayoutTrackerCard(props) {
   const [editing, setEditing] = useState(false);
   if (!account || account.accountType === 'challenge') return null;
 
-  const hasRules = (parseFloat(account.payoutBuffer) || 0) > 0 || (parseFloat(account.payoutThreshold) || 0) > 0;
+  const hasRules = payoutRulesConfigured(account);
 
   if (!hasRules || editing) {
     return (
@@ -1532,7 +1702,7 @@ function PayoutTrackerCard(props) {
           <h2 className="text-lg font-semibold text-white">Payout Rules</h2>
         </div>
         <p className="text-xs text-gray-500 mb-4">
-          {hasRules ? 'Update the payout rules for this account.' : "Set this account's payout rules once, and we'll track exactly how close you are to your next payout - and tell you the moment it's due."}
+          {hasRules ? 'Update the payout rules for this account.' : "Pick how this firm actually pays out, fill in its numbers once, and we'll track exactly how close you are to your next payout - and tell you the moment it's due."}
         </p>
         <PayoutRulesForm account={account}
           onSave={function(rules) { onSaveRules(rules); setEditing(false); }}
@@ -1543,13 +1713,15 @@ function PayoutTrackerCard(props) {
 
   const status = getPayoutStatus(account, entries);
   if (!status) return null;
+  const typeInfo = PAYOUT_TYPES.find(function(t) { return t.key === status.type; }) || PAYOUT_TYPES[0];
 
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <Icon name="Calendar" className="h-5 w-5 text-yellow-400" />
           <h2 className="text-lg font-semibold text-white">Payout Tracker</h2>
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700">{typeInfo.label}</span>
         </div>
         <button onClick={function() { setEditing(true); }} className="text-xs text-gray-500 hover:text-gray-300 flex items-center gap-1">
           <Icon name="Pencil" className="h-3.5 w-3.5" /><span>Edit Rules</span>
@@ -1560,9 +1732,9 @@ function PayoutTrackerCard(props) {
         <div className="border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3 mb-4">
           <Icon name="CheckCircle" className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-green-300 font-semibold text-sm">Payout Ready - Go Request It</p>
+            <p className="text-green-300 font-semibold text-sm">Payout Ready - {fmt(status.requestable)} Available</p>
             <p className="text-green-200/70 text-xs mt-1">
-              {status.isFirstPayout ? "Your first payout buffer is cleared." : "You've cleared this payout's threshold."} Log into your prop firm's own dashboard and submit the request there - this journal tracks it, it doesn't send it for you. Once it's paid, add it below in the Payout Ledger so the next one starts counting from today.
+              {status.note} Log into your prop firm's own dashboard and submit the request there - this journal tracks it, it doesn't send it for you. Once it's paid, add it below in the Payout Ledger so the next cycle starts counting from today.
             </p>
           </div>
         </div>
@@ -1570,20 +1742,14 @@ function PayoutTrackerCard(props) {
         <div className="border border-yellow-500/30 bg-yellow-500/10 rounded-xl p-4 flex items-start gap-3 mb-4">
           <Icon name="Clock" className="h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0" />
           <div>
-            <p className="text-yellow-300 font-semibold text-sm">{status.isFirstPayout ? 'Building Your First Payout Buffer' : 'Building Toward Your Next Payout'}</p>
-            <p className="text-yellow-200/70 text-xs mt-1">
-              {!status.moneyEligible && (fmt(status.amountRemaining) + ' more net profit needed')}
-              {!status.moneyEligible && !status.daysEligible && ', and '}
-              {!status.daysEligible && (status.daysRemaining + ' more qualifying day' + (status.daysRemaining !== 1 ? 's' : ''))}
-              {'.'}
-              {status.projectedDaysToTarget && !status.moneyEligible ? (' At your current pace, about ' + status.projectedDaysToTarget + ' more trading day' + (status.projectedDaysToTarget !== 1 ? 's' : '') + '.') : ''}
-            </p>
+            <p className="text-yellow-300 font-semibold text-sm">{status.isFirstPayout ? 'Building Toward Your First Payout' : 'Building Toward Your Next Payout'}</p>
+            <p className="text-yellow-200/70 text-xs mt-1">{status.note}</p>
           </div>
         </div>
       )}
 
       <div className="mb-1 flex justify-between text-xs text-gray-500">
-        <span>{fmt(Math.max(0, status.netProfit))} of {fmt(status.targetAmount)} {status.isFirstPayout ? '(first payout buffer)' : '(since last payout)'}</span>
+        <span>{status.progressLabel}</span>
         <span>{status.progressPct.toFixed(0)}%</span>
       </div>
       <div className="h-2.5 bg-gray-800 rounded-full overflow-hidden mb-4">
@@ -1591,12 +1757,10 @@ function PayoutTrackerCard(props) {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-        <MiniStat label="Net Profit (this window)" value={fmt(status.netProfit)} color={status.netProfit >= 0 ? 'text-green-400' : 'text-red-400'} />
-        <MiniStat label="Needed" value={fmt(status.targetAmount)} color="text-yellow-400" />
-        {status.minDays > 0 && <MiniStat label="Qualifying Days" value={status.qualifyingDays + " of " + status.minDays} color={status.daysEligible ? 'text-green-400' : 'text-yellow-400'} />}
-        <MiniStat label="Your Split" value={status.split + "%"} color="text-purple-400" />
-        <MiniStat label="Est. Payout Now" value={fmt(status.estimatedPayout)} color="text-green-400" />
+        <MiniStat label="Requestable Now" value={fmt(status.requestable)} color={status.requestable > 0 ? 'text-green-400' : 'text-gray-500'} />
+        {status.split ? <MiniStat label="Your Split" value={status.split + "%"} color="text-purple-400" /> : null}
         {status.cap ? <MiniStat label="Payout Cap" value={fmt(status.cap)} color="text-gray-400" /> : null}
+        {status.liveCredit ? <MiniStat label="Live Credit (2nd leg)" value={fmt(status.liveCredit)} color="text-cyan-400" /> : null}
       </div>
     </div>
   );
@@ -1605,6 +1769,7 @@ function PayoutTrackerCard(props) {
 function PayoutLedger(props) {
   const account = props.account;
   const onAddPayout = props.onAddPayout;
+  const suggestedAmount = props.suggestedAmount;
   const [amount, setAmount] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const payouts = account.payouts || [];
@@ -1617,6 +1782,12 @@ function PayoutLedger(props) {
         <Icon name="Banknote" className="h-5 w-5 text-green-400" />
         <h2 className="text-lg font-semibold text-white">Payout Ledger</h2>
       </div>
+      {suggestedAmount > 0 && (
+        <button onClick={function() { setAmount(suggestedAmount.toFixed(2)); }}
+          className="text-xs bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 px-3 py-1.5 rounded-lg mb-3">
+          Use tracked amount: {fmt(suggestedAmount)}
+        </button>
+      )}
       <div className="flex flex-col sm:flex-row gap-2 mb-4">
         <input type="date" value={date} onChange={function(e) { setDate(e.target.value); }}
           className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" />
@@ -3190,11 +3361,23 @@ function MMMJournal(props) {
       minTradingDays: newAccount.minTradingDays ? parseFloat(newAccount.minTradingDays) : null,
       dailyLossLimit: newAccount.dailyLossLimit ? parseFloat(newAccount.dailyLossLimit) : null,
       dllType: newAccount.dllType || 'hard',
+      payoutType: newAccount.payoutType || 'simple',
       payoutBuffer: newAccount.payoutBuffer ? parseFloat(newAccount.payoutBuffer) : null,
       payoutThreshold: newAccount.payoutThreshold ? parseFloat(newAccount.payoutThreshold) : null,
       profitSplit: newAccount.profitSplit ? parseFloat(newAccount.profitSplit) : null,
       minQualifyingDays: newAccount.minQualifyingDays ? parseFloat(newAccount.minQualifyingDays) : null,
       payoutCap: newAccount.payoutCap ? parseFloat(newAccount.payoutCap) : null,
+      streakDays: newAccount.streakDays ? parseFloat(newAccount.streakDays) : null,
+      streakDayMin: newAccount.streakDayMin ? parseFloat(newAccount.streakDayMin) : null,
+      streakPctOfTotal: newAccount.streakPctOfTotal ? parseFloat(newAccount.streakPctOfTotal) : null,
+      streakFlatCap: newAccount.streakFlatCap ? parseFloat(newAccount.streakFlatCap) : null,
+      formulaBuffer: newAccount.formulaBuffer ? parseFloat(newAccount.formulaBuffer) : null,
+      formulaMultiplier: newAccount.formulaMultiplier ? parseFloat(newAccount.formulaMultiplier) : null,
+      formulaCap: newAccount.formulaCap ? parseFloat(newAccount.formulaCap) : null,
+      formulaMinPayout: newAccount.formulaMinPayout ? parseFloat(newAccount.formulaMinPayout) : null,
+      twoLegTarget: newAccount.twoLegTarget ? parseFloat(newAccount.twoLegTarget) : null,
+      twoLegCashPayout: newAccount.twoLegCashPayout ? parseFloat(newAccount.twoLegCashPayout) : null,
+      twoLegLiveCredit: newAccount.twoLegLiveCredit ? parseFloat(newAccount.twoLegLiveCredit) : null,
       payouts: [],
       archived: false,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -3636,8 +3819,8 @@ function MMMJournal(props) {
                   <div className="border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3">
                     <Icon name="Calendar" className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
-                      <p className="text-green-300 font-semibold text-sm">Payout Due - {fmt(payoutStatus.estimatedPayout)} at your {payoutStatus.split}% split</p>
-                      <p className="text-green-200/70 text-xs mt-1">{payoutStatus.isFirstPayout ? "Your first payout buffer is cleared." : "You've cleared this payout's threshold."} Head to your prop firm's dashboard to request it, then log it on the Finances tab.</p>
+                      <p className="text-green-300 font-semibold text-sm">Payout Due - {fmt(payoutStatus.requestable)} available{payoutStatus.split ? (' at your ' + payoutStatus.split + '% split') : ''}</p>
+                      <p className="text-green-200/70 text-xs mt-1">{payoutStatus.note} Head to your prop firm's dashboard to request it, then log it on the Finances tab.</p>
                     </div>
                     <button onClick={function() { setActivePage('finances'); }} className="text-xs bg-green-500/20 hover:bg-green-500/30 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/40 flex-shrink-0">View Payout Tracker</button>
                   </div>
@@ -3920,7 +4103,7 @@ function MMMJournal(props) {
                 <React.Fragment>
                 <CostsAndPayoutsCard account={activeAccount} status={activeStatus} />
                 <PayoutTrackerCard account={activeAccount} entries={entries} onSaveRules={handleSavePayoutRules} />
-                <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} />
+                <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} suggestedAmount={payoutStatus && payoutStatus.eligible ? payoutStatus.requestable : null} />
                 <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} divisor={ruinDivisor} accountType={activeAccount.accountType} />
                 </React.Fragment>
                 )}
@@ -4045,29 +4228,11 @@ function MMMJournal(props) {
               <p className="text-sm text-yellow-400 font-medium flex items-center gap-1.5">
                 <Icon name="Calendar" className="h-4 w-4" /><span>Payout Rules (optional - can also be set later on the Finances tab)</span>
               </p>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="First Payout Buffer ($)">
-                  <input type="number" value={newAccount.payoutBuffer}
-                    onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { payoutBuffer: e.target.value })); }}
-                    placeholder="e.g. 1100" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
-                </Field>
-                <Field label="Each Payout After That ($)">
-                  <input type="number" value={newAccount.payoutThreshold}
-                    onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { payoutThreshold: e.target.value })); }}
-                    placeholder="e.g. 500" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
-                </Field>
-                <Field label="Your Profit Split (%)">
-                  <input type="number" value={newAccount.profitSplit}
-                    onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { profitSplit: e.target.value })); }}
-                    placeholder="e.g. 90" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
-                </Field>
-                <Field label="Min Qualifying Days">
-                  <input type="number" value={newAccount.minQualifyingDays}
-                    onChange={function(e) { setNewAccount(Object.assign({}, newAccount, { minQualifyingDays: e.target.value })); }}
-                    placeholder="leave blank if none" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none" />
-                </Field>
-              </div>
-              <p className="text-xs text-gray-500">First Payout Buffer is the net profit you need before your very first payout unlocks. Every payout after that only needs the smaller "each payout after" amount, counted from the date of your last payout.</p>
+              <PayoutTypeSelector value={newAccount.payoutType || 'simple'} onChange={function(t) { setNewAccount(Object.assign({}, newAccount, { payoutType: t })); }} />
+              <p className="text-xs text-gray-500">{(PAYOUT_TYPES.find(function(t) { return t.key === (newAccount.payoutType || 'simple'); }) || {}).desc}</p>
+              <PayoutTypeFieldset type={newAccount.payoutType || 'simple'}
+                get={function(field) { return newAccount[field]; }}
+                set={function(field, value) { setNewAccount(Object.assign({}, newAccount, { [field]: value })); }} />
             </div>
             )}
 
