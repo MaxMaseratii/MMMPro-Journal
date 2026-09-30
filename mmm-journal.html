@@ -765,7 +765,29 @@ const emptyAccountForm = {
   twoLegTarget: '', twoLegCashPayout: '', twoLegLiveCredit: ''
 };
 
-const emptyEntryForm = function(defaultRisk, defaultContracts) {
+const emptyMentalCheck = function() {
+  return { marketAwareness: 5, riskRespect: 5, humility: 5, mindset: 5 };
+};
+
+const emptyDailyPlan = function(defaultRisk, defaultRR) {
+  return {
+    riskAmount: defaultRisk ? defaultRisk.toFixed(2) : '',
+    targetProfit: '',
+    maxTrades: '3',
+    plannedTrades: '2',
+    riskRewardRatio: defaultRR ? String(defaultRR) : '',
+    maxLossPerDay: '',
+    startTime: '',
+    endTime: '',
+    notes: '',
+  };
+};
+
+const emptyReflection = function() {
+  return { wentWrong: '', wentRight: '', lessonsLearned: '', improvementPlan: '', emotionalState: 'neutral', marketConditions: '' };
+};
+
+const emptyEntryForm = function(defaultRisk, defaultContracts, defaultRR) {
   return {
     date: new Date().toISOString().split('T')[0],
     tradedToday: 'yes',
@@ -777,7 +799,10 @@ const emptyEntryForm = function(defaultRisk, defaultContracts) {
     trades: [{ result: 'win', pnl: '', direction: 'long', rulesChecked: [],
       positionSize: defaultContracts ? String(defaultContracts) : '',
       riskAmount: defaultRisk ? defaultRisk.toFixed(2) : '', htfLtf: false, chartUrl: '' }],
-    notes: ''
+    notes: '',
+    mentalCheck: emptyMentalCheck(),
+    dailyPlan: emptyDailyPlan(defaultRisk, defaultRR),
+    reflection: emptyReflection(),
   };
 };
 
@@ -2706,6 +2731,68 @@ function DisciplineChecklistCard(props) {
   );
 }
 
+// The three-pillar reflection log for the active account - what went wrong,
+// what went right, tomorrow's plan - plus a running average of the
+// pre-session Mental Check score, so the psychological side of trading gets
+// the same kind of tracked history as the P&L side does.
+function ReflectionLog(props) {
+  const accountEntries = props.accountEntries;
+  const [open, setOpen] = useState(false);
+
+  const withReflection = accountEntries.filter(function(e) {
+    const r = e.reflection;
+    return r && (r.wentWrong || r.wentRight || r.lessonsLearned || r.improvementPlan);
+  }).slice().sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+
+  const withMentalCheck = accountEntries.filter(function(e) { return e.mentalCheck && mentalCheckTotal(e.mentalCheck) > 0; });
+  const avgMental = withMentalCheck.length > 0
+    ? withMentalCheck.reduce(function(s, e) { return s + mentalCheckTotal(e.mentalCheck); }, 0) / withMentalCheck.length
+    : null;
+
+  if (withReflection.length === 0 && avgMental === null) return null;
+
+  const avgColor = avgMental === null ? 'text-gray-500' : avgMental >= 32 ? 'text-green-400' : avgMental >= 20 ? 'text-yellow-400' : 'text-red-400';
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden">
+      <button onClick={function() { setOpen(!open); }} className="w-full flex items-center justify-between p-6 text-left">
+        <div className="flex items-center gap-3">
+          <Icon name="BookOpen" className="h-5 w-5 text-purple-400 flex-shrink-0" />
+          <div>
+            <h2 className="text-lg font-semibold text-white">Discipline &amp; Psychology Log</h2>
+            <p className="text-xs text-gray-500">
+              {withReflection.length} reflection{withReflection.length !== 1 ? 's' : ''} logged
+              {avgMental !== null && <span> - avg mental check <span className={avgColor}>{avgMental.toFixed(0)}/40</span></span>}
+            </p>
+          </div>
+        </div>
+        <Icon name={open ? "ChevronUp" : "ChevronDown"} className="h-4 w-4 text-gray-500 flex-shrink-0" />
+      </button>
+      {open && (
+        <div className="px-6 pb-6 space-y-3">
+          {withReflection.length === 0 ? (
+            <p className="text-xs text-gray-500">No written reflections yet - fill in the "Discipline &amp; Psychology Reflection" section next time you log a day to start the log.</p>
+          ) : withReflection.map(function(e) {
+            const r = e.reflection;
+            return (
+              <div key={e.id} className="bg-black/30 border border-gray-800 rounded-lg p-3 space-y-1.5">
+                <div className="flex items-center justify-between text-[11px] text-gray-500">
+                  <span className="num">{e.date}</span>
+                  {r.emotionalState && <span className="capitalize px-2 py-0.5 rounded-full bg-gray-800 text-gray-400">{r.emotionalState}</span>}
+                </div>
+                {r.wentRight && <p className="text-xs text-gray-300"><span className="text-green-400 font-medium">Right: </span>{r.wentRight}</p>}
+                {r.wentWrong && <p className="text-xs text-gray-300"><span className="text-red-400 font-medium">Wrong: </span>{r.wentWrong}</p>}
+                {r.lessonsLearned && <p className="text-xs text-gray-300"><span className="text-blue-400 font-medium">Lesson: </span>{r.lessonsLearned}</p>}
+                {r.improvementPlan && <p className="text-xs text-gray-300"><span className="text-yellow-400 font-medium">Tomorrow: </span>{r.improvementPlan}</p>}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DisciplineLeaderboard(props) {
   const currentUid = props.uid;
   const currentName = props.currentName;
@@ -3354,6 +3441,170 @@ function CsvImportFields(props) {
   );
 }
 
+const MENTAL_CHECK_SLIDERS = [
+  { key: 'marketAwareness', label: 'Market Regime Awareness', sub: 'How well do you understand current market conditions right now?' },
+  { key: 'riskRespect', label: 'Risk Respect Level', sub: 'Will you strictly follow your risk management rules today?' },
+  { key: 'humility', label: 'Humility Check', sub: 'Are you emotionally balanced - not chasing, not revenge-trading?' },
+  { key: 'mindset', label: 'Professional Mindset', sub: 'Are you approaching today as a business, not a gamble?' },
+];
+
+function mentalCheckTotal(mc) {
+  if (!mc) return 0;
+  return (mc.marketAwareness || 0) + (mc.riskRespect || 0) + (mc.humility || 0) + (mc.mindset || 0);
+}
+
+// A collapsible pre-session check-in, real sliders tied to real state (unlike
+// the source app's decorative demo numbers) - the score is computed live
+// from what's actually moved, not a hardcoded percentage.
+function MentalCheckSection(props) {
+  const value = props.value;
+  const onChange = props.onChange;
+  const [open, setOpen] = useState(false);
+  const total = mentalCheckTotal(value);
+  const scoreColor = total >= 32 ? 'text-green-400' : total >= 20 ? 'text-yellow-400' : 'text-red-400';
+
+  return (
+    <div className="border border-gray-800 rounded-lg overflow-hidden">
+      <button type="button" onClick={function() { setOpen(!open); }} className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-900/60 text-left">
+        <span className="text-sm text-gray-300 flex items-center gap-1.5"><Icon name="Brain" className="h-3.5 w-3.5 text-teal-400" /><span>Pre-Session Mental Check</span></span>
+        <span className="flex items-center gap-2">
+          <span className={"text-xs num font-semibold " + scoreColor}>{total}/40</span>
+          <Icon name={open ? "ChevronUp" : "ChevronDown"} className="h-3.5 w-3.5 text-gray-500" />
+        </span>
+      </button>
+      {open && (
+        <div className="p-3 space-y-3 bg-black/20">
+          {MENTAL_CHECK_SLIDERS.map(function(s) {
+            return (
+              <div key={s.key}>
+                <div className="flex items-center justify-between mb-0.5">
+                  <label className="text-xs text-gray-400">{s.label}</label>
+                  <span className="text-xs text-yellow-400 num">{value[s.key]}/10</span>
+                </div>
+                <input type="range" min="1" max="10" value={value[s.key]} onChange={function(e) { onChange(s.key, parseInt(e.target.value, 10)); }} className="w-full accent-teal-400" />
+                <p className="text-[11px] text-gray-600">{s.sub}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// The day's plan, written down before trading starts - risk, target, session
+// window and allowed trade count - so the Discipline tab can later compare
+// what was planned against what actually happened.
+function DailyPlanSection(props) {
+  const value = props.value;
+  const onChange = props.onChange;
+  const [open, setOpen] = useState(false);
+  const hasPlan = value.riskAmount || value.targetProfit;
+
+  return (
+    <div className="border border-gray-800 rounded-lg overflow-hidden">
+      <button type="button" onClick={function() { setOpen(!open); }} className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-900/60 text-left">
+        <span className="text-sm text-gray-300 flex items-center gap-1.5"><Icon name="Calendar" className="h-3.5 w-3.5 text-yellow-400" /><span>Daily Plan</span></span>
+        <span className="flex items-center gap-2">
+          {hasPlan && <span className="text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/15 text-yellow-300">Set</span>}
+          <Icon name={open ? "ChevronUp" : "ChevronDown"} className="h-3.5 w-3.5 text-gray-500" />
+        </span>
+      </button>
+      {open && (
+        <div className="p-3 space-y-3 bg-black/20">
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-[11px] text-gray-500 mb-1">Risk Per Trade ($)</label>
+              <input type="number" value={value.riskAmount} onChange={function(e) { onChange('riskAmount', e.target.value); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
+            </div>
+            <div>
+              <label className="block text-[11px] text-gray-500 mb-1">Target Profit Today ($)</label>
+              <input type="number" value={value.targetProfit} onChange={function(e) { onChange('targetProfit', e.target.value); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
+            </div>
+            <div>
+              <label className="block text-[11px] text-gray-500 mb-1">Planned Trades</label>
+              <input type="number" min="0" max="3" value={value.plannedTrades} onChange={function(e) { onChange('plannedTrades', e.target.value); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
+            </div>
+            <div>
+              <label className="block text-[11px] text-gray-500 mb-1">Reward:Risk Ratio</label>
+              <input type="number" step="0.1" value={value.riskRewardRatio} onChange={function(e) { onChange('riskRewardRatio', e.target.value); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
+            </div>
+            <div>
+              <label className="block text-[11px] text-gray-500 mb-1">Session Start</label>
+              <input type="time" value={value.startTime} onChange={function(e) { onChange('startTime', e.target.value); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
+            </div>
+            <div>
+              <label className="block text-[11px] text-gray-500 mb-1">Session End</label>
+              <input type="time" value={value.endTime} onChange={function(e) { onChange('endTime', e.target.value); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
+            </div>
+          </div>
+          <div>
+            <label className="block text-[11px] text-gray-500 mb-1">Setups you're allowed to take today</label>
+            <textarea value={value.notes} onChange={function(e) { onChange('notes', e.target.value); }} placeholder="e.g. only the A+ pullback setup, no counter-trend trades before 10am..." className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-14 focus:border-yellow-400/50 outline-none resize-none"></textarea>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const EMOTIONAL_STATES = ['neutral', 'confident', 'anxious', 'frustrated', 'excited', 'fatigued'];
+
+// The three-pillar reflection - what went wrong, what went right, tomorrow's
+// plan - plus lessons learned and emotional state. Shown collapsed by
+// default so it never blocks a quick log, but it's what feeds the
+// Discipline tab's reflection log.
+function ReflectionSection(props) {
+  const value = props.value;
+  const onChange = props.onChange;
+  const [open, setOpen] = useState(false);
+  const hasReflection = value.wentWrong || value.wentRight || value.improvementPlan;
+
+  return (
+    <div className="border border-gray-800 rounded-lg overflow-hidden">
+      <button type="button" onClick={function() { setOpen(!open); }} className="w-full flex items-center justify-between px-3 py-2.5 bg-gray-900/60 text-left">
+        <span className="text-sm text-gray-300 flex items-center gap-1.5"><Icon name="ListChecks" className="h-3.5 w-3.5 text-purple-400" /><span>Discipline &amp; Psychology Reflection</span></span>
+        <span className="flex items-center gap-2">
+          {hasReflection && <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300">Filled</span>}
+          <Icon name={open ? "ChevronUp" : "ChevronDown"} className="h-3.5 w-3.5 text-gray-500" />
+        </span>
+      </button>
+      {open && (
+        <div className="p-3 space-y-3 bg-black/20">
+          <div>
+            <label className="block text-[11px] text-red-400 mb-1">What went wrong?</label>
+            <textarea value={value.wentWrong} onChange={function(e) { onChange('wentWrong', e.target.value); }} placeholder="Mistakes, emotional decisions, rule breaks..." className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-14 focus:border-red-400/50 outline-none resize-none"></textarea>
+          </div>
+          <div>
+            <label className="block text-[11px] text-green-400 mb-1">What went right?</label>
+            <textarea value={value.wentRight} onChange={function(e) { onChange('wentRight', e.target.value); }} placeholder="Disciplined decisions, setups you're proud of..." className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-14 focus:border-green-400/50 outline-none resize-none"></textarea>
+          </div>
+          <div>
+            <label className="block text-[11px] text-gray-400 mb-1">Lessons learned</label>
+            <textarea value={value.lessonsLearned} onChange={function(e) { onChange('lessonsLearned', e.target.value); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-12 focus:border-yellow-400/50 outline-none resize-none"></textarea>
+          </div>
+          <div>
+            <label className="block text-[11px] text-yellow-400 mb-1">Tomorrow's improvement plan</label>
+            <textarea value={value.improvementPlan} onChange={function(e) { onChange('improvementPlan', e.target.value); }} placeholder="One concrete thing to do differently tomorrow..." className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-14 focus:border-yellow-400/50 outline-none resize-none"></textarea>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-[11px] text-gray-500 mb-1">Emotional state</label>
+              <select value={value.emotionalState} onChange={function(e) { onChange('emotionalState', e.target.value); }} className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm capitalize focus:border-yellow-400/50 outline-none">
+                {EMOTIONAL_STATES.map(function(s) { return (<option key={s} value={s}>{s}</option>); })}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[11px] text-gray-500 mb-1">Market conditions</label>
+              <input type="text" value={value.marketConditions} onChange={function(e) { onChange('marketConditions', e.target.value); }} placeholder="e.g. choppy, trending, news-driven" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none" />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function PerAccountBreakdown(props) {
   const accounts = props.accounts.filter(function(a) { return computeAccountStatus(a, props.entries) !== 'breached'; });
   const entries = props.entries;
@@ -3900,6 +4151,16 @@ function MMMJournal(props) {
     setNewEntry(Object.assign({}, newEntry, { trades: trades }));
   };
 
+  const updateMentalCheck = function(key, value) {
+    setNewEntry(Object.assign({}, newEntry, { mentalCheck: Object.assign({}, newEntry.mentalCheck, { [key]: value }) }));
+  };
+  const updateDailyPlan = function(key, value) {
+    setNewEntry(Object.assign({}, newEntry, { dailyPlan: Object.assign({}, newEntry.dailyPlan, { [key]: value }) }));
+  };
+  const updateReflection = function(key, value) {
+    setNewEntry(Object.assign({}, newEntry, { reflection: Object.assign({}, newEntry.reflection, { [key]: value }) }));
+  };
+
   const handleSaveEntry = async function() {
     if (!activeAccountId) return;
     if (newEntry.tradedToday === 'no') {
@@ -3907,9 +4168,10 @@ function MMMJournal(props) {
       await entriesRef.add({
         accountId: activeAccountId, date: newEntry.date, tradedToday: 'no',
         noTradeReason: newEntry.noTradeReason, notes: newEntry.noTradeNotes,
-        dailyBias: 'neutral', exercised: newEntry.exercised, strategyId: newEntry.strategyId || 'default', trades: []
+        dailyBias: 'neutral', exercised: newEntry.exercised, strategyId: newEntry.strategyId || 'default', trades: [],
+        mentalCheck: newEntry.mentalCheck, dailyPlan: newEntry.dailyPlan, reflection: newEntry.reflection
       });
-      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts));
+      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR));
       setShowAddEntry(false);
       return;
     }
@@ -3924,9 +4186,10 @@ function MMMJournal(props) {
     await entriesRef.add({
       accountId: activeAccountId, date: newEntry.date, tradedToday: 'yes',
       dailyBias: newEntry.dailyBias, exercised: newEntry.exercised, strategyId: newEntry.strategyId || 'default',
-      trades: stampedTrades, notes: newEntry.notes, matrixAdherent: matrixAdherent
+      trades: stampedTrades, notes: newEntry.notes, matrixAdherent: matrixAdherent,
+      mentalCheck: newEntry.mentalCheck, dailyPlan: newEntry.dailyPlan, reflection: newEntry.reflection
     });
-    setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts));
+    setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR));
     setShowAddEntry(false);
   };
 
@@ -3979,7 +4242,7 @@ function MMMJournal(props) {
             <div className="flex items-center gap-2 flex-wrap">
               <AccountGroupNav accounts={accounts} activeAccountId={activeAccountId} onSelect={function(id, fromBreachedTab) { setHasManualSelection(true); setViewingBreached(!!fromBreachedTab); setActiveAccountId(id); setActivePage('overview'); }} getStatus={getAccountStatus} filter={accountFilter} selectedIds={selectedAccountIds} onToggleAccount={toggleAccountSelection} onToggleGroup={toggleGroupSelection} onToggleAll={toggleAllAccountSelection} />
               {shouldShowAccountDetail && (
-                <button onClick={function() { setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts)); setEntryMethod('manual'); setShowAddEntry(true); }}
+                <button onClick={function() { setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR)); setEntryMethod('manual'); setShowAddEntry(true); }}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-yellow-500/10 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/15 transition">
                   <Icon name="CalendarPlus" className="h-3.5 w-3.5" /><span>Daily Log</span>
                 </button>
@@ -4257,7 +4520,7 @@ function MMMJournal(props) {
                         className="flex items-center gap-1.5 bg-gray-900 border border-gray-800 text-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium hover:border-blue-500/40 hover:text-blue-300 transition">
                         <Icon name="Download" className="h-3.5 w-3.5" /><span>Export CSV</span>
                       </button>
-                      <button onClick={function() { setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts)); setEntryMethod('manual'); setShowAddEntry(true); }}
+                      <button onClick={function() { setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR)); setEntryMethod('manual'); setShowAddEntry(true); }}
                         className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-green-400 hover:to-emerald-500 transition">
                         <Icon name="Plus" className="h-3.5 w-3.5" /><span>Daily Log</span>
                       </button>
@@ -4374,6 +4637,7 @@ function MMMJournal(props) {
                   <BreachReviewCard account={activeAccount} accountEntries={accountEntries} bufferHistory={bufferHistory} />
                 )}
                 <DisciplineChecklistCard accounts={accounts} entries={entries} />
+                <ReflectionLog accountEntries={accountEntries} />
                 <DisciplineLeaderboard uid={user.uid} currentName={user.displayName || user.email} />
                 </React.Fragment>
                 )}
@@ -4684,6 +4948,10 @@ function MMMJournal(props) {
                 <button onClick={function() { setNewEntry(Object.assign({}, newEntry, { exercised: false })); }} className={"flex-1 py-2 rounded-lg text-sm font-medium border " + (!newEntry.exercised ? 'bg-gray-500/30 text-gray-300 border-gray-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}>No</button>
               </div>
             </div>
+
+            <MentalCheckSection value={newEntry.mentalCheck} onChange={updateMentalCheck} />
+            <DailyPlanSection value={newEntry.dailyPlan} onChange={updateDailyPlan} />
+            <ReflectionSection value={newEntry.reflection} onChange={updateReflection} />
 
             {newEntry.tradedToday === 'no' ? (
               <React.Fragment>
