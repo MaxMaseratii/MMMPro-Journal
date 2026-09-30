@@ -1028,6 +1028,7 @@ const PAGE_TABS = [
   { key: 'reports', label: 'Reports', icon: 'BarChart3' },
   { key: 'discipline', label: 'Discipline', icon: 'ListChecks' },
   { key: 'finances', label: 'Finances', icon: 'DollarSign' },
+  { key: 'projections', label: 'Projections', icon: 'Target' },
   { key: 'strategy', label: 'Strategy', icon: 'BookOpen' },
 ];
 
@@ -1462,6 +1463,191 @@ function TradeBudgetReference(props) {
         </button>
       ) : (
         <p className="text-xs text-gray-600">Your system max ({fmt(systemMaxRisk)}/trade) is already tighter than this reference - you're already more conservative than a {LOW_COUNT}-trade life count.</p>
+      )}
+    </div>
+  );
+}
+
+function ProjectionsCard(props) {
+  const account = props.account;
+  const accountEntries = props.accountEntries;
+  const defaultRisk = props.defaultRiskPerTrade;
+  const storageKey = 'mmm_projection_' + account.id;
+
+  const [settings, setSettings] = useState(function() {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return {
+      riskPerTrade: defaultRisk || 0,
+      rewardRatio: Math.max(parseFloat(account.rewardRatio) || MIN_RR, MIN_RR),
+      profitTarget: parseFloat(account.profitTarget) || 0,
+      riskCuttingPercent: 0,
+      compoundingPercent: 0,
+    };
+  });
+
+  useEffect(function() {
+    try { localStorage.setItem(storageKey, JSON.stringify(settings)); } catch (e) {}
+  }, [settings, storageKey]);
+
+  const update = function(key, value) {
+    setSettings(function(prev) { const next = Object.assign({}, prev); next[key] = value; return next; });
+  };
+
+  // Real day-by-day P&L pulled straight from this account's logged entries,
+  // so the projection swaps in what actually happened the moment a day has
+  // been logged, instead of only ever showing the simulated path.
+  const pnlByDate = {};
+  accountEntries.forEach(function(e) {
+    if (e.tradedToday === 'no') return;
+    const dayPnl = (e.trades || []).reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0);
+    pnlByDate[e.date] = (pnlByDate[e.date] || 0) + dayPnl;
+  });
+
+  const target = settings.profitTarget || 0;
+  const days = [];
+  if (settings.riskPerTrade > 0 && settings.rewardRatio > 0 && target > 0) {
+    let cumulativeTarget = 0;
+    let currentRisk = settings.riskPerTrade;
+    let tradingDayCount = 0;
+    let calendarDayCount = 0;
+    while (cumulativeTarget < target && tradingDayCount < 200) {
+      calendarDayCount++;
+      const d = new Date();
+      d.setDate(d.getDate() + calendarDayCount - 1);
+      if (d.getDay() === 0 || d.getDay() === 6) continue;
+      tradingDayCount++;
+      const dateStr = d.toISOString().split('T')[0];
+      const reward = currentRisk * settings.rewardRatio;
+      cumulativeTarget += reward;
+      const hasActual = pnlByDate.hasOwnProperty(dateStr);
+      const actualPnl = hasActual ? pnlByDate[dateStr] : undefined;
+      days.push({ date: dateStr, dayNumber: tradingDayCount, risk: currentRisk, reward: reward, targetExpectation: cumulativeTarget, hasActual: hasActual, actualPnl: actualPnl });
+      if (hasActual) {
+        if (actualPnl < 0 && settings.riskCuttingPercent > 0) currentRisk = currentRisk * (1 - settings.riskCuttingPercent / 100);
+        else if (actualPnl > 0 && settings.compoundingPercent > 0) currentRisk = currentRisk * (1 + settings.compoundingPercent / 100);
+      } else if (settings.compoundingPercent > 0) {
+        currentRisk = currentRisk * (1 + settings.compoundingPercent / 100);
+      }
+    }
+  }
+
+  const dailyReward = settings.riskPerTrade * settings.rewardRatio;
+  const loggedDaysInPlan = days.filter(function(d) { return d.hasActual; }).length;
+  const cumulativeActual = days.reduce(function(s, d) { return s + (d.hasActual ? d.actualPnl : 0); }, 0);
+  const progressPct = target > 0 ? Math.min(100, Math.max(0, (cumulativeActual / target) * 100)) : 0;
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+      <div className="flex items-center gap-2 mb-1">
+        <Icon name="Target" className="h-5 w-5 text-yellow-400" />
+        <h2 className="text-lg font-semibold text-white">Target Projection</h2>
+      </div>
+      <p className="text-xs text-gray-500 mb-5">Set a risk-per-trade and a profit target, and see the day-by-day path to it. Risk cuts after a real loss and compounds after a real win, once a day is logged.</p>
+
+      <div className="grid sm:grid-cols-2 gap-4 mb-5">
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">Risk Per Trade ($)</label>
+          <input type="number" value={settings.riskPerTrade || ''} onChange={function(e) { update('riskPerTrade', parseFloat(e.target.value) || 0); }}
+            className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white" placeholder="0" />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">Reward:Risk Ratio</label>
+          <input type="number" step="0.1" value={settings.rewardRatio || ''} onChange={function(e) { update('rewardRatio', parseFloat(e.target.value) || 0); }}
+            className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white" placeholder="2" />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">Profit Target ($)</label>
+          <input type="number" value={settings.profitTarget || ''} onChange={function(e) { update('profitTarget', parseFloat(e.target.value) || 0); }}
+            className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white" placeholder="0" />
+        </div>
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">Daily Profit / Trade</label>
+          <div className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-green-400 num">{fmt(dailyReward)}</div>
+        </div>
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-5 mb-6">
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-xs text-gray-400">Risk Cutting on a Loss</label>
+            <span className="text-xs text-red-400 num">{settings.riskCuttingPercent}%</span>
+          </div>
+          <input type="range" min="0" max="100" step="5" value={settings.riskCuttingPercent}
+            onChange={function(e) { update('riskCuttingPercent', parseInt(e.target.value, 10)); }}
+            className="w-full accent-red-400" />
+          <p className="text-[11px] text-gray-600 mt-1">Shrinks next trade's risk after a logged losing day.</p>
+        </div>
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-xs text-gray-400">Compounding on a Win</label>
+            <span className="text-xs text-green-400 num">{settings.compoundingPercent}%</span>
+          </div>
+          <input type="range" min="0" max="100" step="5" value={settings.compoundingPercent}
+            onChange={function(e) { update('compoundingPercent', parseInt(e.target.value, 10)); }}
+            className="w-full accent-green-400" />
+          <p className="text-[11px] text-gray-600 mt-1">Grows next trade's risk after a logged winning day.</p>
+        </div>
+      </div>
+
+      {days.length === 0 ? (
+        <p className="text-xs text-gray-600 border border-gray-800 rounded-lg p-4 text-center">Fill in risk per trade, reward:risk and a profit target to generate the plan.</p>
+      ) : (
+        <React.Fragment>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
+            <MiniStat label="Trading Days to Target" value={String(days.length)} color="text-blue-400" />
+            <MiniStat label="Daily Reward" value={fmt(dailyReward)} color="text-yellow-400" />
+            <MiniStat label="Progress (Logged Days)" value={progressPct.toFixed(1) + '%'} color="text-green-400" />
+            <MiniStat label="Days Logged So Far" value={loggedDaysInPlan + ' of ' + days.length} color="text-purple-400" />
+          </div>
+
+          <div className="overflow-x-auto -mx-2">
+            <table className="w-full text-xs min-w-[640px]">
+              <thead>
+                <tr className="text-gray-500 border-b border-gray-800">
+                  <th className="text-left px-2 py-2 font-medium">Day</th>
+                  <th className="text-center px-2 py-2 font-medium">Risk</th>
+                  <th className="text-center px-2 py-2 font-medium">Expected Profit</th>
+                  <th className="text-center px-2 py-2 font-medium">Progress to Goal</th>
+                  <th className="text-center px-2 py-2 font-medium">Actual Result</th>
+                </tr>
+              </thead>
+              <tbody>
+                {days.map(function(d) {
+                  const pct = target > 0 ? Math.min(100, (d.targetExpectation / target) * 100) : 0;
+                  const reached = d.targetExpectation >= target;
+                  return (
+                    <tr key={d.date} className="border-b border-gray-900 hover:bg-white/[0.02]">
+                      <td className="px-2 py-2 text-gray-300">
+                        <div className="font-medium">{d.date}</div>
+                        <div className="text-[10px] text-gray-600">Day {d.dayNumber}</div>
+                      </td>
+                      <td className="px-2 py-2 text-center text-blue-400 num">{fmt(d.risk)}</td>
+                      <td className="px-2 py-2 text-center text-green-400 num">{fmt(d.reward)}</td>
+                      <td className="px-2 py-2 text-center">
+                        <div className={"num font-semibold " + (reached ? 'text-green-400' : 'text-yellow-400')}>{fmt(d.targetExpectation)}</div>
+                        <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden mt-1">
+                          <div className={"h-full rounded-full " + (reached ? 'bg-green-400' : 'bg-yellow-400')} style={{ width: Math.max(2, pct) + '%' }}></div>
+                        </div>
+                      </td>
+                      <td className="px-2 py-2 text-center num">
+                        {d.hasActual ? (
+                          <span className={d.actualPnl > 0 ? 'text-green-400' : d.actualPnl < 0 ? 'text-red-400' : 'text-gray-400'}>
+                            {d.actualPnl > 0 ? '+' : ''}{fmt(d.actualPnl)}
+                          </span>
+                        ) : (
+                          <span className="text-gray-700">-</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </React.Fragment>
       )}
     </div>
   );
@@ -4106,6 +4292,10 @@ function MMMJournal(props) {
                 <PayoutLedger account={activeAccount} onAddPayout={handleAddPayout} suggestedAmount={payoutStatus && payoutStatus.eligible ? payoutStatus.requestable : null} />
                 <RiskOfRuinCard currentBuffer={Math.max(currentBuffer, 0)} divisor={ruinDivisor} accountType={activeAccount.accountType} />
                 </React.Fragment>
+                )}
+
+                {activePage === 'projections' && (
+                  <ProjectionsCard account={activeAccount} accountEntries={accountEntries} defaultRiskPerTrade={effectiveRiskPerTrade} />
                 )}
 
                 {activePage === 'strategy' && (
