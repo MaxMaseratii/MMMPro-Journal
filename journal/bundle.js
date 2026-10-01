@@ -155,6 +155,11 @@ const TRANSLATIONS = {
     es: "¿Ya tienes una cuenta?",
     ht: "Ou gen kont deja?"
   },
+  "Forgot password?": {
+    fr: "Mot de passe oublié ?",
+    es: "¿Olvidaste tu contraseña?",
+    ht: "Ou bliye modpas ou?"
+  },
   "Sign out": {
     fr: "Se déconnecter",
     es: "Cerrar sesión",
@@ -1527,10 +1532,12 @@ function AuthScreen(props) {
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const [showInstall, setShowInstall] = useState(false);
   const [loading, setLoading] = useState(false);
   const handleSubmit = async function () {
     setError('');
+    setInfo('');
     if (!email || !password) {
       setError('Enter email and password.');
       return;
@@ -1545,6 +1552,22 @@ function AuthScreen(props) {
       } else {
         await auth.signInWithEmailAndPassword(email, password);
       }
+    } catch (e) {
+      setError(e.message.replace('Firebase: ', ''));
+    }
+    setLoading(false);
+  };
+  const handleForgotPassword = async function () {
+    setError('');
+    setInfo('');
+    if (!email) {
+      setError('Enter your email above first, then tap "Forgot password?".');
+      return;
+    }
+    setLoading(true);
+    try {
+      await auth.sendPasswordResetEmail(email);
+      setInfo('Password reset email sent to ' + email + ' - check your inbox (and spam folder).');
     } catch (e) {
       setError(e.message.replace('Firebase: ', ''));
     }
@@ -1588,16 +1611,23 @@ function AuthScreen(props) {
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 focus:border-yellow-400/50 outline-none"
   }), error && React.createElement("p", {
     className: "text-red-400 text-xs mb-3"
-  }, error), React.createElement("button", {
+  }, error), info && React.createElement("p", {
+    className: "text-green-400 text-xs mb-3"
+  }, info), React.createElement("button", {
     onClick: handleSubmit,
     disabled: loading,
     className: "w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-50 mb-3"
-  }, loading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'), React.createElement("p", {
+  }, loading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'), mode === 'login' && React.createElement("button", {
+    onClick: handleForgotPassword,
+    disabled: loading,
+    className: "w-full text-center text-xs text-gray-500 hover:text-yellow-400 mb-3"
+  }, "Forgot password?"), React.createElement("p", {
     className: "text-center text-sm text-gray-500"
   }, mode === 'login' ? "Don't have an account?" : "Already have an account?", ' ', React.createElement("button", {
     onClick: function () {
       setMode(mode === 'login' ? 'signup' : 'login');
       setError('');
+      setInfo('');
     },
     className: "text-yellow-400 hover:underline"
   }, mode === 'login' ? 'Sign up' : 'Sign in')), React.createElement("button", {
@@ -5821,16 +5851,13 @@ function MMMJournal(props) {
     }));
     setShowAddAccount(true);
   };
-  const handleDeleteAccount = async function (id) {
-    if (!confirm('Delete this account and all its journal entries?')) return;
-    const batchEntries = await entriesRef.where('accountId', '==', id).get();
-    const batch = db.batch();
-    batchEntries.forEach(function (d) {
-      batch.delete(d.ref);
+  const handleArchiveAccount = async function (id, currentlyArchived) {
+    const verb = currentlyArchived ? 'Unarchive' : 'Archive';
+    const msg = currentlyArchived ? 'Unarchive this account? It will show up as active again.' : "Archive this account? It'll stop counting as active, but every trade and entry stays saved - you can unarchive it anytime.";
+    if (!confirm(msg)) return;
+    await accountsRef.doc(id).update({
+      archived: !currentlyArchived
     });
-    batch.delete(accountsRef.doc(id));
-    await batch.commit();
-    if (activeAccountId === id) setActiveAccountId(null);
   };
   const handleAddPayout = async function (payout) {
     await accountsRef.doc(activeAccount.id).update({
@@ -6329,10 +6356,10 @@ function MMMJournal(props) {
     className: "text-yellow-400"
   }, activeAccount.copiedAccountNumber)), React.createElement("button", {
     onClick: function () {
-      handleDeleteAccount(activeAccount.id);
+      handleArchiveAccount(activeAccount.id, activeAccount.archived === true);
     },
-    className: "text-xs text-gray-600 hover:text-red-400 transition"
-  }, "Delete account"))), React.createElement("div", {
+    className: "text-xs text-gray-600 hover:text-yellow-400 transition"
+  }, activeAccount.archived === true ? 'Unarchive account' : 'Archive account'))), React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
   }, React.createElement("div", null, React.createElement("div", {
     className: "text-[11px] text-gray-500 mb-0.5"
