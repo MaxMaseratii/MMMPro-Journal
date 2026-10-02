@@ -86,6 +86,12 @@ const LANGUAGES = [{
   code: 'es',
   label: 'Español'
 }, {
+  code: 'pt',
+  label: 'Português'
+}, {
+  code: 'de',
+  label: 'Deutsch'
+}, {
   code: 'ht',
   label: 'Kreyòl Ayisyen'
 }];
@@ -93,682 +99,954 @@ const TRANSLATIONS = {
   "MMM Pro Journal": {
     fr: "Journal MMM Pro",
     es: "Diario MMM Pro",
-    ht: "Jounal MMM Pro"
+    ht: "Jounal MMM Pro",
+    pt: "Diário MMM Pro",
+    de: "MMM Pro Journal"
   },
   "Sign in to your account": {
     fr: "Connectez-vous à votre compte",
     es: "Inicia sesión en tu cuenta",
-    ht: "Konekte sou kont ou"
+    ht: "Konekte sou kont ou",
+    pt: "Entre na sua conta",
+    de: "In dein Konto einloggen"
   },
   "Create your account": {
     fr: "Créez votre compte",
     es: "Crea tu cuenta",
-    ht: "Kreye kont ou"
+    ht: "Kreye kont ou",
+    pt: "Crie sua conta",
+    de: "Konto erstellen"
   },
   "Your name": {
     fr: "Votre nom",
     es: "Tu nombre",
-    ht: "Non ou"
+    ht: "Non ou",
+    pt: "Seu nome",
+    de: "Dein Name"
   },
   "Email": {
     fr: "E-mail",
     es: "Correo electrónico",
-    ht: "Imel"
+    ht: "Imel",
+    pt: "E-mail",
+    de: "E-Mail"
   },
   "Password": {
     fr: "Mot de passe",
     es: "Contraseña",
-    ht: "Modpas"
+    ht: "Modpas",
+    pt: "Senha",
+    de: "Passwort"
   },
   "Sign In": {
     fr: "Se connecter",
     es: "Iniciar sesión",
-    ht: "Konekte"
+    ht: "Konekte",
+    pt: "Entrar",
+    de: "Anmelden"
   },
   "Create Account": {
     fr: "Créer un compte",
     es: "Crear cuenta",
-    ht: "Kreye kont"
+    ht: "Kreye kont",
+    pt: "Criar conta",
+    de: "Konto erstellen"
   },
   "Please wait...": {
     fr: "Veuillez patienter...",
     es: "Espera por favor...",
-    ht: "Tanpri tann..."
+    ht: "Tanpri tann...",
+    pt: "Aguarde...",
+    de: "Bitte warten..."
   },
   "Sign up": {
     fr: "S'inscrire",
     es: "Regístrate",
-    ht: "Enskri"
+    ht: "Enskri",
+    pt: "Cadastre-se",
+    de: "Registrieren"
   },
   "Sign in": {
     fr: "Se connecter",
     es: "Inicia sesión",
-    ht: "Konekte"
+    ht: "Konekte",
+    pt: "Entrar",
+    de: "Anmelden"
   },
   "Don't have an account?": {
     fr: "Vous n'avez pas de compte ?",
     es: "¿No tienes una cuenta?",
-    ht: "Ou pa gen kont?"
+    ht: "Ou pa gen kont?",
+    pt: "Não tem uma conta?",
+    de: "Noch kein Konto?"
   },
   "Already have an account?": {
     fr: "Vous avez déjà un compte ?",
     es: "¿Ya tienes una cuenta?",
-    ht: "Ou gen kont deja?"
+    ht: "Ou gen kont deja?",
+    pt: "Já tem uma conta?",
+    de: "Bereits ein Konto?"
   },
   "Forgot password?": {
     fr: "Mot de passe oublié ?",
     es: "¿Olvidaste tu contraseña?",
-    ht: "Ou bliye modpas ou?"
+    ht: "Ou bliye modpas ou?",
+    pt: "Esqueceu a senha?",
+    de: "Passwort vergessen?"
   },
   "Sign out": {
     fr: "Se déconnecter",
     es: "Cerrar sesión",
-    ht: "Dekonekte"
+    ht: "Dekonekte",
+    pt: "Sair",
+    de: "Abmelden"
   },
   "Loading...": {
     fr: "Chargement...",
     es: "Cargando...",
-    ht: "Ap chaje..."
+    ht: "Ap chaje...",
+    pt: "Carregando...",
+    de: "Wird geladen..."
   },
   "Edit display name": {
     fr: "Modifier le nom affiché",
     es: "Editar nombre visible",
-    ht: "Chanje non ki afiche"
+    ht: "Chanje non ki afiche",
+    pt: "Editar nome de exibição",
+    de: "Anzeigename bearbeiten"
   },
   "Active Only": {
     fr: "Actifs uniquement",
     es: "Solo activos",
-    ht: "Sèlman aktif"
+    ht: "Sèlman aktif",
+    pt: "Somente ativos",
+    de: "Nur aktive"
   },
   "All Accounts": {
     fr: "Tous les comptes",
     es: "Todas las cuentas",
-    ht: "Tout kont"
+    ht: "Tout kont",
+    pt: "Todas as contas",
+    de: "Alle Konten"
   },
   "Add Account": {
     fr: "Ajouter un compte",
     es: "Agregar cuenta",
-    ht: "Ajoute yon kont"
+    ht: "Ajoute yon kont",
+    pt: "Adicionar conta",
+    de: "Konto hinzufügen"
   },
   "Daily Log": {
     fr: "Journal quotidien",
     es: "Registro diario",
-    ht: "Jounal chak jou"
+    ht: "Jounal chak jou",
+    pt: "Registro diário",
+    de: "Tageseintrag"
   },
   "Export CSV": {
     fr: "Exporter CSV",
     es: "Exportar CSV",
-    ht: "Ekspòte CSV"
+    ht: "Ekspòte CSV",
+    pt: "Exportar CSV",
+    de: "CSV exportieren"
   },
   "Start: ": {
     fr: "Début : ",
     es: "Inicio: ",
-    ht: "Kòmansman: "
+    ht: "Kòmansman: ",
+    pt: "Início: ",
+    de: "Start: "
   },
   "Target: ": {
     fr: "Objectif : ",
     es: "Objetivo: ",
-    ht: "Objektif: "
+    ht: "Objektif: ",
+    pt: "Meta: ",
+    de: "Ziel: "
   },
   "Active Strategy": {
     fr: "Stratégie active",
     es: "Estrategia activa",
-    ht: "Estrateji aktif"
+    ht: "Estrateji aktif",
+    pt: "Estratégia ativa",
+    de: "Aktive Strategie"
   },
   "Current Capital (Buffer)": {
     fr: "Capital actuel (tampon)",
     es: "Capital actual (colchón)",
-    ht: "Kapital aktyèl (tanpon)"
+    ht: "Kapital aktyèl (tanpon)",
+    pt: "Capital atual (buffer)",
+    de: "Aktuelles Kapital (Puffer)"
   },
   "Risk Per Trade": {
     fr: "Risque par transaction",
     es: "Riesgo por operación",
-    ht: "Risk pou chak tranzaksyon"
+    ht: "Risk pou chak tranzaksyon",
+    pt: "Risco por operação",
+    de: "Risiko pro Trade"
   },
   "Total P&L": {
     fr: "P&L total",
     es: "P&L total",
-    ht: "P&L total"
+    ht: "P&L total",
+    pt: "P&L total",
+    de: "Gesamt-P&L"
   },
   "Win Rate": {
     fr: "Taux de réussite",
     es: "Tasa de victorias",
-    ht: "Pousantaj viktwa"
+    ht: "Pousantaj viktwa",
+    pt: "Taxa de acerto",
+    de: "Trefferquote"
   },
   "Contracts Unlocked": {
     fr: "Contrats débloqués",
     es: "Contratos desbloqueados",
-    ht: "Kontra ki debloke"
+    ht: "Kontra ki debloke",
+    pt: "Contratos desbloqueados",
+    de: "Freigeschaltete Kontrakte"
   },
   "Risk / Trade": {
     fr: "Risque / transaction",
     es: "Riesgo / operación",
-    ht: "Risk / Tranzaksyon"
+    ht: "Risk / Tranzaksyon",
+    pt: "Risco / Operação",
+    de: "Risiko / Trade"
   },
   "Locked Max Stop": {
     fr: "Stop max verrouillé",
     es: "Stop máximo fijo",
-    ht: "Estòp maksimòm fikse"
+    ht: "Estòp maksimòm fikse",
+    pt: "Stop máximo fixo",
+    de: "Fixiertes Max-Stop"
   },
   "Daily Target (2 wins)": {
     fr: "Objectif quotidien (2 gains)",
     es: "Meta diaria (2 ganancias)",
-    ht: "Objektif chak jou (2 viktwa)"
+    ht: "Objektif chak jou (2 viktwa)",
+    pt: "Meta diária (2 ganhos)",
+    de: "Tagesziel (2 Gewinne)"
   },
   "Consistency Required": {
     fr: "Cohérence requise",
     es: "Consistencia requerida",
-    ht: "Konsistans obligatwa"
+    ht: "Konsistans obligatwa",
+    pt: "Consistência exigida",
+    de: "Erforderliche Konsistenz"
   },
   "Max Profit Allowed / Day": {
     fr: "Profit max autorisé / jour",
     es: "Ganancia máxima permitida / día",
-    ht: "Pwofi maksimòm otorize / jou"
+    ht: "Pwofi maksimòm otorize / jou",
+    pt: "Lucro máximo permitido / dia",
+    de: "Max. erlaubter Gewinn / Tag"
   },
   "Daily Loss Limit": {
     fr: "Limite de perte quotidienne",
     es: "Límite de pérdida diaria",
-    ht: "Limit pèt chak jou"
+    ht: "Limit pèt chak jou",
+    pt: "Limite de perda diária",
+    de: "Tägliches Verlustlimit"
   },
   "DLL Type": {
     fr: "Type de LPQ",
     es: "Tipo de LPD",
-    ht: "Tip LPJ"
+    ht: "Tip LPJ",
+    pt: "Tipo de LPD",
+    de: "DLL-Typ"
   },
   "Win / Trade": {
     fr: "Gain / transaction",
     es: "Ganancia / operación",
-    ht: "Genyen / Tranzaksyon"
+    ht: "Genyen / Tranzaksyon",
+    pt: "Ganho / Operação",
+    de: "Gewinn / Trade"
   },
   "RR Ratio": {
     fr: "Ratio R/R",
     es: "Ratio R/R",
-    ht: "Rapò R/R"
+    ht: "Rapò R/R",
+    pt: "Relação R/R",
+    de: "CRV-Verhältnis"
   },
   "Breakeven Win Rate": {
     fr: "Taux de réussite d'équilibre",
     es: "Tasa de equilibrio",
-    ht: "Pousantaj balans"
+    ht: "Pousantaj balans",
+    pt: "Taxa de acerto de equilíbrio",
+    de: "Breakeven-Trefferquote"
   },
   "Wins to Hit Target": {
     fr: "Gains pour atteindre l'objectif",
     es: "Ganancias para llegar a la meta",
-    ht: "Viktwa pou rive nan objektif"
+    ht: "Viktwa pou rive nan objektif",
+    pt: "Ganhos para atingir a meta",
+    de: "Gewinne bis zum Ziel"
   },
   "Avg Trades Taken / Day": {
     fr: "Moy. transactions / jour",
     es: "Prom. operaciones / día",
-    ht: "Mwayèn tranzaksyon / jou"
+    ht: "Mwayèn tranzaksyon / jou",
+    pt: "Média de operações / dia",
+    de: "Ø Trades / Tag"
   },
   "Most Trades Taken (Day)": {
     fr: "Max de transactions (jour)",
     es: "Máx. operaciones (día)",
-    ht: "Pi plis tranzaksyon (jou)"
+    ht: "Pi plis tranzaksyon (jou)",
+    pt: "Máx. de operações (dia)",
+    de: "Meiste Trades (Tag)"
   },
   "Remaining to Target": {
     fr: "Restant pour l'objectif",
     es: "Restante para la meta",
-    ht: "Rès pou rive nan objektif"
+    ht: "Rès pou rive nan objektif",
+    pt: "Restante para a meta",
+    de: "Verbleibend bis zum Ziel"
   },
   "Capital (Buffer)": {
     fr: "Capital (tampon)",
     es: "Capital (colchón)",
-    ht: "Kapital (tanpon)"
+    ht: "Kapital (tanpon)",
+    pt: "Capital (buffer)",
+    de: "Kapital (Puffer)"
   },
   "Costs": {
     fr: "Coûts",
     es: "Costos",
-    ht: "Depans"
+    ht: "Depans",
+    pt: "Custos",
+    de: "Kosten"
   },
   "Total Costs": {
     fr: "Coûts totaux",
     es: "Costos totales",
-    ht: "Total depans"
+    ht: "Total depans",
+    pt: "Custos totais",
+    de: "Gesamtkosten"
   },
   "Total Payouts": {
     fr: "Paiements totaux",
     es: "Pagos totales",
-    ht: "Total peman"
+    ht: "Total peman",
+    pt: "Total de pagamentos",
+    de: "Gesamtauszahlungen"
   },
   "Net Profitability": {
     fr: "Rentabilité nette",
     es: "Rentabilidad neta",
-    ht: "Pwofitabilite nèt"
+    ht: "Pwofitabilite nèt",
+    pt: "Rentabilidade líquida",
+    de: "Nettorentabilität"
   },
   "Payout Ledger": {
     fr: "Registre des paiements",
     es: "Registro de pagos",
-    ht: "Rejis peman"
+    ht: "Rejis peman",
+    pt: "Registro de pagamentos",
+    de: "Auszahlungsübersicht"
   },
   "Add Payout": {
     fr: "Ajouter un paiement",
     es: "Agregar pago",
-    ht: "Ajoute peman"
+    ht: "Ajoute peman",
+    pt: "Adicionar pagamento",
+    de: "Auszahlung hinzufügen"
   },
   "No payouts recorded yet.": {
     fr: "Aucun paiement enregistré pour l'instant.",
     es: "Aún no hay pagos registrados.",
-    ht: "Poko gen okenn peman ki anrejistre."
+    ht: "Poko gen okenn peman ki anrejistre.",
+    pt: "Nenhum pagamento registrado ainda.",
+    de: "Noch keine Auszahlungen erfasst."
   },
   "Per-Account Breakdown": {
     fr: "Répartition par compte",
     es: "Desglose por cuenta",
-    ht: "Detay pa kont"
+    ht: "Detay pa kont",
+    pt: "Detalhamento por conta",
+    de: "Aufschlüsselung nach Konto"
   },
   "No accounts yet.": {
     fr: "Aucun compte pour l'instant.",
     es: "Aún no hay cuentas.",
-    ht: "Poko gen kont."
+    ht: "Poko gen kont.",
+    pt: "Nenhuma conta ainda.",
+    de: "Noch keine Konten."
   },
   "No accounts yet. Add one to start tracking your buffer.": {
     fr: "Aucun compte pour l'instant. Ajoutez-en un pour suivre votre tampon.",
     es: "Aún no hay cuentas. Agrega una para empezar a seguir tu colchón.",
-    ht: "Poko gen kont. Ajoute youn pou kòmanse swiv tanpon ou."
+    ht: "Poko gen kont. Ajoute youn pou kòmanse swiv tanpon ou.",
+    pt: "Nenhuma conta ainda. Adicione uma para começar a acompanhar seu buffer.",
+    de: "Noch keine Konten. Füge eines hinzu, um deinen Puffer zu verfolgen."
   },
   "Performance Overview": {
     fr: "Aperçu des performances",
     es: "Resumen de rendimiento",
-    ht: "Apèsi pèfòmans"
+    ht: "Apèsi pèfòmans",
+    pt: "Visão geral de desempenho",
+    de: "Leistungsübersicht"
   },
   "All Accounts, Combined": {
     fr: "Tous les comptes, combinés",
     es: "Todas las cuentas, combinadas",
-    ht: "Tout kont, konbine"
+    ht: "Tout kont, konbine",
+    pt: "Todas as contas, combinadas",
+    de: "Alle Konten, kombiniert"
   },
   "Rule Adherence": {
     fr: "Respect des règles",
     es: "Cumplimiento de reglas",
-    ht: "Respekte règ yo"
+    ht: "Respekte règ yo",
+    pt: "Adesão às regras",
+    de: "Regeltreue"
   },
   "Total Trades": {
     fr: "Transactions totales",
     es: "Operaciones totales",
-    ht: "Total tranzaksyon"
+    ht: "Total tranzaksyon",
+    pt: "Total de operações",
+    de: "Trades gesamt"
   },
   "Best day: ": {
     fr: "Meilleur jour : ",
     es: "Mejor día: ",
-    ht: "Pi bon jou: "
+    ht: "Pi bon jou: ",
+    pt: "Melhor dia: ",
+    de: "Bester Tag: "
   },
   "Worst day: ": {
     fr: "Pire jour : ",
     es: "Peor día: ",
-    ht: "Pi move jou: "
+    ht: "Pi move jou: ",
+    pt: "Pior dia: ",
+    de: "Schlechtester Tag: "
   },
   "Trade History": {
     fr: "Historique des transactions",
     es: "Historial de operaciones",
-    ht: "Istwa tranzaksyon"
+    ht: "Istwa tranzaksyon",
+    pt: "Histórico de operações",
+    de: "Trade-Historie"
   },
   "No entries yet.": {
     fr: "Aucune entrée pour l'instant.",
     es: "Aún no hay entradas.",
-    ht: "Poko gen antre."
+    ht: "Poko gen antre.",
+    pt: "Nenhum registro ainda.",
+    de: "Noch keine Einträge."
   },
   "Delete entry": {
     fr: "Supprimer l'entrée",
     es: "Eliminar entrada",
-    ht: "Efase antre a"
+    ht: "Efase antre a",
+    pt: "Excluir registro",
+    de: "Eintrag löschen"
   },
   "Trade 1": {
     fr: "Transaction 1",
     es: "Operación 1",
-    ht: "Tranzaksyon 1"
+    ht: "Tranzaksyon 1",
+    pt: "Operação 1",
+    de: "Trade 1"
   },
   "Trade 2": {
     fr: "Transaction 2",
     es: "Operación 2",
-    ht: "Tranzaksyon 2"
+    ht: "Tranzaksyon 2",
+    pt: "Operação 2",
+    de: "Trade 2"
   },
   "Trade 3": {
     fr: "Transaction 3",
     es: "Operación 3",
-    ht: "Tranzaksyon 3"
+    ht: "Tranzaksyon 3",
+    pt: "Operação 3",
+    de: "Trade 3"
   },
   "Win": {
     fr: "Gain",
     es: "Ganancia",
-    ht: "Genyen"
+    ht: "Genyen",
+    pt: "Ganho",
+    de: "Gewinn"
   },
   "Loss": {
     fr: "Perte",
     es: "Pérdida",
-    ht: "Pèdi"
+    ht: "Pèdi",
+    pt: "Perda",
+    de: "Verlust"
   },
   "Long": {
     fr: "Long",
     es: "Largo",
-    ht: "Long"
+    ht: "Long",
+    pt: "Comprado",
+    de: "Long"
   },
   "Short": {
     fr: "Court",
     es: "Corto",
-    ht: "Kout"
+    ht: "Kout",
+    pt: "Vendido",
+    de: "Short"
   },
   "Buffer after this day: ": {
     fr: "Tampon après ce jour : ",
     es: "Colchón después de este día: ",
-    ht: "Tanpon apre jou sa a: "
+    ht: "Tanpon apre jou sa a: ",
+    pt: "Buffer após este dia: ",
+    de: "Puffer nach diesem Tag: "
   },
   "Discipline Leaderboard": {
     fr: "Classement de la discipline",
     es: "Tabla de disciplina",
-    ht: "Klasman disiplin"
+    ht: "Klasman disiplin",
+    pt: "Ranking de disciplina",
+    de: "Disziplin-Rangliste"
   },
   "Your Discipline Checklist": {
     fr: "Votre liste de discipline",
     es: "Tu lista de disciplina",
-    ht: "Lis disiplin ou"
+    ht: "Lis disiplin ou",
+    pt: "Sua lista de disciplina",
+    de: "Deine Disziplin-Checkliste"
   },
   "Overall score: ": {
     fr: "Score global : ",
     es: "Puntuación general: ",
-    ht: "Nòt jeneral: "
+    ht: "Nòt jeneral: ",
+    pt: "Pontuação geral: ",
+    de: "Gesamtwertung: "
   },
   "Logged every day since you started?": {
     fr: "Avez-vous enregistré chaque jour depuis le début ?",
     es: "¿Registraste todos los días desde que empezaste?",
-    ht: "Èske ou anrejistre chak jou depi ou kòmanse?"
+    ht: "Èske ou anrejistre chak jou depi ou kòmanse?",
+    pt: "Registrou todos os dias desde que começou?",
+    de: "Jeden Tag seit Beginn protokolliert?"
   },
   "Did physical exercise?": {
     fr: "Avez-vous fait de l'exercice physique ?",
     es: "¿Hiciste ejercicio físico?",
-    ht: "Èske ou te fè egzèsis fizik?"
+    ht: "Èske ou te fè egzèsis fizik?",
+    pt: "Fez exercício físico?",
+    de: "Sport gemacht?"
   },
   "Followed your written entry rules?": {
     fr: "Avez-vous suivi vos règles d'entrée écrites ?",
     es: "¿Seguiste tus reglas de entrada escritas?",
-    ht: "Èske ou te swiv règ antre ekri ou yo?"
+    ht: "Èske ou te swiv règ antre ekri ou yo?",
+    pt: "Seguiu suas regras de entrada escritas?",
+    de: "Deine schriftlichen Einstiegsregeln befolgt?"
   },
   "Stayed within your risk per trade (no over-risk)?": {
     fr: "Êtes-vous resté dans votre risque par transaction (pas de surisque) ?",
     es: "¿Te mantuviste dentro de tu riesgo por operación (sin exceso de riesgo)?",
-    ht: "Èske ou te rete nan risk pou chak tranzaksyon (san twòp risk)?"
+    ht: "Èske ou te rete nan risk pou chak tranzaksyon (san twòp risk)?",
+    pt: "Ficou dentro do seu risco por operação (sem excesso de risco)?",
+    de: "Innerhalb deines Risikos pro Trade geblieben (kein Überrisiko)?"
   },
   "Stayed within your unlocked contract size (no over-lot)?": {
     fr: "Êtes-vous resté dans la taille de contrat débloquée (pas de surtaille) ?",
     es: "¿Te mantuviste dentro del tamaño de contrato desbloqueado (sin exceso de lote)?",
-    ht: "Èske ou te rete nan gwosè kontra ki debloke a (san twòp lo)?"
+    ht: "Èske ou te rete nan gwosè kontra ki debloke a (san twòp lo)?",
+    pt: "Ficou dentro do tamanho de contrato desbloqueado (sem excesso de lote)?",
+    de: "Innerhalb der freigeschalteten Kontraktgröße geblieben (kein Über-Lot)?"
   },
   "Respected the Daily Execution Matrix?": {
     fr: "Avez-vous respecté la matrice d'exécution quotidienne ?",
     es: "¿Respetaste la matriz de ejecución diaria?",
-    ht: "Èske ou te respekte matris egzekisyon chak jou a?"
+    ht: "Èske ou te respekte matris egzekisyon chak jou a?",
+    pt: "Respeitou a Matriz de Execução Diária?",
+    de: "Die tägliche Ausführungsmatrix eingehalten?"
   },
   "Stayed within your max daily loss (2x risk per trade)?": {
     fr: "Êtes-vous resté dans votre perte maximale quotidienne (2x le risque par transaction) ?",
     es: "¿Te mantuviste dentro de tu pérdida máxima diaria (2x el riesgo por operación)?",
-    ht: "Èske ou te rete nan pèt maksimòm chak jou (2x risk pou chak tranzaksyon)?"
+    ht: "Èske ou te rete nan pèt maksimòm chak jou (2x risk pou chak tranzaksyon)?",
+    pt: "Ficou dentro da sua perda máxima diária (2x o risco por operação)?",
+    de: "Innerhalb deines maximalen Tagesverlusts geblieben (2x Risiko pro Trade)?"
   },
   "Completed HTF to LTF analysis before entry?": {
     fr: "Avez-vous terminé l'analyse HTF vers LTF avant d'entrer ?",
     es: "¿Completaste el análisis de HTF a LTF antes de entrar?",
-    ht: "Èske ou te fini analiz HTF a LTF anvan ou antre?"
+    ht: "Èske ou te fini analiz HTF a LTF anvan ou antre?",
+    pt: "Concluiu a análise de HTF para LTF antes de entrar?",
+    de: "HTF-zu-LTF-Analyse vor dem Einstieg abgeschlossen?"
   },
   "Traded in the direction of your daily bias?": {
     fr: "Avez-vous négocié dans le sens de votre biais quotidien ?",
     es: "¿Operaste en la dirección de tu sesgo diario?",
-    ht: "Èske ou te fè tranzaksyon nan direksyon bias ou chak jou a?"
+    ht: "Èske ou te fè tranzaksyon nan direksyon bias ou chak jou a?",
+    pt: "Operou na direção do seu viés diário?",
+    de: "In Richtung deines Tagesbias gehandelt?"
   },
   "No data yet": {
     fr: "Pas encore de données",
     es: "Sin datos aún",
-    ht: "Poko gen done"
+    ht: "Poko gen done",
+    pt: "Ainda sem dados",
+    de: "Noch keine Daten"
   },
   "Risk of Ruin - Consecutive Loss Projection & Gain to Recover": {
     fr: "Risque de ruine - Projection de pertes consécutives et gain pour récupérer",
     es: "Riesgo de ruina - Proyección de pérdidas consecutivas y ganancia para recuperar",
-    ht: "Risk Riwin - Pwojeksyon Pèt Youn Apre Lòt ak Genyen pou Rekipere"
+    ht: "Risk Riwin - Pwojeksyon Pèt Youn Apre Lòt ak Genyen pou Rekipere",
+    pt: "Risco de Ruína - Projeção de Perdas Consecutivas e Ganho para Recuperar",
+    de: "Ruinrisiko - Prognose aufeinanderfolgender Verluste & Erholungsgewinn"
   },
   "Consecutive Losses": {
     fr: "Pertes consécutives",
     es: "Pérdidas consecutivas",
-    ht: "Pèt Youn Apre Lòt"
+    ht: "Pèt Youn Apre Lòt",
+    pt: "Perdas consecutivas",
+    de: "Aufeinanderfolgende Verluste"
   },
   "Buffer Remaining": {
     fr: "Tampon restant",
     es: "Colchón restante",
-    ht: "Tanpon ki rete"
+    ht: "Tanpon ki rete",
+    pt: "Buffer restante",
+    de: "Verbleibender Puffer"
   },
   "Gain Needed to Recover": {
     fr: "Gain nécessaire pour récupérer",
     es: "Ganancia necesaria para recuperar",
-    ht: "Genyen ki nesesè pou rekipere"
+    ht: "Genyen ki nesesè pou rekipere",
+    pt: "Ganho necessário para recuperar",
+    de: "Benötigter Gewinn zur Erholung"
   },
   "Account wiped": {
     fr: "Compte anéanti",
     es: "Cuenta liquidada",
-    ht: "Kont efase nèt"
+    ht: "Kont efase nèt",
+    pt: "Conta zerada",
+    de: "Konto gelöscht"
   },
   "Daily Trade Execution Matrix - your actual risk": {
     fr: "Matrice d'exécution quotidienne - votre risque réel",
     es: "Matriz de ejecución diaria - tu riesgo real",
-    ht: "Matris Egzekisyon Chak Jou - risk reyèl ou"
+    ht: "Matris Egzekisyon Chak Jou - risk reyèl ou",
+    pt: "Matriz de Execução Diária - seu risco real",
+    de: "Tägliche Trade-Ausführungsmatrix - dein tatsächliches Risiko"
   },
   "Scenario": {
     fr: "Scénario",
     es: "Escenario",
-    ht: "Senaryo"
+    ht: "Senaryo",
+    pt: "Cenário",
+    de: "Szenario"
   },
   "Long Setup Rules": {
     fr: "Règles de configuration longue",
     es: "Reglas de configuración larga",
-    ht: "Règ pou Long"
+    ht: "Règ pou Long",
+    pt: "Regras de configuração para Long",
+    de: "Regeln für Long-Setups"
   },
   "Short Setup Rules": {
     fr: "Règles de configuration courte",
     es: "Reglas de configuración corta",
-    ht: "Règ pou Kout"
+    ht: "Règ pou Kout",
+    pt: "Regras de configuração para Short",
+    de: "Regeln für Short-Setups"
   },
   "No rules defined.": {
     fr: "Aucune règle définie.",
     es: "No hay reglas definidas.",
-    ht: "Pa gen règ ki defini."
+    ht: "Pa gen règ ki defini.",
+    pt: "Nenhuma regra definida.",
+    de: "Keine Regeln definiert."
   },
   "Log Today's Trades": {
     fr: "Enregistrer les transactions d'aujourd'hui",
     es: "Registrar las operaciones de hoy",
-    ht: "Anrejistre tranzaksyon jodi a"
+    ht: "Anrejistre tranzaksyon jodi a",
+    pt: "Registrar operações de hoje",
+    de: "Heutige Trades protokollieren"
   },
   "Entry Method": {
     fr: "Méthode de saisie",
     es: "Método de entrada",
-    ht: "Metòd Antre"
+    ht: "Metòd Antre",
+    pt: "Método de entrada",
+    de: "Eingabemethode"
   },
   "Manual Entry": {
     fr: "Saisie manuelle",
     es: "Entrada manual",
-    ht: "Antre Manyèl"
+    ht: "Antre Manyèl",
+    pt: "Entrada manual",
+    de: "Manuelle Eingabe"
   },
   "Import CSV": {
     fr: "Importer CSV",
     es: "Importar CSV",
-    ht: "Enpòte CSV"
+    ht: "Enpòte CSV",
+    pt: "Importar CSV",
+    de: "CSV importieren"
   },
   "Choose CSV File": {
     fr: "Choisir un fichier CSV",
     es: "Elegir archivo CSV",
-    ht: "Chwazi Fichye CSV"
+    ht: "Chwazi Fichye CSV",
+    pt: "Escolher arquivo CSV",
+    de: "CSV-Datei wählen"
   },
   "Date": {
     fr: "Date",
     es: "Fecha",
-    ht: "Dat"
+    ht: "Dat",
+    pt: "Data",
+    de: "Datum"
   },
   "Did you trade today?": {
     fr: "Avez-vous négocié aujourd'hui ?",
     es: "¿Operaste hoy?",
-    ht: "Èske ou te fè tranzaksyon jodi a?"
+    ht: "Èske ou te fè tranzaksyon jodi a?",
+    pt: "Você operou hoje?",
+    de: "Hast du heute gehandelt?"
   },
   "Yes": {
     fr: "Oui",
     es: "Sí",
-    ht: "Wi"
+    ht: "Wi",
+    pt: "Sim",
+    de: "Ja"
   },
   "No": {
     fr: "Non",
     es: "No",
-    ht: "Non"
+    ht: "Non",
+    pt: "Não",
+    de: "Nein"
   },
   "Physical exercise today?": {
     fr: "Exercice physique aujourd'hui ?",
     es: "¿Ejercicio físico hoy?",
-    ht: "Egzèsis fizik jodi a?"
+    ht: "Egzèsis fizik jodi a?",
+    pt: "Exercício físico hoje?",
+    de: "Heute Sport gemacht?"
   },
   "Reason": {
     fr: "Raison",
     es: "Razón",
-    ht: "Rezon"
+    ht: "Rezon",
+    pt: "Motivo",
+    de: "Grund"
   },
   "No Setup Found": {
     fr: "Aucune configuration trouvée",
     es: "No se encontró configuración",
-    ht: "Pa Jwenn Setup"
+    ht: "Pa Jwenn Setup",
+    pt: "Nenhuma configuração encontrada",
+    de: "Kein Setup gefunden"
   },
   "Did Not Trade": {
     fr: "N'a pas négocié",
     es: "No operó",
-    ht: "Pa Fè Tranzaksyon"
+    ht: "Pa Fè Tranzaksyon",
+    pt: "Não operou",
+    de: "Nicht gehandelt"
   },
   "Other": {
     fr: "Autre",
     es: "Otro",
-    ht: "Lòt"
+    ht: "Lòt",
+    pt: "Outro",
+    de: "Andere"
   },
   "Save No-Trade Day": {
     fr: "Enregistrer jour sans transaction",
     es: "Guardar día sin operar",
-    ht: "Anrejistre Jou San Tranzaksyon"
+    ht: "Anrejistre Jou San Tranzaksyon",
+    pt: "Salvar dia sem operação",
+    de: "Handelsfreien Tag speichern"
   },
   "Save Entry": {
     fr: "Enregistrer l'entrée",
     es: "Guardar entrada",
-    ht: "Anrejistre Antre"
+    ht: "Anrejistre Antre",
+    pt: "Salvar registro",
+    de: "Eintrag speichern"
   },
   "Save Account": {
     fr: "Enregistrer le compte",
     es: "Guardar cuenta",
-    ht: "Anrejistre Kont"
+    ht: "Anrejistre Kont",
+    pt: "Salvar conta",
+    de: "Konto speichern"
   },
   "Save": {
     fr: "Enregistrer",
     es: "Guardar",
-    ht: "Anrejistre"
+    ht: "Anrejistre",
+    pt: "Salvar",
+    de: "Speichern"
   },
   "Cancel": {
     fr: "Annuler",
     es: "Cancelar",
-    ht: "Anile"
+    ht: "Anile",
+    pt: "Cancelar",
+    de: "Abbrechen"
   },
   "Add Trading Account": {
     fr: "Ajouter un compte de trading",
     es: "Agregar cuenta de trading",
-    ht: "Ajoute Kont Tranzaksyon"
+    ht: "Ajoute Kont Tranzaksyon",
+    pt: "Adicionar conta de trading",
+    de: "Trading-Konto hinzufügen"
   },
   "Start Funded Account": {
     fr: "Démarrer un compte financé",
     es: "Iniciar cuenta financiada",
-    ht: "Kòmanse Kont Finanse"
+    ht: "Kòmanse Kont Finanse",
+    pt: "Iniciar conta financiada",
+    de: "Finanziertes Konto starten"
   },
   "Account Name": {
     fr: "Nom du compte",
     es: "Nombre de la cuenta",
-    ht: "Non Kont"
+    ht: "Non Kont",
+    pt: "Nome da conta",
+    de: "Kontoname"
   },
   "Starting Balance": {
     fr: "Solde de départ",
     es: "Saldo inicial",
-    ht: "Balans Depa"
+    ht: "Balans Depa",
+    pt: "Saldo inicial",
+    de: "Startkapital"
   },
   "Capital / Buffer ($)": {
     fr: "Capital / Tampon ($)",
     es: "Capital / Colchón ($)",
-    ht: "Kapital / Tanpon ($)"
+    ht: "Kapital / Tanpon ($)",
+    pt: "Capital / Buffer ($)",
+    de: "Kapital / Puffer ($)"
   },
   "Drawdown Type": {
     fr: "Type de retrait",
     es: "Tipo de drawdown",
-    ht: "Tip Drawdown"
+    ht: "Tip Drawdown",
+    pt: "Tipo de drawdown",
+    de: "Drawdown-Typ"
   },
   "Market": {
     fr: "Marché",
     es: "Mercado",
-    ht: "Mache"
+    ht: "Mache",
+    pt: "Mercado",
+    de: "Markt"
   },
   "Profit Target ($)": {
     fr: "Objectif de profit ($)",
     es: "Meta de ganancia ($)",
-    ht: "Objektif Pwofi ($)"
+    ht: "Objektif Pwofi ($)",
+    pt: "Meta de lucro ($)",
+    de: "Gewinnziel ($)"
   },
   "Consistency Rule (%)": {
     fr: "Règle de cohérence (%)",
     es: "Regla de consistencia (%)",
-    ht: "Règ Konsistans (%)"
+    ht: "Règ Konsistans (%)",
+    pt: "Regra de consistência (%)",
+    de: "Konsistenzregel (%)"
   },
   "Daily Loss Limit ($)": {
     fr: "Limite de perte quotidienne ($)",
     es: "Límite de pérdida diaria ($)",
-    ht: "Limit Pèt Chak Jou ($)"
+    ht: "Limit Pèt Chak Jou ($)",
+    pt: "Limite de perda diária ($)",
+    de: "Tägliches Verlustlimit ($)"
   },
   "Daily Loss Limit Type": {
     fr: "Type de limite de perte quotidienne",
     es: "Tipo de límite de pérdida diaria",
-    ht: "Tip Limit Pèt Chak Jou"
+    ht: "Tip Limit Pèt Chak Jou",
+    pt: "Tipo de limite de perda diária",
+    de: "Typ des Tagesverlustlimits"
   },
   "Strategy Name": {
     fr: "Nom de la stratégie",
     es: "Nombre de la estrategia",
-    ht: "Non Estrateji"
+    ht: "Non Estrateji",
+    pt: "Nome da estratégia",
+    de: "Strategiename"
   },
   "Add rule": {
     fr: "Ajouter une règle",
     es: "Agregar regla",
-    ht: "Ajoute règ"
+    ht: "Ajoute règ",
+    pt: "Adicionar regra",
+    de: "Regel hinzufügen"
   },
   "Challenge Cost ($)": {
     fr: "Coût du challenge ($)",
     es: "Costo del desafío ($)",
-    ht: "Pri Defi ($)"
+    ht: "Pri Defi ($)",
+    pt: "Custo do desafio ($)",
+    de: "Challenge-Kosten ($)"
   },
   "Activation Cost ($)": {
     fr: "Coût d'activation ($)",
     es: "Costo de activación ($)",
-    ht: "Pri Aktivasyon ($)"
+    ht: "Pri Aktivasyon ($)",
+    pt: "Custo de ativação ($)",
+    de: "Aktivierungskosten ($)"
   },
   "Reset Cost ($)": {
     fr: "Coût de réinitialisation ($)",
     es: "Costo de reinicio ($)",
-    ht: "Pri Reyajiste"
+    ht: "Pri Reyajiste",
+    pt: "Custo de reinício ($)",
+    de: "Reset-Kosten ($)"
   },
   "Master / Copied Account Number (optional)": {
     fr: "Numéro de compte maître / copié (facultatif)",
     es: "Número de cuenta maestra / copiada (opcional)",
-    ht: "Nimewo Kont Mèt / Kopye (opsyonèl)"
+    ht: "Nimewo Kont Mèt / Kopye (opsyonèl)",
+    pt: "Número de conta mestre / copiada (opcional)",
+    de: "Master-/kopierte Kontonummer (optional)"
   },
   "How was your day? (thoughts, emotions, anything on your mind)": {
     fr: "Comment s'est passée votre journée ? (pensées, émotions, tout ce qui vous préoccupe)",
     es: "¿Cómo estuvo tu día? (pensamientos, emociones, lo que tengas en mente)",
-    ht: "Kijan jounen ou te ye? (panse, emosyon, nenpòt bagay nan tèt ou)"
+    ht: "Kijan jounen ou te ye? (panse, emosyon, nenpòt bagay nan tèt ou)",
+    pt: "Como foi seu dia? (pensamentos, emoções, qualquer coisa na sua mente)",
+    de: "Wie war dein Tag? (Gedanken, Gefühle, alles, was dich beschäftigt)"
   },
   "Add another trade": {
     fr: "Ajouter une autre transaction",
     es: "Agregar otra operación",
-    ht: "Ajoute yon lòt tranzaksyon"
+    ht: "Ajoute yon lòt tranzaksyon",
+    pt: "Adicionar outra operação",
+    de: "Weiteren Trade hinzufügen"
   },
   "Circuit Breaker - 2 losses. Day over.": {
     fr: "Coupe-circuit - 2 pertes. Journée terminée.",
     es: "Interruptor - 2 pérdidas. Día terminado.",
-    ht: "Kout Sikwi - 2 pèt. Jounen fini."
+    ht: "Kout Sikwi - 2 pèt. Jounen fini.",
+    pt: "Disjuntor - 2 perdas. Dia encerrado.",
+    de: "Sicherung - 2 Verluste. Tag beendet."
   },
   "Greed Filter - 2 wins. Day over.": {
     fr: "Filtre de cupidité - 2 gains. Journée terminée.",
     es: "Filtro de codicia - 2 ganancias. Día terminado.",
-    ht: "Filtè Konvwatiz - 2 genyen. Jounen fini."
+    ht: "Filtè Konvwatiz - 2 genyen. Jounen fini.",
+    pt: "Filtro de ganância - 2 ganhos. Dia encerrado.",
+    de: "Gier-Filter - 2 Gewinne. Tag beendet."
   },
   "Day over - Trade 3 result stands.": {
     fr: "Journée terminée - le résultat de la transaction 3 est final.",
     es: "Día terminado - el resultado de la operación 3 es final.",
-    ht: "Jounen fini - rezilta Tranzaksyon 3 la kanpe."
+    ht: "Jounen fini - rezilta Tranzaksyon 3 la kanpe.",
+    pt: "Dia encerrado - o resultado da Operação 3 é definitivo.",
+    de: "Tag beendet - Ergebnis von Trade 3 bleibt bestehen."
   }
 };
 let originalTextMap = null;
@@ -1474,7 +1752,7 @@ const emptyReflection = function () {
     marketConditions: ''
   };
 };
-const emptyEntryForm = function (defaultRisk, defaultContracts, defaultRR) {
+const emptyEntryForm = function (defaultRisk, defaultContracts, defaultRR, planTemplate) {
   return {
     date: new Date().toISOString().split('T')[0],
     tradedToday: 'yes',
@@ -1495,7 +1773,7 @@ const emptyEntryForm = function (defaultRisk, defaultContracts, defaultRR) {
     }],
     notes: '',
     mentalCheck: emptyMentalCheck(),
-    dailyPlan: emptyDailyPlan(defaultRisk, defaultRR),
+    dailyPlan: planTemplate ? Object.assign({}, emptyDailyPlan(defaultRisk, defaultRR), planTemplate) : emptyDailyPlan(defaultRisk, defaultRR),
     reflection: emptyReflection()
   };
 };
@@ -1820,6 +2098,14 @@ const PAGE_TABS = [{
   key: 'overview',
   label: 'Overview',
   icon: 'LayoutDashboard'
+}, {
+  key: 'dailyplan',
+  label: 'Daily Plan',
+  icon: 'Calendar'
+}, {
+  key: 'mentalcheck',
+  label: 'Mental Check',
+  icon: 'Brain'
 }, {
   key: 'history',
   label: 'Trade History',
@@ -2339,31 +2625,37 @@ function MiniStat(props) {
     className: "num text-[15px] font-semibold " + props.color
   }, props.value));
 }
-function TradingPlanSummaryGrid(props) {
-  const account = props.account;
-  const rtu = props.riskPerTrade;
+function tradingPlanMath(account, riskAmount, totalPnl) {
+  const rtu = riskAmount;
   const rr = Math.max(parseFloat(account.rewardRatio) || MIN_RR, MIN_RR);
   const winPerTrade = rtu * rr;
   const minWinRate = rtu + winPerTrade > 0 ? rtu / (rtu + winPerTrade) * 100 : 0;
   const winsToTarget = winPerTrade > 0 ? Math.ceil((parseFloat(account.profitTarget) || 0) / winPerTrade) : 0;
-  const remaining = (parseFloat(account.profitTarget) || 0) - props.totalPnl;
+  const remaining = (parseFloat(account.profitTarget) || 0) - totalPnl;
+  return {
+    rr: rr,
+    winPerTrade: winPerTrade,
+    minWinRate: minWinRate,
+    winsToTarget: winsToTarget,
+    remaining: remaining
+  };
+}
+function GeneralPlanStats(props) {
+  const account = props.account;
+  const m = tradingPlanMath(account, props.riskPerTrade, props.totalPnl);
   const avgTradesPerDay = props.avgTradesPerDay || 0;
   const maxTradesInDay = props.maxTradesInDay || 0;
   return React.createElement(React.Fragment, null, React.createElement(MiniStat, {
-    label: "Win / Trade",
-    value: fmt(winPerTrade),
+    label: "Win / Trade (max)",
+    value: fmt(m.winPerTrade),
     color: "text-green-400"
   }), React.createElement(MiniStat, {
     label: "RR Ratio",
-    value: rr + ":1",
+    value: m.rr + ":1",
     color: "text-purple-400"
   }), React.createElement(MiniStat, {
     label: "Breakeven Win Rate",
-    value: minWinRate.toFixed(1) + "%",
-    color: "text-purple-400"
-  }), React.createElement(MiniStat, {
-    label: "Wins to Hit Target",
-    value: winsToTarget + " wins",
+    value: m.minWinRate.toFixed(1) + "%",
     color: "text-purple-400"
   }), React.createElement(MiniStat, {
     label: "Avg Trades Taken / Day",
@@ -2374,12 +2666,25 @@ function TradingPlanSummaryGrid(props) {
     value: String(maxTradesInDay),
     color: "text-blue-400"
   }), React.createElement(MiniStat, {
-    label: "Remaining to Target",
-    value: fmt(Math.max(0, remaining)),
-    color: "text-yellow-400"
-  }), React.createElement(MiniStat, {
     label: "Capital (Buffer)",
     value: fmt(account.maxDrawdown),
+    color: "text-yellow-400"
+  }), React.createElement(MiniStat, {
+    label: "Suggested Trades (sample)",
+    value: "20-25",
+    color: "text-gray-300"
+  }));
+}
+function PersonalPlanStats(props) {
+  const account = props.account;
+  const m = tradingPlanMath(account, props.riskPerTrade, props.totalPnl);
+  return React.createElement(React.Fragment, null, React.createElement(MiniStat, {
+    label: "Wins to Hit Target",
+    value: m.winsToTarget + " wins",
+    color: "text-purple-400"
+  }), React.createElement(MiniStat, {
+    label: "Remaining to Target",
+    value: fmt(Math.max(0, m.remaining)),
     color: "text-yellow-400"
   }));
 }
@@ -2387,6 +2692,7 @@ function TradeBudgetReference(props) {
   const buffer = Math.max(parseFloat(props.buffer) || 0, 0);
   const systemMaxRisk = parseFloat(props.systemMaxRisk) || 0;
   const onApply = props.onApply;
+  const locked = !!props.locked;
   if (buffer <= 0) return null;
   const HIGH_COUNT = 20;
   const LOW_COUNT = 25;
@@ -2419,7 +2725,12 @@ function TradeBudgetReference(props) {
     label: "As % of Buffer",
     value: (100 / LOW_COUNT).toFixed(1) + "% - " + (100 / HIGH_COUNT).toFixed(1) + "%",
     color: "text-gray-400"
-  })), fitsUnderMax ? React.createElement("button", {
+  })), locked ? React.createElement("p", {
+    className: "text-xs text-gray-600 flex items-center gap-1.5"
+  }, React.createElement(Icon, {
+    name: "Lock",
+    className: "h-3 w-3"
+  }), React.createElement("span", null, "Risk tolerance is locked for this account - this reference is informational only until it passes or fails.")) : fitsUnderMax ? React.createElement("button", {
     onClick: function () {
       onApply(midRisk.toFixed(2));
     },
@@ -2427,6 +2738,135 @@ function TradeBudgetReference(props) {
   }, "Use ", fmt(midRisk), "/trade as My Personal Risk Tolerance") : React.createElement("p", {
     className: "text-xs text-gray-600"
   }, "Your system max (", fmt(systemMaxRisk), "/trade) is already tighter than this reference - you're already more conservative than a ", LOW_COUNT, "-trade life count."));
+}
+const RR_BREAKEVEN_TABLE = [{
+  rr: '1:1',
+  breakeven: '50%',
+  profitable: 'above ~55-60%'
+}, {
+  rr: '1:1.5',
+  breakeven: '40%',
+  profitable: 'above ~45-50%'
+}, {
+  rr: '1:2',
+  breakeven: '33.33%',
+  profitable: 'above ~40%'
+}, {
+  rr: '1:3',
+  breakeven: '25%',
+  profitable: 'above ~30-35%'
+}, {
+  rr: '1:5',
+  breakeven: '16.67%',
+  profitable: 'above ~20-25%'
+}];
+const BACKTEST_REQUIREMENTS_TABLE = [{
+  style: 'Scalping',
+  min: '500',
+  ideal: '1,000',
+  data: '1-3 months'
+}, {
+  style: 'Intraday',
+  min: '100-200',
+  ideal: '500',
+  data: '3-12 months'
+}, {
+  style: 'Swing Trading',
+  min: '50-100',
+  ideal: '200-500',
+  data: '2-5 years'
+}, {
+  style: 'Position / Trend Following',
+  min: '30-50',
+  ideal: '100-200',
+  data: '5+ years'
+}];
+function StrategyBacktestReference() {
+  const [open, setOpen] = useState(false);
+  return React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-5"
+  }, React.createElement("button", {
+    onClick: function () {
+      setOpen(!open);
+    },
+    className: "w-full flex items-center justify-between gap-2 text-left"
+  }, React.createElement("div", {
+    className: "flex items-center gap-2"
+  }, React.createElement(Icon, {
+    name: "Calculator",
+    className: "h-5 w-5 text-yellow-400"
+  }), React.createElement("h3", {
+    className: "text-sm font-semibold text-white"
+  }, "Strategy, RR & Sample-Size Reference")), React.createElement(Icon, {
+    name: open ? 'ChevronUp' : 'ChevronDown',
+    className: "h-4 w-4 text-gray-500 flex-shrink-0"
+  })), !open ? React.createElement("p", {
+    className: "text-xs text-gray-600 mt-1.5"
+  }, "Your win rate needed to be profitable at each RR, and how many backtested trades you need before trusting a strategy. Click to expand.") : React.createElement("div", {
+    className: "mt-4 space-y-5"
+  }, React.createElement("div", null, React.createElement("p", {
+    className: "text-xs text-gray-400 mb-2"
+  }, React.createElement("span", {
+    className: "text-white font-medium"
+  }, "Your strategy must be fixed - never change it if it's profitable."), " A profitable strategy means a good win rate for its RR (risk/reward). Change the RR, and the win rate you need changes too:"), React.createElement("div", {
+    className: "overflow-x-auto"
+  }, React.createElement("table", {
+    className: "w-full text-xs"
+  }, React.createElement("thead", null, React.createElement("tr", {
+    className: "text-gray-500 border-b border-gray-800"
+  }, React.createElement("th", {
+    className: "text-left py-1.5 pr-3"
+  }, "RR"), React.createElement("th", {
+    className: "text-left py-1.5 pr-3"
+  }, "Breakeven Win Rate"), React.createElement("th", {
+    className: "text-left py-1.5"
+  }, "Profitable When"))), React.createElement("tbody", null, RR_BREAKEVEN_TABLE.map(function (r) {
+    return React.createElement("tr", {
+      key: r.rr,
+      className: "border-b border-gray-900"
+    }, React.createElement("td", {
+      className: "py-1.5 pr-3 text-purple-300 font-medium num"
+    }, r.rr), React.createElement("td", {
+      className: "py-1.5 pr-3 text-gray-300 num"
+    }, r.breakeven), React.createElement("td", {
+      className: "py-1.5 text-green-400 num"
+    }, r.profitable));
+  }))))), React.createElement("div", null, React.createElement("p", {
+    className: "text-xs text-gray-400 mb-2"
+  }, "Minimum sample size before trusting a strategy's numbers: ", React.createElement("span", {
+    className: "text-white font-medium"
+  }, "100 trades"), ". Ideal: ", React.createElement("span", {
+    className: "text-white font-medium"
+  }, "200-500 trades"), ". By trading style:"), React.createElement("div", {
+    className: "overflow-x-auto"
+  }, React.createElement("table", {
+    className: "w-full text-xs"
+  }, React.createElement("thead", null, React.createElement("tr", {
+    className: "text-gray-500 border-b border-gray-800"
+  }, React.createElement("th", {
+    className: "text-left py-1.5 pr-3"
+  }, "Style"), React.createElement("th", {
+    className: "text-left py-1.5 pr-3"
+  }, "Minimum"), React.createElement("th", {
+    className: "text-left py-1.5 pr-3"
+  }, "Ideal"), React.createElement("th", {
+    className: "text-left py-1.5"
+  }, "Data Span"))), React.createElement("tbody", null, BACKTEST_REQUIREMENTS_TABLE.map(function (r) {
+    return React.createElement("tr", {
+      key: r.style,
+      className: "border-b border-gray-900"
+    }, React.createElement("td", {
+      className: "py-1.5 pr-3 text-gray-300"
+    }, r.style), React.createElement("td", {
+      className: "py-1.5 pr-3 text-blue-300 num"
+    }, r.min), React.createElement("td", {
+      className: "py-1.5 pr-3 text-green-400 num"
+    }, r.ideal), React.createElement("td", {
+      className: "py-1.5 text-gray-400"
+    }, r.data));
+  }))))), React.createElement("p", {
+    className: "text-xs text-gray-600"
+  }, "Why 20-25 suggested trades on the Overview's General panel: across a 400-trade sample, a trader can run into 14 losses in a row - sizing around a 20-25 trade \"survival window\" is the sweet spot that accounts for that.")));
 }
 function ProjectionsCard(props) {
   const account = props.account;
@@ -5543,9 +5983,11 @@ function MMMJournal(props) {
   const [brokerCommission, setBrokerCommission] = useState('');
   const [showInstall, setShowInstall] = useState(false);
   const [riskToleranceDraft, setRiskToleranceDraft] = useState('');
-  const [riskToleranceDraftAccountId, setRiskToleranceDraftAccountId] = useState(null);
   const [confirmedTolerance, setConfirmedTolerance] = useState(undefined);
   const [riskToleranceStatus, setRiskToleranceStatus] = useState(null);
+  const [dailyPlanTemplateDraft, setDailyPlanTemplateDraft] = useState(emptyDailyPlan(0, 1));
+  const [dailyPlanCadence, setDailyPlanCadence] = useState('daily');
+  const [dailyPlanTemplateStatus, setDailyPlanTemplateStatus] = useState(null);
   const [showImportBroker, setShowImportBroker] = useState(false);
   const [showDupeCleanup, setShowDupeCleanup] = useState(false);
   const [brokerImportPreview, setBrokerImportPreview] = useState(null);
@@ -5556,8 +5998,19 @@ function MMMJournal(props) {
   const [expandedEntry, setExpandedEntry] = useState(null);
   const [newAccount, setNewAccount] = useState(emptyAccountForm);
   const [newEntry, setNewEntry] = useState(emptyEntryForm(0, 1));
+  const [saveEntryError, setSaveEntryError] = useState('');
+  const [entrySavedToast, setEntrySavedToast] = useState('');
   const accountsRef = db.collection('users').doc(user.uid).collection('accounts');
   const entriesRef = db.collection('users').doc(user.uid).collection('entries');
+  useEffect(function () {
+    if (!entrySavedToast) return;
+    const t = setTimeout(function () {
+      setEntrySavedToast('');
+    }, 4000);
+    return function () {
+      clearTimeout(t);
+    };
+  }, [entrySavedToast]);
   useEffect(function () {
     const unsub = accountsRef.orderBy('createdAt', 'asc').onSnapshot(function (snap) {
       const list = snap.docs.map(function (d) {
@@ -5712,6 +6165,15 @@ function MMMJournal(props) {
   const activeTicker = activeAccount ? getTickerForTier(activeAccount.market || 'nasdaq100', contractPlan.tier) : '-';
   const ruinDivisor = activeCfg.riskPct > 0 ? 1 / activeCfg.riskPct : 10;
   const activeRR = activeAccount ? Math.max(parseFloat(activeAccount.rewardRatio) || MIN_RR, MIN_RR) : MIN_RR;
+  useEffect(function () {
+    setRiskToleranceDraft(activeAccount && activeAccount.riskTolerance ? String(activeAccount.riskTolerance) : '');
+    setConfirmedTolerance(undefined);
+    setRiskToleranceStatus(null);
+    const tpl = activeAccount && activeAccount.dailyPlanTemplate;
+    setDailyPlanTemplateDraft(tpl ? Object.assign({}, emptyDailyPlan(riskPerTrade, activeRR), tpl) : emptyDailyPlan(riskPerTrade, activeRR));
+    setDailyPlanCadence(tpl && tpl.cadence ? tpl.cadence : 'daily');
+    setDailyPlanTemplateStatus(null);
+  }, [activeAccountId]);
   const riskToleranceRaw = confirmedTolerance !== undefined ? confirmedTolerance : activeAccount && activeAccount.riskTolerance ? parseFloat(activeAccount.riskTolerance) : null;
   const effectiveRiskPerTrade = riskToleranceRaw && riskToleranceRaw > 0 ? Math.min(riskToleranceRaw, riskPerTrade) : riskPerTrade;
   const toleranceIsActive = effectiveRiskPerTrade < riskPerTrade;
@@ -5751,6 +6213,7 @@ function MMMJournal(props) {
   }, 0);
   const activeStatus = activeAccount ? accountEntries.length === 0 ? 'active' : computeStatus(activeAccount, currentBuffer, totalPnl) : 'active';
   const shouldShowAccountDetail = activeAccount && (accountFilter !== 'active' || activeStatus !== 'breached' || viewingBreached);
+  const toleranceLocked = !!(activeAccount && activeAccount.riskTolerance && activeStatus === 'active');
   const getAccountStatus = function (acc) {
     return computeAccountStatus(acc, entries);
   };
@@ -5874,6 +6337,13 @@ function MMMJournal(props) {
   };
   const handleChangeRiskTolerance = async function (value) {
     setRiskToleranceStatus(null);
+    if (toleranceLocked) {
+      setRiskToleranceStatus({
+        type: 'error',
+        text: 'Locked - you already set your risk tolerance for this account. It stays fixed until this account passes or fails, so you can\'t raise or lower it mid-account.'
+      });
+      return;
+    }
     if (riskPerTrade <= 0) {
       setRiskToleranceStatus({
         type: 'error',
@@ -5902,16 +6372,24 @@ function MMMJournal(props) {
         });
         return;
       }
+      const wasOverMax = num > riskPerTrade;
       const clamped = Math.min(num, riskPerTrade);
       setConfirmedTolerance(clamped);
       setRiskToleranceDraft(String(clamped));
       await accountsRef.doc(activeAccount.id).update({
         riskTolerance: clamped
       });
-      setRiskToleranceStatus({
-        type: 'success',
-        text: 'Saved - now using ' + fmt(clamped) + '/trade.'
-      });
+      if (wasOverMax) {
+        setRiskToleranceStatus({
+          type: 'error',
+          text: 'Caution: $' + num + ' is above the General max of ' + fmt(riskPerTrade) + '/trade - that is not allowed. Using ' + fmt(clamped) + '/trade instead, and it is now locked at that amount.'
+        });
+      } else {
+        setRiskToleranceStatus({
+          type: 'success',
+          text: 'Saved and locked - now using ' + fmt(clamped) + '/trade until this account passes or fails.'
+        });
+      }
     } catch (e) {
       console.error('Risk tolerance save failed:', e.code, e.message);
       setRiskToleranceStatus({
@@ -5919,6 +6397,38 @@ function MMMJournal(props) {
         text: "Couldn't save: " + (e.message || 'unknown error') + '. Your change is showing locally but was not persisted - try again.'
       });
     }
+  };
+  const handleSaveDailyPlanTemplate = async function () {
+    setDailyPlanTemplateStatus(null);
+    try {
+      const payload = Object.assign({}, dailyPlanTemplateDraft, {
+        cadence: dailyPlanCadence
+      });
+      await accountsRef.doc(activeAccount.id).update({
+        dailyPlanTemplate: payload
+      });
+      const cadenceLabel = {
+        daily: 'every day',
+        weekly: 'this week',
+        monthly: 'this month',
+        yearly: 'this year'
+      }[dailyPlanCadence] || 'every day';
+      setDailyPlanTemplateStatus({
+        type: 'success',
+        text: 'Saved - this plan will pre-fill new Daily Log entries for ' + cadenceLabel + ' until you change it.'
+      });
+    } catch (e) {
+      console.error('Daily plan template save failed:', e.code, e.message);
+      setDailyPlanTemplateStatus({
+        type: 'error',
+        text: "Couldn't save: " + (e.message || 'unknown error') + '. Try again.'
+      });
+    }
+  };
+  const updateDailyPlanTemplateDraft = function (key, value) {
+    setDailyPlanTemplateDraft(Object.assign({}, dailyPlanTemplateDraft, {
+      [key]: value
+    }));
   };
   const handleBackToActive = function () {
     setViewingBreached(false);
@@ -6150,28 +6660,45 @@ function MMMJournal(props) {
   };
   const handleSaveEntry = async function () {
     if (!activeAccountId) return;
+    setSaveEntryError('');
     if (newEntry.tradedToday === 'no') {
-      if (!newEntry.noTradeReason) return;
-      await entriesRef.add({
-        accountId: activeAccountId,
-        date: newEntry.date,
-        tradedToday: 'no',
-        noTradeReason: newEntry.noTradeReason,
-        notes: newEntry.noTradeNotes,
-        dailyBias: 'neutral',
-        exercised: newEntry.exercised,
-        strategyId: newEntry.strategyId || 'default',
-        trades: [],
-        mentalCheck: newEntry.mentalCheck,
-        dailyPlan: newEntry.dailyPlan,
-        reflection: newEntry.reflection
-      });
-      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR));
+      if (!newEntry.noTradeReason) {
+        setSaveEntryError('Pick a reason above, then you can save.');
+        return;
+      }
+      try {
+        await entriesRef.add({
+          accountId: activeAccountId,
+          date: newEntry.date,
+          tradedToday: 'no',
+          noTradeReason: newEntry.noTradeReason,
+          notes: newEntry.noTradeNotes,
+          dailyBias: 'neutral',
+          exercised: newEntry.exercised,
+          strategyId: newEntry.strategyId || 'default',
+          trades: [],
+          mentalCheck: newEntry.mentalCheck,
+          dailyPlan: newEntry.dailyPlan,
+          reflection: newEntry.reflection
+        });
+      } catch (e) {
+        console.error('Save no-trade day failed:', e.code, e.message);
+        setSaveEntryError("Couldn't save: " + (e.message || 'unknown error') + '. Try again.');
+        return;
+      }
+      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate));
       setShowAddEntry(false);
+      setEntrySavedToast('Logged - staying disciplined and not forcing a trade still counts toward your discipline score.');
       return;
     }
-    if (filledTrades.length === 0) return;
-    if (isTie) return;
+    if (filledTrades.length === 0) {
+      setSaveEntryError('Add at least one trade first.');
+      return;
+    }
+    if (isTie) {
+      setSaveEntryError('A 1-1 split needs a tie-breaker third trade before you can save.');
+      return;
+    }
     const wins = filledTrades.filter(function (t) {
       return t.result === 'win';
     }).length;
@@ -6185,22 +6712,29 @@ function MMMJournal(props) {
         expectedContracts: effectiveContracts
       });
     });
-    await entriesRef.add({
-      accountId: activeAccountId,
-      date: newEntry.date,
-      tradedToday: 'yes',
-      dailyBias: newEntry.dailyBias,
-      exercised: newEntry.exercised,
-      strategyId: newEntry.strategyId || 'default',
-      trades: stampedTrades,
-      notes: newEntry.notes,
-      matrixAdherent: matrixAdherent,
-      mentalCheck: newEntry.mentalCheck,
-      dailyPlan: newEntry.dailyPlan,
-      reflection: newEntry.reflection
-    });
-    setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR));
+    try {
+      await entriesRef.add({
+        accountId: activeAccountId,
+        date: newEntry.date,
+        tradedToday: 'yes',
+        dailyBias: newEntry.dailyBias,
+        exercised: newEntry.exercised,
+        strategyId: newEntry.strategyId || 'default',
+        trades: stampedTrades,
+        notes: newEntry.notes,
+        matrixAdherent: matrixAdherent,
+        mentalCheck: newEntry.mentalCheck,
+        dailyPlan: newEntry.dailyPlan,
+        reflection: newEntry.reflection
+      });
+    } catch (e) {
+      console.error('Save entry failed:', e.code, e.message);
+      setSaveEntryError("Couldn't save: " + (e.message || 'unknown error') + '. Try again.');
+      return;
+    }
+    setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate));
     setShowAddEntry(false);
+    setEntrySavedToast('Entry saved.');
   };
   const handleDeleteEntry = async function (id) {
     await entriesRef.doc(id).delete();
@@ -6218,7 +6752,12 @@ function MMMJournal(props) {
   const newAccountMaxStop = getMaxStopPoints(newAccount.market, newAccount.accountType);
   return React.createElement("div", {
     className: "min-h-screen bg-black text-white p-4 md:p-8"
-  }, React.createElement("div", {
+  }, entrySavedToast && React.createElement("div", {
+    className: "fixed top-4 right-4 z-50 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-xs"
+  }, React.createElement(Icon, {
+    name: "CheckCircle2",
+    className: "h-4 w-4 flex-shrink-0"
+  }), React.createElement("span", null, entrySavedToast)), React.createElement("div", {
     className: "max-w-6xl mx-auto space-y-6"
   }, React.createElement("div", {
     className: "flex flex-col gap-4 pb-5 border-b border-gray-900"
@@ -6301,8 +6840,9 @@ function MMMJournal(props) {
     onToggleAll: toggleAllAccountSelection
   }), shouldShowAccountDetail && React.createElement("button", {
     onClick: function () {
-      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR));
+      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate));
       setEntryMethod('manual');
+      setSaveEntryError('');
       setShowAddEntry(true);
     },
     className: "flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-yellow-500/10 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/15 transition"
@@ -6520,6 +7060,15 @@ function MMMJournal(props) {
   }, "No accounts selected"), React.createElement("p", {
     className: "text-gray-600 text-sm mt-1"
   }, "Check the boxes next to accounts in the nav above to see their numbers here - the whole Overview stays at zero until something's selected.")) : React.createElement(React.Fragment, null, React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, React.createElement(Icon, {
+    name: "UserCheck",
+    className: "h-5 w-5 text-blue-400"
+  }), React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Personal Trading Plan"), React.createElement("span", {
+    className: "text-xs text-gray-500"
+  }, "trader's final decision")), React.createElement("div", {
     className: "grid grid-cols-2 lg:grid-cols-4 gap-4"
   }, React.createElement(StatCard, {
     label: "Current Capital (Buffer)",
@@ -6547,13 +7096,13 @@ function MMMJournal(props) {
     icon: "DollarSign",
     color: totalTrades === 0 ? 'text-gray-500' : winRate >= 50 ? 'text-green-400' : 'text-red-400',
     sub: totalTrades === 0 ? 'No trades yet' : winTrades + "W / " + lossTrades + "L"
-  })), riskToleranceDraftAccountId !== activeAccountId && function () {
-    setRiskToleranceDraftAccountId(activeAccountId);
-    setRiskToleranceDraft(activeAccount && activeAccount.riskTolerance ? String(activeAccount.riskTolerance) : '');
-    setConfirmedTolerance(undefined);
-    setRiskToleranceStatus(null);
-    return null;
-  }(), React.createElement("div", {
+  })), React.createElement("div", {
+    className: "grid grid-cols-2 gap-3"
+  }, React.createElement(PersonalPlanStats, {
+    account: activeAccount,
+    riskPerTrade: effectiveRiskPerTrade,
+    totalPnl: totalPnl
+  })), React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
   }, React.createElement("div", {
     className: "flex items-center justify-between mb-4 flex-wrap gap-2"
@@ -6601,19 +7150,81 @@ function MMMJournal(props) {
   }), React.createElement(PropFirmRuleStats, {
     account: activeAccount,
     entries: entries
-  }), React.createElement(TradingPlanSummaryGrid, {
+  }), React.createElement(GeneralPlanStats, {
     account: activeAccount,
-    riskPerTrade: effectiveRiskPerTrade,
+    riskPerTrade: riskPerTrade,
     totalPnl: totalPnl,
     avgTradesPerDay: avgTradesPerDay,
     maxTradesInDay: maxTradesInDay
-  })), React.createElement(PropFirmRuleNote, {
+  })), React.createElement("div", {
+    className: "mt-3 bg-black/30 border border-gray-800/80 rounded-lg px-3 py-2.5"
+  }, React.createElement("p", {
+    className: "text-xs text-gray-400 flex items-start gap-1.5"
+  }, React.createElement(Icon, {
+    name: "ShieldAlert",
+    className: "h-3.5 w-3.5 text-yellow-400 flex-shrink-0 mt-0.5"
+  }), React.createElement("span", null, React.createElement("span", {
+    className: "text-gray-300 font-medium"
+  }, "General rule:"), " max ", React.createElement("span", {
+    className: "text-white font-semibold"
+  }, "3 trades/day"), ", max ", React.createElement("span", {
+    className: "text-green-400 font-semibold"
+  }, "2 wins"), ", max ", React.createElement("span", {
+    className: "text-red-400 font-semibold"
+  }, "2 losses"), ". Hit any of those and you're done for the day - no exceptions."))), React.createElement(PropFirmRuleNote, {
     account: activeAccount,
     entries: entries
   })), React.createElement(ConsistencyRebalanceWidget, {
     account: activeAccount,
     accountEntries: accountEntries
-  }), React.createElement("div", {
+  }), React.createElement("button", {
+    onClick: function () {
+      setActivePage('dailyplan');
+    },
+    className: "w-full flex items-center justify-between gap-3 bg-gradient-to-br from-purple-950/40 to-black border border-purple-800/40 rounded-2xl p-4 text-left hover:border-purple-600/50 transition"
+  }, React.createElement("div", {
+    className: "flex items-center gap-2"
+  }, React.createElement(Icon, {
+    name: "Shield",
+    className: "h-5 w-5 text-purple-400"
+  }), React.createElement("div", null, React.createElement("p", {
+    className: "text-sm font-semibold text-white"
+  }, "Personal Risk Tolerance: ", fmt(effectiveRiskPerTrade), "/trade ", toleranceLocked && '(Locked)'), React.createElement("p", {
+    className: "text-xs text-gray-500"
+  }, "Set in Daily Plan - ", toleranceIsActive ? 'trading below the system max by choice.' : 'currently using the full system max.'))), React.createElement("span", {
+    className: "text-xs text-purple-300 flex items-center gap-1 flex-shrink-0"
+  }, "Open Daily Plan ", React.createElement(Icon, {
+    name: "ArrowRight",
+    className: "h-3.5 w-3.5"
+  }))), React.createElement("div", null, React.createElement("h2", {
+    className: "text-lg font-semibold text-white flex items-center gap-2 mb-1"
+  }, React.createElement(Icon, {
+    name: "LayoutDashboard",
+    className: "h-5 w-5 text-yellow-400"
+  }), React.createElement("span", null, "Performance Overview")), React.createElement("p", {
+    className: "text-xs text-gray-600 mb-3"
+  }, accountsForOverview.length === 0 ? 'No accounts selected - check the boxes next to accounts above to include them here.' : accountsForOverview.length === accounts.filter(function (a) {
+    return getAccountStatus(a) !== 'breached';
+  }).length ? 'Showing all accounts, combined.' : 'Showing ' + accountsForOverview.length + ' selected account' + (accountsForOverview.length !== 1 ? 's' : '') + ': ' + accountsForOverview.map(function (a) {
+    return a.name;
+  }).join(', ')), React.createElement(OverviewStats, {
+    accounts: accountsForOverview,
+    entries: entries
+  })), React.createElement(TradingCalendar, {
+    accounts: accountsForOverview,
+    entries: entries,
+    viewMode: viewMode,
+    viewContext: {
+      buffer: parseFloat(activeAccount.maxDrawdown) || 0,
+      risk: effectiveRiskPerTrade,
+      pointValue: activePointValue
+    }
+  }), React.createElement(EquityCurveBlock, {
+    accounts: accountsForOverview,
+    entries: entries
+  }))), activePage === 'dailyplan' && activeAccount && React.createElement("div", {
+    className: "space-y-6"
+  }, React.createElement("div", {
     className: "bg-gradient-to-br from-purple-950/40 to-black border border-purple-800/40 rounded-2xl p-6"
   }, React.createElement("div", {
     className: "flex items-center gap-2 mb-1"
@@ -6622,9 +7233,14 @@ function MMMJournal(props) {
     className: "h-5 w-5 text-purple-400"
   }), React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Personal Risk Tolerance")), React.createElement("p", {
+  }, "Personal Risk Tolerance"), toleranceLocked && React.createElement("span", {
+    className: "text-xs px-2 py-0.5 rounded-full font-medium bg-yellow-500/15 text-yellow-300 border border-yellow-500/30 flex items-center gap-1"
+  }, React.createElement(Icon, {
+    name: "Lock",
+    className: "h-3 w-3"
+  }), React.createElement("span", null, "Locked until account passes/fails"))), React.createElement("p", {
     className: "text-xs text-gray-500 mb-4"
-  }, "The amount you can lose per trade without it triggering revenge trading or feeling bad about yourself. Can only go at or below the system max above (", fmt(riskPerTrade), "/trade) - never above it. This becomes your actual default risk everywhere in the app."), React.createElement("div", {
+  }, "The amount you can lose per trade without it triggering revenge trading or feeling bad about yourself. Can only go at or below the system max (", fmt(riskPerTrade), "/trade, see General on Overview) - never above it. This becomes your actual default risk everywhere in the app. Once set, it's locked for this account until it passes or fails."), React.createElement("div", {
     className: "grid grid-cols-1 md:grid-cols-2 gap-4 items-start"
   }, React.createElement("div", null, React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1.5"
@@ -6637,27 +7253,29 @@ function MMMJournal(props) {
     step: "1",
     value: riskToleranceDraft,
     placeholder: fmt(riskPerTrade) + ' (system max)',
+    disabled: toleranceLocked,
     onChange: function (e) {
       setRiskToleranceDraft(e.target.value);
     },
     onBlur: function () {
-      handleChangeRiskTolerance(riskToleranceDraft);
+      if (!toleranceLocked) handleChangeRiskTolerance(riskToleranceDraft);
     },
     onKeyDown: function (e) {
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && !toleranceLocked) {
         handleChangeRiskTolerance(riskToleranceDraft);
         e.target.blur();
       }
     },
-    className: "flex-1 bg-black/40 border border-purple-700/40 text-purple-200 text-lg font-semibold rounded-lg px-3 py-2 outline-none focus:border-purple-400/60 num"
+    className: "flex-1 bg-black/40 border border-purple-700/40 text-purple-200 text-lg font-semibold rounded-lg px-3 py-2 outline-none focus:border-purple-400/60 num " + (toleranceLocked ? 'opacity-50 cursor-not-allowed' : '')
   }), React.createElement("button", {
     onClick: function () {
-      handleChangeRiskTolerance(riskToleranceDraft);
+      if (!toleranceLocked) handleChangeRiskTolerance(riskToleranceDraft);
     },
-    className: "bg-purple-500/20 border border-purple-500/40 text-purple-300 hover:bg-purple-500/30 px-4 rounded-lg text-sm font-semibold transition flex-shrink-0"
+    disabled: toleranceLocked,
+    className: "bg-purple-500/20 border border-purple-500/40 text-purple-300 px-4 rounded-lg text-sm font-semibold transition flex-shrink-0 " + (toleranceLocked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purple-500/30')
   }, "Confirm")), React.createElement("p", {
     className: "text-xs text-gray-600 mt-1.5"
-  }, "Type a number and click Confirm (or press Enter). Clear the field and confirm to go back to the system max."), riskToleranceStatus && React.createElement("p", {
+  }, toleranceLocked ? "Locked - it'll unlock automatically once this account passes or fails." : 'Type a number and click Confirm (or press Enter). Clear the field and confirm to go back to the system max.'), riskToleranceStatus && React.createElement("p", {
     className: "text-xs mt-1.5 font-medium " + (riskToleranceStatus.type === 'error' ? 'text-red-400' : 'text-green-400')
   }, riskToleranceStatus.text)), React.createElement("div", {
     className: "grid grid-cols-3 gap-2"
@@ -6686,37 +7304,139 @@ function MMMJournal(props) {
     className: "h-3.5 w-3.5 flex-shrink-0"
   }), React.createElement("span", null, "Active - trading below the system max by choice.")) : React.createElement("p", {
     className: "text-xs text-gray-600 mt-3"
-  }, "Not set - currently using the full system max shown in Dashboard above.")), React.createElement(TradeBudgetReference, {
+  }, "Not set - currently using the full system max.")), React.createElement(TradeBudgetReference, {
     buffer: currentBuffer,
     systemMaxRisk: riskPerTrade,
-    onApply: handleChangeRiskTolerance
-  }), React.createElement("div", null, React.createElement("h2", {
-    className: "text-lg font-semibold text-white flex items-center gap-2 mb-1"
+    onApply: handleChangeRiskTolerance,
+    locked: toleranceLocked
+  }), React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
+  }, React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
   }, React.createElement(Icon, {
-    name: "LayoutDashboard",
+    name: "Calendar",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("span", null, "Performance Overview")), React.createElement("p", {
-    className: "text-xs text-gray-600 mb-3"
-  }, accountsForOverview.length === 0 ? 'No accounts selected - check the boxes next to accounts above to include them here.' : accountsForOverview.length === accounts.filter(function (a) {
-    return getAccountStatus(a) !== 'breached';
-  }).length ? 'Showing all accounts, combined.' : 'Showing ' + accountsForOverview.length + ' selected account' + (accountsForOverview.length !== 1 ? 's' : '') + ': ' + accountsForOverview.map(function (a) {
-    return a.name;
-  }).join(', ')), React.createElement(OverviewStats, {
-    accounts: accountsForOverview,
-    entries: entries
-  })), React.createElement(TradingCalendar, {
-    accounts: accountsForOverview,
-    entries: entries,
-    viewMode: viewMode,
-    viewContext: {
-      buffer: parseFloat(activeAccount.maxDrawdown) || 0,
-      risk: effectiveRiskPerTrade,
-      pointValue: activePointValue
+  }), React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Daily Plan Template")), React.createElement("p", {
+    className: "text-xs text-gray-500 mb-4"
+  }, "Set your plan once and it pre-fills every new Daily Log entry you add - choose how long it should hold before you'll want to revisit it. You can still edit a single day's plan inside that day's own entry without changing this template."), React.createElement("div", {
+    className: "flex flex-wrap gap-2 mb-4"
+  }, [{
+    key: 'daily',
+    label: 'Every Day'
+  }, {
+    key: 'weekly',
+    label: 'This Week'
+  }, {
+    key: 'monthly',
+    label: 'This Month'
+  }, {
+    key: 'yearly',
+    label: 'This Year'
+  }].map(function (c) {
+    return React.createElement("button", {
+      key: c.key,
+      onClick: function () {
+        setDailyPlanCadence(c.key);
+      },
+      className: "px-3.5 py-1.5 rounded-lg text-xs font-medium border transition " + (dailyPlanCadence === c.key ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-300' : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-gray-200')
+    }, c.label);
+  })), React.createElement(DailyPlanSection, {
+    value: dailyPlanTemplateDraft,
+    onChange: updateDailyPlanTemplateDraft
+  }), React.createElement("div", {
+    className: "flex items-center gap-3 mt-4"
+  }, React.createElement("button", {
+    onClick: handleSaveDailyPlanTemplate,
+    className: "bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/30 px-4 py-2 rounded-lg text-sm font-semibold transition"
+  }, "Save Daily Plan Template"), dailyPlanTemplateStatus && React.createElement("p", {
+    className: "text-xs font-medium " + (dailyPlanTemplateStatus.type === 'error' ? 'text-red-400' : 'text-green-400')
+  }, dailyPlanTemplateStatus.text)))), activePage === 'mentalcheck' && activeAccount && React.createElement("div", {
+    className: "space-y-6"
+  }, React.createElement("div", {
+    className: "bg-gradient-to-br from-teal-950/40 to-black border border-teal-800/40 rounded-2xl p-6"
+  }, React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, React.createElement(Icon, {
+    name: "Brain",
+    className: "h-5 w-5 text-teal-400"
+  }), React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Pre-Session Mental Check History")), React.createElement("p", {
+    className: "text-xs text-gray-500 mb-4"
+  }, "Your pre-session check-in is filled out on each day's Daily Log (it's tied to that trading day's actual headspace) - this page is where you track the trend over time: market awareness, risk respect, humility and professional mindset, each out of 10."), function () {
+    const withMc = accountEntries.filter(function (e) {
+      return e.mentalCheck && mentalCheckTotal(e.mentalCheck) > 0;
+    }).sort(function (a, b) {
+      return b.date < a.date ? -1 : 1;
+    });
+    if (withMc.length === 0) {
+      return React.createElement("p", {
+        className: "text-sm text-gray-600 py-6 text-center"
+      }, "No mental check-ins logged yet for this account - fill one out next time you add a Daily Log entry.");
     }
-  }), React.createElement(EquityCurveBlock, {
-    accounts: accountsForOverview,
-    entries: entries
-  }))), activePage === 'history' && React.createElement("div", null, React.createElement("div", {
+    const avg = withMc.reduce(function (s, e) {
+      return s + mentalCheckTotal(e.mentalCheck);
+    }, 0) / withMc.length;
+    const avgColor = avg >= 32 ? 'text-green-400' : avg >= 20 ? 'text-yellow-400' : 'text-red-400';
+    return React.createElement(React.Fragment, null, React.createElement("div", {
+      className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5"
+    }, React.createElement(MiniStat, {
+      label: "Average Score",
+      value: avg.toFixed(0) + "/40",
+      color: avgColor
+    }), React.createElement(MiniStat, {
+      label: "Days Checked In",
+      value: String(withMc.length),
+      color: "text-blue-400"
+    }), React.createElement(MiniStat, {
+      label: "Last Score",
+      value: mentalCheckTotal(withMc[0].mentalCheck) + "/40",
+      color: "text-purple-400"
+    }), React.createElement(MiniStat, {
+      label: "Last Check-In",
+      value: withMc[0].date,
+      color: "text-gray-400"
+    })), React.createElement("div", {
+      className: "overflow-x-auto"
+    }, React.createElement("table", {
+      className: "w-full text-xs"
+    }, React.createElement("thead", null, React.createElement("tr", {
+      className: "text-gray-500 border-b border-gray-800"
+    }, React.createElement("th", {
+      className: "text-left py-1.5 pr-3"
+    }, "Date"), React.createElement("th", {
+      className: "text-left py-1.5 pr-3"
+    }, "Market Awareness"), React.createElement("th", {
+      className: "text-left py-1.5 pr-3"
+    }, "Risk Respect"), React.createElement("th", {
+      className: "text-left py-1.5 pr-3"
+    }, "Humility"), React.createElement("th", {
+      className: "text-left py-1.5 pr-3"
+    }, "Mindset"), React.createElement("th", {
+      className: "text-left py-1.5"
+    }, "Total"))), React.createElement("tbody", null, withMc.slice(0, 30).map(function (e) {
+      const t = mentalCheckTotal(e.mentalCheck);
+      const tc = t >= 32 ? 'text-green-400' : t >= 20 ? 'text-yellow-400' : 'text-red-400';
+      return React.createElement("tr", {
+        key: e.id,
+        className: "border-b border-gray-900"
+      }, React.createElement("td", {
+        className: "py-1.5 pr-3 text-gray-300 num"
+      }, e.date), React.createElement("td", {
+        className: "py-1.5 pr-3 text-gray-400 num"
+      }, e.mentalCheck.marketAwareness, "/10"), React.createElement("td", {
+        className: "py-1.5 pr-3 text-gray-400 num"
+      }, e.mentalCheck.riskRespect, "/10"), React.createElement("td", {
+        className: "py-1.5 pr-3 text-gray-400 num"
+      }, e.mentalCheck.humility, "/10"), React.createElement("td", {
+        className: "py-1.5 pr-3 text-gray-400 num"
+      }, e.mentalCheck.mindset, "/10"), React.createElement("td", {
+        className: "py-1.5 font-semibold num " + tc
+      }, t, "/40"));
+    })))));
+  }())), activePage === 'history' && React.createElement("div", null, React.createElement("div", {
     className: "flex items-center justify-between flex-wrap gap-2 mb-3"
   }, React.createElement("h2", {
     className: "text-lg font-semibold text-white flex items-center gap-2"
@@ -6735,8 +7455,9 @@ function MMMJournal(props) {
     className: "h-3.5 w-3.5"
   }), React.createElement("span", null, "Export CSV")), React.createElement("button", {
     onClick: function () {
-      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR));
+      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate));
       setEntryMethod('manual');
+      setSaveEntryError('');
       setShowAddEntry(true);
     },
     className: "flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-green-400 hover:to-emerald-500 transition"
@@ -6930,13 +7651,15 @@ function MMMJournal(props) {
     account: activeAccount,
     accountEntries: accountEntries,
     defaultRiskPerTrade: effectiveRiskPerTrade
-  }), activePage === 'strategy' && React.createElement(StrategyCard, {
+  }), activePage === 'strategy' && React.createElement("div", {
+    className: "space-y-4"
+  }, React.createElement(StrategyCard, {
     account: activeAccount,
     onManage: function () {
       setNewStrategy(emptyStrategyForm);
       setShowManageStrategies(true);
     }
-  })))), showAddAccount && React.createElement(Modal, {
+  }), React.createElement(StrategyBacktestReference, null))))), showAddAccount && React.createElement(Modal, {
     onClose: function () {
       setShowAddAccount(false);
     },
@@ -7607,7 +8330,14 @@ function MMMJournal(props) {
     },
     placeholder: "Frustrated I didn't find a setup, but glad I didn't force a trade...",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-16 focus:border-yellow-400/50 outline-none resize-none"
-  })), React.createElement("button", {
+  })), React.createElement("p", {
+    className: "text-xs text-gray-500 flex items-center gap-1.5"
+  }, React.createElement(Icon, {
+    name: "ShieldCheck",
+    className: "h-3.5 w-3.5 text-green-400 flex-shrink-0"
+  }), React.createElement("span", null, "Logging today - even a no-trade day - still counts toward your discipline score.")), saveEntryError && React.createElement("p", {
+    className: "text-red-400 text-xs"
+  }, saveEntryError), React.createElement("button", {
     onClick: handleSaveEntry,
     disabled: !newEntry.noTradeReason,
     className: "w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
@@ -7813,7 +8543,9 @@ function MMMJournal(props) {
     },
     placeholder: "How did it feel taking these trades? Any pressure, doubt, confidence...",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-20 focus:border-yellow-400/50 outline-none resize-none"
-  })), React.createElement("button", {
+  })), saveEntryError && React.createElement("p", {
+    className: "text-red-400 text-xs"
+  }, saveEntryError), React.createElement("button", {
     onClick: handleSaveEntry,
     disabled: filledTrades.length === 0 || isTie,
     className: "w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
