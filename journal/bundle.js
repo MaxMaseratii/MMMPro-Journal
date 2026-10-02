@@ -6920,7 +6920,15 @@ function MMMJournal(props) {
     className: "text-red-400 hover:underline"
   }, "Sign out")), React.createElement(UserCounters, null))), React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement("button", {
+  }, React.createElement("a", {
+    href: "course/index.html",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    className: "flex items-center gap-1.5 bg-gradient-to-r from-[#D6B15E] to-[#b8903f] text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-[#e0c074] hover:to-[#c89f4c] transition"
+  }, React.createElement(Icon, {
+    name: "GraduationCap",
+    className: "h-4 w-4"
+  }), React.createElement("span", null, "Course")), React.createElement("button", {
     onClick: function () {
       setShowInstall(true);
     },

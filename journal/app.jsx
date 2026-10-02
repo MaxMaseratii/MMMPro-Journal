@@ -4529,6 +4529,10 @@ function MMMJournal(props) {
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <a href="course/index.html" target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1.5 bg-gradient-to-r from-[#D6B15E] to-[#b8903f] text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-[#e0c074] hover:to-[#c89f4c] transition">
+                <Icon name="GraduationCap" className="h-4 w-4" /><span>Course</span>
+              </a>
               <button onClick={function() { setShowInstall(true); }} title="Put MMM Pro Journal on your phone" className="bg-gray-900 border border-gray-800 text-gray-400 hover:text-yellow-300 hover:border-yellow-500/40 rounded-lg p-1.5 transition">
                 <Icon name="Smartphone" className="h-4 w-4" />
               </button>
