@@ -1752,7 +1752,7 @@ const emptyReflection = function () {
     marketConditions: ''
   };
 };
-const emptyEntryForm = function (defaultRisk, defaultContracts, defaultRR, planTemplate) {
+const emptyEntryForm = function (defaultRisk, defaultContracts, defaultRR, planTemplate, mentalCheckSource) {
   return {
     date: new Date().toISOString().split('T')[0],
     tradedToday: 'yes',
@@ -1772,7 +1772,7 @@ const emptyEntryForm = function (defaultRisk, defaultContracts, defaultRR, planT
       chartUrl: ''
     }],
     notes: '',
-    mentalCheck: emptyMentalCheck(),
+    mentalCheck: mentalCheckSource ? Object.assign({}, emptyMentalCheck(), mentalCheckSource) : emptyMentalCheck(),
     dailyPlan: planTemplate ? Object.assign({}, emptyDailyPlan(defaultRisk, defaultRR), planTemplate) : emptyDailyPlan(defaultRisk, defaultRR),
     reflection: emptyReflection()
   };
@@ -4977,16 +4977,20 @@ function DisciplineLeaderboard(props) {
     className: "space-y-1.5 max-h-96 overflow-y-auto pr-1"
   }, rows.map(function (r, i) {
     const isMe = r.uid === currentUid;
+    const scoreOk = typeof r.disciplineScore === 'number' && isFinite(r.disciplineScore);
     return React.createElement("div", {
       key: r.uid,
-      className: "flex items-center justify-between text-sm rounded-lg px-3 py-2 " + (isMe ? 'bg-yellow-500/15 border border-yellow-500/30' : 'bg-black/30')
+      className: "grid items-center gap-3 text-sm rounded-lg px-3 py-2 " + (isMe ? 'bg-yellow-500/15 border border-yellow-500/30' : 'bg-black/30'),
+      style: {
+        gridTemplateColumns: '2.25rem 1fr auto'
+      }
     }, React.createElement("span", {
-      className: "text-gray-400"
+      className: "text-gray-500 num"
     }, "#", i + 1), React.createElement("span", {
-      className: "flex-1 ml-3 " + (isMe ? 'text-yellow-300 font-semibold' : 'text-white')
-    }, r.displayName, isMe ? ' (you)' : ''), React.createElement("span", {
-      className: "num text-green-400 font-semibold"
-    }, r.disciplineScore.toFixed(1)));
+      className: "truncate min-w-0 " + (isMe ? 'text-yellow-300 font-semibold' : 'text-white')
+    }, r.displayName || 'Trader', isMe ? ' (you)' : ''), React.createElement("span", {
+      className: "num text-green-400 font-semibold bg-green-500/10 border border-green-500/20 rounded-md px-2 py-0.5 flex-shrink-0"
+    }, scoreOk ? r.disciplineScore.toFixed(1) : '-'));
   }))));
 }
 const TICKER_POINT_VALUES = {
@@ -5813,6 +5817,117 @@ function DailyPlanSection(props) {
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-14 focus:border-yellow-400/50 outline-none resize-none"
   }))));
 }
+function MentalCheckFields(props) {
+  const value = props.value;
+  const onChange = props.onChange;
+  const total = mentalCheckTotal(value);
+  const scoreColor = total >= 32 ? 'text-green-400' : total >= 20 ? 'text-yellow-400' : 'text-red-400';
+  return React.createElement("div", {
+    className: "space-y-3"
+  }, React.createElement("div", {
+    className: "flex items-center justify-between"
+  }, React.createElement("span", {
+    className: "text-sm text-gray-400"
+  }, "Total"), React.createElement("span", {
+    className: "text-sm num font-semibold " + scoreColor
+  }, total, "/40")), MENTAL_CHECK_SLIDERS.map(function (s) {
+    return React.createElement("div", {
+      key: s.key
+    }, React.createElement("div", {
+      className: "flex items-center justify-between mb-0.5"
+    }, React.createElement("label", {
+      className: "text-xs text-gray-400"
+    }, s.label), React.createElement("span", {
+      className: "text-xs text-yellow-400 num"
+    }, value[s.key], "/10")), React.createElement("input", {
+      type: "range",
+      min: "1",
+      max: "10",
+      value: value[s.key],
+      onChange: function (e) {
+        onChange(s.key, parseInt(e.target.value, 10));
+      },
+      className: "w-full accent-teal-400"
+    }), React.createElement("p", {
+      className: "text-[11px] text-gray-600"
+    }, s.sub));
+  }));
+}
+function PlanFieldsGrid(props) {
+  const value = props.value;
+  const onChange = props.onChange;
+  return React.createElement("div", {
+    className: "space-y-3"
+  }, React.createElement("div", {
+    className: "grid grid-cols-2 gap-2"
+  }, React.createElement("div", null, React.createElement("label", {
+    className: "block text-[11px] text-gray-500 mb-1"
+  }, "Target Profit Today ($)"), React.createElement("input", {
+    type: "number",
+    value: value.targetProfit,
+    onChange: function (e) {
+      onChange('targetProfit', e.target.value);
+    },
+    className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-[11px] text-gray-500 mb-1"
+  }, "Planned Trades"), React.createElement("input", {
+    type: "number",
+    min: "0",
+    max: "3",
+    value: value.plannedTrades,
+    onChange: function (e) {
+      onChange('plannedTrades', e.target.value);
+    },
+    className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-[11px] text-gray-500 mb-1"
+  }, "Reward:Risk Ratio"), React.createElement("input", {
+    type: "number",
+    step: "0.1",
+    value: value.riskRewardRatio,
+    onChange: function (e) {
+      onChange('riskRewardRatio', e.target.value);
+    },
+    className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-[11px] text-gray-500 mb-1"
+  }, "Max Loss / Day ($)"), React.createElement("input", {
+    type: "number",
+    value: value.maxLossPerDay,
+    onChange: function (e) {
+      onChange('maxLossPerDay', e.target.value);
+    },
+    className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-[11px] text-gray-500 mb-1"
+  }, "Session Start"), React.createElement("input", {
+    type: "time",
+    value: value.startTime,
+    onChange: function (e) {
+      onChange('startTime', e.target.value);
+    },
+    className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-[11px] text-gray-500 mb-1"
+  }, "Session End"), React.createElement("input", {
+    type: "time",
+    value: value.endTime,
+    onChange: function (e) {
+      onChange('endTime', e.target.value);
+    },
+    className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
+  }))), React.createElement("div", null, React.createElement("label", {
+    className: "block text-[11px] text-gray-500 mb-1"
+  }, "Setups you're allowed to take today"), React.createElement("textarea", {
+    value: value.notes,
+    onChange: function (e) {
+      onChange('notes', e.target.value);
+    },
+    placeholder: "e.g. only the A+ pullback setup, no counter-trend trades before 10am...",
+    className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-14 focus:border-yellow-400/50 outline-none resize-none"
+  })));
+}
 const EMOTIONAL_STATES = ['neutral', 'confident', 'anxious', 'frustrated', 'excited', 'fatigued'];
 function ReflectionSection(props) {
   const value = props.value;
@@ -5988,6 +6103,8 @@ function MMMJournal(props) {
   const [dailyPlanTemplateDraft, setDailyPlanTemplateDraft] = useState(emptyDailyPlan(0, 1));
   const [dailyPlanCadence, setDailyPlanCadence] = useState('daily');
   const [dailyPlanTemplateStatus, setDailyPlanTemplateStatus] = useState(null);
+  const [mentalCheckDraft, setMentalCheckDraft] = useState(emptyMentalCheck());
+  const [mentalCheckStatus, setMentalCheckStatus] = useState(null);
   const [showImportBroker, setShowImportBroker] = useState(false);
   const [showDupeCleanup, setShowDupeCleanup] = useState(false);
   const [brokerImportPreview, setBrokerImportPreview] = useState(null);
@@ -6144,6 +6261,11 @@ function MMMJournal(props) {
   const accountEntries = entries.filter(function (e) {
     return e.accountId === activeAccountId;
   });
+  const todayStr = new Date().toISOString().split('T')[0];
+  const todaysEntryForAccount = accountEntries.find(function (e) {
+    return e.date === todayStr;
+  });
+  const todaysMentalCheckSource = todaysEntryForAccount && todaysEntryForAccount.mentalCheck ? todaysEntryForAccount.mentalCheck : activeAccount && activeAccount.todayMentalCheck && activeAccount.todayMentalCheck.date === todayStr ? activeAccount.todayMentalCheck : null;
   const tradingDaysCount = activeAccount ? getTradingDaysCount(entries, activeAccount.id) : 0;
   const minTradingDaysNeeded = activeAccount && activeAccount.minTradingDays ? parseFloat(activeAccount.minTradingDays) : null;
   const daysStillNeeded = minTradingDaysNeeded ? Math.max(0, minTradingDaysNeeded - tradingDaysCount) : 0;
@@ -6174,6 +6296,10 @@ function MMMJournal(props) {
     setDailyPlanCadence(tpl && tpl.cadence ? tpl.cadence : 'daily');
     setDailyPlanTemplateStatus(null);
   }, [activeAccountId]);
+  useEffect(function () {
+    setMentalCheckDraft(todaysMentalCheckSource ? Object.assign({}, emptyMentalCheck(), todaysMentalCheckSource) : emptyMentalCheck());
+    setMentalCheckStatus(null);
+  }, [activeAccountId, activePage, todaysEntryForAccount && todaysEntryForAccount.id]);
   const riskToleranceRaw = confirmedTolerance !== undefined ? confirmedTolerance : activeAccount && activeAccount.riskTolerance ? parseFloat(activeAccount.riskTolerance) : null;
   const effectiveRiskPerTrade = riskToleranceRaw && riskToleranceRaw > 0 ? Math.min(riskToleranceRaw, riskPerTrade) : riskPerTrade;
   const toleranceIsActive = effectiveRiskPerTrade < riskPerTrade;
@@ -6402,7 +6528,8 @@ function MMMJournal(props) {
     setDailyPlanTemplateStatus(null);
     try {
       const payload = Object.assign({}, dailyPlanTemplateDraft, {
-        cadence: dailyPlanCadence
+        cadence: dailyPlanCadence,
+        riskAmount: effectiveRiskPerTrade.toFixed(2)
       });
       await accountsRef.doc(activeAccount.id).update({
         dailyPlanTemplate: payload
@@ -6429,6 +6556,37 @@ function MMMJournal(props) {
     setDailyPlanTemplateDraft(Object.assign({}, dailyPlanTemplateDraft, {
       [key]: value
     }));
+  };
+  const updateMentalCheckDraft = function (key, value) {
+    setMentalCheckDraft(Object.assign({}, mentalCheckDraft, {
+      [key]: value
+    }));
+  };
+  const handleSaveMentalCheck = async function () {
+    setMentalCheckStatus(null);
+    try {
+      if (todaysEntryForAccount) {
+        await entriesRef.doc(todaysEntryForAccount.id).update({
+          mentalCheck: mentalCheckDraft
+        });
+      } else {
+        await accountsRef.doc(activeAccount.id).update({
+          todayMentalCheck: Object.assign({}, mentalCheckDraft, {
+            date: todayStr
+          })
+        });
+      }
+      setMentalCheckStatus({
+        type: 'success',
+        text: "Saved - this will carry over automatically when you log today's Daily Log entry."
+      });
+    } catch (e) {
+      console.error('Mental check save failed:', e.code, e.message);
+      setMentalCheckStatus({
+        type: 'error',
+        text: "Couldn't save: " + (e.message || 'unknown error') + '. Try again.'
+      });
+    }
   };
   const handleBackToActive = function () {
     setViewingBreached(false);
@@ -6637,20 +6795,6 @@ function MMMJournal(props) {
       trades: trades
     }));
   };
-  const updateMentalCheck = function (key, value) {
-    setNewEntry(Object.assign({}, newEntry, {
-      mentalCheck: Object.assign({}, newEntry.mentalCheck, {
-        [key]: value
-      })
-    }));
-  };
-  const updateDailyPlan = function (key, value) {
-    setNewEntry(Object.assign({}, newEntry, {
-      dailyPlan: Object.assign({}, newEntry.dailyPlan, {
-        [key]: value
-      })
-    }));
-  };
   const updateReflection = function (key, value) {
     setNewEntry(Object.assign({}, newEntry, {
       reflection: Object.assign({}, newEntry.reflection, {
@@ -6686,7 +6830,7 @@ function MMMJournal(props) {
         setSaveEntryError("Couldn't save: " + (e.message || 'unknown error') + '. Try again.');
         return;
       }
-      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate));
+      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate, todaysMentalCheckSource));
       setShowAddEntry(false);
       setEntrySavedToast('Logged - staying disciplined and not forcing a trade still counts toward your discipline score.');
       return;
@@ -6732,7 +6876,7 @@ function MMMJournal(props) {
       setSaveEntryError("Couldn't save: " + (e.message || 'unknown error') + '. Try again.');
       return;
     }
-    setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate));
+    setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate, todaysMentalCheckSource));
     setShowAddEntry(false);
     setEntrySavedToast('Entry saved.');
   };
@@ -6840,7 +6984,7 @@ function MMMJournal(props) {
     onToggleAll: toggleAllAccountSelection
   }), shouldShowAccountDetail && React.createElement("button", {
     onClick: function () {
-      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate));
+      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate, todaysMentalCheckSource));
       setEntryMethod('manual');
       setSaveEntryError('');
       setShowAddEntry(true);
@@ -7229,22 +7373,22 @@ function MMMJournal(props) {
   }, React.createElement("div", {
     className: "flex items-center gap-2 mb-1"
   }, React.createElement(Icon, {
-    name: "Shield",
+    name: "Calendar",
     className: "h-5 w-5 text-purple-400"
   }), React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Personal Risk Tolerance"), toleranceLocked && React.createElement("span", {
+  }, "Daily Plan"), toleranceLocked && React.createElement("span", {
     className: "text-xs px-2 py-0.5 rounded-full font-medium bg-yellow-500/15 text-yellow-300 border border-yellow-500/30 flex items-center gap-1"
   }, React.createElement(Icon, {
     name: "Lock",
     className: "h-3 w-3"
-  }), React.createElement("span", null, "Locked until account passes/fails"))), React.createElement("p", {
-    className: "text-xs text-gray-500 mb-4"
-  }, "The amount you can lose per trade without it triggering revenge trading or feeling bad about yourself. Can only go at or below the system max (", fmt(riskPerTrade), "/trade, see General on Overview) - never above it. This becomes your actual default risk everywhere in the app. Once set, it's locked for this account until it passes or fails."), React.createElement("div", {
-    className: "grid grid-cols-1 md:grid-cols-2 gap-4 items-start"
-  }, React.createElement("div", null, React.createElement("label", {
+  }), React.createElement("span", null, "Risk Locked"))), React.createElement("p", {
+    className: "text-xs text-gray-500 mb-5"
+  }, "Your risk per trade and your plan for the session, in one place. Set your risk tolerance once - it's the amount you can lose per trade without it triggering revenge trading, capped at the system max (", fmt(riskPerTrade), "/trade, see General on Overview) and locked for this account until it passes or fails. Everything below it - target, planned trades, session window - can change as often as you like."), React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1.5"
   }, "Your risk tolerance ($ per trade)"), React.createElement("div", {
+    className: "grid grid-cols-1 md:grid-cols-2 gap-4 items-start"
+  }, React.createElement("div", null, React.createElement("div", {
     className: "flex gap-2"
   }, React.createElement("input", {
     type: "number",
@@ -7277,7 +7421,14 @@ function MMMJournal(props) {
     className: "text-xs text-gray-600 mt-1.5"
   }, toleranceLocked ? "Locked - it'll unlock automatically once this account passes or fails." : 'Type a number and click Confirm (or press Enter). Clear the field and confirm to go back to the system max.'), riskToleranceStatus && React.createElement("p", {
     className: "text-xs mt-1.5 font-medium " + (riskToleranceStatus.type === 'error' ? 'text-red-400' : 'text-green-400')
-  }, riskToleranceStatus.text)), React.createElement("div", {
+  }, riskToleranceStatus.text), toleranceIsActive ? React.createElement("p", {
+    className: "text-xs text-purple-300/80 mt-2 flex items-center gap-1.5"
+  }, React.createElement(Icon, {
+    name: "CheckCircle",
+    className: "h-3.5 w-3.5 flex-shrink-0"
+  }), React.createElement("span", null, "Active - trading below the system max by choice.")) : React.createElement("p", {
+    className: "text-xs text-gray-600 mt-2"
+  }, "Not set - currently using the full system max.")), React.createElement("div", {
     className: "grid grid-cols-3 gap-2"
   }, React.createElement("div", {
     className: "bg-black/30 border border-purple-800/30 rounded-lg px-3 py-2.5 text-center"
@@ -7297,31 +7448,14 @@ function MMMJournal(props) {
     className: "text-[11px] text-gray-500 mb-1"
   }, "Your max loss/day"), React.createElement("div", {
     className: "num text-lg font-bold text-purple-300"
-  }, fmt(effectiveDailyCap))))), toleranceIsActive ? React.createElement("p", {
-    className: "text-xs text-purple-300/80 mt-3 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
-    name: "CheckCircle",
-    className: "h-3.5 w-3.5 flex-shrink-0"
-  }), React.createElement("span", null, "Active - trading below the system max by choice.")) : React.createElement("p", {
-    className: "text-xs text-gray-600 mt-3"
-  }, "Not set - currently using the full system max.")), React.createElement(TradeBudgetReference, {
-    buffer: currentBuffer,
-    systemMaxRisk: riskPerTrade,
-    onApply: handleChangeRiskTolerance,
-    locked: toleranceLocked
+  }, fmt(effectiveDailyCap))))), React.createElement("div", {
+    className: "h-px bg-gray-800 my-5"
   }), React.createElement("div", {
-    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-  }, React.createElement("div", {
-    className: "flex items-center gap-2 mb-1"
-  }, React.createElement(Icon, {
-    name: "Calendar",
-    className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
-    className: "text-lg font-semibold text-white"
-  }, "Daily Plan Template")), React.createElement("p", {
-    className: "text-xs text-gray-500 mb-4"
-  }, "Set your plan once and it pre-fills every new Daily Log entry you add - choose how long it should hold before you'll want to revisit it. You can still edit a single day's plan inside that day's own entry without changing this template."), React.createElement("div", {
-    className: "flex flex-wrap gap-2 mb-4"
+    className: "flex items-center justify-between flex-wrap gap-2 mb-1"
+  }, React.createElement("label", {
+    className: "block text-xs text-gray-500"
+  }, "Apply this plan for:"), React.createElement("div", {
+    className: "flex flex-wrap gap-2"
   }, [{
     key: 'daily',
     label: 'Every Day'
@@ -7342,7 +7476,9 @@ function MMMJournal(props) {
       },
       className: "px-3.5 py-1.5 rounded-lg text-xs font-medium border transition " + (dailyPlanCadence === c.key ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-300' : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-gray-200')
     }, c.label);
-  })), React.createElement(DailyPlanSection, {
+  }))), React.createElement("p", {
+    className: "text-xs text-gray-600 mb-4"
+  }, "Set it once and it pre-fills every new Daily Log entry you add until you change it - so it covers one day, the whole week, the month, or the year, whichever you pick above."), React.createElement(PlanFieldsGrid, {
     value: dailyPlanTemplateDraft,
     onChange: updateDailyPlanTemplateDraft
   }), React.createElement("div", {
@@ -7350,9 +7486,14 @@ function MMMJournal(props) {
   }, React.createElement("button", {
     onClick: handleSaveDailyPlanTemplate,
     className: "bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/30 px-4 py-2 rounded-lg text-sm font-semibold transition"
-  }, "Save Daily Plan Template"), dailyPlanTemplateStatus && React.createElement("p", {
+  }, "Save Daily Plan"), dailyPlanTemplateStatus && React.createElement("p", {
     className: "text-xs font-medium " + (dailyPlanTemplateStatus.type === 'error' ? 'text-red-400' : 'text-green-400')
-  }, dailyPlanTemplateStatus.text)))), activePage === 'mentalcheck' && activeAccount && React.createElement("div", {
+  }, dailyPlanTemplateStatus.text))), React.createElement(TradeBudgetReference, {
+    buffer: currentBuffer,
+    systemMaxRisk: riskPerTrade,
+    onApply: handleChangeRiskTolerance,
+    locked: toleranceLocked
+  })), activePage === 'mentalcheck' && activeAccount && React.createElement("div", {
     className: "space-y-6"
   }, React.createElement("div", {
     className: "bg-gradient-to-br from-teal-950/40 to-black border border-teal-800/40 rounded-2xl p-6"
@@ -7363,9 +7504,30 @@ function MMMJournal(props) {
     className: "h-5 w-5 text-teal-400"
   }), React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Pre-Session Mental Check History")), React.createElement("p", {
+  }, "Pre-Session Mental Check")), React.createElement("p", {
     className: "text-xs text-gray-500 mb-4"
-  }, "Your pre-session check-in is filled out on each day's Daily Log (it's tied to that trading day's actual headspace) - this page is where you track the trend over time: market awareness, risk respect, humility and professional mindset, each out of 10."), function () {
+  }, todaysEntryForAccount ? "Today's entry is already logged - this updates its mental check directly." : "Fill this out before you start trading today. It'll carry over automatically when you log today's Daily Log entry."), React.createElement(MentalCheckFields, {
+    value: mentalCheckDraft,
+    onChange: updateMentalCheckDraft
+  }), React.createElement("div", {
+    className: "flex items-center gap-3 mt-4"
+  }, React.createElement("button", {
+    onClick: handleSaveMentalCheck,
+    className: "bg-teal-500/20 border border-teal-500/40 text-teal-300 hover:bg-teal-500/30 px-4 py-2 rounded-lg text-sm font-semibold transition"
+  }, "Save Check-In"), mentalCheckStatus && React.createElement("p", {
+    className: "text-xs font-medium " + (mentalCheckStatus.type === 'error' ? 'text-red-400' : 'text-green-400')
+  }, mentalCheckStatus.text))), React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
+  }, React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, React.createElement(Icon, {
+    name: "History",
+    className: "h-5 w-5 text-gray-400"
+  }), React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "History")), React.createElement("p", {
+    className: "text-xs text-gray-500 mb-4"
+  }, "The trend over time: market awareness, risk respect, humility and professional mindset, each out of 10."), function () {
     const withMc = accountEntries.filter(function (e) {
       return e.mentalCheck && mentalCheckTotal(e.mentalCheck) > 0;
     }).sort(function (a, b) {
@@ -7455,7 +7617,7 @@ function MMMJournal(props) {
     className: "h-3.5 w-3.5"
   }), React.createElement("span", null, "Export CSV")), React.createElement("button", {
     onClick: function () {
-      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate));
+      setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate, todaysMentalCheckSource));
       setEntryMethod('manual');
       setSaveEntryError('');
       setShowAddEntry(true);
@@ -8296,13 +8458,18 @@ function MMMJournal(props) {
       }));
     },
     className: "flex-1 py-2 rounded-lg text-sm font-medium border " + (!newEntry.exercised ? 'bg-gray-500/30 text-gray-300 border-gray-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-  }, "No"))), React.createElement(MentalCheckSection, {
-    value: newEntry.mentalCheck,
-    onChange: updateMentalCheck
-  }), React.createElement(DailyPlanSection, {
-    value: newEntry.dailyPlan,
-    onChange: updateDailyPlan
-  }), React.createElement(ReflectionSection, {
+  }, "No"))), React.createElement("div", {
+    className: "bg-black/30 border border-gray-800 rounded-lg px-3 py-2.5 flex items-start gap-2"
+  }, React.createElement(Icon, {
+    name: "Info",
+    className: "h-3.5 w-3.5 text-gray-500 flex-shrink-0 mt-0.5"
+  }), React.createElement("p", {
+    className: "text-xs text-gray-500"
+  }, "Your pre-session mental check ", mentalCheckTotal(newEntry.mentalCheck) > 0 ? React.createElement("span", {
+    className: "text-teal-400 font-medium"
+  }, "(", mentalCheckTotal(newEntry.mentalCheck), "/40, already set)") : React.createElement("span", null, "(not set yet)"), " and Daily Plan ", newEntry.dailyPlan.riskAmount || newEntry.dailyPlan.targetProfit ? React.createElement("span", {
+    className: "text-yellow-400 font-medium"
+  }, "(set)") : React.createElement("span", null, "(not set)"), " now live on their own pages in the menu - this entry will pick up whatever's saved there for today.")), React.createElement(ReflectionSection, {
     value: newEntry.reflection,
     onChange: updateReflection
   }), newEntry.tradedToday === 'no' ? React.createElement(React.Fragment, null, React.createElement("div", null, React.createElement("label", {
