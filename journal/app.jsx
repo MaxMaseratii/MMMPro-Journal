@@ -844,7 +844,9 @@ function AuthScreen(props) {
     <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-sm bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-8">
         <div className="flex justify-end mb-3"><LanguageSwitcher language={language} setLanguage={setLanguage} /></div>
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent text-center mb-1">MMM Pro Journal</h1>
+        <div className="flex justify-center mb-3">
+          <img src="./logo-wordmark.png" alt="MMM Pro Journal" className="h-20 w-auto rounded-xl border border-yellow-500/20" />
+        </div>
         <p className="text-gray-500 text-sm text-center mb-4">{mode === 'login' ? 'Sign in to your account' : 'Create your account'}</p>
         {wantsCourse && (
           <div className="bg-teal-500/10 border border-teal-500/30 rounded-lg px-3 py-2.5 mb-4 flex items-start gap-2">
@@ -4780,13 +4782,17 @@ function MMMJournal(props) {
         <div className="flex flex-col gap-4 pb-5 border-b border-gray-900">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent tracking-tight">MMM Pro Journal</h1>
+              <img src="./logo-wordmark.png" alt="MMM Pro Journal" className="h-10 w-auto rounded-lg border border-yellow-500/20" />
               <p className="text-gray-500 text-sm mt-1 flex items-center flex-wrap">
                 <span><EditableName user={user} /> - <button onClick={function() { auth.signOut(); }} className="text-red-400 hover:underline">Sign out</button></span>
                 <UserCounters />
               </p>
             </div>
             <div className="flex items-center gap-2">
+              <a href="../" title="Back to maxmaserati.com"
+                className="flex items-center gap-1.5 bg-gray-900 border border-gray-800 text-gray-400 hover:text-yellow-300 hover:border-yellow-500/40 rounded-lg px-3 py-1.5 text-sm font-semibold transition">
+                <Icon name="Home" className="h-4 w-4" /><span>Home</span>
+              </a>
               <a href="course/index.html" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-1.5 bg-gradient-to-r from-[#D6B15E] to-[#b8903f] text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-[#e0c074] hover:to-[#c89f4c] transition">
                 <Icon name="GraduationCap" className="h-4 w-4" /><span>Course</span>

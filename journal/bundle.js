@@ -2,6 +2,10 @@ const {
   useState,
   useEffect
 } = React;
+
+// Hardened Icon component: if a Lucide icon name doesn't exist or errors,
+// this catches it and renders nothing for that icon instead of crashing
+// the whole app (which is what "page goes black" was caused by).
 const Icon = ({
   name,
   className
@@ -22,11 +26,16 @@ const Icon = ({
       console.error('Icon render failed for name:', name, err);
     }
   }, [name]);
-  return React.createElement("span", {
+  return /*#__PURE__*/React.createElement("span", {
     ref: ref,
     className: "inline-flex items-center justify-center flex-shrink-0 " + (className || '')
   });
 };
+
+// Single source of truth for a trade's signed P&L - every place that sums
+// trades (calendar, Total P&L, buffer/drawdown, reports, consistency) calls
+// this instead of repeating the abs()+sign-flip logic inline, so those can
+// never silently drift apart from each other.
 const tradeSignedPnl = function (t) {
   const v = Math.abs(parseFloat(t.pnl) || 0);
   return t.result === 'win' ? v : -v;
@@ -55,6 +64,11 @@ const VIEW_MODES = [{
   key: 'privacy',
   label: 'Privacy'
 }];
+
+// Renders the same underlying $ amount through whichever lens the person has
+// selected, without needing separate calculations stored anywhere - context
+// carries the account's current risk-per-trade, buffer, and point value so
+// Percentage/R-Multiple/Points stay meaningful even as those numbers change.
 const fmtView = function (amount, viewMode, context) {
   if (amount === null || amount === undefined || isNaN(amount)) amount = 0;
   const ctx = context || {};
@@ -76,6 +90,13 @@ const fmtView = function (amount, viewMode, context) {
   }
   return fmt(amount);
 };
+
+// ---------------------------------------------------------------------
+// TRANSLATIONS - keyed by the exact English string as it appears on screen.
+// The translator (below) walks the live page and swaps matched text/placeholder
+// values, so most of the app's visible copy stays translatable without every
+// JSX string needing to be rewritten as a lookup call.
+// ---------------------------------------------------------------------
 const LANGUAGES = [{
   code: 'en',
   label: 'English'
@@ -1063,6 +1084,13 @@ function applyTranslation(lang) {
     if (lang === 'en') return original;
     return entry[lang] || original;
   };
+
+  // True when `current` is either the cached English original itself, or one
+  // of its already-known translations. If neither matches, the live text was
+  // changed by something other than this translator (e.g. React re-rendering
+  // new copy for a different UI state), so the cached "original" is stale and
+  // must be refreshed - otherwise this function would keep stomping fresh
+  // React updates back to whatever text the node first happened to hold.
   const isKnownVariant = function (original, current) {
     if (current === original) return true;
     const entry = TRANSLATIONS[original.trim()];
@@ -1122,71 +1150,75 @@ function InstallAppModal(props) {
     title: 'Tap Add',
     body: 'The gold M icon appears with your other apps.'
   }];
-  return React.createElement(Modal, {
+  return /*#__PURE__*/React.createElement(Modal, {
     onClose: onClose,
     title: "Put MMM Pro Journal on Your Phone",
     size: "md"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "space-y-4"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "Optional. Adds a home-screen icon so the app opens full-screen, like a real app - no browser bar. Do this from the browser, not from a downloaded file."), React.createElement("div", {
+  }, "Optional. Adds a home-screen icon so the app opens full-screen, like a real app - no browser bar. Do this from the browser, not from a downloaded file."), /*#__PURE__*/React.createElement("div", {
     className: "flex bg-gray-900 border border-gray-800 rounded-lg p-1"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setPlatform('iphone');
     },
     className: "flex-1 py-2 rounded-md text-sm font-medium transition flex items-center justify-center gap-1.5 " + (platform === 'iphone' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Smartphone",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "iPhone")), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "iPhone")), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setPlatform('android');
     },
     className: "flex-1 py-2 rounded-md text-sm font-medium transition flex items-center justify-center gap-1.5 " + (platform === 'android' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Smartphone",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Android"))), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Android"))), /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
   }, steps.map(function (step, i) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: i,
       className: "flex gap-3"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "h-7 w-7 rounded-full bg-yellow-500/15 border border-yellow-500/30 text-yellow-300 text-sm font-bold flex items-center justify-center flex-shrink-0"
-    }, i + 1), React.createElement("div", null, React.createElement("p", {
+    }, i + 1), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
       className: "text-white text-sm font-medium"
-    }, step.title), React.createElement("p", {
+    }, step.title), /*#__PURE__*/React.createElement("p", {
       className: "text-gray-500 text-xs mt-0.5"
     }, step.body)));
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3 bg-black/30 rounded-lg p-3"
-  }, React.createElement("img", {
+  }, /*#__PURE__*/React.createElement("img", {
     src: "./logo-icon-192.png",
     alt: "MMM Pro Journal icon",
     className: "h-10 w-10 rounded-xl flex-shrink-0"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
   }, "This is the icon you're looking for once it's added."))));
 }
 function LanguageSwitcher(props) {
   const language = props.language;
   const setLanguage = props.setLanguage;
-  return React.createElement("select", {
+  return /*#__PURE__*/React.createElement("select", {
     value: language,
     onChange: function (e) {
       setLanguage(e.target.value);
     },
     className: "bg-gray-900 border border-gray-800 text-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-yellow-400/50 outline-none"
   }, LANGUAGES.map(function (l) {
-    return React.createElement("option", {
+    return /*#__PURE__*/React.createElement("option", {
       key: l.code,
       value: l.code
     }, l.label);
   }));
 }
+
+// THE MAXMILLIONS INSTITUTIONAL TRADING CHARTER - CORE RISK ENGINE
+// ---------------------------------------------------------------------
+
 const PHASE_CONFIG = {
   challenge: {
     mode: 'Speed Mode',
@@ -1305,6 +1337,7 @@ const MARKET_SPECS = {
     miniTicker: 'CL',
     miniPt: 1000.00
   },
+  // Silver has no $100 nano contract - the smallest tradable size (SIC) needs a $1,000 buffer minimum.
   silver: {
     label: 'Silver',
     nanoTicker: null,
@@ -1320,6 +1353,7 @@ function getMaxStopPoints(marketKey, accountType) {
   const cfg = PHASE_CONFIG[accountType] || PHASE_CONFIG.challenge;
   const spec = MARKET_SPECS[marketKey] || MARKET_SPECS.nasdaq100;
   if (spec.nanoTicker && spec.nanoPt) return cfg.riskPct * (100 / spec.nanoPt);
+  // No nano tier (Silver): base the locked stop on the smallest tier that exists, the $1,000 micro.
   return cfg.riskPct * (1000 / spec.microPt);
 }
 function getTickerForTier(marketKey, tier) {
@@ -1329,6 +1363,11 @@ function getTickerForTier(marketKey, tier) {
   if (tier === 'mini') return spec.miniTicker || '-';
   return '-';
 }
+
+// Many prop firms (e.g. MFFU's Rapid EOD) require a minimum number of days
+// actually traded before a pass/payout request is even eligible, separate
+// from whether the profit target has been hit - counts unique trading days
+// for this specific account.
 function getTradingDaysCount(entries, accountId) {
   const dates = entries.filter(function (e) {
     return e.accountId === accountId && e.tradedToday !== 'no';
@@ -1352,6 +1391,11 @@ function getConsistencyCap(account, cumulativeBefore) {
   const p = pct / 100;
   return p * cumulativeBefore / (1 - p);
 }
+
+// The 4 confirmed real-world payout mechanisms, checked against actual prop
+// firm help-center wording (MFFU, Tradeify, Apex, TopStep, Phidias). Every
+// account picks exactly one - "simple" is the default so existing accounts
+// (saved before this taxonomy existed) keep working unchanged.
 const PAYOUT_TYPES = [{
   key: 'simple',
   label: 'Simple Threshold',
@@ -1373,6 +1417,10 @@ const PAYOUT_TYPES = [{
   firms: 'Phidias E2L',
   desc: 'Hit the same profit target twice - the first clears the eval, the second pays a flat cash amount plus live-account credit.'
 }];
+
+// Whether an account actually has enough of its chosen payout type's fields
+// filled in to compute anything - each type has its own "is this configured"
+// bar, since they don't share the same required fields.
 function payoutRulesConfigured(account) {
   if (!account) return false;
   const type = account.payoutType || 'simple';
@@ -1381,6 +1429,13 @@ function payoutRulesConfigured(account) {
   if (type === 'twoleg') return (parseFloat(account.twoLegTarget) || 0) > 0;
   return (parseFloat(account.payoutBuffer) || 0) > 0 || (parseFloat(account.payoutThreshold) || 0) > 0;
 }
+
+// Tracks progress toward the NEXT payout, dispatched by the account's payout
+// type (see PAYOUT_TYPES above). Every branch returns the SAME shape -
+// { type, eligible, requestable, progressPct, progressLabel, note, split,
+// cap, isFirstPayout, liveCredit } - so the UI can render any of the 4
+// mechanisms generically. Returns null when this account has no payout rules
+// configured yet, or is a Challenge (no payouts on a Challenge).
 function getPayoutStatus(account, entries) {
   if (!account || account.accountType === 'challenge') return null;
   if (!payoutRulesConfigured(account)) return null;
@@ -1408,6 +1463,8 @@ function getPayoutStatus(account, entries) {
   const totalPnl = accEntries.reduce(function (s, e) {
     return s + dayPnl(e);
   }, 0);
+
+  // ---- Winning-Days Streak (Tradeify Flex, Apex, TopStep) ----
   if (type === 'streak') {
     const dayMin = parseFloat(account.streakDayMin) || 0;
     const byDate = {};
@@ -1436,6 +1493,8 @@ function getPayoutStatus(account, entries) {
       liveCredit: null
     };
   }
+
+  // ---- Cycle Formula + Buffer Floor (Tradeify Daily) ----
   if (type === 'formula') {
     const buffer = parseFloat(account.formulaBuffer) || 0;
     const bufferCleared = totalPnl >= buffer;
@@ -1462,6 +1521,8 @@ function getPayoutStatus(account, entries) {
       liveCredit: null
     };
   }
+
+  // ---- Two-Leg Flat (Phidias E2L) ----
   if (type === 'twoleg') {
     const target = parseFloat(account.twoLegTarget) || 0;
     const legsCleared = target > 0 ? Math.floor(totalPnl / target) : 0;
@@ -1481,6 +1542,8 @@ function getPayoutStatus(account, entries) {
       liveCredit: credit
     };
   }
+
+  // ---- Simple Threshold (MFFU Rapid EOD, DayTraders) - the default ----
   const buffer = parseFloat(account.payoutBuffer) || 0;
   const threshold = parseFloat(account.payoutThreshold) || 0;
   const targetAmount = isFirstPayout ? buffer : threshold || buffer;
@@ -1499,6 +1562,10 @@ function getPayoutStatus(account, entries) {
   let requestable = netProfit > 0 ? netProfit * (split / 100) : 0;
   const cap = account.payoutCap ? parseFloat(account.payoutCap) : null;
   if (cap && requestable > cap) requestable = cap;
+
+  // Pace projection: average net $/trading day across this account's whole
+  // history, used to guess how many more sessions at that pace it takes to
+  // close the remaining gap - a rough ETA, not a promise.
   const totalDays = new Set(accEntries.map(function (e) {
     return e.date;
   })).size;
@@ -1517,6 +1584,10 @@ function getPayoutStatus(account, entries) {
     liveCredit: null
   };
 }
+
+// Before you have any trading history, there is no real cap yet (math needs
+// past profit to work with). This gives a starter number instead of nothing,
+// based on your profit target, so the number on screen is always useful.
 function getConsistencyGuideline(account) {
   const pct = parseFloat(account.consistencyPct);
   const target = parseFloat(account.profitTarget) || 0;
@@ -1531,6 +1602,10 @@ const computeStatus = function (account, buffer, totalPnl) {
   }
   return 'active';
 };
+
+// Pure, top-level so both the component and aggregate calculations (which need to
+// know if an account is breached before deciding whether to count its trades) can
+// use the exact same math as what's shown on screen.
 const calcBufferHistory = function (account, accEntries) {
   if (!account) return [];
   const dtype = account.drawdownType || 'static';
@@ -1572,6 +1647,10 @@ const computeAccountStatus = function (account, allEntries) {
   const accE = allEntries.filter(function (e) {
     return e.accountId === account.id;
   });
+  // A brand-new account with no logged days at all cannot possibly be
+  // breached - breaching only happens through logged trading losses over
+  // time, so this guards against ever mis-flagging a fresh account as
+  // breached due to any data quirk in the buffer calculation.
   if (accE.length === 0) return 'active';
   const hist = calcBufferHistory(account, accE);
   const buf = hist.length > 0 ? hist[hist.length - 1].buffer : parseFloat(account.maxDrawdown) || 0;
@@ -1784,11 +1863,21 @@ const emptyEntryForm = function (defaultRisk, defaultContracts, defaultRR, planT
       revengeEntry: false
     }],
     notes: '',
+    // Pre-session mental check is filled out on its own page now, not in this
+    // modal - whatever was saved there for today carries straight through.
     mentalCheck: mentalCheckSource ? Object.assign({}, emptyMentalCheck(), mentalCheckSource) : emptyMentalCheck(),
+    // If the trader has set a Daily Plan template on the account (Daily Plan
+    // page), use it as the starting point for today's plan instead of a blank
+    // one - that's what lets setting it once cover a whole week/month/year.
     dailyPlan: planTemplate ? Object.assign({}, emptyDailyPlan(defaultRisk, defaultRR), planTemplate) : emptyDailyPlan(defaultRisk, defaultRR),
     reflection: emptyReflection()
   };
 };
+
+// A strategy is a named set of long/short entry rules. Older accounts only ever
+// had one rule set stored directly on the account - this treats that as an
+// implicit "Default Strategy" so nothing breaks, while accounts.strategies
+// (once someone adds more) holds any additional named strategies.
 const getStrategies = function (account) {
   const extra = account.strategies || [];
   const defaultStrategy = {
@@ -1804,6 +1893,10 @@ const emptyStrategyForm = {
   longRules: [''],
   shortRules: ['']
 };
+
+// Resolves the actual rule list for a trade based on which strategy was
+// selected for that day (entry.strategyId), not just the account's single
+// legacy rule set - so multiple named strategies can coexist on one account.
 const getApplicableRules = function (trade, entry, account) {
   const strategies = getStrategies(account);
   const strategy = strategies.find(function (s) {
@@ -1848,6 +1941,10 @@ function AuthScreen(props) {
     }
     setLoading(false);
   };
+
+  // A registered user's trading history should never be out of reach just
+  // because a password was forgotten - this sends Firebase's own reset email
+  // so they can get back into their real account instead of being stuck.
   const handleForgotPassword = async function () {
     setError('');
     setInfo('');
@@ -1864,34 +1961,38 @@ function AuthScreen(props) {
     }
     setLoading(false);
   };
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "min-h-screen bg-black text-white flex items-center justify-center p-4"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "w-full max-w-sm bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-8"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex justify-end mb-3"
-  }, React.createElement(LanguageSwitcher, {
+  }, /*#__PURE__*/React.createElement(LanguageSwitcher, {
     language: language,
     setLanguage: setLanguage
-  })), React.createElement("h1", {
-    className: "text-2xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent text-center mb-1"
-  }, "MMM Pro Journal"), React.createElement("p", {
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex justify-center mb-3"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "./logo-wordmark.png",
+    alt: "MMM Pro Journal",
+    className: "h-20 w-auto rounded-xl border border-yellow-500/20"
+  })), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-500 text-sm text-center mb-4"
-  }, mode === 'login' ? 'Sign in to your account' : 'Create your account'), wantsCourse && React.createElement("div", {
+  }, mode === 'login' ? 'Sign in to your account' : 'Create your account'), wantsCourse && /*#__PURE__*/React.createElement("div", {
     className: "bg-teal-500/10 border border-teal-500/30 rounded-lg px-3 py-2.5 mb-4 flex items-start gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "GraduationCap",
     className: "h-4 w-4 text-teal-400 flex-shrink-0 mt-0.5"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-teal-200/90"
-  }, mode === 'login' ? 'Sign in to' : 'Create a free account to', " start the MMM Mastery Course - it's free, and your progress is saved to your account.")), mode === 'signup' && React.createElement("input", {
+  }, mode === 'login' ? 'Sign in to' : 'Create a free account to', " start the MMM Mastery Course - it's free, and your progress is saved to your account.")), mode === 'signup' && /*#__PURE__*/React.createElement("input", {
     value: displayName,
     onChange: function (e) {
       setDisplayName(e.target.value);
     },
     placeholder: "Your name",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 focus:border-yellow-400/50 outline-none"
-  }), React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("input", {
     value: email,
     onChange: function (e) {
       setEmail(e.target.value);
@@ -1899,7 +2000,7 @@ function AuthScreen(props) {
     placeholder: "Email",
     type: "email",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 focus:border-yellow-400/50 outline-none"
-  }), React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("input", {
     value: password,
     onChange: function (e) {
       setPassword(e.target.value);
@@ -1907,36 +2008,36 @@ function AuthScreen(props) {
     placeholder: "Password",
     type: "password",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 focus:border-yellow-400/50 outline-none"
-  }), error && React.createElement("p", {
+  }), error && /*#__PURE__*/React.createElement("p", {
     className: "text-red-400 text-xs mb-3"
-  }, error), info && React.createElement("p", {
+  }, error), info && /*#__PURE__*/React.createElement("p", {
     className: "text-green-400 text-xs mb-3"
-  }, info), React.createElement("button", {
+  }, info), /*#__PURE__*/React.createElement("button", {
     onClick: handleSubmit,
     disabled: loading,
     className: "w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-50 mb-3"
-  }, loading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'), mode === 'login' && React.createElement("button", {
+  }, loading ? 'Please wait...' : mode === 'login' ? 'Sign In' : 'Create Account'), mode === 'login' && /*#__PURE__*/React.createElement("button", {
     onClick: handleForgotPassword,
     disabled: loading,
     className: "w-full text-center text-xs text-gray-500 hover:text-yellow-400 mb-3"
-  }, "Forgot password?"), React.createElement("p", {
+  }, "Forgot password?"), /*#__PURE__*/React.createElement("p", {
     className: "text-center text-sm text-gray-500"
-  }, mode === 'login' ? "Don't have an account?" : "Already have an account?", ' ', React.createElement("button", {
+  }, mode === 'login' ? "Don't have an account?" : "Already have an account?", ' ', /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setMode(mode === 'login' ? 'signup' : 'login');
       setError('');
       setInfo('');
     },
     className: "text-yellow-400 hover:underline"
-  }, mode === 'login' ? 'Sign up' : 'Sign in')), React.createElement("button", {
+  }, mode === 'login' ? 'Sign up' : 'Sign in')), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setShowInstall(true);
     },
     className: "w-full text-center text-xs text-gray-600 hover:text-gray-400 mt-4 flex items-center justify-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Smartphone",
     className: "h-3 w-3"
-  }), React.createElement("span", null, "Put MMM Pro Journal on your phone"))), showInstall && React.createElement(InstallAppModal, {
+  }), /*#__PURE__*/React.createElement("span", null, "Put MMM Pro Journal on your phone"))), showInstall && /*#__PURE__*/React.createElement(InstallAppModal, {
     onClose: function () {
       setShowInstall(false);
     }
@@ -1974,33 +2075,33 @@ function EditableName(props) {
     setSaving(false);
   };
   if (editing) {
-    return React.createElement("span", {
+    return /*#__PURE__*/React.createElement("span", {
       className: "inline-flex items-center gap-1.5"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       value: draft,
       onChange: function (e) {
         setDraft(e.target.value);
       },
       placeholder: "Your name",
       className: "bg-gray-800 border border-gray-700 text-white rounded px-2 py-0.5 text-sm w-32 focus:border-yellow-400/50 outline-none"
-    }), React.createElement("button", {
+    }), /*#__PURE__*/React.createElement("button", {
       onClick: save,
       disabled: saving || !draft.trim(),
       className: "text-green-400 hover:underline disabled:opacity-40 text-sm"
-    }, "Save"), React.createElement("button", {
+    }, "Save"), /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         setEditing(false);
       },
       className: "text-gray-500 hover:text-gray-300 text-sm"
     }, "Cancel"));
   }
-  return React.createElement("span", {
+  return /*#__PURE__*/React.createElement("span", {
     className: "inline-flex items-center gap-1.5"
-  }, React.createElement("span", null, currentLabel), React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("span", null, currentLabel), /*#__PURE__*/React.createElement("button", {
     onClick: startEdit,
     className: "text-gray-500 hover:text-yellow-400",
     title: "Edit display name"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Pencil",
     className: "h-3 w-3"
   })));
@@ -2040,66 +2141,66 @@ function UserCounters() {
     };
   }, []);
   if (total === null) return null;
-  return React.createElement("span", {
+  return /*#__PURE__*/React.createElement("span", {
     className: "inline-flex items-center gap-2 ml-2 align-middle"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "inline-flex items-center gap-1 text-xs text-gray-400"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "w-2 h-2 rounded-full bg-white"
-  }), total), React.createElement("span", {
+  }), total), /*#__PURE__*/React.createElement("span", {
     className: "inline-flex items-center gap-1 text-xs text-gray-400"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "w-2 h-2 rounded-full bg-green-400"
   }), online));
 }
 function SystemExplainer() {
   const [open, setOpen] = useState(false);
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "border border-yellow-500/30 bg-gradient-to-r from-yellow-500/10 to-transparent rounded-xl overflow-hidden"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setOpen(!open);
     },
     className: "w-full flex items-start gap-3 p-4 text-left"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Zap",
     className: "h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0"
-  }), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "flex-1"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm text-yellow-100/80"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "text-yellow-400 font-semibold"
-  }, "Charter: "), "Risk is fixed by Phase - ", React.createElement("span", {
+  }, "Charter: "), "Risk is fixed by Phase - ", /*#__PURE__*/React.createElement("span", {
     className: "text-white font-medium"
-  }, "10% Speed Mode"), " (Challenge / Funded) or", React.createElement("span", {
+  }, "10% Speed Mode"), " (Challenge / Funded) or", /*#__PURE__*/React.createElement("span", {
     className: "text-white font-medium"
-  }, " 2% Preservation Mode"), " (Live). Every trade targets your account's reward-to-risk (minimum ", MIN_RR, ":1). Max 3 trades/day, tie-breaker mandatory on a 1-1 split.", React.createElement("span", {
+  }, " 2% Preservation Mode"), " (Live). Every trade targets your account's reward-to-risk (minimum ", MIN_RR, ":1). Max 3 trades/day, tie-breaker mandatory on a 1-1 split.", /*#__PURE__*/React.createElement("span", {
     className: "text-yellow-400 underline ml-1"
-  }, open ? 'Hide details' : 'What does this mean?'))), React.createElement(Icon, {
+  }, open ? 'Hide details' : 'What does this mean?'))), /*#__PURE__*/React.createElement(Icon, {
     name: open ? "ChevronUp" : "ChevronDown",
     className: "h-4 w-4 text-yellow-400 mt-0.5 flex-shrink-0"
-  })), open && React.createElement("div", {
+  })), open && /*#__PURE__*/React.createElement("div", {
     className: "px-4 pb-4 space-y-3 text-sm text-gray-300 border-t border-yellow-500/20 pt-3"
-  }, React.createElement("div", null, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-yellow-400 font-semibold mb-1"
-  }, "Capital = Drawdown Buffer"), React.createElement("p", {
+  }, "Capital = Drawdown Buffer"), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-400"
-  }, "Your Capital is strictly your drawdown buffer, not the nominal account size. Risk is calculated as a fixed percentage of this buffer.")), React.createElement("div", null, React.createElement("p", {
+  }, "Your Capital is strictly your drawdown buffer, not the nominal account size. Risk is calculated as a fixed percentage of this buffer.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-blue-400 font-semibold mb-1"
-  }, "Capital Sizing Lock"), React.createElement("p", {
+  }, "Capital Sizing Lock"), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-400"
-  }, "You don't choose your contract size - your Capital does. $100 unlocks 1 Nano, $1,000 unlocks 1 Micro, $10,000 unlocks 1 Mini.")), React.createElement("div", null, React.createElement("p", {
+  }, "You don't choose your contract size - your Capital does. $100 unlocks 1 Nano, $1,000 unlocks 1 Micro, $10,000 unlocks 1 Mini.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-red-400 font-semibold mb-1"
-  }, "Locked Maximum Stop Loss"), React.createElement("p", {
+  }, "Locked Maximum Stop Loss"), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-400"
-  }, "Because capital tiers and point-values scale together, your max stop in points never changes for a market and phase. If the chart needs a wider stop, you skip the trade.")), React.createElement("div", null, React.createElement("p", {
+  }, "Because capital tiers and point-values scale together, your max stop in points never changes for a market and phase. If the chart needs a wider stop, you skip the trade.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-purple-400 font-semibold mb-1"
-  }, "Daily Execution Matrix"), React.createElement("p", {
+  }, "Daily Execution Matrix"), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-400"
-  }, "2 losses = circuit breaker, day over. 2 wins = greed filter, day over. A 1-1 split forces a mandatory Trade 3 tie-breaker.")), React.createElement("div", null, React.createElement("p", {
+  }, "2 losses = circuit breaker, day over. 2 wins = greed filter, day over. A 1-1 split forces a mandatory Trade 3 tie-breaker.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-orange-400 font-semibold mb-1"
-  }, "Prop Firm Rules (optional, per account)"), React.createElement("p", {
+  }, "Prop Firm Rules (optional, per account)"), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-400"
   }, "Consistency % caps how much of your total profit a single day can represent. Daily Loss Limit is separate from your Capital and resets every day - some firms hard-breach it, others soft-breach."))));
 }
@@ -2169,7 +2270,7 @@ function AccountGroupNav(props) {
   const allSelectedCount = accounts.filter(function (a) {
     return selectedIds.has(a.id);
   }).length;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "flex flex-col sm:flex-row gap-2 flex-wrap items-center"
   }, NAV_GROUPS.map(function (type) {
     const isBreachedGroup = type.key === 'breached';
@@ -2190,71 +2291,71 @@ function AccountGroupNav(props) {
     }).length;
     const groupAllSelected = group.length > 0 && groupSelectedCount === group.length;
     if (isBreachedGroup && allOfType.length === 0) return null;
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: type.key,
       className: "relative"
-    }, React.createElement("button", {
+    }, /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         setOpenGroup(isOpen ? null : type.key);
       },
       className: "flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition " + (isOpen ? t_border(type.key) : 'bg-gray-900 border-gray-800 text-gray-300 hover:border-gray-700')
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "px-1.5 py-0.5 rounded text-xs font-semibold " + ACCOUNT_BADGE_CLS[type.key]
-    }, type.label), React.createElement("span", {
+    }, type.label), /*#__PURE__*/React.createElement("span", {
       className: "text-xs text-gray-500"
-    }, "(", activeInGroup, isBreachedGroup ? '' : ' Active', ")"), groupSelectedCount > 0 && React.createElement("span", {
+    }, "(", activeInGroup, isBreachedGroup ? '' : ' Active', ")"), groupSelectedCount > 0 && /*#__PURE__*/React.createElement("span", {
       className: "text-[10px] px-1.5 py-0.5 rounded-full bg-yellow-500/20 text-yellow-300"
-    }, groupSelectedCount, " in view"), React.createElement(Icon, {
+    }, groupSelectedCount, " in view"), /*#__PURE__*/React.createElement(Icon, {
       name: isOpen ? "ChevronUp" : "ChevronDown",
       className: "h-3.5 w-3.5 text-gray-500"
-    })), isOpen && React.createElement("div", {
+    })), isOpen && /*#__PURE__*/React.createElement("div", {
       className: "absolute z-40 mt-1 w-72 bg-black border border-gray-800 rounded-xl shadow-2xl p-2 max-h-80 overflow-y-auto"
-    }, group.length === 0 && React.createElement("p", {
+    }, group.length === 0 && /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-600 p-2"
-    }, "No ", type.label.toLowerCase(), " accounts to show."), group.length > 0 && React.createElement("button", {
+    }, "No ", type.label.toLowerCase(), " accounts to show."), group.length > 0 && /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         onToggleGroup(group.map(function (a) {
           return a.id;
         }), !groupAllSelected);
       },
       className: "w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-gray-400 hover:bg-gray-900 border-b border-gray-800 mb-1"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: groupAllSelected ? "CheckSquare" : "Square",
       className: "h-3.5 w-3.5 flex-shrink-0 " + (groupAllSelected ? 'text-yellow-400' : 'text-gray-600')
-    }), React.createElement("span", null, "Select all ", type.label.toLowerCase(), " for Overview/Equity Curve")), group.map(function (acc) {
+    }), /*#__PURE__*/React.createElement("span", null, "Select all ", type.label.toLowerCase(), " for Overview/Equity Curve")), group.map(function (acc) {
       const st = getStatus(acc);
       const archived = isArchived(acc, st);
       const checked = selectedIds.has(acc.id);
-      return React.createElement("div", {
+      return /*#__PURE__*/React.createElement("div", {
         key: acc.id,
         className: "w-full flex items-center gap-1.5 px-1 py-0.5 rounded-lg " + (activeAccountId === acc.id ? 'bg-yellow-500/10' : '')
-      }, React.createElement("button", {
+      }, /*#__PURE__*/React.createElement("button", {
         onClick: function (e) {
           e.stopPropagation();
           onToggleAccount(acc.id);
         },
         className: "p-1.5 flex-shrink-0",
         title: "Include in Overview/Equity Curve"
-      }, React.createElement(Icon, {
+      }, /*#__PURE__*/React.createElement(Icon, {
         name: checked ? "CheckSquare" : "Square",
         className: "h-3.5 w-3.5 " + (checked ? 'text-yellow-400' : 'text-gray-600')
-      })), React.createElement("button", {
+      })), /*#__PURE__*/React.createElement("button", {
         onClick: function () {
           onSelect(acc.id, isBreachedGroup);
           setOpenGroup(null);
         },
         className: "flex-1 flex items-center justify-between px-2 py-1.5 rounded-lg text-sm text-left " + (archived ? 'opacity-40 ' : '') + (activeAccountId === acc.id ? 'text-yellow-300' : 'text-gray-300 hover:bg-gray-900')
-      }, React.createElement("span", null, acc.name, " #", acc.accountNumber), archived && React.createElement("span", {
+      }, /*#__PURE__*/React.createElement("span", null, acc.name, " #", acc.accountNumber), archived && /*#__PURE__*/React.createElement("span", {
         className: "text-[10px] text-red-400"
       }, "Archived")));
     })));
-  }), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("button", {
     onClick: onToggleAll,
     className: "flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-medium transition " + (allSelectedCount === nonBreachedTotal && nonBreachedTotal > 0 ? 'bg-yellow-500/15 border-yellow-500/40 text-yellow-300' : 'bg-gray-900 border-gray-800 text-gray-400 hover:border-gray-700')
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: allSelectedCount === nonBreachedTotal && nonBreachedTotal > 0 ? "CheckSquare" : "Square",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "All Accounts (", allSelectedCount, " in view)")));
+  }), /*#__PURE__*/React.createElement("span", null, "All Accounts (", allSelectedCount, " in view)")));
 }
 function RiskOfRuinCard(props) {
   const currentBuffer = props.currentBuffer;
@@ -2275,72 +2376,72 @@ function RiskOfRuinCard(props) {
       recoveryPct: recoveryPct
     };
   });
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setOpen(!open);
     },
     className: "w-full flex items-center justify-between p-6 text-left"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "TrendingDown",
     className: "h-5 w-5 text-red-400"
-  }), React.createElement("div", null, React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Risk of Ruin"), React.createElement("p", {
+  }, "Risk of Ruin"), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "Consecutive loss projection & gain needed to recover"))), React.createElement(Icon, {
+  }, "Consecutive loss projection & gain needed to recover"))), /*#__PURE__*/React.createElement(Icon, {
     name: open ? "ChevronUp" : "ChevronDown",
     className: "h-4 w-4 text-gray-500 flex-shrink-0"
-  })), open && React.createElement("div", {
+  })), open && /*#__PURE__*/React.createElement("div", {
     className: "px-6 pb-6"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-4"
-  }, "Hypothetical: if every trade lost at the fixed Charter risk% for this phase."), React.createElement("div", {
+  }, "Hypothetical: if every trade lost at the fixed Charter risk% for this phase."), /*#__PURE__*/React.createElement("div", {
     className: "overflow-x-auto"
-  }, React.createElement("table", {
+  }, /*#__PURE__*/React.createElement("table", {
     className: "w-full text-sm"
-  }, React.createElement("thead", null, React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
     className: "text-left text-gray-500 text-xs uppercase tracking-wide border-b border-gray-800"
-  }, React.createElement("th", {
+  }, /*#__PURE__*/React.createElement("th", {
     className: "pb-2 pr-4"
-  }, "Consecutive Losses"), React.createElement("th", {
+  }, "Consecutive Losses"), /*#__PURE__*/React.createElement("th", {
     className: "pb-2 pr-4"
-  }, "Buffer Remaining"), React.createElement("th", {
+  }, "Buffer Remaining"), /*#__PURE__*/React.createElement("th", {
     className: "pb-2 pr-4"
-  }, "% of Buffer Left"), React.createElement("th", {
+  }, "% of Buffer Left"), /*#__PURE__*/React.createElement("th", {
     className: "pb-2"
-  }, "Gain Needed to Recover"))), React.createElement("tbody", null, rows.map(function (r) {
-    return React.createElement("tr", {
+  }, "Gain Needed to Recover"))), /*#__PURE__*/React.createElement("tbody", null, rows.map(function (r) {
+    return /*#__PURE__*/React.createElement("tr", {
       key: r.n,
       className: "border-b border-gray-800/50 last:border-0"
-    }, React.createElement("td", {
+    }, /*#__PURE__*/React.createElement("td", {
       className: "py-2 pr-4 text-white font-medium"
-    }, r.n, " losses"), React.createElement("td", {
+    }, r.n, " losses"), /*#__PURE__*/React.createElement("td", {
       className: "py-2 pr-4 font-semibold " + (r.pctRemaining <= 20 ? 'text-red-400' : r.pctRemaining <= 50 ? 'text-yellow-400' : 'text-green-400')
-    }, fmt(r.remaining)), React.createElement("td", {
+    }, fmt(r.remaining)), /*#__PURE__*/React.createElement("td", {
       className: "py-2 pr-4"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-2"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "w-20 bg-gray-800 rounded-full h-1.5 overflow-hidden"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "h-full rounded-full " + (r.pctRemaining <= 20 ? 'bg-red-400' : r.pctRemaining <= 50 ? 'bg-yellow-400' : 'bg-green-400'),
       style: {
         width: Math.max(r.pctRemaining, 2) + '%'
       }
-    })), React.createElement("span", {
+    })), /*#__PURE__*/React.createElement("span", {
       className: "text-xs " + (r.pctRemaining <= 20 ? 'text-red-400' : r.pctRemaining <= 50 ? 'text-yellow-400' : 'text-green-400')
-    }, r.pctRemaining.toFixed(1), "%"))), React.createElement("td", {
+    }, r.pctRemaining.toFixed(1), "%"))), /*#__PURE__*/React.createElement("td", {
       className: "py-2"
-    }, r.recoveryPct === null ? React.createElement("span", {
+    }, r.recoveryPct === null ? /*#__PURE__*/React.createElement("span", {
       className: "text-red-500 font-semibold"
-    }, "Account wiped") : React.createElement("span", {
+    }, "Account wiped") : /*#__PURE__*/React.createElement("span", {
       className: "font-semibold " + (r.recoveryPct >= 100 ? 'text-red-400' : r.recoveryPct >= 40 ? 'text-yellow-400' : 'text-gray-300')
     }, "+", r.recoveryPct.toFixed(1), "% needed")));
-  })))), React.createElement("p", {
+  })))), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600 mt-3"
   }, accountType === 'live' ? 'Live runs Preservation Mode (2%) - the buffer erodes much slower, protecting real capital.' : 'Challenge and Funded run Speed Mode (10%) - faster progress, faster erosion under a bad streak.')));
 }
@@ -2369,53 +2470,63 @@ function DailyTradeMatrix(props) {
     trades: ['L', 'L', '-'],
     pnl: -2 * risk
   }];
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-black/40 border border-gray-800 rounded-xl p-4"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "LayoutGrid",
     className: "h-4 w-4 text-yellow-400"
-  }), React.createElement("h3", {
+  }), /*#__PURE__*/React.createElement("h3", {
     className: "text-sm font-semibold text-white"
-  }, "Daily Trade Execution Matrix - your actual risk")), React.createElement("p", {
+  }, "Daily Trade Execution Matrix - your actual risk")), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-3"
-  }, "Max 3 trades - stop at 2 wins or 2 losses, mandatory Trade 3 on a tie. Built from this account's real risk (", fmt(risk), ") at ", rr, ":1 reward (", fmt(reward), ")."), React.createElement("div", {
+  }, "Max 3 trades - stop at 2 wins or 2 losses, mandatory Trade 3 on a tie. Built from this account's real risk (", fmt(risk), ") at ", rr, ":1 reward (", fmt(reward), ")."), /*#__PURE__*/React.createElement("div", {
     className: "overflow-x-auto"
-  }, React.createElement("table", {
+  }, /*#__PURE__*/React.createElement("table", {
     className: "w-full text-xs"
-  }, React.createElement("thead", null, React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
     className: "text-left text-gray-500 uppercase tracking-wide border-b border-gray-800"
-  }, React.createElement("th", {
+  }, /*#__PURE__*/React.createElement("th", {
     className: "pb-1.5 pr-3"
-  }, "Scenario"), React.createElement("th", {
+  }, "Scenario"), /*#__PURE__*/React.createElement("th", {
     className: "pb-1.5 pr-3"
-  }, "Trade 1"), React.createElement("th", {
+  }, "Trade 1"), /*#__PURE__*/React.createElement("th", {
     className: "pb-1.5 pr-3"
-  }, "Trade 2"), React.createElement("th", {
+  }, "Trade 2"), /*#__PURE__*/React.createElement("th", {
     className: "pb-1.5 pr-3"
-  }, "Trade 3"), React.createElement("th", {
+  }, "Trade 3"), /*#__PURE__*/React.createElement("th", {
     className: "pb-1.5"
-  }, "Daily P&L"))), React.createElement("tbody", null, scenarios.map(function (s, i) {
-    return React.createElement("tr", {
+  }, "Daily P&L"))), /*#__PURE__*/React.createElement("tbody", null, scenarios.map(function (s, i) {
+    return /*#__PURE__*/React.createElement("tr", {
       key: i,
       className: "border-b border-gray-800/50 last:border-0"
-    }, React.createElement("td", {
+    }, /*#__PURE__*/React.createElement("td", {
       className: "py-1.5 pr-3 font-medium " + (s.pnl > 0 ? 'text-green-400' : s.pnl < 0 ? 'text-red-400' : 'text-gray-300')
     }, s.name), s.trades.map(function (t, ti) {
-      return React.createElement("td", {
+      return /*#__PURE__*/React.createElement("td", {
         key: ti,
         className: "py-1.5 pr-3"
-      }, t === '-' ? React.createElement("span", {
+      }, t === '-' ? /*#__PURE__*/React.createElement("span", {
         className: "text-gray-700"
-      }, "-") : React.createElement("span", {
+      }, "-") : /*#__PURE__*/React.createElement("span", {
         className: t === 'W' ? 'text-green-400 font-semibold' : 'text-red-400 font-semibold'
       }, t, " ", t === 'W' ? '+' + fmt(reward) : '-' + fmt(risk)));
-    }), React.createElement("td", {
+    }), /*#__PURE__*/React.createElement("td", {
       className: "py-1.5 font-bold " + (s.pnl > 0 ? 'text-green-400' : s.pnl < 0 ? 'text-red-400' : 'text-gray-300')
     }, s.pnl >= 0 ? '+' : '', fmt(s.pnl)));
   })))));
 }
+
+// Shown once an account is breached - a specific, honest recap using the exact
+// same discipline checklist as the rest of the app, scoped to just this account,
+// plus a look at the actual day the buffer hit zero.
+// Shows up only when the consistency rule is actually being violated right now
+// - the forward-looking "Max Profit Allowed / Day" stat tells you what's safe
+// to make today, but once a day's already over the limit, the fix isn't to
+// undo that day - it's to earn more elsewhere so the ratio rebalances. This
+// computes exactly how much more, verified against a real trader's account:
+// $1,800 best day on $3,400 total at a 50% limit needs exactly $200 more.
 function ConsistencyRebalanceWidget(props) {
   const account = props.account;
   const accountEntries = props.accountEntries;
@@ -2429,20 +2540,20 @@ function ConsistencyRebalanceWidget(props) {
   const currentRatio = bestDayPnl / d.totalPnl;
   if (currentRatio <= pct) return null;
   const additionalNeeded = Math.max(0, bestDayPnl / pct - d.totalPnl);
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "border border-orange-500/40 bg-orange-500/10 rounded-xl p-4 flex items-start gap-3"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "TrendingUp",
     className: "h-5 w-5 text-orange-400 mt-0.5 flex-shrink-0"
-  }), React.createElement("div", null, React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-orange-300 font-semibold text-sm"
-  }, "Best day is over your consistency limit"), React.createElement("p", {
+  }, "Best day is over your consistency limit"), /*#__PURE__*/React.createElement("p", {
     className: "text-orange-200/80 text-xs mt-1"
-  }, "Your best day (", React.createElement("span", {
+  }, "Your best day (", /*#__PURE__*/React.createElement("span", {
     className: "num"
-  }, fmt(bestDayPnl)), ") is currently ", React.createElement("span", {
+  }, fmt(bestDayPnl)), ") is currently ", /*#__PURE__*/React.createElement("span", {
     className: "num"
-  }, (currentRatio * 100).toFixed(1), "%"), " of your total profit - over your ", account.consistencyPct, "% limit. You don't need to undo that day - make ", React.createElement("span", {
+  }, (currentRatio * 100).toFixed(1), "%"), " of your total profit - over your ", account.consistencyPct, "% limit. You don't need to undo that day - make ", /*#__PURE__*/React.createElement("span", {
     className: "num text-white font-semibold"
   }, fmt(additionalNeeded)), " more in total profit (from other days) and the ratio rebalances back into compliance on its own.")));
 }
@@ -2485,63 +2596,63 @@ function BreachReviewCard(props) {
   const breachEntry = breachDay ? accountEntries.find(function (e) {
     return e.date === breachDay.date;
   }) : null;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-red-500/30 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "FileSearch",
     className: "h-5 w-5 text-red-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Breach Review")), React.createElement("p", {
+  }, "Breach Review")), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-4"
-  }, "A specific look at what happened on this account - not a punishment, just the facts so the next one goes differently."), breachDay && React.createElement("div", {
+  }, "A specific look at what happened on this account - not a punishment, just the facts so the next one goes differently."), breachDay && /*#__PURE__*/React.createElement("div", {
     className: "bg-black/30 rounded-lg p-3 mb-4"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-400 mb-1"
-  }, "The day the buffer hit zero: ", React.createElement("span", {
+  }, "The day the buffer hit zero: ", /*#__PURE__*/React.createElement("span", {
     className: "text-white font-medium"
-  }, breachDay.date)), React.createElement("p", {
+  }, breachDay.date)), /*#__PURE__*/React.createElement("p", {
     className: "text-sm font-semibold " + (breachDay.pnl < 0 ? 'text-red-400' : 'text-gray-300')
-  }, breachDay.pnl >= 0 ? '+' : '', fmt(breachDay.pnl), " that day"), breachEntry && breachEntry.trades && breachEntry.trades.length > 0 && React.createElement("p", {
+  }, breachDay.pnl >= 0 ? '+' : '', fmt(breachDay.pnl), " that day"), breachEntry && breachEntry.trades && breachEntry.trades.length > 0 && /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mt-1"
   }, breachEntry.trades.length, " trade", breachEntry.trades.length !== 1 ? 's' : '', " logged that day - ", breachEntry.trades.filter(function (t) {
     return t.result === 'loss';
   }).length, " loss", breachEntry.trades.filter(function (t) {
     return t.result === 'loss';
-  }).length !== 1 ? 'es' : '', ".")), items.length === 0 ? React.createElement("p", {
+  }).length !== 1 ? 'es' : '', ".")), items.length === 0 ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "Not enough logged trades on this account to build a review yet.") : React.createElement("div", {
+  }, "Not enough logged trades on this account to build a review yet.") : /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 md:grid-cols-2 gap-4"
-  }, React.createElement("div", null, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-xs uppercase tracking-wide text-green-400 font-semibold mb-2"
-  }, "What went well"), wentWell.length === 0 ? React.createElement("p", {
+  }, "What went well"), wentWell.length === 0 ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600"
-  }, "Nothing cleared 70% on this account.") : React.createElement("div", {
+  }, "Nothing cleared 70% on this account.") : /*#__PURE__*/React.createElement("div", {
     className: "space-y-1.5"
   }, wentWell.map(function (i, idx) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: idx,
       className: "flex items-center justify-between text-xs bg-black/30 rounded-lg px-2.5 py-1.5"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-gray-300"
-    }, i.label), React.createElement("span", {
+    }, i.label), /*#__PURE__*/React.createElement("span", {
       className: "text-green-400 font-semibold"
     }, i.value.toFixed(0), "%"));
-  }))), React.createElement("div", null, React.createElement("p", {
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-xs uppercase tracking-wide text-red-400 font-semibold mb-2"
-  }, "What to work on"), toWorkOn.length === 0 ? React.createElement("p", {
+  }, "What to work on"), toWorkOn.length === 0 ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600"
-  }, "Nothing fell below 70% on this account.") : React.createElement("div", {
+  }, "Nothing fell below 70% on this account.") : /*#__PURE__*/React.createElement("div", {
     className: "space-y-1.5"
   }, toWorkOn.map(function (i, idx) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: idx,
       className: "flex items-center justify-between text-xs bg-black/30 rounded-lg px-2.5 py-1.5"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-gray-300"
-    }, i.label), React.createElement("span", {
+    }, i.label), /*#__PURE__*/React.createElement("span", {
       className: "text-red-400 font-semibold"
     }, i.value.toFixed(0), "%"));
   })))));
@@ -2558,31 +2669,31 @@ function StrategyCard(props) {
     }).length > 0;
     return hasLong || hasShort || s.id !== 'default';
   });
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6 space-y-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "BookOpen",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Strategy Rules")), React.createElement("button", {
+  }, "Strategy Rules")), /*#__PURE__*/React.createElement("button", {
     onClick: onManage,
     className: "flex items-center gap-1.5 bg-yellow-500/10 border border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/15 px-3 py-1.5 rounded-lg text-sm font-medium transition"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Plus",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Add Strategy"))), strategies.length === 0 ? React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Add Strategy"))), strategies.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "text-center py-8 border border-dashed border-gray-800 rounded-xl"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "BookOpen",
     className: "h-8 w-8 text-gray-700 mx-auto mb-2"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-500 text-sm"
-  }, "No strategies defined yet."), React.createElement("p", {
+  }, "No strategies defined yet."), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-600 text-xs mt-1"
   }, "Add one with its own Long/Short entry rules - you'll pick which strategy you used each time you log a day.")) : strategies.map(function (strategy) {
     const longRules = (strategy.longRules || []).filter(function (r) {
@@ -2591,61 +2702,67 @@ function StrategyCard(props) {
     const shortRules = (strategy.shortRules || []).filter(function (r) {
       return r && r.trim();
     });
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: strategy.id
-    }, React.createElement("p", {
+    }, /*#__PURE__*/React.createElement("p", {
       className: "text-sm font-medium text-white mb-2"
-    }, strategy.name), React.createElement("div", {
+    }, strategy.name), /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-1 md:grid-cols-2 gap-4"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "bg-black/40 border border-green-800/40 rounded-xl p-4"
-    }, React.createElement("p", {
+    }, /*#__PURE__*/React.createElement("p", {
       className: "text-xs uppercase tracking-wide text-green-400 font-semibold mb-2 flex items-center gap-1.5"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "TrendingUp",
       className: "h-3.5 w-3.5"
-    }), React.createElement("span", null, "Long Setup Rules")), longRules.length === 0 ? React.createElement("p", {
+    }), /*#__PURE__*/React.createElement("span", null, "Long Setup Rules")), longRules.length === 0 ? /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-600"
-    }, "No rules defined.") : React.createElement("ul", {
+    }, "No rules defined.") : /*#__PURE__*/React.createElement("ul", {
       className: "space-y-1.5"
     }, longRules.map(function (r, i) {
-      return React.createElement("li", {
+      return /*#__PURE__*/React.createElement("li", {
         key: i,
         className: "text-sm text-gray-300 flex items-start gap-2"
-      }, React.createElement("span", {
+      }, /*#__PURE__*/React.createElement("span", {
         className: "text-green-400 mt-0.5 leading-none"
-      }, "*"), React.createElement("span", null, r));
-    }))), React.createElement("div", {
+      }, "*"), /*#__PURE__*/React.createElement("span", null, r));
+    }))), /*#__PURE__*/React.createElement("div", {
       className: "bg-black/40 border border-red-800/40 rounded-xl p-4"
-    }, React.createElement("p", {
+    }, /*#__PURE__*/React.createElement("p", {
       className: "text-xs uppercase tracking-wide text-red-400 font-semibold mb-2 flex items-center gap-1.5"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "TrendingDown",
       className: "h-3.5 w-3.5"
-    }), React.createElement("span", null, "Short Setup Rules")), shortRules.length === 0 ? React.createElement("p", {
+    }), /*#__PURE__*/React.createElement("span", null, "Short Setup Rules")), shortRules.length === 0 ? /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-600"
-    }, "No rules defined.") : React.createElement("ul", {
+    }, "No rules defined.") : /*#__PURE__*/React.createElement("ul", {
       className: "space-y-1.5"
     }, shortRules.map(function (r, i) {
-      return React.createElement("li", {
+      return /*#__PURE__*/React.createElement("li", {
         key: i,
         className: "text-sm text-gray-300 flex items-start gap-2"
-      }, React.createElement("span", {
+      }, /*#__PURE__*/React.createElement("span", {
         className: "text-red-400 mt-0.5 leading-none"
-      }, "*"), React.createElement("span", null, r));
+      }, "*"), /*#__PURE__*/React.createElement("span", null, r));
     })))));
   }));
 }
 function MiniStat(props) {
   const accentBorder = (props.color || '').replace(/text-/g, 'border-');
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-black/30 border border-gray-800/80 border-l-2 rounded-lg pl-3 pr-2.5 py-2 " + accentBorder
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-gray-500 leading-tight mb-0.5"
-  }, props.label), React.createElement("div", {
+  }, props.label), /*#__PURE__*/React.createElement("div", {
     className: "num text-[15px] font-semibold " + props.color
   }, props.value));
 }
+
+// Shared math for both the General guide and the Personal plan - General uses
+// the system max risk (the ceiling, the same for everyone on this account
+// type), Personal uses whatever the trader actually locked in as their
+// tolerance. Keeping one function means the two views can never silently
+// drift apart from the same underlying formulas.
 function tradingPlanMath(account, riskAmount, totalPnl) {
   const rtu = riskAmount;
   const rr = Math.max(parseFloat(account.rewardRatio) || MIN_RR, MIN_RR);
@@ -2661,105 +2778,123 @@ function tradingPlanMath(account, riskAmount, totalPnl) {
     remaining: remaining
   };
 }
+
+// GENERAL: the ceiling - the most the Charter's math allows, same for every
+// trader on this account type. This is a guide and a barrier, never the
+// trader's own choice (see PersonalPlanStats below for that).
 function GeneralPlanStats(props) {
   const account = props.account;
   const m = tradingPlanMath(account, props.riskPerTrade, props.totalPnl);
   const avgTradesPerDay = props.avgTradesPerDay || 0;
   const maxTradesInDay = props.maxTradesInDay || 0;
-  return React.createElement(React.Fragment, null, React.createElement(MiniStat, {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Win / Trade (max)",
     value: fmt(m.winPerTrade),
     color: "text-green-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "RR Ratio",
     value: m.rr + ":1",
     color: "text-purple-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Breakeven Win Rate",
     value: m.minWinRate.toFixed(1) + "%",
     color: "text-purple-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Avg Trades Taken / Day",
     value: avgTradesPerDay.toFixed(1),
     color: "text-blue-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Most Trades Taken (Day)",
     value: String(maxTradesInDay),
     color: "text-blue-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Capital (Buffer)",
     value: fmt(account.maxDrawdown),
     color: "text-yellow-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Suggested Trades (sample)",
     value: "20-25",
     color: "text-gray-300"
   }));
 }
+
+// PERSONAL: the trader's own final decision - how far they actually are from
+// the goal, given the risk they chose (never more than General's ceiling).
 function PersonalPlanStats(props) {
   const account = props.account;
   const m = tradingPlanMath(account, props.riskPerTrade, props.totalPnl);
-  return React.createElement(React.Fragment, null, React.createElement(MiniStat, {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Wins to Hit Target",
     value: m.winsToTarget + " wins",
     color: "text-purple-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Remaining to Target",
     value: fmt(Math.max(0, m.remaining)),
     color: "text-yellow-400"
   }));
 }
+
+// A reference-only rule of thumb (not part of the system's own risk math above
+// it): size each trade so the buffer could survive roughly 20-25 losing
+// trades in a row before it's gone, instead of just the system's own max.
+// Shown right under Personal Risk Tolerance so a trader can compare the two
+// and, optionally, one-click apply the suggested number as their tolerance.
 function TradeBudgetReference(props) {
   const buffer = Math.max(parseFloat(props.buffer) || 0, 0);
   const systemMaxRisk = parseFloat(props.systemMaxRisk) || 0;
   const onApply = props.onApply;
   const locked = !!props.locked;
   if (buffer <= 0) return null;
-  const HIGH_COUNT = 20;
-  const LOW_COUNT = 25;
+  const HIGH_COUNT = 20; // fewer survivable losers -> bigger $ per trade
+  const LOW_COUNT = 25; // more survivable losers -> smaller $ per trade
   const highRisk = buffer / HIGH_COUNT;
   const lowRisk = buffer / LOW_COUNT;
   const midRisk = Math.min((lowRisk + highRisk) / 2, systemMaxRisk);
   const fitsUnderMax = systemMaxRisk > 0 && lowRisk <= systemMaxRisk;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-5"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "ListOrdered",
     className: "h-5 w-5 text-blue-400"
-  }), React.createElement("h3", {
+  }), /*#__PURE__*/React.createElement("h3", {
     className: "text-sm font-semibold text-white"
-  }, "Suggested Trade Budget (Reference)")), React.createElement("p", {
+  }, "Suggested Trade Budget (Reference)")), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-3"
-  }, "A rule of thumb: size each trade so your buffer could survive about ", HIGH_COUNT, "-", LOW_COUNT, " losing trades in a row before it's gone. This is just a reference - it changes nothing until you apply it below."), React.createElement("div", {
+  }, "A rule of thumb: size each trade so your buffer could survive about ", HIGH_COUNT, "-", LOW_COUNT, " losing trades in a row before it's gone. This is just a reference - it changes nothing until you apply it below."), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-3 gap-2 mb-3"
-  }, React.createElement(MiniStat, {
+  }, /*#__PURE__*/React.createElement(MiniStat, {
     label: HIGH_COUNT + "-Trade Life",
     value: fmt(highRisk) + "/trade",
     color: "text-blue-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: LOW_COUNT + "-Trade Life",
     value: fmt(lowRisk) + "/trade",
     color: "text-blue-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "As % of Buffer",
     value: (100 / LOW_COUNT).toFixed(1) + "% - " + (100 / HIGH_COUNT).toFixed(1) + "%",
     color: "text-gray-400"
-  })), locked ? React.createElement("p", {
+  })), locked ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Lock",
     className: "h-3 w-3"
-  }), React.createElement("span", null, "Risk tolerance is locked for this account - this reference is informational only until it passes or fails.")) : fitsUnderMax ? React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Risk tolerance is locked for this account - this reference is informational only until it passes or fails.")) : fitsUnderMax ? /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       onApply(midRisk.toFixed(2));
     },
     className: "text-xs bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 px-3 py-1.5 rounded-lg border border-blue-500/40"
-  }, "Use ", fmt(midRisk), "/trade as My Personal Risk Tolerance") : React.createElement("p", {
+  }, "Use ", fmt(midRisk), "/trade as My Personal Risk Tolerance") : /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600"
   }, "Your system max (", fmt(systemMaxRisk), "/trade) is already tighter than this reference - you're already more conservative than a ", LOW_COUNT, "-trade life count."));
 }
+
+// RR/win-rate breakeven math and minimum-sample-size guidance. Kept off the
+// main dashboard (collapsed by default, lives on the Strategy page) so it
+// doesn't add weight to the screen a trader checks every day - it's a
+// reference they open deliberately, not a stat that's always in their face.
 const RR_BREAKEVEN_TABLE = [{
   rr: '1:1',
   breakeven: '50%',
@@ -2804,88 +2939,88 @@ const BACKTEST_REQUIREMENTS_TABLE = [{
 }];
 function StrategyBacktestReference() {
   const [open, setOpen] = useState(false);
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-5"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setOpen(!open);
     },
     className: "w-full flex items-center justify-between gap-2 text-left"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Calculator",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h3", {
+  }), /*#__PURE__*/React.createElement("h3", {
     className: "text-sm font-semibold text-white"
-  }, "Strategy, RR & Sample-Size Reference")), React.createElement(Icon, {
+  }, "Strategy, RR & Sample-Size Reference")), /*#__PURE__*/React.createElement(Icon, {
     name: open ? 'ChevronUp' : 'ChevronDown',
     className: "h-4 w-4 text-gray-500 flex-shrink-0"
-  })), !open ? React.createElement("p", {
+  })), !open ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600 mt-1.5"
-  }, "Your win rate needed to be profitable at each RR, and how many backtested trades you need before trusting a strategy. Click to expand.") : React.createElement("div", {
+  }, "Your win rate needed to be profitable at each RR, and how many backtested trades you need before trusting a strategy. Click to expand.") : /*#__PURE__*/React.createElement("div", {
     className: "mt-4 space-y-5"
-  }, React.createElement("div", null, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-400 mb-2"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "text-white font-medium"
-  }, "Your strategy must be fixed - never change it if it's profitable."), " A profitable strategy means a good win rate for its RR (risk/reward). Change the RR, and the win rate you need changes too:"), React.createElement("div", {
+  }, "Your strategy must be fixed - never change it if it's profitable."), " A profitable strategy means a good win rate for its RR (risk/reward). Change the RR, and the win rate you need changes too:"), /*#__PURE__*/React.createElement("div", {
     className: "overflow-x-auto"
-  }, React.createElement("table", {
+  }, /*#__PURE__*/React.createElement("table", {
     className: "w-full text-xs"
-  }, React.createElement("thead", null, React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
     className: "text-gray-500 border-b border-gray-800"
-  }, React.createElement("th", {
+  }, /*#__PURE__*/React.createElement("th", {
     className: "text-left py-1.5 pr-3"
-  }, "RR"), React.createElement("th", {
+  }, "RR"), /*#__PURE__*/React.createElement("th", {
     className: "text-left py-1.5 pr-3"
-  }, "Breakeven Win Rate"), React.createElement("th", {
+  }, "Breakeven Win Rate"), /*#__PURE__*/React.createElement("th", {
     className: "text-left py-1.5"
-  }, "Profitable When"))), React.createElement("tbody", null, RR_BREAKEVEN_TABLE.map(function (r) {
-    return React.createElement("tr", {
+  }, "Profitable When"))), /*#__PURE__*/React.createElement("tbody", null, RR_BREAKEVEN_TABLE.map(function (r) {
+    return /*#__PURE__*/React.createElement("tr", {
       key: r.rr,
       className: "border-b border-gray-900"
-    }, React.createElement("td", {
+    }, /*#__PURE__*/React.createElement("td", {
       className: "py-1.5 pr-3 text-purple-300 font-medium num"
-    }, r.rr), React.createElement("td", {
+    }, r.rr), /*#__PURE__*/React.createElement("td", {
       className: "py-1.5 pr-3 text-gray-300 num"
-    }, r.breakeven), React.createElement("td", {
+    }, r.breakeven), /*#__PURE__*/React.createElement("td", {
       className: "py-1.5 text-green-400 num"
     }, r.profitable));
-  }))))), React.createElement("div", null, React.createElement("p", {
+  }))))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-400 mb-2"
-  }, "Minimum sample size before trusting a strategy's numbers: ", React.createElement("span", {
+  }, "Minimum sample size before trusting a strategy's numbers: ", /*#__PURE__*/React.createElement("span", {
     className: "text-white font-medium"
-  }, "100 trades"), ". Ideal: ", React.createElement("span", {
+  }, "100 trades"), ". Ideal: ", /*#__PURE__*/React.createElement("span", {
     className: "text-white font-medium"
-  }, "200-500 trades"), ". By trading style:"), React.createElement("div", {
+  }, "200-500 trades"), ". By trading style:"), /*#__PURE__*/React.createElement("div", {
     className: "overflow-x-auto"
-  }, React.createElement("table", {
+  }, /*#__PURE__*/React.createElement("table", {
     className: "w-full text-xs"
-  }, React.createElement("thead", null, React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
     className: "text-gray-500 border-b border-gray-800"
-  }, React.createElement("th", {
+  }, /*#__PURE__*/React.createElement("th", {
     className: "text-left py-1.5 pr-3"
-  }, "Style"), React.createElement("th", {
+  }, "Style"), /*#__PURE__*/React.createElement("th", {
     className: "text-left py-1.5 pr-3"
-  }, "Minimum"), React.createElement("th", {
+  }, "Minimum"), /*#__PURE__*/React.createElement("th", {
     className: "text-left py-1.5 pr-3"
-  }, "Ideal"), React.createElement("th", {
+  }, "Ideal"), /*#__PURE__*/React.createElement("th", {
     className: "text-left py-1.5"
-  }, "Data Span"))), React.createElement("tbody", null, BACKTEST_REQUIREMENTS_TABLE.map(function (r) {
-    return React.createElement("tr", {
+  }, "Data Span"))), /*#__PURE__*/React.createElement("tbody", null, BACKTEST_REQUIREMENTS_TABLE.map(function (r) {
+    return /*#__PURE__*/React.createElement("tr", {
       key: r.style,
       className: "border-b border-gray-900"
-    }, React.createElement("td", {
+    }, /*#__PURE__*/React.createElement("td", {
       className: "py-1.5 pr-3 text-gray-300"
-    }, r.style), React.createElement("td", {
+    }, r.style), /*#__PURE__*/React.createElement("td", {
       className: "py-1.5 pr-3 text-blue-300 num"
-    }, r.min), React.createElement("td", {
+    }, r.min), /*#__PURE__*/React.createElement("td", {
       className: "py-1.5 pr-3 text-green-400 num"
-    }, r.ideal), React.createElement("td", {
+    }, r.ideal), /*#__PURE__*/React.createElement("td", {
       className: "py-1.5 text-gray-400"
     }, r.data));
-  }))))), React.createElement("p", {
+  }))))), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600"
   }, "Why 20-25 suggested trades on the Overview's General panel: across a 400-trade sample, a trader can run into 14 losses in a row - sizing around a 20-25 trade \"survival window\" is the sweet spot that accounts for that.")));
 }
@@ -2910,6 +3045,9 @@ function ProjectionsCard(props) {
   const [settings, setSettings] = useState(function () {
     try {
       const saved = localStorage.getItem(storageKey);
+      // Merge onto the defaults rather than replacing them outright, so a
+      // trader who saved settings before the account-copying/win-rate modes
+      // existed still gets sane values for the new fields instead of undefined.
       if (saved) return Object.assign({}, defaultSettings, JSON.parse(saved));
     } catch (e) {}
     return defaultSettings;
@@ -2926,6 +3064,10 @@ function ProjectionsCard(props) {
       return next;
     });
   };
+
+  // Real day-by-day P&L pulled straight from this account's logged entries,
+  // so the projection swaps in what actually happened the moment a day has
+  // been logged, instead of only ever showing the simulated path.
   const pnlByDate = {};
   accountEntries.forEach(function (e) {
     if (e.tradedToday === 'no') return;
@@ -2980,32 +3122,38 @@ function ProjectionsCard(props) {
   const risk = settings.riskPerTrade || 0;
   const reward = risk * settings.rewardRatio;
   const breakevenWinRatePct = risk + reward > 0 ? risk / (risk + reward) * 100 : 0;
+
+  // Win Rate mode - a win rate, a sample size, risk/trade and RR turn into an
+  // expected result for one account and for every copied account combined.
   const wrTrades = Math.max(0, parseInt(settings.sampleTrades, 10) || 0);
   const wrWinRate = Math.max(0, Math.min(100, parseFloat(settings.winRatePct) || 0));
   const wrWins = Math.round(wrTrades * (wrWinRate / 100));
   const wrLosses = wrTrades - wrWins;
   const wrGrossPerAccount = wrWins * reward - wrLosses * risk;
   const wrExpectancyPerTrade = wrWinRate / 100 * reward - (1 - wrWinRate / 100) * risk;
+
+  // Trade Count mode - the trader sets the exact number of winners and losers
+  // instead of a percentage, useful for "what if I go 12-8" style questions.
   const tcWins = Math.max(0, parseInt(settings.wcWins, 10) || 0);
   const tcLosses = Math.max(0, parseInt(settings.wcLosses, 10) || 0);
   const tcTotalTrades = tcWins + tcLosses;
   const tcGrossPerAccount = tcWins * reward - tcLosses * risk;
   const tcImpliedWinRate = tcTotalTrades > 0 ? tcWins / tcTotalTrades * 100 : null;
   const mode = settings.mode || 'date';
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Target",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Target Projection")), React.createElement("p", {
+  }, "Target Projection")), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-4"
-  }, "Model the path to your target by day, by win rate, or by a set number of wins and losses - scaled across every account you copy-trade."), React.createElement("div", {
+  }, "Model the path to your target by day, by win rate, or by a set number of wins and losses - scaled across every account you copy-trade."), /*#__PURE__*/React.createElement("div", {
     className: "grid sm:grid-cols-[2fr_1fr] gap-3 mb-5"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex gap-1.5"
   }, [{
     key: 'date',
@@ -3017,16 +3165,16 @@ function ProjectionsCard(props) {
     key: 'tradecount',
     label: 'Trade Count'
   }].map(function (m) {
-    return React.createElement("button", {
+    return /*#__PURE__*/React.createElement("button", {
       key: m.key,
       onClick: function () {
         update('mode', m.key);
       },
       className: "flex-1 py-2 rounded-lg text-xs font-medium border transition " + (mode === m.key ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
     }, m.label);
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Accounts to Copy"), React.createElement("input", {
+  }, "Accounts to Copy"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     min: "1",
     value: settings.accountsToCopy || '',
@@ -3035,13 +3183,13 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
     placeholder: "1"
-  }))), accountsN > 1 && React.createElement("p", {
+  }))), accountsN > 1 && /*#__PURE__*/React.createElement("p", {
     className: "text-[11px] text-gray-600 -mt-3 mb-4"
-  }, "Every dollar figure below is scaled x", accountsN, " for copy-trading across ", accountsN, " accounts."), mode === 'date' && React.createElement(React.Fragment, null, React.createElement("div", {
+  }, "Every dollar figure below is scaled x", accountsN, " for copy-trading across ", accountsN, " accounts."), mode === 'date' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "grid sm:grid-cols-2 gap-4 mb-5"
-  }, React.createElement("div", null, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Risk Per Trade ($)"), React.createElement("input", {
+  }, "Risk Per Trade ($)"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: settings.riskPerTrade || '',
     onChange: function (e) {
@@ -3049,9 +3197,9 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
     placeholder: "0"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Reward:Risk Ratio"), React.createElement("input", {
+  }, "Reward:Risk Ratio"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     step: "0.1",
     value: settings.rewardRatio || '',
@@ -3060,9 +3208,9 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
     placeholder: "2"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Profit Target ($)"), React.createElement("input", {
+  }, "Profit Target ($)"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: settings.profitTarget || '',
     onChange: function (e) {
@@ -3070,19 +3218,19 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
     placeholder: "0"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Daily Profit / Trade"), React.createElement("div", {
+  }, "Daily Profit / Trade"), /*#__PURE__*/React.createElement("div", {
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-green-400 num"
-  }, fmt(dailyReward * accountsN)))), React.createElement("div", {
+  }, fmt(dailyReward * accountsN)))), /*#__PURE__*/React.createElement("div", {
     className: "grid sm:grid-cols-2 gap-5 mb-6"
-  }, React.createElement("div", null, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between mb-1"
-  }, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("label", {
     className: "text-xs text-gray-400"
-  }, "Risk Cutting on a Loss"), React.createElement("span", {
+  }, "Risk Cutting on a Loss"), /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-red-400 num"
-  }, settings.riskCuttingPercent, "%")), React.createElement("input", {
+  }, settings.riskCuttingPercent, "%")), /*#__PURE__*/React.createElement("input", {
     type: "range",
     min: "0",
     max: "100",
@@ -3092,15 +3240,15 @@ function ProjectionsCard(props) {
       update('riskCuttingPercent', parseInt(e.target.value, 10));
     },
     className: "w-full accent-red-400"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-[11px] text-gray-600 mt-1"
-  }, "Shrinks next trade's risk after a logged losing day.")), React.createElement("div", null, React.createElement("div", {
+  }, "Shrinks next trade's risk after a logged losing day.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between mb-1"
-  }, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("label", {
     className: "text-xs text-gray-400"
-  }, "Compounding on a Win"), React.createElement("span", {
+  }, "Compounding on a Win"), /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-green-400 num"
-  }, settings.compoundingPercent, "%")), React.createElement("input", {
+  }, settings.compoundingPercent, "%")), /*#__PURE__*/React.createElement("input", {
     type: "range",
     min: "0",
     max: "100",
@@ -3110,83 +3258,83 @@ function ProjectionsCard(props) {
       update('compoundingPercent', parseInt(e.target.value, 10));
     },
     className: "w-full accent-green-400"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-[11px] text-gray-600 mt-1"
-  }, "Grows next trade's risk after a logged winning day."))), days.length === 0 ? React.createElement("p", {
+  }, "Grows next trade's risk after a logged winning day."))), days.length === 0 ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600 border border-gray-800 rounded-lg p-4 text-center"
-  }, "Fill in risk per trade, reward:risk and a profit target to generate the plan.") : React.createElement(React.Fragment, null, React.createElement("div", {
+  }, "Fill in risk per trade, reward:risk and a profit target to generate the plan.") : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5"
-  }, React.createElement(MiniStat, {
+  }, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Trading Days to Target",
     value: String(days.length),
     color: "text-blue-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Daily Reward",
     value: fmt(dailyReward * accountsN),
     color: "text-yellow-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Progress (Logged Days)",
     value: progressPct.toFixed(1) + '%',
     color: "text-green-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Days Logged So Far",
     value: loggedDaysInPlan + ' of ' + days.length,
     color: "text-purple-400"
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "overflow-x-auto -mx-2"
-  }, React.createElement("table", {
+  }, /*#__PURE__*/React.createElement("table", {
     className: "w-full text-xs min-w-[640px]"
-  }, React.createElement("thead", null, React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
     className: "text-gray-500 border-b border-gray-800"
-  }, React.createElement("th", {
+  }, /*#__PURE__*/React.createElement("th", {
     className: "text-left px-2 py-2 font-medium"
-  }, "Day"), React.createElement("th", {
+  }, "Day"), /*#__PURE__*/React.createElement("th", {
     className: "text-center px-2 py-2 font-medium"
-  }, "Risk"), React.createElement("th", {
+  }, "Risk"), /*#__PURE__*/React.createElement("th", {
     className: "text-center px-2 py-2 font-medium"
-  }, "Expected Profit"), React.createElement("th", {
+  }, "Expected Profit"), /*#__PURE__*/React.createElement("th", {
     className: "text-center px-2 py-2 font-medium"
-  }, "Progress to Goal"), React.createElement("th", {
+  }, "Progress to Goal"), /*#__PURE__*/React.createElement("th", {
     className: "text-center px-2 py-2 font-medium"
-  }, "Actual Result"))), React.createElement("tbody", null, days.map(function (d) {
+  }, "Actual Result"))), /*#__PURE__*/React.createElement("tbody", null, days.map(function (d) {
     const pct = target > 0 ? Math.min(100, d.targetExpectation / target * 100) : 0;
     const reached = d.targetExpectation >= target;
-    return React.createElement("tr", {
+    return /*#__PURE__*/React.createElement("tr", {
       key: d.date,
       className: "border-b border-gray-900 hover:bg-white/[0.02]"
-    }, React.createElement("td", {
+    }, /*#__PURE__*/React.createElement("td", {
       className: "px-2 py-2 text-gray-300"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "font-medium"
-    }, d.date), React.createElement("div", {
+    }, d.date), /*#__PURE__*/React.createElement("div", {
       className: "text-[10px] text-gray-600"
-    }, "Day ", d.dayNumber)), React.createElement("td", {
+    }, "Day ", d.dayNumber)), /*#__PURE__*/React.createElement("td", {
       className: "px-2 py-2 text-center text-blue-400 num"
-    }, fmt(d.risk * accountsN)), React.createElement("td", {
+    }, fmt(d.risk * accountsN)), /*#__PURE__*/React.createElement("td", {
       className: "px-2 py-2 text-center text-green-400 num"
-    }, fmt(d.reward * accountsN)), React.createElement("td", {
+    }, fmt(d.reward * accountsN)), /*#__PURE__*/React.createElement("td", {
       className: "px-2 py-2 text-center"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "num font-semibold " + (reached ? 'text-green-400' : 'text-yellow-400')
-    }, fmt(d.targetExpectation * accountsN)), React.createElement("div", {
+    }, fmt(d.targetExpectation * accountsN)), /*#__PURE__*/React.createElement("div", {
       className: "h-1.5 bg-gray-800 rounded-full overflow-hidden mt-1"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "h-full rounded-full " + (reached ? 'bg-green-400' : 'bg-yellow-400'),
       style: {
         width: Math.max(2, pct) + '%'
       }
-    }))), React.createElement("td", {
+    }))), /*#__PURE__*/React.createElement("td", {
       className: "px-2 py-2 text-center num"
-    }, d.hasActual ? React.createElement("span", {
+    }, d.hasActual ? /*#__PURE__*/React.createElement("span", {
       className: d.actualPnl > 0 ? 'text-green-400' : d.actualPnl < 0 ? 'text-red-400' : 'text-gray-400'
-    }, d.actualPnl > 0 ? '+' : '', fmt(d.actualPnl * accountsN)) : React.createElement("span", {
+    }, d.actualPnl > 0 ? '+' : '', fmt(d.actualPnl * accountsN)) : /*#__PURE__*/React.createElement("span", {
       className: "text-gray-700"
     }, "-")));
-  })))))), mode === 'winrate' && React.createElement(React.Fragment, null, React.createElement("div", {
+  })))))), mode === 'winrate' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5"
-  }, React.createElement("div", null, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Risk Per Trade ($)"), React.createElement("input", {
+  }, "Risk Per Trade ($)"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: settings.riskPerTrade || '',
     onChange: function (e) {
@@ -3194,9 +3342,9 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
     placeholder: "0"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Reward:Risk Ratio"), React.createElement("input", {
+  }, "Reward:Risk Ratio"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     step: "0.1",
     value: settings.rewardRatio || '',
@@ -3205,9 +3353,9 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
     placeholder: "2"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Win Rate (%)"), React.createElement("input", {
+  }, "Win Rate (%)"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     min: "0",
     max: "100",
@@ -3217,9 +3365,9 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
     placeholder: "50"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Sample Size (trades)"), React.createElement("input", {
+  }, "Sample Size (trades)"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     min: "0",
     value: settings.sampleTrades || '',
@@ -3228,35 +3376,35 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
     placeholder: "20"
-  }))), React.createElement("div", {
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4"
-  }, React.createElement(MiniStat, {
+  }, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Implied Wins / Losses",
     value: wrWins + 'W / ' + wrLosses + 'L',
     color: "text-blue-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Expectancy / Trade",
     value: fmt(wrExpectancyPerTrade),
     color: wrExpectancyPerTrade >= 0 ? 'text-green-400' : 'text-red-400'
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Breakeven Win Rate",
     value: breakevenWinRatePct.toFixed(1) + '%',
     color: "text-yellow-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Total Result (1 account)",
     value: fmt(wrGrossPerAccount),
     color: wrGrossPerAccount >= 0 ? 'text-green-400' : 'text-red-400'
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "bg-black/40 border border-gray-800 rounded-lg p-4 text-center"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-1"
-  }, "Total Result across ", accountsN, " account", accountsN !== 1 ? 's' : ''), React.createElement("p", {
+  }, "Total Result across ", accountsN, " account", accountsN !== 1 ? 's' : ''), /*#__PURE__*/React.createElement("p", {
     className: "text-2xl font-bold num " + (wrGrossPerAccount * accountsN >= 0 ? 'text-green-400' : 'text-red-400')
-  }, fmt(wrGrossPerAccount * accountsN)))), mode === 'tradecount' && React.createElement(React.Fragment, null, React.createElement("div", {
+  }, fmt(wrGrossPerAccount * accountsN)))), mode === 'tradecount' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5"
-  }, React.createElement("div", null, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Risk Per Trade ($)"), React.createElement("input", {
+  }, "Risk Per Trade ($)"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: settings.riskPerTrade || '',
     onChange: function (e) {
@@ -3264,9 +3412,9 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
     placeholder: "0"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Reward:Risk Ratio"), React.createElement("input", {
+  }, "Reward:Risk Ratio"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     step: "0.1",
     value: settings.rewardRatio || '',
@@ -3275,9 +3423,9 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
     placeholder: "2"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Winning Trades"), React.createElement("input", {
+  }, "Winning Trades"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     min: "0",
     value: settings.wcWins || '',
@@ -3286,9 +3434,9 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-green-400",
     placeholder: "10"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
-  }, "Losing Trades"), React.createElement("input", {
+  }, "Losing Trades"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     min: "0",
     value: settings.wcLosses || '',
@@ -3297,29 +3445,29 @@ function ProjectionsCard(props) {
     },
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-red-400",
     placeholder: "10"
-  }))), React.createElement("div", {
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4"
-  }, React.createElement(MiniStat, {
+  }, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Total Trades",
     value: String(tcTotalTrades),
     color: "text-blue-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Implied Win Rate",
     value: tcImpliedWinRate === null ? '-' : tcImpliedWinRate.toFixed(1) + '%',
     color: "text-yellow-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Breakeven Win Rate",
     value: breakevenWinRatePct.toFixed(1) + '%',
     color: "text-gray-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Total Result (1 account)",
     value: fmt(tcGrossPerAccount),
     color: tcGrossPerAccount >= 0 ? 'text-green-400' : 'text-red-400'
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "bg-black/40 border border-gray-800 rounded-lg p-4 text-center"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-1"
-  }, "Total Result across ", accountsN, " account", accountsN !== 1 ? 's' : ''), React.createElement("p", {
+  }, "Total Result across ", accountsN, " account", accountsN !== 1 ? 's' : ''), /*#__PURE__*/React.createElement("p", {
     className: "text-2xl font-bold num " + (tcGrossPerAccount * accountsN >= 0 ? 'text-green-400' : 'text-red-400')
   }, fmt(tcGrossPerAccount * accountsN)))));
 }
@@ -3334,43 +3482,46 @@ function CostsAndPayoutsCard(props) {
     return s + (parseFloat(p.amount) || 0);
   }, 0);
   const profitability = totalPayouts - totalCosts;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-4"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Receipt",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Costs")), React.createElement("div", {
+  }, "Costs")), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2"
-  }, React.createElement(MiniStat, {
+  }, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Challenge Cost",
     value: fmt(account.accountCost),
     color: "text-red-400"
-  }), showActivation && React.createElement(MiniStat, {
+  }), showActivation && /*#__PURE__*/React.createElement(MiniStat, {
     label: "Activation Cost",
     value: fmt(account.activationCost),
     color: "text-red-400"
-  }), showReset && React.createElement(MiniStat, {
+  }), showReset && /*#__PURE__*/React.createElement(MiniStat, {
     label: "Reset Cost",
     value: fmt(account.resetCost),
     color: "text-red-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Total Costs",
     value: fmt(totalCosts),
     color: "text-red-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Total Payouts",
     value: fmt(totalPayouts),
     color: "text-green-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Net Profitability",
     value: fmt(profitability),
     color: profitability >= 0 ? 'text-green-400' : 'text-red-400'
   })));
 }
+
+// Consistency Required / Max Profit Allowed / Daily Loss Limit stats, meant to be
+// dropped straight into the Active Strategy card's stat grid alongside its other MiniStats.
 function PropFirmRuleStats(props) {
   const account = props.account;
   const entries = props.entries;
@@ -3382,28 +3533,31 @@ function PropFirmRuleStats(props) {
   const cap = getConsistencyCap(account, cumBefore);
   const guideline = getConsistencyGuideline(account);
   const daysTraded = minDays ? getTradingDaysCount(entries, account.id) : 0;
-  return React.createElement(React.Fragment, null, React.createElement(MiniStat, {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Consistency Required",
     value: account.consistencyPct ? account.consistencyPct + "%" : 'Not set',
     color: "text-purple-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Max Profit Allowed / Day",
     value: account.consistencyPct ? cap !== null ? fmt(cap) : guideline !== null ? fmt(guideline) : 'Add a profit target' : '-',
     color: "text-yellow-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Daily Loss Limit",
     value: dll ? fmt(dll) : 'Not set',
     color: "text-red-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "DLL Type",
     value: dll ? account.dllType === 'hard' ? 'Hard Breach' : 'Soft Breach' : '-',
     color: dll && account.dllType === 'hard' ? 'text-red-400' : 'text-yellow-400'
-  }), minDays !== null && React.createElement(MiniStat, {
+  }), minDays !== null && /*#__PURE__*/React.createElement(MiniStat, {
     label: "Trading Days (min)",
     value: daysTraded + " of " + minDays,
     color: daysTraded >= minDays ? 'text-green-400' : 'text-yellow-400'
   }));
 }
+
+// The explanatory text and today's within/over check, meant to sit below the
+// Active Strategy card's stat grid, right under PropFirmRuleStats.
 function PropFirmRuleNote(props) {
   const account = props.account;
   const entries = props.entries;
@@ -3419,56 +3573,61 @@ function PropFirmRuleNote(props) {
     return s + tradeSignedPnl(t);
   }, 0) : null;
   const todayWithin = cap !== null && todaysPnl !== null ? todaysPnl <= cap : null;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "mt-3 space-y-1.5"
-  }, cap === null ? guideline !== null ? React.createElement("p", {
+  }, cap === null ? guideline !== null ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "You have no profitable days logged yet, so this is a starter number: ", fmt(guideline), " is ", account.consistencyPct, "% of your ", fmt(parseFloat(account.profitTarget) || 0), " profit target. It switches to a real cap the moment you log your first profitable day.") : React.createElement("p", {
+  }, "You have no profitable days logged yet, so this is a starter number: ", fmt(guideline), " is ", account.consistencyPct, "% of your ", fmt(parseFloat(account.profitTarget) || 0), " profit target. It switches to a real cap the moment you log your first profitable day.") : /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "Add a profit target on this account and we'll give you a starter max-per-day number here, before you've even logged your first profitable day.") : React.createElement("p", {
+  }, "Add a profit target on this account and we'll give you a starter max-per-day number here, before you've even logged your first profitable day.") : /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "How this number is worked out: your ", account.consistencyPct, "% rule means no single day can be more than ", account.consistencyPct, "% of your total profit. Cumulative profit before today is ", React.createElement("span", {
+  }, "How this number is worked out: your ", account.consistencyPct, "% rule means no single day can be more than ", account.consistencyPct, "% of your total profit. Cumulative profit before today is ", /*#__PURE__*/React.createElement("span", {
     className: "text-white font-medium"
-  }, fmt(cumBefore)), ", so today's cap is ", React.createElement("span", {
+  }, fmt(cumBefore)), ", so today's cap is ", /*#__PURE__*/React.createElement("span", {
     className: "text-yellow-400 font-medium"
-  }, fmt(cap)), " - the amount that would keep today at exactly ", account.consistencyPct, "% of the new total."), todayWithin !== null && React.createElement("p", {
+  }, fmt(cap)), " - the amount that would keep today at exactly ", account.consistencyPct, "% of the new total."), todayWithin !== null && /*#__PURE__*/React.createElement("p", {
     className: "text-xs flex items-center gap-1.5 " + (todayWithin ? 'text-green-400' : 'text-red-400')
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: todayWithin ? "CheckCircle" : "AlertTriangle",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Today's logged P&L is ", fmt(todaysPnl), " - ", todayWithin ? 'within' : 'OVER', " the ", fmt(cap), " cap.")));
+  }), /*#__PURE__*/React.createElement("span", null, "Today's logged P&L is ", fmt(todaysPnl), " - ", todayWithin ? 'within' : 'OVER', " the ", fmt(cap), " cap.")));
 }
 function PayoutTypeSelector(props) {
   const value = props.value;
   const onChange = props.onChange;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 sm:grid-cols-2 gap-2"
   }, PAYOUT_TYPES.map(function (t) {
-    return React.createElement("button", {
+    return /*#__PURE__*/React.createElement("button", {
       key: t.key,
       type: "button",
       onClick: function () {
         onChange(t.key);
       },
       className: "text-left p-2.5 rounded-lg border text-xs transition " + (value === t.key ? 'bg-yellow-500/15 border-yellow-500/50 text-yellow-200' : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600')
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "font-semibold"
-    }, t.label), React.createElement("div", {
+    }, t.label), /*#__PURE__*/React.createElement("div", {
       className: "text-[10px] text-gray-500 mt-0.5"
     }, t.firms));
   }));
 }
+
+// Renders the fields for whichever payout type is selected. `get`/`set` let
+// this be reused against two different state shapes - the Add Account
+// form's newAccount draft, and PayoutRulesForm's own local state - without
+// duplicating the field markup in both places.
 function PayoutTypeFieldset(props) {
   const type = props.type;
   const get = props.get;
   const set = props.set;
   const cls = "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none";
   if (type === 'streak') {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-2 gap-3"
-    }, React.createElement(Field, {
+    }, /*#__PURE__*/React.createElement(Field, {
       label: "Qualifying Days Needed"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       value: get('streakDays'),
       onChange: function (e) {
@@ -3476,9 +3635,9 @@ function PayoutTypeFieldset(props) {
       },
       placeholder: "e.g. 5",
       className: cls
-    })), React.createElement(Field, {
+    })), /*#__PURE__*/React.createElement(Field, {
       label: "Min Profit / Qualifying Day ($)"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       value: get('streakDayMin'),
       onChange: function (e) {
@@ -3486,9 +3645,9 @@ function PayoutTypeFieldset(props) {
       },
       placeholder: "e.g. 200",
       className: cls
-    })), React.createElement(Field, {
+    })), /*#__PURE__*/React.createElement(Field, {
       label: "Payout (% of Total Profit)"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       value: get('streakPctOfTotal'),
       onChange: function (e) {
@@ -3496,9 +3655,9 @@ function PayoutTypeFieldset(props) {
       },
       placeholder: "e.g. 50",
       className: cls
-    })), React.createElement(Field, {
+    })), /*#__PURE__*/React.createElement(Field, {
       label: "Flat Cap ($, optional)"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       value: get('streakFlatCap'),
       onChange: function (e) {
@@ -3509,11 +3668,11 @@ function PayoutTypeFieldset(props) {
     })));
   }
   if (type === 'formula') {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-2 gap-3"
-    }, React.createElement(Field, {
+    }, /*#__PURE__*/React.createElement(Field, {
       label: "Buffer Before First Payout ($)"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       value: get('formulaBuffer'),
       onChange: function (e) {
@@ -3521,9 +3680,9 @@ function PayoutTypeFieldset(props) {
       },
       placeholder: "e.g. 1000",
       className: cls
-    })), React.createElement(Field, {
+    })), /*#__PURE__*/React.createElement(Field, {
       label: "Cycle Profit Multiplier"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       step: "0.1",
       value: get('formulaMultiplier'),
@@ -3532,9 +3691,9 @@ function PayoutTypeFieldset(props) {
       },
       placeholder: "e.g. 2",
       className: cls
-    })), React.createElement(Field, {
+    })), /*#__PURE__*/React.createElement(Field, {
       label: "Payout Cap ($)"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       value: get('formulaCap'),
       onChange: function (e) {
@@ -3542,9 +3701,9 @@ function PayoutTypeFieldset(props) {
       },
       placeholder: "e.g. 1500",
       className: cls
-    })), React.createElement(Field, {
+    })), /*#__PURE__*/React.createElement(Field, {
       label: "Minimum Payout ($)"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       value: get('formulaMinPayout'),
       onChange: function (e) {
@@ -3555,11 +3714,11 @@ function PayoutTypeFieldset(props) {
     })));
   }
   if (type === 'twoleg') {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-2 gap-3"
-    }, React.createElement(Field, {
+    }, /*#__PURE__*/React.createElement(Field, {
       label: "Target Per Leg ($)"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       value: get('twoLegTarget'),
       onChange: function (e) {
@@ -3567,9 +3726,9 @@ function PayoutTypeFieldset(props) {
       },
       placeholder: "e.g. 3000",
       className: cls
-    })), React.createElement(Field, {
+    })), /*#__PURE__*/React.createElement(Field, {
       label: "Cash Payout ($)"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       value: get('twoLegCashPayout'),
       onChange: function (e) {
@@ -3577,9 +3736,9 @@ function PayoutTypeFieldset(props) {
       },
       placeholder: "e.g. 1500",
       className: cls
-    })), React.createElement(Field, {
+    })), /*#__PURE__*/React.createElement(Field, {
       label: "Live Account Credit ($)"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       value: get('twoLegLiveCredit'),
       onChange: function (e) {
@@ -3589,11 +3748,11 @@ function PayoutTypeFieldset(props) {
       className: cls
     })));
   }
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 gap-3"
-  }, React.createElement(Field, {
+  }, /*#__PURE__*/React.createElement(Field, {
     label: "First Payout Buffer ($)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: get('payoutBuffer'),
     onChange: function (e) {
@@ -3601,9 +3760,9 @@ function PayoutTypeFieldset(props) {
     },
     placeholder: "e.g. 1100",
     className: cls
-  })), React.createElement(Field, {
+  })), /*#__PURE__*/React.createElement(Field, {
     label: "Each Payout After That ($)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: get('payoutThreshold'),
     onChange: function (e) {
@@ -3611,9 +3770,9 @@ function PayoutTypeFieldset(props) {
     },
     placeholder: "e.g. 500",
     className: cls
-  })), React.createElement(Field, {
+  })), /*#__PURE__*/React.createElement(Field, {
     label: "Your Profit Split (%)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: get('profitSplit'),
     onChange: function (e) {
@@ -3621,9 +3780,9 @@ function PayoutTypeFieldset(props) {
     },
     placeholder: "e.g. 90",
     className: cls
-  })), React.createElement(Field, {
+  })), /*#__PURE__*/React.createElement(Field, {
     label: "Min Qualifying Days (optional)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: get('minQualifyingDays'),
     onChange: function (e) {
@@ -3631,9 +3790,9 @@ function PayoutTypeFieldset(props) {
     },
     placeholder: "leave blank if none",
     className: cls
-  })), React.createElement(Field, {
+  })), /*#__PURE__*/React.createElement(Field, {
     label: "Payout Cap ($, optional)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: get('payoutCap'),
     onChange: function (e) {
@@ -3682,22 +3841,22 @@ function PayoutRulesForm(props) {
     }));
   };
   const canSave = type === 'streak' ? !!(values.streakDays && values.streakPctOfTotal) : type === 'formula' ? !!values.formulaBuffer : type === 'twoleg' ? !!values.twoLegTarget : !!(values.payoutBuffer || values.payoutThreshold);
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
-  }, React.createElement(PayoutTypeSelector, {
+  }, /*#__PURE__*/React.createElement(PayoutTypeSelector, {
     value: type,
     onChange: setType
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
   }, (PAYOUT_TYPES.find(function (t) {
     return t.key === type;
-  }) || {}).desc), React.createElement(PayoutTypeFieldset, {
+  }) || {}).desc), /*#__PURE__*/React.createElement(PayoutTypeFieldset, {
     type: type,
     get: get,
     set: set
-  }), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-2"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       const num = function (v) {
         return v === '' || v === null || v === undefined ? null : parseFloat(v);
@@ -3724,7 +3883,7 @@ function PayoutRulesForm(props) {
     },
     disabled: !canSave,
     className: "flex-1 bg-green-500/20 text-green-400 border border-green-500/40 py-2 rounded-lg text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed"
-  }, "Save Payout Rules"), onCancel && React.createElement("button", {
+  }, "Save Payout Rules"), onCancel && /*#__PURE__*/React.createElement("button", {
     onClick: onCancel,
     className: "px-4 py-2 rounded-lg text-sm text-gray-400 border border-gray-700"
   }, "Cancel")));
@@ -3737,18 +3896,18 @@ function PayoutTrackerCard(props) {
   if (!account || account.accountType === 'challenge') return null;
   const hasRules = payoutRulesConfigured(account);
   if (!hasRules || editing) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-2 mb-1"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "Calendar",
       className: "h-5 w-5 text-yellow-400"
-    }), React.createElement("h2", {
+    }), /*#__PURE__*/React.createElement("h2", {
       className: "text-lg font-semibold text-white"
-    }, "Payout Rules")), React.createElement("p", {
+    }, "Payout Rules")), /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-500 mb-4"
-    }, hasRules ? 'Update the payout rules for this account.' : "Pick how this firm actually pays out, fill in its numbers once, and we'll track exactly how close you are to your next payout - and tell you the moment it's due."), React.createElement(PayoutRulesForm, {
+    }, hasRules ? 'Update the payout rules for this account.' : "Pick how this firm actually pays out, fill in its numbers once, and we'll track exactly how close you are to your next payout - and tell you the moment it's due."), /*#__PURE__*/React.createElement(PayoutRulesForm, {
       account: account,
       onSave: function (rules) {
         onSaveRules(rules);
@@ -3764,69 +3923,69 @@ function PayoutTrackerCard(props) {
   const typeInfo = PAYOUT_TYPES.find(function (t) {
     return t.key === status.type;
   }) || PAYOUT_TYPES[0];
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between mb-4 flex-wrap gap-2"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Calendar",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Payout Tracker"), React.createElement("span", {
+  }, "Payout Tracker"), /*#__PURE__*/React.createElement("span", {
     className: "text-[10px] px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700"
-  }, typeInfo.label)), React.createElement("button", {
+  }, typeInfo.label)), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setEditing(true);
     },
     className: "text-xs text-gray-500 hover:text-gray-300 flex items-center gap-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Pencil",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Edit Rules"))), status.eligible ? React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Edit Rules"))), status.eligible ? /*#__PURE__*/React.createElement("div", {
     className: "border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3 mb-4"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "CheckCircle",
     className: "h-5 w-5 text-green-400 mt-0.5 flex-shrink-0"
-  }), React.createElement("div", null, React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-green-300 font-semibold text-sm"
-  }, "Payout Ready - ", fmt(status.requestable), " Available"), React.createElement("p", {
+  }, "Payout Ready - ", fmt(status.requestable), " Available"), /*#__PURE__*/React.createElement("p", {
     className: "text-green-200/70 text-xs mt-1"
-  }, status.note, " Log into your prop firm's own dashboard and submit the request there - this journal tracks it, it doesn't send it for you. Once it's paid, add it below in the Payout Ledger so the next cycle starts counting from today."))) : React.createElement("div", {
+  }, status.note, " Log into your prop firm's own dashboard and submit the request there - this journal tracks it, it doesn't send it for you. Once it's paid, add it below in the Payout Ledger so the next cycle starts counting from today."))) : /*#__PURE__*/React.createElement("div", {
     className: "border border-yellow-500/30 bg-yellow-500/10 rounded-xl p-4 flex items-start gap-3 mb-4"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Clock",
     className: "h-5 w-5 text-yellow-400 mt-0.5 flex-shrink-0"
-  }), React.createElement("div", null, React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-yellow-300 font-semibold text-sm"
-  }, status.isFirstPayout ? 'Building Toward Your First Payout' : 'Building Toward Your Next Payout'), React.createElement("p", {
+  }, status.isFirstPayout ? 'Building Toward Your First Payout' : 'Building Toward Your Next Payout'), /*#__PURE__*/React.createElement("p", {
     className: "text-yellow-200/70 text-xs mt-1"
-  }, status.note))), React.createElement("div", {
+  }, status.note))), /*#__PURE__*/React.createElement("div", {
     className: "mb-1 flex justify-between text-xs text-gray-500"
-  }, React.createElement("span", null, status.progressLabel), React.createElement("span", null, status.progressPct.toFixed(0), "%")), React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("span", null, status.progressLabel), /*#__PURE__*/React.createElement("span", null, status.progressPct.toFixed(0), "%")), /*#__PURE__*/React.createElement("div", {
     className: "h-2.5 bg-gray-800 rounded-full overflow-hidden mb-4"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "h-full rounded-full " + (status.eligible ? 'bg-green-400' : 'bg-yellow-400'),
     style: {
       width: Math.max(2, status.progressPct) + '%'
     }
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-4 gap-2"
-  }, React.createElement(MiniStat, {
+  }, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Requestable Now",
     value: fmt(status.requestable),
     color: status.requestable > 0 ? 'text-green-400' : 'text-gray-500'
-  }), status.split ? React.createElement(MiniStat, {
+  }), status.split ? /*#__PURE__*/React.createElement(MiniStat, {
     label: "Your Split",
     value: status.split + "%",
     color: "text-purple-400"
-  }) : null, status.cap ? React.createElement(MiniStat, {
+  }) : null, status.cap ? /*#__PURE__*/React.createElement(MiniStat, {
     label: "Payout Cap",
     value: fmt(status.cap),
     color: "text-gray-400"
-  }) : null, status.liveCredit ? React.createElement(MiniStat, {
+  }) : null, status.liveCredit ? /*#__PURE__*/React.createElement(MiniStat, {
     label: "Live Credit (2nd leg)",
     value: fmt(status.liveCredit),
     color: "text-cyan-400"
@@ -3840,30 +3999,30 @@ function PayoutLedger(props) {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const payouts = account.payouts || [];
   if (account.accountType === 'challenge') return null;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-4"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Banknote",
     className: "h-5 w-5 text-green-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Payout Ledger")), suggestedAmount > 0 && React.createElement("button", {
+  }, "Payout Ledger")), suggestedAmount > 0 && /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setAmount(suggestedAmount.toFixed(2));
     },
     className: "text-xs bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 px-3 py-1.5 rounded-lg mb-3"
-  }, "Use tracked amount: ", fmt(suggestedAmount)), React.createElement("div", {
+  }, "Use tracked amount: ", fmt(suggestedAmount)), /*#__PURE__*/React.createElement("div", {
     className: "flex flex-col sm:flex-row gap-2 mb-4"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "date",
     value: date,
     onChange: function (e) {
       setDate(e.target.value);
     },
     className: "bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"
-  }), React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("input", {
     type: "number",
     placeholder: "Payout amount",
     value: amount,
@@ -3871,7 +4030,7 @@ function PayoutLedger(props) {
       setAmount(e.target.value);
     },
     className: "flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"
-  }), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       if (!amount) return;
       onAddPayout({
@@ -3881,20 +4040,20 @@ function PayoutLedger(props) {
       setAmount('');
     },
     className: "bg-green-500/20 text-green-400 border border-green-500/40 px-4 py-2 rounded-lg text-sm font-medium"
-  }, "Add Payout")), React.createElement("div", {
+  }, "Add Payout")), /*#__PURE__*/React.createElement("div", {
     className: "space-y-1.5"
   }, payouts.slice().sort(function (a, b) {
     return new Date(b.date) - new Date(a.date);
   }).map(function (p, i) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: i,
       className: "flex justify-between text-sm bg-black/30 rounded-lg px-3 py-2"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-gray-400"
-    }, p.date), React.createElement("span", {
+    }, p.date), /*#__PURE__*/React.createElement("span", {
       className: "text-green-400 font-semibold"
     }, fmt(parseFloat(p.amount))));
-  }), payouts.length === 0 && React.createElement("p", {
+  }), payouts.length === 0 && /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600"
   }, "No payouts recorded yet.")));
 }
@@ -3903,7 +4062,7 @@ function EquityCurve(props) {
   const floorPoints = props.floorPoints;
   const startingAmount = props.startingAmount;
   const targetAmount = props.targetAmount;
-  if (!points || points.length < 2) return React.createElement("p", {
+  if (!points || points.length < 2) return /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600 py-6 text-center"
   }, "Not enough data yet - log at least 2 days to see your equity curve.");
   const hasFloor = floorPoints && floorPoints.length === points.length;
@@ -3920,6 +4079,13 @@ function EquityCurve(props) {
   const xFor = function (i) {
     return padL + i * stepX;
   };
+
+  // Everything - balance, floor, starting amount, target - is the exact same
+  // kind of number (dollars of P&L from where you started), so they all share
+  // one axis. Putting any of them on a separate scale makes their positions
+  // relative to each other meaningless on screen, even if the math underneath
+  // is technically correct - which is exactly what made the last version
+  // confusing: Start and Actual could visually cross with no real relationship.
   let allValues = points.map(function (p) {
     return p.cum;
   });
@@ -3966,16 +4132,16 @@ function EquityCurve(props) {
   }
   const startY = startingAmount !== null && startingAmount !== undefined ? yFor(startingAmount) : null;
   const targetY = targetAmount !== null && targetAmount !== undefined ? yFor(targetAmount) : null;
-  return React.createElement("div", null, React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "overflow-x-auto"
-  }, React.createElement("svg", {
+  }, /*#__PURE__*/React.createElement("svg", {
     viewBox: "0 0 " + w + " " + h,
     className: "w-full",
     style: {
       minWidth: '500px',
       height: '260px'
     }
-  }, startY !== null && React.createElement(React.Fragment, null, React.createElement("line", {
+  }, startY !== null && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("line", {
     x1: padL,
     y1: startY,
     x2: w - padR,
@@ -3983,13 +4149,13 @@ function EquityCurve(props) {
     stroke: "#60a5fa",
     strokeDasharray: "3 3",
     strokeWidth: "1"
-  }), React.createElement("text", {
+  }), /*#__PURE__*/React.createElement("text", {
     x: padL - 6,
     y: startY + 3,
     fill: "#60a5fa",
     fontSize: "9",
     textAnchor: "end"
-  }, "Start")), targetY !== null && React.createElement(React.Fragment, null, React.createElement("line", {
+  }, "Start")), targetY !== null && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("line", {
     x1: padL,
     y1: targetY,
     x2: w - padR,
@@ -3997,77 +4163,77 @@ function EquityCurve(props) {
     stroke: "#facc15",
     strokeDasharray: "3 3",
     strokeWidth: "1"
-  }), React.createElement("text", {
+  }), /*#__PURE__*/React.createElement("text", {
     x: padL - 6,
     y: targetY + 3,
     fill: "#facc15",
     fontSize: "9",
     textAnchor: "end"
-  }, "Target")), floorPathD && React.createElement("path", {
+  }, "Target")), floorPathD && /*#__PURE__*/React.createElement("path", {
     d: floorPathD,
     fill: "none",
     stroke: "#f87171",
     strokeWidth: "1.5",
     strokeDasharray: "5 3"
-  }), lastFloor && React.createElement("circle", {
+  }), lastFloor && /*#__PURE__*/React.createElement("circle", {
     cx: lastFloor.x,
     cy: lastFloor.y,
     r: "3",
     fill: "#f87171"
-  }), React.createElement("path", {
+  }), /*#__PURE__*/React.createElement("path", {
     d: pathD,
     fill: "none",
     stroke: lineColor,
     strokeWidth: "2.5"
-  }), React.createElement("circle", {
+  }), /*#__PURE__*/React.createElement("circle", {
     cx: last.x,
     cy: last.y,
     r: "4",
     fill: lineColor
-  }), React.createElement("text", {
+  }), /*#__PURE__*/React.createElement("text", {
     x: padL,
     y: h - 10,
     fill: "#6b7280",
     fontSize: "10"
-  }, coords[0].date), React.createElement("text", {
+  }, coords[0].date), /*#__PURE__*/React.createElement("text", {
     x: w - padR,
     y: h - 10,
     fill: "#6b7280",
     fontSize: "10",
     textAnchor: "end"
-  }, last.date), React.createElement("text", {
+  }, last.date), /*#__PURE__*/React.createElement("text", {
     x: last.x,
     y: last.y - 10,
     fill: lineColor,
     fontSize: "11",
     fontWeight: "600",
     textAnchor: "end"
-  }, fmt(last.cum)))), React.createElement("div", {
+  }, fmt(last.cum)))), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-4 flex-wrap mt-2 text-[11px] text-gray-500"
-  }, startingAmount !== null && startingAmount !== undefined && React.createElement("span", {
+  }, startingAmount !== null && startingAmount !== undefined && /*#__PURE__*/React.createElement("span", {
     className: "flex items-center gap-1.5"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "inline-block w-3 h-0.5",
     style: {
       borderTop: '1.5px dashed #60a5fa'
     }
-  }), "Starting balance (", fmt(startingAmount), ")"), hasFloor && React.createElement("span", {
+  }), "Starting balance (", fmt(startingAmount), ")"), hasFloor && /*#__PURE__*/React.createElement("span", {
     className: "flex items-center gap-1.5"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "inline-block w-3 h-0.5",
     style: {
       borderTop: '1.5px dashed #f87171'
     }
-  }), "Trailing floor - breach if Balance touches this"), targetAmount !== null && targetAmount !== undefined && React.createElement("span", {
+  }), "Trailing floor - breach if Balance touches this"), targetAmount !== null && targetAmount !== undefined && /*#__PURE__*/React.createElement("span", {
     className: "flex items-center gap-1.5"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "inline-block w-3 h-0.5",
     style: {
       borderTop: '1.5px dashed #facc15'
     }
-  }), "Target (", fmt(targetAmount), ")"), React.createElement("span", {
+  }), "Target (", fmt(targetAmount), ")"), /*#__PURE__*/React.createElement("span", {
     className: "flex items-center gap-1.5"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "inline-block w-3 h-0.5",
     style: {
       background: lineColor
@@ -4095,6 +4261,14 @@ function computeTradeAdherence(trade, entry, account) {
     return s + f;
   }, 0) / factors.length;
 }
+
+// Same underlying signals as computeTradeAdherence, but kept as separate named
+// questions instead of one blended number - each becomes its own trackable line
+// on the discipline checklist (entry rules, risk size, lot size, bias, HTF/LTF).
+// Rule-based auto-tags, not an AI model - straightforward pattern checks
+// against data you already log (trade order in the day, prior result that
+// day, bias match, risk/rule compliance). Labeled honestly as automated
+// tagging rather than "AI" since no model inference is actually happening.
 const computeTradeTags = function (trade, tradeIndex, allTradesInDay, entry, account) {
   const tags = [];
   if (tradeIndex >= 2) tags.push('Overtrade');
@@ -4113,6 +4287,12 @@ const computeTradeTags = function (trade, tradeIndex, allTradesInDay, entry, acc
 function computeTradeDisciplineFactors(trade, entry, account) {
   const applicableRules = getApplicableRules(trade, entry, account);
   const rulesFrac = applicableRules.length > 0 ? (trade.rulesChecked || []).length / applicableRules.length : null;
+
+  // "No over-risk" checks two things, not one: did you log a risk amount within
+  // your locked budget, AND did the trade actually lose more than that budget
+  // once it closed. A trader who logs a small riskAmount but takes a much
+  // bigger real loss (stop not honored, slippage, moving the stop) shouldn't
+  // pass this just because the number they typed looked fine.
   let riskOk = null;
   if (trade.riskAmount !== '' && trade.riskAmount !== undefined && trade.expectedRisk) {
     riskOk = Math.abs(parseFloat(trade.riskAmount)) <= trade.expectedRisk * 1.1;
@@ -4132,6 +4312,10 @@ function computeTradeDisciplineFactors(trade, entry, account) {
     htfDone: htfDone
   };
 }
+
+// Rolls every trade's factors up into one set of pass-rates across all of a
+// person's accounts - the actual "specific list of questions" behind the
+// discipline score. Each question only counts once there's real data for it.
 function computeDisciplineChecklist(accounts, entries) {
   const accountsById = {};
   accounts.forEach(function (a) {
@@ -4152,6 +4336,11 @@ function computeDisciplineChecklist(accounts, entries) {
   const matrixPct = matrixDays.length > 0 ? matrixDays.filter(function (e) {
     return e.matrixAdherent;
   }).length / matrixDays.length * 100 : null;
+
+  // Your max loss for a day is capped by the matrix's circuit breaker (2 losses,
+  // each at your locked risk per trade) - e.g. $100 risk x 2 = $200 max. A day
+  // that lost more than that isn't just "one over-risk trade", it's the specific
+  // failure mode of blowing straight through the daily circuit breaker.
   let dailyCapOkCount = 0,
     dailyCapTotal = 0;
   tradedEntries.forEach(function (e) {
@@ -4220,12 +4409,22 @@ function computeDisciplineChecklist(accounts, entries) {
   };
 }
 function computeOverviewData(accounts, entries) {
+  // Costs and payouts are real money already spent or received - they count for
+  // every account regardless of status. Trading performance (P&L, win rate, equity
+  // curve) only reflects accounts that are still active, so a blown account's
+  // losses don't keep dragging down numbers that are supposed to represent where
+  // things stand right now.
   const accountIds = {};
   const breachedIds = {};
   accounts.forEach(function (a) {
     accountIds[a.id] = true;
     if (computeAccountStatus(a, entries) === 'breached') breachedIds[a.id] = true;
   });
+
+  // Must check accountIds[e.accountId], not just exclude breached ones - entries
+  // is always the full, all-accounts array at every call site, so without this
+  // an entry from an account that isn't even in the selected/passed-in accounts
+  // list would still slip through and land on the wrong calendar day or total.
   const tradedEntries = entries.filter(function (e) {
     return e.tradedToday !== 'no' && accountIds[e.accountId] && !breachedIds[e.accountId];
   });
@@ -4253,6 +4452,10 @@ function computeOverviewData(accounts, entries) {
   const totalPnl = allTrades.reduce(function (s, t) {
     return s + tradeSignedPnl(t);
   }, 0);
+
+  // Standard trading metrics: profit factor (gross profit / gross loss - above
+  // 1.0 means profitable), average win/loss size, and expectancy (what you
+  // should expect to make per trade on average, blending win rate and size).
   const grossProfit = allTrades.filter(function (t) {
     return t.result === 'win';
   }).reduce(function (s, t) {
@@ -4337,6 +4540,9 @@ function computeDisciplineScore(accounts, entries) {
     return e.date;
   }).filter(Boolean);
   const uniqueLoggedDays = new Set(loggedDates).size;
+  // "Since start" means since the person's first logged day, not their account
+  // creation date - a dormant gap between setting up an account and actually
+  // beginning to log shouldn't count against someone's consistency.
   let daysSinceStart = 1;
   if (loggedDates.length > 0) {
     const earliestLoggedDate = loggedDates.reduce(function (min, d) {
@@ -4347,6 +4553,14 @@ function computeDisciplineScore(accounts, entries) {
   }
   const loggingConsistency = Math.min(100, uniqueLoggedDays / daysSinceStart * 100);
   const checklist = computeDisciplineChecklist(accounts, entries);
+
+  // Showing up every day since you started is the main thing being measured here -
+  // a trader on day 1 who logs today is exactly as consistent as a trader on day 14
+  // who has logged every day, so logging consistency carries the most weight and
+  // is always present. Every other question - exercise, entry rules, risk size,
+  // lot size, the daily matrix, HTF/LTF analysis, bias alignment - only gets
+  // folded in once there's actual data to judge, so a consistent newcomer with
+  // no trades yet isn't dragged down by questions that don't apply to them yet.
   const parts = [{
     weight: 0.28,
     value: loggingConsistency
@@ -4401,66 +4615,66 @@ function OverviewStats(props) {
   const accounts = props.accounts;
   const entries = props.entries;
   const d = computeOverviewData(accounts, entries);
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6 space-y-4"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "LayoutDashboard",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "All Accounts, Combined")), React.createElement("div", {
+  }, "All Accounts, Combined")), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 md:grid-cols-4 gap-3"
-  }, React.createElement(MiniStat, {
+  }, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Total P&L",
     value: fmt(d.totalPnl),
     color: d.totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Win Rate",
     value: d.totalTrades === 0 ? '-' : d.overallWinRate.toFixed(1) + '%',
     color: d.totalTrades === 0 ? 'text-gray-500' : d.overallWinRate >= 50 ? 'text-green-400' : 'text-red-400'
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Profit Factor",
     value: d.profitFactor === null ? '-' : d.profitFactor.toFixed(2),
     color: d.profitFactor === null ? 'text-gray-500' : d.profitFactor >= 1 ? 'text-green-400' : 'text-red-400'
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Day Win Rate",
     value: d.dayWinRate === null ? '-' : d.dayWinRate.toFixed(0) + '%',
     color: d.dayWinRate === null ? 'text-gray-500' : d.dayWinRate >= 50 ? 'text-green-400' : 'text-red-400'
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Avg Win",
     value: d.avgWin === null ? '-' : fmt(d.avgWin),
     color: "text-green-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Avg Loss",
     value: d.avgLoss === null ? '-' : fmt(d.avgLoss),
     color: "text-red-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Expectancy / Trade",
     value: d.expectancy === null ? '-' : fmt(d.expectancy),
     color: d.expectancy === null ? 'text-gray-500' : d.expectancy >= 0 ? 'text-green-400' : 'text-red-400'
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Rule Adherence",
     value: d.ruleAdherencePct === null ? '-' : d.ruleAdherencePct.toFixed(1) + '%',
     color: "text-purple-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Total Trades",
     value: String(d.totalTrades),
     color: "text-white"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Total Costs",
     value: fmt(d.totalAllCosts),
     color: "text-red-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Total Payouts",
     value: fmt(d.totalAllPayouts),
     color: "text-green-400"
-  })), (d.bestDay || d.worstDay) && React.createElement("div", {
+  })), (d.bestDay || d.worstDay) && /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 gap-3 text-xs text-gray-400 pt-1"
-  }, d.bestDay && React.createElement("div", null, "Best day: ", React.createElement("span", {
+  }, d.bestDay && /*#__PURE__*/React.createElement("div", null, "Best day: ", /*#__PURE__*/React.createElement("span", {
     className: "text-green-400 font-medium"
-  }, d.bestDay), " (", fmt(d.byDate[d.bestDay]), ")"), d.worstDay && React.createElement("div", null, "Worst day: ", React.createElement("span", {
+  }, d.bestDay), " (", fmt(d.byDate[d.bestDay]), ")"), d.worstDay && /*#__PURE__*/React.createElement("div", null, "Worst day: ", /*#__PURE__*/React.createElement("span", {
     className: "text-red-400 font-medium"
   }, d.worstDay), " (", fmt(d.byDate[d.worstDay]), ")")));
 }
@@ -4505,56 +4719,56 @@ function TradingCalendar(props) {
   }).map(function (day) {
     return Math.abs(d.byDate[dateKey(day)]);
   }).concat([1]));
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between mb-4"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Calendar",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Trading Calendar")), React.createElement("div", {
+  }, "Trading Calendar")), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
-  }, greenDays, " green - ", redDays, " red"), React.createElement("div", {
+  }, greenDays, " green - ", redDays, " red"), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-1"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setMonthOffset(monthOffset - 1);
     },
     className: "text-gray-500 hover:text-white p-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "ChevronLeft",
     className: "h-4 w-4"
-  })), React.createElement("span", {
+  })), /*#__PURE__*/React.createElement("span", {
     className: "text-sm text-white font-medium w-32 text-center num"
-  }, monthLabel), React.createElement("button", {
+  }, monthLabel), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setMonthOffset(Math.min(monthOffset + 1, 0));
     },
     disabled: monthOffset >= 0,
     className: "text-gray-500 hover:text-white disabled:opacity-20 p-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "ChevronRight",
     className: "h-4 w-4"
-  }))))), React.createElement("div", {
+  }))))), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between mb-2"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "num text-sm font-semibold " + (monthTotal >= 0 ? 'text-green-400' : 'text-red-400')
-  }, viewMode === 'privacy' ? '••••' : (monthTotal >= 0 ? '+' : '') + fmt(monthTotal), " this month")), React.createElement("div", {
+  }, viewMode === 'privacy' ? '••••' : (monthTotal >= 0 ? '+' : '') + fmt(monthTotal), " this month")), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-7 gap-1.5 text-center text-[10px] text-gray-600 mb-1.5"
   }, ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(function (lbl, i) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: i
     }, lbl);
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-7 gap-1.5"
   }, cells.map(function (day, i) {
-    if (!day) return React.createElement("div", {
+    if (!day) return /*#__PURE__*/React.createElement("div", {
       key: i
     });
     const key = dateKey(day);
@@ -4562,19 +4776,26 @@ function TradingCalendar(props) {
     const hasData = pnl !== undefined;
     const intensity = hasData ? Math.min(Math.abs(pnl) / maxAbs, 1) : 0;
     const bg = !hasData ? '#111827' : pnl > 0 ? 'rgba(74, 222, 128, ' + (0.18 + intensity * 0.62) + ')' : pnl < 0 ? 'rgba(248, 113, 113, ' + (0.18 + intensity * 0.62) + ')' : '#374151';
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: i,
       className: "aspect-square rounded-md flex flex-col items-center justify-center border border-gray-800/60 px-0.5",
       style: {
         backgroundColor: bg
       }
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-[10px] text-gray-400 leading-none"
-    }, day), hasData && React.createElement("span", {
+    }, day), hasData && /*#__PURE__*/React.createElement("span", {
       className: "num text-[9px] font-semibold text-white leading-tight mt-0.5"
     }, viewMode === 'privacy' ? '••' : fmtView(pnl, viewMode, viewContext).replace('.00', '')));
   })));
 }
+
+// A small, honest set of reports - built from data you already log, not padded
+// out to hit a number. Each one groups your trades by a dimension you already
+// track and shows win rate and P&L for each group.
+// Only trades imported from a broker file carry openTime/closeTime/prices -
+// manually-logged trades don't have that granularity, so this only shows
+// what's actually known, rather than inventing timestamps for hand-entered days.
 function ClosedTradesTable(props) {
   const accountEntries = props.accountEntries;
   const [open, setOpen] = useState(false);
@@ -4612,77 +4833,77 @@ function ClosedTradesTable(props) {
     return b.closeTime - a.closeTime;
   });
   if (rows.length === 0) return null;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setOpen(!open);
     },
     className: "w-full flex items-center justify-between p-6 text-left"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "ListOrdered",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Closed Trades"), React.createElement("span", {
+  }, "Closed Trades"), /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
-  }, "(", rows.length, ")")), React.createElement(Icon, {
+  }, "(", rows.length, ")")), /*#__PURE__*/React.createElement(Icon, {
     name: open ? "ChevronUp" : "ChevronDown",
     className: "h-4 w-4 text-gray-500 flex-shrink-0"
-  })), open && React.createElement("div", {
+  })), open && /*#__PURE__*/React.createElement("div", {
     className: "px-6 pb-6 overflow-x-auto"
-  }, React.createElement("table", {
+  }, /*#__PURE__*/React.createElement("table", {
     className: "w-full text-sm whitespace-nowrap"
-  }, React.createElement("thead", null, React.createElement("tr", {
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
     className: "text-left text-gray-500 text-xs border-b border-gray-800"
-  }, React.createElement("th", {
+  }, /*#__PURE__*/React.createElement("th", {
     className: "pb-2 pr-4"
-  }, "Symbol"), React.createElement("th", {
+  }, "Symbol"), /*#__PURE__*/React.createElement("th", {
     className: "pb-2 pr-4"
-  }, "Volume"), React.createElement("th", {
+  }, "Volume"), /*#__PURE__*/React.createElement("th", {
     className: "pb-2 pr-4"
-  }, "Open Time"), React.createElement("th", {
+  }, "Open Time"), /*#__PURE__*/React.createElement("th", {
     className: "pb-2 pr-4"
-  }, "Avg Entry"), React.createElement("th", {
+  }, "Avg Entry"), /*#__PURE__*/React.createElement("th", {
     className: "pb-2 pr-4"
-  }, "Bias"), React.createElement("th", {
+  }, "Bias"), /*#__PURE__*/React.createElement("th", {
     className: "pb-2 pr-4"
-  }, "Duration"), React.createElement("th", {
+  }, "Duration"), /*#__PURE__*/React.createElement("th", {
     className: "pb-2 pr-4"
-  }, "Close Time"), React.createElement("th", {
+  }, "Close Time"), /*#__PURE__*/React.createElement("th", {
     className: "pb-2 pr-4"
-  }, "Avg Close"), React.createElement("th", {
+  }, "Avg Close"), /*#__PURE__*/React.createElement("th", {
     className: "pb-2 text-right"
-  }, "Profit"))), React.createElement("tbody", null, rows.map(function (t, i) {
+  }, "Profit"))), /*#__PURE__*/React.createElement("tbody", null, rows.map(function (t, i) {
     const pnlVal = tradeSignedPnl(t);
-    return React.createElement("tr", {
+    return /*#__PURE__*/React.createElement("tr", {
       key: i,
       className: "border-b border-gray-800/50 last:border-0"
-    }, React.createElement("td", {
+    }, /*#__PURE__*/React.createElement("td", {
       className: "py-2 pr-4 text-white font-medium"
-    }, t.symbol || '-'), React.createElement("td", {
+    }, t.symbol || '-'), /*#__PURE__*/React.createElement("td", {
       className: "py-2 pr-4 text-gray-300"
-    }, t.positionSize || '-'), React.createElement("td", {
+    }, t.positionSize || '-'), /*#__PURE__*/React.createElement("td", {
       className: "py-2 pr-4 text-gray-400"
-    }, fmtTime(t.openTime)), React.createElement("td", {
+    }, fmtTime(t.openTime)), /*#__PURE__*/React.createElement("td", {
       className: "py-2 pr-4 num text-gray-300"
     }, t.entryPrice ? t.entryPrice.toLocaleString(undefined, {
       minimumFractionDigits: 2
-    }) : '-'), React.createElement("td", {
+    }) : '-'), /*#__PURE__*/React.createElement("td", {
       className: "py-2 pr-4"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-[10px] px-1.5 py-0.5 rounded font-semibold " + (t.direction === 'long' ? 'bg-blue-500/15 text-blue-300' : 'bg-red-500/15 text-red-300')
-    }, t.direction === 'long' ? 'LONG' : 'SHORT')), React.createElement("td", {
+    }, t.direction === 'long' ? 'LONG' : 'SHORT')), /*#__PURE__*/React.createElement("td", {
       className: "py-2 pr-4 text-gray-400"
-    }, fmtDuration(t.closeTime - t.openTime)), React.createElement("td", {
+    }, fmtDuration(t.closeTime - t.openTime)), /*#__PURE__*/React.createElement("td", {
       className: "py-2 pr-4 text-gray-400"
-    }, fmtTime(t.closeTime)), React.createElement("td", {
+    }, fmtTime(t.closeTime)), /*#__PURE__*/React.createElement("td", {
       className: "py-2 pr-4 num text-gray-300"
     }, t.exitPrice ? t.exitPrice.toLocaleString(undefined, {
       minimumFractionDigits: 2
-    }) : '-'), React.createElement("td", {
+    }) : '-'), /*#__PURE__*/React.createElement("td", {
       className: "py-2 num font-semibold text-right " + (pnlVal >= 0 ? 'text-green-400' : 'text-red-400')
     }, pnlVal >= 0 ? '+' : '', fmt(pnlVal)));
   })))));
@@ -4774,57 +4995,57 @@ function ReportsCard(props) {
   }) : Object.keys(current.groups).sort(function (a, b) {
     return current.groups[b].pnl - current.groups[a].pnl;
   });
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setOpen(!open);
     },
     className: "w-full flex items-center justify-between p-6 text-left"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "BarChart3",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("div", null, React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Reports"), React.createElement("p", {
+  }, "Reports"), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "Win rate and P&L broken down by weekday, bias, market, and strategy"))), React.createElement(Icon, {
+  }, "Win rate and P&L broken down by weekday, bias, market, and strategy"))), /*#__PURE__*/React.createElement(Icon, {
     name: open ? "ChevronUp" : "ChevronDown",
     className: "h-4 w-4 text-gray-500 flex-shrink-0"
-  })), open && React.createElement("div", {
+  })), open && /*#__PURE__*/React.createElement("div", {
     className: "px-6 pb-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex gap-2 mb-3 flex-wrap"
   }, Object.keys(reports).map(function (key) {
-    return React.createElement("button", {
+    return /*#__PURE__*/React.createElement("button", {
       key: key,
       onClick: function () {
         setActiveReport(key);
       },
       className: "px-3 py-1.5 rounded-lg text-xs font-medium border transition " + (activeReport === key ? 'bg-yellow-500/15 text-yellow-300 border-yellow-500/30' : 'bg-gray-900 text-gray-400 border-gray-800 hover:border-gray-700')
     }, reports[key].label);
-  })), keys.length === 0 ? React.createElement("p", {
+  })), keys.length === 0 ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600"
-  }, "Not enough logged trades for this report yet.") : React.createElement("div", {
+  }, "Not enough logged trades for this report yet.") : /*#__PURE__*/React.createElement("div", {
     className: "space-y-1.5"
   }, keys.map(function (key) {
     const g = current.groups[key];
     const total = g.wins + g.losses;
     const wr = total > 0 ? g.wins / total * 100 : 0;
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: key,
       className: "flex items-center justify-between text-sm bg-black/30 rounded-lg px-3 py-2"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-gray-300"
-    }, key), React.createElement("div", {
+    }, key), /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-4"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-xs text-gray-500"
-    }, total, " trade", total !== 1 ? 's' : ''), React.createElement("span", {
+    }, total, " trade", total !== 1 ? 's' : ''), /*#__PURE__*/React.createElement("span", {
       className: "num text-xs " + (wr >= 50 ? 'text-green-400' : 'text-red-400')
-    }, wr.toFixed(0), "% WR"), React.createElement("span", {
+    }, wr.toFixed(0), "% WR"), /*#__PURE__*/React.createElement("span", {
       className: "num font-semibold " + (g.pnl >= 0 ? 'text-green-400' : 'text-red-400')
     }, fmt(g.pnl))));
   }))));
@@ -4834,6 +5055,12 @@ function EquityCurveBlock(props) {
   const entries = props.entries;
   const d = computeOverviewData(accounts, entries);
   const singleAccount = accounts.length === 1 ? accounts[0] : null;
+  // Real account-dollar terms, matching what MFFU's own dashboard shows -
+  // Balance = starting balance + P&L (your actual account value), Floor =
+  // Balance - buffer (verified against MFFU's own "Max Drawdown" figure:
+  // $25,363.40 balance - $1,000 buffer = $24,363.40, exactly what their
+  // dashboard displayed). Target = starting balance + profit target. All
+  // three are numbers you'd actually recognize, not an abstracted scale.
   let equityPointsForChart = d.equityPoints;
   let floorPoints = null;
   let startingAmount = null;
@@ -4869,24 +5096,28 @@ function EquityCurveBlock(props) {
     startingAmount = startBal;
     targetAmount = singleAccount.profitTarget ? startBal + parseFloat(singleAccount.profitTarget) : null;
   }
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-4"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "LineChart",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Equity Curve", singleAccount ? ' - ' + singleAccount.name : accounts.length > 0 ? ' - ' + accounts.length + ' Accounts Combined' : '')), React.createElement(EquityCurve, {
+  }, "Equity Curve", singleAccount ? ' - ' + singleAccount.name : accounts.length > 0 ? ' - ' + accounts.length + ' Accounts Combined' : '')), /*#__PURE__*/React.createElement(EquityCurve, {
     points: equityPointsForChart,
     floorPoints: floorPoints,
     startingAmount: startingAmount,
     targetAmount: targetAmount
-  }), !singleAccount && accounts.length > 1 && React.createElement("p", {
+  }), !singleAccount && accounts.length > 1 && /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600 mt-2"
   }, "The starting/floor/target lines only show for a single selected account, since each account's buffer and target are different numbers - select just one above to see them."));
 }
+
+// Real, computed-from-your-own-trades stop-loss and revenge-trading stats -
+// never example numbers. Reads straight off the active account's logged
+// trades, so it's blank/neutral until there's actually something to show.
 function TradeDisciplineTracker(props) {
   const accountEntries = props.accountEntries;
   const allTrades = accountEntries.filter(function (e) {
@@ -4899,16 +5130,16 @@ function TradeDisciplineTracker(props) {
     });
   });
   if (allTrades.length === 0) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-2 mb-1"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "ShieldAlert",
       className: "h-5 w-5 text-yellow-400"
-    }), React.createElement("h2", {
+    }), /*#__PURE__*/React.createElement("h2", {
       className: "text-lg font-semibold text-white"
-    }, "Trade Discipline Tracker")), React.createElement("p", {
+    }, "Trade Discipline Tracker")), /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-500"
     }, "Log a trade and mark what happened to its stop-loss to start building this - stop-loss handling and revenge-entry flags, tracked automatically across every trade on this account."));
   }
@@ -4958,62 +5189,62 @@ function TradeDisciplineTracker(props) {
   const revengeWinRate = revengeTrades.length > 0 ? revengeTrades.filter(function (t) {
     return t.result === 'win';
   }).length / revengeTrades.length * 100 : null;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6 space-y-5"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "ShieldAlert",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Trade Discipline Tracker"), React.createElement("span", {
+  }, "Trade Discipline Tracker"), /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
-  }, allTrades.length, " trade", allTrades.length !== 1 ? 's' : '', " logged on this account")), React.createElement("div", null, React.createElement("p", {
+  }, allTrades.length, " trade", allTrades.length !== 1 ? 's' : '', " logged on this account")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-2"
-  }, "What happens after price approaches your stop"), React.createElement("div", {
+  }, "What happens after price approaches your stop"), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-3 gap-2"
-  }, React.createElement(MiniStat, {
+  }, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Stop Respected",
     value: pct(respected.length) + '%',
     color: "text-green-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Stop Widened",
     value: pct(widened.length) + '%',
     color: "text-yellow-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Stop Removed",
     value: pct(removed.length) + '%',
     color: "text-red-400"
-  })), lossMultiplier !== null ? React.createElement("p", {
+  })), lossMultiplier !== null ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-400 mt-3 leading-relaxed"
-  }, "Trades where the stop was moved or removed lost ", React.createElement("span", {
+  }, "Trades where the stop was moved or removed lost ", /*#__PURE__*/React.createElement("span", {
     className: "text-red-400 font-semibold num"
-  }, lossMultiplier.toFixed(1), "x"), " more on average (", fmt(avgLossMoved), ") than trades where it was respected (", fmt(avgLossRespected), ").", movedThatWon === 0 && moved.length > 0 ? ' Moving it hasn\'t turned a single one of those trades into a winner yet.' : '') : moved.length > 0 ? React.createElement("p", {
+  }, lossMultiplier.toFixed(1), "x"), " more on average (", fmt(avgLossMoved), ") than trades where it was respected (", fmt(avgLossRespected), ").", movedThatWon === 0 && moved.length > 0 ? ' Moving it hasn\'t turned a single one of those trades into a winner yet.' : '') : moved.length > 0 ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mt-3"
-  }, "Not enough losing trades yet in both groups to compare the average loss size.") : React.createElement("p", {
+  }, "Not enough losing trades yet in both groups to compare the average loss size.") : /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mt-3"
-  }, "Every logged trade has respected its stop so far - keep it that way.")), React.createElement("div", {
+  }, "Every logged trade has respected its stop so far - keep it that way.")), /*#__PURE__*/React.createElement("div", {
     className: "border-t border-gray-800 pt-4"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-2"
-  }, "Revenge entries (reacting to an earlier loss, not the setup)"), React.createElement("div", {
+  }, "Revenge entries (reacting to an earlier loss, not the setup)"), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 gap-2"
-  }, React.createElement(MiniStat, {
+  }, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Revenge Entries",
     value: revengeTrades.length + ' of ' + allTrades.length,
     color: "text-red-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Revenge Win Rate",
     value: revengeWinRate === null ? '-' : revengeWinRate.toFixed(0) + '%',
     color: revengeWinRate !== null && revengeWinRate < 50 ? 'text-red-400' : 'text-gray-300'
-  })), revengeTrades.length > 0 && revengeAvgPnl !== null && nonRevengeAvgPnl !== null ? React.createElement("p", {
+  })), revengeTrades.length > 0 && revengeAvgPnl !== null && nonRevengeAvgPnl !== null ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-400 mt-3 leading-relaxed"
-  }, "Revenge entries have averaged ", React.createElement("span", {
+  }, "Revenge entries have averaged ", /*#__PURE__*/React.createElement("span", {
     className: "font-semibold num " + (revengeAvgPnl >= 0 ? 'text-green-400' : 'text-red-400')
-  }, fmt(revengeAvgPnl)), " per trade, against ", React.createElement("span", {
+  }, fmt(revengeAvgPnl)), " per trade, against ", /*#__PURE__*/React.createElement("span", {
     className: "font-semibold num " + (nonRevengeAvgPnl >= 0 ? 'text-green-400' : 'text-red-400')
-  }, fmt(nonRevengeAvgPnl)), " for everything else.") : React.createElement("p", {
+  }, fmt(nonRevengeAvgPnl)), " for everything else.") : /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mt-3"
   }, "No revenge entries flagged yet on this account.")));
 }
@@ -5063,28 +5294,28 @@ function DisciplineChecklistCard(props) {
   const scoreTextCls = disc.score >= 70 ? 'text-green-400' : disc.score >= 40 ? 'text-yellow-400' : 'text-red-400';
   const ringCirc = 97.4;
   const ringDash = Math.max(0, Math.min(100, disc.score)) / 100 * ringCirc;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setOpen(!open);
     },
     className: "w-full flex items-center justify-between p-6 text-left"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "relative w-12 h-12 flex-shrink-0"
-  }, React.createElement("svg", {
+  }, /*#__PURE__*/React.createElement("svg", {
     viewBox: "0 0 36 36",
     className: "w-12 h-12 -rotate-90"
-  }, React.createElement("circle", {
+  }, /*#__PURE__*/React.createElement("circle", {
     cx: "18",
     cy: "18",
     r: "15.5",
     fill: "none",
     stroke: "#1f2937",
     strokeWidth: "3"
-  }), React.createElement("circle", {
+  }), /*#__PURE__*/React.createElement("circle", {
     cx: "18",
     cy: "18",
     r: "15.5",
@@ -5093,36 +5324,36 @@ function DisciplineChecklistCard(props) {
     strokeWidth: "3",
     strokeDasharray: ringDash + " " + ringCirc,
     strokeLinecap: "round"
-  })), React.createElement("span", {
+  })), /*#__PURE__*/React.createElement("span", {
     className: "num absolute inset-0 flex items-center justify-center text-xs font-bold " + scoreTextCls
-  }, disc.score.toFixed(0))), React.createElement("div", null, React.createElement("h2", {
+  }, disc.score.toFixed(0))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Your Discipline Checklist"), React.createElement("p", {
+  }, "Your Discipline Checklist"), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, passing.length, " of ", withData.length, " tracked questions above 70%"))), React.createElement(Icon, {
+  }, passing.length, " of ", withData.length, " tracked questions above 70%"))), /*#__PURE__*/React.createElement(Icon, {
     name: open ? "ChevronUp" : "ChevronDown",
     className: "h-4 w-4 text-gray-500 flex-shrink-0"
-  })), open && React.createElement("div", {
+  })), open && /*#__PURE__*/React.createElement("div", {
     className: "px-6 pb-6 space-y-3"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 -mt-1 mb-1"
   }, "Each question only counts once you have data for it, so one you haven't triggered yet won't drag your score down."), questions.map(function (q, i) {
     const hasData = q.value !== null && q.value !== undefined;
     const barColor = !hasData ? 'bg-gray-700' : q.value >= 70 ? 'bg-green-400' : q.value >= 40 ? 'bg-yellow-400' : 'bg-red-400';
     const textColor = !hasData ? 'text-gray-600' : q.value >= 70 ? 'text-green-400' : q.value >= 40 ? 'text-yellow-400' : 'text-red-400';
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: i
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "flex items-center justify-between text-xs mb-1"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-gray-300"
-    }, q.label, q.sub && React.createElement("span", {
+    }, q.label, q.sub && /*#__PURE__*/React.createElement("span", {
       className: "text-gray-600 ml-1"
-    }, "(", q.sub, ")")), React.createElement("span", {
+    }, "(", q.sub, ")")), /*#__PURE__*/React.createElement("span", {
       className: textColor + " font-semibold flex-shrink-0 ml-2"
-    }, hasData ? q.value.toFixed(0) + '%' : 'No data yet')), React.createElement("div", {
+    }, hasData ? q.value.toFixed(0) + '%' : 'No data yet')), /*#__PURE__*/React.createElement("div", {
       className: "w-full bg-gray-800 rounded-full h-1.5 overflow-hidden"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "h-full rounded-full transition-all " + barColor,
       style: {
         width: (hasData ? q.value : 0) + '%'
@@ -5130,6 +5361,11 @@ function DisciplineChecklistCard(props) {
     })));
   })));
 }
+
+// The three-pillar reflection log for the active account - what went wrong,
+// what went right, tomorrow's plan - plus a running average of the
+// pre-session Mental Check score, so the psychological side of trading gets
+// the same kind of tracked history as the P&L side does.
 function ReflectionLog(props) {
   const accountEntries = props.accountEntries;
   const [open, setOpen] = useState(false);
@@ -5147,57 +5383,57 @@ function ReflectionLog(props) {
   }, 0) / withMentalCheck.length : null;
   if (withReflection.length === 0 && avgMental === null) return null;
   const avgColor = avgMental === null ? 'text-gray-500' : avgMental >= 32 ? 'text-green-400' : avgMental >= 20 ? 'text-yellow-400' : 'text-red-400';
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setOpen(!open);
     },
     className: "w-full flex items-center justify-between p-6 text-left"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "BookOpen",
     className: "h-5 w-5 text-purple-400 flex-shrink-0"
-  }), React.createElement("div", null, React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Discipline & Psychology Log"), React.createElement("p", {
+  }, "Discipline & Psychology Log"), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, withReflection.length, " reflection", withReflection.length !== 1 ? 's' : '', " logged", avgMental !== null && React.createElement("span", null, " - avg mental check ", React.createElement("span", {
+  }, withReflection.length, " reflection", withReflection.length !== 1 ? 's' : '', " logged", avgMental !== null && /*#__PURE__*/React.createElement("span", null, " - avg mental check ", /*#__PURE__*/React.createElement("span", {
     className: avgColor
-  }, avgMental.toFixed(0), "/40"))))), React.createElement(Icon, {
+  }, avgMental.toFixed(0), "/40"))))), /*#__PURE__*/React.createElement(Icon, {
     name: open ? "ChevronUp" : "ChevronDown",
     className: "h-4 w-4 text-gray-500 flex-shrink-0"
-  })), open && React.createElement("div", {
+  })), open && /*#__PURE__*/React.createElement("div", {
     className: "px-6 pb-6 space-y-3"
-  }, withReflection.length === 0 ? React.createElement("p", {
+  }, withReflection.length === 0 ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
   }, "No written reflections yet - fill in the \"Discipline & Psychology Reflection\" section next time you log a day to start the log.") : withReflection.map(function (e) {
     const r = e.reflection;
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: e.id,
       className: "bg-black/30 border border-gray-800 rounded-lg p-3 space-y-1.5"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "flex items-center justify-between text-[11px] text-gray-500"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "num"
-    }, e.date), r.emotionalState && React.createElement("span", {
+    }, e.date), r.emotionalState && /*#__PURE__*/React.createElement("span", {
       className: "capitalize px-2 py-0.5 rounded-full bg-gray-800 text-gray-400"
-    }, r.emotionalState)), r.wentRight && React.createElement("p", {
+    }, r.emotionalState)), r.wentRight && /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-300"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-green-400 font-medium"
-    }, "Right: "), r.wentRight), r.wentWrong && React.createElement("p", {
+    }, "Right: "), r.wentRight), r.wentWrong && /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-300"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-red-400 font-medium"
-    }, "Wrong: "), r.wentWrong), r.lessonsLearned && React.createElement("p", {
+    }, "Wrong: "), r.wentWrong), r.lessonsLearned && /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-300"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-blue-400 font-medium"
-    }, "Lesson: "), r.lessonsLearned), r.improvementPlan && React.createElement("p", {
+    }, "Lesson: "), r.lessonsLearned), r.improvementPlan && /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-300"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-yellow-400 font-medium"
     }, "Tomorrow: "), r.improvementPlan));
   })));
@@ -5210,6 +5446,11 @@ function DisciplineLeaderboard(props) {
   const [open, setOpen] = useState(false);
   useEffect(function () {
     let cancelled = false;
+
+    // Build the leaderboard straight from what's actually sitting in Firestore -
+    // every registered user's accounts and entries - rather than waiting for each
+    // person's own browser to write a leaderboard doc. That way someone who set
+    // up their accounts last week and hasn't opened the app since still shows up.
     async function loadAll() {
       try {
         const [namesSnap, accountsSnap, entriesSnap] = await Promise.all([db.collection('leaderboard').get(), db.collectionGroup('accounts').get(), db.collectionGroup('entries').get()]);
@@ -5218,6 +5459,10 @@ function DisciplineLeaderboard(props) {
           const data = d.data();
           if (data.displayName) namesByUid[d.id] = data.displayName;
         });
+
+        // Paper (practice) accounts never count toward anyone's discipline score
+        // or leaderboard rank - track their ids so both accounts and the entries
+        // logged against them can be skipped below.
         const paperAccountIds = {};
         accountsSnap.forEach(function (d) {
           if (d.data().accountType === 'paper') paperAccountIds[d.id] = true;
@@ -5277,16 +5522,16 @@ function DisciplineLeaderboard(props) {
   }, [currentUid, currentName]);
   if (rows.length === 0) {
     if (loadError) {
-      return React.createElement("div", {
+      return /*#__PURE__*/React.createElement("div", {
         className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-      }, React.createElement("div", {
+      }, /*#__PURE__*/React.createElement("div", {
         className: "flex items-center gap-2 mb-2"
-      }, React.createElement(Icon, {
+      }, /*#__PURE__*/React.createElement(Icon, {
         name: "Award",
         className: "h-5 w-5 text-yellow-400"
-      }), React.createElement("h2", {
+      }), /*#__PURE__*/React.createElement("h2", {
         className: "text-lg font-semibold text-white"
-      }, "Discipline Leaderboard")), React.createElement("p", {
+      }, "Discipline Leaderboard")), /*#__PURE__*/React.createElement("p", {
         className: "text-xs text-red-400"
       }, "Couldn't load everyone's data - this needs a Firestore rules update to allow reading across users. Check the browser console for the exact error."));
     }
@@ -5296,57 +5541,59 @@ function DisciplineLeaderboard(props) {
     return r.uid === currentUid;
   });
   const myPercentile = myIndex >= 0 ? Math.max(1, Math.round((myIndex + 1) / rows.length * 100)) : null;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl overflow-hidden"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setOpen(!open);
     },
     className: "w-full flex items-center justify-between p-6 text-left"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Award",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Discipline Leaderboard"), React.createElement("span", {
+  }, "Discipline Leaderboard"), /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
-  }, "(", rows.length, " trader", rows.length !== 1 ? 's' : '', ")")), React.createElement("div", {
+  }, "(", rows.length, " trader", rows.length !== 1 ? 's' : '', ")")), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3"
-  }, myPercentile !== null && React.createElement("span", {
+  }, myPercentile !== null && /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-yellow-400 font-medium hidden sm:inline"
-  }, "Rank ", myIndex + 1, " of ", rows.length, " - top ", myPercentile, "%"), React.createElement(Icon, {
+  }, "Rank ", myIndex + 1, " of ", rows.length, " - top ", myPercentile, "%"), /*#__PURE__*/React.createElement(Icon, {
     name: open ? "ChevronUp" : "ChevronDown",
     className: "h-4 w-4 text-gray-500"
-  }))), open && React.createElement("div", {
+  }))), open && /*#__PURE__*/React.createElement("div", {
     className: "px-6 pb-6"
-  }, myPercentile !== null && React.createElement("div", {
+  }, myPercentile !== null && /*#__PURE__*/React.createElement("div", {
     className: "mb-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 text-sm"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "text-yellow-400 font-semibold"
-  }, "You are in the top ", myPercentile, "%"), React.createElement("span", {
+  }, "You are in the top ", myPercentile, "%"), /*#__PURE__*/React.createElement("span", {
     className: "text-gray-400"
-  }, " - rank ", myIndex + 1, " of ", rows.length, " - score ", rows[myIndex].disciplineScore.toFixed(1))), React.createElement("div", {
+  }, " - rank ", myIndex + 1, " of ", rows.length, " - score ", rows[myIndex].disciplineScore.toFixed(1))), /*#__PURE__*/React.createElement("div", {
     className: "space-y-1.5 max-h-96 overflow-y-auto pr-1"
   }, rows.map(function (r, i) {
     const isMe = r.uid === currentUid;
     const scoreOk = typeof r.disciplineScore === 'number' && isFinite(r.disciplineScore);
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: r.uid,
       className: "grid items-center gap-3 text-sm rounded-lg px-3 py-2 " + (isMe ? 'bg-yellow-500/15 border border-yellow-500/30' : 'bg-black/30'),
       style: {
         gridTemplateColumns: '2.25rem 1fr auto'
       }
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-gray-500 num"
-    }, "#", i + 1), React.createElement("span", {
+    }, "#", i + 1), /*#__PURE__*/React.createElement("span", {
       className: "truncate min-w-0 " + (isMe ? 'text-yellow-300 font-semibold' : 'text-white')
-    }, r.displayName || 'Trader', isMe ? ' (you)' : ''), React.createElement("span", {
+    }, r.displayName || 'Trader', isMe ? ' (you)' : ''), /*#__PURE__*/React.createElement("span", {
       className: "num text-green-400 font-semibold bg-green-500/10 border border-green-500/20 rounded-md px-2 py-0.5 flex-shrink-0"
     }, scoreOk ? r.disciplineScore.toFixed(1) : '-'));
   }))));
 }
+
+// Verified against real CME contract specs (point value = $ per 1.00 price move).
 const TICKER_POINT_VALUES = {
   MES: 5,
   ES: 50,
@@ -5373,6 +5620,8 @@ const getPointValueForContract = function (contractOrProduct) {
   }
   return null;
 };
+
+// Minimal but correct CSV parser - handles quoted fields that may contain commas.
 const parseCsvRows = function (text) {
   const rows = [];
   let row = [],
@@ -5406,6 +5655,12 @@ const parseCsvRows = function (text) {
   }
   return rows;
 };
+
+// Weighted-average position matching per contract: opens a position, adds to
+// it on same-direction fills, and realizes P&L against the average entry
+// price as opposing fills close or flip it. This is the standard approach
+// broker-import tools use to turn a per-fill order export into round-turn
+// trades without needing strict per-lot FIFO bookkeeping.
 const buildTradovateTrades = function (fills) {
   const byContract = {};
   fills.forEach(function (f) {
@@ -5436,6 +5691,9 @@ const buildTradovateTrades = function (fills) {
         const direction = posQty > 0 ? 'long' : 'short';
         const pnlPoints = direction === 'long' ? f.price - avgEntryPrice : avgEntryPrice - f.price;
         const pnl = pointValue !== null ? Math.round(pnlPoints * pointValue * closingQty * 100) / 100 : null;
+        // closeDateStr comes from Tradovate's own Date column on the closing fill,
+        // not derived from the fill timestamp - a UTC conversion of the timestamp
+        // can land on the wrong calendar day depending on session/timezone offset.
         roundTurns.push({
           contract: contract,
           product: f.product,
@@ -5463,6 +5721,11 @@ const buildTradovateTrades = function (fills) {
   });
   return roundTurns;
 };
+
+// Tradovate's Date column looks like "9/16/26" or "09/16/2026" - always local
+// session date, unlike the fill timestamp which can shift a day under UTC
+// conversion. Normalizes to YYYY-MM-DD to match how entries are keyed everywhere
+// else in the app.
 const normalizeTradovateDate = function (dateStr) {
   if (!dateStr) return null;
   const parts = dateStr.trim().split('/');
@@ -5474,6 +5737,10 @@ const normalizeTradovateDate = function (dateStr) {
   if (y.length !== 4 || isNaN(parseInt(m, 10)) || isNaN(parseInt(d, 10))) return null;
   return y + '-' + m + '-' + d;
 };
+
+// Parses a Tradovate Reports > Orders CSV export into round-turn trades
+// grouped by the day each trade closed. Returns skipped counts so the import
+// preview can be honest about anything it couldn't price or understand.
 const parseTradovateCsv = function (text, commissionPerContract) {
   const commission = parseFloat(commissionPerContract) || 0;
   const rows = parseCsvRows(text).filter(function (r) {
@@ -5542,6 +5809,10 @@ const parseTradovateCsv = function (text, commissionPerContract) {
   const priced = roundTurns.filter(function (rt) {
     return rt.pnl !== null;
   }).map(function (rt) {
+    // Commission is charged round-turn, per contract - subtracting it here means
+    // every downstream number (day totals, consistency %, buffer) reflects what
+    // you actually kept, not the gross price-movement figure Tradovate's Orders
+    // export alone would imply.
     const net = Math.round((rt.pnl - commission * rt.qty) * 100) / 100;
     return Object.assign({}, rt, {
       pnl: net,
@@ -5563,6 +5834,13 @@ const parseTradovateCsv = function (text, commissionPerContract) {
     error: null
   };
 };
+
+// Tradovate's Performance export has each trade already matched entry-to-exit
+// by the broker itself (buyFillId/sellFillId paired, pnl pre-computed) - no
+// FIFO/weighted-average reconstruction needed, which also means it can't
+// diverge from Tradovate's own numbers the way rebuilding from raw Orders
+// fills sometimes can (e.g. a position closed via two separate partial fills
+// is already represented as two separate rows here, correctly).
 const parsePerformanceCsv = function (text, commissionPerContract) {
   const commission = parseFloat(commissionPerContract) || 0;
   const rows = parseCsvRows(text).filter(function (r) {
@@ -5602,6 +5880,8 @@ const parsePerformanceCsv = function (text, commissionPerContract) {
       error: "This doesn't look like a Tradovate Performance export - it needs symbol, qty, pnl, boughtTimestamp, and soldTimestamp columns."
     };
   }
+
+  // "$27.50" or "$(20.00)" for a loss - parenthesis means negative, not a minus sign.
   const parseMoney = function (s) {
     if (!s) return null;
     const negative = s.indexOf('(') >= 0;
@@ -5610,6 +5890,9 @@ const parsePerformanceCsv = function (text, commissionPerContract) {
     return negative ? -Math.abs(num) : num;
   };
   const toLocalDate = function (timestampStr) {
+    // "09/15/2026 14:30:34" - take the date portion directly as text, same
+    // trick as the Orders.csv Date column: it's already local/session time,
+    // no UTC conversion to accidentally shift the day.
     if (!timestampStr) return null;
     const datePart = timestampStr.trim().split(' ')[0];
     const parts = datePart.split('/');
@@ -5638,6 +5921,9 @@ const parsePerformanceCsv = function (text, commissionPerContract) {
       skipped++;
       continue;
     }
+    // Bought before sold = long (bought to open, sold to close). Sold before
+    // bought = short (sold to open, bought to close). The closing action's
+    // own timestamp is what determines which calendar day the trade lands on.
     const direction = boughtTime < soldTime ? 'long' : 'short';
     const closeDateStr = toLocalDate(direction === 'long' ? soldStr : boughtStr);
     if (!closeDateStr) {
@@ -5678,6 +5964,16 @@ const parsePerformanceCsv = function (text, commissionPerContract) {
     error: null
   };
 };
+
+// Generic closed-trade CSV support for everything that isn't Tradovate -
+// NinjaTrader, TopstepX, ProjectX, MT4/5 trade history exports, ThinkOrSwim
+// and the rest all export one row per already-closed trade with some
+// spelling of a date column and some spelling of a P&L column. Rather than
+// guess at broker-specific fills/round-turn reconstruction (safe only for
+// Tradovate, where the point values have been verified), this matches by
+// column name against the common aliases each platform actually uses and
+// only proceeds when it can find both a date and a P&L column - anything
+// it can't confidently read is skipped and counted, never guessed at.
 const GENERIC_CSV_ALIASES = {
   date: ['date', 'trade date', 'close date', 'closed date', 'exit date', 'date closed', 'time closed', 'exit time', 'closing time'],
   pnl: ['pnl', 'p&l', 'p/l', 'net pnl', 'net p&l', 'net profit', 'profit', 'profit/loss', 'realized pnl', 'realized p&l', 'realized p/l', 'gain/loss', 'amount'],
@@ -5731,7 +6027,9 @@ const parseGenericTradesCsv = function (text, commissionPerContract) {
   const toLocalDate = function (raw) {
     if (!raw) return null;
     const str = String(raw).trim().split(' ')[0];
+    // Already ISO (yyyy-mm-dd)
     if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.slice(0, 10);
+    // US-style m/d/yyyy or m/d/yy
     const parts = str.split('/');
     if (parts.length === 3) {
       let y = parts[2];
@@ -5784,6 +6082,14 @@ const parseGenericTradesCsv = function (text, commissionPerContract) {
     error: priced.length === 0 ? "Found a date and P&L column, but couldn't read a valid row from either - check the file isn't empty below the header." : null
   };
 };
+
+// Looks at the header row to decide which parser fits - the person just
+// picks whichever file their platform gave them, no need to know the
+// difference. Tradovate's two export types get broker-specific handling
+// (verified point values for its Orders/fills reconstruction); everything
+// else falls through to the generic date+P&L column matcher, which covers
+// NinjaTrader, TopstepX, ProjectX, MT4/5 and most other closed-trade
+// history exports.
 const parseTradeFile = function (text, commissionPerContract) {
   const firstLine = (text.split('\n')[0] || '').toLowerCase();
   if (firstLine.indexOf('buyfillid') >= 0 || firstLine.indexOf('sellfillid') >= 0) {
@@ -5838,6 +6144,10 @@ function parseCSV(text) {
 }
 async function importCSV(text, accountId, entriesRef) {
   const rows = parseCSV(text);
+  // A Tradovate Orders export has completely different columns (B/S, Filled Qty,
+  // Avg Fill Price...) - without this check, none of those match our expected
+  // "date"/"direction"/"result" fields, so every row silently collapses into one
+  // broken entry with an undefined date instead of failing loudly.
   if (rows.length > 0 && rows[0].date === undefined) {
     const looksLikeTradovate = rows[0]['B/S'] !== undefined || rows[0]['Filled Qty'] !== undefined || rows[0]['Avg Fill Price'] !== undefined;
     throw new Error(looksLikeTradovate ? "This looks like a broker export, not a journal CSV. Use the \"Import Trades (CSV)\" button in Trade History instead - it reads broker files directly." : "This file doesn't have the columns this importer expects (needs a \"date\" column at minimum). Use the CSV exported from this app's own \"Export CSV\" button as a template, or use the \"Import Trades (CSV)\" button in Trade History for a broker export.");
@@ -5894,6 +6204,10 @@ async function importCSV(text, accountId, entriesRef) {
   }
   return dates.length;
 }
+
+// CSV import as an entry method inside the Add Entry modal (Export CSV lives
+// next to the Daily Log button in Trade History instead - it's a read action,
+// not a way of logging an entry).
 function DupeCleanupModal(props) {
   const accountEntries = props.accountEntries;
   const entriesRef = props.entriesRef;
@@ -5915,42 +6229,42 @@ function DupeCleanupModal(props) {
     }
     setBusy(null);
   };
-  return React.createElement(Modal, {
+  return /*#__PURE__*/React.createElement(Modal, {
     onClose: onClose,
     title: "Clean Up Duplicate Days",
     size: "lg"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "space-y-4"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "Days with more than one entry - usually from re-importing the same broker file before the overwrite fix. Pick which copy to keep for each day; the others get deleted. Nothing is removed automatically."), dupeDates.length === 0 ? React.createElement("p", {
+  }, "Days with more than one entry - usually from re-importing the same broker file before the overwrite fix. Pick which copy to keep for each day; the others get deleted. Nothing is removed automatically."), dupeDates.length === 0 ? /*#__PURE__*/React.createElement("p", {
     className: "text-sm text-green-400 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "CheckCircle",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "No duplicate days found on this account.")) : React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "No duplicate days found on this account.")) : /*#__PURE__*/React.createElement("div", {
     className: "space-y-4 max-h-96 overflow-y-auto"
   }, dupeDates.map(function (date) {
     const group = byDate[date];
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: date,
       className: "border border-yellow-500/30 bg-yellow-500/5 rounded-lg p-3"
-    }, React.createElement("p", {
+    }, /*#__PURE__*/React.createElement("p", {
       className: "text-sm text-white font-medium mb-2"
-    }, date, " - ", group.length, " copies found"), React.createElement("div", {
+    }, date, " - ", group.length, " copies found"), /*#__PURE__*/React.createElement("div", {
       className: "space-y-1.5"
     }, group.map(function (entry) {
       const total = (entry.trades || []).reduce(function (s, t) {
         return s + tradeSignedPnl(t);
       }, 0);
-      return React.createElement("div", {
+      return /*#__PURE__*/React.createElement("div", {
         key: entry.id,
         className: "flex items-center justify-between bg-black/30 rounded-lg px-3 py-2 text-xs"
-      }, React.createElement("span", {
+      }, /*#__PURE__*/React.createElement("span", {
         className: "text-gray-400"
-      }, (entry.trades || []).length, " trade", (entry.trades || []).length !== 1 ? 's' : ''), React.createElement("span", {
+      }, (entry.trades || []).length, " trade", (entry.trades || []).length !== 1 ? 's' : ''), /*#__PURE__*/React.createElement("span", {
         className: "num font-semibold " + (total >= 0 ? 'text-green-400' : 'text-red-400')
-      }, fmt(total)), React.createElement("button", {
+      }, fmt(total)), /*#__PURE__*/React.createElement("button", {
         onClick: function () {
           keepThisOne(date, entry.id);
         },
@@ -5966,19 +6280,19 @@ function CsvImportFields(props) {
   const onDone = props.onDone;
   const [status, setStatus] = useState('');
   const fileRef = React.useRef(null);
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "Import a CSV of trades for ", account.name, " instead of entering them one by one. Expects the same column format as an exported file - export a day first if you need a template."), React.createElement("button", {
+  }, "Import a CSV of trades for ", account.name, " instead of entering them one by one. Expects the same column format as an exported file - export a day first if you need a template."), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       fileRef.current.click();
     },
     className: "w-full flex items-center justify-center gap-1.5 bg-blue-500/20 text-blue-400 border border-blue-500/40 px-4 py-2.5 rounded-lg text-sm font-medium"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Upload",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Choose CSV File")), React.createElement("input", {
+  }), /*#__PURE__*/React.createElement("span", null, "Choose CSV File")), /*#__PURE__*/React.createElement("input", {
     ref: fileRef,
     type: "file",
     accept: ".csv",
@@ -5998,7 +6312,7 @@ function CsvImportFields(props) {
         e.target.value = '';
       }
     }
-  }), status && React.createElement("p", {
+  }), status && /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-400"
   }, status));
 }
@@ -6023,44 +6337,48 @@ function mentalCheckTotal(mc) {
   if (!mc) return 0;
   return (mc.marketAwareness || 0) + (mc.riskRespect || 0) + (mc.humility || 0) + (mc.mindset || 0);
 }
+
+// A collapsible pre-session check-in, real sliders tied to real state (unlike
+// the source app's decorative demo numbers) - the score is computed live
+// from what's actually moved, not a hardcoded percentage.
 function MentalCheckSection(props) {
   const value = props.value;
   const onChange = props.onChange;
   const [open, setOpen] = useState(false);
   const total = mentalCheckTotal(value);
   const scoreColor = total >= 32 ? 'text-green-400' : total >= 20 ? 'text-yellow-400' : 'text-red-400';
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "border border-gray-800 rounded-lg overflow-hidden"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     type: "button",
     onClick: function () {
       setOpen(!open);
     },
     className: "w-full flex items-center justify-between px-3 py-2.5 bg-gray-900/60 text-left"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "text-sm text-gray-300 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Brain",
     className: "h-3.5 w-3.5 text-teal-400"
-  }), React.createElement("span", null, "Pre-Session Mental Check")), React.createElement("span", {
+  }), /*#__PURE__*/React.createElement("span", null, "Pre-Session Mental Check")), /*#__PURE__*/React.createElement("span", {
     className: "flex items-center gap-2"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "text-xs num font-semibold " + scoreColor
-  }, total, "/40"), React.createElement(Icon, {
+  }, total, "/40"), /*#__PURE__*/React.createElement(Icon, {
     name: open ? "ChevronUp" : "ChevronDown",
     className: "h-3.5 w-3.5 text-gray-500"
-  }))), open && React.createElement("div", {
+  }))), open && /*#__PURE__*/React.createElement("div", {
     className: "p-3 space-y-3 bg-black/20"
   }, MENTAL_CHECK_SLIDERS.map(function (s) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: s.key
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "flex items-center justify-between mb-0.5"
-    }, React.createElement("label", {
+    }, /*#__PURE__*/React.createElement("label", {
       className: "text-xs text-gray-400"
-    }, s.label), React.createElement("span", {
+    }, s.label), /*#__PURE__*/React.createElement("span", {
       className: "text-xs text-yellow-400 num"
-    }, value[s.key], "/10")), React.createElement("input", {
+    }, value[s.key], "/10")), /*#__PURE__*/React.createElement("input", {
       type: "range",
       min: "1",
       max: "10",
@@ -6069,61 +6387,65 @@ function MentalCheckSection(props) {
         onChange(s.key, parseInt(e.target.value, 10));
       },
       className: "w-full accent-teal-400"
-    }), React.createElement("p", {
+    }), /*#__PURE__*/React.createElement("p", {
       className: "text-[11px] text-gray-600"
     }, s.sub));
   })));
 }
+
+// The day's plan, written down before trading starts - risk, target, session
+// window and allowed trade count - so the Discipline tab can later compare
+// what was planned against what actually happened.
 function DailyPlanSection(props) {
   const value = props.value;
   const onChange = props.onChange;
   const [open, setOpen] = useState(false);
   const hasPlan = value.riskAmount || value.targetProfit;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "border border-gray-800 rounded-lg overflow-hidden"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     type: "button",
     onClick: function () {
       setOpen(!open);
     },
     className: "w-full flex items-center justify-between px-3 py-2.5 bg-gray-900/60 text-left"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "text-sm text-gray-300 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Calendar",
     className: "h-3.5 w-3.5 text-yellow-400"
-  }), React.createElement("span", null, "Daily Plan")), React.createElement("span", {
+  }), /*#__PURE__*/React.createElement("span", null, "Daily Plan")), /*#__PURE__*/React.createElement("span", {
     className: "flex items-center gap-2"
-  }, hasPlan && React.createElement("span", {
+  }, hasPlan && /*#__PURE__*/React.createElement("span", {
     className: "text-[10px] px-2 py-0.5 rounded-full bg-yellow-500/15 text-yellow-300"
-  }, "Set"), React.createElement(Icon, {
+  }, "Set"), /*#__PURE__*/React.createElement(Icon, {
     name: open ? "ChevronUp" : "ChevronDown",
     className: "h-3.5 w-3.5 text-gray-500"
-  }))), open && React.createElement("div", {
+  }))), open && /*#__PURE__*/React.createElement("div", {
     className: "p-3 space-y-3 bg-black/20"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 gap-2"
-  }, React.createElement("div", null, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Risk Per Trade ($)"), React.createElement("input", {
+  }, "Risk Per Trade ($)"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: value.riskAmount,
     onChange: function (e) {
       onChange('riskAmount', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Target Profit Today ($)"), React.createElement("input", {
+  }, "Target Profit Today ($)"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: value.targetProfit,
     onChange: function (e) {
       onChange('targetProfit', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Planned Trades"), React.createElement("input", {
+  }, "Planned Trades"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     min: "0",
     max: "3",
@@ -6132,9 +6454,9 @@ function DailyPlanSection(props) {
       onChange('plannedTrades', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Reward:Risk Ratio"), React.createElement("input", {
+  }, "Reward:Risk Ratio"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     step: "0.1",
     value: value.riskRewardRatio,
@@ -6142,27 +6464,27 @@ function DailyPlanSection(props) {
       onChange('riskRewardRatio', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Session Start"), React.createElement("input", {
+  }, "Session Start"), /*#__PURE__*/React.createElement("input", {
     type: "time",
     value: value.startTime,
     onChange: function (e) {
       onChange('startTime', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Session End"), React.createElement("input", {
+  }, "Session End"), /*#__PURE__*/React.createElement("input", {
     type: "time",
     value: value.endTime,
     onChange: function (e) {
       onChange('endTime', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  }))), React.createElement("div", null, React.createElement("label", {
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Setups you're allowed to take today"), React.createElement("textarea", {
+  }, "Setups you're allowed to take today"), /*#__PURE__*/React.createElement("textarea", {
     value: value.notes,
     onChange: function (e) {
       onChange('notes', e.target.value);
@@ -6171,29 +6493,34 @@ function DailyPlanSection(props) {
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-14 focus:border-yellow-400/50 outline-none resize-none"
   }))));
 }
+
+// Flat (always-open, no border-box/collapse) version of the mental check
+// sliders, for the Mental Check page itself - the check-in IS the page, so
+// there's no reason to hide it behind another toggle the way the old
+// in-modal version did.
 function MentalCheckFields(props) {
   const value = props.value;
   const onChange = props.onChange;
   const total = mentalCheckTotal(value);
   const scoreColor = total >= 32 ? 'text-green-400' : total >= 20 ? 'text-yellow-400' : 'text-red-400';
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "text-sm text-gray-400"
-  }, "Total"), React.createElement("span", {
+  }, "Total"), /*#__PURE__*/React.createElement("span", {
     className: "text-sm num font-semibold " + scoreColor
   }, total, "/40")), MENTAL_CHECK_SLIDERS.map(function (s) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: s.key
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "flex items-center justify-between mb-0.5"
-    }, React.createElement("label", {
+    }, /*#__PURE__*/React.createElement("label", {
       className: "text-xs text-gray-400"
-    }, s.label), React.createElement("span", {
+    }, s.label), /*#__PURE__*/React.createElement("span", {
       className: "text-xs text-yellow-400 num"
-    }, value[s.key], "/10")), React.createElement("input", {
+    }, value[s.key], "/10")), /*#__PURE__*/React.createElement("input", {
       type: "range",
       min: "1",
       max: "10",
@@ -6202,30 +6529,34 @@ function MentalCheckFields(props) {
         onChange(s.key, parseInt(e.target.value, 10));
       },
       className: "w-full accent-teal-400"
-    }), React.createElement("p", {
+    }), /*#__PURE__*/React.createElement("p", {
       className: "text-[11px] text-gray-600"
     }, s.sub));
   }));
 }
+
+// Flat version of the Daily Plan fields (no Risk Per Trade field - that's
+// handled by Personal Risk Tolerance right above it on the Daily Plan page,
+// so asking for risk twice in the same blended card would be confusing).
 function PlanFieldsGrid(props) {
   const value = props.value;
   const onChange = props.onChange;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 gap-2"
-  }, React.createElement("div", null, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Target Profit Today ($)"), React.createElement("input", {
+  }, "Target Profit Today ($)"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: value.targetProfit,
     onChange: function (e) {
       onChange('targetProfit', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Planned Trades"), React.createElement("input", {
+  }, "Planned Trades"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     min: "0",
     max: "3",
@@ -6234,9 +6565,9 @@ function PlanFieldsGrid(props) {
       onChange('plannedTrades', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Reward:Risk Ratio"), React.createElement("input", {
+  }, "Reward:Risk Ratio"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     step: "0.1",
     value: value.riskRewardRatio,
@@ -6244,36 +6575,36 @@ function PlanFieldsGrid(props) {
       onChange('riskRewardRatio', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Max Loss / Day ($)"), React.createElement("input", {
+  }, "Max Loss / Day ($)"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: value.maxLossPerDay,
     onChange: function (e) {
       onChange('maxLossPerDay', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Session Start"), React.createElement("input", {
+  }, "Session Start"), /*#__PURE__*/React.createElement("input", {
     type: "time",
     value: value.startTime,
     onChange: function (e) {
       onChange('startTime', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Session End"), React.createElement("input", {
+  }, "Session End"), /*#__PURE__*/React.createElement("input", {
     type: "time",
     value: value.endTime,
     onChange: function (e) {
       onChange('endTime', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-  }))), React.createElement("div", null, React.createElement("label", {
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Setups you're allowed to take today"), React.createElement("textarea", {
+  }, "Setups you're allowed to take today"), /*#__PURE__*/React.createElement("textarea", {
     value: value.notes,
     onChange: function (e) {
       onChange('notes', e.target.value);
@@ -6283,86 +6614,91 @@ function PlanFieldsGrid(props) {
   })));
 }
 const EMOTIONAL_STATES = ['neutral', 'confident', 'anxious', 'frustrated', 'excited', 'fatigued'];
+
+// The three-pillar reflection - what went wrong, what went right, tomorrow's
+// plan - plus lessons learned and emotional state. Shown collapsed by
+// default so it never blocks a quick log, but it's what feeds the
+// Discipline tab's reflection log.
 function ReflectionSection(props) {
   const value = props.value;
   const onChange = props.onChange;
   const [open, setOpen] = useState(false);
   const hasReflection = value.wentWrong || value.wentRight || value.improvementPlan;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "border border-gray-800 rounded-lg overflow-hidden"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     type: "button",
     onClick: function () {
       setOpen(!open);
     },
     className: "w-full flex items-center justify-between px-3 py-2.5 bg-gray-900/60 text-left"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "text-sm text-gray-300 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "ListChecks",
     className: "h-3.5 w-3.5 text-purple-400"
-  }), React.createElement("span", null, "Discipline & Psychology Reflection")), React.createElement("span", {
+  }), /*#__PURE__*/React.createElement("span", null, "Discipline & Psychology Reflection")), /*#__PURE__*/React.createElement("span", {
     className: "flex items-center gap-2"
-  }, hasReflection && React.createElement("span", {
+  }, hasReflection && /*#__PURE__*/React.createElement("span", {
     className: "text-[10px] px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300"
-  }, "Filled"), React.createElement(Icon, {
+  }, "Filled"), /*#__PURE__*/React.createElement(Icon, {
     name: open ? "ChevronUp" : "ChevronDown",
     className: "h-3.5 w-3.5 text-gray-500"
-  }))), open && React.createElement("div", {
+  }))), open && /*#__PURE__*/React.createElement("div", {
     className: "p-3 space-y-3 bg-black/20"
-  }, React.createElement("div", null, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-red-400 mb-1"
-  }, "What went wrong?"), React.createElement("textarea", {
+  }, "What went wrong?"), /*#__PURE__*/React.createElement("textarea", {
     value: value.wentWrong,
     onChange: function (e) {
       onChange('wentWrong', e.target.value);
     },
     placeholder: "Mistakes, emotional decisions, rule breaks...",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-14 focus:border-red-400/50 outline-none resize-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-green-400 mb-1"
-  }, "What went right?"), React.createElement("textarea", {
+  }, "What went right?"), /*#__PURE__*/React.createElement("textarea", {
     value: value.wentRight,
     onChange: function (e) {
       onChange('wentRight', e.target.value);
     },
     placeholder: "Disciplined decisions, setups you're proud of...",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-14 focus:border-green-400/50 outline-none resize-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-400 mb-1"
-  }, "Lessons learned"), React.createElement("textarea", {
+  }, "Lessons learned"), /*#__PURE__*/React.createElement("textarea", {
     value: value.lessonsLearned,
     onChange: function (e) {
       onChange('lessonsLearned', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-12 focus:border-yellow-400/50 outline-none resize-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-yellow-400 mb-1"
-  }, "Tomorrow's improvement plan"), React.createElement("textarea", {
+  }, "Tomorrow's improvement plan"), /*#__PURE__*/React.createElement("textarea", {
     value: value.improvementPlan,
     onChange: function (e) {
       onChange('improvementPlan', e.target.value);
     },
     placeholder: "One concrete thing to do differently tomorrow...",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm h-14 focus:border-yellow-400/50 outline-none resize-none"
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 gap-2"
-  }, React.createElement("div", null, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Emotional state"), React.createElement("select", {
+  }, "Emotional state"), /*#__PURE__*/React.createElement("select", {
     value: value.emotionalState,
     onChange: function (e) {
       onChange('emotionalState', e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm capitalize focus:border-yellow-400/50 outline-none"
   }, EMOTIONAL_STATES.map(function (s) {
-    return React.createElement("option", {
+    return /*#__PURE__*/React.createElement("option", {
       key: s,
       value: s
     }, s);
-  }))), React.createElement("div", null, React.createElement("label", {
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-[11px] text-gray-500 mb-1"
-  }, "Market conditions"), React.createElement("input", {
+  }, "Market conditions"), /*#__PURE__*/React.createElement("input", {
     type: "text",
     value: value.marketConditions,
     onChange: function (e) {
@@ -6377,16 +6713,16 @@ function PerAccountBreakdown(props) {
     return computeAccountStatus(a, props.entries) !== 'breached';
   });
   const entries = props.entries;
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-4"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Layers",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Per-Account Breakdown")), React.createElement("div", {
+  }, "Per-Account Breakdown")), /*#__PURE__*/React.createElement("div", {
     className: "space-y-1.5"
   }, accounts.map(function (acc) {
     const accEntries = entries.filter(function (e) {
@@ -6404,30 +6740,30 @@ function PerAccountBreakdown(props) {
       return t.result === 'win';
     }).length;
     const accWinRate = accTrades.length > 0 ? accWins / accTrades.length * 100 : 0;
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: acc.id,
       className: "flex items-center justify-between text-sm bg-black/30 rounded-lg px-4 py-3 flex-wrap gap-2"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-2"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-white font-medium"
-    }, acc.name, " #", acc.accountNumber), React.createElement("span", {
+    }, acc.name, " #", acc.accountNumber), /*#__PURE__*/React.createElement("span", {
       className: "px-1.5 py-0.5 rounded text-[10px] " + (ACCOUNT_BADGE_CLS[acc.accountType] || ACCOUNT_BADGE_CLS.challenge)
     }, function () {
       const f = ACCOUNT_TYPES.find(function (t) {
         return t.key === acc.accountType;
       });
       return f ? f.label : '';
-    }())), React.createElement("div", {
+    }())), /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-4"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-gray-500"
-    }, accTrades.length, " trades"), React.createElement("span", {
+    }, accTrades.length, " trades"), /*#__PURE__*/React.createElement("span", {
       className: "num " + (accWinRate >= 50 ? 'text-green-400' : 'text-red-400')
-    }, accWinRate.toFixed(0), "% WR"), React.createElement("span", {
+    }, accWinRate.toFixed(0), "% WR"), /*#__PURE__*/React.createElement("span", {
       className: "num font-semibold " + (accPnl >= 0 ? 'text-green-400' : 'text-red-400')
     }, fmt(accPnl))));
-  }), accounts.length === 0 && React.createElement("p", {
+  }), accounts.length === 0 && /*#__PURE__*/React.createElement("p", {
     className: "text-sm text-gray-500 text-center py-4"
   }, props.accounts.length > 0 ? 'All accounts are breached - check the Breached tab.' : 'No accounts yet.')));
 }
@@ -6490,6 +6826,10 @@ function MMMJournal(props) {
         }, d.data());
       });
       setAccounts(list);
+      // Functional updater so this always sees the real current selection, not
+      // whatever activeAccountId happened to be when this listener was first set
+      // up - otherwise every snapshot update (like adding a new account) would
+      // silently reset the selection back to the oldest account in the list.
       setActiveAccountId(function (prev) {
         if (prev && list.some(function (a) {
           return a.id === prev;
@@ -6509,6 +6849,12 @@ function MMMJournal(props) {
     });
     return unsub;
   }, [user.uid]);
+
+  // Until the user has actually clicked an account themselves, the default
+  // selection should prefer a live account over a breached one - otherwise
+  // whichever account happens to be oldest (breached or not) becomes the
+  // default view, which is exactly the "why am I looking at a breached
+  // account I never chose" problem this fixes.
   useEffect(function () {
     if (hasManualSelection) return;
     if (accounts.length === 0) return;
@@ -6518,6 +6864,12 @@ function MMMJournal(props) {
     setViewingBreached(false);
     setActiveAccountId(nonBreached ? nonBreached.id : null);
   }, [accounts, entries, hasManualSelection]);
+
+  // Populates the Overview/Equity Curve selection once, the first time accounts
+  // load - after that, the user's own checkbox choices are never overridden,
+  // even if they deliberately deselect everything. Paper accounts start
+  // unchecked - practice trades shouldn't quietly blend into real combined
+  // numbers unless the trader opts in by hand.
   useEffect(function () {
     if (hasInitializedSelection) return;
     if (accounts.length === 0) return;
@@ -6559,6 +6911,10 @@ function MMMJournal(props) {
   const accountsForOverview = accounts.filter(function (a) {
     return selectedAccountIds.has(a.id);
   });
+
+  // Paper accounts are a practice sandbox - they should never move a real
+  // discipline score or the leaderboard, so every discipline computation
+  // for this user runs on real (non-paper) accounts/entries only.
   const nonPaperAccounts = accounts.filter(function (a) {
     return a.accountType !== 'paper';
   });
@@ -6586,6 +6942,11 @@ function MMMJournal(props) {
       clearInterval(interval);
     };
   }, [user.uid]);
+
+  // Records the person's display name the moment they log in, regardless of
+  // whether they have any trading accounts yet. Without this, someone who
+  // signed up with a real name but hasn't set up an account never gets that
+  // name saved anywhere the leaderboard can read it, and shows as Trader-XXXX.
   useEffect(function () {
     db.collection('leaderboard').doc(user.uid).set({
       displayName: user.displayName || 'Trader-' + user.uid.slice(0, 4)
@@ -6624,6 +6985,11 @@ function MMMJournal(props) {
   const accountEntries = entries.filter(function (e) {
     return e.accountId === activeAccountId;
   });
+  // Today's entry (if the trader already logged trades or a no-trade day for
+  // today) and whatever pre-session check-in exists for today - whichever of
+  // the two is "freshest" is what the Mental Check page edits and what a new
+  // Daily Log entry picks up automatically, so the check-in is only ever
+  // filled out once a day, on its own page, not duplicated in the modal too.
   const todayStr = new Date().toISOString().split('T')[0];
   const todaysEntryForAccount = accountEntries.find(function (e) {
     return e.date === todayStr;
@@ -6650,6 +7016,11 @@ function MMMJournal(props) {
   const activeTicker = activeAccount ? getTickerForTier(activeAccount.market || 'nasdaq100', contractPlan.tier) : '-';
   const ruinDivisor = activeCfg.riskPct > 0 ? 1 / activeCfg.riskPct : 10;
   const activeRR = activeAccount ? Math.max(parseFloat(activeAccount.rewardRatio) || MIN_RR, MIN_RR) : MIN_RR;
+
+  // Whenever the selected account changes, reload the risk-tolerance draft and
+  // the Daily Plan template draft from that account's own saved data (each
+  // account has its own tolerance and its own plan - switching accounts must
+  // never leak one account's draft into another's inputs).
   useEffect(function () {
     setRiskToleranceDraft(activeAccount && activeAccount.riskTolerance ? String(activeAccount.riskTolerance) : '');
     setConfirmedTolerance(undefined);
@@ -6658,11 +7029,27 @@ function MMMJournal(props) {
     setDailyPlanTemplateDraft(tpl ? Object.assign({}, emptyDailyPlan(riskPerTrade, activeRR), tpl) : emptyDailyPlan(riskPerTrade, activeRR));
     setDailyPlanCadence(tpl && tpl.cadence ? tpl.cadence : 'daily');
     setDailyPlanTemplateStatus(null);
+    // eslint-disable-next-line
   }, [activeAccountId]);
+
+  // Keeps the Mental Check page's draft in sync with whatever's actually the
+  // freshest source for today - today's own entry if one already exists, or
+  // the standalone check-in saved earlier that morning - so switching
+  // accounts, switching pages, or another tab saving a new entry for today
+  // never leaves the sliders showing stale or wrong-account numbers.
   useEffect(function () {
     setMentalCheckDraft(todaysMentalCheckSource ? Object.assign({}, emptyMentalCheck(), todaysMentalCheckSource) : emptyMentalCheck());
     setMentalCheckStatus(null);
+    // eslint-disable-next-line
   }, [activeAccountId, activePage, todaysEntryForAccount && todaysEntryForAccount.id]);
+
+  // Risk tolerance: the Charter's math (riskPerTrade, contractPlan) is always
+  // the ceiling - the most a trader is ever allowed to risk. A trader can
+  // choose to trade smaller than that ceiling if the full amount would risk
+  // triggering revenge trading or emotional strain, but never larger. When
+  // set, lot size is recalculated to fit inside the smaller dollar amount
+  // using the same stop distance, rather than just capping the dollar figure
+  // and leaving the lot size at the full-risk tier.
   const riskToleranceRaw = confirmedTolerance !== undefined ? confirmedTolerance : activeAccount && activeAccount.riskTolerance ? parseFloat(activeAccount.riskTolerance) : null;
   const effectiveRiskPerTrade = riskToleranceRaw && riskToleranceRaw > 0 ? Math.min(riskToleranceRaw, riskPerTrade) : riskPerTrade;
   const toleranceIsActive = effectiveRiskPerTrade < riskPerTrade;
@@ -6702,6 +7089,12 @@ function MMMJournal(props) {
   }, 0);
   const activeStatus = activeAccount ? accountEntries.length === 0 ? 'active' : computeStatus(activeAccount, currentBuffer, totalPnl) : 'active';
   const shouldShowAccountDetail = activeAccount && (accountFilter !== 'active' || activeStatus !== 'breached' || viewingBreached);
+
+  // Once a risk tolerance is actually locked in, it stays locked for the
+  // rest of this account's active life - no changing your mind mid-account
+  // and quietly raising your own risk. It only opens back up once the
+  // account is done (passed/target-hit, or breached/failed), at which point
+  // a new number would apply to whatever account comes next anyway.
   const toleranceLocked = !!(activeAccount && activeAccount.riskTolerance && activeStatus === 'active');
   const getAccountStatus = function (acc) {
     return computeAccountStatus(acc, entries);
@@ -6779,6 +7172,9 @@ function MMMJournal(props) {
     setHasManualSelection(true);
     setViewingBreached(false);
     setActiveAccountId(doc.id);
+    // A new paper (practice) account stays out of the combined Overview by
+    // default, same as it stays out of the discipline score and leaderboard -
+    // the trader can still check its box by hand if they want it blended in.
     if (newAccount.accountType !== 'paper') {
       setSelectedAccountIds(function (prev) {
         const next = new Set(prev);
@@ -6805,6 +7201,14 @@ function MMMJournal(props) {
     }));
     setShowAddAccount(true);
   };
+
+  // Accounts can never be permanently deleted from the app - that would wipe
+  // real trading history (entries, payouts, buffer data) a user may need
+  // later for records, taxes, or a payout dispute. Instead, every account
+  // moves through a lifecycle: Active -> Funded/Live (accountType already
+  // tracks this) -> Breached ("failed", computed automatically from real
+  // losses - never user-set) -> or manually Archived, which is reversible.
+  // This just flips the existing `archived` flag; it never touches entries.
   const handleArchiveAccount = async function (id, currentlyArchived) {
     const verb = currentlyArchived ? 'Unarchive' : 'Archive';
     const msg = currentlyArchived ? 'Unarchive this account? It will show up as active again.' : "Archive this account? It'll stop counting as active, but every trade and entry stays saved - you can unarchive it anytime.";
@@ -6863,8 +7267,16 @@ function MMMJournal(props) {
         });
         return;
       }
+      // The General calculation is always the ceiling - a trader can only
+      // choose to trade smaller than it, never larger. Rather than silently
+      // clamping a too-high number down, this tells the trader plainly that
+      // what they typed was not allowed and exactly what was used instead,
+      // so a caution is seen, not just a surprising smaller number.
       const wasOverMax = num > riskPerTrade;
       const clamped = Math.min(num, riskPerTrade);
+      // Update local state immediately so the dashboard reflects the change right
+      // away, rather than waiting on the Firestore write/listener round trip -
+      // the write below still persists it for next session.
       setConfirmedTolerance(clamped);
       setRiskToleranceDraft(String(clamped));
       await accountsRef.doc(activeAccount.id).update({
@@ -6889,9 +7301,20 @@ function MMMJournal(props) {
       });
     }
   };
+
+  // Saves the Daily Plan as a reusable template on the account itself (not a
+  // single day's entry). Once saved, every new Daily Log pre-fills its Daily
+  // Plan section from this template - so setting it once covers that one day,
+  // the whole week, the month, or the year, however long the trader says it's
+  // good for (the cadence label), without having to retype it each time a new
+  // entry is opened. A trader can always edit a single day's own plan inside
+  // that day's entry without touching this template.
   const handleSaveDailyPlanTemplate = async function () {
     setDailyPlanTemplateStatus(null);
     try {
+      // riskAmount always mirrors the Personal Risk Tolerance set above it on
+      // this same page, never a separately-typed value - there's only one
+      // risk-per-trade field on this page now, not two that could drift apart.
       const payload = Object.assign({}, dailyPlanTemplateDraft, {
         cadence: dailyPlanCadence,
         riskAmount: effectiveRiskPerTrade.toFixed(2)
@@ -6927,6 +7350,13 @@ function MMMJournal(props) {
       [key]: value
     }));
   };
+
+  // The pre-session check-in now lives on its own page instead of the Daily
+  // Log modal. If today's entry already exists (trades or a no-trade day were
+  // already logged today), update that entry directly so there's still only
+  // one document per account per day. Otherwise, stash it on the account as
+  // "today's" check-in - handleSaveEntry/the no-trade-day save both pick it
+  // up automatically when that day's real entry is created later.
   const handleSaveMentalCheck = async function () {
     setMentalCheckStatus(null);
     try {
@@ -7013,6 +7443,12 @@ function MMMJournal(props) {
             exitPrice: rt.exitPrice !== undefined && rt.exitPrice !== null && !isNaN(rt.exitPrice) ? rt.exitPrice : null
           };
         });
+        // Re-importing the same account+date must overwrite, not stack a second
+        // entry alongside the first. Querying Firestore directly here (not the
+        // local `entries` state) matters: that state comes from an async
+        // listener that can lag behind what's actually saved, especially right
+        // after a previous import - checking the local copy could miss
+        // entries that genuinely exist and let a duplicate through anyway.
         const existingSnap = await entriesRef.where('accountId', '==', activeAccountId).where('date', '==', date).get();
         for (let j = 0; j < existingSnap.docs.length; j++) {
           await entriesRef.doc(existingSnap.docs[j].id).delete();
@@ -7173,6 +7609,13 @@ function MMMJournal(props) {
     if (!activeAccountId) return;
     setSaveEntryError('');
     if (newEntry.tradedToday === 'no') {
+      // A no-trade day is still a logged day - choosing NOT to force a trade
+      // is exactly the discipline this app is trying to build, so it has to
+      // save cleanly and the user has to see that it counted, not just
+      // silently vanish into the log. computeDisciplineScore already counts
+      // every logged date (traded or not) toward loggingConsistency, the
+      // single largest-weighted factor in the discipline score - this just
+      // makes that visible instead of invisible.
       if (!newEntry.noTradeReason) {
         setSaveEntryError('Pick a reason above, then you can save.');
         return;
@@ -7261,88 +7704,97 @@ function MMMJournal(props) {
   }) : [];
   const newAccountPreviewCfg = PHASE_CONFIG[newAccount.accountType] || PHASE_CONFIG.challenge;
   const newAccountMaxStop = getMaxStopPoints(newAccount.market, newAccount.accountType);
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "min-h-screen bg-black text-white p-4 md:p-8"
-  }, entrySavedToast && React.createElement("div", {
+  }, entrySavedToast && /*#__PURE__*/React.createElement("div", {
     className: "fixed top-4 right-4 z-50 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-xs"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "CheckCircle2",
     className: "h-4 w-4 flex-shrink-0"
-  }), React.createElement("span", null, entrySavedToast)), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, entrySavedToast)), /*#__PURE__*/React.createElement("div", {
     className: "max-w-6xl mx-auto space-y-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex flex-col gap-4 pb-5 border-b border-gray-900"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex flex-col sm:flex-row sm:items-center justify-between gap-3"
-  }, React.createElement("div", null, React.createElement("h1", {
-    className: "text-2xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent tracking-tight"
-  }, "MMM Pro Journal"), React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("img", {
+    src: "./logo-wordmark.png",
+    alt: "MMM Pro Journal",
+    className: "h-10 w-auto rounded-lg border border-yellow-500/20"
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-500 text-sm mt-1 flex items-center flex-wrap"
-  }, React.createElement("span", null, React.createElement(EditableName, {
+  }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement(EditableName, {
     user: user
-  }), " - ", React.createElement("button", {
+  }), " - ", /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       auth.signOut();
     },
     className: "text-red-400 hover:underline"
-  }, "Sign out")), React.createElement(UserCounters, null))), React.createElement("div", {
+  }, "Sign out")), /*#__PURE__*/React.createElement(UserCounters, null))), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement("a", {
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "../",
+    title: "Back to maxmaserati.com",
+    className: "flex items-center gap-1.5 bg-gray-900 border border-gray-800 text-gray-400 hover:text-yellow-300 hover:border-yellow-500/40 rounded-lg px-3 py-1.5 text-sm font-semibold transition"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Home",
+    className: "h-4 w-4"
+  }), /*#__PURE__*/React.createElement("span", null, "Home")), /*#__PURE__*/React.createElement("a", {
     href: "course/index.html",
     target: "_blank",
     rel: "noopener noreferrer",
     className: "flex items-center gap-1.5 bg-gradient-to-r from-[#D6B15E] to-[#b8903f] text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-[#e0c074] hover:to-[#c89f4c] transition"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "GraduationCap",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Course")), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Course")), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setShowInstall(true);
     },
     title: "Put MMM Pro Journal on your phone",
     className: "bg-gray-900 border border-gray-800 text-gray-400 hover:text-yellow-300 hover:border-yellow-500/40 rounded-lg p-1.5 transition"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Smartphone",
     className: "h-4 w-4"
-  })), React.createElement("select", {
+  })), /*#__PURE__*/React.createElement("select", {
     value: viewMode,
     onChange: function (e) {
       setViewMode(e.target.value);
     },
     className: "bg-gray-900 border border-gray-800 text-gray-300 rounded-lg px-2 py-1.5 text-xs focus:border-yellow-400/50 outline-none"
   }, VIEW_MODES.map(function (v) {
-    return React.createElement("option", {
+    return /*#__PURE__*/React.createElement("option", {
       key: v.key,
       value: v.key
     }, v.label);
-  })), React.createElement(LanguageSwitcher, {
+  })), /*#__PURE__*/React.createElement(LanguageSwitcher, {
     language: language,
     setLanguage: setLanguage
-  }), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "flex bg-gray-900 border border-gray-800 rounded-lg p-1"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setViewingBreached(false);
       setAccountFilter('active');
     },
     className: "px-3 py-1.5 rounded-md text-xs font-medium transition " + (accountFilter === 'active' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')
-  }, "Active Only"), React.createElement("button", {
+  }, "Active Only"), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setAccountFilter('all');
     },
     className: "px-3 py-1.5 rounded-md text-xs font-medium transition " + (accountFilter === 'all' ? 'bg-yellow-500/20 text-yellow-300' : 'text-gray-500 hover:text-white')
-  }, "All Accounts")), React.createElement("button", {
+  }, "All Accounts")), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setNewAccount(emptyAccountForm);
       setShowAddAccount(true);
     },
     className: "flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-green-400 hover:to-emerald-500 transition"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Plus",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Add Account")))), accounts.length > 0 && React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Add Account")))), accounts.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 flex-wrap"
-  }, React.createElement(AccountGroupNav, {
+  }, /*#__PURE__*/React.createElement(AccountGroupNav, {
     accounts: accounts,
     activeAccountId: activeAccountId,
     onSelect: function (id, fromBreachedTab) {
@@ -7357,7 +7809,7 @@ function MMMJournal(props) {
     onToggleAccount: toggleAccountSelection,
     onToggleGroup: toggleGroupSelection,
     onToggleAll: toggleAllAccountSelection
-  }), shouldShowAccountDetail && React.createElement("button", {
+  }), shouldShowAccountDetail && /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate, todaysMentalCheckSource));
       setEntryMethod('manual');
@@ -7365,10 +7817,10 @@ function MMMJournal(props) {
       setShowAddEntry(true);
     },
     className: "flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-yellow-500/10 border-yellow-500/30 text-yellow-300 hover:bg-yellow-500/15 transition"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "CalendarPlus",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Daily Log")), shouldShowAccountDetail && React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Daily Log")), shouldShowAccountDetail && /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setBrokerImportError('');
       setBrokerImportPreview(null);
@@ -7377,10 +7829,10 @@ function MMMJournal(props) {
       setShowImportBroker(true);
     },
     className: "flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-gray-900 border-gray-800 text-gray-300 hover:border-blue-500/40 hover:text-blue-300 transition"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Upload",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Import Trades (CSV)")), shouldShowAccountDetail && function () {
+  }), /*#__PURE__*/React.createElement("span", null, "Import Trades (CSV)")), shouldShowAccountDetail && function () {
     const seenDates = {};
     let hasDupes = false;
     accountEntries.forEach(function (e) {
@@ -7388,226 +7840,226 @@ function MMMJournal(props) {
       seenDates[e.date] = true;
     });
     if (!hasDupes) return null;
-    return React.createElement("button", {
+    return /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         setShowDupeCleanup(true);
       },
       className: "flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium bg-red-500/10 border-red-500/40 text-red-300 hover:bg-red-500/20 transition"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "AlertTriangle",
       className: "h-3.5 w-3.5"
-    }), React.createElement("span", null, "Duplicate Days Found - Clean Up"));
-  }()), shouldShowAccountDetail && React.createElement("div", {
+    }), /*#__PURE__*/React.createElement("span", null, "Duplicate Days Found - Clean Up"));
+  }()), shouldShowAccountDetail && /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900/60 to-black border border-gray-800 rounded-xl px-5 py-4"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between mb-3.5"
-  }, React.createElement("h3", {
+  }, /*#__PURE__*/React.createElement("h3", {
     className: "text-white font-semibold"
-  }, activeAccount.name), React.createElement("div", {
+  }, activeAccount.name), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3"
-  }, activeAccount.linkedFromLabel && React.createElement("span", {
+  }, activeAccount.linkedFromLabel && /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
-  }, "Promoted from ", React.createElement("span", {
+  }, "Promoted from ", /*#__PURE__*/React.createElement("span", {
     className: "text-yellow-400"
-  }, activeAccount.linkedFromLabel)), activeAccount.copiedAccountNumber && React.createElement("span", {
+  }, activeAccount.linkedFromLabel)), activeAccount.copiedAccountNumber && /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
-  }, "Copy of ", React.createElement("span", {
+  }, "Copy of ", /*#__PURE__*/React.createElement("span", {
     className: "text-yellow-400"
-  }, activeAccount.copiedAccountNumber)), React.createElement("button", {
+  }, activeAccount.copiedAccountNumber)), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       handleArchiveAccount(activeAccount.id, activeAccount.archived === true);
     },
     className: "text-xs text-gray-600 hover:text-yellow-400 transition"
-  }, activeAccount.archived === true ? 'Unarchive account' : 'Archive account'))), React.createElement("div", {
+  }, activeAccount.archived === true ? 'Unarchive account' : 'Archive account'))), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
-  }, React.createElement("div", null, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-gray-500 mb-0.5"
-  }, "Capital"), React.createElement("div", {
+  }, "Capital"), /*#__PURE__*/React.createElement("div", {
     className: "num text-white font-semibold"
-  }, fmt(activeAccount.startingBalance))), React.createElement("div", null, React.createElement("div", {
+  }, fmt(activeAccount.startingBalance))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-gray-500 mb-0.5"
-  }, "Drawdown"), React.createElement("div", {
+  }, "Drawdown"), /*#__PURE__*/React.createElement("div", {
     className: "num font-semibold " + (currentBuffer - (parseFloat(activeAccount.maxDrawdown) || 0) < 0 ? 'text-red-400' : 'text-white')
-  }, fmt(currentBuffer - (parseFloat(activeAccount.maxDrawdown) || 0))), React.createElement("div", {
+  }, fmt(currentBuffer - (parseFloat(activeAccount.maxDrawdown) || 0))), /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-gray-600"
-  }, "from ", fmt(activeAccount.maxDrawdown))), React.createElement("div", null, React.createElement("div", {
+  }, "from ", fmt(activeAccount.maxDrawdown))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-gray-500 mb-0.5"
-  }, "Drawdown type"), React.createElement("div", {
+  }, "Drawdown type"), /*#__PURE__*/React.createElement("div", {
     className: "text-white font-semibold text-sm"
   }, (DRAWDOWN_TYPES.find(function (dt) {
     return dt.key === (activeAccount.drawdownType || 'static');
-  }) || {}).short)), React.createElement("div", null, React.createElement("div", {
+  }) || {}).short)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-gray-500 mb-0.5"
-  }, "Market"), React.createElement("select", {
+  }, "Market"), /*#__PURE__*/React.createElement("select", {
     value: activeAccount.market || 'nasdaq100',
     onChange: function (e) {
       handleChangeMarket(e.target.value);
     },
     className: "bg-gray-900 border border-gray-700 text-white rounded-md px-2 py-1 text-sm focus:border-yellow-400/50 outline-none w-full"
   }, MARKET_OPTIONS.map(function (m) {
-    return React.createElement("option", {
+    return /*#__PURE__*/React.createElement("option", {
       key: m.key,
       value: m.key
     }, m.label);
-  }))), React.createElement("div", null, React.createElement("div", {
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-gray-500 mb-0.5"
-  }, "Target"), React.createElement("div", {
+  }, "Target"), /*#__PURE__*/React.createElement("div", {
     className: "num text-white font-semibold"
-  }, fmt(activeAccount.profitTarget))))), React.createElement(SystemExplainer, null)), accounts.length === 0 ? React.createElement("div", {
+  }, fmt(activeAccount.profitTarget))))), /*#__PURE__*/React.createElement(SystemExplainer, null)), accounts.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "text-center py-20 border border-dashed border-gray-700 rounded-2xl"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Shield",
     className: "h-10 w-10 text-gray-600 mx-auto mb-3"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-500"
-  }, "No accounts yet. Add one to start tracking your buffer.")) : !shouldShowAccountDetail ? React.createElement("div", {
+  }, "No accounts yet. Add one to start tracking your buffer.")) : !shouldShowAccountDetail ? /*#__PURE__*/React.createElement("div", {
     className: "text-center py-20 border border-dashed border-gray-700 rounded-2xl"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Shield",
     className: "h-10 w-10 text-gray-600 mx-auto mb-3"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-500"
-  }, "No active accounts right now."), React.createElement("p", {
+  }, "No active accounts right now."), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-600 text-sm mt-1"
-  }, "Add a new account to get started, or check the Breached tab to review what happened."), React.createElement("button", {
+  }, "Add a new account to get started, or check the Breached tab to review what happened."), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setNewAccount(emptyAccountForm);
       setShowAddAccount(true);
     },
     className: "mt-4 inline-flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-green-400 hover:to-emerald-500 transition"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Plus",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Add Account"))) : React.createElement(React.Fragment, null, activeAccount && React.createElement(React.Fragment, null, activeStatus === 'breached' && React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Add Account"))) : /*#__PURE__*/React.createElement(React.Fragment, null, activeAccount && /*#__PURE__*/React.createElement(React.Fragment, null, activeStatus === 'breached' && /*#__PURE__*/React.createElement("div", {
     className: "border border-red-500/40 bg-red-500/10 rounded-xl p-4 flex items-start gap-3"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "AlertTriangle",
     className: "h-5 w-5 text-red-400 mt-0.5"
-  }), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "flex-1"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-red-300 font-semibold text-sm"
-  }, "Account Breached"), React.createElement("p", {
+  }, "Account Breached"), /*#__PURE__*/React.createElement("p", {
     className: "text-red-200/70 text-xs mt-1"
-  }, "Buffer fully consumed. This account is now archived.")), React.createElement("button", {
+  }, "Buffer fully consumed. This account is now archived.")), /*#__PURE__*/React.createElement("button", {
     onClick: handleBackToActive,
     className: "text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-3 py-1.5 rounded-lg border border-gray-700 flex-shrink-0"
-  }, "Back to Active"), React.createElement("button", {
+  }, "Back to Active"), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setNewAccount(emptyAccountForm);
       setShowAddAccount(true);
     },
     className: "text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 px-3 py-1.5 rounded-lg border border-red-500/40 flex-shrink-0"
-  }, "Open New Account")), activeStatus === 'passed' && React.createElement("div", {
+  }, "Open New Account")), activeStatus === 'passed' && /*#__PURE__*/React.createElement("div", {
     className: "border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Trophy",
     className: "h-5 w-5 text-green-400 mt-0.5"
-  }), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "flex-1"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-green-300 font-semibold text-sm"
-  }, "Challenge Passed!"), React.createElement("p", {
+  }, "Challenge Passed!"), /*#__PURE__*/React.createElement("p", {
     className: "text-green-200/70 text-xs mt-1"
-  }, "Start tracking the funded account."), daysStillNeeded > 0 && React.createElement("p", {
+  }, "Start tracking the funded account."), daysStillNeeded > 0 && /*#__PURE__*/React.createElement("p", {
     className: "text-yellow-300 text-xs mt-1 flex items-center gap-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "AlertTriangle",
     className: "h-3 w-3 flex-shrink-0"
-  }), React.createElement("span", null, "Target hit, but this firm requires ", minTradingDaysNeeded, " trading days minimum - you're at ", tradingDaysCount, ". ", daysStillNeeded, " more day", daysStillNeeded !== 1 ? 's' : '', " needed before you can actually request the pass."))), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Target hit, but this firm requires ", minTradingDaysNeeded, " trading days minimum - you're at ", tradingDaysCount, ". ", daysStillNeeded, " more day", daysStillNeeded !== 1 ? 's' : '', " needed before you can actually request the pass."))), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       handleStartFundedFromChallenge(activeAccount);
     },
     className: "text-xs bg-green-500/20 hover:bg-green-500/30 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/40 flex-shrink-0"
-  }, "Start Funded Account")), activeStatus === 'target-hit' && React.createElement("div", {
+  }, "Start Funded Account")), activeStatus === 'target-hit' && /*#__PURE__*/React.createElement("div", {
     className: "border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "DollarSign",
     className: "h-5 w-5 text-green-400 mt-0.5"
-  }), React.createElement("div", null, React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-green-300 font-semibold text-sm"
-  }, "Target Hit"), React.createElement("p", {
+  }, "Target Hit"), /*#__PURE__*/React.createElement("p", {
     className: "text-green-200/70 text-xs mt-1"
-  }, activeAccount.accountType === 'funded' ? 'Ready for payout.' : 'Profit target reached.'), daysStillNeeded > 0 && React.createElement("p", {
+  }, activeAccount.accountType === 'funded' ? 'Ready for payout.' : 'Profit target reached.'), daysStillNeeded > 0 && /*#__PURE__*/React.createElement("p", {
     className: "text-yellow-300 text-xs mt-1 flex items-center gap-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "AlertTriangle",
     className: "h-3 w-3 flex-shrink-0"
-  }), React.createElement("span", null, "But this firm requires ", minTradingDaysNeeded, " trading days minimum - you're at ", tradingDaysCount, ". ", daysStillNeeded, " more day", daysStillNeeded !== 1 ? 's' : '', " needed before this actually qualifies.")))), payoutStatus && payoutStatus.eligible && React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "But this firm requires ", minTradingDaysNeeded, " trading days minimum - you're at ", tradingDaysCount, ". ", daysStillNeeded, " more day", daysStillNeeded !== 1 ? 's' : '', " needed before this actually qualifies.")))), payoutStatus && payoutStatus.eligible && /*#__PURE__*/React.createElement("div", {
     className: "border border-green-500/40 bg-green-500/10 rounded-xl p-4 flex items-start gap-3"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Calendar",
     className: "h-5 w-5 text-green-400 mt-0.5 flex-shrink-0"
-  }), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "flex-1"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-green-300 font-semibold text-sm"
-  }, "Payout Due - ", fmt(payoutStatus.requestable), " available", payoutStatus.split ? ' at your ' + payoutStatus.split + '% split' : ''), React.createElement("p", {
+  }, "Payout Due - ", fmt(payoutStatus.requestable), " available", payoutStatus.split ? ' at your ' + payoutStatus.split + '% split' : ''), /*#__PURE__*/React.createElement("p", {
     className: "text-green-200/70 text-xs mt-1"
-  }, payoutStatus.note, " Head to your prop firm's dashboard to request it, then log it on the Finances tab.")), React.createElement("button", {
+  }, payoutStatus.note, " Head to your prop firm's dashboard to request it, then log it on the Finances tab.")), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setActivePage('finances');
     },
     className: "text-xs bg-green-500/20 hover:bg-green-500/30 text-green-300 px-3 py-1.5 rounded-lg border border-green-500/40 flex-shrink-0"
-  }, "View Payout Tracker")), daysSinceLastLog !== null && daysSinceLastLog >= 1 && activeStatus === 'active' && React.createElement("div", {
+  }, "View Payout Tracker")), daysSinceLastLog !== null && daysSinceLastLog >= 1 && activeStatus === 'active' && /*#__PURE__*/React.createElement("div", {
     className: "border border-orange-500/30 bg-orange-500/10 rounded-xl p-3 flex items-center gap-3"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Clock",
     className: "h-4 w-4 text-orange-400"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-orange-200/80"
-  }, "Last logged ", daysSinceLastLog, " day", daysSinceLastLog !== 1 ? 's' : '', " ago. Log today's activity or mark it as no-trade.")), React.createElement("div", {
+  }, "Last logged ", daysSinceLastLog, " day", daysSinceLastLog !== 1 ? 's' : '', " ago. Log today's activity or mark it as no-trade.")), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-1 border-b border-gray-900 overflow-x-auto"
   }, PAGE_TABS.map(function (tab) {
-    return React.createElement("button", {
+    return /*#__PURE__*/React.createElement("button", {
       key: tab.key,
       onClick: function () {
         setActivePage(tab.key);
       },
       className: "flex items-center gap-1.5 px-3.5 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition " + (activePage === tab.key ? 'border-yellow-400 text-yellow-300' : 'border-transparent text-gray-500 hover:text-gray-300')
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: tab.icon,
       className: "h-3.5 w-3.5"
-    }), React.createElement("span", null, tab.label));
-  })), activeAccount.accountType === 'paper' && React.createElement("div", {
+    }), /*#__PURE__*/React.createElement("span", null, tab.label));
+  })), activeAccount.accountType === 'paper' && /*#__PURE__*/React.createElement("div", {
     className: "border border-blue-500/30 bg-blue-500/10 rounded-xl p-3 flex items-center gap-3"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "FlaskConical",
     className: "h-4 w-4 text-blue-400 flex-shrink-0"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-blue-200/80"
-  }, "Paper account - practice only. Nothing logged here counts toward your discipline score, the leaderboard, or any other real account's numbers.")), activePage === 'overview' && React.createElement(React.Fragment, null, selectedAccountIds.size === 0 ? React.createElement("div", {
+  }, "Paper account - practice only. Nothing logged here counts toward your discipline score, the leaderboard, or any other real account's numbers.")), activePage === 'overview' && /*#__PURE__*/React.createElement(React.Fragment, null, selectedAccountIds.size === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "text-center py-16 border border-dashed border-gray-700 rounded-2xl"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Square",
     className: "h-10 w-10 text-gray-600 mx-auto mb-3"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-400 font-medium"
-  }, "No accounts selected"), React.createElement("p", {
+  }, "No accounts selected"), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-600 text-sm mt-1"
-  }, "Check the boxes next to accounts in the nav above to see their numbers here - the whole Overview stays at zero until something's selected.")) : React.createElement(React.Fragment, null, React.createElement("div", {
+  }, "Check the boxes next to accounts in the nav above to see their numbers here - the whole Overview stays at zero until something's selected.")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "UserCheck",
     className: "h-5 w-5 text-blue-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Personal Trading Plan"), React.createElement("span", {
+  }, "Personal Trading Plan"), /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
-  }, "trader's final decision")), React.createElement("div", {
+  }, "trader's final decision")), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 lg:grid-cols-4 gap-4"
-  }, React.createElement(StatCard, {
+  }, /*#__PURE__*/React.createElement(StatCard, {
     label: "Current Capital (Buffer)",
     value: fmt(Math.max(currentBuffer, 0)),
     icon: "Shield",
     color: activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'
-  }), React.createElement(StatCard, {
+  }), /*#__PURE__*/React.createElement(StatCard, {
     label: "Risk Per Trade",
     value: fmt(effectiveRiskPerTrade),
     icon: "Target",
     color: "text-blue-400",
     sub: toleranceIsActive ? "Tolerance (system max " + fmt(riskPerTrade) + ")" : activeCfg.mode + " (" + activeCfg.riskPct * 100 + "%)"
-  }), React.createElement(StatCard, {
+  }), /*#__PURE__*/React.createElement(StatCard, {
     label: "Total P&L",
     value: fmtView(totalPnl, viewMode, {
       buffer: parseFloat(activeAccount.maxDrawdown) || 0,
@@ -7616,127 +8068,127 @@ function MMMJournal(props) {
     }),
     icon: totalPnl >= 0 ? "TrendingUp" : "TrendingDown",
     color: totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
-  }), React.createElement(StatCard, {
+  }), /*#__PURE__*/React.createElement(StatCard, {
     label: "Win Rate",
     value: totalTrades === 0 ? '-' : winRate.toFixed(1) + "%",
     icon: "DollarSign",
     color: totalTrades === 0 ? 'text-gray-500' : winRate >= 50 ? 'text-green-400' : 'text-red-400',
     sub: totalTrades === 0 ? 'No trades yet' : winTrades + "W / " + lossTrades + "L"
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 gap-3"
-  }, React.createElement(PersonalPlanStats, {
+  }, /*#__PURE__*/React.createElement(PersonalPlanStats, {
     account: activeAccount,
     riskPerTrade: effectiveRiskPerTrade,
     totalPnl: totalPnl
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between mb-4 flex-wrap gap-2"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "LineChart",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Dashboard"), React.createElement("span", {
+  }, "Dashboard"), /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
-  }, "general calculation")), React.createElement("div", {
+  }, "general calculation")), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 flex-wrap"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "text-xs px-2.5 py-1 rounded-full font-medium border " + STATUS_STYLES[activeStatus].cls
-  }, STATUS_STYLES[activeStatus].label), React.createElement("span", {
+  }, STATUS_STYLES[activeStatus].label), /*#__PURE__*/React.createElement("span", {
     className: "text-xs px-2.5 py-1 rounded-full font-medium " + ACCOUNT_BADGE_CLS[activeAccount.accountType] + " border border-current/30"
-  }, activeCfg.label), React.createElement("span", {
+  }, activeCfg.label), /*#__PURE__*/React.createElement("span", {
     className: "text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700"
-  }, activeCfg.mode, " - ", activeCfg.riskPct * 100, "% Risk"), React.createElement("span", {
+  }, activeCfg.mode, " - ", activeCfg.riskPct * 100, "% Risk"), /*#__PURE__*/React.createElement("span", {
     className: "text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700"
-  }, (MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label, " - ", activeTicker))), React.createElement("div", {
+  }, (MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label, " - ", activeTicker))), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 md:grid-cols-4 gap-3"
-  }, React.createElement(MiniStat, {
+  }, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Contracts Unlocked (max)",
     value: contractPlan.label,
     color: "text-yellow-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Risk / Trade (max)",
     value: fmt(riskPerTrade),
     color: "text-blue-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Locked Max Stop",
     value: maxStopPoints.toFixed(0) + " pts",
     color: "text-red-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Daily Target (max, 2 wins)",
     value: fmt(riskPerTrade * activeRR * 2),
     color: "text-green-400"
-  }), React.createElement(MiniStat, {
+  }), /*#__PURE__*/React.createElement(MiniStat, {
     label: "Max Loss / Day (max)",
     value: fmt(riskPerTrade * 2),
     color: "text-red-400"
-  }), React.createElement(PropFirmRuleStats, {
+  }), /*#__PURE__*/React.createElement(PropFirmRuleStats, {
     account: activeAccount,
     entries: entries
-  }), React.createElement(GeneralPlanStats, {
+  }), /*#__PURE__*/React.createElement(GeneralPlanStats, {
     account: activeAccount,
     riskPerTrade: riskPerTrade,
     totalPnl: totalPnl,
     avgTradesPerDay: avgTradesPerDay,
     maxTradesInDay: maxTradesInDay
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "mt-3 bg-black/30 border border-gray-800/80 rounded-lg px-3 py-2.5"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-400 flex items-start gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "ShieldAlert",
     className: "h-3.5 w-3.5 text-yellow-400 flex-shrink-0 mt-0.5"
-  }), React.createElement("span", null, React.createElement("span", {
+  }), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
     className: "text-gray-300 font-medium"
-  }, "General rule:"), " max ", React.createElement("span", {
+  }, "General rule:"), " max ", /*#__PURE__*/React.createElement("span", {
     className: "text-white font-semibold"
-  }, "3 trades/day"), ", max ", React.createElement("span", {
+  }, "3 trades/day"), ", max ", /*#__PURE__*/React.createElement("span", {
     className: "text-green-400 font-semibold"
-  }, "2 wins"), ", max ", React.createElement("span", {
+  }, "2 wins"), ", max ", /*#__PURE__*/React.createElement("span", {
     className: "text-red-400 font-semibold"
-  }, "2 losses"), ". Hit any of those and you're done for the day - no exceptions."))), React.createElement(PropFirmRuleNote, {
+  }, "2 losses"), ". Hit any of those and you're done for the day - no exceptions."))), /*#__PURE__*/React.createElement(PropFirmRuleNote, {
     account: activeAccount,
     entries: entries
-  })), React.createElement(ConsistencyRebalanceWidget, {
+  })), /*#__PURE__*/React.createElement(ConsistencyRebalanceWidget, {
     account: activeAccount,
     accountEntries: accountEntries
-  }), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setActivePage('dailyplan');
     },
     className: "w-full flex items-center justify-between gap-3 bg-gradient-to-br from-purple-950/40 to-black border border-purple-800/40 rounded-2xl p-4 text-left hover:border-purple-600/50 transition"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Shield",
     className: "h-5 w-5 text-purple-400"
-  }), React.createElement("div", null, React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-sm font-semibold text-white"
-  }, "Personal Risk Tolerance: ", fmt(effectiveRiskPerTrade), "/trade ", toleranceLocked && '(Locked)'), React.createElement("p", {
+  }, "Personal Risk Tolerance: ", fmt(effectiveRiskPerTrade), "/trade ", toleranceLocked && '(Locked)'), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "Set in Daily Plan - ", toleranceIsActive ? 'trading below the system max by choice.' : 'currently using the full system max.'))), React.createElement("span", {
+  }, "Set in Daily Plan - ", toleranceIsActive ? 'trading below the system max by choice.' : 'currently using the full system max.'))), /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-purple-300 flex items-center gap-1 flex-shrink-0"
-  }, "Open Daily Plan ", React.createElement(Icon, {
+  }, "Open Daily Plan ", /*#__PURE__*/React.createElement(Icon, {
     name: "ArrowRight",
     className: "h-3.5 w-3.5"
-  }))), React.createElement("div", null, React.createElement("h2", {
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white flex items-center gap-2 mb-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "LayoutDashboard",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("span", null, "Performance Overview")), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("span", null, "Performance Overview")), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600 mb-3"
   }, accountsForOverview.length === 0 ? 'No accounts selected - check the boxes next to accounts above to include them here.' : accountsForOverview.length === accounts.filter(function (a) {
     return getAccountStatus(a) !== 'breached';
   }).length ? 'Showing all accounts, combined.' : 'Showing ' + accountsForOverview.length + ' selected account' + (accountsForOverview.length !== 1 ? 's' : '') + ': ' + accountsForOverview.map(function (a) {
     return a.name;
-  }).join(', ')), React.createElement(OverviewStats, {
+  }).join(', ')), /*#__PURE__*/React.createElement(OverviewStats, {
     accounts: accountsForOverview,
     entries: entries
-  })), React.createElement(TradingCalendar, {
+  })), /*#__PURE__*/React.createElement(TradingCalendar, {
     accounts: accountsForOverview,
     entries: entries,
     viewMode: viewMode,
@@ -7745,34 +8197,34 @@ function MMMJournal(props) {
       risk: effectiveRiskPerTrade,
       pointValue: activePointValue
     }
-  }), React.createElement(EquityCurveBlock, {
+  }), /*#__PURE__*/React.createElement(EquityCurveBlock, {
     accounts: accountsForOverview,
     entries: entries
-  }))), activePage === 'dailyplan' && activeAccount && React.createElement("div", {
+  }))), activePage === 'dailyplan' && activeAccount && /*#__PURE__*/React.createElement("div", {
     className: "space-y-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-purple-950/40 to-black border border-purple-800/40 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Calendar",
     className: "h-5 w-5 text-purple-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Daily Plan"), toleranceLocked && React.createElement("span", {
+  }, "Daily Plan"), toleranceLocked && /*#__PURE__*/React.createElement("span", {
     className: "text-xs px-2 py-0.5 rounded-full font-medium bg-yellow-500/15 text-yellow-300 border border-yellow-500/30 flex items-center gap-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Lock",
     className: "h-3 w-3"
-  }), React.createElement("span", null, "Risk Locked"))), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("span", null, "Risk Locked"))), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-5"
-  }, "Your risk per trade and your plan for the session, in one place. Set your risk tolerance once - it's the amount you can lose per trade without it triggering revenge trading, capped at the system max (", fmt(riskPerTrade), "/trade, see General on Overview) and locked for this account until it passes or fails. Everything below it - target, planned trades, session window - can change as often as you like."), React.createElement("label", {
+  }, "Your risk per trade and your plan for the session, in one place. Set your risk tolerance once - it's the amount you can lose per trade without it triggering revenge trading, capped at the system max (", fmt(riskPerTrade), "/trade, see General on Overview) and locked for this account until it passes or fails. Everything below it - target, planned trades, session window - can change as often as you like."), /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1.5"
-  }, "Your risk tolerance ($ per trade)"), React.createElement("div", {
+  }, "Your risk tolerance ($ per trade)"), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 md:grid-cols-2 gap-4 items-start"
-  }, React.createElement("div", null, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "flex gap-2"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     min: "1",
     max: riskPerTrade,
@@ -7793,50 +8245,50 @@ function MMMJournal(props) {
       }
     },
     className: "flex-1 bg-black/40 border border-purple-700/40 text-purple-200 text-lg font-semibold rounded-lg px-3 py-2 outline-none focus:border-purple-400/60 num " + (toleranceLocked ? 'opacity-50 cursor-not-allowed' : '')
-  }), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       if (!toleranceLocked) handleChangeRiskTolerance(riskToleranceDraft);
     },
     disabled: toleranceLocked,
     className: "bg-purple-500/20 border border-purple-500/40 text-purple-300 px-4 rounded-lg text-sm font-semibold transition flex-shrink-0 " + (toleranceLocked ? 'opacity-50 cursor-not-allowed' : 'hover:bg-purple-500/30')
-  }, "Confirm")), React.createElement("p", {
+  }, "Confirm")), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600 mt-1.5"
-  }, toleranceLocked ? "Locked - it'll unlock automatically once this account passes or fails." : 'Type a number and click Confirm (or press Enter). Clear the field and confirm to go back to the system max.'), riskToleranceStatus && React.createElement("p", {
+  }, toleranceLocked ? "Locked - it'll unlock automatically once this account passes or fails." : 'Type a number and click Confirm (or press Enter). Clear the field and confirm to go back to the system max.'), riskToleranceStatus && /*#__PURE__*/React.createElement("p", {
     className: "text-xs mt-1.5 font-medium " + (riskToleranceStatus.type === 'error' ? 'text-red-400' : 'text-green-400')
-  }, riskToleranceStatus.text), toleranceIsActive ? React.createElement("p", {
+  }, riskToleranceStatus.text), toleranceIsActive ? /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-purple-300/80 mt-2 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "CheckCircle",
     className: "h-3.5 w-3.5 flex-shrink-0"
-  }), React.createElement("span", null, "Active - trading below the system max by choice.")) : React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("span", null, "Active - trading below the system max by choice.")) : /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600 mt-2"
-  }, "Not set - currently using the full system max.")), React.createElement("div", {
+  }, "Not set - currently using the full system max.")), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-3 gap-2"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "bg-black/30 border border-purple-800/30 rounded-lg px-3 py-2.5 text-center"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-gray-500 mb-1"
-  }, "Your risk/trade"), React.createElement("div", {
+  }, "Your risk/trade"), /*#__PURE__*/React.createElement("div", {
     className: "num text-lg font-bold text-purple-300"
-  }, fmt(effectiveRiskPerTrade))), React.createElement("div", {
+  }, fmt(effectiveRiskPerTrade))), /*#__PURE__*/React.createElement("div", {
     className: "bg-black/30 border border-purple-800/30 rounded-lg px-3 py-2.5 text-center"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-gray-500 mb-1"
-  }, "Your lot size"), React.createElement("div", {
+  }, "Your lot size"), /*#__PURE__*/React.createElement("div", {
     className: "num text-lg font-bold text-purple-300"
-  }, effectiveContractLabel)), React.createElement("div", {
+  }, effectiveContractLabel)), /*#__PURE__*/React.createElement("div", {
     className: "bg-black/30 border border-purple-800/30 rounded-lg px-3 py-2.5 text-center"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-gray-500 mb-1"
-  }, "Your max loss/day"), React.createElement("div", {
+  }, "Your max loss/day"), /*#__PURE__*/React.createElement("div", {
     className: "num text-lg font-bold text-purple-300"
-  }, fmt(effectiveDailyCap))))), React.createElement("div", {
+  }, fmt(effectiveDailyCap))))), /*#__PURE__*/React.createElement("div", {
     className: "h-px bg-gray-800 my-5"
-  }), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between flex-wrap gap-2 mb-1"
-  }, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("label", {
     className: "block text-xs text-gray-500"
-  }, "Apply this plan for:"), React.createElement("div", {
+  }, "Apply this plan for:"), /*#__PURE__*/React.createElement("div", {
     className: "flex flex-wrap gap-2"
   }, [{
     key: 'daily',
@@ -7851,63 +8303,63 @@ function MMMJournal(props) {
     key: 'yearly',
     label: 'This Year'
   }].map(function (c) {
-    return React.createElement("button", {
+    return /*#__PURE__*/React.createElement("button", {
       key: c.key,
       onClick: function () {
         setDailyPlanCadence(c.key);
       },
       className: "px-3.5 py-1.5 rounded-lg text-xs font-medium border transition " + (dailyPlanCadence === c.key ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-300' : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-gray-200')
     }, c.label);
-  }))), React.createElement("p", {
+  }))), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600 mb-4"
-  }, "Set it once and it pre-fills every new Daily Log entry you add until you change it - so it covers one day, the whole week, the month, or the year, whichever you pick above."), React.createElement(PlanFieldsGrid, {
+  }, "Set it once and it pre-fills every new Daily Log entry you add until you change it - so it covers one day, the whole week, the month, or the year, whichever you pick above."), /*#__PURE__*/React.createElement(PlanFieldsGrid, {
     value: dailyPlanTemplateDraft,
     onChange: updateDailyPlanTemplateDraft
-  }), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3 mt-4"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: handleSaveDailyPlanTemplate,
     className: "bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/30 px-4 py-2 rounded-lg text-sm font-semibold transition"
-  }, "Save Daily Plan"), dailyPlanTemplateStatus && React.createElement("p", {
+  }, "Save Daily Plan"), dailyPlanTemplateStatus && /*#__PURE__*/React.createElement("p", {
     className: "text-xs font-medium " + (dailyPlanTemplateStatus.type === 'error' ? 'text-red-400' : 'text-green-400')
-  }, dailyPlanTemplateStatus.text))), React.createElement(TradeBudgetReference, {
+  }, dailyPlanTemplateStatus.text))), /*#__PURE__*/React.createElement(TradeBudgetReference, {
     buffer: currentBuffer,
     systemMaxRisk: riskPerTrade,
     onApply: handleChangeRiskTolerance,
     locked: toleranceLocked
-  })), activePage === 'mentalcheck' && activeAccount && React.createElement("div", {
+  })), activePage === 'mentalcheck' && activeAccount && /*#__PURE__*/React.createElement("div", {
     className: "space-y-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-teal-950/40 to-black border border-teal-800/40 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Brain",
     className: "h-5 w-5 text-teal-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Pre-Session Mental Check")), React.createElement("p", {
+  }, "Pre-Session Mental Check")), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-4"
-  }, todaysEntryForAccount ? "Today's entry is already logged - this updates its mental check directly." : "Fill this out before you start trading today. It'll carry over automatically when you log today's Daily Log entry."), React.createElement(MentalCheckFields, {
+  }, todaysEntryForAccount ? "Today's entry is already logged - this updates its mental check directly." : "Fill this out before you start trading today. It'll carry over automatically when you log today's Daily Log entry."), /*#__PURE__*/React.createElement(MentalCheckFields, {
     value: mentalCheckDraft,
     onChange: updateMentalCheckDraft
-  }), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3 mt-4"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: handleSaveMentalCheck,
     className: "bg-teal-500/20 border border-teal-500/40 text-teal-300 hover:bg-teal-500/30 px-4 py-2 rounded-lg text-sm font-semibold transition"
-  }, "Save Check-In"), mentalCheckStatus && React.createElement("p", {
+  }, "Save Check-In"), mentalCheckStatus && /*#__PURE__*/React.createElement("p", {
     className: "text-xs font-medium " + (mentalCheckStatus.type === 'error' ? 'text-red-400' : 'text-green-400')
-  }, mentalCheckStatus.text))), React.createElement("div", {
+  }, mentalCheckStatus.text))), /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2 mb-1"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "History",
     className: "h-5 w-5 text-gray-400"
-  }), React.createElement("h2", {
+  }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "History")), React.createElement("p", {
+  }, "History")), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-4"
   }, "The trend over time: market awareness, risk respect, humility and professional mindset, each out of 10."), function () {
     const withMc = accountEntries.filter(function (e) {
@@ -7916,7 +8368,7 @@ function MMMJournal(props) {
       return b.date < a.date ? -1 : 1;
     });
     if (withMc.length === 0) {
-      return React.createElement("p", {
+      return /*#__PURE__*/React.createElement("p", {
         className: "text-sm text-gray-600 py-6 text-center"
       }, "No mental check-ins logged yet for this account - fill one out next time you add a Daily Log entry.");
     }
@@ -7924,80 +8376,80 @@ function MMMJournal(props) {
       return s + mentalCheckTotal(e.mentalCheck);
     }, 0) / withMc.length;
     const avgColor = avg >= 32 ? 'text-green-400' : avg >= 20 ? 'text-yellow-400' : 'text-red-400';
-    return React.createElement(React.Fragment, null, React.createElement("div", {
+    return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5"
-    }, React.createElement(MiniStat, {
+    }, /*#__PURE__*/React.createElement(MiniStat, {
       label: "Average Score",
       value: avg.toFixed(0) + "/40",
       color: avgColor
-    }), React.createElement(MiniStat, {
+    }), /*#__PURE__*/React.createElement(MiniStat, {
       label: "Days Checked In",
       value: String(withMc.length),
       color: "text-blue-400"
-    }), React.createElement(MiniStat, {
+    }), /*#__PURE__*/React.createElement(MiniStat, {
       label: "Last Score",
       value: mentalCheckTotal(withMc[0].mentalCheck) + "/40",
       color: "text-purple-400"
-    }), React.createElement(MiniStat, {
+    }), /*#__PURE__*/React.createElement(MiniStat, {
       label: "Last Check-In",
       value: withMc[0].date,
       color: "text-gray-400"
-    })), React.createElement("div", {
+    })), /*#__PURE__*/React.createElement("div", {
       className: "overflow-x-auto"
-    }, React.createElement("table", {
+    }, /*#__PURE__*/React.createElement("table", {
       className: "w-full text-xs"
-    }, React.createElement("thead", null, React.createElement("tr", {
+    }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
       className: "text-gray-500 border-b border-gray-800"
-    }, React.createElement("th", {
+    }, /*#__PURE__*/React.createElement("th", {
       className: "text-left py-1.5 pr-3"
-    }, "Date"), React.createElement("th", {
+    }, "Date"), /*#__PURE__*/React.createElement("th", {
       className: "text-left py-1.5 pr-3"
-    }, "Market Awareness"), React.createElement("th", {
+    }, "Market Awareness"), /*#__PURE__*/React.createElement("th", {
       className: "text-left py-1.5 pr-3"
-    }, "Risk Respect"), React.createElement("th", {
+    }, "Risk Respect"), /*#__PURE__*/React.createElement("th", {
       className: "text-left py-1.5 pr-3"
-    }, "Humility"), React.createElement("th", {
+    }, "Humility"), /*#__PURE__*/React.createElement("th", {
       className: "text-left py-1.5 pr-3"
-    }, "Mindset"), React.createElement("th", {
+    }, "Mindset"), /*#__PURE__*/React.createElement("th", {
       className: "text-left py-1.5"
-    }, "Total"))), React.createElement("tbody", null, withMc.slice(0, 30).map(function (e) {
+    }, "Total"))), /*#__PURE__*/React.createElement("tbody", null, withMc.slice(0, 30).map(function (e) {
       const t = mentalCheckTotal(e.mentalCheck);
       const tc = t >= 32 ? 'text-green-400' : t >= 20 ? 'text-yellow-400' : 'text-red-400';
-      return React.createElement("tr", {
+      return /*#__PURE__*/React.createElement("tr", {
         key: e.id,
         className: "border-b border-gray-900"
-      }, React.createElement("td", {
+      }, /*#__PURE__*/React.createElement("td", {
         className: "py-1.5 pr-3 text-gray-300 num"
-      }, e.date), React.createElement("td", {
+      }, e.date), /*#__PURE__*/React.createElement("td", {
         className: "py-1.5 pr-3 text-gray-400 num"
-      }, e.mentalCheck.marketAwareness, "/10"), React.createElement("td", {
+      }, e.mentalCheck.marketAwareness, "/10"), /*#__PURE__*/React.createElement("td", {
         className: "py-1.5 pr-3 text-gray-400 num"
-      }, e.mentalCheck.riskRespect, "/10"), React.createElement("td", {
+      }, e.mentalCheck.riskRespect, "/10"), /*#__PURE__*/React.createElement("td", {
         className: "py-1.5 pr-3 text-gray-400 num"
-      }, e.mentalCheck.humility, "/10"), React.createElement("td", {
+      }, e.mentalCheck.humility, "/10"), /*#__PURE__*/React.createElement("td", {
         className: "py-1.5 pr-3 text-gray-400 num"
-      }, e.mentalCheck.mindset, "/10"), React.createElement("td", {
+      }, e.mentalCheck.mindset, "/10"), /*#__PURE__*/React.createElement("td", {
         className: "py-1.5 font-semibold num " + tc
       }, t, "/40"));
     })))));
-  }())), activePage === 'history' && React.createElement("div", null, React.createElement("div", {
+  }())), activePage === 'history' && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between flex-wrap gap-2 mb-3"
-  }, React.createElement("h2", {
+  }, /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white flex items-center gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Calendar",
     className: "h-5 w-5 text-yellow-400"
-  }), React.createElement("span", null, "Trade History")), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Trade History")), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-2"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       downloadCSV(toCSV(accountEntries), activeAccount.name + '-trades.csv');
     },
     className: "flex items-center gap-1.5 bg-gray-900 border border-gray-800 text-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium hover:border-blue-500/40 hover:text-blue-300 transition"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Download",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Export CSV")), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Export CSV")), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setNewEntry(emptyEntryForm(effectiveRiskPerTrade, effectiveContracts, activeRR, activeAccount && activeAccount.dailyPlanTemplate, todaysMentalCheckSource));
       setEntryMethod('manual');
@@ -8005,14 +8457,14 @@ function MMMJournal(props) {
       setShowAddEntry(true);
     },
     className: "flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-green-400 hover:to-emerald-500 transition"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Plus",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Daily Log")))), React.createElement(ClosedTradesTable, {
+  }), /*#__PURE__*/React.createElement("span", null, "Daily Log")))), /*#__PURE__*/React.createElement(ClosedTradesTable, {
     accountEntries: accountEntries
-  }), accountEntries.length === 0 ? React.createElement("div", {
+  }), accountEntries.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "text-center py-12 border border-dashed border-gray-800 rounded-xl text-gray-500 text-sm"
-  }, "No entries yet.") : React.createElement("div", {
+  }, "No entries yet.") : /*#__PURE__*/React.createElement("div", {
     className: "space-y-2"
   }, accountEntries.slice().sort(function (a, b) {
     return new Date(b.date) - new Date(a.date);
@@ -8021,23 +8473,23 @@ function MMMJournal(props) {
       const reasonLabel = (NO_TRADE_REASONS.find(function (r) {
         return r.key === entry.noTradeReason;
       }) || {}).label || entry.noTradeReason;
-      return React.createElement("div", {
+      return /*#__PURE__*/React.createElement("div", {
         key: entry.id,
         className: "bg-gray-900/40 border border-gray-800 rounded-xl p-3 flex items-center justify-between"
-      }, React.createElement("div", {
+      }, /*#__PURE__*/React.createElement("div", {
         className: "flex items-center gap-2"
-      }, React.createElement("div", {
+      }, /*#__PURE__*/React.createElement("div", {
         className: "w-2 h-2 rounded-full bg-gray-600"
-      }), React.createElement("span", {
+      }), /*#__PURE__*/React.createElement("span", {
         className: "text-white text-sm font-medium"
-      }, entry.date), React.createElement("span", {
+      }, entry.date), /*#__PURE__*/React.createElement("span", {
         className: "text-xs px-1.5 py-0.5 rounded bg-gray-700 text-gray-300"
-      }, "No Trade - ", reasonLabel)), React.createElement("button", {
+      }, "No Trade - ", reasonLabel)), /*#__PURE__*/React.createElement("button", {
         onClick: function () {
           handleDeleteEntry(entry.id);
         },
         className: "text-xs text-red-400/70 hover:text-red-400"
-      }, React.createElement(Icon, {
+      }, /*#__PURE__*/React.createElement(Icon, {
         name: "Trash2",
         className: "h-3.5 w-3.5"
       })));
@@ -8055,170 +8507,170 @@ function MMMJournal(props) {
     const entryCumBefore = activeAccount.consistencyPct ? getCumulativeProfitBefore(entries, activeAccount.id, entry.date) : 0;
     const entryCap = activeAccount.consistencyPct ? getConsistencyCap(activeAccount, entryCumBefore) : null;
     const entryWithinConsistency = entryCap !== null ? dayPnl <= entryCap : null;
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: entry.id,
       className: "bg-gray-900/60 border border-gray-800 rounded-xl overflow-hidden"
-    }, React.createElement("button", {
+    }, /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         setExpandedEntry(isExpanded ? null : entry.id);
       },
       className: "w-full flex items-center justify-between p-3 hover:bg-gray-800/30 transition"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-2 flex-wrap"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "w-2 h-2 rounded-full " + (dayPnl >= 0 ? 'bg-green-400' : 'bg-red-400')
-    }), React.createElement("span", {
+    }), /*#__PURE__*/React.createElement("span", {
       className: "text-white text-sm font-medium"
-    }, entry.date), React.createElement("span", {
+    }, entry.date), /*#__PURE__*/React.createElement("span", {
       className: "text-[10px] px-1.5 py-0.5 rounded border " + biasInfo.cls + " flex items-center gap-1"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: biasInfo.icon,
       className: "h-3 w-3"
-    }), React.createElement("span", null, biasInfo.label)), entry.exercised && React.createElement("span", {
+    }), /*#__PURE__*/React.createElement("span", null, biasInfo.label)), entry.exercised && /*#__PURE__*/React.createElement("span", {
       className: "text-[10px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300 flex items-center gap-1"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "Dumbbell",
       className: "h-3 w-3"
-    }), React.createElement("span", null, "Exercised")), entryWithinConsistency !== null && React.createElement("span", {
+    }), /*#__PURE__*/React.createElement("span", null, "Exercised")), entryWithinConsistency !== null && /*#__PURE__*/React.createElement("span", {
       className: "text-[10px] px-1.5 py-0.5 rounded border flex items-center gap-1 " + (entryWithinConsistency ? 'bg-green-500/15 text-green-400 border-green-500/30' : 'bg-red-500/15 text-red-400 border-red-500/30')
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: entryWithinConsistency ? "CheckCircle" : "AlertTriangle",
       className: "h-3 w-3"
-    }), React.createElement("span", null, entryWithinConsistency ? 'Within consistency' : 'Over consistency'))), React.createElement("div", {
+    }), /*#__PURE__*/React.createElement("span", null, entryWithinConsistency ? 'Within consistency' : 'Over consistency'))), /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-3"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "num font-semibold text-sm " + (dayPnl >= 0 ? 'text-green-400' : 'text-red-400')
-    }, dayPnl >= 0 ? '+' : '', fmt(dayPnl)), React.createElement(Icon, {
+    }, dayPnl >= 0 ? '+' : '', fmt(dayPnl)), /*#__PURE__*/React.createElement(Icon, {
       name: isExpanded ? "ChevronUp" : "ChevronDown",
       className: "h-4 w-4 text-gray-500"
-    }))), isExpanded && React.createElement("div", {
+    }))), isExpanded && /*#__PURE__*/React.createElement("div", {
       className: "px-3 pb-3 space-y-2 border-t border-gray-800 pt-3"
     }, entry.trades.map(function (t, i) {
       const val = Math.abs(parseFloat(t.pnl) || 0);
       const aligned = biasAligns(entry.dailyBias, t.direction);
       const score = computeTradeAdherence(t, entry, activeAccount);
       const tags = computeTradeTags(t, i, entry.trades, entry, activeAccount);
-      return React.createElement("div", {
+      return /*#__PURE__*/React.createElement("div", {
         key: i,
         className: "bg-black/30 rounded-lg px-3 py-2 space-y-1"
-      }, React.createElement("div", {
+      }, /*#__PURE__*/React.createElement("div", {
         className: "flex items-center justify-between text-xs flex-wrap gap-1"
-      }, React.createElement("div", {
+      }, /*#__PURE__*/React.createElement("div", {
         className: "flex items-center gap-1.5 flex-wrap"
-      }, React.createElement("span", {
+      }, /*#__PURE__*/React.createElement("span", {
         className: "text-gray-400"
-      }, "Trade ", i + 1), React.createElement("span", {
+      }, "Trade ", i + 1), /*#__PURE__*/React.createElement("span", {
         className: "text-[10px] px-1.5 py-0.5 rounded " + (t.direction === 'long' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400')
-      }, t.direction === 'long' ? 'LONG' : 'SHORT'), aligned !== null && React.createElement("span", {
+      }, t.direction === 'long' ? 'LONG' : 'SHORT'), aligned !== null && /*#__PURE__*/React.createElement("span", {
         className: "text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1 " + (aligned ? 'bg-green-500/15 text-green-400' : 'bg-orange-500/15 text-orange-400')
-      }, React.createElement(Icon, {
+      }, /*#__PURE__*/React.createElement(Icon, {
         name: aligned ? "CheckCircle" : "AlertTriangle",
         className: "h-2.5 w-2.5"
-      }), React.createElement("span", null, aligned ? 'With trend' : 'Against bias')), score !== null && React.createElement("span", {
+      }), /*#__PURE__*/React.createElement("span", null, aligned ? 'With trend' : 'Against bias')), score !== null && /*#__PURE__*/React.createElement("span", {
         className: "text-[10px] px-1.5 py-0.5 rounded " + (score >= 0.7 ? 'bg-green-500/15 text-green-400' : score >= 0.4 ? 'bg-yellow-500/15 text-yellow-400' : 'bg-red-500/15 text-red-400')
-      }, (score * 100).toFixed(0), "%")), React.createElement("div", {
+      }, (score * 100).toFixed(0), "%")), /*#__PURE__*/React.createElement("div", {
         className: "flex items-center gap-2"
-      }, React.createElement("span", {
+      }, /*#__PURE__*/React.createElement("span", {
         className: "font-medium px-1.5 py-0.5 rounded " + (t.result === 'win' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400')
-      }, t.result === 'win' ? 'WIN' : 'LOSS'), React.createElement("span", {
+      }, t.result === 'win' ? 'WIN' : 'LOSS'), /*#__PURE__*/React.createElement("span", {
         className: "font-semibold " + (t.result === 'win' ? 'text-green-400' : 'text-red-400')
-      }, t.result === 'win' ? '+' : '-', fmt(val)))), (t.positionSize || t.riskAmount) && React.createElement("p", {
+      }, t.result === 'win' ? '+' : '-', fmt(val)))), (t.positionSize || t.riskAmount) && /*#__PURE__*/React.createElement("p", {
         className: "text-[10px] text-gray-500"
-      }, "Size: ", t.positionSize || 'N/A', " - Risked: ", t.riskAmount ? fmt(parseFloat(t.riskAmount)) : 'N/A', " - HTF/LTF: ", t.htfLtf ? 'Yes' : 'No'), t.chartUrl && React.createElement("a", {
+      }, "Size: ", t.positionSize || 'N/A', " - Risked: ", t.riskAmount ? fmt(parseFloat(t.riskAmount)) : 'N/A', " - HTF/LTF: ", t.htfLtf ? 'Yes' : 'No'), t.chartUrl && /*#__PURE__*/React.createElement("a", {
         href: t.chartUrl,
         target: "_blank",
         rel: "noopener noreferrer",
         className: "text-[10px] text-blue-400 hover:text-blue-300 flex items-center gap-1 mt-0.5"
-      }, React.createElement(Icon, {
+      }, /*#__PURE__*/React.createElement(Icon, {
         name: "Link",
         className: "h-2.5 w-2.5"
-      }), React.createElement("span", null, "View chart")), tags.length > 0 && React.createElement("div", {
+      }), /*#__PURE__*/React.createElement("span", null, "View chart")), tags.length > 0 && /*#__PURE__*/React.createElement("div", {
         className: "flex items-center gap-1 flex-wrap pt-0.5"
       }, tags.map(function (tag, ti) {
         const isGood = tag === 'Rules Followed';
-        return React.createElement("span", {
+        return /*#__PURE__*/React.createElement("span", {
           key: ti,
           className: "text-[9px] px-1.5 py-0.5 rounded-full border " + (isGood ? 'bg-green-500/10 text-green-400 border-green-500/30' : 'bg-orange-500/10 text-orange-300 border-orange-500/30')
         }, tag);
       })));
-    }), entry.notes && React.createElement("p", {
+    }), entry.notes && /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-500 italic mt-2"
-    }, "\"", entry.notes, "\""), bufferAtDate && React.createElement("p", {
+    }, "\"", entry.notes, "\""), bufferAtDate && /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-600 mt-2"
-    }, "Buffer after this day: ", React.createElement("span", {
+    }, "Buffer after this day: ", /*#__PURE__*/React.createElement("span", {
       className: "text-gray-400"
-    }, fmt(bufferAtDate.buffer))), entryCap !== null && React.createElement("p", {
+    }, fmt(bufferAtDate.buffer))), entryCap !== null && /*#__PURE__*/React.createElement("p", {
       className: "text-xs mt-1 " + (entryWithinConsistency ? 'text-gray-500' : 'text-red-400')
-    }, "Consistency check: cumulative profit before this day was ", fmt(entryCumBefore), ", so the ", activeAccount.consistencyPct, "% cap for this day was ", fmt(entryCap), " - this day made ", fmt(dayPnl), ", which is ", entryWithinConsistency ? 'within the cap' : 'OVER the cap and would need diluting by future profitable days', "."), React.createElement("button", {
+    }, "Consistency check: cumulative profit before this day was ", fmt(entryCumBefore), ", so the ", activeAccount.consistencyPct, "% cap for this day was ", fmt(entryCap), " - this day made ", fmt(dayPnl), ", which is ", entryWithinConsistency ? 'within the cap' : 'OVER the cap and would need diluting by future profitable days', "."), /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         handleDeleteEntry(entry.id);
       },
       className: "text-xs text-red-400/70 hover:text-red-400 flex items-center gap-1.5 mt-2"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "Trash2",
       className: "h-3.5 w-3.5"
-    }), React.createElement("span", null, "Delete entry"))));
-  }))), activePage === 'reports' && React.createElement(React.Fragment, null, React.createElement(ReportsCard, {
+    }), /*#__PURE__*/React.createElement("span", null, "Delete entry"))));
+  }))), activePage === 'reports' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(ReportsCard, {
     accounts: accountsForOverview,
     entries: entries
-  }), React.createElement(PerAccountBreakdown, {
+  }), /*#__PURE__*/React.createElement(PerAccountBreakdown, {
     accounts: accounts,
     entries: entries
-  })), activePage === 'discipline' && React.createElement(React.Fragment, null, activeStatus === 'breached' && React.createElement(BreachReviewCard, {
+  })), activePage === 'discipline' && /*#__PURE__*/React.createElement(React.Fragment, null, activeStatus === 'breached' && /*#__PURE__*/React.createElement(BreachReviewCard, {
     account: activeAccount,
     accountEntries: accountEntries,
     bufferHistory: bufferHistory
-  }), React.createElement(DisciplineChecklistCard, {
+  }), /*#__PURE__*/React.createElement(DisciplineChecklistCard, {
     accounts: nonPaperAccounts,
     entries: nonPaperEntries
-  }), React.createElement(TradeDisciplineTracker, {
+  }), /*#__PURE__*/React.createElement(TradeDisciplineTracker, {
     accountEntries: accountEntries
-  }), React.createElement(ReflectionLog, {
+  }), /*#__PURE__*/React.createElement(ReflectionLog, {
     accountEntries: accountEntries
-  }), React.createElement(DisciplineLeaderboard, {
+  }), /*#__PURE__*/React.createElement(DisciplineLeaderboard, {
     uid: user.uid,
     currentName: user.displayName || user.email
-  })), activePage === 'finances' && React.createElement(React.Fragment, null, React.createElement(CostsAndPayoutsCard, {
+  })), activePage === 'finances' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(CostsAndPayoutsCard, {
     account: activeAccount,
     status: activeStatus
-  }), React.createElement(PayoutTrackerCard, {
+  }), /*#__PURE__*/React.createElement(PayoutTrackerCard, {
     account: activeAccount,
     entries: entries,
     onSaveRules: handleSavePayoutRules
-  }), React.createElement(PayoutLedger, {
+  }), /*#__PURE__*/React.createElement(PayoutLedger, {
     account: activeAccount,
     onAddPayout: handleAddPayout,
     suggestedAmount: payoutStatus && payoutStatus.eligible ? payoutStatus.requestable : null
-  }), React.createElement(RiskOfRuinCard, {
+  }), /*#__PURE__*/React.createElement(RiskOfRuinCard, {
     currentBuffer: Math.max(currentBuffer, 0),
     divisor: ruinDivisor,
     accountType: activeAccount.accountType
-  })), activePage === 'projections' && React.createElement(ProjectionsCard, {
+  })), activePage === 'projections' && /*#__PURE__*/React.createElement(ProjectionsCard, {
     account: activeAccount,
     accountEntries: accountEntries,
     defaultRiskPerTrade: effectiveRiskPerTrade
-  }), activePage === 'strategy' && React.createElement("div", {
+  }), activePage === 'strategy' && /*#__PURE__*/React.createElement("div", {
     className: "space-y-4"
-  }, React.createElement(StrategyCard, {
+  }, /*#__PURE__*/React.createElement(StrategyCard, {
     account: activeAccount,
     onManage: function () {
       setNewStrategy(emptyStrategyForm);
       setShowManageStrategies(true);
     }
-  }), React.createElement(StrategyBacktestReference, null))))), showAddAccount && React.createElement(Modal, {
+  }), /*#__PURE__*/React.createElement(StrategyBacktestReference, null))))), showAddAccount && /*#__PURE__*/React.createElement(Modal, {
     onClose: function () {
       setShowAddAccount(false);
     },
     title: newAccount.linkedFromId ? "Start Funded Account" : "Add Trading Account",
     size: "lg"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "space-y-4"
-  }, React.createElement("div", null, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm text-gray-400 mb-1"
-  }, "Account Type (Phase)"), React.createElement("div", {
+  }, "Account Type (Phase)"), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-2"
   }, ACCOUNT_TYPES.map(function (t) {
-    return React.createElement("button", {
+    return /*#__PURE__*/React.createElement("button", {
       key: t.key,
       onClick: function () {
         setNewAccount(Object.assign({}, newAccount, {
@@ -8229,11 +8681,11 @@ function MMMJournal(props) {
       },
       className: "flex-1 py-2.5 rounded-lg text-sm font-medium transition border " + (newAccount.accountType === t.key ? t.activeCls : 'bg-gray-800 text-gray-500 border-gray-700')
     }, t.label);
-  })), React.createElement("p", {
+  })), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mt-1"
-  }, PHASE_CONFIG[newAccount.accountType].label, " - ", PHASE_CONFIG[newAccount.accountType].mode, " (", PHASE_CONFIG[newAccount.accountType].riskPct * 100, "% risk)")), (newAccount.accountType === 'funded' || newAccount.accountType === 'live') && React.createElement(Field, {
+  }, PHASE_CONFIG[newAccount.accountType].label, " - ", PHASE_CONFIG[newAccount.accountType].mode, " (", PHASE_CONFIG[newAccount.accountType].riskPct * 100, "% risk)")), (newAccount.accountType === 'funded' || newAccount.accountType === 'live') && /*#__PURE__*/React.createElement(Field, {
     label: "Link to existing " + (newAccount.accountType === 'funded' ? 'Challenge' : 'Funded') + " account (optional)"
-  }, React.createElement("select", {
+  }, /*#__PURE__*/React.createElement("select", {
     value: newAccount.linkedFromId || '',
     onChange: function (e) {
       const id = e.target.value;
@@ -8253,16 +8705,16 @@ function MMMJournal(props) {
       }));
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  }, React.createElement("option", {
+  }, /*#__PURE__*/React.createElement("option", {
     value: ""
   }, "Standalone - already passed elsewhere, just logging it here"), linkableAccounts.map(function (a) {
-    return React.createElement("option", {
+    return /*#__PURE__*/React.createElement("option", {
       key: a.id,
       value: a.id
     }, a.name, " #", a.accountNumber);
-  }))), React.createElement(Field, {
+  }))), /*#__PURE__*/React.createElement(Field, {
     label: "Account Name"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     value: newAccount.name,
     onChange: function (e) {
       setNewAccount(Object.assign({}, newAccount, {
@@ -8271,11 +8723,11 @@ function MMMJournal(props) {
     },
     placeholder: "e.g. Phidias 1",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 gap-3"
-  }, React.createElement(Field, {
+  }, /*#__PURE__*/React.createElement(Field, {
     label: "Starting Balance"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: newAccount.startingBalance,
     onChange: function (e) {
@@ -8285,9 +8737,9 @@ function MMMJournal(props) {
     },
     placeholder: "100000",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  })), React.createElement(Field, {
+  })), /*#__PURE__*/React.createElement(Field, {
     label: "Capital / Buffer ($)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: newAccount.maxDrawdown,
     onChange: function (e) {
@@ -8297,11 +8749,11 @@ function MMMJournal(props) {
     },
     placeholder: "500",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  }))), React.createElement("div", {
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 gap-3"
-  }, React.createElement(Field, {
+  }, /*#__PURE__*/React.createElement(Field, {
     label: "Drawdown Type"
-  }, React.createElement("select", {
+  }, /*#__PURE__*/React.createElement("select", {
     value: newAccount.drawdownType,
     onChange: function (e) {
       setNewAccount(Object.assign({}, newAccount, {
@@ -8310,13 +8762,13 @@ function MMMJournal(props) {
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
   }, DRAWDOWN_TYPES.map(function (dt) {
-    return React.createElement("option", {
+    return /*#__PURE__*/React.createElement("option", {
       key: dt.key,
       value: dt.key
     }, dt.label);
-  }))), React.createElement(Field, {
+  }))), /*#__PURE__*/React.createElement(Field, {
     label: "Market"
-  }, React.createElement("select", {
+  }, /*#__PURE__*/React.createElement("select", {
     value: newAccount.market,
     onChange: function (e) {
       setNewAccount(Object.assign({}, newAccount, {
@@ -8325,15 +8777,15 @@ function MMMJournal(props) {
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
   }, MARKET_OPTIONS.map(function (m) {
-    return React.createElement("option", {
+    return /*#__PURE__*/React.createElement("option", {
       key: m.key,
       value: m.key
     }, m.label);
-  })))), React.createElement("div", {
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 gap-3"
-  }, React.createElement(Field, {
+  }, /*#__PURE__*/React.createElement(Field, {
     label: "Profit Target ($)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: newAccount.profitTarget,
     onChange: function (e) {
@@ -8343,9 +8795,9 @@ function MMMJournal(props) {
     },
     placeholder: "1500",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  })), React.createElement(Field, {
+  })), /*#__PURE__*/React.createElement(Field, {
     label: "Reward:Risk Ratio (min " + MIN_RR + ":1)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     step: "0.1",
     min: MIN_RR,
@@ -8357,38 +8809,38 @@ function MMMJournal(props) {
     },
     placeholder: "2.5",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  }), parseFloat(newAccount.rewardRatio) < MIN_RR && newAccount.rewardRatio !== '' && React.createElement("p", {
+  }), parseFloat(newAccount.rewardRatio) < MIN_RR && newAccount.rewardRatio !== '' && /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-red-400 mt-1"
-  }, "Below minimum - will be locked to ", MIN_RR, ":1 on save."))), React.createElement("div", {
+  }, "Below minimum - will be locked to ", MIN_RR, ":1 on save."))), /*#__PURE__*/React.createElement("div", {
     className: "mt-1 bg-black/40 border border-gray-800 rounded-lg p-3 grid grid-cols-2 gap-2 text-xs"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "text-gray-400"
-  }, "Phase: ", React.createElement("span", {
+  }, "Phase: ", /*#__PURE__*/React.createElement("span", {
     className: "text-yellow-400 font-medium"
-  }, newAccountPreviewCfg.label)), React.createElement("div", {
+  }, newAccountPreviewCfg.label)), /*#__PURE__*/React.createElement("div", {
     className: "text-gray-400"
-  }, "Mode: ", React.createElement("span", {
+  }, "Mode: ", /*#__PURE__*/React.createElement("span", {
     className: "text-yellow-400 font-medium"
-  }, newAccountPreviewCfg.mode, " (", newAccountPreviewCfg.riskPct * 100, "%)")), React.createElement("div", {
+  }, newAccountPreviewCfg.mode, " (", newAccountPreviewCfg.riskPct * 100, "%)")), /*#__PURE__*/React.createElement("div", {
     className: "text-gray-400"
-  }, "Locked Max Stop: ", React.createElement("span", {
+  }, "Locked Max Stop: ", /*#__PURE__*/React.createElement("span", {
     className: "text-red-400 font-medium"
-  }, newAccountMaxStop.toFixed(0), " points")), React.createElement("div", {
+  }, newAccountMaxStop.toFixed(0), " points")), /*#__PURE__*/React.createElement("div", {
     className: "text-gray-400"
-  }, "RR Target: ", React.createElement("span", {
+  }, "RR Target: ", /*#__PURE__*/React.createElement("span", {
     className: "text-purple-400 font-medium"
-  }, Math.max(parseFloat(newAccount.rewardRatio) || MIN_RR, MIN_RR), ":1"))), React.createElement("div", {
+  }, Math.max(parseFloat(newAccount.rewardRatio) || MIN_RR, MIN_RR), ":1"))), /*#__PURE__*/React.createElement("div", {
     className: "border-t border-gray-800 pt-4 space-y-3"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm text-yellow-400 font-medium flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "ShieldAlert",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Prop Firm Rules (optional - leave blank if the firm has none)")), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Prop Firm Rules (optional - leave blank if the firm has none)")), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 gap-3"
-  }, React.createElement(Field, {
+  }, /*#__PURE__*/React.createElement(Field, {
     label: "Consistency Rule (%)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: newAccount.consistencyPct,
     onChange: function (e) {
@@ -8398,9 +8850,9 @@ function MMMJournal(props) {
     },
     placeholder: "e.g. 40 - leave blank if none",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  })), React.createElement(Field, {
+  })), /*#__PURE__*/React.createElement(Field, {
     label: "Min Trading Days"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: newAccount.minTradingDays,
     onChange: function (e) {
@@ -8410,9 +8862,9 @@ function MMMJournal(props) {
     },
     placeholder: "e.g. 4 - leave blank if none",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  })), React.createElement(Field, {
+  })), /*#__PURE__*/React.createElement(Field, {
     label: "Daily Loss Limit ($)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: newAccount.dailyLossLimit,
     onChange: function (e) {
@@ -8422,45 +8874,45 @@ function MMMJournal(props) {
     },
     placeholder: "e.g. 1000 - leave blank if none",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  }))), newAccount.dailyLossLimit && React.createElement(Field, {
+  }))), newAccount.dailyLossLimit && /*#__PURE__*/React.createElement(Field, {
     label: "Daily Loss Limit Type"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex gap-2"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setNewAccount(Object.assign({}, newAccount, {
         dllType: 'hard'
       }));
     },
     className: "flex-1 py-2 rounded-lg text-sm font-medium border " + (newAccount.dllType === 'hard' ? 'bg-red-500/20 text-red-400 border-red-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-  }, "Hard Breach (account terminated)"), React.createElement("button", {
+  }, "Hard Breach (account terminated)"), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setNewAccount(Object.assign({}, newAccount, {
         dllType: 'soft'
       }));
     },
     className: "flex-1 py-2 rounded-lg text-sm font-medium border " + (newAccount.dllType === 'soft' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-  }, "Soft Breach (flatten & lock)"))), React.createElement("p", {
+  }, "Soft Breach (flatten & lock)"))), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "Consistency rule caps how much of your total profit any single day can represent - checked at payout time. Daily Loss Limit is separate from your Capital and resets every day.")), newAccount.accountType !== 'challenge' && React.createElement("div", {
+  }, "Consistency rule caps how much of your total profit any single day can represent - checked at payout time. Daily Loss Limit is separate from your Capital and resets every day.")), newAccount.accountType !== 'challenge' && /*#__PURE__*/React.createElement("div", {
     className: "border-t border-gray-800 pt-4 space-y-3"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm text-yellow-400 font-medium flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Calendar",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Payout Rules (optional - can also be set later on the Finances tab)")), React.createElement(PayoutTypeSelector, {
+  }), /*#__PURE__*/React.createElement("span", null, "Payout Rules (optional - can also be set later on the Finances tab)")), /*#__PURE__*/React.createElement(PayoutTypeSelector, {
     value: newAccount.payoutType || 'simple',
     onChange: function (t) {
       setNewAccount(Object.assign({}, newAccount, {
         payoutType: t
       }));
     }
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
   }, (PAYOUT_TYPES.find(function (t) {
     return t.key === (newAccount.payoutType || 'simple');
-  }) || {}).desc), React.createElement(PayoutTypeFieldset, {
+  }) || {}).desc), /*#__PURE__*/React.createElement(PayoutTypeFieldset, {
     type: newAccount.payoutType || 'simple',
     get: function (field) {
       return newAccount[field];
@@ -8470,18 +8922,18 @@ function MMMJournal(props) {
         [field]: value
       }));
     }
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "border-t border-gray-800 pt-4"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm text-yellow-400 font-medium mb-2 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Receipt",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Costs")), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Costs")), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-3 gap-3"
-  }, React.createElement(Field, {
+  }, /*#__PURE__*/React.createElement(Field, {
     label: "Challenge Cost ($)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: newAccount.accountCost,
     onChange: function (e) {
@@ -8490,9 +8942,9 @@ function MMMJournal(props) {
       }));
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  })), React.createElement(Field, {
+  })), /*#__PURE__*/React.createElement(Field, {
     label: "Activation Cost ($)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: newAccount.activationCost,
     onChange: function (e) {
@@ -8501,9 +8953,9 @@ function MMMJournal(props) {
       }));
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  })), React.createElement(Field, {
+  })), /*#__PURE__*/React.createElement(Field, {
     label: "Reset Cost ($)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "number",
     value: newAccount.resetCost,
     onChange: function (e) {
@@ -8512,9 +8964,9 @@ function MMMJournal(props) {
       }));
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  })))), React.createElement(Field, {
+  })))), /*#__PURE__*/React.createElement(Field, {
     label: "Master / Copied Account Number (optional)"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     value: newAccount.copiedAccountNumber,
     onChange: function (e) {
       setNewAccount(Object.assign({}, newAccount, {
@@ -8523,55 +8975,55 @@ function MMMJournal(props) {
     },
     placeholder: "If copying a master account",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  })), React.createElement("button", {
+  })), /*#__PURE__*/React.createElement("button", {
     onClick: handleAddAccount,
     disabled: !newAccount.name || !newAccount.startingBalance || !newAccount.maxDrawdown,
     className: "w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Save",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Save Account")))), showManageStrategies && activeAccount && React.createElement(Modal, {
+  }), /*#__PURE__*/React.createElement("span", null, "Save Account")))), showManageStrategies && activeAccount && /*#__PURE__*/React.createElement(Modal, {
     onClose: function () {
       setShowManageStrategies(false);
     },
     title: "Manage Strategies",
     size: "lg"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "space-y-5"
-  }, React.createElement("div", null, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "text-sm text-gray-400 mb-2"
-  }, "Existing strategies"), React.createElement("div", {
+  }, "Existing strategies"), /*#__PURE__*/React.createElement("div", {
     className: "space-y-2"
   }, getStrategies(activeAccount).map(function (s) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: s.id,
       className: "bg-black/30 border border-gray-800 rounded-lg p-3"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "flex items-center justify-between"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-white font-medium text-sm"
-    }, s.name), s.id !== 'default' && React.createElement("button", {
+    }, s.name), s.id !== 'default' && /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         handleDeleteStrategy(s.id);
       },
       className: "text-red-400/70 hover:text-red-400"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "Trash2",
       className: "h-3.5 w-3.5"
-    }))), React.createElement("p", {
+    }))), /*#__PURE__*/React.createElement("p", {
       className: "text-xs text-gray-500 mt-1"
     }, (s.longRules || []).filter(function (r) {
       return r && r.trim();
     }).length, " long rule(s) - ", (s.shortRules || []).filter(function (r) {
       return r && r.trim();
     }).length, " short rule(s)"));
-  }))), React.createElement("div", {
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "border-t border-gray-800 pt-4 space-y-4"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-sm text-yellow-400 font-medium"
-  }, "Add a new strategy"), React.createElement(Field, {
+  }, "Add a new strategy"), /*#__PURE__*/React.createElement(Field, {
     label: "Strategy Name"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     value: newStrategy.name,
     onChange: function (e) {
       setNewStrategy(Object.assign({}, newStrategy, {
@@ -8580,114 +9032,114 @@ function MMMJournal(props) {
     },
     placeholder: "e.g. Reversal Scalp",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-1 md:grid-cols-2 gap-4"
-  }, React.createElement("div", null, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm text-green-400 mb-1.5 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "TrendingUp",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Long Setup Rules")), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Long Setup Rules")), /*#__PURE__*/React.createElement("div", {
     className: "space-y-2"
   }, newStrategy.longRules.map(function (rule, idx) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: idx,
       className: "flex items-center gap-1.5"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       value: rule,
       onChange: function (e) {
         updateStrategyRuleRow('longRules', idx, e.target.value);
       },
       placeholder: "Rule " + (idx + 1),
       className: "flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-    }), newStrategy.longRules.length > 1 && React.createElement("button", {
+    }), newStrategy.longRules.length > 1 && /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         removeStrategyRuleRow('longRules', idx);
       },
       className: "text-gray-500 hover:text-red-400 flex-shrink-0"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "X",
       className: "h-3.5 w-3.5"
     })));
-  }), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       addStrategyRuleRow('longRules');
     },
     className: "text-xs text-green-400 hover:text-green-300 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Plus",
     className: "h-3 w-3"
-  }), React.createElement("span", null, "Add rule")))), React.createElement("div", null, React.createElement("label", {
+  }), /*#__PURE__*/React.createElement("span", null, "Add rule")))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm text-red-400 mb-1.5 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "TrendingDown",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Short Setup Rules")), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Short Setup Rules")), /*#__PURE__*/React.createElement("div", {
     className: "space-y-2"
   }, newStrategy.shortRules.map(function (rule, idx) {
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: idx,
       className: "flex items-center gap-1.5"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       value: rule,
       onChange: function (e) {
         updateStrategyRuleRow('shortRules', idx, e.target.value);
       },
       placeholder: "Rule " + (idx + 1),
       className: "flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-sm focus:border-yellow-400/50 outline-none"
-    }), newStrategy.shortRules.length > 1 && React.createElement("button", {
+    }), newStrategy.shortRules.length > 1 && /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         removeStrategyRuleRow('shortRules', idx);
       },
       className: "text-gray-500 hover:text-red-400 flex-shrink-0"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "X",
       className: "h-3.5 w-3.5"
     })));
-  }), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       addStrategyRuleRow('shortRules');
     },
     className: "text-xs text-red-400 hover:text-red-300 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Plus",
     className: "h-3 w-3"
-  }), React.createElement("span", null, "Add rule"))))), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Add rule"))))), /*#__PURE__*/React.createElement("button", {
     onClick: handleAddStrategy,
     disabled: !newStrategy.name.trim(),
     className: "w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Save",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Add Strategy"))))), showInstall && React.createElement(InstallAppModal, {
+  }), /*#__PURE__*/React.createElement("span", null, "Add Strategy"))))), showInstall && /*#__PURE__*/React.createElement(InstallAppModal, {
     onClose: function () {
       setShowInstall(false);
     }
-  }), showDupeCleanup && activeAccount && React.createElement(DupeCleanupModal, {
+  }), showDupeCleanup && activeAccount && /*#__PURE__*/React.createElement(DupeCleanupModal, {
     accountEntries: accountEntries,
     entriesRef: entriesRef,
     onClose: function () {
       setShowDupeCleanup(false);
     }
-  }), showImportBroker && activeAccount && React.createElement(Modal, {
+  }), showImportBroker && activeAccount && /*#__PURE__*/React.createElement(Modal, {
     onClose: function () {
       setShowImportBroker(false);
     },
     title: "Import Trades (CSV)",
     size: "lg"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "space-y-4"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 text-xs text-blue-200 space-y-1"
-  }, React.createElement("p", null, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("span", {
     className: "text-white font-medium"
-  }, "Tradovate:"), " Reports ", '>', " Performance (recommended - already matched entry to exit) or Reports ", '>', " Orders (reconstructed from raw fills using verified CME point values for ES/MES, NQ/MNQ, RTY/M2K, YM/MYM, GC/MGC, SI/SIL, and CL/MCL). Either file is auto-detected."), React.createElement("p", {
+  }, "Tradovate:"), " Reports ", '>', " Performance (recommended - already matched entry to exit) or Reports ", '>', " Orders (reconstructed from raw fills using verified CME point values for ES/MES, NQ/MNQ, RTY/M2K, YM/MYM, GC/MGC, SI/SIL, and CL/MCL). Either file is auto-detected."), /*#__PURE__*/React.createElement("p", {
     className: "text-blue-300/70"
-  }, "Any other platform: NinjaTrader, TopstepX, ProjectX, MT4/5, ThinkOrSwim and most others export a closed-trade history CSV with a date column and a P&L column per trade - upload it as-is and it's matched by column name automatically. Whatever the exchange rate or point value already baked into that P&L figure is what gets imported as-is."), React.createElement("p", {
+  }, "Any other platform: NinjaTrader, TopstepX, ProjectX, MT4/5, ThinkOrSwim and most others export a closed-trade history CSV with a date column and a P&L column per trade - upload it as-is and it's matched by column name automatically. Whatever the exchange rate or point value already baked into that P&L figure is what gets imported as-is."), /*#__PURE__*/React.createElement("p", {
     className: "text-blue-300/70"
-  }, "If the export doesn't include commissions, enter your round-turn rate below and it'll be subtracted per contract, so every number here reflects what you actually kept.")), React.createElement("div", null, React.createElement("label", {
+  }, "If the export doesn't include commissions, enter your round-turn rate below and it'll be subtracted per contract, so every number here reflects what you actually kept.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm text-gray-400 mb-1.5"
-  }, "Commission per contract, round-turn ($)"), React.createElement("input", {
+  }, "Commission per contract, round-turn ($)"), /*#__PURE__*/React.createElement("input", {
     type: "number",
     min: "0",
     step: "0.01",
@@ -8697,32 +9149,32 @@ function MMMJournal(props) {
       handleBrokerCommissionChange(e.target.value);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-600 mt-1"
-  }, "Leave blank or 0 if you're not sure, or if the P&L column is already net - you can re-enter this after uploading and the preview below updates automatically.")), !brokerImportPreview && React.createElement("div", null, React.createElement("label", {
+  }, "Leave blank or 0 if you're not sure, or if the P&L column is already net - you can re-enter this after uploading and the preview below updates automatically.")), !brokerImportPreview && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm text-gray-400 mb-1.5"
-  }, "Trade History CSV"), React.createElement("input", {
+  }, "Trade History CSV"), /*#__PURE__*/React.createElement("input", {
     type: "file",
     accept: ".csv",
     onChange: function (e) {
       handleBrokerFileSelect(e.target.files[0]);
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm file:mr-3 file:py-1 file:px-3 file:rounded file:border-0 file:bg-gray-700 file:text-gray-300"
-  })), brokerImportError && React.createElement("div", {
+  })), brokerImportError && /*#__PURE__*/React.createElement("div", {
     className: "bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-xs text-red-300"
-  }, brokerImportError), brokerImportPreview && React.createElement("div", {
+  }, brokerImportError), brokerImportPreview && /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "bg-black/30 rounded-lg p-3 text-sm"
-  }, React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("p", {
     className: "text-white font-medium mb-1"
-  }, brokerImportPreview.totalTrades, " trade", brokerImportPreview.totalTrades !== 1 ? 's' : '', " found across ", Object.keys(brokerImportPreview.byDate).length, " day", Object.keys(brokerImportPreview.byDate).length !== 1 ? 's' : ''), brokerImportPreview.skipped > 0 && React.createElement("p", {
+  }, brokerImportPreview.totalTrades, " trade", brokerImportPreview.totalTrades !== 1 ? 's' : '', " found across ", Object.keys(brokerImportPreview.byDate).length, " day", Object.keys(brokerImportPreview.byDate).length !== 1 ? 's' : ''), brokerImportPreview.skipped > 0 && /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-yellow-400"
-  }, brokerImportPreview.skipped, " trade", brokerImportPreview.skipped !== 1 ? 's' : '', " skipped - unrecognized contract, couldn't price."), React.createElement("p", {
+  }, brokerImportPreview.skipped, " trade", brokerImportPreview.skipped !== 1 ? 's' : '', " skipped - unrecognized contract, couldn't price."), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mt-1"
-  }, "Added as new daily log entries with bias set to Neutral (edit any day afterward if needed). A day that already has entries for ", React.createElement("span", {
+  }, "Added as new daily log entries with bias set to Neutral (edit any day afterward if needed). A day that already has entries for ", /*#__PURE__*/React.createElement("span", {
     className: "text-white"
-  }, activeAccount.name), " gets fully replaced, not duplicated.")), React.createElement("div", {
+  }, activeAccount.name), " gets fully replaced, not duplicated.")), /*#__PURE__*/React.createElement("div", {
     className: "max-h-48 overflow-y-auto space-y-1.5"
   }, Object.keys(brokerImportPreview.byDate).sort().map(function (date) {
     const dayTrades = brokerImportPreview.byDate[date];
@@ -8732,69 +9184,69 @@ function MMMJournal(props) {
     const willOverwrite = accountEntries.some(function (e) {
       return e.date === date;
     });
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: date,
       className: "flex items-center justify-between text-xs bg-black/30 rounded-lg px-3 py-2"
-    }, React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("span", {
       className: "text-gray-300"
-    }, date, willOverwrite && React.createElement("span", {
+    }, date, willOverwrite && /*#__PURE__*/React.createElement("span", {
       className: "text-yellow-400 ml-1.5"
-    }, "(overwrites existing)")), React.createElement("span", {
+    }, "(overwrites existing)")), /*#__PURE__*/React.createElement("span", {
       className: "text-gray-500"
-    }, dayTrades.length, " trade", dayTrades.length !== 1 ? 's' : ''), React.createElement("span", {
+    }, dayTrades.length, " trade", dayTrades.length !== 1 ? 's' : ''), /*#__PURE__*/React.createElement("span", {
       className: "num font-semibold " + (dayPnl >= 0 ? 'text-green-400' : 'text-red-400')
     }, fmt(dayPnl)));
-  })), React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-2"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setBrokerImportPreview(null);
     },
     className: "flex-1 bg-gray-800 text-gray-300 py-2.5 rounded-lg font-medium hover:bg-gray-700 transition"
-  }, "Choose Different File"), React.createElement("button", {
+  }, "Choose Different File"), /*#__PURE__*/React.createElement("button", {
     onClick: handleConfirmBrokerImport,
     disabled: brokerImportBusy,
     className: "flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 flex items-center justify-center gap-1.5"
-  }, brokerImportBusy ? React.createElement("span", null, "Importing...") : React.createElement(React.Fragment, null, React.createElement(Icon, {
+  }, brokerImportBusy ? /*#__PURE__*/React.createElement("span", null, "Importing...") : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Icon, {
     name: "Upload",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Confirm Import"))))))), showAddEntry && activeAccount && React.createElement(Modal, {
+  }), /*#__PURE__*/React.createElement("span", null, "Confirm Import"))))))), showAddEntry && activeAccount && /*#__PURE__*/React.createElement(Modal, {
     onClose: function () {
       setShowAddEntry(false);
     },
     title: "Log Today's Trades",
     size: "lg"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "space-y-4"
-  }, React.createElement("div", null, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm text-gray-400 mb-1.5"
-  }, "Entry Method"), React.createElement("div", {
+  }, "Entry Method"), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-2"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setEntryMethod('manual');
     },
     className: "flex-1 py-2 rounded-lg text-sm font-medium border flex items-center justify-center gap-1.5 " + (entryMethod === 'manual' ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "PenLine",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Manual Entry")), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Manual Entry")), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setEntryMethod('csv');
     },
     className: "flex-1 py-2 rounded-lg text-sm font-medium border flex items-center justify-center gap-1.5 " + (entryMethod === 'csv' ? 'bg-blue-500/20 text-blue-400 border-blue-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Upload",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Import CSV")))), entryMethod === 'csv' ? React.createElement(CsvImportFields, {
+  }), /*#__PURE__*/React.createElement("span", null, "Import CSV")))), entryMethod === 'csv' ? /*#__PURE__*/React.createElement(CsvImportFields, {
     account: activeAccount,
     entriesRef: entriesRef,
     onDone: function () {
       setShowAddEntry(false);
     }
-  }) : React.createElement(React.Fragment, null, React.createElement(Field, {
+  }) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Field, {
     label: "Date"
-  }, React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("input", {
     type: "date",
     value: newEntry.date,
     onChange: function (e) {
@@ -8803,65 +9255,65 @@ function MMMJournal(props) {
       }));
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-  })), React.createElement("div", null, React.createElement("label", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm text-gray-400 mb-1.5"
-  }, "Did you trade today?"), React.createElement("div", {
+  }, "Did you trade today?"), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-2"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setNewEntry(Object.assign({}, newEntry, {
         tradedToday: 'yes'
       }));
     },
     className: "flex-1 py-2 rounded-lg text-sm font-medium border " + (newEntry.tradedToday === 'yes' ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-  }, "Yes"), React.createElement("button", {
+  }, "Yes"), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setNewEntry(Object.assign({}, newEntry, {
         tradedToday: 'no'
       }));
     },
     className: "flex-1 py-2 rounded-lg text-sm font-medium border " + (newEntry.tradedToday === 'no' ? 'bg-gray-500/30 text-gray-300 border-gray-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-  }, "No"))), React.createElement("div", null, React.createElement("label", {
+  }, "No"))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm text-gray-400 mb-1.5"
-  }, "Physical exercise today?"), React.createElement("div", {
+  }, "Physical exercise today?"), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-2"
-  }, React.createElement("button", {
+  }, /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setNewEntry(Object.assign({}, newEntry, {
         exercised: true
       }));
     },
     className: "flex-1 py-2 rounded-lg text-sm font-medium border flex items-center justify-center gap-1.5 " + (newEntry.exercised ? 'bg-blue-500/20 text-blue-400 border-blue-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Dumbbell",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Yes")), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Yes")), /*#__PURE__*/React.createElement("button", {
     onClick: function () {
       setNewEntry(Object.assign({}, newEntry, {
         exercised: false
       }));
     },
     className: "flex-1 py-2 rounded-lg text-sm font-medium border " + (!newEntry.exercised ? 'bg-gray-500/30 text-gray-300 border-gray-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-  }, "No"))), React.createElement("div", {
+  }, "No"))), /*#__PURE__*/React.createElement("div", {
     className: "bg-black/30 border border-gray-800 rounded-lg px-3 py-2.5 flex items-start gap-2"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Info",
     className: "h-3.5 w-3.5 text-gray-500 flex-shrink-0 mt-0.5"
-  }), React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500"
-  }, "Your pre-session mental check ", mentalCheckTotal(newEntry.mentalCheck) > 0 ? React.createElement("span", {
+  }, "Your pre-session mental check ", mentalCheckTotal(newEntry.mentalCheck) > 0 ? /*#__PURE__*/React.createElement("span", {
     className: "text-teal-400 font-medium"
-  }, "(", mentalCheckTotal(newEntry.mentalCheck), "/40, already set)") : React.createElement("span", null, "(not set yet)"), " and Daily Plan ", newEntry.dailyPlan.riskAmount || newEntry.dailyPlan.targetProfit ? React.createElement("span", {
+  }, "(", mentalCheckTotal(newEntry.mentalCheck), "/40, already set)") : /*#__PURE__*/React.createElement("span", null, "(not set yet)"), " and Daily Plan ", newEntry.dailyPlan.riskAmount || newEntry.dailyPlan.targetProfit ? /*#__PURE__*/React.createElement("span", {
     className: "text-yellow-400 font-medium"
-  }, "(set)") : React.createElement("span", null, "(not set)"), " now live on their own pages in the menu - this entry will pick up whatever's saved there for today.")), React.createElement(ReflectionSection, {
+  }, "(set)") : /*#__PURE__*/React.createElement("span", null, "(not set)"), " now live on their own pages in the menu - this entry will pick up whatever's saved there for today.")), /*#__PURE__*/React.createElement(ReflectionSection, {
     value: newEntry.reflection,
     onChange: updateReflection
-  }), newEntry.tradedToday === 'no' ? React.createElement(React.Fragment, null, React.createElement("div", null, React.createElement("label", {
+  }), newEntry.tradedToday === 'no' ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm text-gray-400 mb-1.5"
-  }, "Reason"), React.createElement("div", {
+  }, "Reason"), /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-3 gap-2"
   }, NO_TRADE_REASONS.map(function (r) {
-    return React.createElement("button", {
+    return /*#__PURE__*/React.createElement("button", {
       key: r.key,
       onClick: function () {
         setNewEntry(Object.assign({}, newEntry, {
@@ -8870,9 +9322,9 @@ function MMMJournal(props) {
       },
       className: "py-2 rounded-lg text-xs font-medium border " + (newEntry.noTradeReason === r.key ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
     }, r.label);
-  }))), React.createElement(Field, {
+  }))), /*#__PURE__*/React.createElement(Field, {
     label: "How was your day? (thoughts, emotions, anything on your mind)"
-  }, React.createElement("textarea", {
+  }, /*#__PURE__*/React.createElement("textarea", {
     value: newEntry.noTradeNotes,
     onChange: function (e) {
       setNewEntry(Object.assign({}, newEntry, {
@@ -8881,23 +9333,23 @@ function MMMJournal(props) {
     },
     placeholder: "Frustrated I didn't find a setup, but glad I didn't force a trade...",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-16 focus:border-yellow-400/50 outline-none resize-none"
-  })), React.createElement("p", {
+  })), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "ShieldCheck",
     className: "h-3.5 w-3.5 text-green-400 flex-shrink-0"
-  }), React.createElement("span", null, "Logging today - even a no-trade day - still counts toward your discipline score.")), saveEntryError && React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("span", null, "Logging today - even a no-trade day - still counts toward your discipline score.")), saveEntryError && /*#__PURE__*/React.createElement("p", {
     className: "text-red-400 text-xs"
-  }, saveEntryError), React.createElement("button", {
+  }, saveEntryError), /*#__PURE__*/React.createElement("button", {
     onClick: handleSaveEntry,
     disabled: !newEntry.noTradeReason,
     className: "w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Save",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Save No-Trade Day"))) : React.createElement(React.Fragment, null, React.createElement(Field, {
+  }), /*#__PURE__*/React.createElement("span", null, "Save No-Trade Day"))) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Field, {
     label: "Strategy used today"
-  }, React.createElement("select", {
+  }, /*#__PURE__*/React.createElement("select", {
     value: newEntry.strategyId || 'default',
     onChange: function (e) {
       setNewEntry(Object.assign({}, newEntry, {
@@ -8906,16 +9358,16 @@ function MMMJournal(props) {
     },
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
   }, getStrategies(activeAccount).map(function (s) {
-    return React.createElement("option", {
+    return /*#__PURE__*/React.createElement("option", {
       key: s.id,
       value: s.id
     }, s.name);
-  }))), React.createElement("div", null, React.createElement("label", {
+  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm text-gray-400 mb-1.5"
-  }, "Daily Bias (which way is the trend?)"), React.createElement("div", {
+  }, "Daily Bias (which way is the trend?)"), /*#__PURE__*/React.createElement("div", {
     className: "flex gap-2"
   }, BIAS_OPTIONS.map(function (b) {
-    return React.createElement("button", {
+    return /*#__PURE__*/React.createElement("button", {
       key: b.key,
       onClick: function () {
         setNewEntry(Object.assign({}, newEntry, {
@@ -8923,61 +9375,61 @@ function MMMJournal(props) {
         }));
       },
       className: "flex-1 py-2 rounded-lg text-sm font-medium transition border flex items-center justify-center gap-1.5 " + (newEntry.dailyBias === b.key ? b.cls : 'bg-gray-800 text-gray-500 border-gray-700')
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: b.icon,
       className: "h-3.5 w-3.5"
-    }), React.createElement("span", null, b.label));
-  }))), React.createElement(DailyTradeMatrix, {
+    }), /*#__PURE__*/React.createElement("span", null, b.label));
+  }))), /*#__PURE__*/React.createElement(DailyTradeMatrix, {
     riskUnit: effectiveRiskPerTrade,
     rewardRatio: activeRR
-  }), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "space-y-3"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between flex-wrap gap-1"
-  }, React.createElement("label", {
+  }, /*#__PURE__*/React.createElement("label", {
     className: "text-sm text-gray-400"
-  }, "Trades"), React.createElement("span", {
+  }, "Trades"), /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
-  }, "Risk: ", React.createElement("span", {
+  }, "Risk: ", /*#__PURE__*/React.createElement("span", {
     className: "text-blue-400 font-medium"
-  }, fmt(effectiveRiskPerTrade)), " - ", effectiveContractLabel, " (", activeTicker, ") - Max stop: ", React.createElement("span", {
+  }, fmt(effectiveRiskPerTrade)), " - ", effectiveContractLabel, " (", activeTicker, ") - Max stop: ", /*#__PURE__*/React.createElement("span", {
     className: "text-red-400 font-medium"
   }, maxStopPoints.toFixed(0), " pts"))), newEntry.trades.map(function (trade, idx) {
     const applicableRules = rulesForDirection(trade.direction);
     const aligned = biasAligns(newEntry.dailyBias, trade.direction);
-    return React.createElement("div", {
+    return /*#__PURE__*/React.createElement("div", {
       key: idx,
       className: "bg-gray-800/40 border border-gray-700 rounded-lg p-3 space-y-2"
-    }, React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-2 flex-wrap"
-    }, React.createElement("button", {
+    }, /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         updateTradeRow(idx, 'direction', 'long');
       },
       className: "px-2.5 py-1.5 rounded-lg text-xs font-medium transition " + (trade.direction === 'long' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')
-    }, "Long"), React.createElement("button", {
+    }, "Long"), /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         updateTradeRow(idx, 'direction', 'short');
       },
       className: "px-2.5 py-1.5 rounded-lg text-xs font-medium transition " + (trade.direction === 'short' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')
-    }, "Short"), aligned !== null && React.createElement("span", {
+    }, "Short"), aligned !== null && /*#__PURE__*/React.createElement("span", {
       className: "text-[10px] px-2 py-1 rounded flex items-center gap-1 " + (aligned ? 'bg-green-500/15 text-green-400' : 'bg-orange-500/15 text-orange-400')
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: aligned ? "CheckCircle" : "AlertTriangle",
       className: "h-2.5 w-2.5"
-    }), React.createElement("span", null, aligned ? 'With trend' : 'Against bias'))), React.createElement("div", {
+    }), /*#__PURE__*/React.createElement("span", null, aligned ? 'With trend' : 'Against bias'))), /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-2"
-    }, React.createElement("button", {
+    }, /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         updateTradeRow(idx, 'result', 'win');
       },
       className: "px-3 py-2 rounded-lg text-sm font-medium transition " + (trade.result === 'win' ? 'bg-green-500/20 text-green-400 border border-green-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')
-    }, "Win"), React.createElement("button", {
+    }, "Win"), /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         updateTradeRow(idx, 'result', 'loss');
       },
       className: "px-3 py-2 rounded-lg text-sm font-medium transition " + (trade.result === 'loss' ? 'bg-red-500/20 text-red-400 border border-red-500/40' : 'bg-gray-800 text-gray-500 border border-gray-700')
-    }, "Loss"), React.createElement("input", {
+    }, "Loss"), /*#__PURE__*/React.createElement("input", {
       type: "number",
       placeholder: "P&L amount",
       value: trade.pnl,
@@ -8985,17 +9437,17 @@ function MMMJournal(props) {
         updateTradeRow(idx, 'pnl', e.target.value);
       },
       className: "flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 focus:border-yellow-400/50 outline-none"
-    }), newEntry.trades.length > 1 && React.createElement("button", {
+    }), newEntry.trades.length > 1 && /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         removeTradeRow(idx);
       },
       className: "text-gray-500 hover:text-red-400 flex-shrink-0"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "X",
       className: "h-4 w-4"
-    }))), React.createElement("div", {
+    }))), /*#__PURE__*/React.createElement("div", {
       className: "grid grid-cols-2 gap-2"
-    }, React.createElement("input", {
+    }, /*#__PURE__*/React.createElement("input", {
       type: "number",
       placeholder: "Contracts",
       value: trade.positionSize,
@@ -9003,7 +9455,7 @@ function MMMJournal(props) {
         updateTradeRow(idx, 'positionSize', e.target.value);
       },
       className: "bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none"
-    }), React.createElement("input", {
+    }), /*#__PURE__*/React.createElement("input", {
       type: "number",
       placeholder: "$ Risked on this trade",
       value: trade.riskAmount,
@@ -9011,49 +9463,49 @@ function MMMJournal(props) {
         updateTradeRow(idx, 'riskAmount', e.target.value);
       },
       className: "bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none"
-    })), React.createElement("button", {
+    })), /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         updateTradeRow(idx, 'htfLtf', !trade.htfLtf);
       },
       className: "w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: trade.htfLtf ? "CheckSquare" : "Square",
       className: "h-4 w-4 flex-shrink-0 " + (trade.htfLtf ? 'text-green-400' : 'text-gray-600')
-    }), React.createElement("span", null, "HTF to LTF analysis done before this trade?")), React.createElement("div", {
+    }), /*#__PURE__*/React.createElement("span", null, "HTF to LTF analysis done before this trade?")), /*#__PURE__*/React.createElement("div", {
       className: "bg-black/30 rounded-lg p-2.5 space-y-2"
-    }, React.createElement("p", {
+    }, /*#__PURE__*/React.createElement("p", {
       className: "text-[11px] text-gray-500 uppercase tracking-wide"
-    }, "What happened to your stop-loss?"), React.createElement("div", {
+    }, "What happened to your stop-loss?"), /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-1.5"
-    }, React.createElement("button", {
+    }, /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         updateTradeRow(idx, 'stopHandling', 'respected');
       },
       className: "flex-1 py-1.5 rounded-lg text-[11px] font-medium border " + ((trade.stopHandling || 'respected') === 'respected' ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-    }, "Respected"), React.createElement("button", {
+    }, "Respected"), /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         updateTradeRow(idx, 'stopHandling', 'widened');
       },
       className: "flex-1 py-1.5 rounded-lg text-[11px] font-medium border " + (trade.stopHandling === 'widened' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-    }, "Widened"), React.createElement("button", {
+    }, "Widened"), /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         updateTradeRow(idx, 'stopHandling', 'removed');
       },
       className: "flex-1 py-1.5 rounded-lg text-[11px] font-medium border " + (trade.stopHandling === 'removed' ? 'bg-red-500/20 text-red-400 border-red-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
-    }, "Removed")), React.createElement("button", {
+    }, "Removed")), /*#__PURE__*/React.createElement("button", {
       onClick: function () {
         updateTradeRow(idx, 'revengeEntry', !trade.revengeEntry);
       },
       className: "w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white pt-0.5"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: trade.revengeEntry ? "CheckSquare" : "Square",
       className: "h-4 w-4 flex-shrink-0 " + (trade.revengeEntry ? 'text-red-400' : 'text-gray-600')
-    }), React.createElement("span", null, "Revenge entry - reacting to an earlier loss today, not the setup?"))), React.createElement("div", {
+    }), /*#__PURE__*/React.createElement("span", null, "Revenge entry - reacting to an earlier loss today, not the setup?"))), /*#__PURE__*/React.createElement("div", {
       className: "flex items-center gap-1.5"
-    }, React.createElement(Icon, {
+    }, /*#__PURE__*/React.createElement(Icon, {
       name: "Link",
       className: "h-3.5 w-3.5 text-gray-500 flex-shrink-0"
-    }), React.createElement("input", {
+    }), /*#__PURE__*/React.createElement("input", {
       type: "url",
       placeholder: "TradingView chart link (optional)",
       value: trade.chartUrl || '',
@@ -9061,60 +9513,60 @@ function MMMJournal(props) {
         updateTradeRow(idx, 'chartUrl', e.target.value);
       },
       className: "flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-xs focus:border-yellow-400/50 outline-none"
-    })), applicableRules.length > 0 && React.createElement("div", {
+    })), applicableRules.length > 0 && /*#__PURE__*/React.createElement("div", {
       className: "bg-black/30 rounded-lg p-2.5 space-y-1.5"
-    }, React.createElement("p", {
+    }, /*#__PURE__*/React.createElement("p", {
       className: "text-[11px] text-gray-500 uppercase tracking-wide"
     }, "Did you follow your ", trade.direction, " rules?"), applicableRules.map(function (rule, ri) {
       const checked = (trade.rulesChecked || []).indexOf(rule) !== -1;
-      return React.createElement("button", {
+      return /*#__PURE__*/React.createElement("button", {
         key: ri,
         onClick: function () {
           toggleRuleChecked(idx, rule);
         },
         className: "w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white"
-      }, React.createElement(Icon, {
+      }, /*#__PURE__*/React.createElement(Icon, {
         name: checked ? "CheckSquare" : "Square",
         className: "h-4 w-4 flex-shrink-0 " + (checked ? 'text-green-400' : 'text-gray-600')
-      }), React.createElement("span", null, rule));
+      }), /*#__PURE__*/React.createElement("span", null, rule));
     })));
-  }), filledLosses >= 2 && React.createElement("p", {
+  }), filledLosses >= 2 && /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-red-400 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "AlertTriangle",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Circuit Breaker - 2 losses. Day over.")), filledWins >= 2 && React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("span", null, "Circuit Breaker - 2 losses. Day over.")), filledWins >= 2 && /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-green-400 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "CheckCircle",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Greed Filter - 2 wins. Day over.")), isTie && React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("span", null, "Greed Filter - 2 wins. Day over.")), isTie && /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-yellow-400 flex items-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Scale",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Tie-Breaker required - Trade 3 is mandatory before you can save today's log.")), filledTrades.length >= 3 && React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("span", null, "Tie-Breaker required - Trade 3 is mandatory before you can save today's log.")), filledTrades.length >= 3 && /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-400"
-  }, "Day over - Trade 3 result stands."), consistencyCap !== null && filledPnlSigned > 0 && React.createElement("p", {
+  }, "Day over - Trade 3 result stands."), consistencyCap !== null && filledPnlSigned > 0 && /*#__PURE__*/React.createElement("p", {
     className: "text-xs flex items-center gap-1.5 " + (overConsistency ? 'text-red-400' : 'text-gray-400')
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: overConsistency ? "AlertTriangle" : "Info",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Today: ", fmt(filledPnlSigned), " of ", fmt(consistencyCap), " max allowed under your ", activeAccount.consistencyPct, "% consistency rule", overConsistency ? ' - exceeded, this day will need diluting by future profitable days' : '', ".")), dllLimit !== null && React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("span", null, "Today: ", fmt(filledPnlSigned), " of ", fmt(consistencyCap), " max allowed under your ", activeAccount.consistencyPct, "% consistency rule", overConsistency ? ' - exceeded, this day will need diluting by future profitable days' : '', ".")), dllLimit !== null && /*#__PURE__*/React.createElement("p", {
     className: "text-xs flex items-center gap-1.5 " + (dllBreached ? 'text-red-400' : 'text-gray-400')
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: dllBreached ? "AlertTriangle" : "Info",
     className: "h-3.5 w-3.5"
-  }), React.createElement("span", null, "Daily Loss Limit: ", fmt(todaysLoss), " of ", fmt(dllLimit), dllBreached ? activeAccount.dllType === 'hard' ? ' - HARD BREACH, this would terminate the account' : ' - SOFT BREACH, firm would flatten and lock you out today' : '', ".")), React.createElement("button", {
+  }), /*#__PURE__*/React.createElement("span", null, "Daily Loss Limit: ", fmt(todaysLoss), " of ", fmt(dllLimit), dllBreached ? activeAccount.dllType === 'hard' ? ' - HARD BREACH, this would terminate the account' : ' - SOFT BREACH, firm would flatten and lock you out today' : '', ".")), /*#__PURE__*/React.createElement("button", {
     onClick: addTradeRow,
     disabled: newEntry.trades.length >= 3 || filledWins >= 2 || filledLosses >= 2 || dllBreached,
     className: "text-sm text-yellow-400 hover:text-yellow-300 flex items-center gap-1.5 mt-1 disabled:opacity-30 disabled:cursor-not-allowed"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Plus",
     className: "h-3 w-3"
-  }), React.createElement("span", null, "Add another trade"))), React.createElement(Field, {
+  }), /*#__PURE__*/React.createElement("span", null, "Add another trade"))), /*#__PURE__*/React.createElement(Field, {
     label: "How was your day? (thoughts, emotions, anything on your mind)"
-  }, React.createElement("textarea", {
+  }, /*#__PURE__*/React.createElement("textarea", {
     value: newEntry.notes,
     onChange: function (e) {
       setNewEntry(Object.assign({}, newEntry, {
@@ -9123,58 +9575,58 @@ function MMMJournal(props) {
     },
     placeholder: "How did it feel taking these trades? Any pressure, doubt, confidence...",
     className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 h-20 focus:border-yellow-400/50 outline-none resize-none"
-  })), saveEntryError && React.createElement("p", {
+  })), saveEntryError && /*#__PURE__*/React.createElement("p", {
     className: "text-red-400 text-xs"
-  }, saveEntryError), React.createElement("button", {
+  }, saveEntryError), /*#__PURE__*/React.createElement("button", {
     onClick: handleSaveEntry,
     disabled: filledTrades.length === 0 || isTie,
     className: "w-full bg-gradient-to-r from-green-500 to-emerald-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "Save",
     className: "h-4 w-4"
-  }), React.createElement("span", null, "Save Entry")))))));
+  }), /*#__PURE__*/React.createElement("span", null, "Save Entry")))))));
 }
 function StatCard(props) {
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-xl p-4"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-start justify-between mb-3"
-  }, React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
-  }, props.label), React.createElement("div", {
+  }, props.label), /*#__PURE__*/React.createElement("div", {
     className: "h-7 w-7 rounded-full flex items-center justify-center bg-current/10 flex-shrink-0 " + props.color
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: props.icon,
     className: "h-3.5 w-3.5 " + props.color
-  }))), React.createElement("div", {
+  }))), /*#__PURE__*/React.createElement("div", {
     className: "num text-2xl font-bold " + props.color
-  }, props.value), props.sub && React.createElement("div", {
+  }, props.value), props.sub && /*#__PURE__*/React.createElement("div", {
     className: "text-xs text-gray-600 mt-1"
   }, props.sub));
 }
 function Modal(props) {
   const size = props.size || 'md';
-  return React.createElement("div", {
+  return /*#__PURE__*/React.createElement("div", {
     className: "fixed inset-0 z-50 flex items-center justify-center p-4"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "fixed inset-0 bg-black bg-opacity-80",
     onClick: props.onClose
-  }), React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("div", {
     className: "relative bg-black border border-yellow-500/20 rounded-2xl p-6 w-full " + (size === 'lg' ? 'max-w-lg' : 'max-w-md') + " max-h-[90vh] overflow-y-auto shadow-2xl"
-  }, React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between mb-5"
-  }, React.createElement("h3", {
+  }, /*#__PURE__*/React.createElement("h3", {
     className: "text-lg font-bold text-white"
-  }, props.title), React.createElement("button", {
+  }, props.title), /*#__PURE__*/React.createElement("button", {
     onClick: props.onClose,
     className: "text-gray-500 hover:text-white flex-shrink-0"
-  }, React.createElement(Icon, {
+  }, /*#__PURE__*/React.createElement(Icon, {
     name: "X",
     className: "h-5 w-5"
   }))), props.children));
 }
 function Field(props) {
-  return React.createElement("div", null, React.createElement("label", {
+  return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
     className: "block text-sm text-gray-400 mb-1"
   }, props.label), props.children);
 }
@@ -9187,6 +9639,10 @@ function App() {
       return 'en';
     }
   });
+
+  // The homepage/diagnostic test link to the course as journal/?course=1 so
+  // the course sits behind a free account instead of being open to anyone -
+  // once a signed-in user carries that flag, send them straight to it.
   const wantsCourse = function () {
     try {
       return new URLSearchParams(window.location.search).get('course') === '1';
@@ -9222,21 +9678,21 @@ function App() {
   useEffect(function () {
     if (user && wantsCourse) window.location.href = 'course/index.html';
   }, [user, wantsCourse]);
-  if (user === undefined) return React.createElement("div", {
+  if (user === undefined) return /*#__PURE__*/React.createElement("div", {
     className: "min-h-screen bg-black flex items-center justify-center text-yellow-400"
   }, "Loading...");
-  if (user && wantsCourse) return React.createElement("div", {
+  if (user && wantsCourse) return /*#__PURE__*/React.createElement("div", {
     className: "min-h-screen bg-black flex items-center justify-center text-yellow-400"
   }, "Taking you to the course...");
-  return user ? React.createElement(MMMJournal, {
+  return user ? /*#__PURE__*/React.createElement(MMMJournal, {
     user: user,
     language: language,
     setLanguage: setLanguage
-  }) : React.createElement(AuthScreen, {
+  }) : /*#__PURE__*/React.createElement(AuthScreen, {
     language: language,
     setLanguage: setLanguage,
     wantsCourse: wantsCourse
   });
 }
 const rootEl = ReactDOM.createRoot(document.getElementById('root'));
-rootEl.render(React.createElement(App, null));
+rootEl.render(/*#__PURE__*/React.createElement(App, null));
