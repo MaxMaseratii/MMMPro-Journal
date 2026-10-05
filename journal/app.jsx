@@ -351,6 +351,7 @@ const PHASE_CONFIG = {
   challenge: { mode: 'Speed Mode',        riskPct: 0.10, label: 'Phase 1 - Evaluation' },
   funded:    { mode: 'Speed Mode',        riskPct: 0.10, label: 'Phase 2 - Funded Cash Run' },
   live:      { mode: 'Preservation Mode', riskPct: 0.02, label: 'Phase 3 - Live Consolidation' },
+  paper:     { mode: 'Practice Mode',     riskPct: 0.10, label: 'Paper - Practice Run' },
 };
 
 const MIN_RR = 2;
@@ -665,12 +666,14 @@ const ACCOUNT_TYPES = [
   { key: 'challenge', label: 'Challenge', activeCls: 'bg-purple-500/20 text-purple-400 border-purple-500/40' },
   { key: 'funded',    label: 'Funded',    activeCls: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' },
   { key: 'live',      label: 'Live',      activeCls: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40' },
+  { key: 'paper',     label: 'Paper',     activeCls: 'bg-blue-500/20 text-blue-400 border-blue-500/40' },
 ];
 
 const ACCOUNT_BADGE_CLS = {
   challenge: 'bg-purple-500/20 text-purple-300',
   funded: 'bg-emerald-500/20 text-emerald-300',
   live: 'bg-cyan-500/20 text-cyan-300',
+  paper: 'bg-blue-500/20 text-blue-300',
   breached: 'bg-red-500/20 text-red-300',
 };
 
@@ -748,7 +751,8 @@ const emptyEntryForm = function(defaultRisk, defaultContracts, defaultRR, planTe
     strategyId: 'default',
     trades: [{ result: 'win', pnl: '', direction: 'long', rulesChecked: [],
       positionSize: defaultContracts ? String(defaultContracts) : '',
-      riskAmount: defaultRisk ? defaultRisk.toFixed(2) : '', htfLtf: false, chartUrl: '' }],
+      riskAmount: defaultRisk ? defaultRisk.toFixed(2) : '', htfLtf: false, chartUrl: '',
+      stopHandling: 'respected', revengeEntry: false }],
     notes: '',
     // Pre-session mental check is filled out on its own page now, not in this
     // modal - whatever was saved there for today carries straight through.
@@ -791,7 +795,8 @@ const getApplicableRules = function(trade, entry, account) {
 function AuthScreen(props) {
   const language = props.language;
   const setLanguage = props.setLanguage;
-  const [mode, setMode] = useState('login');
+  const wantsCourse = props.wantsCourse;
+  const [mode, setMode] = useState(wantsCourse ? 'signup' : 'login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -840,7 +845,13 @@ function AuthScreen(props) {
       <div className="w-full max-w-sm bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-8">
         <div className="flex justify-end mb-3"><LanguageSwitcher language={language} setLanguage={setLanguage} /></div>
         <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent text-center mb-1">MMM Pro Journal</h1>
-        <p className="text-gray-500 text-sm text-center mb-6">{mode === 'login' ? 'Sign in to your account' : 'Create your account'}</p>
+        <p className="text-gray-500 text-sm text-center mb-4">{mode === 'login' ? 'Sign in to your account' : 'Create your account'}</p>
+        {wantsCourse && (
+          <div className="bg-teal-500/10 border border-teal-500/30 rounded-lg px-3 py-2.5 mb-4 flex items-start gap-2">
+            <Icon name="GraduationCap" className="h-4 w-4 text-teal-400 flex-shrink-0 mt-0.5" />
+            <p className="text-xs text-teal-200/90">{mode === 'login' ? 'Sign in to' : 'Create a free account to'} start the MMM Mastery Course - it's free, and your progress is saved to your account.</p>
+          </div>
+        )}
         {mode === 'signup' && (
           <input value={displayName} onChange={function(e) { setDisplayName(e.target.value); }} placeholder="Your name"
             className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 focus:border-yellow-400/50 outline-none" />
@@ -1022,6 +1033,7 @@ function t_border(key) {
   if (key === 'challenge') return 'bg-purple-500/10 border-purple-500/40';
   if (key === 'funded') return 'bg-emerald-500/10 border-emerald-500/40';
   if (key === 'breached') return 'bg-red-500/10 border-red-500/40';
+  if (key === 'paper') return 'bg-blue-500/10 border-blue-500/40';
   return 'bg-cyan-500/10 border-cyan-500/40';
 }
 
@@ -1587,18 +1599,28 @@ function ProjectionsCard(props) {
   const defaultRisk = props.defaultRiskPerTrade;
   const storageKey = 'mmm_projection_' + account.id;
 
+  const defaultSettings = {
+    riskPerTrade: defaultRisk || 0,
+    rewardRatio: Math.max(parseFloat(account.rewardRatio) || MIN_RR, MIN_RR),
+    profitTarget: parseFloat(account.profitTarget) || 0,
+    riskCuttingPercent: 0,
+    compoundingPercent: 0,
+    mode: 'date',
+    accountsToCopy: 1,
+    winRatePct: 50,
+    sampleTrades: 20,
+    wcWins: 10,
+    wcLosses: 10,
+  };
   const [settings, setSettings] = useState(function() {
     try {
       const saved = localStorage.getItem(storageKey);
-      if (saved) return JSON.parse(saved);
+      // Merge onto the defaults rather than replacing them outright, so a
+      // trader who saved settings before the account-copying/win-rate modes
+      // existed still gets sane values for the new fields instead of undefined.
+      if (saved) return Object.assign({}, defaultSettings, JSON.parse(saved));
     } catch (e) {}
-    return {
-      riskPerTrade: defaultRisk || 0,
-      rewardRatio: Math.max(parseFloat(account.rewardRatio) || MIN_RR, MIN_RR),
-      profitTarget: parseFloat(account.profitTarget) || 0,
-      riskCuttingPercent: 0,
-      compoundingPercent: 0,
-    };
+    return defaultSettings;
   });
 
   useEffect(function() {
@@ -1652,14 +1674,59 @@ function ProjectionsCard(props) {
   const cumulativeActual = days.reduce(function(s, d) { return s + (d.hasActual ? d.actualPnl : 0); }, 0);
   const progressPct = target > 0 ? Math.min(100, Math.max(0, (cumulativeActual / target) * 100)) : 0;
 
+  const accountsN = Math.max(1, parseInt(settings.accountsToCopy, 10) || 1);
+  const risk = settings.riskPerTrade || 0;
+  const reward = risk * settings.rewardRatio;
+  const breakevenWinRatePct = (risk + reward) > 0 ? (risk / (risk + reward)) * 100 : 0;
+
+  // Win Rate mode - a win rate, a sample size, risk/trade and RR turn into an
+  // expected result for one account and for every copied account combined.
+  const wrTrades = Math.max(0, parseInt(settings.sampleTrades, 10) || 0);
+  const wrWinRate = Math.max(0, Math.min(100, parseFloat(settings.winRatePct) || 0));
+  const wrWins = Math.round(wrTrades * (wrWinRate / 100));
+  const wrLosses = wrTrades - wrWins;
+  const wrGrossPerAccount = (wrWins * reward) - (wrLosses * risk);
+  const wrExpectancyPerTrade = ((wrWinRate / 100) * reward) - ((1 - wrWinRate / 100) * risk);
+
+  // Trade Count mode - the trader sets the exact number of winners and losers
+  // instead of a percentage, useful for "what if I go 12-8" style questions.
+  const tcWins = Math.max(0, parseInt(settings.wcWins, 10) || 0);
+  const tcLosses = Math.max(0, parseInt(settings.wcLosses, 10) || 0);
+  const tcTotalTrades = tcWins + tcLosses;
+  const tcGrossPerAccount = (tcWins * reward) - (tcLosses * risk);
+  const tcImpliedWinRate = tcTotalTrades > 0 ? (tcWins / tcTotalTrades) * 100 : null;
+
+  const mode = settings.mode || 'date';
+
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
       <div className="flex items-center gap-2 mb-1">
         <Icon name="Target" className="h-5 w-5 text-yellow-400" />
         <h2 className="text-lg font-semibold text-white">Target Projection</h2>
       </div>
-      <p className="text-xs text-gray-500 mb-5">Set a risk-per-trade and a profit target, and see the day-by-day path to it. Risk cuts after a real loss and compounds after a real win, once a day is logged.</p>
+      <p className="text-xs text-gray-500 mb-4">Model the path to your target by day, by win rate, or by a set number of wins and losses - scaled across every account you copy-trade.</p>
 
+      <div className="grid sm:grid-cols-[2fr_1fr] gap-3 mb-5">
+        <div className="flex gap-1.5">
+          {[{ key: 'date', label: 'Day-by-Day Plan' }, { key: 'winrate', label: 'Win Rate' }, { key: 'tradecount', label: 'Trade Count' }].map(function(m) {
+            return (
+              <button key={m.key} onClick={function() { update('mode', m.key); }}
+                className={"flex-1 py-2 rounded-lg text-xs font-medium border transition " + (mode === m.key ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}>
+                {m.label}
+              </button>
+            );
+          })}
+        </div>
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">Accounts to Copy</label>
+          <input type="number" min="1" value={settings.accountsToCopy || ''} onChange={function(e) { update('accountsToCopy', parseInt(e.target.value, 10) || 1); }}
+            className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white" placeholder="1" />
+        </div>
+      </div>
+      {accountsN > 1 && <p className="text-[11px] text-gray-600 -mt-3 mb-4">Every dollar figure below is scaled x{accountsN} for copy-trading across {accountsN} accounts.</p>}
+
+      {mode === 'date' && (
+      <React.Fragment>
       <div className="grid sm:grid-cols-2 gap-4 mb-5">
         <div>
           <label className="block text-xs text-gray-500 mb-1">Risk Per Trade ($)</label>
@@ -1678,7 +1745,7 @@ function ProjectionsCard(props) {
         </div>
         <div>
           <label className="block text-xs text-gray-500 mb-1">Daily Profit / Trade</label>
-          <div className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-green-400 num">{fmt(dailyReward)}</div>
+          <div className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-green-400 num">{fmt(dailyReward * accountsN)}</div>
         </div>
       </div>
 
@@ -1711,7 +1778,7 @@ function ProjectionsCard(props) {
         <React.Fragment>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
             <MiniStat label="Trading Days to Target" value={String(days.length)} color="text-blue-400" />
-            <MiniStat label="Daily Reward" value={fmt(dailyReward)} color="text-yellow-400" />
+            <MiniStat label="Daily Reward" value={fmt(dailyReward * accountsN)} color="text-yellow-400" />
             <MiniStat label="Progress (Logged Days)" value={progressPct.toFixed(1) + '%'} color="text-green-400" />
             <MiniStat label="Days Logged So Far" value={loggedDaysInPlan + ' of ' + days.length} color="text-purple-400" />
           </div>
@@ -1737,10 +1804,10 @@ function ProjectionsCard(props) {
                         <div className="font-medium">{d.date}</div>
                         <div className="text-[10px] text-gray-600">Day {d.dayNumber}</div>
                       </td>
-                      <td className="px-2 py-2 text-center text-blue-400 num">{fmt(d.risk)}</td>
-                      <td className="px-2 py-2 text-center text-green-400 num">{fmt(d.reward)}</td>
+                      <td className="px-2 py-2 text-center text-blue-400 num">{fmt(d.risk * accountsN)}</td>
+                      <td className="px-2 py-2 text-center text-green-400 num">{fmt(d.reward * accountsN)}</td>
                       <td className="px-2 py-2 text-center">
-                        <div className={"num font-semibold " + (reached ? 'text-green-400' : 'text-yellow-400')}>{fmt(d.targetExpectation)}</div>
+                        <div className={"num font-semibold " + (reached ? 'text-green-400' : 'text-yellow-400')}>{fmt(d.targetExpectation * accountsN)}</div>
                         <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden mt-1">
                           <div className={"h-full rounded-full " + (reached ? 'bg-green-400' : 'bg-yellow-400')} style={{ width: Math.max(2, pct) + '%' }}></div>
                         </div>
@@ -1748,7 +1815,7 @@ function ProjectionsCard(props) {
                       <td className="px-2 py-2 text-center num">
                         {d.hasActual ? (
                           <span className={d.actualPnl > 0 ? 'text-green-400' : d.actualPnl < 0 ? 'text-red-400' : 'text-gray-400'}>
-                            {d.actualPnl > 0 ? '+' : ''}{fmt(d.actualPnl)}
+                            {d.actualPnl > 0 ? '+' : ''}{fmt(d.actualPnl * accountsN)}
                           </span>
                         ) : (
                           <span className="text-gray-700">-</span>
@@ -1759,6 +1826,82 @@ function ProjectionsCard(props) {
                 })}
               </tbody>
             </table>
+          </div>
+        </React.Fragment>
+      )}
+      </React.Fragment>
+      )}
+
+      {mode === 'winrate' && (
+        <React.Fragment>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Risk Per Trade ($)</label>
+              <input type="number" value={settings.riskPerTrade || ''} onChange={function(e) { update('riskPerTrade', parseFloat(e.target.value) || 0); }}
+                className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white" placeholder="0" />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Reward:Risk Ratio</label>
+              <input type="number" step="0.1" value={settings.rewardRatio || ''} onChange={function(e) { update('rewardRatio', parseFloat(e.target.value) || 0); }}
+                className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white" placeholder="2" />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Win Rate (%)</label>
+              <input type="number" min="0" max="100" value={settings.winRatePct || ''} onChange={function(e) { update('winRatePct', parseFloat(e.target.value) || 0); }}
+                className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white" placeholder="50" />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Sample Size (trades)</label>
+              <input type="number" min="0" value={settings.sampleTrades || ''} onChange={function(e) { update('sampleTrades', parseInt(e.target.value, 10) || 0); }}
+                className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white" placeholder="20" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+            <MiniStat label="Implied Wins / Losses" value={wrWins + 'W / ' + wrLosses + 'L'} color="text-blue-400" />
+            <MiniStat label="Expectancy / Trade" value={fmt(wrExpectancyPerTrade)} color={wrExpectancyPerTrade >= 0 ? 'text-green-400' : 'text-red-400'} />
+            <MiniStat label="Breakeven Win Rate" value={breakevenWinRatePct.toFixed(1) + '%'} color="text-yellow-400" />
+            <MiniStat label="Total Result (1 account)" value={fmt(wrGrossPerAccount)} color={wrGrossPerAccount >= 0 ? 'text-green-400' : 'text-red-400'} />
+          </div>
+          <div className="bg-black/40 border border-gray-800 rounded-lg p-4 text-center">
+            <p className="text-xs text-gray-500 mb-1">Total Result across {accountsN} account{accountsN !== 1 ? 's' : ''}</p>
+            <p className={"text-2xl font-bold num " + (wrGrossPerAccount * accountsN >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(wrGrossPerAccount * accountsN)}</p>
+          </div>
+        </React.Fragment>
+      )}
+
+      {mode === 'tradecount' && (
+        <React.Fragment>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Risk Per Trade ($)</label>
+              <input type="number" value={settings.riskPerTrade || ''} onChange={function(e) { update('riskPerTrade', parseFloat(e.target.value) || 0); }}
+                className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white" placeholder="0" />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Reward:Risk Ratio</label>
+              <input type="number" step="0.1" value={settings.rewardRatio || ''} onChange={function(e) { update('rewardRatio', parseFloat(e.target.value) || 0); }}
+                className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white" placeholder="2" />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Winning Trades</label>
+              <input type="number" min="0" value={settings.wcWins || ''} onChange={function(e) { update('wcWins', parseInt(e.target.value, 10) || 0); }}
+                className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-green-400" placeholder="10" />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Losing Trades</label>
+              <input type="number" min="0" value={settings.wcLosses || ''} onChange={function(e) { update('wcLosses', parseInt(e.target.value, 10) || 0); }}
+                className="w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-red-400" placeholder="10" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+            <MiniStat label="Total Trades" value={String(tcTotalTrades)} color="text-blue-400" />
+            <MiniStat label="Implied Win Rate" value={tcImpliedWinRate === null ? '-' : tcImpliedWinRate.toFixed(1) + '%'} color="text-yellow-400" />
+            <MiniStat label="Breakeven Win Rate" value={breakevenWinRatePct.toFixed(1) + '%'} color="text-gray-400" />
+            <MiniStat label="Total Result (1 account)" value={fmt(tcGrossPerAccount)} color={tcGrossPerAccount >= 0 ? 'text-green-400' : 'text-red-400'} />
+          </div>
+          <div className="bg-black/40 border border-gray-800 rounded-lg p-4 text-center">
+            <p className="text-xs text-gray-500 mb-1">Total Result across {accountsN} account{accountsN !== 1 ? 's' : ''}</p>
+            <p className={"text-2xl font-bold num " + (tcGrossPerAccount * accountsN >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(tcGrossPerAccount * accountsN)}</p>
           </div>
         </React.Fragment>
       )}
@@ -2749,6 +2892,95 @@ function EquityCurveBlock(props) {
   );
 }
 
+// Real, computed-from-your-own-trades stop-loss and revenge-trading stats -
+// never example numbers. Reads straight off the active account's logged
+// trades, so it's blank/neutral until there's actually something to show.
+function TradeDisciplineTracker(props) {
+  const accountEntries = props.accountEntries;
+  const allTrades = accountEntries
+    .filter(function(e) { return e.tradedToday !== 'no'; })
+    .flatMap(function(e) { return (e.trades || []).map(function(t) { return Object.assign({}, t, { date: e.date }); }); });
+
+  if (allTrades.length === 0) {
+    return (
+      <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6">
+        <div className="flex items-center gap-2 mb-1">
+          <Icon name="ShieldAlert" className="h-5 w-5 text-yellow-400" />
+          <h2 className="text-lg font-semibold text-white">Trade Discipline Tracker</h2>
+        </div>
+        <p className="text-xs text-gray-500">Log a trade and mark what happened to its stop-loss to start building this - stop-loss handling and revenge-entry flags, tracked automatically across every trade on this account.</p>
+      </div>
+    );
+  }
+
+  const respected = allTrades.filter(function(t) { return (t.stopHandling || 'respected') === 'respected'; });
+  const widened = allTrades.filter(function(t) { return t.stopHandling === 'widened'; });
+  const removed = allTrades.filter(function(t) { return t.stopHandling === 'removed'; });
+  const moved = widened.concat(removed);
+  const pct = function(n) { return allTrades.length > 0 ? Math.round((n / allTrades.length) * 100) : 0; };
+
+  const avgAbs = function(list) {
+    const losers = list.map(function(t) { return tradeSignedPnl(t); }).filter(function(p) { return p < 0; });
+    if (losers.length === 0) return null;
+    return Math.abs(losers.reduce(function(s, p) { return s + p; }, 0) / losers.length);
+  };
+  const avgLossRespected = avgAbs(respected);
+  const avgLossMoved = avgAbs(moved);
+  const lossMultiplier = (avgLossRespected && avgLossMoved) ? (avgLossMoved / avgLossRespected) : null;
+  const movedThatWon = moved.filter(function(t) { return t.result === 'win'; }).length;
+
+  const revengeTrades = allTrades.filter(function(t) { return !!t.revengeEntry; });
+  const nonRevengeTrades = allTrades.filter(function(t) { return !t.revengeEntry; });
+  const avgPnl = function(list) { return list.length > 0 ? list.reduce(function(s, t) { return s + tradeSignedPnl(t); }, 0) / list.length : null; };
+  const revengeAvgPnl = avgPnl(revengeTrades);
+  const nonRevengeAvgPnl = avgPnl(nonRevengeTrades);
+  const revengeWinRate = revengeTrades.length > 0 ? (revengeTrades.filter(function(t) { return t.result === 'win'; }).length / revengeTrades.length) * 100 : null;
+
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6 space-y-5">
+      <div className="flex items-center gap-2">
+        <Icon name="ShieldAlert" className="h-5 w-5 text-yellow-400" />
+        <h2 className="text-lg font-semibold text-white">Trade Discipline Tracker</h2>
+        <span className="text-xs text-gray-500">{allTrades.length} trade{allTrades.length !== 1 ? 's' : ''} logged on this account</span>
+      </div>
+
+      <div>
+        <p className="text-xs text-gray-500 mb-2">What happens after price approaches your stop</p>
+        <div className="grid grid-cols-3 gap-2">
+          <MiniStat label="Stop Respected" value={pct(respected.length) + '%'} color="text-green-400" />
+          <MiniStat label="Stop Widened" value={pct(widened.length) + '%'} color="text-yellow-400" />
+          <MiniStat label="Stop Removed" value={pct(removed.length) + '%'} color="text-red-400" />
+        </div>
+        {lossMultiplier !== null ? (
+          <p className="text-xs text-gray-400 mt-3 leading-relaxed">
+            Trades where the stop was moved or removed lost <span className="text-red-400 font-semibold num">{lossMultiplier.toFixed(1)}x</span> more on average ({fmt(avgLossMoved)}) than trades where it was respected ({fmt(avgLossRespected)}).
+            {movedThatWon === 0 && moved.length > 0 ? ' Moving it hasn\'t turned a single one of those trades into a winner yet.' : ''}
+          </p>
+        ) : moved.length > 0 ? (
+          <p className="text-xs text-gray-500 mt-3">Not enough losing trades yet in both groups to compare the average loss size.</p>
+        ) : (
+          <p className="text-xs text-gray-500 mt-3">Every logged trade has respected its stop so far - keep it that way.</p>
+        )}
+      </div>
+
+      <div className="border-t border-gray-800 pt-4">
+        <p className="text-xs text-gray-500 mb-2">Revenge entries (reacting to an earlier loss, not the setup)</p>
+        <div className="grid grid-cols-2 gap-2">
+          <MiniStat label="Revenge Entries" value={revengeTrades.length + ' of ' + allTrades.length} color="text-red-400" />
+          <MiniStat label="Revenge Win Rate" value={revengeWinRate === null ? '-' : revengeWinRate.toFixed(0) + '%'} color={revengeWinRate !== null && revengeWinRate < 50 ? 'text-red-400' : 'text-gray-300'} />
+        </div>
+        {revengeTrades.length > 0 && revengeAvgPnl !== null && nonRevengeAvgPnl !== null ? (
+          <p className="text-xs text-gray-400 mt-3 leading-relaxed">
+            Revenge entries have averaged <span className={"font-semibold num " + (revengeAvgPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(revengeAvgPnl)}</span> per trade, against <span className={"font-semibold num " + (nonRevengeAvgPnl >= 0 ? 'text-green-400' : 'text-red-400')}>{fmt(nonRevengeAvgPnl)}</span> for everything else.
+          </p>
+        ) : (
+          <p className="text-xs text-gray-500 mt-3">No revenge entries flagged yet on this account.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function DisciplineChecklistCard(props) {
   const accounts = props.accounts;
   const entries = props.entries;
@@ -2909,10 +3141,19 @@ function DisciplineLeaderboard(props) {
           if (data.displayName) namesByUid[d.id] = data.displayName;
         });
 
+        // Paper (practice) accounts never count toward anyone's discipline score
+        // or leaderboard rank - track their ids so both accounts and the entries
+        // logged against them can be skipped below.
+        const paperAccountIds = {};
+        accountsSnap.forEach(function(d) {
+          if (d.data().accountType === 'paper') paperAccountIds[d.id] = true;
+        });
+
         const accountsByUid = {};
         accountsSnap.forEach(function(d) {
           const uid = d.ref.parent.parent ? d.ref.parent.parent.id : null;
           if (!uid) return;
+          if (paperAccountIds[d.id]) return;
           if (!accountsByUid[uid]) accountsByUid[uid] = [];
           accountsByUid[uid].push(Object.assign({ id: d.id }, d.data()));
         });
@@ -2921,8 +3162,10 @@ function DisciplineLeaderboard(props) {
         entriesSnap.forEach(function(d) {
           const uid = d.ref.parent.parent ? d.ref.parent.parent.id : null;
           if (!uid) return;
+          const data = d.data();
+          if (paperAccountIds[data.accountId]) return;
           if (!entriesByUid[uid]) entriesByUid[uid] = [];
-          entriesByUid[uid].push(Object.assign({ id: d.id }, d.data()));
+          entriesByUid[uid].push(Object.assign({ id: d.id }, data));
         });
 
         const allUids = Array.from(new Set(Object.keys(accountsByUid).concat(Object.keys(entriesByUid))));
@@ -3893,11 +4136,13 @@ function MMMJournal(props) {
 
   // Populates the Overview/Equity Curve selection once, the first time accounts
   // load - after that, the user's own checkbox choices are never overridden,
-  // even if they deliberately deselect everything.
+  // even if they deliberately deselect everything. Paper accounts start
+  // unchecked - practice trades shouldn't quietly blend into real combined
+  // numbers unless the trader opts in by hand.
   useEffect(function() {
     if (hasInitializedSelection) return;
     if (accounts.length === 0) return;
-    const nonBreached = accounts.filter(function(a) { return computeAccountStatus(a, entries) !== 'breached'; });
+    const nonBreached = accounts.filter(function(a) { return a.accountType !== 'paper' && computeAccountStatus(a, entries) !== 'breached'; });
     setSelectedAccountIds(new Set(nonBreached.map(function(a) { return a.id; })));
     setHasInitializedSelection(true);
   }, [accounts, entries, hasInitializedSelection]);
@@ -3923,6 +4168,13 @@ function MMMJournal(props) {
   };
   const accountsForOverview = accounts.filter(function(a) { return selectedAccountIds.has(a.id); });
 
+  // Paper accounts are a practice sandbox - they should never move a real
+  // discipline score or the leaderboard, so every discipline computation
+  // for this user runs on real (non-paper) accounts/entries only.
+  const nonPaperAccounts = accounts.filter(function(a) { return a.accountType !== 'paper'; });
+  const nonPaperAccountIdSet = new Set(nonPaperAccounts.map(function(a) { return a.id; }));
+  const nonPaperEntries = entries.filter(function(e) { return nonPaperAccountIdSet.has(e.accountId); });
+
   useEffect(function() {
     const ref = db.collection('presence').doc(user.uid);
     const beat = function() {
@@ -3946,7 +4198,7 @@ function MMMJournal(props) {
   }, [user.uid, user.displayName]);
 
   useEffect(function() {
-    const disc = computeDisciplineScore(accounts, entries);
+    const disc = computeDisciplineScore(nonPaperAccounts, nonPaperEntries);
     if (!disc) return;
     db.collection('leaderboard').doc(user.uid).set({
       displayName: user.displayName || ('Trader-' + user.uid.slice(0, 4)),
@@ -4132,7 +4384,12 @@ function MMMJournal(props) {
     setHasManualSelection(true);
     setViewingBreached(false);
     setActiveAccountId(doc.id);
-    setSelectedAccountIds(function(prev) { const next = new Set(prev); next.add(doc.id); return next; });
+    // A new paper (practice) account stays out of the combined Overview by
+    // default, same as it stays out of the discipline score and leaderboard -
+    // the trader can still check its box by hand if they want it blended in.
+    if (newAccount.accountType !== 'paper') {
+      setSelectedAccountIds(function(prev) { const next = new Set(prev); next.add(doc.id); return next; });
+    }
     setNewAccount(emptyAccountForm);
     setShowAddAccount(false);
   };
@@ -4418,7 +4675,8 @@ function MMMJournal(props) {
   const addTradeRow = function() {
     if (newEntry.trades.length >= 3 || filledWins >= 2 || filledLosses >= 2 || dllBreached) return;
     setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.concat([{ result: 'win', pnl: '', direction: 'long', rulesChecked: [],
-      positionSize: String(effectiveContracts), riskAmount: effectiveRiskPerTrade.toFixed(2), htfLtf: false, chartUrl: '' }]) }));
+      positionSize: String(effectiveContracts), riskAmount: effectiveRiskPerTrade.toFixed(2), htfLtf: false, chartUrl: '',
+      stopHandling: 'respected', revengeEntry: false }]) }));
   };
   const removeTradeRow = function(idx) {
     setNewEntry(Object.assign({}, newEntry, { trades: newEntry.trades.filter(function(_, i) { return i !== idx; }) }));
@@ -4696,6 +4954,13 @@ function MMMJournal(props) {
                     );
                   })}
                 </div>
+
+                {activeAccount.accountType === 'paper' && (
+                  <div className="border border-blue-500/30 bg-blue-500/10 rounded-xl p-3 flex items-center gap-3">
+                    <Icon name="FlaskConical" className="h-4 w-4 text-blue-400 flex-shrink-0" />
+                    <p className="text-xs text-blue-200/80">Paper account - practice only. Nothing logged here counts toward your discipline score, the leaderboard, or any other real account's numbers.</p>
+                  </div>
+                )}
 
                 {activePage === 'overview' && (
                 <React.Fragment>
@@ -5087,7 +5352,8 @@ function MMMJournal(props) {
                 {activeStatus === 'breached' && (
                   <BreachReviewCard account={activeAccount} accountEntries={accountEntries} bufferHistory={bufferHistory} />
                 )}
-                <DisciplineChecklistCard accounts={accounts} entries={entries} />
+                <DisciplineChecklistCard accounts={nonPaperAccounts} entries={nonPaperEntries} />
+                <TradeDisciplineTracker accountEntries={accountEntries} />
                 <ReflectionLog accountEntries={accountEntries} />
                 <DisciplineLeaderboard uid={user.uid} currentName={user.displayName || user.email} />
                 </React.Fragment>
@@ -5473,6 +5739,17 @@ function MMMJournal(props) {
                         <button onClick={function() { updateTradeRow(idx, 'htfLtf', !trade.htfLtf); }} className="w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white">
                           <Icon name={trade.htfLtf ? "CheckSquare" : "Square"} className={"h-4 w-4 flex-shrink-0 " + (trade.htfLtf ? 'text-green-400' : 'text-gray-600')} /><span>HTF to LTF analysis done before this trade?</span>
                         </button>
+                        <div className="bg-black/30 rounded-lg p-2.5 space-y-2">
+                          <p className="text-[11px] text-gray-500 uppercase tracking-wide">What happened to your stop-loss?</p>
+                          <div className="flex items-center gap-1.5">
+                            <button onClick={function() { updateTradeRow(idx, 'stopHandling', 'respected'); }} className={"flex-1 py-1.5 rounded-lg text-[11px] font-medium border " + ((trade.stopHandling || 'respected') === 'respected' ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}>Respected</button>
+                            <button onClick={function() { updateTradeRow(idx, 'stopHandling', 'widened'); }} className={"flex-1 py-1.5 rounded-lg text-[11px] font-medium border " + (trade.stopHandling === 'widened' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}>Widened</button>
+                            <button onClick={function() { updateTradeRow(idx, 'stopHandling', 'removed'); }} className={"flex-1 py-1.5 rounded-lg text-[11px] font-medium border " + (trade.stopHandling === 'removed' ? 'bg-red-500/20 text-red-400 border-red-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')}>Removed</button>
+                          </div>
+                          <button onClick={function() { updateTradeRow(idx, 'revengeEntry', !trade.revengeEntry); }} className="w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white pt-0.5">
+                            <Icon name={trade.revengeEntry ? "CheckSquare" : "Square"} className={"h-4 w-4 flex-shrink-0 " + (trade.revengeEntry ? 'text-red-400' : 'text-gray-600')} /><span>Revenge entry - reacting to an earlier loss today, not the setup?</span>
+                          </button>
+                        </div>
                         <div className="flex items-center gap-1.5">
                           <Icon name="Link" className="h-3.5 w-3.5 text-gray-500 flex-shrink-0" />
                           <input type="url" placeholder="TradingView chart link (optional)" value={trade.chartUrl || ''} onChange={function(e) { updateTradeRow(idx, 'chartUrl', e.target.value); }} className="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-1.5 text-xs focus:border-yellow-400/50 outline-none" />
@@ -5560,6 +5837,13 @@ function App() {
     try { return localStorage.getItem('mmm-language') || 'en'; } catch (e) { return 'en'; }
   });
 
+  // The homepage/diagnostic test link to the course as journal/?course=1 so
+  // the course sits behind a free account instead of being open to anyone -
+  // once a signed-in user carries that flag, send them straight to it.
+  const wantsCourse = (function() {
+    try { return new URLSearchParams(window.location.search).get('course') === '1'; } catch (e) { return false; }
+  })();
+
   useEffect(function() {
     const unsub = auth.onAuthStateChanged(function(u) { setUser(u); });
     return unsub;
@@ -5575,8 +5859,13 @@ function App() {
     return function() { observer.disconnect(); };
   }, [language, user]);
 
+  useEffect(function() {
+    if (user && wantsCourse) window.location.href = 'course/index.html';
+  }, [user, wantsCourse]);
+
   if (user === undefined) return <div className="min-h-screen bg-black flex items-center justify-center text-yellow-400">Loading...</div>;
-  return user ? <MMMJournal user={user} language={language} setLanguage={setLanguage} /> : <AuthScreen language={language} setLanguage={setLanguage} />;
+  if (user && wantsCourse) return <div className="min-h-screen bg-black flex items-center justify-center text-yellow-400">Taking you to the course...</div>;
+  return user ? <MMMJournal user={user} language={language} setLanguage={setLanguage} /> : <AuthScreen language={language} setLanguage={setLanguage} wantsCourse={wantsCourse} />;
 }
 
 const rootEl = ReactDOM.createRoot(document.getElementById('root'));

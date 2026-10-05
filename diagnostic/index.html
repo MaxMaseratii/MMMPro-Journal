@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Free Trading Discipline Test | MMM Trading</title>
+<meta name="description" content="A free 2-minute diagnostic that scores your stop-loss discipline, revenge-trading risk, and trading process - built on the MMM method.">
+<link rel="icon" href="../favicon.ico" sizes="any">
+<meta name="theme-color" content="#0a0a0a">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --mmm-black: hsl(0,0%,4%);
+    --mmm-dark: hsl(0,0%,9%);
+    --mmm-surface: hsl(0,0%,12%);
+    --mmm-gold: hsl(45,100%,55%);
+    --mmm-gold-light: hsl(45,100%,65%);
+    --mmm-tiffany: hsl(180,70%,55%);
+    --mmm-tiffany-light: hsl(180,80%,65%);
+    --mmm-green: hsl(142,76%,36%);
+    --mmm-red: hsl(0,84%,60%);
+  }
+  body { background: var(--mmm-black); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .num { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .gold-text { background-image: linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .teal-text { background-image: linear-gradient(90deg, var(--mmm-tiffany), var(--mmm-tiffany-light)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .crown-badge { background: var(--mmm-black); border: 2px solid var(--mmm-tiffany); }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .opt-btn { transition: all .15s ease; }
+  .opt-btn.selected { background: hsla(45,100%,55%,0.15); border-color: var(--mmm-gold); color: var(--mmm-gold-light); }
+  .bar-fill { transition: width .6s ease; }
+  .fade-in { animation: fadeIn .35s ease; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
+</style>
+</head>
+<body class="text-white">
+
+<header class="sticky top-0 z-40 shadow-xl" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light), var(--mmm-gold));">
+  <div class="max-w-4xl mx-auto px-5 sm:px-8">
+    <div class="h-[64px] flex items-center justify-between">
+      <a href="../" class="flex items-center gap-2.5">
+        <div class="crown-badge h-9 w-9 rounded-lg flex items-center justify-center shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--mmm-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7Zm3 15h14"/></svg>
+        </div>
+        <span class="text-sm font-extrabold tracking-tight text-black">MMM Trading</span>
+      </a>
+      <a href="../" class="text-sm font-bold text-black/70 hover:text-black transition">&larr; Back to home</a>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-2xl mx-auto px-5 sm:px-8 py-12 sm:py-16">
+
+  <!-- INTRO -->
+  <section id="screen-intro" class="screen active fade-in">
+    <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-5" style="background:hsla(180,70%,55%,0.12); color:var(--mmm-tiffany-light); border:1px solid hsla(180,70%,55%,0.3);">Free &middot; 2 Minutes &middot; No Signup</div>
+    <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight mb-4">What's Actually Costing You Money?</h1>
+    <p class="text-gray-400 leading-relaxed mb-6">Twenty honest yes/no questions on your stop-loss habits, revenge trading, risk, planning and execution. No account needed, nothing is sent anywhere - the scoring runs right here in your browser.</p>
+    <p class="text-gray-400 leading-relaxed mb-8">Answer how you actually trade, not how you wish you traded. The MMM method is built on one idea: <span class="text-white font-semibold">the plan isn't the problem, the departures from it are.</span> This finds yours.</p>
+    <button onclick="startQuiz()" class="w-full sm:w-auto font-bold text-black px-8 py-4 rounded-xl text-lg shadow-2xl hover:scale-[1.02] transition" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Start the Test</button>
+  </section>
+
+  <!-- QUIZ -->
+  <section id="screen-quiz" class="screen">
+    <div class="flex items-center justify-between mb-2 text-xs text-gray-500">
+      <span id="q-category" class="font-semibold" style="color:var(--mmm-tiffany-light);"></span>
+      <span id="q-progress-label" class="num"></span>
+    </div>
+    <div class="h-1.5 bg-gray-800 rounded-full overflow-hidden mb-8">
+      <div id="q-progress-bar" class="bar-fill h-full rounded-full" style="width:0%; background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-tiffany));"></div>
+    </div>
+    <div id="q-wrap" class="fade-in">
+      <h2 id="q-text" class="text-xl sm:text-2xl font-bold leading-snug mb-8"></h2>
+      <div class="grid grid-cols-2 gap-3">
+        <button class="opt-btn bg-white/[0.03] border-2 border-white/10 rounded-xl py-5 text-lg font-semibold" onclick="answer(true)">Yes</button>
+        <button class="opt-btn bg-white/[0.03] border-2 border-white/10 rounded-xl py-5 text-lg font-semibold" onclick="answer(false)">No</button>
+      </div>
+    </div>
+    <button id="q-back" onclick="goBack()" class="mt-8 text-sm text-gray-500 hover:text-gray-300 transition">&larr; Previous question</button>
+  </section>
+
+  <!-- RESULTS -->
+  <section id="screen-results" class="screen fade-in">
+    <div class="text-center mb-10">
+      <p class="text-sm text-gray-500 mb-2">Your Trading Discipline Score</p>
+      <div id="score-big" class="text-6xl sm:text-7xl font-extrabold num mb-2">--%</div>
+      <p id="score-band" class="text-lg font-bold mb-1"></p>
+      <p id="score-archetype" class="text-gray-400">Your profile: <span id="archetype-label" class="font-semibold text-white"></span></p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-4 mb-8">
+      <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-5">
+        <p class="text-xs text-gray-500 mb-1">Strongest Area</p>
+        <p id="strong-area" class="font-bold mb-1" style="color:var(--mmm-green);"></p>
+        <p id="strong-note" class="text-xs text-gray-400 leading-relaxed"></p>
+      </div>
+      <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-5">
+        <p class="text-xs text-gray-500 mb-1">Biggest Leak</p>
+        <p id="weak-area" class="font-bold mb-1" style="color:var(--mmm-red);"></p>
+        <p id="weak-note" class="text-xs text-gray-400 leading-relaxed"></p>
+      </div>
+    </div>
+
+    <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-6 mb-8">
+      <h3 class="font-bold mb-4">Score by Category</h3>
+      <div id="category-bars" class="space-y-4"></div>
+    </div>
+
+    <div id="flags-wrap" class="mb-10">
+      <h3 class="font-bold mb-4">What To Watch</h3>
+      <div id="flags-list" class="space-y-3"></div>
+    </div>
+
+    <div class="rounded-2xl p-6 sm:p-8 text-center" style="background:linear-gradient(135deg, hsla(45,100%,55%,0.1), hsla(180,70%,55%,0.08)); border:1px solid hsla(45,100%,55%,0.25);">
+      <h3 class="text-xl font-extrabold mb-3">Your score doesn't mean you can't trade.</h3>
+      <p class="text-gray-400 leading-relaxed mb-6 max-w-lg mx-auto">It means these leaks are probably costing you more than your setups ever do. The MMM Pro Journal's Mental Check and Discipline Leaderboard exist to catch exactly this, every single day, before it costs your buffer.</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="../journal/" class="w-full sm:w-auto text-center font-bold text-black px-7 py-3.5 rounded-xl transition hover:scale-[1.02]" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Start Journaling Free</a>
+        <a href="../journal/?course=1" class="w-full sm:w-auto text-center font-bold px-7 py-3.5 rounded-xl border-2 transition" style="border-color:var(--mmm-tiffany); color:var(--mmm-tiffany-light);">Learn the MMM Method First</a>
+      </div>
+      <button onclick="restartQuiz()" class="mt-5 text-xs text-gray-500 hover:text-gray-300 transition">Retake the test</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="border-t border-white/10 mt-10">
+  <div class="max-w-4xl mx-auto px-5 sm:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
+    <span>Max Maserati Trading University</span>
+    <span>Nothing here is financial advice - it's a discipline check, not a diagnosis.</span>
+  </div>
+</footer>
+
+<script>
+// Each question: text, category, and "goodAnswer" (true=Yes, false=No) - the honest answer that scores a discipline point.
+var QUESTIONS = [
+  // Stop-Loss Discipline
+  { cat: 'Stop-Loss Discipline', text: 'Once your stop-loss is set, do you ever move it further away after the trade is already open?', good: false, flag: "Moving a stop after entry turns a planned loss into an unplanned one - the exact thing the stop was there to prevent." },
+  { cat: 'Stop-Loss Discipline', text: 'Have you ever removed a stop-loss completely in the middle of a trade?', good: false, flag: "A trade with no stop has no defined risk - it isn't a trade anymore, it's a hope." },
+  { cat: 'Stop-Loss Discipline', text: 'Do you place your stop-loss the moment you enter a trade, every single time?', good: true, flag: "Setting the stop after entry leaves a window where a trade runs with no defined risk at all." },
+  { cat: 'Stop-Loss Discipline', text: 'Has moving a stop ever turned a small loss into a much bigger one for you?', good: false, flag: "This is the clearest sign stop-loss discipline is costing real money, not just theoretical money." },
+  // Revenge Trading
+  { cat: 'Revenge Trading', text: "After a loss, do you feel an urge to immediately open a new trade to make it back?", good: false, flag: "The urge to recover fast is the single clearest early sign of revenge trading." },
+  { cat: 'Revenge Trading', text: 'Do you ever increase your position size right after a losing trade?', good: false, flag: "Sizing up after a loss turns one mistake into a much more expensive one." },
+  { cat: 'Revenge Trading', text: 'Have you re-entered the same symbol within 30 minutes of a stop-out?', good: false, flag: "A fast re-entry on the same symbol is rarely a new setup - it's usually the last trade in disguise." },
+  { cat: 'Revenge Trading', text: 'Does a losing streak ever make you trade more often, not less?', good: false, flag: "Trading more after losses is the opposite of what a losing streak should trigger." },
+  // Mindset & Emotions
+  { cat: 'Mindset & Emotions', text: 'Does watching your live P&L move around ever change your exit before your plan says to?', good: false, flag: "Reacting to every tick hands control from your plan to your emotions, trade by trade." },
+  { cat: 'Mindset & Emotions', text: "Do you take trades outside your plan because price is moving and you don't want to miss it?", good: false, flag: "FOMO entries happen after emotional pressure, not after your setup actually confirmed." },
+  { cat: 'Mindset & Emotions', text: 'Does fear after a loss ever stop you from taking your next valid setup?', good: false, flag: "Skipping a valid setup out of fear is still your plan being overridden by emotion - just quietly." },
+  // Risk Management Habits
+  { cat: 'Risk Management', text: 'Do you know your exact dollar risk before you click buy or sell, every single time?', good: true, flag: "Entering without a defined risk amount makes it easy to stay in a bad trade or resize emotionally." },
+  { cat: 'Risk Management', text: 'Do you ever increase your risk size after a losing trade, hoping to recover faster?', good: false, flag: "Raising risk after a loss is recovery behavior, not a trading decision - and it accelerates drawdowns." },
+  { cat: 'Risk Management', text: "Is your usual risk per trade ever bigger than your account's buffer could survive 20+ times in a row?", good: false, flag: "This is the core MMM buffer-first rule - size for survival first, profit second." },
+  // Planning & Process
+  { cat: 'Planning & Process', text: 'Do you write a daily plan - risk, target, and the setups you\'re allowed to take - before the session starts?', good: true, flag: "Without a written plan, every decision in the session gets made live, under pressure." },
+  { cat: 'Planning & Process', text: 'Do you log your trading day - win, loss, or no-trade - so you can review it later?', good: true, flag: "Without a journal, the same mistakes repeat because they're never actually measured." },
+  { cat: 'Planning & Process', text: 'Do you change your strategy after just a few losing trades in a row?', good: false, flag: "Switching systems after a short losing streak prevents you from ever finding out what actually works." },
+  // Execution & Discipline
+  { cat: 'Execution & Discipline', text: 'Do you only take trades that match your written setup criteria?', good: true, flag: "Trades outside your criteria add randomness and quietly erode your statistical edge." },
+  { cat: 'Execution & Discipline', text: "Do you ever skip your entry checklist when you're trying to recover a loss?", good: false, flag: "Skipping the checklist under pressure is exactly when it matters most." },
+  { cat: 'Execution & Discipline', text: 'Have you taken a trade this month with no predefined stop-loss or profit target?', good: false, flag: "A trade with no stop and no target isn't a plan being executed - it's a guess being hoped on." }
+];
+
+var CATEGORIES = ['Stop-Loss Discipline', 'Revenge Trading', 'Mindset & Emotions', 'Risk Management', 'Planning & Process', 'Execution & Discipline'];
+
+var ARCHETYPES = {
+  'Stop-Loss Discipline': { label: 'The Stop Mover', note: "Your stops aren't the problem - what happens to them after entry is. This is usually the single fastest fix available to you." },
+  'Revenge Trading': { label: 'The Revenge Trader', note: "Losses are triggering trades, not patience. The 30-minute rule (close the app after any loss) is built for exactly this." },
+  'Mindset & Emotions': { label: 'The Emotional Executor', note: "Your plan is probably fine - it's being overridden live, in the moment, by what the chart is doing to your nerves." },
+  'Risk Management': { label: 'The Risk Drifter', note: "Risk sizing is moving around based on how the last trade felt, not on what the account's buffer can actually survive." },
+  'Planning & Process': { label: 'The Unplanned Trader', note: "Decisions are being made live instead of in advance. A written plan and a journal entry turn guesses into a process." },
+  'Execution & Discipline': { label: 'The Rule Bender', note: "The plan exists - it's just not always the thing actually being executed, especially under pressure." }
+};
+
+var current = 0;
+var answers = [];
+
+function startQuiz() {
+  current = 0; answers = [];
+  show('screen-quiz');
+  renderQuestion();
+}
+
+function restartQuiz() { startQuiz(); }
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderQuestion() {
+  var q = QUESTIONS[current];
+  document.getElementById('q-category').textContent = q.cat;
+  document.getElementById('q-progress-label').textContent = (current + 1) + ' / ' + QUESTIONS.length;
+  document.getElementById('q-progress-bar').style.width = Math.round(((current) / QUESTIONS.length) * 100) + '%';
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-back').style.visibility = current === 0 ? 'hidden' : 'visible';
+  var wrap = document.getElementById('q-wrap');
+  wrap.classList.remove('fade-in'); void wrap.offsetWidth; wrap.classList.add('fade-in');
+  var btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(function(b) { b.classList.remove('selected'); });
+}
+
+function answer(val) {
+  answers[current] = val;
+  if (current < QUESTIONS.length - 1) {
+    current++;
+    renderQuestion();
+  } else {
+    document.getElementById('q-progress-bar').style.width = '100%';
+    setTimeout(showResults, 200);
+  }
+}
+
+function goBack() {
+  if (current === 0) return;
+  current--;
+  renderQuestion();
+}
+
+function showResults() {
+  var catScores = {};
+  var catCounts = {};
+  CATEGORIES.forEach(function(c) { catScores[c] = 0; catCounts[c] = 0; });
+
+  var flagged = [];
+  var totalGood = 0;
+
+  QUESTIONS.forEach(function(q, i) {
+    catCounts[q.cat]++;
+    var userAnswer = answers[i];
+    var isGood = userAnswer === q.good;
+    if (isGood) { catScores[q.cat]++; totalGood++; }
+    else { flagged.push(q); }
+  });
+
+  var overallPct = Math.round((totalGood / QUESTIONS.length) * 100);
+  document.getElementById('score-big').textContent = overallPct + '%';
+  document.getElementById('score-big').style.color = overallPct >= 70 ? 'var(--mmm-green)' : overallPct >= 45 ? 'var(--mmm-gold-light)' : 'var(--mmm-red)';
+
+  var band, bandColor;
+  if (overallPct >= 80) { band = 'Tight Discipline'; bandColor = 'var(--mmm-green)'; }
+  else if (overallPct >= 60) { band = 'Developing Discipline'; bandColor = 'var(--mmm-gold-light)'; }
+  else if (overallPct >= 40) { band = 'Leaking Edge'; bandColor = 'var(--mmm-tiffany-light)'; }
+  else { band = 'Critical Leak'; bandColor = 'var(--mmm-red)'; }
+  var bandEl = document.getElementById('score-band');
+  bandEl.textContent = band;
+  bandEl.style.color = bandColor;
+
+  var catPct = {};
+  CATEGORIES.forEach(function(c) { catPct[c] = catCounts[c] ? Math.round((catScores[c] / catCounts[c]) * 100) : 0; });
+
+  var sorted = CATEGORIES.slice().sort(function(a, b) { return catPct[b] - catPct[a]; });
+  var strongest = sorted[0];
+  var weakest = sorted[sorted.length - 1];
+
+  document.getElementById('strong-area').textContent = strongest + ' (' + catPct[strongest] + '%)';
+  document.getElementById('strong-note').textContent = 'This is your most stable habit right now - protect it and repeat it.';
+  document.getElementById('weak-area').textContent = weakest + ' (' + catPct[weakest] + '%)';
+  document.getElementById('weak-note').textContent = 'This is where the biggest performance leak is most likely happening.';
+
+  document.getElementById('archetype-label').textContent = ARCHETYPES[weakest].label;
+
+  var barsWrap = document.getElementById('category-bars');
+  barsWrap.innerHTML = '';
+  CATEGORIES.forEach(function(c) {
+    var pct = catPct[c];
+    var color = pct >= 70 ? 'var(--mmm-green)' : pct >= 45 ? 'var(--mmm-gold-light)' : 'var(--mmm-red)';
+    var row = document.createElement('div');
+    row.innerHTML =
+      '<div class="flex items-center justify-between mb-1.5 text-sm">' +
+        '<span class="text-gray-300">' + c + '</span>' +
+        '<span class="num font-semibold" style="color:' + color + ';">' + pct + '%</span>' +
+      '</div>' +
+      '<div class="h-2 bg-gray-800 rounded-full overflow-hidden">' +
+        '<div class="bar-fill h-full rounded-full" style="width:' + pct + '%; background:' + color + ';"></div>' +
+      '</div>';
+    barsWrap.appendChild(row);
+  });
+
+  var flagsList = document.getElementById('flags-list');
+  var flagsWrap = document.getElementById('flags-wrap');
+  flagsList.innerHTML = '';
+  if (flagged.length === 0) {
+    flagsWrap.style.display = 'none';
+  } else {
+    flagsWrap.style.display = 'block';
+    flagged.slice(0, 8).forEach(function(q) {
+      var item = document.createElement('div');
+      item.className = 'bg-white/[0.02] border border-white/10 rounded-xl p-4 flex items-start gap-3';
+      item.innerHTML =
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--mmm-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 flex-shrink-0 mt-0.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>' +
+        '<div><p class="text-sm text-gray-200 mb-1">' + q.text + '</p><p class="text-xs text-gray-500 leading-relaxed">' + q.flag + '</p></div>';
+      flagsList.appendChild(item);
+    });
+  }
+
+  show('screen-results');
+}
+</script>
+
+</body>
+</html>

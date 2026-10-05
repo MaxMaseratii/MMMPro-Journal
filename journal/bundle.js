@@ -1202,6 +1202,11 @@ const PHASE_CONFIG = {
     mode: 'Preservation Mode',
     riskPct: 0.02,
     label: 'Phase 3 - Live Consolidation'
+  },
+  paper: {
+    mode: 'Practice Mode',
+    riskPct: 0.10,
+    label: 'Paper - Practice Run'
   }
 };
 const MIN_RR = 2;
@@ -1613,11 +1618,16 @@ const ACCOUNT_TYPES = [{
   key: 'live',
   label: 'Live',
   activeCls: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40'
+}, {
+  key: 'paper',
+  label: 'Paper',
+  activeCls: 'bg-blue-500/20 text-blue-400 border-blue-500/40'
 }];
 const ACCOUNT_BADGE_CLS = {
   challenge: 'bg-purple-500/20 text-purple-300',
   funded: 'bg-emerald-500/20 text-emerald-300',
   live: 'bg-cyan-500/20 text-cyan-300',
+  paper: 'bg-blue-500/20 text-blue-300',
   breached: 'bg-red-500/20 text-red-300'
 };
 const BIAS_OPTIONS = [{
@@ -1769,7 +1779,9 @@ const emptyEntryForm = function (defaultRisk, defaultContracts, defaultRR, planT
       positionSize: defaultContracts ? String(defaultContracts) : '',
       riskAmount: defaultRisk ? defaultRisk.toFixed(2) : '',
       htfLtf: false,
-      chartUrl: ''
+      chartUrl: '',
+      stopHandling: 'respected',
+      revengeEntry: false
     }],
     notes: '',
     mentalCheck: mentalCheckSource ? Object.assign({}, emptyMentalCheck(), mentalCheckSource) : emptyMentalCheck(),
@@ -1805,7 +1817,8 @@ const getApplicableRules = function (trade, entry, account) {
 function AuthScreen(props) {
   const language = props.language;
   const setLanguage = props.setLanguage;
-  const [mode, setMode] = useState('login');
+  const wantsCourse = props.wantsCourse;
+  const [mode, setMode] = useState(wantsCourse ? 'signup' : 'login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -1863,8 +1876,15 @@ function AuthScreen(props) {
   })), React.createElement("h1", {
     className: "text-2xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent text-center mb-1"
   }, "MMM Pro Journal"), React.createElement("p", {
-    className: "text-gray-500 text-sm text-center mb-6"
-  }, mode === 'login' ? 'Sign in to your account' : 'Create your account'), mode === 'signup' && React.createElement("input", {
+    className: "text-gray-500 text-sm text-center mb-4"
+  }, mode === 'login' ? 'Sign in to your account' : 'Create your account'), wantsCourse && React.createElement("div", {
+    className: "bg-teal-500/10 border border-teal-500/30 rounded-lg px-3 py-2.5 mb-4 flex items-start gap-2"
+  }, React.createElement(Icon, {
+    name: "GraduationCap",
+    className: "h-4 w-4 text-teal-400 flex-shrink-0 mt-0.5"
+  }), React.createElement("p", {
+    className: "text-xs text-teal-200/90"
+  }, mode === 'login' ? 'Sign in to' : 'Create a free account to', " start the MMM Mastery Course - it's free, and your progress is saved to your account.")), mode === 'signup' && React.createElement("input", {
     value: displayName,
     onChange: function (e) {
       setDisplayName(e.target.value);
@@ -2087,6 +2107,7 @@ function t_border(key) {
   if (key === 'challenge') return 'bg-purple-500/10 border-purple-500/40';
   if (key === 'funded') return 'bg-emerald-500/10 border-emerald-500/40';
   if (key === 'breached') return 'bg-red-500/10 border-red-500/40';
+  if (key === 'paper') return 'bg-blue-500/10 border-blue-500/40';
   return 'bg-cyan-500/10 border-cyan-500/40';
 }
 const NAV_GROUPS = ACCOUNT_TYPES.concat([{
@@ -2873,18 +2894,25 @@ function ProjectionsCard(props) {
   const accountEntries = props.accountEntries;
   const defaultRisk = props.defaultRiskPerTrade;
   const storageKey = 'mmm_projection_' + account.id;
+  const defaultSettings = {
+    riskPerTrade: defaultRisk || 0,
+    rewardRatio: Math.max(parseFloat(account.rewardRatio) || MIN_RR, MIN_RR),
+    profitTarget: parseFloat(account.profitTarget) || 0,
+    riskCuttingPercent: 0,
+    compoundingPercent: 0,
+    mode: 'date',
+    accountsToCopy: 1,
+    winRatePct: 50,
+    sampleTrades: 20,
+    wcWins: 10,
+    wcLosses: 10
+  };
   const [settings, setSettings] = useState(function () {
     try {
       const saved = localStorage.getItem(storageKey);
-      if (saved) return JSON.parse(saved);
+      if (saved) return Object.assign({}, defaultSettings, JSON.parse(saved));
     } catch (e) {}
-    return {
-      riskPerTrade: defaultRisk || 0,
-      rewardRatio: Math.max(parseFloat(account.rewardRatio) || MIN_RR, MIN_RR),
-      profitTarget: parseFloat(account.profitTarget) || 0,
-      riskCuttingPercent: 0,
-      compoundingPercent: 0
-    };
+    return defaultSettings;
   });
   useEffect(function () {
     try {
@@ -2948,6 +2976,22 @@ function ProjectionsCard(props) {
     return s + (d.hasActual ? d.actualPnl : 0);
   }, 0);
   const progressPct = target > 0 ? Math.min(100, Math.max(0, cumulativeActual / target * 100)) : 0;
+  const accountsN = Math.max(1, parseInt(settings.accountsToCopy, 10) || 1);
+  const risk = settings.riskPerTrade || 0;
+  const reward = risk * settings.rewardRatio;
+  const breakevenWinRatePct = risk + reward > 0 ? risk / (risk + reward) * 100 : 0;
+  const wrTrades = Math.max(0, parseInt(settings.sampleTrades, 10) || 0);
+  const wrWinRate = Math.max(0, Math.min(100, parseFloat(settings.winRatePct) || 0));
+  const wrWins = Math.round(wrTrades * (wrWinRate / 100));
+  const wrLosses = wrTrades - wrWins;
+  const wrGrossPerAccount = wrWins * reward - wrLosses * risk;
+  const wrExpectancyPerTrade = wrWinRate / 100 * reward - (1 - wrWinRate / 100) * risk;
+  const tcWins = Math.max(0, parseInt(settings.wcWins, 10) || 0);
+  const tcLosses = Math.max(0, parseInt(settings.wcLosses, 10) || 0);
+  const tcTotalTrades = tcWins + tcLosses;
+  const tcGrossPerAccount = tcWins * reward - tcLosses * risk;
+  const tcImpliedWinRate = tcTotalTrades > 0 ? tcWins / tcTotalTrades * 100 : null;
+  const mode = settings.mode || 'date';
   return React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
   }, React.createElement("div", {
@@ -2958,8 +3002,42 @@ function ProjectionsCard(props) {
   }), React.createElement("h2", {
     className: "text-lg font-semibold text-white"
   }, "Target Projection")), React.createElement("p", {
-    className: "text-xs text-gray-500 mb-5"
-  }, "Set a risk-per-trade and a profit target, and see the day-by-day path to it. Risk cuts after a real loss and compounds after a real win, once a day is logged."), React.createElement("div", {
+    className: "text-xs text-gray-500 mb-4"
+  }, "Model the path to your target by day, by win rate, or by a set number of wins and losses - scaled across every account you copy-trade."), React.createElement("div", {
+    className: "grid sm:grid-cols-[2fr_1fr] gap-3 mb-5"
+  }, React.createElement("div", {
+    className: "flex gap-1.5"
+  }, [{
+    key: 'date',
+    label: 'Day-by-Day Plan'
+  }, {
+    key: 'winrate',
+    label: 'Win Rate'
+  }, {
+    key: 'tradecount',
+    label: 'Trade Count'
+  }].map(function (m) {
+    return React.createElement("button", {
+      key: m.key,
+      onClick: function () {
+        update('mode', m.key);
+      },
+      className: "flex-1 py-2 rounded-lg text-xs font-medium border transition " + (mode === m.key ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
+    }, m.label);
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-xs text-gray-500 mb-1"
+  }, "Accounts to Copy"), React.createElement("input", {
+    type: "number",
+    min: "1",
+    value: settings.accountsToCopy || '',
+    onChange: function (e) {
+      update('accountsToCopy', parseInt(e.target.value, 10) || 1);
+    },
+    className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
+    placeholder: "1"
+  }))), accountsN > 1 && React.createElement("p", {
+    className: "text-[11px] text-gray-600 -mt-3 mb-4"
+  }, "Every dollar figure below is scaled x", accountsN, " for copy-trading across ", accountsN, " accounts."), mode === 'date' && React.createElement(React.Fragment, null, React.createElement("div", {
     className: "grid sm:grid-cols-2 gap-4 mb-5"
   }, React.createElement("div", null, React.createElement("label", {
     className: "block text-xs text-gray-500 mb-1"
@@ -2996,7 +3074,7 @@ function ProjectionsCard(props) {
     className: "block text-xs text-gray-500 mb-1"
   }, "Daily Profit / Trade"), React.createElement("div", {
     className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-green-400 num"
-  }, fmt(dailyReward)))), React.createElement("div", {
+  }, fmt(dailyReward * accountsN)))), React.createElement("div", {
     className: "grid sm:grid-cols-2 gap-5 mb-6"
   }, React.createElement("div", null, React.createElement("div", {
     className: "flex items-center justify-between mb-1"
@@ -3044,7 +3122,7 @@ function ProjectionsCard(props) {
     color: "text-blue-400"
   }), React.createElement(MiniStat, {
     label: "Daily Reward",
-    value: fmt(dailyReward),
+    value: fmt(dailyReward * accountsN),
     color: "text-yellow-400"
   }), React.createElement(MiniStat, {
     label: "Progress (Logged Days)",
@@ -3084,13 +3162,13 @@ function ProjectionsCard(props) {
       className: "text-[10px] text-gray-600"
     }, "Day ", d.dayNumber)), React.createElement("td", {
       className: "px-2 py-2 text-center text-blue-400 num"
-    }, fmt(d.risk)), React.createElement("td", {
+    }, fmt(d.risk * accountsN)), React.createElement("td", {
       className: "px-2 py-2 text-center text-green-400 num"
-    }, fmt(d.reward)), React.createElement("td", {
+    }, fmt(d.reward * accountsN)), React.createElement("td", {
       className: "px-2 py-2 text-center"
     }, React.createElement("div", {
       className: "num font-semibold " + (reached ? 'text-green-400' : 'text-yellow-400')
-    }, fmt(d.targetExpectation)), React.createElement("div", {
+    }, fmt(d.targetExpectation * accountsN)), React.createElement("div", {
       className: "h-1.5 bg-gray-800 rounded-full overflow-hidden mt-1"
     }, React.createElement("div", {
       className: "h-full rounded-full " + (reached ? 'bg-green-400' : 'bg-yellow-400'),
@@ -3101,10 +3179,149 @@ function ProjectionsCard(props) {
       className: "px-2 py-2 text-center num"
     }, d.hasActual ? React.createElement("span", {
       className: d.actualPnl > 0 ? 'text-green-400' : d.actualPnl < 0 ? 'text-red-400' : 'text-gray-400'
-    }, d.actualPnl > 0 ? '+' : '', fmt(d.actualPnl)) : React.createElement("span", {
+    }, d.actualPnl > 0 ? '+' : '', fmt(d.actualPnl * accountsN)) : React.createElement("span", {
       className: "text-gray-700"
     }, "-")));
-  }))))));
+  })))))), mode === 'winrate' && React.createElement(React.Fragment, null, React.createElement("div", {
+    className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5"
+  }, React.createElement("div", null, React.createElement("label", {
+    className: "block text-xs text-gray-500 mb-1"
+  }, "Risk Per Trade ($)"), React.createElement("input", {
+    type: "number",
+    value: settings.riskPerTrade || '',
+    onChange: function (e) {
+      update('riskPerTrade', parseFloat(e.target.value) || 0);
+    },
+    className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
+    placeholder: "0"
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-xs text-gray-500 mb-1"
+  }, "Reward:Risk Ratio"), React.createElement("input", {
+    type: "number",
+    step: "0.1",
+    value: settings.rewardRatio || '',
+    onChange: function (e) {
+      update('rewardRatio', parseFloat(e.target.value) || 0);
+    },
+    className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
+    placeholder: "2"
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-xs text-gray-500 mb-1"
+  }, "Win Rate (%)"), React.createElement("input", {
+    type: "number",
+    min: "0",
+    max: "100",
+    value: settings.winRatePct || '',
+    onChange: function (e) {
+      update('winRatePct', parseFloat(e.target.value) || 0);
+    },
+    className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
+    placeholder: "50"
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-xs text-gray-500 mb-1"
+  }, "Sample Size (trades)"), React.createElement("input", {
+    type: "number",
+    min: "0",
+    value: settings.sampleTrades || '',
+    onChange: function (e) {
+      update('sampleTrades', parseInt(e.target.value, 10) || 0);
+    },
+    className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
+    placeholder: "20"
+  }))), React.createElement("div", {
+    className: "grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4"
+  }, React.createElement(MiniStat, {
+    label: "Implied Wins / Losses",
+    value: wrWins + 'W / ' + wrLosses + 'L',
+    color: "text-blue-400"
+  }), React.createElement(MiniStat, {
+    label: "Expectancy / Trade",
+    value: fmt(wrExpectancyPerTrade),
+    color: wrExpectancyPerTrade >= 0 ? 'text-green-400' : 'text-red-400'
+  }), React.createElement(MiniStat, {
+    label: "Breakeven Win Rate",
+    value: breakevenWinRatePct.toFixed(1) + '%',
+    color: "text-yellow-400"
+  }), React.createElement(MiniStat, {
+    label: "Total Result (1 account)",
+    value: fmt(wrGrossPerAccount),
+    color: wrGrossPerAccount >= 0 ? 'text-green-400' : 'text-red-400'
+  })), React.createElement("div", {
+    className: "bg-black/40 border border-gray-800 rounded-lg p-4 text-center"
+  }, React.createElement("p", {
+    className: "text-xs text-gray-500 mb-1"
+  }, "Total Result across ", accountsN, " account", accountsN !== 1 ? 's' : ''), React.createElement("p", {
+    className: "text-2xl font-bold num " + (wrGrossPerAccount * accountsN >= 0 ? 'text-green-400' : 'text-red-400')
+  }, fmt(wrGrossPerAccount * accountsN)))), mode === 'tradecount' && React.createElement(React.Fragment, null, React.createElement("div", {
+    className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5"
+  }, React.createElement("div", null, React.createElement("label", {
+    className: "block text-xs text-gray-500 mb-1"
+  }, "Risk Per Trade ($)"), React.createElement("input", {
+    type: "number",
+    value: settings.riskPerTrade || '',
+    onChange: function (e) {
+      update('riskPerTrade', parseFloat(e.target.value) || 0);
+    },
+    className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
+    placeholder: "0"
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-xs text-gray-500 mb-1"
+  }, "Reward:Risk Ratio"), React.createElement("input", {
+    type: "number",
+    step: "0.1",
+    value: settings.rewardRatio || '',
+    onChange: function (e) {
+      update('rewardRatio', parseFloat(e.target.value) || 0);
+    },
+    className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white",
+    placeholder: "2"
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-xs text-gray-500 mb-1"
+  }, "Winning Trades"), React.createElement("input", {
+    type: "number",
+    min: "0",
+    value: settings.wcWins || '',
+    onChange: function (e) {
+      update('wcWins', parseInt(e.target.value, 10) || 0);
+    },
+    className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-green-400",
+    placeholder: "10"
+  })), React.createElement("div", null, React.createElement("label", {
+    className: "block text-xs text-gray-500 mb-1"
+  }, "Losing Trades"), React.createElement("input", {
+    type: "number",
+    min: "0",
+    value: settings.wcLosses || '',
+    onChange: function (e) {
+      update('wcLosses', parseInt(e.target.value, 10) || 0);
+    },
+    className: "w-full bg-black/40 border border-gray-700 rounded-lg px-3 py-2 text-sm text-red-400",
+    placeholder: "10"
+  }))), React.createElement("div", {
+    className: "grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4"
+  }, React.createElement(MiniStat, {
+    label: "Total Trades",
+    value: String(tcTotalTrades),
+    color: "text-blue-400"
+  }), React.createElement(MiniStat, {
+    label: "Implied Win Rate",
+    value: tcImpliedWinRate === null ? '-' : tcImpliedWinRate.toFixed(1) + '%',
+    color: "text-yellow-400"
+  }), React.createElement(MiniStat, {
+    label: "Breakeven Win Rate",
+    value: breakevenWinRatePct.toFixed(1) + '%',
+    color: "text-gray-400"
+  }), React.createElement(MiniStat, {
+    label: "Total Result (1 account)",
+    value: fmt(tcGrossPerAccount),
+    color: tcGrossPerAccount >= 0 ? 'text-green-400' : 'text-red-400'
+  })), React.createElement("div", {
+    className: "bg-black/40 border border-gray-800 rounded-lg p-4 text-center"
+  }, React.createElement("p", {
+    className: "text-xs text-gray-500 mb-1"
+  }, "Total Result across ", accountsN, " account", accountsN !== 1 ? 's' : ''), React.createElement("p", {
+    className: "text-2xl font-bold num " + (tcGrossPerAccount * accountsN >= 0 ? 'text-green-400' : 'text-red-400')
+  }, fmt(tcGrossPerAccount * accountsN)))));
 }
 function CostsAndPayoutsCard(props) {
   const account = props.account;
@@ -4670,6 +4887,136 @@ function EquityCurveBlock(props) {
     className: "text-xs text-gray-600 mt-2"
   }, "The starting/floor/target lines only show for a single selected account, since each account's buffer and target are different numbers - select just one above to see them."));
 }
+function TradeDisciplineTracker(props) {
+  const accountEntries = props.accountEntries;
+  const allTrades = accountEntries.filter(function (e) {
+    return e.tradedToday !== 'no';
+  }).flatMap(function (e) {
+    return (e.trades || []).map(function (t) {
+      return Object.assign({}, t, {
+        date: e.date
+      });
+    });
+  });
+  if (allTrades.length === 0) {
+    return React.createElement("div", {
+      className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
+    }, React.createElement("div", {
+      className: "flex items-center gap-2 mb-1"
+    }, React.createElement(Icon, {
+      name: "ShieldAlert",
+      className: "h-5 w-5 text-yellow-400"
+    }), React.createElement("h2", {
+      className: "text-lg font-semibold text-white"
+    }, "Trade Discipline Tracker")), React.createElement("p", {
+      className: "text-xs text-gray-500"
+    }, "Log a trade and mark what happened to its stop-loss to start building this - stop-loss handling and revenge-entry flags, tracked automatically across every trade on this account."));
+  }
+  const respected = allTrades.filter(function (t) {
+    return (t.stopHandling || 'respected') === 'respected';
+  });
+  const widened = allTrades.filter(function (t) {
+    return t.stopHandling === 'widened';
+  });
+  const removed = allTrades.filter(function (t) {
+    return t.stopHandling === 'removed';
+  });
+  const moved = widened.concat(removed);
+  const pct = function (n) {
+    return allTrades.length > 0 ? Math.round(n / allTrades.length * 100) : 0;
+  };
+  const avgAbs = function (list) {
+    const losers = list.map(function (t) {
+      return tradeSignedPnl(t);
+    }).filter(function (p) {
+      return p < 0;
+    });
+    if (losers.length === 0) return null;
+    return Math.abs(losers.reduce(function (s, p) {
+      return s + p;
+    }, 0) / losers.length);
+  };
+  const avgLossRespected = avgAbs(respected);
+  const avgLossMoved = avgAbs(moved);
+  const lossMultiplier = avgLossRespected && avgLossMoved ? avgLossMoved / avgLossRespected : null;
+  const movedThatWon = moved.filter(function (t) {
+    return t.result === 'win';
+  }).length;
+  const revengeTrades = allTrades.filter(function (t) {
+    return !!t.revengeEntry;
+  });
+  const nonRevengeTrades = allTrades.filter(function (t) {
+    return !t.revengeEntry;
+  });
+  const avgPnl = function (list) {
+    return list.length > 0 ? list.reduce(function (s, t) {
+      return s + tradeSignedPnl(t);
+    }, 0) / list.length : null;
+  };
+  const revengeAvgPnl = avgPnl(revengeTrades);
+  const nonRevengeAvgPnl = avgPnl(nonRevengeTrades);
+  const revengeWinRate = revengeTrades.length > 0 ? revengeTrades.filter(function (t) {
+    return t.result === 'win';
+  }).length / revengeTrades.length * 100 : null;
+  return React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6 space-y-5"
+  }, React.createElement("div", {
+    className: "flex items-center gap-2"
+  }, React.createElement(Icon, {
+    name: "ShieldAlert",
+    className: "h-5 w-5 text-yellow-400"
+  }), React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Trade Discipline Tracker"), React.createElement("span", {
+    className: "text-xs text-gray-500"
+  }, allTrades.length, " trade", allTrades.length !== 1 ? 's' : '', " logged on this account")), React.createElement("div", null, React.createElement("p", {
+    className: "text-xs text-gray-500 mb-2"
+  }, "What happens after price approaches your stop"), React.createElement("div", {
+    className: "grid grid-cols-3 gap-2"
+  }, React.createElement(MiniStat, {
+    label: "Stop Respected",
+    value: pct(respected.length) + '%',
+    color: "text-green-400"
+  }), React.createElement(MiniStat, {
+    label: "Stop Widened",
+    value: pct(widened.length) + '%',
+    color: "text-yellow-400"
+  }), React.createElement(MiniStat, {
+    label: "Stop Removed",
+    value: pct(removed.length) + '%',
+    color: "text-red-400"
+  })), lossMultiplier !== null ? React.createElement("p", {
+    className: "text-xs text-gray-400 mt-3 leading-relaxed"
+  }, "Trades where the stop was moved or removed lost ", React.createElement("span", {
+    className: "text-red-400 font-semibold num"
+  }, lossMultiplier.toFixed(1), "x"), " more on average (", fmt(avgLossMoved), ") than trades where it was respected (", fmt(avgLossRespected), ").", movedThatWon === 0 && moved.length > 0 ? ' Moving it hasn\'t turned a single one of those trades into a winner yet.' : '') : moved.length > 0 ? React.createElement("p", {
+    className: "text-xs text-gray-500 mt-3"
+  }, "Not enough losing trades yet in both groups to compare the average loss size.") : React.createElement("p", {
+    className: "text-xs text-gray-500 mt-3"
+  }, "Every logged trade has respected its stop so far - keep it that way.")), React.createElement("div", {
+    className: "border-t border-gray-800 pt-4"
+  }, React.createElement("p", {
+    className: "text-xs text-gray-500 mb-2"
+  }, "Revenge entries (reacting to an earlier loss, not the setup)"), React.createElement("div", {
+    className: "grid grid-cols-2 gap-2"
+  }, React.createElement(MiniStat, {
+    label: "Revenge Entries",
+    value: revengeTrades.length + ' of ' + allTrades.length,
+    color: "text-red-400"
+  }), React.createElement(MiniStat, {
+    label: "Revenge Win Rate",
+    value: revengeWinRate === null ? '-' : revengeWinRate.toFixed(0) + '%',
+    color: revengeWinRate !== null && revengeWinRate < 50 ? 'text-red-400' : 'text-gray-300'
+  })), revengeTrades.length > 0 && revengeAvgPnl !== null && nonRevengeAvgPnl !== null ? React.createElement("p", {
+    className: "text-xs text-gray-400 mt-3 leading-relaxed"
+  }, "Revenge entries have averaged ", React.createElement("span", {
+    className: "font-semibold num " + (revengeAvgPnl >= 0 ? 'text-green-400' : 'text-red-400')
+  }, fmt(revengeAvgPnl)), " per trade, against ", React.createElement("span", {
+    className: "font-semibold num " + (nonRevengeAvgPnl >= 0 ? 'text-green-400' : 'text-red-400')
+  }, fmt(nonRevengeAvgPnl)), " for everything else.") : React.createElement("p", {
+    className: "text-xs text-gray-500 mt-3"
+  }, "No revenge entries flagged yet on this account.")));
+}
 function DisciplineChecklistCard(props) {
   const accounts = props.accounts;
   const entries = props.entries;
@@ -4871,10 +5218,15 @@ function DisciplineLeaderboard(props) {
           const data = d.data();
           if (data.displayName) namesByUid[d.id] = data.displayName;
         });
+        const paperAccountIds = {};
+        accountsSnap.forEach(function (d) {
+          if (d.data().accountType === 'paper') paperAccountIds[d.id] = true;
+        });
         const accountsByUid = {};
         accountsSnap.forEach(function (d) {
           const uid = d.ref.parent.parent ? d.ref.parent.parent.id : null;
           if (!uid) return;
+          if (paperAccountIds[d.id]) return;
           if (!accountsByUid[uid]) accountsByUid[uid] = [];
           accountsByUid[uid].push(Object.assign({
             id: d.id
@@ -4884,10 +5236,12 @@ function DisciplineLeaderboard(props) {
         entriesSnap.forEach(function (d) {
           const uid = d.ref.parent.parent ? d.ref.parent.parent.id : null;
           if (!uid) return;
+          const data = d.data();
+          if (paperAccountIds[data.accountId]) return;
           if (!entriesByUid[uid]) entriesByUid[uid] = [];
           entriesByUid[uid].push(Object.assign({
             id: d.id
-          }, d.data()));
+          }, data));
         });
         const allUids = Array.from(new Set(Object.keys(accountsByUid).concat(Object.keys(entriesByUid))));
         const computed = allUids.map(function (uid) {
@@ -6168,7 +6522,7 @@ function MMMJournal(props) {
     if (hasInitializedSelection) return;
     if (accounts.length === 0) return;
     const nonBreached = accounts.filter(function (a) {
-      return computeAccountStatus(a, entries) !== 'breached';
+      return a.accountType !== 'paper' && computeAccountStatus(a, entries) !== 'breached';
     });
     setSelectedAccountIds(new Set(nonBreached.map(function (a) {
       return a.id;
@@ -6205,6 +6559,15 @@ function MMMJournal(props) {
   const accountsForOverview = accounts.filter(function (a) {
     return selectedAccountIds.has(a.id);
   });
+  const nonPaperAccounts = accounts.filter(function (a) {
+    return a.accountType !== 'paper';
+  });
+  const nonPaperAccountIdSet = new Set(nonPaperAccounts.map(function (a) {
+    return a.id;
+  }));
+  const nonPaperEntries = entries.filter(function (e) {
+    return nonPaperAccountIdSet.has(e.accountId);
+  });
   useEffect(function () {
     const ref = db.collection('presence').doc(user.uid);
     const beat = function () {
@@ -6233,7 +6596,7 @@ function MMMJournal(props) {
     });
   }, [user.uid, user.displayName]);
   useEffect(function () {
-    const disc = computeDisciplineScore(accounts, entries);
+    const disc = computeDisciplineScore(nonPaperAccounts, nonPaperEntries);
     if (!disc) return;
     db.collection('leaderboard').doc(user.uid).set({
       displayName: user.displayName || 'Trader-' + user.uid.slice(0, 4),
@@ -6416,11 +6779,13 @@ function MMMJournal(props) {
     setHasManualSelection(true);
     setViewingBreached(false);
     setActiveAccountId(doc.id);
-    setSelectedAccountIds(function (prev) {
-      const next = new Set(prev);
-      next.add(doc.id);
-      return next;
-    });
+    if (newAccount.accountType !== 'paper') {
+      setSelectedAccountIds(function (prev) {
+        const next = new Set(prev);
+        next.add(doc.id);
+        return next;
+      });
+    }
     setNewAccount(emptyAccountForm);
     setShowAddAccount(false);
   };
@@ -6764,7 +7129,9 @@ function MMMJournal(props) {
         positionSize: String(effectiveContracts),
         riskAmount: effectiveRiskPerTrade.toFixed(2),
         htfLtf: false,
-        chartUrl: ''
+        chartUrl: '',
+        stopHandling: 'respected',
+        revengeEntry: false
       }])
     }));
   };
@@ -7202,7 +7569,14 @@ function MMMJournal(props) {
       name: tab.icon,
       className: "h-3.5 w-3.5"
     }), React.createElement("span", null, tab.label));
-  })), activePage === 'overview' && React.createElement(React.Fragment, null, selectedAccountIds.size === 0 ? React.createElement("div", {
+  })), activeAccount.accountType === 'paper' && React.createElement("div", {
+    className: "border border-blue-500/30 bg-blue-500/10 rounded-xl p-3 flex items-center gap-3"
+  }, React.createElement(Icon, {
+    name: "FlaskConical",
+    className: "h-4 w-4 text-blue-400 flex-shrink-0"
+  }), React.createElement("p", {
+    className: "text-xs text-blue-200/80"
+  }, "Paper account - practice only. Nothing logged here counts toward your discipline score, the leaderboard, or any other real account's numbers.")), activePage === 'overview' && React.createElement(React.Fragment, null, selectedAccountIds.size === 0 ? React.createElement("div", {
     className: "text-center py-16 border border-dashed border-gray-700 rounded-2xl"
   }, React.createElement(Icon, {
     name: "Square",
@@ -7795,8 +8169,10 @@ function MMMJournal(props) {
     accountEntries: accountEntries,
     bufferHistory: bufferHistory
   }), React.createElement(DisciplineChecklistCard, {
-    accounts: accounts,
-    entries: entries
+    accounts: nonPaperAccounts,
+    entries: nonPaperEntries
+  }), React.createElement(TradeDisciplineTracker, {
+    accountEntries: accountEntries
   }), React.createElement(ReflectionLog, {
     accountEntries: accountEntries
   }), React.createElement(DisciplineLeaderboard, {
@@ -8644,6 +9020,35 @@ function MMMJournal(props) {
       name: trade.htfLtf ? "CheckSquare" : "Square",
       className: "h-4 w-4 flex-shrink-0 " + (trade.htfLtf ? 'text-green-400' : 'text-gray-600')
     }), React.createElement("span", null, "HTF to LTF analysis done before this trade?")), React.createElement("div", {
+      className: "bg-black/30 rounded-lg p-2.5 space-y-2"
+    }, React.createElement("p", {
+      className: "text-[11px] text-gray-500 uppercase tracking-wide"
+    }, "What happened to your stop-loss?"), React.createElement("div", {
+      className: "flex items-center gap-1.5"
+    }, React.createElement("button", {
+      onClick: function () {
+        updateTradeRow(idx, 'stopHandling', 'respected');
+      },
+      className: "flex-1 py-1.5 rounded-lg text-[11px] font-medium border " + ((trade.stopHandling || 'respected') === 'respected' ? 'bg-green-500/20 text-green-400 border-green-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
+    }, "Respected"), React.createElement("button", {
+      onClick: function () {
+        updateTradeRow(idx, 'stopHandling', 'widened');
+      },
+      className: "flex-1 py-1.5 rounded-lg text-[11px] font-medium border " + (trade.stopHandling === 'widened' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
+    }, "Widened"), React.createElement("button", {
+      onClick: function () {
+        updateTradeRow(idx, 'stopHandling', 'removed');
+      },
+      className: "flex-1 py-1.5 rounded-lg text-[11px] font-medium border " + (trade.stopHandling === 'removed' ? 'bg-red-500/20 text-red-400 border-red-500/40' : 'bg-gray-800 text-gray-500 border-gray-700')
+    }, "Removed")), React.createElement("button", {
+      onClick: function () {
+        updateTradeRow(idx, 'revengeEntry', !trade.revengeEntry);
+      },
+      className: "w-full flex items-center gap-2 text-left text-xs text-gray-300 hover:text-white pt-0.5"
+    }, React.createElement(Icon, {
+      name: trade.revengeEntry ? "CheckSquare" : "Square",
+      className: "h-4 w-4 flex-shrink-0 " + (trade.revengeEntry ? 'text-red-400' : 'text-gray-600')
+    }), React.createElement("span", null, "Revenge entry - reacting to an earlier loss today, not the setup?"))), React.createElement("div", {
       className: "flex items-center gap-1.5"
     }, React.createElement(Icon, {
       name: "Link",
@@ -8782,6 +9187,13 @@ function App() {
       return 'en';
     }
   });
+  const wantsCourse = function () {
+    try {
+      return new URLSearchParams(window.location.search).get('course') === '1';
+    } catch (e) {
+      return false;
+    }
+  }();
   useEffect(function () {
     const unsub = auth.onAuthStateChanged(function (u) {
       setUser(u);
@@ -8807,16 +9219,23 @@ function App() {
       observer.disconnect();
     };
   }, [language, user]);
+  useEffect(function () {
+    if (user && wantsCourse) window.location.href = 'course/index.html';
+  }, [user, wantsCourse]);
   if (user === undefined) return React.createElement("div", {
     className: "min-h-screen bg-black flex items-center justify-center text-yellow-400"
   }, "Loading...");
+  if (user && wantsCourse) return React.createElement("div", {
+    className: "min-h-screen bg-black flex items-center justify-center text-yellow-400"
+  }, "Taking you to the course...");
   return user ? React.createElement(MMMJournal, {
     user: user,
     language: language,
     setLanguage: setLanguage
   }) : React.createElement(AuthScreen, {
     language: language,
-    setLanguage: setLanguage
+    setLanguage: setLanguage,
+    wantsCourse: wantsCourse
   });
 }
 const rootEl = ReactDOM.createRoot(document.getElementById('root'));
