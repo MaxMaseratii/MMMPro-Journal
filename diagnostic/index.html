@@ -48,7 +48,10 @@
         </div>
         <span class="text-sm font-extrabold tracking-tight text-black">MMM Trading</span>
       </a>
-      <a href="../" class="text-sm font-bold text-black/70 hover:text-black transition">&larr; Back to home</a>
+      <div class="flex items-center gap-3">
+        <select id="lang-switch" aria-label="Language" class="bg-black/10 border border-black/25 text-black text-xs font-semibold rounded-lg px-2 py-1.5 outline-none cursor-pointer hover:bg-black/15 transition"></select>
+        <a href="../" class="text-sm font-bold text-black/70 hover:text-black transition">&larr; Back to home</a>
+      </div>
     </div>
   </div>
 </header>
@@ -205,6 +208,7 @@ function renderQuestion() {
   wrap.classList.remove('fade-in'); void wrap.offsetWidth; wrap.classList.add('fade-in');
   var btns = document.querySelectorAll('.opt-btn');
   btns.forEach(function(b) { b.classList.remove('selected'); });
+  if (window.mmmApplyLang) mmmApplyLang(mmmGetLang());
 }
 
 function answer(val) {
@@ -260,9 +264,9 @@ function showResults() {
   var strongest = sorted[0];
   var weakest = sorted[sorted.length - 1];
 
-  document.getElementById('strong-area').textContent = strongest + ' (' + catPct[strongest] + '%)';
+  document.getElementById('strong-area').innerHTML = '<span>' + strongest + '</span> (' + catPct[strongest] + '%)';
   document.getElementById('strong-note').textContent = 'This is your most stable habit right now - protect it and repeat it.';
-  document.getElementById('weak-area').textContent = weakest + ' (' + catPct[weakest] + '%)';
+  document.getElementById('weak-area').innerHTML = '<span>' + weakest + '</span> (' + catPct[weakest] + '%)';
   document.getElementById('weak-note').textContent = 'This is where the biggest performance leak is most likely happening.';
 
   document.getElementById('archetype-label').textContent = ARCHETYPES[weakest].label;
@@ -302,8 +306,11 @@ function showResults() {
   }
 
   show('screen-results');
+  if (window.mmmApplyLang) mmmApplyLang(mmmGetLang());
 }
 </script>
+<script src="../i18n.js"></script>
+<script src="./i18n-diagnostic.js"></script>
 
 </body>
 </html>

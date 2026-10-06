@@ -56,7 +56,10 @@
         <a href="./diagnostic/" class="hover:text-black transition">Free Trading Test</a>
         <a href="#socials" class="hover:text-black transition">Watch Live</a>
       </nav>
-      <a href="./whop/" class="text-sm font-bold bg-black text-[color:var(--mmm-gold)] border-2 border-[color:var(--mmm-tiffany)] px-5 py-2.5 rounded-lg hover:bg-gray-900 transition">Join MMM Trading</a>
+      <div class="flex items-center gap-3">
+        <select id="lang-switch" aria-label="Language" class="bg-black/10 border border-black/25 text-black text-xs font-semibold rounded-lg px-2 py-2 outline-none cursor-pointer hover:bg-black/15 transition"></select>
+        <a href="./whop/" class="text-sm font-bold bg-black text-[color:var(--mmm-gold)] border-2 border-[color:var(--mmm-tiffany)] px-5 py-2.5 rounded-lg hover:bg-gray-900 transition">Join MMM Trading</a>
+      </div>
     </div>
   </div>
 </header>
@@ -66,7 +69,7 @@
     <img src="./mmm-logo-lockup.jpg" alt="Max Maserati Model - Highest Entry Precision. Minimal Drawdown. Absolute Risk Control." class="mx-auto w-full max-w-md sm:max-w-lg rounded-2xl border border-white/10 shadow-2xl mb-10" />
     <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.08]">
       <span class="gold-text">Master The MMM Method</span><br class="hidden sm:block">
-      With <span class="teal-text">Precision</span>
+      <span class="teal-text">With Precision</span>
     </h1>
     <p class="mt-6 text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
       Max Maserati's order-flow system for ES and NQ futures. <span class="text-[color:var(--mmm-gold-light)] font-semibold">The MMM indicators</span>, the <span class="text-[color:var(--mmm-tiffany-light)] font-semibold">MMM Mastery Course</span>, and a full <span class="text-[color:var(--mmm-green)] font-semibold">prop-firm journal</span> - all built to keep you funded, not just entered.
@@ -89,7 +92,7 @@
     <div class="inline-flex items-center gap-2 text-xs font-bold text-white px-4 py-1.5 rounded-full mb-5" style="background:linear-gradient(90deg, var(--mmm-tiffany), var(--mmm-tiffany-light)); color:#04211f;">
       One System, Every Piece
     </div>
-    <h2 class="text-3xl sm:text-4xl font-extrabold">Built For <span class="gold-text">Prop Traders</span></h2>
+    <h2 class="text-3xl sm:text-4xl font-extrabold"><span class="gold-text">Built For Prop Traders</span></h2>
     <p class="text-gray-400 mt-3 max-w-xl mx-auto">Everything Max teaches and everything you trade with, under one roof.</p>
   </div>
   <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -234,5 +237,6 @@
   </div>
 </footer>
 
+<script src="./i18n.js"></script>
 </body>
 </html>
