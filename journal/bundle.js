@@ -2570,6 +2570,26 @@ Object.assign(TRANSLATIONS, {
     zh: "心流仪式"
   }
 });
+Object.assign(TRANSLATIONS, {
+  "General Calculation": {
+    fr: "Calcul général",
+    es: "Cálculo general",
+    ht: "Kalkil jeneral",
+    pt: "Cálculo geral",
+    de: "Allgemeine Berechnung",
+    ja: "一般計算",
+    zh: "通用计算"
+  },
+  "system maximums for this account": {
+    fr: "maximums du système pour ce compte",
+    es: "máximos del sistema para esta cuenta",
+    ht: "maksimòm sistèm pou kont sa a",
+    pt: "máximos do sistema para esta conta",
+    de: "Systemmaxima für dieses Konto",
+    ja: "この口座のシステム上限",
+    zh: "此账户的系统上限"
+  }
+});
 function applyTranslation(lang) {
   if (typeof document === 'undefined') return;
   const root = document.getElementById('root');
@@ -10362,6 +10382,20 @@ function MMMJournal(props) {
   const [activePage, setActivePage] = useState(props.wantsDiagnostic ? 'discipline' : 'overview');
   const [diagnostic, setDiagnostic] = useState(null);
   const [diagnosticReady, setDiagnosticReady] = useState(false);
+  const [accountWidgetOpen, setAccountWidgetOpen] = useState(function () {
+    try {
+      return localStorage.getItem('mmm-account-widget') !== 'closed';
+    } catch (e) {
+      return true;
+    }
+  });
+  const toggleAccountWidget = function () {
+    const next = !accountWidgetOpen;
+    setAccountWidgetOpen(next);
+    try {
+      localStorage.setItem('mmm-account-widget', next ? 'open' : 'closed');
+    } catch (e) {}
+  };
   const [savedName, setSavedName] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [entries, setEntries] = useState([]);
@@ -11496,9 +11530,20 @@ function MMMJournal(props) {
     className: "bg-gradient-to-br from-gray-900/60 to-black border border-gray-800 rounded-xl px-5 py-4"
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between mb-3.5"
-  }, /*#__PURE__*/React.createElement("h3", {
-    className: "text-white font-semibold"
-  }, activeAccount.name), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 min-w-0"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: toggleAccountWidget,
+    title: accountWidgetOpen ? 'Collapse' : 'Expand',
+    className: "h-7 w-7 rounded-lg border border-gray-700 text-gray-400 hover:text-yellow-300 hover:border-yellow-500/40 flex items-center justify-center flex-shrink-0"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: accountWidgetOpen ? 'ChevronUp' : 'ChevronDown',
+    className: "h-4 w-4"
+  })), /*#__PURE__*/React.createElement("h3", {
+    className: "text-white font-semibold truncate"
+  }, activeAccount.name), /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] px-2 py-0.5 rounded-full font-medium border " + STATUS_STYLES[activeStatus].cls
+  }, STATUS_STYLES[activeStatus].label)), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3"
   }, activeAccount.linkedFromLabel && /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
@@ -11513,7 +11558,17 @@ function MMMJournal(props) {
       handleArchiveAccount(activeAccount.id, activeAccount.archived === true);
     },
     className: "text-xs text-gray-600 hover:text-yellow-400 transition"
-  }, activeAccount.archived === true ? 'Unarchive account' : 'Archive account'))), /*#__PURE__*/React.createElement("div", {
+  }, activeAccount.archived === true ? 'Unarchive account' : 'Archive account'))), !accountWidgetOpen && /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-500"
+  }, /*#__PURE__*/React.createElement("span", null, "Capital ", /*#__PURE__*/React.createElement("span", {
+    className: "num text-gray-200"
+  }, fmt(activeAccount.startingBalance))), /*#__PURE__*/React.createElement("span", null, "Buffer ", /*#__PURE__*/React.createElement("span", {
+    className: "num text-gray-200"
+  }, fmt(Math.max(currentBuffer, 0)))), /*#__PURE__*/React.createElement("span", null, "Target ", /*#__PURE__*/React.createElement("span", {
+    className: "num text-gray-200"
+  }, fmt(activeAccount.profitTarget))), /*#__PURE__*/React.createElement("span", null, "Risk / trade (max) ", /*#__PURE__*/React.createElement("span", {
+    className: "num text-gray-200"
+  }, fmt(riskPerTrade)))), accountWidgetOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "text-[11px] text-gray-500 mb-0.5"
@@ -11548,7 +11603,72 @@ function MMMJournal(props) {
     className: "text-[11px] text-gray-500 mb-0.5"
   }, "Target"), /*#__PURE__*/React.createElement("div", {
     className: "num text-white font-semibold"
-  }, fmt(activeAccount.profitTarget))))), /*#__PURE__*/React.createElement(SystemExplainer, null)), accounts.length === 0 ? /*#__PURE__*/React.createElement("div", {
+  }, fmt(activeAccount.profitTarget)))), /*#__PURE__*/React.createElement("div", {
+    className: "mt-5 pt-5 border-t border-gray-800 space-y-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 flex-wrap"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Scale",
+    className: "h-4 w-4 text-yellow-400"
+  }), /*#__PURE__*/React.createElement("h4", {
+    className: "text-sm font-semibold text-white"
+  }, "General Calculation"), /*#__PURE__*/React.createElement("span", {
+    className: "text-xs text-gray-500"
+  }, "system maximums for this account"), /*#__PURE__*/React.createElement("span", {
+    className: "ml-auto text-[11px] px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700"
+  }, activeCfg.label, " - ", activeCfg.mode, " - ", activeCfg.riskPct * 100, "% risk - ", (MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label, " ", activeTicker)), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 md:grid-cols-4 gap-3"
+  }, /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Contracts Unlocked (max)",
+    value: contractPlan.label,
+    color: "text-yellow-400"
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Risk / Trade (max)",
+    value: fmt(riskPerTrade),
+    color: "text-blue-400"
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Locked Max Stop",
+    value: maxStopPoints.toFixed(0) + " pts",
+    color: "text-red-400"
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Daily Target (max, 2 wins)",
+    value: fmt(riskPerTrade * activeRR * 2),
+    color: "text-green-400"
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Max Loss / Day (max)",
+    value: fmt(riskPerTrade * 2),
+    color: "text-red-400"
+  }), /*#__PURE__*/React.createElement(PropFirmRuleStats, {
+    account: activeAccount,
+    entries: entries
+  }), /*#__PURE__*/React.createElement(GeneralPlanStats, {
+    account: activeAccount,
+    riskPerTrade: riskPerTrade,
+    totalPnl: totalPnl,
+    avgTradesPerDay: avgTradesPerDay,
+    maxTradesInDay: maxTradesInDay
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "bg-black/30 border border-gray-800/80 rounded-lg px-3 py-2.5"
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-400 flex items-start gap-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "ShieldAlert",
+    className: "h-3.5 w-3.5 text-yellow-400 flex-shrink-0 mt-0.5"
+  }), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
+    className: "text-gray-300 font-medium"
+  }, "General rule:"), " max ", /*#__PURE__*/React.createElement("span", {
+    className: "text-white font-semibold"
+  }, "3 trades/day"), ", max ", /*#__PURE__*/React.createElement("span", {
+    className: "text-green-400 font-semibold"
+  }, "2 wins"), ", max ", /*#__PURE__*/React.createElement("span", {
+    className: "text-red-400 font-semibold"
+  }, "2 losses"), ". Hit any of those and you're done for the day - no exceptions."))), /*#__PURE__*/React.createElement(PropFirmRuleNote, {
+    account: activeAccount,
+    entries: entries
+  }), /*#__PURE__*/React.createElement(ConsistencyRebalanceWidget, {
+    account: activeAccount,
+    accountEntries: accountEntries
+  })))), /*#__PURE__*/React.createElement(SystemExplainer, null)), accounts.length === 0 ? /*#__PURE__*/React.createElement("div", {
     className: "space-y-6"
   }, diagnostic && /*#__PURE__*/React.createElement(DiagnosticResultCard, {
     result: diagnostic
@@ -11755,77 +11875,7 @@ function MMMJournal(props) {
   })), /*#__PURE__*/React.createElement(ProStatsPanel, {
     accounts: accountsForOverview,
     entries: entries
-  }), /*#__PURE__*/React.createElement("details", {
-    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl group"
-  }, /*#__PURE__*/React.createElement("summary", {
-    className: "cursor-pointer list-none flex items-center justify-between gap-2 p-5"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "flex items-center gap-2"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "Scale",
-    className: "h-5 w-5 text-yellow-400"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "text-base font-semibold text-white"
-  }, "Account Rules & System Limits"), /*#__PURE__*/React.createElement("span", {
-    className: "text-xs text-gray-500"
-  }, "the maximums set by the system for this account")), /*#__PURE__*/React.createElement(Icon, {
-    name: "ChevronDown",
-    className: "h-4 w-4 text-gray-500"
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "px-5 pb-5 space-y-4"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-2 md:grid-cols-4 gap-3"
-  }, /*#__PURE__*/React.createElement(MiniStat, {
-    label: "Contracts Unlocked (max)",
-    value: contractPlan.label,
-    color: "text-yellow-400"
-  }), /*#__PURE__*/React.createElement(MiniStat, {
-    label: "Risk / Trade (max)",
-    value: fmt(riskPerTrade),
-    color: "text-blue-400"
-  }), /*#__PURE__*/React.createElement(MiniStat, {
-    label: "Locked Max Stop",
-    value: maxStopPoints.toFixed(0) + " pts",
-    color: "text-red-400"
-  }), /*#__PURE__*/React.createElement(MiniStat, {
-    label: "Daily Target (max, 2 wins)",
-    value: fmt(riskPerTrade * activeRR * 2),
-    color: "text-green-400"
-  }), /*#__PURE__*/React.createElement(MiniStat, {
-    label: "Max Loss / Day (max)",
-    value: fmt(riskPerTrade * 2),
-    color: "text-red-400"
-  }), /*#__PURE__*/React.createElement(PropFirmRuleStats, {
-    account: activeAccount,
-    entries: entries
-  }), /*#__PURE__*/React.createElement(GeneralPlanStats, {
-    account: activeAccount,
-    riskPerTrade: riskPerTrade,
-    totalPnl: totalPnl,
-    avgTradesPerDay: avgTradesPerDay,
-    maxTradesInDay: maxTradesInDay
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "bg-black/30 border border-gray-800/80 rounded-lg px-3 py-2.5"
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "text-xs text-gray-400 flex items-start gap-1.5"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "ShieldAlert",
-    className: "h-3.5 w-3.5 text-yellow-400 flex-shrink-0 mt-0.5"
-  }), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
-    className: "text-gray-300 font-medium"
-  }, "General rule:"), " max ", /*#__PURE__*/React.createElement("span", {
-    className: "text-white font-semibold"
-  }, "3 trades/day"), ", max ", /*#__PURE__*/React.createElement("span", {
-    className: "text-green-400 font-semibold"
-  }, "2 wins"), ", max ", /*#__PURE__*/React.createElement("span", {
-    className: "text-red-400 font-semibold"
-  }, "2 losses"), ". Hit any of those and you're done for the day - no exceptions."))), /*#__PURE__*/React.createElement(PropFirmRuleNote, {
-    account: activeAccount,
-    entries: entries
-  }), /*#__PURE__*/React.createElement(ConsistencyRebalanceWidget, {
-    account: activeAccount,
-    accountEntries: accountEntries
-  }))))), activePage === 'dailyplan' && activeAccount && /*#__PURE__*/React.createElement("div", {
+  }))), activePage === 'dailyplan' && activeAccount && /*#__PURE__*/React.createElement("div", {
     className: "space-y-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-purple-950/40 to-black border border-purple-800/40 rounded-2xl p-6"

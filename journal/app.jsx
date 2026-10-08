@@ -373,6 +373,11 @@ Object.assign(TRANSLATIONS, {
   "Flow Ritual": { fr: "Rituel de flow", es: "Ritual de flujo", ht: "Rit flow", pt: "Ritual de fluxo", de: "Flow-Ritual", ja: "フローの儀式", zh: "心流仪式" },
 });
 
+Object.assign(TRANSLATIONS, {
+  "General Calculation": { fr: "Calcul général", es: "Cálculo general", ht: "Kalkil jeneral", pt: "Cálculo geral", de: "Allgemeine Berechnung", ja: "一般計算", zh: "通用计算" },
+  "system maximums for this account": { fr: "maximums du système pour ce compte", es: "máximos del sistema para esta cuenta", ht: "maksimòm sistèm pou kont sa a", pt: "máximos do sistema para esta conta", de: "Systemmaxima für dieses Konto", ja: "この口座のシステム上限", zh: "此账户的系统上限" },
+});
+
 function applyTranslation(lang) {
   if (typeof document === 'undefined') return;
   const root = document.getElementById('root');
@@ -5283,6 +5288,14 @@ function MMMJournal(props) {
   const [activePage, setActivePage] = useState(props.wantsDiagnostic ? 'discipline' : 'overview');
   const [diagnostic, setDiagnostic] = useState(null);
   const [diagnosticReady, setDiagnosticReady] = useState(false);
+  const [accountWidgetOpen, setAccountWidgetOpen] = useState(function() {
+    try { return localStorage.getItem('mmm-account-widget') !== 'closed'; } catch (e) { return true; }
+  });
+  const toggleAccountWidget = function() {
+    const next = !accountWidgetOpen;
+    setAccountWidgetOpen(next);
+    try { localStorage.setItem('mmm-account-widget', next ? 'open' : 'closed'); } catch (e) {}
+  };
   const [savedName, setSavedName] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [entries, setEntries] = useState([]);
@@ -6100,13 +6113,23 @@ function MMMJournal(props) {
           {shouldShowAccountDetail && (
             <div className="bg-gradient-to-br from-gray-900/60 to-black border border-gray-800 rounded-xl px-5 py-4">
               <div className="flex items-center justify-between mb-3.5">
-                <h3 className="text-white font-semibold">{activeAccount.name}</h3>
+                <div className="flex items-center gap-2 min-w-0"><button onClick={toggleAccountWidget} title={accountWidgetOpen ? 'Collapse' : 'Expand'} className="h-7 w-7 rounded-lg border border-gray-700 text-gray-400 hover:text-yellow-300 hover:border-yellow-500/40 flex items-center justify-center flex-shrink-0"><Icon name={accountWidgetOpen ? 'ChevronUp' : 'ChevronDown'} className="h-4 w-4" /></button><h3 className="text-white font-semibold truncate">{activeAccount.name}</h3><span className={"text-[11px] px-2 py-0.5 rounded-full font-medium border " + STATUS_STYLES[activeStatus].cls}>{STATUS_STYLES[activeStatus].label}</span></div>
                 <div className="flex items-center gap-3">
                   {activeAccount.linkedFromLabel && <span className="text-xs text-gray-500">Promoted from <span className="text-yellow-400">{activeAccount.linkedFromLabel}</span></span>}
                   {activeAccount.copiedAccountNumber && <span className="text-xs text-gray-500">Copy of <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></span>}
                   <button onClick={function() { handleArchiveAccount(activeAccount.id, activeAccount.archived === true); }} className="text-xs text-gray-600 hover:text-yellow-400 transition">{activeAccount.archived === true ? 'Unarchive account' : 'Archive account'}</button>
                 </div>
               </div>
+              {!accountWidgetOpen && (
+                <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-500">
+                  <span>Capital <span className="num text-gray-200">{fmt(activeAccount.startingBalance)}</span></span>
+                  <span>Buffer <span className="num text-gray-200">{fmt(Math.max(currentBuffer, 0))}</span></span>
+                  <span>Target <span className="num text-gray-200">{fmt(activeAccount.profitTarget)}</span></span>
+                  <span>Risk / trade (max) <span className="num text-gray-200">{fmt(riskPerTrade)}</span></span>
+                </div>
+              )}
+              {accountWidgetOpen && (
+                <React.Fragment>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div>
                   <div className="text-[11px] text-gray-500 mb-0.5">Capital</div>
@@ -6133,6 +6156,32 @@ function MMMJournal(props) {
                   <div className="num text-white font-semibold">{fmt(activeAccount.profitTarget)}</div>
                 </div>
               </div>
+              <div className="mt-5 pt-5 border-t border-gray-800 space-y-4">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Icon name="Scale" className="h-4 w-4 text-yellow-400" /><h4 className="text-sm font-semibold text-white">General Calculation</h4>
+                  <span className="text-xs text-gray-500">system maximums for this account</span>
+                  <span className="ml-auto text-[11px] px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700">{activeCfg.label} - {activeCfg.mode} - {(activeCfg.riskPct * 100)}% risk - {(MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label} {activeTicker}</span>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <MiniStat label="Contracts Unlocked (max)" value={contractPlan.label} color="text-yellow-400" />
+                  <MiniStat label="Risk / Trade (max)" value={fmt(riskPerTrade)} color="text-blue-400" />
+                  <MiniStat label="Locked Max Stop" value={maxStopPoints.toFixed(0) + " pts"} color="text-red-400" />
+                  <MiniStat label="Daily Target (max, 2 wins)" value={fmt(riskPerTrade * activeRR * 2)} color="text-green-400" />
+                  <MiniStat label="Max Loss / Day (max)" value={fmt(riskPerTrade * 2)} color="text-red-400" />
+                  <PropFirmRuleStats account={activeAccount} entries={entries} />
+                  <GeneralPlanStats account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} avgTradesPerDay={avgTradesPerDay} maxTradesInDay={maxTradesInDay} />
+                </div>
+                <div className="bg-black/30 border border-gray-800/80 rounded-lg px-3 py-2.5">
+                  <p className="text-xs text-gray-400 flex items-start gap-1.5">
+                    <Icon name="ShieldAlert" className="h-3.5 w-3.5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                    <span><span className="text-gray-300 font-medium">General rule:</span> max <span className="text-white font-semibold">3 trades/day</span>, max <span className="text-green-400 font-semibold">2 wins</span>, max <span className="text-red-400 font-semibold">2 losses</span>. Hit any of those and you're done for the day - no exceptions.</span>
+                  </p>
+                </div>
+                <PropFirmRuleNote account={activeAccount} entries={entries} />
+                <ConsistencyRebalanceWidget account={activeAccount} accountEntries={accountEntries} />
+              </div>
+                </React.Fragment>
+              )}
             </div>
           )}
           <SystemExplainer />
@@ -6266,31 +6315,6 @@ function MMMJournal(props) {
 
                 <ProStatsPanel accounts={accountsForOverview} entries={entries} />
 
-                <details className="bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl group">
-                  <summary className="cursor-pointer list-none flex items-center justify-between gap-2 p-5">
-                    <span className="flex items-center gap-2"><Icon name="Scale" className="h-5 w-5 text-yellow-400" /><span className="text-base font-semibold text-white">Account Rules &amp; System Limits</span><span className="text-xs text-gray-500">the maximums set by the system for this account</span></span>
-                    <Icon name="ChevronDown" className="h-4 w-4 text-gray-500" />
-                  </summary>
-                  <div className="px-5 pb-5 space-y-4">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      <MiniStat label="Contracts Unlocked (max)" value={contractPlan.label} color="text-yellow-400" />
-                      <MiniStat label="Risk / Trade (max)" value={fmt(riskPerTrade)} color="text-blue-400" />
-                      <MiniStat label="Locked Max Stop" value={maxStopPoints.toFixed(0) + " pts"} color="text-red-400" />
-                      <MiniStat label="Daily Target (max, 2 wins)" value={fmt(riskPerTrade * activeRR * 2)} color="text-green-400" />
-                      <MiniStat label="Max Loss / Day (max)" value={fmt(riskPerTrade * 2)} color="text-red-400" />
-                      <PropFirmRuleStats account={activeAccount} entries={entries} />
-                      <GeneralPlanStats account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} avgTradesPerDay={avgTradesPerDay} maxTradesInDay={maxTradesInDay} />
-                    </div>
-                    <div className="bg-black/30 border border-gray-800/80 rounded-lg px-3 py-2.5">
-                      <p className="text-xs text-gray-400 flex items-start gap-1.5">
-                        <Icon name="ShieldAlert" className="h-3.5 w-3.5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                        <span><span className="text-gray-300 font-medium">General rule:</span> max <span className="text-white font-semibold">3 trades/day</span>, max <span className="text-green-400 font-semibold">2 wins</span>, max <span className="text-red-400 font-semibold">2 losses</span>. Hit any of those and you're done for the day - no exceptions.</span>
-                      </p>
-                    </div>
-                    <PropFirmRuleNote account={activeAccount} entries={entries} />
-                    <ConsistencyRebalanceWidget account={activeAccount} accountEntries={accountEntries} />
-                  </div>
-                </details>
                 </React.Fragment>
                 )}
                 </React.Fragment>
