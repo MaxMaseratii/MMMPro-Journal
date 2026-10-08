@@ -374,6 +374,13 @@ Object.assign(TRANSLATIONS, {
 });
 
 Object.assign(TRANSLATIONS, {
+  "Accounts": { fr: "Comptes", es: "Cuentas", ht: "Kont yo", pt: "Contas", de: "Konten", ja: "口座", zh: "账户" },
+  "Manage accounts": { fr: "Gérer les comptes", es: "Gestionar cuentas", ht: "Jere kont yo", pt: "Gerenciar contas", de: "Konten verwalten", ja: "口座を管理", zh: "管理账户" },
+  "Archived": { fr: "Archivés", es: "Archivadas", ht: "Achive", pt: "Arquivadas", de: "Archiviert", ja: "アーカイブ済み", zh: "已归档" },
+  "Archive": { fr: "Archiver", es: "Archivar", ht: "Achive", pt: "Arquivar", de: "Archivieren", ja: "アーカイブ", zh: "归档" },
+  "Unarchive": { fr: "Désarchiver", es: "Desarchivar", ht: "Dezachive", pt: "Desarquivar", de: "Wiederherstellen", ja: "アーカイブ解除", zh: "取消归档" },
+  "In view": { fr: "Affiché", es: "En vista", ht: "Ap gade", pt: "Em exibição", de: "In Ansicht", ja: "表示中", zh: "当前查看" },
+  "Days logged": { fr: "Jours enregistrés", es: "Días registrados", ht: "Jou anrejistre", pt: "Dias registrados", de: "Erfasste Tage", ja: "記録日数", zh: "已记录天数" },
   "General Calculation": { fr: "Calcul général", es: "Cálculo general", ht: "Kalkil jeneral", pt: "Cálculo geral", de: "Allgemeine Berechnung", ja: "一般計算", zh: "通用计算" },
   "system maximums for this account": { fr: "maximums du système pour ce compte", es: "máximos del sistema para esta cuenta", ht: "maksimòm sistèm pou kont sa a", pt: "máximos do sistema para esta conta", de: "Systemmaxima für dieses Konto", ja: "この口座のシステム上限", zh: "此账户的系统上限" },
 });
@@ -998,7 +1005,7 @@ function AuthScreen(props) {
           <LanguageSwitcher language={language} setLanguage={setLanguage} />
         </div>
         <div className="flex justify-center mb-3">
-          <img src="./logo-wordmark.png" alt="MMM Pro Journal" className="h-20 w-auto rounded-xl border border-yellow-500/20" />
+          <div className="flex items-center gap-3"><img src="./logo-shield.png" alt="MMM Pro Journal" className="h-16 w-auto" /><span className="text-2xl font-extrabold leading-tight text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">MMM Pro<br />Journal</span></div>
         </div>
         <p className="text-gray-500 text-sm text-center mb-4">{mode === 'login' ? 'Sign in to your account' : 'Create your account'}</p>
         {fromDiagnostic && (
@@ -3599,6 +3606,7 @@ const NAV_SECTIONS = [
     { key: 'discipline', label: 'Test & Progress', icon: 'ClipboardCheck' },
     { key: 'psychology', label: 'Psychology', icon: 'HeartPulse' },
   ] },
+  { key: 'accounts', label: 'Accounts', icon: 'Wallet', pages: [{ key: 'accounts', label: 'Accounts', icon: 'Wallet' }] },
   { key: 'money', label: 'Money', icon: 'DollarSign', pages: [
     { key: 'finances', label: 'Finances', icon: 'DollarSign' },
     { key: 'projections', label: 'Projections', icon: 'Target' },
@@ -3776,6 +3784,82 @@ function NamePromptModal(props) {
         <input value={name} onChange={function(e) { setName(e.target.value); }} onKeyDown={function(e) { if (e.key === 'Enter') save(); }} placeholder="Your name" className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 outline-none focus:border-yellow-400/50" />
         {err && <p className="text-xs text-red-400 mb-2">{err}</p>}
         <button onClick={save} disabled={saving} className="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-50">{saving ? 'Saving...' : 'Save my name'}</button>
+      </div>
+    </div>
+  );
+}
+
+// ===================== Accounts manager =====================
+function AccountsManager(props) {
+  const accounts = props.accounts;
+  const entries = props.entries;
+  const [filter, setFilter] = useState(props.defaultFilter || 'active');
+  const rows = accounts.map(function(a) {
+    const accEntries = entries.filter(function(e) { return e.accountId === a.id; });
+    const hist = calcBufferHistory(a, accEntries);
+    const buffer = hist.length > 0 ? hist[hist.length - 1].buffer : (parseFloat(a.maxDrawdown) || 0);
+    const status = props.getStatus(a);
+    const archived = a.archived === true;
+    const trades = accEntries.reduce(function(sum, e) { return sum + (e.tradedToday === 'no' ? 0 : (e.trades || []).length); }, 0);
+    return { a: a, buffer: buffer, status: status, archived: archived, trades: trades, days: accEntries.length };
+  });
+  const bucket = function(r) { return r.archived ? 'archived' : r.status === 'breached' ? 'breached' : 'active'; };
+  const counts = { active: 0, archived: 0, breached: 0 };
+  rows.forEach(function(r) { counts[bucket(r)]++; });
+  const shown = rows.filter(function(r) { return filter === 'all' || bucket(r) === filter; });
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Icon name="Wallet" className="h-5 w-5 text-yellow-400" /><span>Accounts</span></h2>
+          <p className="text-xs text-gray-500 mt-1">Create, review and archive your accounts here. Pick which account you are working in from the account selector at the top.</p>
+        </div>
+        <button onClick={props.onAdd} className="inline-flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg text-sm font-semibold"><Icon name="Plus" className="h-4 w-4" /><span>Add Account</span></button>
+      </div>
+      <div className="flex gap-2 flex-wrap">
+        {[['active', 'Active'], ['archived', 'Archived'], ['breached', 'Breached'], ['all', 'All']].map(function(f) {
+          return <button key={f[0]} onClick={function() { setFilter(f[0]); }} className={"px-3.5 py-1.5 rounded-lg text-xs font-medium border " + (filter === f[0] ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-300' : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-gray-200')}>{f[1]}{f[0] !== 'all' ? ' (' + counts[f[0]] + ')' : ''}</button>;
+        })}
+      </div>
+      {shown.length === 0 && <div className="text-center py-14 border border-dashed border-gray-700 rounded-2xl text-gray-500 text-sm">No accounts in this view.</div>}
+      <div className="grid md:grid-cols-2 gap-4">
+        {shown.map(function(r) {
+          const a = r.a;
+          const isActive = a.id === props.activeAccountId;
+          return (
+            <div key={a.id} className={"bg-gradient-to-br from-gray-900 to-black border rounded-2xl p-5 " + (isActive ? 'border-yellow-500/40' : 'border-gray-800')}>
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-white font-semibold truncate">{a.name}</h3>
+                    <span className={"text-[11px] px-2 py-0.5 rounded-full font-medium " + (ACCOUNT_BADGE_CLS[a.accountType] || 'bg-gray-800 text-gray-300')}>{(PHASE_CONFIG[a.accountType] || {}).label || a.accountType}</span>
+                    <span className={"text-[11px] px-2 py-0.5 rounded-full font-medium border " + STATUS_STYLES[r.status].cls}>{r.archived ? 'Archived' : STATUS_STYLES[r.status].label}</span>
+                  </div>
+                  {(a.linkedFromLabel || a.copiedAccountNumber) && <p className="text-[11px] text-gray-500 mt-1">{a.linkedFromLabel ? 'Promoted from ' + a.linkedFromLabel : 'Copy of ' + a.copiedAccountNumber}</p>}
+                </div>
+                {isActive && <span className="text-[11px] text-yellow-300 flex items-center gap-1"><Icon name="Eye" className="h-3.5 w-3.5" /><span>In view</span></span>}
+              </div>
+              <div className="grid grid-cols-3 gap-3 mb-3">
+                <div><div className="text-[11px] text-gray-500">Capital</div><div className="num text-sm font-semibold text-white">{fmt(a.startingBalance)}</div></div>
+                <div><div className="text-[11px] text-gray-500">Buffer</div><div className="num text-sm font-semibold text-green-400">{fmt(Math.max(r.buffer, 0))}</div><div className="text-[10px] text-gray-600">of {fmt(a.maxDrawdown)}</div></div>
+                <div><div className="text-[11px] text-gray-500">Target</div><div className="num text-sm font-semibold text-white">{fmt(a.profitTarget)}</div></div>
+                <div><div className="text-[11px] text-gray-500">Drawdown</div><div className="text-xs font-semibold text-white">{(DRAWDOWN_TYPES.find(function(dt) { return dt.key === (a.drawdownType || 'static'); }) || {}).short}</div></div>
+                <div><div className="text-[11px] text-gray-500">Days logged</div><div className="num text-sm font-semibold text-white">{r.days}</div></div>
+                <div><div className="text-[11px] text-gray-500">Trades</div><div className="num text-sm font-semibold text-white">{r.trades}</div></div>
+              </div>
+              <div className="mb-4">
+                <label className="block text-[11px] text-gray-500 mb-1">Market</label>
+                <select value={a.market || 'nasdaq100'} onChange={function(e) { props.onMarket(a.id, e.target.value); }} className="w-full bg-gray-900 border border-gray-700 text-white rounded-md px-2 py-1.5 text-sm focus:border-yellow-400/50 outline-none">
+                  {MARKET_OPTIONS.map(function(m) { return (<option key={m.key} value={m.key}>{m.label}</option>); })}
+                </select>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {!r.archived && <button onClick={function() { props.onOpen(a.id, r.status === 'breached'); }} className="inline-flex items-center gap-1.5 bg-yellow-500/15 border border-yellow-500/40 text-yellow-300 px-3 py-1.5 rounded-lg text-xs font-semibold"><Icon name="ArrowRight" className="h-3.5 w-3.5" /><span>Open</span></button>}
+                <button onClick={async function() { await props.onArchive(a.id, r.archived); setFilter(r.archived ? 'active' : 'archived'); }} className="inline-flex items-center gap-1.5 bg-gray-800 border border-gray-700 text-gray-300 hover:text-yellow-300 px-3 py-1.5 rounded-lg text-xs"><Icon name={r.archived ? 'ArchiveRestore' : 'Archive'} className="h-3.5 w-3.5" /><span>{r.archived ? 'Unarchive' : 'Archive'}</span></button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -6049,7 +6133,7 @@ function MMMJournal(props) {
         <div className="flex flex-col gap-4 pb-5 border-b border-gray-900">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <img src="./logo-wordmark.png" alt="MMM Pro Journal" className="h-10 w-auto rounded-lg border border-yellow-500/20" />
+              <div className="flex items-center gap-2.5"><img src="./logo-shield.png" alt="MMM Pro Journal" className="h-12 w-auto" /><span className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-500">MMM Pro Journal</span></div>
               <p className="text-gray-500 text-sm mt-1 flex items-center flex-wrap">
                 <span><EditableName user={user} /> - <button onClick={function() { auth.signOut(); }} className="text-red-400 hover:underline">Sign out</button></span>
                 <UserCounters />
@@ -6112,16 +6196,18 @@ function MMMJournal(props) {
           )}
           {shouldShowAccountDetail && (
             <div className="bg-gradient-to-br from-gray-900/60 to-black border border-gray-800 rounded-xl px-5 py-4">
-              <div className="flex items-center justify-between mb-3.5">
-                <div className="flex items-center gap-2 min-w-0"><button onClick={toggleAccountWidget} title={accountWidgetOpen ? 'Collapse' : 'Expand'} className="h-7 w-7 rounded-lg border border-gray-700 text-gray-400 hover:text-yellow-300 hover:border-yellow-500/40 flex items-center justify-center flex-shrink-0"><Icon name={accountWidgetOpen ? 'ChevronUp' : 'ChevronDown'} className="h-4 w-4" /></button><h3 className="text-white font-semibold truncate">{activeAccount.name}</h3><span className={"text-[11px] px-2 py-0.5 rounded-full font-medium border " + STATUS_STYLES[activeStatus].cls}>{STATUS_STYLES[activeStatus].label}</span></div>
-                <div className="flex items-center gap-3">
-                  {activeAccount.linkedFromLabel && <span className="text-xs text-gray-500">Promoted from <span className="text-yellow-400">{activeAccount.linkedFromLabel}</span></span>}
-                  {activeAccount.copiedAccountNumber && <span className="text-xs text-gray-500">Copy of <span className="text-yellow-400">{activeAccount.copiedAccountNumber}</span></span>}
-                  <button onClick={function() { handleArchiveAccount(activeAccount.id, activeAccount.archived === true); }} className="text-xs text-gray-600 hover:text-yellow-400 transition">{activeAccount.archived === true ? 'Unarchive account' : 'Archive account'}</button>
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2 min-w-0 flex-wrap">
+                  <button onClick={toggleAccountWidget} title={accountWidgetOpen ? 'Collapse' : 'Expand'} className="h-7 w-7 rounded-lg border border-gray-700 text-gray-400 hover:text-yellow-300 hover:border-yellow-500/40 flex items-center justify-center flex-shrink-0"><Icon name={accountWidgetOpen ? 'ChevronUp' : 'ChevronDown'} className="h-4 w-4" /></button>
+                  <Icon name="Scale" className="h-4 w-4 text-yellow-400" />
+                  <h3 className="text-white font-semibold">General Calculation</h3>
+                  <span className="text-xs text-gray-500 truncate">{activeAccount.name}</span>
+                  <span className={"text-[11px] px-2 py-0.5 rounded-full font-medium border " + STATUS_STYLES[activeStatus].cls}>{STATUS_STYLES[activeStatus].label}</span>
                 </div>
+                <button onClick={function() { setActivePage('accounts'); }} className="text-xs text-gray-500 hover:text-yellow-300 flex items-center gap-1"><Icon name="Wallet" className="h-3.5 w-3.5" /><span>Manage accounts</span></button>
               </div>
               {!accountWidgetOpen && (
-                <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-500">
+                <div className="flex flex-wrap gap-x-6 gap-y-1 text-xs text-gray-500 mt-3">
                   <span>Capital <span className="num text-gray-200">{fmt(activeAccount.startingBalance)}</span></span>
                   <span>Buffer <span className="num text-gray-200">{fmt(Math.max(currentBuffer, 0))}</span></span>
                   <span>Target <span className="num text-gray-200">{fmt(activeAccount.profitTarget)}</span></span>
@@ -6129,62 +6215,47 @@ function MMMJournal(props) {
                 </div>
               )}
               {accountWidgetOpen && (
-                <React.Fragment>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div>
-                  <div className="text-[11px] text-gray-500 mb-0.5">Capital</div>
-                  <div className="num text-white font-semibold">{fmt(activeAccount.startingBalance)}</div>
+                <div className="mt-4 space-y-5">
+                  <div className="flex flex-wrap gap-2 text-[11px]">
+                    <span className="px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700">{activeCfg.label} - {activeCfg.mode} - {(activeCfg.riskPct * 100)}% risk</span>
+                    <span className="px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700">{(MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label} {activeTicker}</span>
+                    <span className="px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700">Target {fmt(activeAccount.profitTarget)}</span>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <MiniStat label="Contracts Unlocked (max)" value={contractPlan.label} color="text-yellow-400" />
+                    <MiniStat label="Risk / Trade (max)" value={fmt(riskPerTrade)} color="text-blue-400" />
+                    <MiniStat label="Locked Max Stop" value={maxStopPoints.toFixed(0) + " pts"} color="text-red-400" />
+                    <MiniStat label="Daily Target (max, 2 wins)" value={fmt(riskPerTrade * activeRR * 2)} color="text-green-400" />
+                    <MiniStat label="Max Loss / Day (max)" value={fmt(riskPerTrade * 2)} color="text-red-400" />
+                    <PropFirmRuleStats account={activeAccount} entries={entries} />
+                    <GeneralPlanStats account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} avgTradesPerDay={avgTradesPerDay} maxTradesInDay={maxTradesInDay} />
+                  </div>
+                  <div className="bg-black/30 border border-gray-800/80 rounded-lg px-3 py-2.5">
+                    <p className="text-xs text-gray-400 flex items-start gap-1.5">
+                      <Icon name="ShieldAlert" className="h-3.5 w-3.5 text-yellow-400 flex-shrink-0 mt-0.5" />
+                      <span><span className="text-gray-300 font-medium">General rule:</span> max <span className="text-white font-semibold">3 trades/day</span>, max <span className="text-green-400 font-semibold">2 wins</span>, max <span className="text-red-400 font-semibold">2 losses</span>. Hit any of those and you're done for the day - no exceptions.</span>
+                    </p>
+                  </div>
+                  <PropFirmRuleNote account={activeAccount} entries={entries} />
+                  <ConsistencyRebalanceWidget account={activeAccount} accountEntries={accountEntries} />
+
+                  <div className="pt-4 border-t border-gray-800">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Icon name="UserCheck" className="h-4 w-4 text-blue-400" /><h4 className="text-sm font-semibold text-white">Your Plan</h4>
+                      <span className="text-xs text-gray-500">trader's final decision</span>
+                    </div>
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                      <StatCard label="Risk Per Trade" value={fmt(effectiveRiskPerTrade)} icon="Target" color="text-blue-400" sub={toleranceIsActive ? "Tolerance (system max " + fmt(riskPerTrade) + ")" : activeCfg.mode + " (" + (activeCfg.riskPct * 100) + "%)"} />
+                      <StatCard label="Current Capital (Buffer)" value={fmt(Math.max(currentBuffer, 0))} icon="Shield" color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
+                      <PersonalPlanStats account={activeAccount} riskPerTrade={effectiveRiskPerTrade} totalPnl={totalPnl} />
+                    </div>
+                  </div>
+
+                  <SystemExplainer />
                 </div>
-                <div>
-                  <div className="text-[11px] text-gray-500 mb-0.5">Drawdown</div>
-                  <div className={"num font-semibold " + ((currentBuffer - (parseFloat(activeAccount.maxDrawdown) || 0)) < 0 ? 'text-red-400' : 'text-white')}>{fmt(currentBuffer - (parseFloat(activeAccount.maxDrawdown) || 0))}</div>
-                  <div className="text-[11px] text-gray-600">from {fmt(activeAccount.maxDrawdown)}</div>
-                </div>
-                <div>
-                  <div className="text-[11px] text-gray-500 mb-0.5">Drawdown type</div>
-                  <div className="text-white font-semibold text-sm">{(DRAWDOWN_TYPES.find(function(dt) { return dt.key === (activeAccount.drawdownType || 'static'); }) || {}).short}</div>
-                </div>
-                <div>
-                  <div className="text-[11px] text-gray-500 mb-0.5">Market</div>
-                  <select value={activeAccount.market || 'nasdaq100'} onChange={function(e) { handleChangeMarket(e.target.value); }}
-                    className="bg-gray-900 border border-gray-700 text-white rounded-md px-2 py-1 text-sm focus:border-yellow-400/50 outline-none w-full">
-                    {MARKET_OPTIONS.map(function(m) { return (<option key={m.key} value={m.key}>{m.label}</option>); })}
-                  </select>
-                </div>
-                <div>
-                  <div className="text-[11px] text-gray-500 mb-0.5">Target</div>
-                  <div className="num text-white font-semibold">{fmt(activeAccount.profitTarget)}</div>
-                </div>
-              </div>
-              <div className="mt-5 pt-5 border-t border-gray-800 space-y-4">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Icon name="Scale" className="h-4 w-4 text-yellow-400" /><h4 className="text-sm font-semibold text-white">General Calculation</h4>
-                  <span className="text-xs text-gray-500">system maximums for this account</span>
-                  <span className="ml-auto text-[11px] px-2 py-0.5 rounded-full bg-gray-800 text-gray-400 border border-gray-700">{activeCfg.label} - {activeCfg.mode} - {(activeCfg.riskPct * 100)}% risk - {(MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label} {activeTicker}</span>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <MiniStat label="Contracts Unlocked (max)" value={contractPlan.label} color="text-yellow-400" />
-                  <MiniStat label="Risk / Trade (max)" value={fmt(riskPerTrade)} color="text-blue-400" />
-                  <MiniStat label="Locked Max Stop" value={maxStopPoints.toFixed(0) + " pts"} color="text-red-400" />
-                  <MiniStat label="Daily Target (max, 2 wins)" value={fmt(riskPerTrade * activeRR * 2)} color="text-green-400" />
-                  <MiniStat label="Max Loss / Day (max)" value={fmt(riskPerTrade * 2)} color="text-red-400" />
-                  <PropFirmRuleStats account={activeAccount} entries={entries} />
-                  <GeneralPlanStats account={activeAccount} riskPerTrade={riskPerTrade} totalPnl={totalPnl} avgTradesPerDay={avgTradesPerDay} maxTradesInDay={maxTradesInDay} />
-                </div>
-                <div className="bg-black/30 border border-gray-800/80 rounded-lg px-3 py-2.5">
-                  <p className="text-xs text-gray-400 flex items-start gap-1.5">
-                    <Icon name="ShieldAlert" className="h-3.5 w-3.5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                    <span><span className="text-gray-300 font-medium">General rule:</span> max <span className="text-white font-semibold">3 trades/day</span>, max <span className="text-green-400 font-semibold">2 wins</span>, max <span className="text-red-400 font-semibold">2 losses</span>. Hit any of those and you're done for the day - no exceptions.</span>
-                  </p>
-                </div>
-                <PropFirmRuleNote account={activeAccount} entries={entries} />
-                <ConsistencyRebalanceWidget account={activeAccount} accountEntries={accountEntries} />
-              </div>
-                </React.Fragment>
               )}
             </div>
           )}
-          <SystemExplainer />
         </div>
 
         {accounts.length === 0 ? (
@@ -6196,11 +6267,18 @@ function MMMJournal(props) {
             </div>
           </div>
         ) : !shouldShowAccountDetail ? (
+          <div className="space-y-6">
           <div className="text-center py-20 border border-dashed border-gray-700 rounded-2xl">
             <Icon name="Shield" className="h-10 w-10 text-gray-600 mx-auto mb-3" />
             <p className="text-gray-500">No active accounts right now.</p>
             <p className="text-gray-600 text-sm mt-1">Add a new account to get started, or check the Breached tab to review what happened.</p>
             <button onClick={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }} className="mt-4 inline-flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-black px-4 py-2 rounded-lg font-semibold hover:from-green-400 hover:to-emerald-500 transition"><Icon name="Plus" className="h-4 w-4" /><span>Add Account</span></button>
+          </div>
+            <AccountsManager accounts={accounts} entries={entries} activeAccountId={activeAccountId} getStatus={getAccountStatus} defaultFilter="archived"
+              onAdd={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }}
+              onMarket={function(id, m) { accountsRef.doc(id).update({ market: m }); }}
+              onArchive={handleArchiveAccount}
+              onOpen={function(id, breached) { setHasManualSelection(true); setViewingBreached(!!breached); setActiveAccountId(id); setActivePage('overview'); }} />
           </div>
         ) : (
           <React.Fragment>
@@ -6291,18 +6369,6 @@ function MMMJournal(props) {
                   planSet={!!(activeAccount.dailyPlanTemplate && (activeAccount.dailyPlanTemplate.targetProfit || activeAccount.dailyPlanTemplate.maxLossPerDay))}
                   onGo={setActivePage} />
 
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <Icon name="UserCheck" className="h-5 w-5 text-blue-400" /><h2 className="text-lg font-semibold text-white">Your Plan</h2>
-                    <span className="text-xs text-gray-500">trader's final decision</span>
-                  </div>
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    <StatCard label="Risk Per Trade" value={fmt(effectiveRiskPerTrade)} icon="Target" color="text-blue-400" sub={toleranceIsActive ? "Tolerance (system max " + fmt(riskPerTrade) + ")" : activeCfg.mode + " (" + (activeCfg.riskPct * 100) + "%)"} />
-                    <StatCard label="Current Capital (Buffer)" value={fmt(Math.max(currentBuffer, 0))} icon="Shield" color={activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'} />
-                    <PersonalPlanStats account={activeAccount} riskPerTrade={effectiveRiskPerTrade} totalPnl={totalPnl} />
-                  </div>
-                </div>
-
                 <p className="text-xs text-gray-600">
                   {accountsForOverview.length === accounts.filter(function(a) { return getAccountStatus(a) !== 'breached'; }).length ? 'Stats below show all selected accounts, combined.' :
                     'Stats below show ' + accountsForOverview.length + ' selected account' + (accountsForOverview.length !== 1 ? 's' : '') + ': ' + accountsForOverview.map(function(a) { return a.name; }).join(', ')}
@@ -6318,6 +6384,14 @@ function MMMJournal(props) {
                 </React.Fragment>
                 )}
                 </React.Fragment>
+                )}
+
+                {activePage === 'accounts' && (
+                <AccountsManager accounts={accounts} entries={entries} activeAccountId={activeAccountId} getStatus={getAccountStatus}
+                  onAdd={function() { setNewAccount(emptyAccountForm); setShowAddAccount(true); }}
+                  onMarket={function(id, m) { accountsRef.doc(id).update({ market: m }); }}
+                  onArchive={handleArchiveAccount}
+                  onOpen={function(id, breached) { setHasManualSelection(true); setViewingBreached(!!breached); setActiveAccountId(id); setActivePage('overview'); }} />
                 )}
 
                 {activePage === 'dailyplan' && activeAccount && (
