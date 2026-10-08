@@ -2397,6 +2397,179 @@ Object.assign(TRANSLATIONS, {
     zh: "创建免费账户以解锁测试结果"
   }
 });
+Object.assign(TRANSLATIONS, {
+  "Command Center": {
+    fr: "Centre de commande",
+    es: "Centro de mando",
+    ht: "Sant kòmand",
+    pt: "Central de comando",
+    de: "Kommandozentrale",
+    ja: "コマンドセンター",
+    zh: "指挥中心"
+  },
+  "Pre-Session": {
+    fr: "Avant-session",
+    es: "Pre-sesión",
+    ht: "Anvan sesyon",
+    pt: "Pré-sessão",
+    de: "Vor der Session",
+    ja: "セッション前",
+    zh: "开盘前"
+  },
+  "Trades": {
+    fr: "Trades",
+    es: "Operaciones",
+    ht: "Tranzaksyon",
+    pt: "Operações",
+    de: "Trades",
+    ja: "トレード",
+    zh: "交易"
+  },
+  "Money": {
+    fr: "Argent",
+    es: "Dinero",
+    ht: "Lajan",
+    pt: "Dinheiro",
+    de: "Geld",
+    ja: "お金",
+    zh: "资金"
+  },
+  "Test & Progress": {
+    fr: "Test et progrès",
+    es: "Prueba y progreso",
+    ht: "Tès ak pwogrè",
+    pt: "Teste e progresso",
+    de: "Test & Fortschritt",
+    ja: "テストと進捗",
+    zh: "测试与进度"
+  },
+  "Today's Mission": {
+    fr: "Mission du jour",
+    es: "Misión de hoy",
+    ht: "Misyon jodi a",
+    pt: "Missão de hoje",
+    de: "Heutige Mission",
+    ja: "今日のミッション",
+    zh: "今日任务"
+  },
+  "Your Plan": {
+    fr: "Votre plan",
+    es: "Tu plan",
+    ht: "Plan ou",
+    pt: "Seu plano",
+    de: "Dein Plan",
+    ja: "あなたのプラン",
+    zh: "你的计划"
+  },
+  "Account Rules & System Limits": {
+    fr: "Règles du compte et limites du système",
+    es: "Reglas de la cuenta y límites del sistema",
+    ht: "Règ kont lan ak limit sistèm",
+    pt: "Regras da conta e limites do sistema",
+    de: "Kontoregeln & Systemgrenzen",
+    ja: "口座ルールとシステム上限",
+    zh: "账户规则与系统限制"
+  },
+  "Take the Discipline Test to unlock this": {
+    fr: "Passez le test de discipline pour débloquer ceci",
+    es: "Haz la prueba de disciplina para desbloquear esto",
+    ht: "Pran tès disiplin lan pou debloke sa a",
+    pt: "Faça o teste de disciplina para desbloquear",
+    de: "Mach den Disziplin-Test, um dies freizuschalten",
+    ja: "規律テストを受けて解除しましょう",
+    zh: "完成纪律测试以解锁"
+  },
+  "Take the Discipline Test": {
+    fr: "Passer le test de discipline",
+    es: "Hacer la prueba de disciplina",
+    ht: "Pran tès disiplin lan",
+    pt: "Fazer o teste de disciplina",
+    de: "Disziplin-Test machen",
+    ja: "規律テストを受ける",
+    zh: "参加纪律测试"
+  },
+  "Take the Test": {
+    fr: "Passer le test",
+    es: "Hacer la prueba",
+    ht: "Pran tès la",
+    pt: "Fazer o teste",
+    de: "Test machen",
+    ja: "テストを受ける",
+    zh: "参加测试"
+  },
+  "What should we call you?": {
+    fr: "Comment devons-nous vous appeler ?",
+    es: "¿Cómo te llamamos?",
+    ht: "Kijan nou dwe rele w?",
+    pt: "Como devemos chamar você?",
+    de: "Wie sollen wir dich nennen?",
+    ja: "お名前を教えてください",
+    zh: "我们该怎么称呼你？"
+  },
+  "Save my name": {
+    fr: "Enregistrer mon nom",
+    es: "Guardar mi nombre",
+    ht: "Anrejistre non mwen",
+    pt: "Salvar meu nome",
+    de: "Namen speichern",
+    ja: "名前を保存",
+    zh: "保存我的名字"
+  },
+  "Mental Check done": {
+    fr: "Mental Check fait",
+    es: "Mental Check hecho",
+    ht: "Mental Check fèt",
+    pt: "Mental Check feito",
+    de: "Mental Check erledigt",
+    ja: "メンタルチェック完了",
+    zh: "已完成心理检查"
+  },
+  "Daily Plan set": {
+    fr: "Plan quotidien défini",
+    es: "Plan diario definido",
+    ht: "Plan chak jou defini",
+    pt: "Plano diário definido",
+    de: "Tagesplan gesetzt",
+    ja: "デイリープラン設定済み",
+    zh: "已设置每日计划"
+  },
+  "Today logged": {
+    fr: "Journée enregistrée",
+    es: "Día registrado",
+    ht: "Jou a anrejistre",
+    pt: "Dia registrado",
+    de: "Heute erfasst",
+    ja: "今日を記録済み",
+    zh: "今日已记录"
+  },
+  "Buffer (your room to be wrong)": {
+    fr: "Buffer (votre marge d'erreur)",
+    es: "Buffer (tu margen de error)",
+    ht: "Buffer (maj erè ou)",
+    pt: "Buffer (sua margem de erro)",
+    de: "Puffer (dein Fehlerspielraum)",
+    ja: "バッファ（許容できる失敗の余地）",
+    zh: "缓冲（你的容错空间）"
+  },
+  "Open": {
+    fr: "Ouvrir",
+    es: "Abrir",
+    ht: "Louvri",
+    pt: "Abrir",
+    de: "Öffnen",
+    ja: "開く",
+    zh: "打开"
+  },
+  "Flow Ritual": {
+    fr: "Rituel de flow",
+    es: "Ritual de flujo",
+    ht: "Rit flow",
+    pt: "Ritual de fluxo",
+    de: "Flow-Ritual",
+    ja: "フローの儀式",
+    zh: "心流仪式"
+  }
+});
 function applyTranslation(lang) {
   if (typeof document === 'undefined') return;
   const root = document.getElementById('root');
@@ -7606,6 +7779,398 @@ function PreSessionGoNoGo(props) {
     className: "font-semibold " + (ready ? 'text-green-400' : 'text-red-400')
   }, r ? r.pct + '% - ' + r.verdict : 'not set')));
 }
+
+// ===================== Navigation sections (menu reorganised into a clear flow) =====================
+// Internal test accounts that must never appear on the public leaderboard.
+const HIDDEN_LEADERBOARD_NAMES = ['Upg Tester', 'Claude Archive Test'];
+const NAV_SECTIONS = [{
+  key: 'overview',
+  label: 'Overview',
+  icon: 'LayoutDashboard',
+  pages: [{
+    key: 'overview',
+    label: 'Command Center',
+    icon: 'LayoutDashboard'
+  }]
+}, {
+  key: 'plan',
+  label: 'Pre-Session',
+  icon: 'Calendar',
+  pages: [{
+    key: 'dailyplan',
+    label: 'Daily Plan',
+    icon: 'Calendar'
+  }, {
+    key: 'mentalcheck',
+    label: 'Mental Check',
+    icon: 'Brain'
+  }, {
+    key: 'flowstate',
+    label: 'Flow State',
+    icon: 'Waves'
+  }, {
+    key: 'historicalplan',
+    label: 'Historical Plan',
+    icon: 'History'
+  }]
+}, {
+  key: 'trades',
+  label: 'Trades',
+  icon: 'CandlestickChart',
+  pages: [{
+    key: 'history',
+    label: 'Trade History',
+    icon: 'Calendar'
+  }, {
+    key: 'reports',
+    label: 'Reports',
+    icon: 'BarChart3'
+  }]
+}, {
+  key: 'disc',
+  label: 'Discipline',
+  icon: 'ShieldCheck',
+  pages: [{
+    key: 'discipline',
+    label: 'Test & Progress',
+    icon: 'ClipboardCheck'
+  }, {
+    key: 'psychology',
+    label: 'Psychology',
+    icon: 'HeartPulse'
+  }]
+}, {
+  key: 'money',
+  label: 'Money',
+  icon: 'DollarSign',
+  pages: [{
+    key: 'finances',
+    label: 'Finances',
+    icon: 'DollarSign'
+  }, {
+    key: 'projections',
+    label: 'Projections',
+    icon: 'Target'
+  }]
+}, {
+  key: 'strategy',
+  label: 'Strategy',
+  icon: 'BookOpen',
+  pages: [{
+    key: 'strategy',
+    label: 'Strategy',
+    icon: 'BookOpen'
+  }]
+}];
+const DISCIPLINE_GATED_PAGES = ['discipline', 'psychology', 'flowstate', 'mentalcheck'];
+function sectionForPage(pageKey) {
+  return NAV_SECTIONS.find(function (s) {
+    return s.pages.some(function (p) {
+      return p.key === pageKey;
+    });
+  }) || NAV_SECTIONS[0];
+}
+function MainNav(props) {
+  const activePage = props.activePage;
+  const setActivePage = props.setActivePage;
+  const section = sectionForPage(activePage);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-1.5 overflow-x-auto pb-1"
+  }, NAV_SECTIONS.map(function (s) {
+    const on = s.key === section.key;
+    return /*#__PURE__*/React.createElement("button", {
+      key: s.key,
+      onClick: function () {
+        setActivePage(s.pages[0].key);
+      },
+      className: "flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap border transition " + (on ? 'bg-yellow-500/15 border-yellow-500/50 text-yellow-300' : 'bg-gray-900/60 border-gray-800 text-gray-400 hover:text-gray-200 hover:border-gray-700')
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: s.icon,
+      className: "h-4 w-4"
+    }), /*#__PURE__*/React.createElement("span", null, s.label));
+  })), section.pages.length > 1 && /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-1 border-b border-gray-900 overflow-x-auto"
+  }, section.pages.map(function (p) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: p.key,
+      onClick: function () {
+        setActivePage(p.key);
+      },
+      className: "flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition " + (activePage === p.key ? 'border-yellow-400 text-yellow-300' : 'border-transparent text-gray-500 hover:text-gray-300')
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: p.icon,
+      className: "h-3.5 w-3.5"
+    }), /*#__PURE__*/React.createElement("span", null, p.label));
+  })));
+}
+
+// Everything that measures discipline is locked until the trader has taken the
+// Trading Discipline Test - it's the baseline every later score is compared to.
+function DisciplineTestGate(props) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "bg-gradient-to-br from-yellow-950/30 to-black border border-yellow-500/30 rounded-2xl p-8 text-center max-w-2xl mx-auto"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "inline-flex items-center justify-center h-16 w-16 rounded-full bg-yellow-500/10 border border-yellow-500/30 mb-4"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Lock",
+    className: "h-8 w-8 text-yellow-400"
+  })), /*#__PURE__*/React.createElement("h2", {
+    className: "text-xl font-bold text-white mb-2"
+  }, "Take the Discipline Test to unlock this"), /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-gray-400 leading-relaxed mb-5"
+  }, "The Trading Discipline Test is your starting line. It takes 2 minutes and sets the baseline that every later score, check-in and psychology report is compared with. Until you take it, Mental Check, Flow State, Psychology and the Discipline page stay locked."), /*#__PURE__*/React.createElement("a", {
+    href: "../diagnostic/",
+    className: "inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-6 py-3 rounded-xl font-bold"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Play",
+    className: "h-4 w-4"
+  }), /*#__PURE__*/React.createElement("span", null, "Take the Discipline Test")), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-600 mt-4"
+  }, "Already took it? Come back through \"Sign In to See Results\" at the end of the test and it will appear here."));
+}
+function DisciplineRing(props) {
+  const score = props.score;
+  const g = disciplineGrade(score);
+  const r = 34,
+    c = 2 * Math.PI * r;
+  const pct = score === null || score === undefined ? 0 : Math.max(0, Math.min(100, score));
+  const stroke = pct >= 80 ? '#4ade80' : pct >= 60 ? '#fbbf24' : '#f87171';
+  return /*#__PURE__*/React.createElement("div", {
+    className: "relative h-24 w-24 flex-shrink-0"
+  }, /*#__PURE__*/React.createElement("svg", {
+    viewBox: "0 0 80 80",
+    className: "h-24 w-24 -rotate-90"
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: "40",
+    cy: "40",
+    r: r,
+    fill: "none",
+    stroke: "#1f2937",
+    strokeWidth: "7"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: "40",
+    cy: "40",
+    r: r,
+    fill: "none",
+    stroke: stroke,
+    strokeWidth: "7",
+    strokeLinecap: "round",
+    strokeDasharray: c,
+    strokeDashoffset: c * (1 - pct / 100)
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-0 flex flex-col items-center justify-center"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "num text-xl font-extrabold " + g.color
+  }, score === null || score === undefined ? '-' : Math.round(score)), /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] font-bold " + g.color
+  }, "Grade ", g.letter)));
+}
+
+// The first thing you see: how healthy is the account, how disciplined are
+// you, and what should you do right now.
+function CommandCenter(props) {
+  const s = computeAdvancedStats(props.accounts, props.entries);
+  const acc = props.account;
+  const maxDD = parseFloat(acc.maxDrawdown) || 0;
+  const buffer = Math.max(props.buffer, 0);
+  const bufPct = maxDD > 0 ? Math.max(0, Math.min(100, buffer / maxDD * 100)) : 0;
+  const bufColor = bufPct < 30 ? 'bg-red-500' : bufPct < 60 ? 'bg-yellow-500' : 'bg-green-500';
+  const r = mentalReadiness(props.mentalCheck);
+  const maxTrades = 3;
+  const tradesLeft = Math.max(0, maxTrades - props.todayTrades);
+  const mission = [{
+    ok: !!props.mentalDone,
+    label: 'Mental Check done',
+    go: 'mentalcheck'
+  }, {
+    ok: props.planSet,
+    label: 'Daily Plan set',
+    go: 'dailyplan'
+  }, {
+    ok: props.todayTrades > 0 || props.loggedToday,
+    label: 'Today logged',
+    go: null
+  }];
+  const stopped = props.todayPnl <= -props.dailyCap && props.dailyCap > 0;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "grid lg:grid-cols-5 gap-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lg:col-span-3 bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-start justify-between gap-4 flex-wrap"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "min-w-0"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 flex-wrap"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-xl font-bold text-white truncate"
+  }, acc.name), /*#__PURE__*/React.createElement("span", {
+    className: "text-xs px-2.5 py-1 rounded-full font-medium border " + STATUS_STYLES[props.status].cls
+  }, STATUS_STYLES[props.status].label)), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-500 mt-1"
+  }, props.phaseLabel)), /*#__PURE__*/React.createElement(DisciplineRing, {
+    score: s.disciplineScore
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "mt-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex justify-between text-xs mb-1.5"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-gray-400"
+  }, "Buffer (your room to be wrong)"), /*#__PURE__*/React.createElement("span", {
+    className: "num text-white font-semibold"
+  }, fmt(buffer), " ", /*#__PURE__*/React.createElement("span", {
+    className: "text-gray-500"
+  }, "of ", fmt(maxDD)))), /*#__PURE__*/React.createElement("div", {
+    className: "h-3 bg-gray-800 rounded-full overflow-hidden"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "h-full rounded-full transition-all " + bufColor,
+    style: {
+      width: bufPct + '%'
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-gray-500"
+  }, "Net Balance"), /*#__PURE__*/React.createElement("div", {
+    className: "num text-lg font-bold text-white"
+  }, fmt(s.netBalance))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-gray-500"
+  }, "Total P&L"), /*#__PURE__*/React.createElement("div", {
+    className: "num text-lg font-bold " + (s.totalPnl >= 0 ? 'text-green-400' : 'text-red-400')
+  }, fmt(s.totalPnl))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-gray-500"
+  }, "Win Rate"), /*#__PURE__*/React.createElement("div", {
+    className: "num text-lg font-bold " + (s.totalTrades === 0 ? 'text-gray-500' : s.overallWinRate >= 50 ? 'text-green-400' : 'text-red-400')
+  }, s.totalTrades === 0 ? '-' : s.overallWinRate.toFixed(1) + '%')), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-gray-500"
+  }, "Trades"), /*#__PURE__*/React.createElement("div", {
+    className: "num text-lg font-bold text-white"
+  }, s.totalTrades)))), /*#__PURE__*/React.createElement("div", {
+    className: "lg:col-span-2 bg-gradient-to-br from-purple-950/30 to-black border border-purple-800/40 rounded-2xl p-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-3"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Crosshair",
+    className: "h-5 w-5 text-purple-400"
+  }), /*#__PURE__*/React.createElement("h3", {
+    className: "font-semibold text-white"
+  }, "Today's Mission")), r && props.mentalDone ? /*#__PURE__*/React.createElement("div", {
+    className: "rounded-lg border px-3 py-2 mb-3 flex items-center justify-between " + r.cls
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-sm font-bold"
+  }, r.verdict), /*#__PURE__*/React.createElement("span", {
+    className: "num font-bold"
+  }, r.pct, "%")) : /*#__PURE__*/React.createElement("div", {
+    className: "rounded-lg border border-gray-700 bg-gray-900/60 px-3 py-2 mb-3 text-sm text-gray-400"
+  }, "Mental readiness not checked yet"), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-3 gap-2 mb-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-black/30 rounded-lg p-2.5 text-center"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] text-gray-500"
+  }, "Risk / trade"), /*#__PURE__*/React.createElement("div", {
+    className: "num text-sm font-bold text-purple-300"
+  }, fmt(props.risk))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-black/30 rounded-lg p-2.5 text-center"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] text-gray-500"
+  }, "Max loss today"), /*#__PURE__*/React.createElement("div", {
+    className: "num text-sm font-bold text-red-300"
+  }, fmt(props.dailyCap))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-black/30 rounded-lg p-2.5 text-center"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] text-gray-500"
+  }, "Trades left"), /*#__PURE__*/React.createElement("div", {
+    className: "num text-sm font-bold text-white"
+  }, tradesLeft, " / ", maxTrades))), stopped && /*#__PURE__*/React.createElement("div", {
+    className: "rounded-lg border border-red-500/40 bg-red-500/10 text-red-300 text-xs px-3 py-2 mb-3"
+  }, "Daily loss cap reached. You are done for today."), /*#__PURE__*/React.createElement("ul", {
+    className: "space-y-1.5 mb-4"
+  }, mission.map(function (m) {
+    return /*#__PURE__*/React.createElement("li", {
+      key: m.label,
+      className: "flex items-center justify-between text-sm"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "flex items-center gap-2 " + (m.ok ? 'text-green-300' : 'text-gray-400')
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: m.ok ? 'CheckCircle' : 'Circle',
+      className: "h-4 w-4"
+    }), /*#__PURE__*/React.createElement("span", null, m.label)), !m.ok && m.go && /*#__PURE__*/React.createElement("button", {
+      onClick: function () {
+        props.onGo(m.go);
+      },
+      className: "text-xs text-purple-300 hover:underline"
+    }, "Open"));
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap gap-2 text-xs"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: function () {
+      props.onGo('dailyplan');
+    },
+    className: "bg-purple-500/20 border border-purple-500/40 text-purple-200 px-3 py-1.5 rounded-lg"
+  }, "Daily Plan"), /*#__PURE__*/React.createElement("button", {
+    onClick: function () {
+      props.onGo('flowstate');
+    },
+    className: "bg-cyan-500/20 border border-cyan-500/40 text-cyan-200 px-3 py-1.5 rounded-lg"
+  }, "Flow Ritual"))));
+}
+
+// First-run, required: shows a real name on the leaderboard instead of Trader-XXXX.
+function NamePromptModal(props) {
+  const [name, setName] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState('');
+  const save = async function () {
+    const t = name.trim();
+    if (t.length < 2) {
+      setErr('Please enter your name.');
+      return;
+    }
+    setSaving(true);
+    try {
+      await auth.currentUser.updateProfile({
+        displayName: t
+      });
+      await db.collection('leaderboard').doc(props.uid).set({
+        displayName: t
+      }, {
+        merge: true
+      });
+      props.onSaved(t);
+    } catch (e) {
+      setErr('Could not save: ' + e.message);
+      setSaving(false);
+    }
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "w-full max-w-sm bg-gradient-to-br from-gray-900 to-black border border-yellow-500/30 rounded-2xl p-6"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-bold text-white mb-1"
+  }, "What should we call you?"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-400 mb-4"
+  }, "Your name shows on the Discipline Leaderboard. Right now it shows as an anonymous Trader ID. Add your real name or trading handle."), /*#__PURE__*/React.createElement("input", {
+    value: name,
+    onChange: function (e) {
+      setName(e.target.value);
+    },
+    onKeyDown: function (e) {
+      if (e.key === 'Enter') save();
+    },
+    placeholder: "Your name",
+    className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 outline-none focus:border-yellow-400/50"
+  }), err && /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-red-400 mb-2"
+  }, err), /*#__PURE__*/React.createElement("button", {
+    onClick: save,
+    disabled: saving,
+    className: "w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-black py-2.5 rounded-lg font-semibold disabled:opacity-50"
+  }, saving ? 'Saving...' : 'Save my name')));
+}
 function OverviewStats(props) {
   const accounts = props.accounts;
   const entries = props.entries;
@@ -8494,7 +9059,7 @@ function DisciplineLeaderboard(props) {
             disciplineScore: disc.score
           };
         }).filter(function (r) {
-          return r !== null;
+          return r !== null && HIDDEN_LEADERBOARD_NAMES.indexOf(r.displayName) < 0;
         });
         computed.sort(function (a, b) {
           return b.disciplineScore - a.disciplineScore;
@@ -9796,6 +10361,8 @@ function MMMJournal(props) {
   const [viewMode, setViewMode] = useState('dollars');
   const [activePage, setActivePage] = useState(props.wantsDiagnostic ? 'discipline' : 'overview');
   const [diagnostic, setDiagnostic] = useState(null);
+  const [diagnosticReady, setDiagnosticReady] = useState(false);
+  const [savedName, setSavedName] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [entries, setEntries] = useState([]);
   const [activeAccountId, setActiveAccountId] = useState(null);
@@ -9873,7 +10440,10 @@ function MMMJournal(props) {
         } catch (e) {}
         existing = merged;
       }
-      if (!cancelled) setDiagnostic(existing);
+      if (!cancelled) {
+        setDiagnostic(existing);
+        setDiagnosticReady(true);
+      }
     })();
     return function () {
       cancelled = true;
@@ -10776,7 +11346,10 @@ function MMMJournal(props) {
   const newAccountMaxStop = getMaxStopPoints(newAccount.market, newAccount.accountType);
   return /*#__PURE__*/React.createElement("div", {
     className: "min-h-screen bg-black text-white p-4 md:p-8"
-  }, entrySavedToast && /*#__PURE__*/React.createElement("div", {
+  }, !(user.displayName || savedName) && /*#__PURE__*/React.createElement(NamePromptModal, {
+    uid: user.uid,
+    onSaved: setSavedName
+  }), entrySavedToast && /*#__PURE__*/React.createElement("div", {
     className: "fixed top-4 right-4 z-50 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-xs"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "CheckCircle2",
@@ -11082,20 +11655,10 @@ function MMMJournal(props) {
     className: "h-4 w-4 text-orange-400"
   }), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-orange-200/80"
-  }, "Last logged ", daysSinceLastLog, " day", daysSinceLastLog !== 1 ? 's' : '', " ago. Log today's activity or mark it as no-trade.")), /*#__PURE__*/React.createElement("div", {
-    className: "flex gap-1 border-b border-gray-900 overflow-x-auto"
-  }, PAGE_TABS.map(function (tab) {
-    return /*#__PURE__*/React.createElement("button", {
-      key: tab.key,
-      onClick: function () {
-        setActivePage(tab.key);
-      },
-      className: "flex items-center gap-1.5 px-3.5 py-2.5 text-sm font-medium whitespace-nowrap border-b-2 transition " + (activePage === tab.key ? 'border-yellow-400 text-yellow-300' : 'border-transparent text-gray-500 hover:text-gray-300')
-    }, /*#__PURE__*/React.createElement(Icon, {
-      name: tab.icon,
-      className: "h-3.5 w-3.5"
-    }), /*#__PURE__*/React.createElement("span", null, tab.label));
-  })), activeAccount.accountType === 'paper' && /*#__PURE__*/React.createElement("div", {
+  }, "Last logged ", daysSinceLastLog, " day", daysSinceLastLog !== 1 ? 's' : '', " ago. Log today's activity or mark it as no-trade.")), /*#__PURE__*/React.createElement(MainNav, {
+    activePage: activePage,
+    setActivePage: setActivePage
+  }), activeAccount.accountType === 'paper' && /*#__PURE__*/React.createElement("div", {
     className: "border border-blue-500/30 bg-blue-500/10 rounded-xl p-3 flex items-center gap-3"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "FlaskConical",
@@ -11111,76 +11674,106 @@ function MMMJournal(props) {
     className: "text-gray-400 font-medium"
   }, "No accounts selected"), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-600 text-sm mt-1"
-  }, "Check the boxes next to accounts in the nav above to see their numbers here - the whole Overview stays at zero until something's selected.")) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center gap-2 mb-1"
+  }, "Check the boxes next to accounts in the nav above to see their numbers here - the whole Overview stays at zero until something's selected.")) : /*#__PURE__*/React.createElement(React.Fragment, null, diagnosticReady && !diagnostic && /*#__PURE__*/React.createElement("div", {
+    className: "border border-yellow-500/40 bg-yellow-500/10 rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-start gap-3"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "ClipboardCheck",
+    className: "h-5 w-5 text-yellow-400 mt-0.5"
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+    className: "text-sm font-semibold text-yellow-200"
+  }, "Take the Discipline Test to unlock Mental Check, Flow State, Psychology and Discipline"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-yellow-200/70"
+  }, "2 minutes. It is your baseline for measuring progress."))), /*#__PURE__*/React.createElement("a", {
+    href: "../diagnostic/",
+    className: "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-semibold"
+  }, "Take the Test")), /*#__PURE__*/React.createElement(CommandCenter, {
+    account: activeAccount,
+    accounts: accountsForOverview,
+    entries: entries,
+    status: activeStatus,
+    buffer: currentBuffer,
+    phaseLabel: activeCfg.label + ' - ' + activeCfg.mode + ' (' + activeCfg.riskPct * 100 + '% risk) - ' + ((MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label || '') + ' ' + activeTicker,
+    risk: effectiveRiskPerTrade,
+    dailyCap: effectiveDailyCap,
+    todayTrades: todaysEntryForAccount && todaysEntryForAccount.tradedToday !== 'no' ? (todaysEntryForAccount.trades || []).length : 0,
+    todayPnl: todaysEntryForAccount && todaysEntryForAccount.tradedToday !== 'no' ? (todaysEntryForAccount.trades || []).reduce(function (sum, t) {
+      return sum + tradeSignedPnl(t);
+    }, 0) : 0,
+    loggedToday: !!todaysEntryForAccount,
+    mentalDone: !!todaysMentalCheckSource,
+    mentalCheck: todaysMentalCheckSource || mentalCheckDraft,
+    planSet: !!(activeAccount.dailyPlanTemplate && (activeAccount.dailyPlanTemplate.targetProfit || activeAccount.dailyPlanTemplate.maxLossPerDay)),
+    onGo: setActivePage
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-3"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "UserCheck",
     className: "h-5 w-5 text-blue-400"
   }), /*#__PURE__*/React.createElement("h2", {
     className: "text-lg font-semibold text-white"
-  }, "Personal Trading Plan"), /*#__PURE__*/React.createElement("span", {
+  }, "Your Plan"), /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
   }, "trader's final decision")), /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-2 lg:grid-cols-4 gap-4"
+    className: "grid grid-cols-2 lg:grid-cols-4 gap-3"
   }, /*#__PURE__*/React.createElement(StatCard, {
-    label: "Current Capital (Buffer)",
-    value: fmt(Math.max(currentBuffer, 0)),
-    icon: "Shield",
-    color: activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'
-  }), /*#__PURE__*/React.createElement(StatCard, {
     label: "Risk Per Trade",
     value: fmt(effectiveRiskPerTrade),
     icon: "Target",
     color: "text-blue-400",
     sub: toleranceIsActive ? "Tolerance (system max " + fmt(riskPerTrade) + ")" : activeCfg.mode + " (" + activeCfg.riskPct * 100 + "%)"
   }), /*#__PURE__*/React.createElement(StatCard, {
-    label: "Total P&L",
-    value: fmtView(totalPnl, viewMode, {
-      buffer: parseFloat(activeAccount.maxDrawdown) || 0,
-      risk: effectiveRiskPerTrade,
-      pointValue: activePointValue
-    }),
-    icon: totalPnl >= 0 ? "TrendingUp" : "TrendingDown",
-    color: totalPnl >= 0 ? 'text-green-400' : 'text-red-400'
-  }), /*#__PURE__*/React.createElement(StatCard, {
-    label: "Win Rate",
-    value: totalTrades === 0 ? '-' : winRate.toFixed(1) + "%",
-    icon: "DollarSign",
-    color: totalTrades === 0 ? 'text-gray-500' : winRate >= 50 ? 'text-green-400' : 'text-red-400',
-    sub: totalTrades === 0 ? 'No trades yet' : winTrades + "W / " + lossTrades + "L"
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-2 gap-3"
-  }, /*#__PURE__*/React.createElement(PersonalPlanStats, {
+    label: "Current Capital (Buffer)",
+    value: fmt(Math.max(currentBuffer, 0)),
+    icon: "Shield",
+    color: activeStatus === 'breached' ? 'text-red-400' : currentBuffer < (parseFloat(activeAccount.maxDrawdown) || 0) * 0.5 ? 'text-yellow-400' : 'text-green-400'
+  }), /*#__PURE__*/React.createElement(PersonalPlanStats, {
     account: activeAccount,
     riskPerTrade: effectiveRiskPerTrade,
     totalPnl: totalPnl
+  }))), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-600"
+  }, accountsForOverview.length === accounts.filter(function (a) {
+    return getAccountStatus(a) !== 'breached';
+  }).length ? 'Stats below show all selected accounts, combined.' : 'Stats below show ' + accountsForOverview.length + ' selected account' + (accountsForOverview.length !== 1 ? 's' : '') + ': ' + accountsForOverview.map(function (a) {
+    return a.name;
+  }).join(', ')), /*#__PURE__*/React.createElement("div", {
+    className: "grid xl:grid-cols-2 gap-4 items-start"
+  }, /*#__PURE__*/React.createElement(EquityCurveBlock, {
+    accounts: accountsForOverview,
+    entries: entries
+  }), /*#__PURE__*/React.createElement(TradingCalendar, {
+    accounts: accountsForOverview,
+    entries: entries,
+    viewMode: viewMode,
+    viewContext: {
+      buffer: parseFloat(activeAccount.maxDrawdown) || 0,
+      risk: effectiveRiskPerTrade,
+      pointValue: activePointValue
+    }
   })), /*#__PURE__*/React.createElement(ProStatsPanel, {
     accounts: accountsForOverview,
     entries: entries
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center justify-between mb-4 flex-wrap gap-2"
-  }, /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("details", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl group"
+  }, /*#__PURE__*/React.createElement("summary", {
+    className: "cursor-pointer list-none flex items-center justify-between gap-2 p-5"
+  }, /*#__PURE__*/React.createElement("span", {
     className: "flex items-center gap-2"
   }, /*#__PURE__*/React.createElement(Icon, {
-    name: "LineChart",
+    name: "Scale",
     className: "h-5 w-5 text-yellow-400"
-  }), /*#__PURE__*/React.createElement("h2", {
-    className: "text-lg font-semibold text-white"
-  }, "Dashboard"), /*#__PURE__*/React.createElement("span", {
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "text-base font-semibold text-white"
+  }, "Account Rules & System Limits"), /*#__PURE__*/React.createElement("span", {
     className: "text-xs text-gray-500"
-  }, "general calculation")), /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center gap-2 flex-wrap"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "text-xs px-2.5 py-1 rounded-full font-medium border " + STATUS_STYLES[activeStatus].cls
-  }, STATUS_STYLES[activeStatus].label), /*#__PURE__*/React.createElement("span", {
-    className: "text-xs px-2.5 py-1 rounded-full font-medium " + ACCOUNT_BADGE_CLS[activeAccount.accountType] + " border border-current/30"
-  }, activeCfg.label), /*#__PURE__*/React.createElement("span", {
-    className: "text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700"
-  }, activeCfg.mode, " - ", activeCfg.riskPct * 100, "% Risk"), /*#__PURE__*/React.createElement("span", {
-    className: "text-xs px-2.5 py-1 rounded-full font-medium bg-gray-800 text-gray-400 border border-gray-700"
-  }, (MARKET_SPECS[activeAccount.market || 'nasdaq100'] || {}).label, " - ", activeTicker))), /*#__PURE__*/React.createElement("div", {
+  }, "the maximums set by the system for this account")), /*#__PURE__*/React.createElement(Icon, {
+    name: "ChevronDown",
+    className: "h-4 w-4 text-gray-500"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "px-5 pb-5 space-y-4"
+  }, /*#__PURE__*/React.createElement("div", {
     className: "grid grid-cols-2 md:grid-cols-4 gap-3"
   }, /*#__PURE__*/React.createElement(MiniStat, {
     label: "Contracts Unlocked (max)",
@@ -11212,7 +11805,7 @@ function MMMJournal(props) {
     avgTradesPerDay: avgTradesPerDay,
     maxTradesInDay: maxTradesInDay
   })), /*#__PURE__*/React.createElement("div", {
-    className: "mt-3 bg-black/30 border border-gray-800/80 rounded-lg px-3 py-2.5"
+    className: "bg-black/30 border border-gray-800/80 rounded-lg px-3 py-2.5"
   }, /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-400 flex items-start gap-1.5"
   }, /*#__PURE__*/React.createElement(Icon, {
@@ -11229,55 +11822,10 @@ function MMMJournal(props) {
   }, "2 losses"), ". Hit any of those and you're done for the day - no exceptions."))), /*#__PURE__*/React.createElement(PropFirmRuleNote, {
     account: activeAccount,
     entries: entries
-  })), /*#__PURE__*/React.createElement(ConsistencyRebalanceWidget, {
+  }), /*#__PURE__*/React.createElement(ConsistencyRebalanceWidget, {
     account: activeAccount,
     accountEntries: accountEntries
-  }), /*#__PURE__*/React.createElement("button", {
-    onClick: function () {
-      setActivePage('dailyplan');
-    },
-    className: "w-full flex items-center justify-between gap-3 bg-gradient-to-br from-purple-950/40 to-black border border-purple-800/40 rounded-2xl p-4 text-left hover:border-purple-600/50 transition"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center gap-2"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "Shield",
-    className: "h-5 w-5 text-purple-400"
-  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
-    className: "text-sm font-semibold text-white"
-  }, "Personal Risk Tolerance: ", fmt(effectiveRiskPerTrade), "/trade ", toleranceLocked && '(Locked)'), /*#__PURE__*/React.createElement("p", {
-    className: "text-xs text-gray-500"
-  }, "Set in Daily Plan - ", toleranceIsActive ? 'trading below the system max by choice.' : 'currently using the full system max.'))), /*#__PURE__*/React.createElement("span", {
-    className: "text-xs text-purple-300 flex items-center gap-1 flex-shrink-0"
-  }, "Open Daily Plan ", /*#__PURE__*/React.createElement(Icon, {
-    name: "ArrowRight",
-    className: "h-3.5 w-3.5"
-  }))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
-    className: "text-lg font-semibold text-white flex items-center gap-2 mb-1"
-  }, /*#__PURE__*/React.createElement(Icon, {
-    name: "LayoutDashboard",
-    className: "h-5 w-5 text-yellow-400"
-  }), /*#__PURE__*/React.createElement("span", null, "Performance Overview")), /*#__PURE__*/React.createElement("p", {
-    className: "text-xs text-gray-600 mb-3"
-  }, accountsForOverview.length === 0 ? 'No accounts selected - check the boxes next to accounts above to include them here.' : accountsForOverview.length === accounts.filter(function (a) {
-    return getAccountStatus(a) !== 'breached';
-  }).length ? 'Showing all accounts, combined.' : 'Showing ' + accountsForOverview.length + ' selected account' + (accountsForOverview.length !== 1 ? 's' : '') + ': ' + accountsForOverview.map(function (a) {
-    return a.name;
-  }).join(', ')), /*#__PURE__*/React.createElement(OverviewStats, {
-    accounts: accountsForOverview,
-    entries: entries
-  })), /*#__PURE__*/React.createElement(TradingCalendar, {
-    accounts: accountsForOverview,
-    entries: entries,
-    viewMode: viewMode,
-    viewContext: {
-      buffer: parseFloat(activeAccount.maxDrawdown) || 0,
-      risk: effectiveRiskPerTrade,
-      pointValue: activePointValue
-    }
-  }), /*#__PURE__*/React.createElement(EquityCurveBlock, {
-    accounts: accountsForOverview,
-    entries: entries
-  }))), activePage === 'dailyplan' && activeAccount && /*#__PURE__*/React.createElement("div", {
+  }))))), activePage === 'dailyplan' && activeAccount && /*#__PURE__*/React.createElement("div", {
     className: "space-y-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-purple-950/40 to-black border border-purple-800/40 rounded-2xl p-6"
@@ -11407,15 +11955,15 @@ function MMMJournal(props) {
     systemMaxRisk: riskPerTrade,
     onApply: handleChangeRiskTolerance,
     locked: toleranceLocked
-  }), /*#__PURE__*/React.createElement(HistoricalPlan, {
+  })), activePage === 'historicalplan' && activeAccount && /*#__PURE__*/React.createElement(HistoricalPlan, {
     entries: accountEntries
-  })), activePage === 'flowstate' && /*#__PURE__*/React.createElement(FlowStateTraining, {
+  }), activePage === 'flowstate' && diagnosticReady && !diagnostic && /*#__PURE__*/React.createElement(DisciplineTestGate, null), activePage === 'flowstate' && diagnostic && /*#__PURE__*/React.createElement(FlowStateTraining, {
     uid: user.uid
-  }), activePage === 'psychology' && /*#__PURE__*/React.createElement(PsychologyTracker, {
+  }), activePage === 'psychology' && diagnosticReady && !diagnostic && /*#__PURE__*/React.createElement(DisciplineTestGate, null), activePage === 'psychology' && diagnostic && /*#__PURE__*/React.createElement(PsychologyTracker, {
     uid: user.uid,
     accounts: nonPaperAccounts,
     entries: nonPaperEntries
-  }), activePage === 'mentalcheck' && activeAccount && /*#__PURE__*/React.createElement("div", {
+  }), activePage === 'mentalcheck' && diagnosticReady && !diagnostic && /*#__PURE__*/React.createElement(DisciplineTestGate, null), activePage === 'mentalcheck' && diagnostic && activeAccount && /*#__PURE__*/React.createElement("div", {
     className: "space-y-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-teal-950/40 to-black border border-teal-800/40 rounded-2xl p-6"
@@ -11713,7 +12261,7 @@ function MMMJournal(props) {
   }), /*#__PURE__*/React.createElement(PerAccountBreakdown, {
     accounts: accounts,
     entries: entries
-  })), activePage === 'discipline' && /*#__PURE__*/React.createElement(React.Fragment, null, activeStatus === 'breached' && /*#__PURE__*/React.createElement(BreachReviewCard, {
+  })), activePage === 'discipline' && diagnosticReady && !diagnostic && /*#__PURE__*/React.createElement(DisciplineTestGate, null), activePage === 'discipline' && diagnostic && /*#__PURE__*/React.createElement(React.Fragment, null, activeStatus === 'breached' && /*#__PURE__*/React.createElement(BreachReviewCard, {
     account: activeAccount,
     accountEntries: accountEntries,
     bufferHistory: bufferHistory
@@ -11728,7 +12276,7 @@ function MMMJournal(props) {
     accountEntries: accountEntries
   }), /*#__PURE__*/React.createElement(DisciplineLeaderboard, {
     uid: user.uid,
-    currentName: user.displayName || user.email
+    currentName: savedName || user.displayName || user.email
   })), activePage === 'finances' && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(CostsAndPayoutsCard, {
     account: activeAccount,
     status: activeStatus
