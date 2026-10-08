@@ -6239,7 +6239,13 @@ function MMMJournal(props) {
                   <PropFirmRuleNote account={activeAccount} entries={entries} />
                   <ConsistencyRebalanceWidget account={activeAccount} accountEntries={accountEntries} />
 
-                  <div className="pt-4 border-t border-gray-800">
+                  <SystemExplainer />
+                </div>
+              )}
+            </div>
+          )}
+          {shouldShowAccountDetail && (
+                  <div className="bg-gradient-to-br from-gray-900/60 to-black border border-gray-800 rounded-xl px-5 py-4">
                     <div className="flex items-center gap-2 mb-3">
                       <Icon name="UserCheck" className="h-4 w-4 text-blue-400" /><h4 className="text-sm font-semibold text-white">Your Plan</h4>
                       <span className="text-xs text-gray-500">trader's final decision</span>
@@ -6251,10 +6257,6 @@ function MMMJournal(props) {
                     </div>
                   </div>
 
-                  <SystemExplainer />
-                </div>
-              )}
-            </div>
           )}
         </div>
 
