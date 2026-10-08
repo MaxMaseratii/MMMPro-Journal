@@ -1349,6 +1349,1054 @@ const TRANSLATIONS = {
   }
 };
 let originalTextMap = null;
+
+// Added with the expert-journal upgrade (Overview stats, Flow State, Psychology, Historical Plan, Discipline Test)
+Object.assign(TRANSLATIONS, {
+  "Flow State": {
+    fr: "État de flow",
+    es: "Estado de flujo",
+    ht: "Eta Flow",
+    pt: "Estado de fluxo",
+    de: "Flow-Zustand",
+    ja: "フロー状態",
+    zh: "心流状态"
+  },
+  "Psychology": {
+    fr: "Psychologie",
+    es: "Psicología",
+    ht: "Psikoloji",
+    pt: "Psicologia",
+    de: "Psychologie",
+    ja: "心理",
+    zh: "心理"
+  },
+  "Flow State Training": {
+    fr: "Entraînement à l'état de flow",
+    es: "Entrenamiento del estado de flujo",
+    ht: "Antrenman Eta Flow",
+    pt: "Treino do estado de fluxo",
+    de: "Flow-State-Training",
+    ja: "フロー状態トレーニング",
+    zh: "心流状态训练"
+  },
+  "Historical Plan": {
+    fr: "Plan historique",
+    es: "Plan histórico",
+    ht: "Plan istorik",
+    pt: "Plano histórico",
+    de: "Plan-Historie",
+    ja: "過去のプラン",
+    zh: "历史计划"
+  },
+  "Discipline & Psychology Tracker": {
+    fr: "Suivi discipline et psychologie",
+    es: "Seguimiento de disciplina y psicología",
+    ht: "Swivi Disiplin ak Psikoloji",
+    pt: "Acompanhamento de disciplina e psicologia",
+    de: "Disziplin- & Psychologie-Tracker",
+    ja: "規律＆心理トラッカー",
+    zh: "纪律与心理追踪器"
+  },
+  "Pre-Session Go / No-Go": {
+    fr: "Feu vert / Feu rouge avant session",
+    es: "Go / No-Go previo a la sesión",
+    ht: "Go / No-Go Anvan Sesyon",
+    pt: "Go / No-Go pré-sessão",
+    de: "Go / No-Go vor der Session",
+    ja: "セッション前のGo / No-Go",
+    zh: "开盘前 Go / No-Go"
+  },
+  "Performance Overview": {
+    fr: "Aperçu des performances",
+    es: "Resumen de rendimiento",
+    ht: "Apèsi Pèfòmans",
+    pt: "Visão geral de desempenho",
+    de: "Performance-Übersicht",
+    ja: "パフォーマンス概要",
+    zh: "绩效概览"
+  },
+  "Key trading metrics and portfolio performance": {
+    fr: "Indicateurs clés de trading et performance du portefeuille",
+    es: "Métricas clave de trading y rendimiento del portafolio",
+    ht: "Metrik kle trading ak pèfòmans pòtfolyo",
+    pt: "Métricas-chave de trading e desempenho da carteira",
+    de: "Wichtige Trading-Kennzahlen und Portfolio-Performance",
+    ja: "主要なトレード指標とポートフォリオの成績",
+    zh: "关键交易指标与投资组合表现"
+  },
+  "Advanced Statistics": {
+    fr: "Statistiques avancées",
+    es: "Estadísticas avanzadas",
+    ht: "Estatistik Avanse",
+    pt: "Estatísticas avançadas",
+    de: "Erweiterte Statistiken",
+    ja: "詳細統計",
+    zh: "高级统计"
+  },
+  "Deep performance analytics and behavioral insights": {
+    fr: "Analyse approfondie des performances et du comportement",
+    es: "Análisis profundo del rendimiento y del comportamiento",
+    ht: "Analiz pèfòmans ak konpòtman an pwofondè",
+    pt: "Análise profunda de desempenho e comportamento",
+    de: "Tiefe Performance-Analysen und Verhaltenseinblicke",
+    ja: "詳細なパフォーマンス分析と行動インサイト",
+    zh: "深入的绩效分析与行为洞察"
+  },
+  "Net Balance": {
+    fr: "Solde net",
+    es: "Saldo neto",
+    ht: "Balans Nèt",
+    pt: "Saldo líquido",
+    de: "Nettosaldo",
+    ja: "純残高",
+    zh: "净余额"
+  },
+  "Starting balance + Total P&L": {
+    fr: "Solde initial + P&L total",
+    es: "Saldo inicial + P&L total",
+    ht: "Balans kòmansman + P&L total",
+    pt: "Saldo inicial + P&L total",
+    de: "Startkapital + Gesamt-P&L",
+    ja: "初期残高＋合計損益",
+    zh: "初始余额 + 总盈亏"
+  },
+  "Net profit/loss": {
+    fr: "Profit/perte net",
+    es: "Ganancia/pérdida neta",
+    ht: "Pwofi/pèt nèt",
+    pt: "Lucro/prejuízo líquido",
+    de: "Nettogewinn/-verlust",
+    ja: "純損益",
+    zh: "净盈亏"
+  },
+  "Winning trades percentage": {
+    fr: "Pourcentage de trades gagnants",
+    es: "Porcentaje de operaciones ganadoras",
+    ht: "Pousantaj tranzaksyon ki genyen",
+    pt: "Percentual de operações vencedoras",
+    de: "Anteil gewonnener Trades",
+    ja: "勝ちトレードの割合",
+    zh: "盈利交易占比"
+  },
+  "All executed trades": {
+    fr: "Tous les trades exécutés",
+    es: "Todas las operaciones ejecutadas",
+    ht: "Tout tranzaksyon egzekite",
+    pt: "Todas as operações executadas",
+    de: "Alle ausgeführten Trades",
+    ja: "全約定トレード",
+    zh: "所有已执行交易"
+  },
+  "Discipline Score": {
+    fr: "Score de discipline",
+    es: "Puntuación de disciplina",
+    ht: "Nòt Disiplin",
+    pt: "Pontuação de disciplina",
+    de: "Disziplin-Score",
+    ja: "規律スコア",
+    zh: "纪律得分"
+  },
+  "Trading discipline rating": {
+    fr: "Évaluation de la discipline de trading",
+    es: "Calificación de disciplina de trading",
+    ht: "Evalyasyon disiplin trading",
+    pt: "Avaliação da disciplina de trading",
+    de: "Bewertung der Trading-Disziplin",
+    ja: "トレード規律の評価",
+    zh: "交易纪律评级"
+  },
+  "R Factor": {
+    fr: "Facteur R",
+    es: "Factor R",
+    ht: "Faktè R",
+    pt: "Fator R",
+    de: "R-Faktor",
+    ja: "Rファクター",
+    zh: "R因子"
+  },
+  "Risk/Reward ratio": {
+    fr: "Ratio risque/rendement",
+    es: "Relación riesgo/beneficio",
+    ht: "Rapò risk/rekonpans",
+    pt: "Relação risco/retorno",
+    de: "Chance-Risiko-Verhältnis",
+    ja: "リスクリワード比",
+    zh: "风险回报比"
+  },
+  "Profit Factor": {
+    fr: "Facteur de profit",
+    es: "Factor de beneficio",
+    ht: "Faktè Pwofi",
+    pt: "Fator de lucro",
+    de: "Profit-Faktor",
+    ja: "プロフィットファクター",
+    zh: "盈利因子"
+  },
+  "Gross Win / Gross Loss": {
+    fr: "Gain brut / Perte brute",
+    es: "Ganancia bruta / Pérdida bruta",
+    ht: "Gany brit / Pèt brit",
+    pt: "Ganho bruto / Perda bruta",
+    de: "Bruttogewinn / Bruttoverlust",
+    ja: "総利益／総損失",
+    zh: "总盈利 / 总亏损"
+  },
+  "Avg Win/Loss": {
+    fr: "Gain/Perte moyen",
+    es: "Ganancia/Pérdida media",
+    ht: "Gany/Pèt mwayen",
+    pt: "Ganho/Perda médio",
+    de: "Ø Gewinn/Verlust",
+    ja: "平均利益/損失",
+    zh: "平均盈亏"
+  },
+  "Win vs Loss ratio": {
+    fr: "Ratio gains/pertes",
+    es: "Relación ganancias/pérdidas",
+    ht: "Rapò gany/pèt",
+    pt: "Relação ganhos/perdas",
+    de: "Gewinn-zu-Verlust-Verhältnis",
+    ja: "勝ち対負けの比率",
+    zh: "盈亏比"
+  },
+  "Sharpe Ratio": {
+    fr: "Ratio de Sharpe",
+    es: "Ratio de Sharpe",
+    ht: "Rapò Sharpe",
+    pt: "Índice de Sharpe",
+    de: "Sharpe-Ratio",
+    ja: "シャープレシオ",
+    zh: "夏普比率"
+  },
+  "Risk-adjusted returns (daily)": {
+    fr: "Rendements ajustés au risque (quotidien)",
+    es: "Rendimientos ajustados al riesgo (diario)",
+    ht: "Rannman ajiste pou risk (chak jou)",
+    pt: "Retornos ajustados ao risco (diário)",
+    de: "Risikoadjustierte Renditen (täglich)",
+    ja: "リスク調整後リターン（日次）",
+    zh: "风险调整后收益（日度）"
+  },
+  "Max Consecutive Wins": {
+    fr: "Gains consécutifs max",
+    es: "Máx. ganancias consecutivas",
+    ht: "Maks viktwa youn dèyè lòt",
+    pt: "Máx. vitórias consecutivas",
+    de: "Max. Gewinnserie",
+    ja: "最大連勝",
+    zh: "最大连胜"
+  },
+  "Best winning streak": {
+    fr: "Meilleure série gagnante",
+    es: "Mejor racha ganadora",
+    ht: "Pi bon seri viktwa",
+    pt: "Melhor sequência vencedora",
+    de: "Beste Gewinnserie",
+    ja: "最高の連勝記録",
+    zh: "最佳连胜纪录"
+  },
+  "Max Consecutive Losses": {
+    fr: "Pertes consécutives max",
+    es: "Máx. pérdidas consecutivas",
+    ht: "Maks defèt youn dèyè lòt",
+    pt: "Máx. derrotas consecutivas",
+    de: "Max. Verlustserie",
+    ja: "最大連敗",
+    zh: "最大连败"
+  },
+  "Worst losing streak": {
+    fr: "Pire série perdante",
+    es: "Peor racha perdedora",
+    ht: "Pi move seri defèt",
+    pt: "Pior sequência perdedora",
+    de: "Schlimmste Verlustserie",
+    ja: "最悪の連敗記録",
+    zh: "最差连败纪录"
+  },
+  "Expectancy / Trade": {
+    fr: "Espérance / trade",
+    es: "Expectativa / operación",
+    ht: "Espeyans / tranzaksyon",
+    pt: "Expectativa / operação",
+    de: "Erwartungswert / Trade",
+    ja: "期待値／トレード",
+    zh: "每笔期望值"
+  },
+  "Average edge per trade": {
+    fr: "Avantage moyen par trade",
+    es: "Ventaja media por operación",
+    ht: "Avantaj mwayen pa tranzaksyon",
+    pt: "Vantagem média por operação",
+    de: "Durchschnittlicher Vorteil pro Trade",
+    ja: "1トレードあたりの平均優位性",
+    zh: "每笔交易平均优势"
+  },
+  "Largest Win": {
+    fr: "Plus gros gain",
+    es: "Mayor ganancia",
+    ht: "Pi gwo gany",
+    pt: "Maior ganho",
+    de: "Größter Gewinn",
+    ja: "最大利益",
+    zh: "最大盈利"
+  },
+  "Best single trade": {
+    fr: "Meilleur trade",
+    es: "Mejor operación",
+    ht: "Pi bon tranzaksyon",
+    pt: "Melhor operação",
+    de: "Bester Einzeltrade",
+    ja: "最高の単一トレード",
+    zh: "最佳单笔交易"
+  },
+  "Largest Loss": {
+    fr: "Plus grosse perte",
+    es: "Mayor pérdida",
+    ht: "Pi gwo pèt",
+    pt: "Maior perda",
+    de: "Größter Verlust",
+    ja: "最大損失",
+    zh: "最大亏损"
+  },
+  "Worst single trade": {
+    fr: "Pire trade",
+    es: "Peor operación",
+    ht: "Pi move tranzaksyon",
+    pt: "Pior operação",
+    de: "Schlechtester Einzeltrade",
+    ja: "最悪の単一トレード",
+    zh: "最差单笔交易"
+  },
+  "Avg R:R Ratio": {
+    fr: "Ratio R:R moyen",
+    es: "Ratio R:R medio",
+    ht: "Rapò R:R mwayen",
+    pt: "Razão R:R média",
+    de: "Ø R:R-Verhältnis",
+    ja: "平均R:R比",
+    zh: "平均R:R比"
+  },
+  "Average win R / average loss R": {
+    fr: "R moyen des gains / R moyen des pertes",
+    es: "R medio ganador / R medio perdedor",
+    ht: "R mwayen gany / R mwayen pèt",
+    pt: "R médio de ganho / R médio de perda",
+    de: "Ø Gewinn-R / Ø Verlust-R",
+    ja: "平均利益R／平均損失R",
+    zh: "平均盈利R / 平均亏损R"
+  },
+  "Avg R / Trade": {
+    fr: "R moyen / trade",
+    es: "R medio / operación",
+    ht: "R mwayen / tranzaksyon",
+    pt: "R médio / operação",
+    de: "Ø R / Trade",
+    ja: "平均R／トレード",
+    zh: "平均R/笔"
+  },
+  "Needs risk logged per trade": {
+    fr: "Nécessite le risque noté par trade",
+    es: "Requiere registrar el riesgo por operación",
+    ht: "Mande pou risk anrejistre pou chak tranzaksyon",
+    pt: "Requer risco registrado por operação",
+    de: "Erfordert erfasstes Risiko pro Trade",
+    ja: "トレードごとのリスク記録が必要",
+    zh: "需要记录每笔交易风险"
+  },
+  "Max Drawdown": {
+    fr: "Drawdown max",
+    es: "Drawdown máx.",
+    ht: "Drawdown Maks",
+    pt: "Drawdown máx.",
+    de: "Max. Drawdown",
+    ja: "最大ドローダウン",
+    zh: "最大回撤"
+  },
+  "Peak-to-trough equity": {
+    fr: "Capital du pic au creux",
+    es: "Capital de pico a valle",
+    ht: "Kapital soti pi wo rive pi ba",
+    pt: "Capital de pico a vale",
+    de: "Kapital von Hoch zu Tief",
+    ja: "ピークから谷までの資産",
+    zh: "净值峰谷回撤"
+  },
+  "Recovery Factor": {
+    fr: "Facteur de récupération",
+    es: "Factor de recuperación",
+    ht: "Faktè Rekipérasyon",
+    pt: "Fator de recuperação",
+    de: "Erholungsfaktor",
+    ja: "リカバリーファクター",
+    zh: "恢复因子"
+  },
+  "Net profit / max drawdown": {
+    fr: "Profit net / drawdown max",
+    es: "Beneficio neto / drawdown máx.",
+    ht: "Pwofi nèt / drawdown maks",
+    pt: "Lucro líquido / drawdown máx.",
+    de: "Nettogewinn / Max. Drawdown",
+    ja: "純利益／最大ドローダウン",
+    zh: "净利润 / 最大回撤"
+  },
+  "Day Win Rate": {
+    fr: "Taux de jours gagnants",
+    es: "Tasa de días ganadores",
+    ht: "To jou ki genyen",
+    pt: "Taxa de dias vencedores",
+    de: "Gewinntage-Quote",
+    ja: "勝ち日率",
+    zh: "盈利日占比"
+  },
+  "Mental Readiness": {
+    fr: "Préparation mentale",
+    es: "Preparación mental",
+    ht: "Preparasyon Mantal",
+    pt: "Preparação mental",
+    de: "Mentale Bereitschaft",
+    ja: "メンタル準備度",
+    zh: "心理准备度"
+  },
+  "Avg pre-session Mental Check": {
+    fr: "Mental Check moyen avant session",
+    es: "Mental Check medio previo a la sesión",
+    ht: "Mental Check mwayen anvan sesyon",
+    pt: "Mental Check médio pré-sessão",
+    de: "Ø Mental Check vor der Session",
+    ja: "セッション前の平均メンタルチェック",
+    zh: "开盘前平均心理检查"
+  },
+  "Trading Discipline Test": {
+    fr: "Test de discipline de trading",
+    es: "Test de disciplina de trading",
+    ht: "Tès Disiplin Trading",
+    pt: "Teste de disciplina de trading",
+    de: "Trading-Disziplin-Test",
+    ja: "トレード規律テスト",
+    zh: "交易纪律测试"
+  },
+  "Take the Free Test": {
+    fr: "Passer le test gratuit",
+    es: "Hacer la prueba gratis",
+    ht: "Pran tès gratis la",
+    pt: "Fazer o teste grátis",
+    de: "Kostenlosen Test machen",
+    ja: "無料テストを受ける",
+    zh: "参加免费测试"
+  },
+  "Retake the test": {
+    fr: "Repasser le test",
+    es: "Repetir la prueba",
+    ht: "Refè tès la",
+    pt: "Refazer o teste",
+    de: "Test wiederholen",
+    ja: "テストをやり直す",
+    zh: "重新测试"
+  },
+  "Your Trading Discipline Score": {
+    fr: "Votre score de discipline de trading",
+    es: "Tu puntuación de disciplina de trading",
+    ht: "Nòt Disiplin Trading ou",
+    pt: "Sua pontuação de disciplina de trading",
+    de: "Dein Trading-Disziplin-Score",
+    ja: "あなたのトレード規律スコア",
+    zh: "你的交易纪律得分"
+  },
+  "Your profile": {
+    fr: "Votre profil",
+    es: "Tu perfil",
+    ht: "Pwofil ou",
+    pt: "Seu perfil",
+    de: "Dein Profil",
+    ja: "あなたのプロフィール",
+    zh: "你的画像"
+  },
+  "Strongest Area": {
+    fr: "Point le plus fort",
+    es: "Área más fuerte",
+    ht: "Zòn pi fò",
+    pt: "Área mais forte",
+    de: "Stärkster Bereich",
+    ja: "最も強い分野",
+    zh: "最强领域"
+  },
+  "Biggest Leak": {
+    fr: "Plus grosse fuite",
+    es: "Mayor fuga",
+    ht: "Pi gwo fwit",
+    pt: "Maior vazamento",
+    de: "Größtes Leck",
+    ja: "最大の弱点",
+    zh: "最大漏洞"
+  },
+  "Score by Category": {
+    fr: "Score par catégorie",
+    es: "Puntuación por categoría",
+    ht: "Nòt pa kategori",
+    pt: "Pontuação por categoria",
+    de: "Score pro Kategorie",
+    ja: "カテゴリー別スコア",
+    zh: "分类得分"
+  },
+  "What To Watch": {
+    fr: "Points de vigilance",
+    es: "Qué vigilar",
+    ht: "Sa pou swiv",
+    pt: "O que observar",
+    de: "Worauf du achten solltest",
+    ja: "注意点",
+    zh: "需要留意"
+  },
+  "Test History": {
+    fr: "Historique des tests",
+    es: "Historial de pruebas",
+    ht: "Istwa tès yo",
+    pt: "Histórico de testes",
+    de: "Testverlauf",
+    ja: "テスト履歴",
+    zh: "测试历史"
+  },
+  "Home": {
+    fr: "Accueil",
+    es: "Inicio",
+    ht: "Akèy",
+    pt: "Início",
+    de: "Startseite",
+    ja: "ホーム",
+    zh: "首页"
+  },
+  "Mental Check trend": {
+    fr: "Tendance du Mental Check",
+    es: "Tendencia del Mental Check",
+    ht: "Tandans Mental Check",
+    pt: "Tendência do Mental Check",
+    de: "Mental-Check-Verlauf",
+    ja: "メンタルチェックの推移",
+    zh: "心理检查趋势"
+  },
+  "Body & State": {
+    fr: "Corps et état",
+    es: "Cuerpo y estado",
+    ht: "Kò ak eta",
+    pt: "Corpo e estado",
+    de: "Körper & Zustand",
+    ja: "身体と状態",
+    zh: "身体与状态"
+  },
+  "Sleep & Recovery": {
+    fr: "Sommeil et récupération",
+    es: "Sueño y recuperación",
+    ht: "Dòmi ak rekipérasyon",
+    pt: "Sono e recuperação",
+    de: "Schlaf & Erholung",
+    ja: "睡眠と回復",
+    zh: "睡眠与恢复"
+  },
+  "Physical Energy": {
+    fr: "Énergie physique",
+    es: "Energía física",
+    ht: "Enèji fizik",
+    pt: "Energia física",
+    de: "Körperliche Energie",
+    ja: "身体のエネルギー",
+    zh: "身体能量"
+  },
+  "Focus & Clarity": {
+    fr: "Concentration et clarté",
+    es: "Enfoque y claridad",
+    ht: "Konsantrasyon ak klète",
+    pt: "Foco e clareza",
+    de: "Fokus & Klarheit",
+    ja: "集中力と明晰さ",
+    zh: "专注与清晰"
+  },
+  "Outside Stress": {
+    fr: "Stress extérieur",
+    es: "Estrés externo",
+    ht: "Estrès deyò",
+    pt: "Estresse externo",
+    de: "Äußerer Stress",
+    ja: "外的ストレス",
+    zh: "外部压力"
+  },
+  "Green Light": {
+    fr: "Feu vert",
+    es: "Luz verde",
+    ht: "Limyè vèt",
+    pt: "Luz verde",
+    de: "Grünes Licht",
+    ja: "グリーンライト",
+    zh: "绿灯"
+  },
+  "Proceed With Care": {
+    fr: "Procédez avec prudence",
+    es: "Procede con cuidado",
+    ht: "Avanse ak prekosyon",
+    pt: "Prossiga com cuidado",
+    de: "Mit Vorsicht vorgehen",
+    ja: "慎重に進む",
+    zh: "谨慎进行"
+  },
+  "Reduced Size": {
+    fr: "Taille réduite",
+    es: "Tamaño reducido",
+    ht: "Gwosè redwi",
+    pt: "Tamanho reduzido",
+    de: "Reduzierte Größe",
+    ja: "サイズ縮小",
+    zh: "缩小仓位"
+  },
+  "Stand Down": {
+    fr: "Ne pas trader",
+    es: "No operar",
+    ht: "Pa fè tranzaksyon",
+    pt: "Não operar",
+    de: "Nicht handeln",
+    ja: "トレード見送り",
+    zh: "停止交易"
+  },
+  "How much in the flow do you feel right now?": {
+    fr: "À quel point êtes-vous dans le flow en ce moment ?",
+    es: "¿Cuánto en flujo te sientes ahora mismo?",
+    ht: "Ki jan ou santi ou nan flow la kounye a?",
+    pt: "Quanto em fluxo você se sente agora?",
+    de: "Wie sehr fühlst du dich gerade im Flow?",
+    ja: "今、どれくらいフロー状態を感じますか？",
+    zh: "你现在有多“心流”？"
+  },
+  "Your skill level today": {
+    fr: "Votre niveau de compétence aujourd'hui",
+    es: "Tu nivel de habilidad hoy",
+    ht: "Nivo konpetans ou jodi a",
+    pt: "Seu nível de habilidade hoje",
+    de: "Dein Skill-Level heute",
+    ja: "今日のスキルレベル",
+    zh: "你今天的技能水平"
+  },
+  "Challenge of today's market": {
+    fr: "Défi du marché aujourd'hui",
+    es: "Reto del mercado de hoy",
+    ht: "Defi mache jodi a",
+    pt: "Desafio do mercado hoje",
+    de: "Herausforderung des heutigen Marktes",
+    ja: "今日の相場の難しさ",
+    zh: "今日市场的挑战度"
+  },
+  "Performance zone": {
+    fr: "Zone de performance",
+    es: "Zona de rendimiento",
+    ht: "Zòn pèfòmans",
+    pt: "Zona de desempenho",
+    de: "Leistungszone",
+    ja: "パフォーマンスゾーン",
+    zh: "表现区间"
+  },
+  "Start the Flow Ritual": {
+    fr: "Commencer le rituel de flow",
+    es: "Iniciar el ritual de flujo",
+    ht: "Kòmanse Rit Flow la",
+    pt: "Iniciar o ritual de fluxo",
+    de: "Flow-Ritual starten",
+    ja: "フローの儀式を始める",
+    zh: "开始心流仪式"
+  },
+  "Nervous System Reset": {
+    fr: "Réinitialisation du système nerveux",
+    es: "Reinicio del sistema nervioso",
+    ht: "Rekòmanse sistèm nève a",
+    pt: "Reinício do sistema nervoso",
+    de: "Nervensystem-Reset",
+    ja: "神経系リセット",
+    zh: "神经系统重置"
+  },
+  "Body Activation": {
+    fr: "Activation du corps",
+    es: "Activación del cuerpo",
+    ht: "Aktivasyon Kò a",
+    pt: "Ativação do corpo",
+    de: "Körperaktivierung",
+    ja: "ボディ活性化",
+    zh: "身体激活"
+  },
+  "Market Synchronization": {
+    fr: "Synchronisation avec le marché",
+    es: "Sincronización con el mercado",
+    ht: "Senkwonizasyon ak Mache a",
+    pt: "Sincronização com o mercado",
+    de: "Marktsynchronisation",
+    ja: "相場との同期",
+    zh: "市场同步"
+  },
+  "Plan & Intention": {
+    fr: "Plan et intention",
+    es: "Plan e intención",
+    ht: "Plan ak entansyon",
+    pt: "Plano e intenção",
+    de: "Plan & Absicht",
+    ja: "プランと意図",
+    zh: "计划与意图"
+  },
+  "Anchor Activation": {
+    fr: "Activation de l'ancre",
+    es: "Activación del ancla",
+    ht: "Aktivasyon Lank la",
+    pt: "Ativação da âncora",
+    de: "Anker-Aktivierung",
+    ja: "アンカーの起動",
+    zh: "锚点激活"
+  },
+  "How do you feel after the ritual?": {
+    fr: "Comment vous sentez-vous après le rituel ?",
+    es: "¿Cómo te sientes después del ritual?",
+    ht: "Ki jan ou santi apre rit la?",
+    pt: "Como você se sente após o ritual?",
+    de: "Wie fühlst du dich nach dem Ritual?",
+    ja: "儀式の後、どう感じますか？",
+    zh: "仪式之后你感觉如何？"
+  },
+  "Focus": {
+    fr: "Concentration",
+    es: "Enfoque",
+    ht: "Konsantrasyon",
+    pt: "Foco",
+    de: "Fokus",
+    ja: "集中",
+    zh: "专注"
+  },
+  "Calmness": {
+    fr: "Calme",
+    es: "Calma",
+    ht: "Kalm",
+    pt: "Calma",
+    de: "Ruhe",
+    ja: "落ち着き",
+    zh: "平静"
+  },
+  "Confidence": {
+    fr: "Confiance",
+    es: "Confianza",
+    ht: "Konfyans",
+    pt: "Confiança",
+    de: "Selbstvertrauen",
+    ja: "自信",
+    zh: "自信"
+  },
+  "Clarity": {
+    fr: "Clarté",
+    es: "Claridad",
+    ht: "Klète",
+    pt: "Clareza",
+    de: "Klarheit",
+    ja: "明晰さ",
+    zh: "清晰"
+  },
+  "Select...": {
+    fr: "Sélectionner...",
+    es: "Seleccionar...",
+    ht: "Chwazi...",
+    pt: "Selecionar...",
+    de: "Auswählen...",
+    ja: "選択...",
+    zh: "请选择..."
+  },
+  "Excellent": {
+    fr: "Excellent",
+    es: "Excelente",
+    ht: "Ekselan",
+    pt: "Excelente",
+    de: "Ausgezeichnet",
+    ja: "最高",
+    zh: "极好"
+  },
+  "Good": {
+    fr: "Bon",
+    es: "Bueno",
+    ht: "Bon",
+    pt: "Bom",
+    de: "Gut",
+    ja: "良い",
+    zh: "良好"
+  },
+  "Okay": {
+    fr: "Correct",
+    es: "Regular",
+    ht: "Pasab",
+    pt: "Razoável",
+    de: "Okay",
+    ja: "普通",
+    zh: "一般"
+  },
+  "Poor": {
+    fr: "Faible",
+    es: "Bajo",
+    ht: "Fèb",
+    pt: "Fraco",
+    de: "Schwach",
+    ja: "低い",
+    zh: "较差"
+  },
+  "Flow Score": {
+    fr: "Score de flow",
+    es: "Puntuación de flujo",
+    ht: "Nòt Flow",
+    pt: "Pontuação de fluxo",
+    de: "Flow-Score",
+    ja: "フロースコア",
+    zh: "心流得分"
+  },
+  "Save Session": {
+    fr: "Enregistrer la session",
+    es: "Guardar sesión",
+    ht: "Anrejistre sesyon",
+    pt: "Salvar sessão",
+    de: "Session speichern",
+    ja: "セッションを保存",
+    zh: "保存本次训练"
+  },
+  "Start over": {
+    fr: "Recommencer",
+    es: "Empezar de nuevo",
+    ht: "Rekòmanse",
+    pt: "Recomeçar",
+    de: "Neu starten",
+    ja: "最初からやり直す",
+    zh: "重新开始"
+  },
+  "Cancel": {
+    fr: "Annuler",
+    es: "Cancelar",
+    ht: "Anile",
+    pt: "Cancelar",
+    de: "Abbrechen",
+    ja: "キャンセル",
+    zh: "取消"
+  },
+  "Flow Session History": {
+    fr: "Historique des sessions de flow",
+    es: "Historial de sesiones de flujo",
+    ht: "Istwa sesyon flow",
+    pt: "Histórico de sessões de fluxo",
+    de: "Flow-Session-Verlauf",
+    ja: "フローセッション履歴",
+    zh: "心流训练历史"
+  },
+  "Personal Advice": {
+    fr: "Conseils personnalisés",
+    es: "Consejos personales",
+    ht: "Konsèy pèsonèl",
+    pt: "Conselhos pessoais",
+    de: "Persönliche Empfehlungen",
+    ja: "パーソナルアドバイス",
+    zh: "个性化建议"
+  },
+  "Psychology Check-In": {
+    fr: "Bilan psychologique",
+    es: "Chequeo psicológico",
+    ht: "Tcheke Psikolojik",
+    pt: "Check-in psicológico",
+    de: "Psychologie-Check-in",
+    ja: "心理チェックイン",
+    zh: "心理签到"
+  },
+  "Save Check-In": {
+    fr: "Enregistrer le bilan",
+    es: "Guardar chequeo",
+    ht: "Anrejistre tcheke a",
+    pt: "Salvar check-in",
+    de: "Check-in speichern",
+    ja: "チェックインを保存",
+    zh: "保存签到"
+  },
+  "Main emotional state": {
+    fr: "État émotionnel principal",
+    es: "Estado emocional principal",
+    ht: "Eta emosyonèl prensipal",
+    pt: "Estado emocional principal",
+    de: "Hauptsächlicher emotionaler Zustand",
+    ja: "主な感情状態",
+    zh: "主要情绪状态"
+  },
+  "Triggers you felt": {
+    fr: "Déclencheurs ressentis",
+    es: "Detonantes que sentiste",
+    ht: "Deklanchè ou santi yo",
+    pt: "Gatilhos que sentiu",
+    de: "Ausgelöste Trigger",
+    ja: "感じたトリガー",
+    zh: "你感受到的触发因素"
+  },
+  "Urge to break your plan": {
+    fr: "Envie de briser votre plan",
+    es: "Impulso de romper tu plan",
+    ht: "Anvi pou kraze plan ou",
+    pt: "Impulso de quebrar seu plano",
+    de: "Drang, deinen Plan zu brechen",
+    ja: "プランを破りたい衝動",
+    zh: "想打破计划的冲动"
+  },
+  "I broke one of my rules today": {
+    fr: "J'ai enfreint une de mes règles aujourd'hui",
+    es: "Rompí una de mis reglas hoy",
+    ht: "Mwen vyole youn nan règ mwen yo jodi a",
+    pt: "Quebrei uma das minhas regras hoje",
+    de: "Ich habe heute eine meiner Regeln gebrochen",
+    ja: "今日、ルールを1つ破った",
+    zh: "我今天打破了一条规则"
+  },
+  "Most frequent triggers": {
+    fr: "Déclencheurs les plus fréquents",
+    es: "Detonantes más frecuentes",
+    ht: "Deklanchè ki pi souvan",
+    pt: "Gatilhos mais frequentes",
+    de: "Häufigste Trigger",
+    ja: "最も多いトリガー",
+    zh: "最常见的触发因素"
+  },
+  "Pattern Analysis & History": {
+    fr: "Analyse des schémas et historique",
+    es: "Análisis de patrones e historial",
+    ht: "Analiz modèl ak istwa",
+    pt: "Análise de padrões e histórico",
+    de: "Musteranalyse & Verlauf",
+    ja: "パターン分析と履歴",
+    zh: "模式分析与历史"
+  },
+  "Discipline Index": {
+    fr: "Indice de discipline",
+    es: "Índice de disciplina",
+    ht: "Endèks Disiplin",
+    pt: "Índice de disciplina",
+    de: "Disziplin-Index",
+    ja: "規律指数",
+    zh: "纪律指数"
+  },
+  "Emotional Stability": {
+    fr: "Stabilité émotionnelle",
+    es: "Estabilidad emocional",
+    ht: "Estabilite emosyonèl",
+    pt: "Estabilidade emocional",
+    de: "Emotionale Stabilität",
+    ja: "感情の安定性",
+    zh: "情绪稳定性"
+  },
+  "Revenge Index": {
+    fr: "Indice de revenge trading",
+    es: "Índice de revenge trading",
+    ht: "Endèks Revenge",
+    pt: "Índice de revenge trading",
+    de: "Revenge-Index",
+    ja: "リベンジ指数",
+    zh: "报复指数"
+  },
+  "Greed Index": {
+    fr: "Indice de cupidité",
+    es: "Índice de codicia",
+    ht: "Endèks Gwo anvi",
+    pt: "Índice de ganância",
+    de: "Gier-Index",
+    ja: "欲張り指数",
+    zh: "贪婪指数"
+  },
+  "Fear Index": {
+    fr: "Indice de peur",
+    es: "Índice de miedo",
+    ht: "Endèks Laperèz",
+    pt: "Índice de medo",
+    de: "Angst-Index",
+    ja: "恐怖指数",
+    zh: "恐惧指数"
+  },
+  "Rule-Break Rate": {
+    fr: "Taux d'infraction aux règles",
+    es: "Tasa de ruptura de reglas",
+    ht: "To vyolasyon règ",
+    pt: "Taxa de quebra de regras",
+    de: "Regelbruch-Quote",
+    ja: "ルール違反率",
+    zh: "违规率"
+  },
+  "Days planned": {
+    fr: "Jours planifiés",
+    es: "Días planificados",
+    ht: "Jou planifye",
+    pt: "Dias planejados",
+    de: "Geplante Tage",
+    ja: "計画した日数",
+    zh: "计划天数"
+  },
+  "Plan followed": {
+    fr: "Plan respecté",
+    es: "Plan seguido",
+    ht: "Plan swiv",
+    pt: "Plano seguido",
+    de: "Plan befolgt",
+    ja: "プラン遵守",
+    zh: "遵守计划"
+  },
+  "Plan broken": {
+    fr: "Plan non respecté",
+    es: "Plan roto",
+    ht: "Plan kraze",
+    pt: "Plano quebrado",
+    de: "Plan gebrochen",
+    ja: "プラン違反",
+    zh: "违反计划"
+  },
+  "Target hit rate": {
+    fr: "Taux d'objectifs atteints",
+    es: "Tasa de objetivos alcanzados",
+    ht: "To objektif atenn",
+    pt: "Taxa de metas atingidas",
+    de: "Zielerreichungsquote",
+    ja: "目標達成率",
+    zh: "目标达成率"
+  },
+  "All months": {
+    fr: "Tous les mois",
+    es: "Todos los meses",
+    ht: "Tout mwa",
+    pt: "Todos os meses",
+    de: "Alle Monate",
+    ja: "すべての月",
+    zh: "所有月份"
+  },
+  "All days": {
+    fr: "Tous les jours",
+    es: "Todos los días",
+    ht: "Tout jou",
+    pt: "Todos os dias",
+    de: "Alle Tage",
+    ja: "すべての日",
+    zh: "所有日期"
+  },
+  "Nothing matches this filter.": {
+    fr: "Aucun résultat pour ce filtre.",
+    es: "Nada coincide con este filtro.",
+    ht: "Pa gen anyen ki koresponn ak filt sa a.",
+    pt: "Nada corresponde a este filtro.",
+    de: "Nichts entspricht diesem Filter.",
+    ja: "このフィルターに一致する項目はありません。",
+    zh: "没有符合此筛选的内容。"
+  },
+  "Open Gamma Levels": {
+    fr: "Ouvrir les niveaux gamma",
+    es: "Abrir niveles gamma",
+    ht: "Louvri nivo gamma",
+    pt: "Abrir níveis gamma",
+    de: "Gamma-Levels öffnen",
+    ja: "ガンマレベルを開く",
+    zh: "打开Gamma水平"
+  },
+  "Create a free account to unlock your Trading Discipline Test result": {
+    fr: "Créez un compte gratuit pour débloquer le résultat de votre test",
+    es: "Crea una cuenta gratis para desbloquear el resultado de tu prueba",
+    ht: "Kreye yon kont gratis pou debloke rezilta tès ou",
+    pt: "Crie uma conta grátis para desbloquear o resultado do teste",
+    de: "Erstelle ein kostenloses Konto, um dein Testergebnis freizuschalten",
+    ja: "無料アカウントを作成してテスト結果を確認",
+    zh: "创建免费账户以解锁测试结果"
+  }
+});
 function applyTranslation(lang) {
   if (typeof document === 'undefined') return;
   const root = document.getElementById('root');
@@ -2093,7 +3141,11 @@ const emptyMentalCheck = function () {
     marketAwareness: 5,
     riskRespect: 5,
     humility: 5,
-    mindset: 5
+    mindset: 5,
+    sleep: 7,
+    energy: 7,
+    focus: 7,
+    stress: 3
   };
 };
 const emptyDailyPlan = function (defaultRisk, defaultRR) {
@@ -2189,7 +3241,8 @@ function AuthScreen(props) {
   const language = props.language;
   const setLanguage = props.setLanguage;
   const wantsCourse = props.wantsCourse;
-  const [mode, setMode] = useState(wantsCourse ? 'signup' : 'login');
+  const fromDiagnostic = props.fromDiagnostic;
+  const [mode, setMode] = useState(wantsCourse || props.wantsSignup ? 'signup' : 'login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
@@ -2244,8 +3297,14 @@ function AuthScreen(props) {
   }, /*#__PURE__*/React.createElement("div", {
     className: "w-full max-w-sm bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-8"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "flex justify-end mb-3"
-  }, /*#__PURE__*/React.createElement(LanguageSwitcher, {
+    className: "flex items-center justify-between mb-3"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "../",
+    className: "inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-yellow-400 border border-gray-700 rounded-lg px-2.5 py-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Home",
+    className: "h-3.5 w-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Home")), /*#__PURE__*/React.createElement(LanguageSwitcher, {
     language: language,
     setLanguage: setLanguage
   })), /*#__PURE__*/React.createElement("div", {
@@ -2256,7 +3315,14 @@ function AuthScreen(props) {
     className: "h-20 w-auto rounded-xl border border-yellow-500/20"
   })), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-500 text-sm text-center mb-4"
-  }, mode === 'login' ? 'Sign in to your account' : 'Create your account'), wantsCourse && /*#__PURE__*/React.createElement("div", {
+  }, mode === 'login' ? 'Sign in to your account' : 'Create your account'), fromDiagnostic && /*#__PURE__*/React.createElement("div", {
+    className: "bg-yellow-500/10 border border-yellow-500/30 rounded-lg px-3 py-2.5 mb-4 flex items-start gap-2"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "ClipboardCheck",
+    className: "h-4 w-4 text-yellow-400 flex-shrink-0 mt-0.5"
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-yellow-200/90"
+  }, mode === 'login' ? 'Sign in to' : 'Create a free account to', " unlock your Trading Discipline Test result - your score and advice are waiting and will be saved in your journal.")), wantsCourse && /*#__PURE__*/React.createElement("div", {
     className: "bg-teal-500/10 border border-teal-500/30 rounded-lg px-3 py-2.5 mb-4 flex items-start gap-2"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "GraduationCap",
@@ -2507,6 +3573,10 @@ const PAGE_TABS = [{
   label: 'Mental Check',
   icon: 'Brain'
 }, {
+  key: 'flowstate',
+  label: 'Flow State',
+  icon: 'Waves'
+}, {
   key: 'history',
   label: 'Trade History',
   icon: 'Calendar'
@@ -2518,6 +3588,10 @@ const PAGE_TABS = [{
   key: 'discipline',
   label: 'Discipline',
   icon: 'ListChecks'
+}, {
+  key: 'psychology',
+  label: 'Psychology',
+  icon: 'HeartPulse'
 }, {
   key: 'finances',
   label: 'Finances',
@@ -4889,6 +5963,1649 @@ function computeDisciplineScore(accounts, entries) {
     daysSinceStart: daysSinceStart
   };
 }
+function disciplineGrade(score) {
+  if (score === null || score === undefined) return {
+    letter: '-',
+    color: 'text-gray-500'
+  };
+  if (score >= 90) return {
+    letter: 'A',
+    color: 'text-green-400'
+  };
+  if (score >= 80) return {
+    letter: 'B',
+    color: 'text-lime-400'
+  };
+  if (score >= 70) return {
+    letter: 'C',
+    color: 'text-yellow-400'
+  };
+  if (score >= 60) return {
+    letter: 'D',
+    color: 'text-orange-400'
+  };
+  return {
+    letter: 'F',
+    color: 'text-red-400'
+  };
+}
+
+// Deeper analytics for the Overview: streaks, extremes, Sharpe, drawdown and
+// R-multiples. Uses the same trade set as computeOverviewData so every number
+// on the page agrees with every other number.
+function computeAdvancedStats(accounts, entries) {
+  const ov = computeOverviewData(accounts, entries);
+  const ids = {};
+  accounts.forEach(function (a) {
+    if (computeAccountStatus(a, entries) !== 'breached') ids[a.id] = true;
+  });
+  const traded = entries.filter(function (e) {
+    return e.tradedToday !== 'no' && ids[e.accountId];
+  }).slice().sort(function (a, b) {
+    return (a.date || '').localeCompare(b.date || '');
+  });
+  const trades = [];
+  traded.forEach(function (e) {
+    (e.trades || []).forEach(function (t) {
+      if (t.result === 'win' || t.result === 'loss') trades.push(t);
+    });
+  });
+  let curW = 0,
+    curL = 0,
+    maxW = 0,
+    maxL = 0,
+    largestWin = null,
+    largestLoss = null;
+  const rs = [],
+    winRs = [],
+    lossRs = [];
+  trades.forEach(function (t) {
+    const p = tradeSignedPnl(t);
+    if (t.result === 'win') {
+      curW++;
+      curL = 0;
+      if (largestWin === null || p > largestWin) largestWin = p;
+    } else {
+      curL++;
+      curW = 0;
+      if (largestLoss === null || p < largestLoss) largestLoss = p;
+    }
+    if (curW > maxW) maxW = curW;
+    if (curL > maxL) maxL = curL;
+    const risk = Math.abs(parseFloat(t.riskAmount) || 0);
+    if (risk > 0) {
+      const r = p / risk;
+      rs.push(r);
+      if (r > 0) winRs.push(r);else lossRs.push(Math.abs(r));
+    }
+  });
+  const mean = function (a) {
+    return a.length ? a.reduce(function (s, v) {
+      return s + v;
+    }, 0) / a.length : null;
+  };
+  const avgR = mean(rs);
+  const avgWinR = mean(winRs),
+    avgLossR = mean(lossRs);
+  const avgRR = avgWinR !== null && avgLossR ? avgWinR / avgLossR : ov.avgWin && ov.avgLoss ? ov.avgWin / ov.avgLoss : null;
+  const startBal = accounts.filter(function (a) {
+    return ids[a.id];
+  }).reduce(function (s, a) {
+    return s + (parseFloat(a.startingBalance) || 0);
+  }, 0);
+  const days = Object.keys(ov.byDate).sort();
+  let sharpe = null;
+  if (days.length >= 2 && startBal > 0) {
+    const rets = days.map(function (d) {
+      return ov.byDate[d] / startBal;
+    });
+    const m = mean(rets);
+    const sd = Math.sqrt(rets.reduce(function (s, v) {
+      return s + Math.pow(v - m, 2);
+    }, 0) / (rets.length - 1));
+    sharpe = sd > 0 ? m / sd * Math.sqrt(252) : null;
+  }
+  let peak = 0,
+    maxDD = 0;
+  ov.equityPoints.forEach(function (p) {
+    if (p.cum > peak) peak = p.cum;
+    if (peak - p.cum > maxDD) maxDD = peak - p.cum;
+  });
+  const recovery = maxDD > 0 ? ov.totalPnl / maxDD : null;
+  const disc = computeDisciplineScore(accounts, entries);
+  const mcs = entries.filter(function (e) {
+    return e.mentalCheck;
+  }).map(function (e) {
+    return mentalCheckTotal(e.mentalCheck);
+  }).filter(function (v) {
+    return v > 0;
+  });
+  return Object.assign({}, ov, {
+    startBal: startBal,
+    netBalance: startBal + ov.totalPnl,
+    maxW: maxW,
+    maxL: maxL,
+    largestWin: largestWin,
+    largestLoss: largestLoss,
+    sharpe: sharpe,
+    avgR: avgR,
+    avgRR: avgRR,
+    rFactor: ov.avgWin && ov.avgLoss ? ov.avgWin / ov.avgLoss : null,
+    maxDD: maxDD,
+    recovery: recovery,
+    tradingDays: days.length,
+    tradesPerDay: days.length ? trades.length / days.length : null,
+    disciplineScore: disc ? disc.score : null,
+    avgMental: mcs.length ? mean(mcs) / 40 * 100 : null
+  });
+}
+function ProStatTile(p) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "bg-black/30 border border-gray-800/80 rounded-xl p-3.5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] uppercase tracking-wide text-gray-500"
+  }, p.label), /*#__PURE__*/React.createElement("div", {
+    className: "num text-xl font-bold mt-1 " + p.color
+  }, p.value), /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-gray-600 mt-0.5"
+  }, p.sub));
+}
+function ProStatsPanel(props) {
+  const s = computeAdvancedStats(props.accounts, props.entries);
+  const none = s.totalTrades === 0;
+  const g = disciplineGrade(s.disciplineScore);
+  const pos = function (v) {
+    return v === null || v === undefined ? 'text-gray-500' : v >= 0 ? 'text-green-400' : 'text-red-400';
+  };
+  const num = function (v, d) {
+    return v === null || v === undefined || isNaN(v) ? '-' : v.toFixed(d === undefined ? 2 : d);
+  };
+  const Tile = ProStatTile;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "space-y-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Gauge",
+    className: "h-5 w-5 text-yellow-400"
+  }), /*#__PURE__*/React.createElement("h3", {
+    className: "text-base font-semibold text-white"
+  }, "Performance Overview")), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-500 mb-4"
+  }, "Key trading metrics and portfolio performance"), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 lg:grid-cols-4 gap-3"
+  }, /*#__PURE__*/React.createElement(Tile, {
+    label: "Net Balance",
+    value: fmt(s.netBalance),
+    color: "text-white",
+    sub: "Starting balance + Total P&L"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Total P&L",
+    value: fmt(s.totalPnl),
+    color: pos(s.totalPnl),
+    sub: "Net profit/loss"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Win Rate",
+    value: none ? '-' : s.overallWinRate.toFixed(1) + '%',
+    color: none ? 'text-gray-500' : s.overallWinRate >= 50 ? 'text-green-400' : 'text-red-400',
+    sub: "Winning trades percentage"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Total Trades",
+    value: String(s.totalTrades),
+    color: "text-white",
+    sub: "All executed trades"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Discipline Score",
+    value: s.disciplineScore === null ? '-' : Math.round(s.disciplineScore) + '% ' + g.letter,
+    color: g.color,
+    sub: "Trading discipline rating"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "R Factor",
+    value: num(s.rFactor),
+    color: s.rFactor === null ? 'text-gray-500' : s.rFactor >= 1 ? 'text-green-400' : 'text-red-400',
+    sub: "Risk/Reward ratio"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Profit Factor",
+    value: num(s.profitFactor),
+    color: s.profitFactor === null ? 'text-gray-500' : s.profitFactor >= 1 ? 'text-green-400' : 'text-red-400',
+    sub: "Gross Win / Gross Loss"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Avg Win/Loss",
+    value: s.avgWin === null && s.avgLoss === null ? '-' : fmt(s.avgWin || 0) + '/' + fmt(s.avgLoss || 0),
+    color: "text-white",
+    sub: "Win vs Loss ratio"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Microscope",
+    className: "h-5 w-5 text-purple-400"
+  }), /*#__PURE__*/React.createElement("h3", {
+    className: "text-base font-semibold text-white"
+  }, "Advanced Statistics")), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-500 mb-4"
+  }, "Deep performance analytics and behavioral insights"), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 lg:grid-cols-4 gap-3"
+  }, /*#__PURE__*/React.createElement(Tile, {
+    label: "Sharpe Ratio",
+    value: num(s.sharpe),
+    color: s.sharpe === null ? 'text-gray-500' : s.sharpe >= 1 ? 'text-green-400' : s.sharpe >= 0 ? 'text-yellow-400' : 'text-red-400',
+    sub: "Risk-adjusted returns (daily)"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Max Consecutive Wins",
+    value: String(s.maxW),
+    color: "text-green-400",
+    sub: "Best winning streak"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Max Consecutive Losses",
+    value: String(s.maxL),
+    color: "text-red-400",
+    sub: "Worst losing streak"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Expectancy / Trade",
+    value: s.expectancy === null ? '-' : fmt(s.expectancy),
+    color: pos(s.expectancy),
+    sub: "Average edge per trade"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Largest Win",
+    value: s.largestWin === null ? '-' : fmt(s.largestWin),
+    color: "text-green-400",
+    sub: "Best single trade"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Largest Loss",
+    value: s.largestLoss === null ? '-' : fmt(s.largestLoss),
+    color: "text-red-400",
+    sub: "Worst single trade"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Avg R:R Ratio",
+    value: num(s.avgRR),
+    color: s.avgRR === null ? 'text-gray-500' : s.avgRR >= 1 ? 'text-green-400' : 'text-red-400',
+    sub: "Average win R / average loss R"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Avg R / Trade",
+    value: s.avgR === null ? '-' : num(s.avgR) + 'R',
+    color: pos(s.avgR),
+    sub: "Needs risk logged per trade"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Max Drawdown",
+    value: fmt(-s.maxDD),
+    color: s.maxDD > 0 ? 'text-red-400' : 'text-gray-500',
+    sub: "Peak-to-trough equity"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Recovery Factor",
+    value: num(s.recovery),
+    color: pos(s.recovery),
+    sub: "Net profit / max drawdown"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Day Win Rate",
+    value: s.dayWinRate === null ? '-' : s.dayWinRate.toFixed(0) + '%',
+    color: s.dayWinRate === null ? 'text-gray-500' : s.dayWinRate >= 50 ? 'text-green-400' : 'text-red-400',
+    sub: s.tradingDays + " trading days"
+  }), /*#__PURE__*/React.createElement(Tile, {
+    label: "Mental Readiness",
+    value: s.avgMental === null ? '-' : s.avgMental.toFixed(0) + '%',
+    color: s.avgMental === null ? 'text-gray-500' : s.avgMental >= 70 ? 'text-green-400' : 'text-yellow-400',
+    sub: "Avg pre-session Mental Check"
+  }))));
+}
+function DiagnosticResultCard(props) {
+  const r = props.result;
+  if (!r) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: "bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-6"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center gap-2 mb-2"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "ClipboardCheck",
+      className: "h-5 w-5 text-yellow-400"
+    }), /*#__PURE__*/React.createElement("h2", {
+      className: "text-lg font-semibold text-white"
+    }, "Trading Discipline Test")), /*#__PURE__*/React.createElement("p", {
+      className: "text-sm text-gray-400 mb-4"
+    }, "Twenty yes/no questions that find where your discipline leaks. Your score, profile and advice are saved here."), /*#__PURE__*/React.createElement("a", {
+      href: "../diagnostic/",
+      className: "inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-semibold"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "Play",
+      className: "h-4 w-4"
+    }), /*#__PURE__*/React.createElement("span", null, "Take the Free Test")));
+  }
+  const col = function (p) {
+    return p >= 70 ? '#4ade80' : p >= 45 ? '#fbbf24' : '#f87171';
+  };
+  const hist = r.history || [];
+  const prev = hist.length >= 2 ? hist[hist.length - 2].score : null;
+  const delta = prev === null ? null : r.score - prev;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-6 space-y-5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between flex-wrap gap-2"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "ClipboardCheck",
+    className: "h-5 w-5 text-yellow-400"
+  }), /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Trading Discipline Test")), /*#__PURE__*/React.createElement("a", {
+    href: "../diagnostic/",
+    className: "text-xs text-gray-300 hover:text-yellow-400 border border-gray-700 rounded-lg px-3 py-1.5 inline-flex items-center gap-1.5"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "RotateCcw",
+    className: "h-3.5 w-3.5"
+  }), /*#__PURE__*/React.createElement("span", null, "Retake the test"))), /*#__PURE__*/React.createElement("div", {
+    className: "grid md:grid-cols-3 gap-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-black/30 border border-gray-800 rounded-xl p-5 text-center"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-gray-500 mb-1"
+  }, "Your Trading Discipline Score"), /*#__PURE__*/React.createElement("div", {
+    className: "num text-5xl font-extrabold",
+    style: {
+      color: col(r.score)
+    }
+  }, r.score, "%"), /*#__PURE__*/React.createElement("div", {
+    className: "text-sm font-bold mt-1",
+    style: {
+      color: col(r.score)
+    }
+  }, r.bandLabel || r.band), delta !== null && /*#__PURE__*/React.createElement("div", {
+    className: "text-xs mt-2 " + (delta >= 0 ? 'text-green-400' : 'text-red-400')
+  }, (delta >= 0 ? '+' : '') + delta + ' pts vs previous test'), /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-gray-600 mt-2"
+  }, new Date(r.ts).toLocaleDateString())), /*#__PURE__*/React.createElement("div", {
+    className: "md:col-span-2 bg-black/30 border border-gray-800 rounded-xl p-5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-gray-500 mb-1"
+  }, "Your profile"), /*#__PURE__*/React.createElement("div", {
+    className: "text-xl font-bold text-white mb-1"
+  }, r.archetypeLabel || r.archetype), /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-gray-400 leading-relaxed"
+  }, r.archetypeNote), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 gap-3 mt-4"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-gray-500"
+  }, "Strongest Area"), /*#__PURE__*/React.createElement("div", {
+    className: "text-sm font-semibold text-green-400"
+  }, r.strongestLabel || r.strongest, " (", r.strongestPct, "%)")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "text-[11px] text-gray-500"
+  }, "Biggest Leak"), /*#__PURE__*/React.createElement("div", {
+    className: "text-sm font-semibold text-red-400"
+  }, r.weakestLabel || r.weakest, " (", r.weakestPct, "%)"))))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-semibold text-white mb-3"
+  }, "Score by Category"), /*#__PURE__*/React.createElement("div", {
+    className: "grid md:grid-cols-2 gap-x-6 gap-y-3"
+  }, (r.cats || []).map(function (c) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: c.name
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex justify-between text-xs mb-1"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-300"
+    }, c.label || c.name), /*#__PURE__*/React.createElement("span", {
+      className: "num font-semibold",
+      style: {
+        color: col(c.pct)
+      }
+    }, c.pct, "%")), /*#__PURE__*/React.createElement("div", {
+      className: "h-2 bg-gray-800 rounded-full overflow-hidden"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "h-full rounded-full",
+      style: {
+        width: c.pct + '%',
+        background: col(c.pct)
+      }
+    })));
+  }))), (r.flags || []).length > 0 && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-semibold text-white mb-3"
+  }, "What To Watch"), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, r.flags.map(function (f, i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      className: "bg-black/30 border border-gray-800 rounded-lg p-3 flex items-start gap-2.5"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "AlertTriangle",
+      className: "h-4 w-4 text-red-400 flex-shrink-0 mt-0.5"
+    }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
+      className: "text-sm text-gray-200"
+    }, f.text), /*#__PURE__*/React.createElement("p", {
+      className: "text-xs text-gray-500 mt-0.5 leading-relaxed"
+    }, f.flag)));
+  }))), hist.length > 1 && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-semibold text-white mb-2"
+  }, "Test History"), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-end gap-1.5 h-16"
+  }, hist.map(function (h, i) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: i,
+      title: new Date(h.ts).toLocaleDateString() + ': ' + h.score + '%',
+      className: "flex-1 rounded-t",
+      style: {
+        height: Math.max(6, h.score) + '%',
+        background: col(h.score)
+      }
+    });
+  }))));
+}
+
+// ===================== Mental readiness (extends the 4-slider Mental Check) =====================
+const MENTAL_EXTRA_SLIDERS = [{
+  key: 'sleep',
+  label: 'Sleep & Recovery',
+  sub: 'How rested are you? 1 = exhausted, 10 = fully recharged.',
+  def: 7
+}, {
+  key: 'energy',
+  label: 'Physical Energy',
+  sub: 'Body and energy level right now.',
+  def: 7
+}, {
+  key: 'focus',
+  label: 'Focus & Clarity',
+  sub: 'Can you stay on one chart, one plan, without drifting?',
+  def: 7
+}, {
+  key: 'stress',
+  label: 'Outside Stress',
+  sub: 'Money worries, people, work - anything pulling at you. 1 = none, 10 = heavy.',
+  def: 3
+}];
+function mentalReadiness(mc) {
+  if (!mc) return null;
+  const core = mentalCheckTotal(mc) / 40;
+  const g = function (k, d) {
+    return mc[k] === undefined || mc[k] === null ? d : mc[k];
+  };
+  const hasExtras = mc.sleep !== undefined || mc.energy !== undefined || mc.focus !== undefined || mc.stress !== undefined;
+  const extras = (g('sleep', 7) + g('energy', 7) + g('focus', 7) + (11 - g('stress', 3))) / 40;
+  const pct = Math.round((hasExtras ? core * 0.6 + extras * 0.4 : core) * 100);
+  const tips = [];
+  if (g('riskRespect', 5) <= 4) tips.push('Risk respect is low: use your locked risk-per-trade and write down your daily loss cap before the first trade.');
+  if (g('humility', 5) <= 4) tips.push('Humility is low: you are at risk of chasing or revenge trading. After any loss, step away for 30 minutes.');
+  if (g('marketAwareness', 5) <= 4) tips.push('Market awareness is low: mark higher-timeframe bias and key levels first, and wait for an A+ setup.');
+  if (g('mindset', 5) <= 4) tips.push('Mindset is low: treat today as a business day, with a fixed number of trades and no need to make money back.');
+  if (hasExtras && g('sleep', 7) <= 4) tips.push('You are under-slept: tired traders break rules. Cut size and trade fewer setups.');
+  if (hasExtras && g('stress', 3) >= 7) tips.push('Outside stress is high: it leaks into execution. Consider journal-only or a single, small trade.');
+  if (hasExtras && g('focus', 7) <= 4) tips.push('Focus is low: do the Flow State ritual before opening the platform.');
+  let verdict, cls, desc;
+  if (pct >= 80) {
+    verdict = 'Green Light';
+    cls = 'text-green-400 border-green-500/40 bg-green-500/10';
+    desc = 'Trade your plan at normal, locked risk.';
+  } else if (pct >= 60) {
+    verdict = 'Proceed With Care';
+    cls = 'text-yellow-300 border-yellow-500/40 bg-yellow-500/10';
+    desc = 'A+ setups only, and no more than your planned number of trades.';
+  } else if (pct >= 40) {
+    verdict = 'Reduced Size';
+    cls = 'text-orange-300 border-orange-500/40 bg-orange-500/10';
+    desc = 'Cut risk, take one trade at most, and stop after the first loss.';
+  } else {
+    verdict = 'Stand Down';
+    cls = 'text-red-400 border-red-500/40 bg-red-500/10';
+    desc = 'Journal only today. Protect your buffer, not your ego.';
+  }
+  return {
+    pct: pct,
+    verdict: verdict,
+    cls: cls,
+    desc: desc,
+    tips: tips
+  };
+}
+function MentalReadinessPanel(props) {
+  const r = mentalReadiness(props.value);
+  if (!r) return null;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "rounded-xl border p-4 " + r.cls
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between gap-3 flex-wrap"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Gauge",
+    className: "h-5 w-5"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "font-bold"
+  }, r.verdict)), /*#__PURE__*/React.createElement("span", {
+    className: "num text-2xl font-extrabold"
+  }, r.pct, "%")), /*#__PURE__*/React.createElement("p", {
+    className: "text-sm mt-1 opacity-90"
+  }, r.desc), r.tips.length > 0 && /*#__PURE__*/React.createElement("ul", {
+    className: "mt-3 space-y-1.5 text-xs text-gray-300"
+  }, r.tips.map(function (t, i) {
+    return /*#__PURE__*/React.createElement("li", {
+      key: i,
+      className: "flex items-start gap-2"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "ChevronRight",
+      className: "h-3.5 w-3.5 mt-0.5 text-gray-500"
+    }), /*#__PURE__*/React.createElement("span", null, t));
+  })));
+}
+
+// Does being mentally ready actually change your results? Compares the day's
+// P&L on high-readiness check-ins vs low ones, using the person's own data.
+function MentalInsights(props) {
+  const entries = props.entries;
+  const rows = entries.filter(function (e) {
+    return e.mentalCheck && mentalCheckTotal(e.mentalCheck) > 0;
+  }).sort(function (a, b) {
+    return a.date < b.date ? -1 : 1;
+  });
+  if (rows.length === 0) return null;
+  const dayPnl = function (e) {
+    return e.tradedToday === 'no' ? null : (e.trades || []).reduce(function (s, t) {
+      return s + tradeSignedPnl(t);
+    }, 0);
+  };
+  const hi = [],
+    lo = [];
+  rows.forEach(function (e) {
+    const p = dayPnl(e);
+    if (p === null || !(e.trades || []).length) return;
+    (mentalCheckTotal(e.mentalCheck) >= 32 ? hi : lo).push(p);
+  });
+  const avg = function (a) {
+    return a.length ? a.reduce(function (s, v) {
+      return s + v;
+    }, 0) / a.length : null;
+  };
+  const last = rows.slice(-30);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "space-y-4"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-gray-500 mb-2"
+  }, "Mental Check trend (last ", last.length, " check-ins, out of 40)"), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-end gap-1 h-24"
+  }, last.map(function (e) {
+    const t = mentalCheckTotal(e.mentalCheck);
+    const c = t >= 32 ? 'bg-green-500' : t >= 20 ? 'bg-yellow-500' : 'bg-red-500';
+    return /*#__PURE__*/React.createElement("div", {
+      key: e.id,
+      title: e.date + ': ' + t + '/40',
+      className: "flex-1 rounded-t " + c,
+      style: {
+        height: Math.max(8, t / 40 * 100) + '%'
+      }
+    });
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 gap-3"
+  }, /*#__PURE__*/React.createElement(MiniStat, {
+    label: 'Avg day P&L when ready (32+/40), ' + hi.length + ' days',
+    value: avg(hi) === null ? '-' : fmt(avg(hi)),
+    color: avg(hi) === null ? 'text-gray-500' : avg(hi) >= 0 ? 'text-green-400' : 'text-red-400'
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: 'Avg day P&L when not ready (<32/40), ' + lo.length + ' days',
+    value: avg(lo) === null ? '-' : fmt(avg(lo)),
+    color: avg(lo) === null ? 'text-gray-500' : avg(lo) >= 0 ? 'text-green-400' : 'text-red-400'
+  })));
+}
+
+// ===================== Flow State Training =====================
+const FLOW_RITUAL = [{
+  title: 'Nervous System Reset',
+  duration: 300,
+  icon: 'Heart',
+  description: 'Box breathing to calm the nervous system before the market opens.',
+  instructions: ['Sit upright and close your eyes', 'Breathe in for 4 counts', 'Hold for 4 counts', 'Breathe out for 6 counts', 'Repeat slowly until the timer ends']
+}, {
+  title: 'Body Activation',
+  duration: 180,
+  icon: 'Zap',
+  description: 'Move to release tension and wake the body up.',
+  instructions: ['Stand and shake out your whole body for 30 seconds', '20 push-ups (modify as needed)', '20 jumping jacks', 'Roll your neck slowly both ways', 'Take 3 deep breaths']
+}, {
+  title: 'Market Synchronization',
+  duration: 180,
+  icon: 'Activity',
+  description: 'Tune in to the market without analyzing it yet.',
+  instructions: ['Open your chart and just observe', 'Trending or ranging?', 'Is volume high or low?', 'What is the pace - fast, slow, erratic?', 'Make 3 simple observations, nothing more']
+}, {
+  title: 'Plan & Intention',
+  duration: 180,
+  icon: 'Target',
+  description: 'Lock your MMM plan in before the first trade.',
+  instructions: ['Say: "I trade my plan, and only A+ setups."', 'Say: "I honor my stop and my locked risk-per-trade."', 'Say: "I stop at my daily loss cap, no exceptions."', 'Say: "After a loss I step away for 30 minutes."', 'Feel the commitment behind each sentence']
+}, {
+  title: 'Anchor Activation',
+  duration: 120,
+  icon: 'Star',
+  description: 'Create a physical anchor you can recall mid-session.',
+  instructions: ['Hold a small object (coin, ring, stone)', 'Recall your best-executed trading day', 'Focus on the feeling of calm and precision, not the profit', 'Squeeze the object and say "I am ready"']
+}];
+function flowZone(skill, challenge) {
+  if (challenge >= 7 && skill >= 7) return {
+    zone: 'Flow',
+    cls: 'text-green-400',
+    desc: 'Optimal trading state: skill and challenge are both high.'
+  };
+  if (challenge - skill >= 3) return {
+    zone: 'Anxiety',
+    cls: 'text-red-400',
+    desc: 'Challenge outruns your skill. Reduce size or skip the session.'
+  };
+  if (skill - challenge >= 3) return {
+    zone: 'Boredom',
+    cls: 'text-yellow-300',
+    desc: 'Under-challenged: high risk of overtrading. Stick to your A+ setups only.'
+  };
+  if (skill <= 4 && challenge <= 4) return {
+    zone: 'Apathy',
+    cls: 'text-gray-400',
+    desc: 'Low engagement. Use this session for review and learning, not for risk.'
+  };
+  return {
+    zone: 'Building',
+    cls: 'text-blue-300',
+    desc: 'Balanced but not peak. A short ritual can lift you into flow.'
+  };
+}
+function FlowStateTraining(props) {
+  const uid = props.uid;
+  const [view, setView] = useState('assess');
+  const [flowPct, setFlowPct] = useState(50);
+  const [skill, setSkill] = useState(5);
+  const [challenge, setChallenge] = useState(5);
+  const [step, setStep] = useState(0);
+  const [done, setDone] = useState({});
+  const [elapsed, setElapsed] = useState(0);
+  const [running, setRunning] = useState(false);
+  const [feel, setFeel] = useState({});
+  const [sessions, setSessions] = useState([]);
+  const [status, setStatus] = useState(null);
+  const [totalSecs, setTotalSecs] = useState(0);
+  const ref = db.collection('users').doc(uid).collection('flowSessions');
+  useEffect(function () {
+    const unsub = ref.orderBy('ts', 'desc').limit(40).onSnapshot(function (snap) {
+      setSessions(snap.docs.map(function (d) {
+        return Object.assign({
+          id: d.id
+        }, d.data());
+      }));
+    }, function () {});
+    return unsub;
+  }, [uid]);
+  useEffect(function () {
+    if (!running) return;
+    const t = setInterval(function () {
+      setElapsed(function (v) {
+        return v + 1;
+      });
+      setTotalSecs(function (v) {
+        return v + 1;
+      });
+    }, 1000);
+    return function () {
+      clearInterval(t);
+    };
+  }, [running]);
+  const zone = flowZone(skill, challenge);
+  const ritualDone = Object.keys(done).length === FLOW_RITUAL.length;
+  const score = function () {
+    let b = flowPct;
+    if (zone.zone === 'Flow') b += 15;
+    if (ritualDone) b += 10;
+    Object.values(feel).forEach(function (v) {
+      if (v === 'excellent') b += 5;else if (v === 'good') b += 2;else if (v === 'poor') b -= 5;
+    });
+    return Math.max(0, Math.min(100, b));
+  }();
+  const rec = score >= 80 ? {
+    t: 'Flow achieved - trade your plan at normal risk.',
+    c: 'text-green-400'
+  } : score >= 60 ? {
+    t: 'Good state - A+ setups only.',
+    c: 'text-yellow-300'
+  } : score >= 40 ? {
+    t: 'Below peak - reduce size and limit trades.',
+    c: 'text-orange-300'
+  } : {
+    t: 'Not ready - no live trading. Review and reset.',
+    c: 'text-red-400'
+  };
+  const mmss = function (s) {
+    return Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + s % 60;
+  };
+  const finishStep = function () {
+    const nd = Object.assign({}, done);
+    nd[step] = true;
+    setDone(nd);
+    setRunning(false);
+    setElapsed(0);
+    if (step < FLOW_RITUAL.length - 1) setStep(step + 1);else setView('results');
+  };
+  const reset = function () {
+    setView('assess');
+    setStep(0);
+    setDone({});
+    setElapsed(0);
+    setRunning(false);
+    setFeel({});
+    setTotalSecs(0);
+    setStatus(null);
+  };
+  const save = async function () {
+    try {
+      await ref.add({
+        ts: Date.now(),
+        date: new Date().toISOString().slice(0, 10),
+        flowPct: flowPct,
+        skill: skill,
+        challenge: challenge,
+        zone: zone.zone,
+        ritual: ritualDone,
+        ritualSecs: totalSecs,
+        feelings: feel,
+        score: score
+      });
+      setStatus({
+        type: 'ok',
+        text: 'Session saved.'
+      });
+    } catch (e) {
+      setStatus({
+        type: 'error',
+        text: 'Could not save: ' + e.message
+      });
+    }
+  };
+  const removeSession = async function (id) {
+    try {
+      await ref.doc(id).delete();
+    } catch (e) {}
+  };
+  const withR = sessions.filter(function (s) {
+      return s.ritual;
+    }),
+    noR = sessions.filter(function (s) {
+      return !s.ritual;
+    });
+  const avg = function (a) {
+    return a.length ? Math.round(a.reduce(function (s, v) {
+      return s + v.score;
+    }, 0) / a.length) : null;
+  };
+  const cur = FLOW_RITUAL[step];
+  return /*#__PURE__*/React.createElement("div", {
+    className: "space-y-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-gradient-to-br from-cyan-950/40 to-black border border-cyan-800/40 rounded-2xl p-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Waves",
+    className: "h-5 w-5 text-cyan-400"
+  }), /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Flow State Training")), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-500 mb-5"
+  }, "A 15-minute pre-session ritual that gets you calm, focused and committed to the MMM plan before the first trade. Assess, run the ritual, then log how you feel."), view === 'assess' && /*#__PURE__*/React.createElement("div", {
+    className: "space-y-5"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "flex justify-between text-xs mb-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-gray-400"
+  }, "How much in the flow do you feel right now?"), /*#__PURE__*/React.createElement("span", {
+    className: "num text-cyan-300"
+  }, flowPct, "%")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "0",
+    max: "100",
+    value: flowPct,
+    onChange: function (e) {
+      setFlowPct(parseInt(e.target.value, 10));
+    },
+    className: "w-full accent-cyan-400"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "grid md:grid-cols-2 gap-5"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "flex justify-between text-xs mb-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-gray-400"
+  }, "Your skill level today"), /*#__PURE__*/React.createElement("span", {
+    className: "num text-cyan-300"
+  }, skill, "/10")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "1",
+    max: "10",
+    value: skill,
+    onChange: function (e) {
+      setSkill(parseInt(e.target.value, 10));
+    },
+    className: "w-full accent-cyan-400"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "flex justify-between text-xs mb-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-gray-400"
+  }, "Challenge of today's market"), /*#__PURE__*/React.createElement("span", {
+    className: "num text-cyan-300"
+  }, challenge, "/10")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "1",
+    max: "10",
+    value: challenge,
+    onChange: function (e) {
+      setChallenge(parseInt(e.target.value, 10));
+    },
+    className: "w-full accent-cyan-400"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-black/30 border border-gray-800 rounded-xl p-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-gray-500"
+  }, "Performance zone"), /*#__PURE__*/React.createElement("div", {
+    className: "text-xl font-bold " + zone.cls
+  }, zone.zone), /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-gray-400 mt-1"
+  }, zone.desc)), /*#__PURE__*/React.createElement("button", {
+    onClick: function () {
+      setView('ritual');
+    },
+    className: "inline-flex items-center gap-2 bg-cyan-500/20 border border-cyan-500/40 text-cyan-200 hover:bg-cyan-500/30 px-5 py-2.5 rounded-lg text-sm font-semibold"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Play",
+    className: "h-4 w-4"
+  }), /*#__PURE__*/React.createElement("span", null, "Start the Flow Ritual"))), view === 'ritual' && /*#__PURE__*/React.createElement("div", {
+    className: "space-y-4"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between text-xs text-gray-400"
+  }, /*#__PURE__*/React.createElement("span", null, "Step ", step + 1, " of ", FLOW_RITUAL.length), /*#__PURE__*/React.createElement("span", {
+    className: "num"
+  }, mmss(cur.duration), " suggested")), /*#__PURE__*/React.createElement("div", {
+    className: "h-1.5 bg-gray-800 rounded-full overflow-hidden"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "h-full bg-cyan-400 transition-all",
+    style: {
+      width: Object.keys(done).length / FLOW_RITUAL.length * 100 + '%'
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "bg-black/30 border border-cyan-800/30 rounded-xl p-5"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: cur.icon,
+    className: "h-5 w-5 text-cyan-400"
+  }), /*#__PURE__*/React.createElement("h3", {
+    className: "font-semibold text-white"
+  }, cur.title)), /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-gray-400 mb-3"
+  }, cur.description), /*#__PURE__*/React.createElement("ul", {
+    className: "space-y-1.5"
+  }, cur.instructions.map(function (t, i) {
+    return /*#__PURE__*/React.createElement("li", {
+      key: i,
+      className: "flex items-start gap-2 text-sm text-gray-300"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "CheckCircle",
+      className: "h-4 w-4 text-cyan-500 mt-0.5"
+    }), /*#__PURE__*/React.createElement("span", null, t));
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-3 flex-wrap"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "num text-3xl font-bold text-cyan-300"
+  }, mmss(Math.max(0, cur.duration - elapsed))), /*#__PURE__*/React.createElement("button", {
+    onClick: function () {
+      setRunning(!running);
+    },
+    className: "inline-flex items-center gap-1.5 bg-gray-800 border border-gray-700 text-gray-200 px-3 py-2 rounded-lg text-sm"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: running ? 'Pause' : 'Play',
+    className: "h-4 w-4"
+  }), /*#__PURE__*/React.createElement("span", null, running ? 'Pause' : 'Start timer')), /*#__PURE__*/React.createElement("button", {
+    onClick: finishStep,
+    className: "inline-flex items-center gap-1.5 bg-cyan-500/20 border border-cyan-500/40 text-cyan-200 px-4 py-2 rounded-lg text-sm font-semibold"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Check",
+    className: "h-4 w-4"
+  }), /*#__PURE__*/React.createElement("span", null, step < FLOW_RITUAL.length - 1 ? 'Done, next step' : 'Finish ritual')), /*#__PURE__*/React.createElement("button", {
+    onClick: reset,
+    className: "text-xs text-gray-500 hover:text-gray-300"
+  }, "Cancel"))), view === 'results' && /*#__PURE__*/React.createElement("div", {
+    className: "space-y-5"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
+    className: "text-sm font-semibold text-white mb-3"
+  }, "How do you feel after the ritual?"), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 md:grid-cols-4 gap-3"
+  }, ['Focus', 'Calmness', 'Confidence', 'Clarity'].map(function (f) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: f
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "block text-xs text-cyan-300 mb-1"
+    }, f), /*#__PURE__*/React.createElement("select", {
+      value: feel[f] || '',
+      onChange: function (e) {
+        const n = Object.assign({}, feel);
+        n[f] = e.target.value;
+        setFeel(n);
+      },
+      className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-2.5 py-1.5 text-sm outline-none"
+    }, /*#__PURE__*/React.createElement("option", {
+      value: ""
+    }, "Select..."), /*#__PURE__*/React.createElement("option", {
+      value: "excellent"
+    }, "Excellent"), /*#__PURE__*/React.createElement("option", {
+      value: "good"
+    }, "Good"), /*#__PURE__*/React.createElement("option", {
+      value: "okay"
+    }, "Okay"), /*#__PURE__*/React.createElement("option", {
+      value: "poor"
+    }, "Poor")));
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-black/30 border border-gray-800 rounded-xl p-5 text-center"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-gray-500"
+  }, "Flow Score"), /*#__PURE__*/React.createElement("div", {
+    className: "num text-5xl font-extrabold text-cyan-300"
+  }, score), /*#__PURE__*/React.createElement("div", {
+    className: "text-sm font-semibold mt-1 " + rec.c
+  }, rec.t), /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-gray-600 mt-1"
+  }, "Zone: ", zone.zone, ritualDone ? ' - ritual completed' : '')), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-3 flex-wrap"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: save,
+    className: "bg-cyan-500/20 border border-cyan-500/40 text-cyan-200 hover:bg-cyan-500/30 px-4 py-2 rounded-lg text-sm font-semibold"
+  }, "Save Session"), /*#__PURE__*/React.createElement("button", {
+    onClick: reset,
+    className: "inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-white"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "RotateCcw",
+    className: "h-4 w-4"
+  }), /*#__PURE__*/React.createElement("span", null, "Start over")), status && /*#__PURE__*/React.createElement("p", {
+    className: "text-xs font-medium " + (status.type === 'error' ? 'text-red-400' : 'text-green-400')
+  }, status.text)))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "History",
+    className: "h-5 w-5 text-gray-400"
+  }), /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Flow Session History")), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-500 mb-4"
+  }, "Your saved flow sessions. Compare the days you ran the ritual against the days you skipped it."), sessions.length === 0 ? /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-gray-600 py-6 text-center"
+  }, "No flow sessions saved yet.") : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4"
+  }, /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Sessions",
+    value: String(sessions.length),
+    color: "text-blue-400"
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Avg Flow Score",
+    value: String(avg(sessions)),
+    color: "text-cyan-300"
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Avg with ritual",
+    value: avg(withR) === null ? '-' : String(avg(withR)),
+    color: "text-green-400"
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Avg without ritual",
+    value: avg(noR) === null ? '-' : String(avg(noR)),
+    color: "text-gray-400"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-end gap-1 h-20 mb-4"
+  }, sessions.slice().reverse().map(function (s) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: s.id,
+      title: s.date + ': ' + s.score,
+      className: "flex-1 rounded-t bg-cyan-500/70",
+      style: {
+        height: Math.max(6, s.score) + '%'
+      }
+    });
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "overflow-x-auto"
+  }, /*#__PURE__*/React.createElement("table", {
+    className: "w-full text-xs"
+  }, /*#__PURE__*/React.createElement("thead", null, /*#__PURE__*/React.createElement("tr", {
+    className: "text-gray-500 border-b border-gray-800"
+  }, /*#__PURE__*/React.createElement("th", {
+    className: "text-left py-1.5 pr-3"
+  }, "Date"), /*#__PURE__*/React.createElement("th", {
+    className: "text-left py-1.5 pr-3"
+  }, "Zone"), /*#__PURE__*/React.createElement("th", {
+    className: "text-left py-1.5 pr-3"
+  }, "Ritual"), /*#__PURE__*/React.createElement("th", {
+    className: "text-left py-1.5 pr-3"
+  }, "Score"), /*#__PURE__*/React.createElement("th", null))), /*#__PURE__*/React.createElement("tbody", null, sessions.slice(0, 15).map(function (s) {
+    return /*#__PURE__*/React.createElement("tr", {
+      key: s.id,
+      className: "border-b border-gray-900"
+    }, /*#__PURE__*/React.createElement("td", {
+      className: "py-1.5 pr-3 text-gray-300 num"
+    }, s.date), /*#__PURE__*/React.createElement("td", {
+      className: "py-1.5 pr-3 text-gray-400"
+    }, s.zone), /*#__PURE__*/React.createElement("td", {
+      className: "py-1.5 pr-3 text-gray-400"
+    }, s.ritual ? 'Completed' : 'Skipped'), /*#__PURE__*/React.createElement("td", {
+      className: "py-1.5 pr-3 font-semibold num text-cyan-300"
+    }, s.score), /*#__PURE__*/React.createElement("td", {
+      className: "py-1.5 text-right"
+    }, /*#__PURE__*/React.createElement("button", {
+      onClick: function () {
+        removeSession(s.id);
+      },
+      className: "text-gray-600 hover:text-red-400"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "Trash2",
+      className: "h-3.5 w-3.5"
+    }))));
+  })))))));
+}
+
+// ===================== Discipline & Psychology Tracker =====================
+const PSYCH_MOODS = ['calm', 'focused', 'confident', 'anxious', 'frustrated', 'overconfident', 'fatigued', 'distracted'];
+const PSYCH_NEGATIVE = ['anxious', 'frustrated', 'overconfident', 'fatigued', 'distracted'];
+const PSYCH_TRIGGERS = ['FOMO', 'Revenge urge', 'Fear of loss', 'Greed', 'Overconfidence', 'Boredom', 'Fatigue', 'Outside stress'];
+function computePsychProfile(accounts, entries, logs) {
+  const ids = {};
+  accounts.forEach(function (a) {
+    ids[a.id] = true;
+  });
+  const traded = entries.filter(function (e) {
+    return ids[e.accountId] && e.tradedToday !== 'no' && (e.trades || []).length > 0;
+  });
+  let postLoss = 0,
+    revenge = 0,
+    oversize = 0,
+    beyondMax = 0,
+    totalTrades = 0;
+  traded.forEach(function (e) {
+    const tr = e.trades || [];
+    const maxT = parseInt(e.dailyPlan && e.dailyPlan.maxTrades, 10);
+    tr.forEach(function (t, i) {
+      totalTrades++;
+      const risk = Math.abs(parseFloat(t.riskAmount) || 0);
+      if (t.expectedRisk && risk > t.expectedRisk * 1.1) oversize++;
+      if (maxT > 0 && i >= maxT) beyondMax++;
+      if (i > 0 && tr[i - 1].result === 'loss') {
+        postLoss++;
+        const prev = Math.abs(parseFloat(tr[i - 1].riskAmount) || 0);
+        if (prev > 0 && risk > prev * 1.1) revenge++;
+      }
+    });
+  });
+  const disc = computeDisciplineScore(accounts, entries);
+  const reflections = entries.filter(function (e) {
+    return ids[e.accountId] && e.reflection && e.reflection.emotionalState;
+  });
+  const negRefl = reflections.filter(function (e) {
+    return ['anxious', 'frustrated', 'excited', 'fatigued'].indexOf(e.reflection.emotionalState) >= 0;
+  }).length;
+  const negLogs = logs.filter(function (l) {
+    return PSYCH_NEGATIVE.indexOf(l.mood) >= 0;
+  }).length;
+  const emoTotal = reflections.length + logs.length;
+  const fearLogs = logs.filter(function (l) {
+    return (l.triggers || []).indexOf('Fear of loss') >= 0;
+  }).length;
+  return {
+    discipline: disc ? disc.score : null,
+    stability: emoTotal > 0 ? 100 - (negRefl + negLogs) / emoTotal * 100 : null,
+    revenge: postLoss > 0 ? revenge / postLoss * 100 : null,
+    greed: totalTrades > 0 ? (oversize + beyondMax) / totalTrades * 100 : null,
+    fear: logs.length > 0 ? fearLogs / logs.length * 100 : null,
+    ruleBreakRate: logs.length > 0 ? logs.filter(function (l) {
+      return l.ruleBreak;
+    }).length / logs.length * 100 : null,
+    trades: totalTrades
+  };
+}
+function PsychologyTracker(props) {
+  const uid = props.uid;
+  const accounts = props.accounts;
+  const entries = props.entries;
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const [logs, setLogs] = useState([]);
+  const [mood, setMood] = useState('calm');
+  const [triggers, setTriggers] = useState([]);
+  const [urge, setUrge] = useState(3);
+  const [ruleBreak, setRuleBreak] = useState(false);
+  const [note, setNote] = useState('');
+  const [status, setStatus] = useState(null);
+  const ref = db.collection('users').doc(uid).collection('psychLogs');
+  useEffect(function () {
+    const unsub = ref.orderBy('ts', 'desc').limit(120).onSnapshot(function (snap) {
+      setLogs(snap.docs.map(function (d) {
+        return Object.assign({
+          id: d.id
+        }, d.data());
+      }));
+    }, function () {});
+    return unsub;
+  }, [uid]);
+  const toggleTrigger = function (t) {
+    setTriggers(triggers.indexOf(t) >= 0 ? triggers.filter(function (x) {
+      return x !== t;
+    }) : triggers.concat([t]));
+  };
+  const save = async function () {
+    try {
+      await ref.add({
+        ts: Date.now(),
+        date: todayStr,
+        mood: mood,
+        triggers: triggers,
+        urge: urge,
+        ruleBreak: ruleBreak,
+        note: note
+      });
+      setTriggers([]);
+      setNote('');
+      setRuleBreak(false);
+      setUrge(3);
+      setMood('calm');
+      setStatus({
+        type: 'ok',
+        text: 'Check-in saved.'
+      });
+    } catch (e) {
+      setStatus({
+        type: 'error',
+        text: 'Could not save: ' + e.message
+      });
+    }
+  };
+  const remove = async function (id) {
+    try {
+      await ref.doc(id).delete();
+    } catch (e) {}
+  };
+  const p = computePsychProfile(accounts, entries, logs);
+  const tile = function (label, v, goodHigh, sub) {
+    const has = v !== null && v !== undefined;
+    const good = has && (goodHigh ? v >= 70 : v <= 20);
+    const mid = has && (goodHigh ? v >= 45 : v <= 40);
+    const c = !has ? 'text-gray-500' : good ? 'text-green-400' : mid ? 'text-yellow-400' : 'text-red-400';
+    return /*#__PURE__*/React.createElement(ProStatTile, {
+      key: label,
+      label: label,
+      value: has ? Math.round(v) + '%' : '-',
+      color: c,
+      sub: sub
+    });
+  };
+  const trigCount = {};
+  logs.forEach(function (l) {
+    (l.triggers || []).forEach(function (t) {
+      trigCount[t] = (trigCount[t] || 0) + 1;
+    });
+  });
+  const trigList = Object.keys(trigCount).sort(function (a, b) {
+    return trigCount[b] - trigCount[a];
+  });
+  const maxTrig = trigList.length ? trigCount[trigList[0]] : 1;
+  const ov = computeOverviewData(accounts, entries);
+  const withBreak = [],
+    noBreak = [];
+  logs.forEach(function (l) {
+    if (ov.byDate[l.date] === undefined) return;
+    (l.ruleBreak ? withBreak : noBreak).push(ov.byDate[l.date]);
+  });
+  const avgA = function (a) {
+    return a.length ? a.reduce(function (s, v) {
+      return s + v;
+    }, 0) / a.length : null;
+  };
+  const advice = [];
+  if (p.revenge !== null && p.revenge > 15) advice.push('Revenge pattern: after losses you sized up ' + Math.round(p.revenge) + '% of the time. Apply the 30-minute rule: close the platform after any loss and keep risk fixed.');
+  if (p.greed !== null && p.greed > 15) advice.push('Overtrading or oversizing on ' + Math.round(p.greed) + '% of trades. Respect your planned number of trades and your locked risk-per-trade.');
+  if (p.fear !== null && p.fear > 25) advice.push('Fear of loss shows up in ' + Math.round(p.fear) + '% of check-ins. Pre-define the stop and size small enough that a loss is just a cost of doing business.');
+  if (p.stability !== null && p.stability < 60) advice.push('Emotional stability is ' + Math.round(p.stability) + '%. Run the Flow State ritual before sessions and check the Mental Check verdict before trading.');
+  if (trigList.length && trigCount[trigList[0]] >= 3) advice.push('Your most frequent trigger is "' + trigList[0] + '" (' + trigCount[trigList[0]] + 'x). Write a one-line if-then rule for it and put it in tomorrow\'s plan.');
+  if (p.ruleBreakRate !== null && p.ruleBreakRate > 25) advice.push('You reported breaking a rule in ' + Math.round(p.ruleBreakRate) + '% of check-ins. Pick one rule to fix this week instead of all of them.');
+  if (advice.length === 0) advice.push(logs.length < 3 ? 'Log a few daily check-ins and trades to unlock personal pattern analysis.' : 'No red flags in your current data. Keep logging daily to hold the standard.');
+  return /*#__PURE__*/React.createElement("div", {
+    className: "space-y-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bg-gradient-to-br from-rose-950/30 to-black border border-rose-800/40 rounded-2xl p-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "HeartPulse",
+    className: "h-5 w-5 text-rose-400"
+  }), /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Discipline & Psychology Tracker")), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-500 mb-4"
+  }, "Your behavioral profile, built from your trades, reflections and daily check-ins. Lower is better for Revenge, Greed and Fear; higher is better for Discipline and Emotional Stability."), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 lg:grid-cols-3 gap-3"
+  }, tile('Discipline Index', p.discipline, true, 'From your Discipline score'), tile('Emotional Stability', p.stability, true, 'Calm vs. charged states'), tile('Revenge Index', p.revenge, false, 'Size-ups right after a loss'), tile('Greed Index', p.greed, false, 'Oversized or beyond-plan trades'), tile('Fear Index', p.fear, false, 'Check-ins with fear of loss'), tile('Rule-Break Rate', p.ruleBreakRate, false, 'Check-ins where you broke a rule'))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "Sparkles",
+    className: "h-5 w-5 text-yellow-400"
+  }), /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Personal Advice")), /*#__PURE__*/React.createElement("ul", {
+    className: "space-y-2 mt-3"
+  }, advice.map(function (a, i) {
+    return /*#__PURE__*/React.createElement("li", {
+      key: i,
+      className: "flex items-start gap-2 text-sm text-gray-300"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "ChevronRight",
+      className: "h-4 w-4 text-yellow-400 mt-0.5"
+    }), /*#__PURE__*/React.createElement("span", null, a));
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "PenLine",
+    className: "h-5 w-5 text-rose-400"
+  }), /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Psychology Check-In")), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-500 mb-4"
+  }, "A 30-second honest log of how you felt while trading today."), /*#__PURE__*/React.createElement("label", {
+    className: "block text-xs text-gray-500 mb-1.5"
+  }, "Main emotional state"), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap gap-2 mb-4"
+  }, PSYCH_MOODS.map(function (m) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: m,
+      onClick: function () {
+        setMood(m);
+      },
+      className: "px-3 py-1.5 rounded-lg text-xs capitalize border " + (mood === m ? 'bg-rose-500/20 border-rose-500/50 text-rose-200' : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-gray-200')
+    }, m);
+  })), /*#__PURE__*/React.createElement("label", {
+    className: "block text-xs text-gray-500 mb-1.5"
+  }, "Triggers you felt"), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap gap-2 mb-4"
+  }, PSYCH_TRIGGERS.map(function (t) {
+    const on = triggers.indexOf(t) >= 0;
+    return /*#__PURE__*/React.createElement("button", {
+      key: t,
+      onClick: function () {
+        toggleTrigger(t);
+      },
+      className: "px-3 py-1.5 rounded-lg text-xs border " + (on ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-200' : 'bg-gray-800 border-gray-700 text-gray-400 hover:text-gray-200')
+    }, t);
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "grid md:grid-cols-2 gap-4 mb-4"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "flex justify-between text-xs mb-1"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-gray-400"
+  }, "Urge to break your plan"), /*#__PURE__*/React.createElement("span", {
+    className: "num text-rose-300"
+  }, urge, "/10")), /*#__PURE__*/React.createElement("input", {
+    type: "range",
+    min: "1",
+    max: "10",
+    value: urge,
+    onChange: function (e) {
+      setUrge(parseInt(e.target.value, 10));
+    },
+    className: "w-full accent-rose-400"
+  })), /*#__PURE__*/React.createElement("label", {
+    className: "flex items-center gap-2 text-sm text-gray-300 cursor-pointer"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: ruleBreak,
+    onChange: function (e) {
+      setRuleBreak(e.target.checked);
+    },
+    className: "accent-rose-400 h-4 w-4"
+  }), /*#__PURE__*/React.createElement("span", null, "I broke one of my rules today"))), /*#__PURE__*/React.createElement("textarea", {
+    value: note,
+    onChange: function (e) {
+      setNote(e.target.value);
+    },
+    placeholder: "What happened, and what will you do differently?",
+    className: "w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm h-16 outline-none resize-none mb-3"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-3"
+  }, /*#__PURE__*/React.createElement("button", {
+    onClick: save,
+    className: "bg-rose-500/20 border border-rose-500/40 text-rose-200 hover:bg-rose-500/30 px-4 py-2 rounded-lg text-sm font-semibold"
+  }, "Save Check-In"), status && /*#__PURE__*/React.createElement("p", {
+    className: "text-xs font-medium " + (status.type === 'error' ? 'text-red-400' : 'text-green-400')
+  }, status.text))), /*#__PURE__*/React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "History",
+    className: "h-5 w-5 text-gray-400"
+  }), /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Pattern Analysis & History")), logs.length === 0 ? /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-gray-600 py-6 text-center"
+  }, "No psychology check-ins yet.") : /*#__PURE__*/React.createElement("div", {
+    className: "space-y-5 mt-3"
+  }, trigList.length > 0 && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "text-xs text-gray-500 mb-2"
+  }, "Most frequent triggers"), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, trigList.map(function (t) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: t
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex justify-between text-xs mb-0.5"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-300"
+    }, t), /*#__PURE__*/React.createElement("span", {
+      className: "num text-gray-400"
+    }, trigCount[t], "x")), /*#__PURE__*/React.createElement("div", {
+      className: "h-1.5 bg-gray-800 rounded-full overflow-hidden"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "h-full bg-yellow-500/80 rounded-full",
+      style: {
+        width: trigCount[t] / maxTrig * 100 + '%'
+      }
+    })));
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 gap-3"
+  }, /*#__PURE__*/React.createElement(MiniStat, {
+    label: 'Avg day P&L after a rule break (' + withBreak.length + ' days)',
+    value: avgA(withBreak) === null ? '-' : fmt(avgA(withBreak)),
+    color: avgA(withBreak) === null ? 'text-gray-500' : avgA(withBreak) >= 0 ? 'text-green-400' : 'text-red-400'
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: 'Avg day P&L when disciplined (' + noBreak.length + ' days)',
+    value: avgA(noBreak) === null ? '-' : fmt(avgA(noBreak)),
+    color: avgA(noBreak) === null ? 'text-gray-500' : avgA(noBreak) >= 0 ? 'text-green-400' : 'text-red-400'
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, logs.slice(0, 20).map(function (l) {
+    return /*#__PURE__*/React.createElement("div", {
+      key: l.id,
+      className: "bg-black/30 border border-gray-800 rounded-lg p-3 flex items-start justify-between gap-3"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "min-w-0"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center gap-2 flex-wrap text-xs"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "num text-gray-300"
+    }, l.date), /*#__PURE__*/React.createElement("span", {
+      className: "capitalize px-2 py-0.5 rounded-full bg-gray-800 text-gray-300"
+    }, l.mood), /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-500"
+    }, "urge ", l.urge, "/10"), l.ruleBreak && /*#__PURE__*/React.createElement("span", {
+      className: "px-2 py-0.5 rounded-full bg-red-500/15 text-red-300 border border-red-500/30"
+    }, "rule broken"), (l.triggers || []).map(function (t) {
+      return /*#__PURE__*/React.createElement("span", {
+        key: t,
+        className: "px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-300"
+      }, t);
+    })), l.note && /*#__PURE__*/React.createElement("p", {
+      className: "text-xs text-gray-400 mt-1.5"
+    }, l.note)), /*#__PURE__*/React.createElement("button", {
+      onClick: function () {
+        remove(l.id);
+      },
+      className: "text-gray-600 hover:text-red-400 flex-shrink-0"
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "Trash2",
+      className: "h-3.5 w-3.5"
+    })));
+  })))));
+}
+
+// ===================== Historical Plan =====================
+function HistoricalPlan(props) {
+  const entries = props.entries;
+  const [month, setMonth] = useState('all');
+  const [filter, setFilter] = useState('all');
+  const [open, setOpen] = useState(null);
+  const planned = entries.filter(function (e) {
+    const p = e.dailyPlan;
+    return p && (p.targetProfit || p.maxTrades || p.maxLossPerDay || p.notes);
+  }).sort(function (a, b) {
+    return a.date < b.date ? 1 : -1;
+  });
+  const evalDay = function (e) {
+    const p = e.dailyPlan || {};
+    const tr = e.tradedToday === 'no' ? [] : e.trades || [];
+    const pnl = tr.reduce(function (s, t) {
+      return s + tradeSignedPnl(t);
+    }, 0);
+    const maxT = parseInt(p.maxTrades, 10);
+    const cap = parseFloat(p.maxLossPerDay);
+    const tgt = parseFloat(p.targetProfit);
+    const withinTrades = !(maxT > 0) || tr.length <= maxT;
+    const withinLoss = !(cap > 0) || pnl >= -cap * 1.1;
+    return {
+      tr: tr,
+      pnl: pnl,
+      withinTrades: withinTrades,
+      withinLoss: withinLoss,
+      followed: withinTrades && withinLoss,
+      targetHit: tgt > 0 ? pnl >= tgt : null
+    };
+  };
+  const months = Array.from(new Set(planned.map(function (e) {
+    return (e.date || '').slice(0, 7);
+  })));
+  const rows = planned.filter(function (e) {
+    if (month !== 'all' && (e.date || '').slice(0, 7) !== month) return false;
+    const ev = evalDay(e);
+    if (filter === 'followed') return ev.followed;
+    if (filter === 'broken') return !ev.followed;
+    return true;
+  });
+  const evs = planned.map(evalDay);
+  const followedPct = evs.length ? Math.round(evs.filter(function (v) {
+    return v.followed;
+  }).length / evs.length * 100) : null;
+  const tg = evs.filter(function (v) {
+    return v.targetHit !== null;
+  });
+  const targetPct = tg.length ? Math.round(tg.filter(function (v) {
+    return v.targetHit;
+  }).length / tg.length * 100) : null;
+  const fol = evs.filter(function (v) {
+      return v.followed;
+    }),
+    brk = evs.filter(function (v) {
+      return !v.followed;
+    });
+  const avgP = function (a) {
+    return a.length ? a.reduce(function (s, v) {
+      return s + v.pnl;
+    }, 0) / a.length : null;
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-1"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "History",
+    className: "h-5 w-5 text-purple-400"
+  }), /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Historical Plan")), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-500 mb-4"
+  }, "Every past plan next to what actually happened. Open a day to see its trades, reflection and mental check."), planned.length === 0 ? /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-gray-600 py-6 text-center"
+  }, "No logged days with a plan yet. Save a Daily Plan, then log your entry to build your plan history.") : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4"
+  }, /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Days planned",
+    value: String(planned.length),
+    color: "text-blue-400"
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Plan followed",
+    value: followedPct === null ? '-' : followedPct + '%',
+    color: followedPct >= 70 ? 'text-green-400' : 'text-yellow-400'
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Target hit rate",
+    value: targetPct === null ? '-' : targetPct + '%',
+    color: "text-purple-400"
+  }), /*#__PURE__*/React.createElement(MiniStat, {
+    label: "Avg P&L: followed / broken",
+    value: (avgP(fol) === null ? '-' : fmt(avgP(fol))) + ' / ' + (avgP(brk) === null ? '-' : fmt(avgP(brk))),
+    color: "text-white"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap gap-2 mb-4"
+  }, /*#__PURE__*/React.createElement("select", {
+    value: month,
+    onChange: function (e) {
+      setMonth(e.target.value);
+    },
+    className: "bg-gray-800 border border-gray-700 text-gray-200 rounded-lg px-2.5 py-1.5 text-xs outline-none"
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "all"
+  }, "All months"), months.map(function (m) {
+    return /*#__PURE__*/React.createElement("option", {
+      key: m,
+      value: m
+    }, m);
+  })), [['all', 'All days'], ['followed', 'Plan followed'], ['broken', 'Plan broken']].map(function (f) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: f[0],
+      onClick: function () {
+        setFilter(f[0]);
+      },
+      className: "px-3 py-1.5 rounded-lg text-xs border " + (filter === f[0] ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-300' : 'bg-gray-800 border-gray-700 text-gray-400')
+    }, f[1]);
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, rows.slice(0, 60).map(function (e) {
+    const ev = evalDay(e),
+      p = e.dailyPlan || {};
+    const isOpen = open === e.id;
+    return /*#__PURE__*/React.createElement("div", {
+      key: e.id,
+      className: "bg-black/30 border border-gray-800 rounded-xl"
+    }, /*#__PURE__*/React.createElement("button", {
+      onClick: function () {
+        setOpen(isOpen ? null : e.id);
+      },
+      className: "w-full text-left p-3 flex items-center justify-between gap-3 flex-wrap"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center gap-3 flex-wrap"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "num text-sm text-gray-200"
+    }, e.date), /*#__PURE__*/React.createElement("span", {
+      className: "text-[11px] px-2 py-0.5 rounded-full border " + (ev.followed ? 'bg-green-500/10 text-green-300 border-green-500/30' : 'bg-red-500/10 text-red-300 border-red-500/30')
+    }, ev.followed ? 'Plan followed' : 'Plan broken'), ev.targetHit !== null && /*#__PURE__*/React.createElement("span", {
+      className: "text-[11px] " + (ev.targetHit ? 'text-green-400' : 'text-gray-500')
+    }, ev.targetHit ? 'Target hit' : 'Target missed')), /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center gap-4 text-xs"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-500"
+    }, "Plan: ", p.plannedTrades || '-', " trades, target ", p.targetProfit ? fmt(parseFloat(p.targetProfit)) : '-'), /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-500"
+    }, "Actual: ", ev.tr.length, " trades"), /*#__PURE__*/React.createElement("span", {
+      className: "num font-semibold " + (ev.pnl >= 0 ? 'text-green-400' : 'text-red-400')
+    }, fmt(ev.pnl)), /*#__PURE__*/React.createElement(Icon, {
+      name: isOpen ? 'ChevronUp' : 'ChevronDown',
+      className: "h-4 w-4 text-gray-500"
+    }))), isOpen && /*#__PURE__*/React.createElement("div", {
+      className: "border-t border-gray-800 p-3 space-y-3 text-xs text-gray-400"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "grid grid-cols-2 md:grid-cols-4 gap-2"
+    }, /*#__PURE__*/React.createElement("div", null, "Risk / trade: ", /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-200 num"
+    }, p.riskAmount ? fmt(parseFloat(p.riskAmount)) : '-')), /*#__PURE__*/React.createElement("div", null, "Max trades: ", /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-200 num"
+    }, p.maxTrades || '-')), /*#__PURE__*/React.createElement("div", null, "R:R plan: ", /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-200 num"
+    }, p.riskRewardRatio || '-')), /*#__PURE__*/React.createElement("div", null, "Max loss / day: ", /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-200 num"
+    }, p.maxLossPerDay ? fmt(parseFloat(p.maxLossPerDay)) : '-')), /*#__PURE__*/React.createElement("div", null, "Session: ", /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-200"
+    }, p.startTime || '-', " to ", p.endTime || '-')), /*#__PURE__*/React.createElement("div", null, "Mental check: ", /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-200 num"
+    }, e.mentalCheck && mentalCheckTotal(e.mentalCheck) ? mentalCheckTotal(e.mentalCheck) + '/40' : '-')), /*#__PURE__*/React.createElement("div", null, "Within max trades: ", /*#__PURE__*/React.createElement("span", {
+      className: ev.withinTrades ? 'text-green-400' : 'text-red-400'
+    }, ev.withinTrades ? 'Yes' : 'No')), /*#__PURE__*/React.createElement("div", null, "Within loss cap: ", /*#__PURE__*/React.createElement("span", {
+      className: ev.withinLoss ? 'text-green-400' : 'text-red-400'
+    }, ev.withinLoss ? 'Yes' : 'No'))), p.notes && /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-500"
+    }, "Plan notes:"), " ", /*#__PURE__*/React.createElement("span", {
+      className: "text-gray-300"
+    }, p.notes)), ev.tr.length > 0 && /*#__PURE__*/React.createElement("div", null, ev.tr.map(function (t, i) {
+      return /*#__PURE__*/React.createElement("div", {
+        key: i,
+        className: "flex justify-between border-b border-gray-900 py-1"
+      }, /*#__PURE__*/React.createElement("span", null, "Trade ", i + 1, t.direction ? ' - ' + t.direction : '', t.setup ? ' - ' + t.setup : ''), /*#__PURE__*/React.createElement("span", {
+        className: "num " + (t.result === 'win' ? 'text-green-400' : 'text-red-400')
+      }, fmt(tradeSignedPnl(t))));
+    })), e.reflection && (e.reflection.wentWrong || e.reflection.wentRight || e.reflection.lessonsLearned) && /*#__PURE__*/React.createElement("div", {
+      className: "space-y-1"
+    }, e.reflection.wentRight && /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("span", {
+      className: "text-green-400"
+    }, "Went right:"), " ", e.reflection.wentRight), e.reflection.wentWrong && /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("span", {
+      className: "text-red-400"
+    }, "Went wrong:"), " ", e.reflection.wentWrong), e.reflection.lessonsLearned && /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("span", {
+      className: "text-yellow-400"
+    }, "Lesson:"), " ", e.reflection.lessonsLearned))));
+  }), rows.length === 0 && /*#__PURE__*/React.createElement("p", {
+    className: "text-sm text-gray-600 py-4 text-center"
+  }, "Nothing matches this filter."))));
+}
+
+// ===================== Pre-Session Go / No-Go =====================
+const GONOGO_ITEMS = ['Higher-timeframe bias and key levels are marked', 'News and events for today are checked', 'My risk per trade is my locked amount', 'My daily loss cap is written down', 'Stop and target are defined before any entry', 'I will take A+ setups from my plan only'];
+function PreSessionGoNoGo(props) {
+  const key = 'mmm-gonogo-' + props.accountId + '-' + new Date().toISOString().slice(0, 10);
+  const [checked, setChecked] = useState(function () {
+    try {
+      return JSON.parse(localStorage.getItem(key) || '[]');
+    } catch (e) {
+      return [];
+    }
+  });
+  const toggle = function (i) {
+    const n = checked.indexOf(i) >= 0 ? checked.filter(function (x) {
+      return x !== i;
+    }) : checked.concat([i]);
+    setChecked(n);
+    try {
+      localStorage.setItem(key, JSON.stringify(n));
+    } catch (e) {}
+  };
+  const r = mentalReadiness(props.mentalCheck);
+  const all = checked.length === GONOGO_ITEMS.length;
+  const ready = r && r.pct >= 60;
+  const go = all && ready;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "rounded-2xl border p-6 " + (go ? 'border-green-500/40 bg-green-500/5' : 'border-gray-800 bg-gradient-to-br from-gray-900 to-black')
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-between gap-3 flex-wrap mb-1"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2"
+  }, /*#__PURE__*/React.createElement(Icon, {
+    name: "ShieldCheck",
+    className: "h-5 w-5 " + (go ? 'text-green-400' : 'text-yellow-400')
+  }), /*#__PURE__*/React.createElement("h2", {
+    className: "text-lg font-semibold text-white"
+  }, "Pre-Session Go / No-Go")), /*#__PURE__*/React.createElement("span", {
+    className: "text-xs font-bold px-3 py-1 rounded-full border " + (go ? 'bg-green-500/15 text-green-300 border-green-500/40' : 'bg-red-500/10 text-red-300 border-red-500/30')
+  }, go ? 'GO' : 'NOT YET')), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs text-gray-500 mb-4"
+  }, "Tick every item and keep your mental readiness at 60% or better. Resets every day."), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2"
+  }, GONOGO_ITEMS.map(function (t, i) {
+    return /*#__PURE__*/React.createElement("label", {
+      key: i,
+      className: "flex items-center gap-2.5 text-sm text-gray-300 cursor-pointer"
+    }, /*#__PURE__*/React.createElement("input", {
+      type: "checkbox",
+      checked: checked.indexOf(i) >= 0,
+      onChange: function () {
+        toggle(i);
+      },
+      className: "accent-green-400 h-4 w-4"
+    }), /*#__PURE__*/React.createElement("span", null, t));
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "mt-4 text-xs text-gray-400"
+  }, "Mental readiness: ", /*#__PURE__*/React.createElement("span", {
+    className: "font-semibold " + (ready ? 'text-green-400' : 'text-red-400')
+  }, r ? r.pct + '% - ' + r.verdict : 'not set')));
+}
 function OverviewStats(props) {
   const accounts = props.accounts;
   const entries = props.entries;
@@ -6810,7 +9527,33 @@ function MentalCheckFields(props) {
     }), /*#__PURE__*/React.createElement("p", {
       className: "text-[11px] text-gray-600"
     }, s.sub));
-  }));
+  }), props.showExtras && /*#__PURE__*/React.createElement("div", {
+    className: "pt-3 mt-1 border-t border-gray-800 space-y-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-xs font-semibold text-teal-300"
+  }, "Body & State"), MENTAL_EXTRA_SLIDERS.map(function (s) {
+    const v = value[s.key] === undefined ? s.def : value[s.key];
+    return /*#__PURE__*/React.createElement("div", {
+      key: s.key
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center justify-between mb-0.5"
+    }, /*#__PURE__*/React.createElement("label", {
+      className: "text-xs text-gray-400"
+    }, s.label), /*#__PURE__*/React.createElement("span", {
+      className: "text-xs text-yellow-400 num"
+    }, v, "/10")), /*#__PURE__*/React.createElement("input", {
+      type: "range",
+      min: "1",
+      max: "10",
+      value: v,
+      onChange: function (e) {
+        onChange(s.key, parseInt(e.target.value, 10));
+      },
+      className: "w-full accent-teal-400"
+    }), /*#__PURE__*/React.createElement("p", {
+      className: "text-[11px] text-gray-600"
+    }, s.sub));
+  })));
 }
 
 // Flat version of the Daily Plan fields (no Risk Per Trade field - that's
@@ -7051,7 +9794,8 @@ function MMMJournal(props) {
   const setLanguage = props.setLanguage;
   const [accountFilter, setAccountFilter] = useState('active');
   const [viewMode, setViewMode] = useState('dollars');
-  const [activePage, setActivePage] = useState('overview');
+  const [activePage, setActivePage] = useState(props.wantsDiagnostic ? 'discipline' : 'overview');
+  const [diagnostic, setDiagnostic] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [entries, setEntries] = useState([]);
   const [activeAccountId, setActiveAccountId] = useState(null);
@@ -7087,6 +9831,54 @@ function MMMJournal(props) {
   const [entrySavedToast, setEntrySavedToast] = useState('');
   const accountsRef = db.collection('users').doc(user.uid).collection('accounts');
   const entriesRef = db.collection('users').doc(user.uid).collection('entries');
+
+  // The free Trading Discipline Test hands its result over in localStorage;
+  // here it's attached to the signed-in account (Firestore, with a local
+  // fallback) so it lives in the journal instead of only in one browser.
+  useEffect(function () {
+    const docRef = db.collection('users').doc(user.uid).collection('profile').doc('diagnostic');
+    const localKey = 'mmm-diagnostic-saved-' + user.uid;
+    let pending = null;
+    try {
+      pending = JSON.parse(localStorage.getItem('mmm-diagnostic-pending') || 'null');
+    } catch (e) {}
+    let cancelled = false;
+    (async function () {
+      let existing = null;
+      try {
+        const snap = await docRef.get();
+        if (snap.exists) existing = snap.data();
+      } catch (e) {}
+      if (!existing) {
+        try {
+          existing = JSON.parse(localStorage.getItem(localKey) || 'null');
+        } catch (e) {}
+      }
+      if (pending && pending.score !== undefined) {
+        const history = (existing && existing.history || []).concat([{
+          ts: pending.ts,
+          score: pending.score
+        }]).slice(-12);
+        const merged = Object.assign({}, pending, {
+          history: history
+        });
+        try {
+          localStorage.setItem(localKey, JSON.stringify(merged));
+        } catch (e) {}
+        try {
+          await docRef.set(merged);
+        } catch (e) {}
+        try {
+          localStorage.removeItem('mmm-diagnostic-pending');
+        } catch (e) {}
+        existing = merged;
+      }
+      if (!cancelled) setDiagnostic(existing);
+    })();
+    return function () {
+      cancelled = true;
+    };
+  }, [user.uid]);
   useEffect(function () {
     if (!entrySavedToast) return;
     const t = setTimeout(function () {
@@ -8184,13 +10976,17 @@ function MMMJournal(props) {
   }, "Target"), /*#__PURE__*/React.createElement("div", {
     className: "num text-white font-semibold"
   }, fmt(activeAccount.profitTarget))))), /*#__PURE__*/React.createElement(SystemExplainer, null)), accounts.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    className: "space-y-6"
+  }, diagnostic && /*#__PURE__*/React.createElement(DiagnosticResultCard, {
+    result: diagnostic
+  }), /*#__PURE__*/React.createElement("div", {
     className: "text-center py-20 border border-dashed border-gray-700 rounded-2xl"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "Shield",
     className: "h-10 w-10 text-gray-600 mx-auto mb-3"
   }), /*#__PURE__*/React.createElement("p", {
     className: "text-gray-500"
-  }, "No accounts yet. Add one to start tracking your buffer.")) : !shouldShowAccountDetail ? /*#__PURE__*/React.createElement("div", {
+  }, "No accounts yet. Add one to start tracking your buffer."))) : !shouldShowAccountDetail ? /*#__PURE__*/React.createElement("div", {
     className: "text-center py-20 border border-dashed border-gray-700 rounded-2xl"
   }, /*#__PURE__*/React.createElement(Icon, {
     name: "Shield",
@@ -8358,7 +11154,10 @@ function MMMJournal(props) {
     account: activeAccount,
     riskPerTrade: effectiveRiskPerTrade,
     totalPnl: totalPnl
-  })), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement(ProStatsPanel, {
+    accounts: accountsForOverview,
+    entries: entries
+  }), /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-gray-900 to-black border border-gray-800 rounded-2xl p-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "flex items-center justify-between mb-4 flex-wrap gap-2"
@@ -8600,12 +11399,23 @@ function MMMJournal(props) {
     className: "bg-yellow-500/20 border border-yellow-500/40 text-yellow-300 hover:bg-yellow-500/30 px-4 py-2 rounded-lg text-sm font-semibold transition"
   }, "Save Daily Plan"), dailyPlanTemplateStatus && /*#__PURE__*/React.createElement("p", {
     className: "text-xs font-medium " + (dailyPlanTemplateStatus.type === 'error' ? 'text-red-400' : 'text-green-400')
-  }, dailyPlanTemplateStatus.text))), /*#__PURE__*/React.createElement(TradeBudgetReference, {
+  }, dailyPlanTemplateStatus.text))), /*#__PURE__*/React.createElement(PreSessionGoNoGo, {
+    accountId: activeAccount.id,
+    mentalCheck: mentalCheckDraft
+  }), /*#__PURE__*/React.createElement(TradeBudgetReference, {
     buffer: currentBuffer,
     systemMaxRisk: riskPerTrade,
     onApply: handleChangeRiskTolerance,
     locked: toleranceLocked
-  })), activePage === 'mentalcheck' && activeAccount && /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement(HistoricalPlan, {
+    entries: accountEntries
+  })), activePage === 'flowstate' && /*#__PURE__*/React.createElement(FlowStateTraining, {
+    uid: user.uid
+  }), activePage === 'psychology' && /*#__PURE__*/React.createElement(PsychologyTracker, {
+    uid: user.uid,
+    accounts: nonPaperAccounts,
+    entries: nonPaperEntries
+  }), activePage === 'mentalcheck' && activeAccount && /*#__PURE__*/React.createElement("div", {
     className: "space-y-6"
   }, /*#__PURE__*/React.createElement("div", {
     className: "bg-gradient-to-br from-teal-950/40 to-black border border-teal-800/40 rounded-2xl p-6"
@@ -8620,8 +11430,13 @@ function MMMJournal(props) {
     className: "text-xs text-gray-500 mb-4"
   }, todaysEntryForAccount ? "Today's entry is already logged - this updates its mental check directly." : "Fill this out before you start trading today. It'll carry over automatically when you log today's Daily Log entry."), /*#__PURE__*/React.createElement(MentalCheckFields, {
     value: mentalCheckDraft,
-    onChange: updateMentalCheckDraft
+    onChange: updateMentalCheckDraft,
+    showExtras: true
   }), /*#__PURE__*/React.createElement("div", {
+    className: "mt-4"
+  }, /*#__PURE__*/React.createElement(MentalReadinessPanel, {
+    value: mentalCheckDraft
+  })), /*#__PURE__*/React.createElement("div", {
     className: "flex items-center gap-3 mt-4"
   }, /*#__PURE__*/React.createElement("button", {
     onClick: handleSaveMentalCheck,
@@ -8639,7 +11454,11 @@ function MMMJournal(props) {
     className: "text-lg font-semibold text-white"
   }, "History")), /*#__PURE__*/React.createElement("p", {
     className: "text-xs text-gray-500 mb-4"
-  }, "The trend over time: market awareness, risk respect, humility and professional mindset, each out of 10."), function () {
+  }, "The trend over time: market awareness, risk respect, humility and professional mindset, each out of 10."), /*#__PURE__*/React.createElement("div", {
+    className: "mb-5"
+  }, /*#__PURE__*/React.createElement(MentalInsights, {
+    entries: accountEntries
+  })), function () {
     const withMc = accountEntries.filter(function (e) {
       return e.mentalCheck && mentalCheckTotal(e.mentalCheck) > 0;
     }).sort(function (a, b) {
@@ -8898,6 +11717,8 @@ function MMMJournal(props) {
     account: activeAccount,
     accountEntries: accountEntries,
     bufferHistory: bufferHistory
+  }), /*#__PURE__*/React.createElement(DiagnosticResultCard, {
+    result: diagnostic
   }), /*#__PURE__*/React.createElement(DisciplineChecklistCard, {
     accounts: nonPaperAccounts,
     entries: nonPaperEntries
@@ -9928,6 +12749,20 @@ function App() {
       return false;
     }
   }();
+  const wantsDiagnostic = function () {
+    try {
+      return new URLSearchParams(window.location.search).get('diagnostic') === '1';
+    } catch (e) {
+      return false;
+    }
+  }();
+  const wantsSignup = function () {
+    try {
+      return new URLSearchParams(window.location.search).get('mode') === 'signup';
+    } catch (e) {
+      return false;
+    }
+  }();
   useEffect(function () {
     const unsub = auth.onAuthStateChanged(function (u) {
       setUser(u);
@@ -9965,11 +12800,14 @@ function App() {
   return user ? /*#__PURE__*/React.createElement(MMMJournal, {
     user: user,
     language: language,
-    setLanguage: setLanguage
+    setLanguage: setLanguage,
+    wantsDiagnostic: wantsDiagnostic
   }) : /*#__PURE__*/React.createElement(AuthScreen, {
     language: language,
     setLanguage: setLanguage,
-    wantsCourse: wantsCourse
+    wantsCourse: wantsCourse,
+    wantsSignup: wantsSignup,
+    fromDiagnostic: wantsDiagnostic
   });
 }
 const rootEl = ReactDOM.createRoot(document.getElementById('root'));

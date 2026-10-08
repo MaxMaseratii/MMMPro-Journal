@@ -60,9 +60,9 @@
 
   <!-- INTRO -->
   <section id="screen-intro" class="screen active fade-in">
-    <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-5" style="background:hsla(180,70%,55%,0.12); color:var(--mmm-tiffany-light); border:1px solid hsla(180,70%,55%,0.3);">Free &middot; 2 Minutes &middot; No Signup</div>
+    <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-5" style="background:hsla(180,70%,55%,0.12); color:var(--mmm-tiffany-light); border:1px solid hsla(180,70%,55%,0.3);">Free &middot; 2 Minutes &middot; Free Account Saves Results</div>
     <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight mb-4">What's Actually Costing You Money?</h1>
-    <p class="text-gray-400 leading-relaxed mb-6">Twenty honest yes/no questions on your stop-loss habits, revenge trading, risk, planning and execution. No account needed, nothing is sent anywhere - the scoring runs right here in your browser.</p>
+    <p class="text-gray-400 leading-relaxed mb-6">Twenty honest yes/no questions on your stop-loss habits, revenge trading, risk, planning and execution. Take it free, no account needed. Your score, profile and personal advice are saved to your free MMM Pro Journal account, so you can track your discipline over time.</p>
     <p class="text-gray-400 leading-relaxed mb-8">Answer how you actually trade, not how you wish you traded. The MMM method is built on one idea: <span class="text-white font-semibold">the plan isn't the problem, the departures from it are.</span> This finds yours.</p>
     <button onclick="startQuiz()" class="w-full sm:w-auto font-bold text-black px-8 py-4 rounded-xl text-lg shadow-2xl hover:scale-[1.02] transition" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Start the Test</button>
   </section>
@@ -86,47 +86,35 @@
     <button id="q-back" onclick="goBack()" class="mt-8 text-sm text-gray-500 hover:text-gray-300 transition">&larr; Previous question</button>
   </section>
 
-  <!-- RESULTS -->
+  <!-- RESULT GATE: results live inside the journal account -->
   <section id="screen-results" class="screen fade-in">
-    <div class="text-center mb-10">
-      <p class="text-sm text-gray-500 mb-2">Your Trading Discipline Score</p>
-      <div id="score-big" class="text-6xl sm:text-7xl font-extrabold num mb-2">--%</div>
-      <p id="score-band" class="text-lg font-bold mb-1"></p>
-      <p id="score-archetype" class="text-gray-400">Your profile: <span id="archetype-label" class="font-semibold text-white"></span></p>
-    </div>
-
-    <div class="grid sm:grid-cols-2 gap-4 mb-8">
-      <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-5">
-        <p class="text-xs text-gray-500 mb-1">Strongest Area</p>
-        <p id="strong-area" class="font-bold mb-1" style="color:var(--mmm-green);"></p>
-        <p id="strong-note" class="text-xs text-gray-400 leading-relaxed"></p>
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center h-16 w-16 rounded-full mb-5" style="background:hsla(45,100%,55%,0.12); border:1px solid hsla(45,100%,55%,0.35);">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--mmm-gold-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-8 w-8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </div>
-      <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-5">
-        <p class="text-xs text-gray-500 mb-1">Biggest Leak</p>
-        <p id="weak-area" class="font-bold mb-1" style="color:var(--mmm-red);"></p>
-        <p id="weak-note" class="text-xs text-gray-400 leading-relaxed"></p>
+      <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">Your result is ready</h2>
+      <p class="text-gray-400 leading-relaxed max-w-lg mx-auto">Create a free account or sign in to unlock your Trading Discipline Score, your trader profile and your personal advice. They are saved inside your MMM Pro Journal.</p>
+    </div>
+    <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-6 mb-8 relative overflow-hidden">
+      <div class="text-center select-none" style="filter:blur(7px);" aria-hidden="true">
+        <div class="text-6xl font-extrabold num mb-2">--%</div>
+        <p class="text-lg font-bold mb-4">Your profile</p>
+        <div class="space-y-3 max-w-sm mx-auto">
+          <div class="h-2 bg-gray-700 rounded-full"></div><div class="h-2 bg-gray-700 rounded-full w-3/4"></div><div class="h-2 bg-gray-700 rounded-full w-1/2"></div>
+        </div>
       </div>
     </div>
-
-    <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-6 mb-8">
-      <h3 class="font-bold mb-4">Score by Category</h3>
-      <div id="category-bars" class="space-y-4"></div>
+    <ul class="text-sm text-gray-300 space-y-2 mb-8 max-w-md mx-auto">
+      <li>&bull; Your Discipline Score and band</li>
+      <li>&bull; Your trader archetype and biggest leak</li>
+      <li>&bull; Score by category and what to watch</li>
+      <li>&bull; Kept in your journal's Discipline page</li>
+    </ul>
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a href="../journal/?diagnostic=1&amp;mode=signup" class="w-full sm:w-auto text-center font-bold text-black px-7 py-3.5 rounded-xl transition hover:scale-[1.02]" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Create Free Account to See Results</a>
+      <a href="../journal/?diagnostic=1" class="w-full sm:w-auto text-center font-bold px-7 py-3.5 rounded-xl border-2 transition" style="border-color:var(--mmm-tiffany); color:var(--mmm-tiffany-light);">Sign In to See Results</a>
     </div>
-
-    <div id="flags-wrap" class="mb-10">
-      <h3 class="font-bold mb-4">What To Watch</h3>
-      <div id="flags-list" class="space-y-3"></div>
-    </div>
-
-    <div class="rounded-2xl p-6 sm:p-8 text-center" style="background:linear-gradient(135deg, hsla(45,100%,55%,0.1), hsla(180,70%,55%,0.08)); border:1px solid hsla(45,100%,55%,0.25);">
-      <h3 class="text-xl font-extrabold mb-3">Your score doesn't mean you can't trade.</h3>
-      <p class="text-gray-400 leading-relaxed mb-6 max-w-lg mx-auto">It means these leaks are probably costing you more than your setups ever do. The MMM Pro Journal's Mental Check and Discipline Leaderboard exist to catch exactly this, every single day, before it costs your buffer.</p>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <a href="../journal/" class="w-full sm:w-auto text-center font-bold text-black px-7 py-3.5 rounded-xl transition hover:scale-[1.02]" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Start Journaling Free</a>
-        <a href="../journal/?course=1" class="w-full sm:w-auto text-center font-bold px-7 py-3.5 rounded-xl border-2 transition" style="border-color:var(--mmm-tiffany); color:var(--mmm-tiffany-light);">Learn the MMM Method First</a>
-      </div>
-      <button onclick="restartQuiz()" class="mt-5 text-xs text-gray-500 hover:text-gray-300 transition">Retake the test</button>
-    </div>
+    <div class="text-center"><button onclick="restartQuiz()" class="mt-5 text-xs text-gray-500 hover:text-gray-300 transition">Retake the test</button></div>
   </section>
 
 </main>
@@ -229,82 +217,34 @@ function goBack() {
 }
 
 function showResults() {
-  var catScores = {};
-  var catCounts = {};
+  var lang = (window.mmmGetLang && mmmGetLang()) || 'en';
+  var tr = function(t) {
+    if (lang === 'en' || !window.MMM_TRANSLATIONS) return t;
+    var e = MMM_TRANSLATIONS[t];
+    return (e && e[lang]) || t;
+  };
+  var catScores = {}, catCounts = {}, flagged = [], totalGood = 0;
   CATEGORIES.forEach(function(c) { catScores[c] = 0; catCounts[c] = 0; });
-
-  var flagged = [];
-  var totalGood = 0;
-
   QUESTIONS.forEach(function(q, i) {
     catCounts[q.cat]++;
-    var userAnswer = answers[i];
-    var isGood = userAnswer === q.good;
-    if (isGood) { catScores[q.cat]++; totalGood++; }
+    if (answers[i] === q.good) { catScores[q.cat]++; totalGood++; }
     else { flagged.push(q); }
   });
-
   var overallPct = Math.round((totalGood / QUESTIONS.length) * 100);
-  document.getElementById('score-big').textContent = overallPct + '%';
-  document.getElementById('score-big').style.color = overallPct >= 70 ? 'var(--mmm-green)' : overallPct >= 45 ? 'var(--mmm-gold-light)' : 'var(--mmm-red)';
-
-  var band, bandColor;
-  if (overallPct >= 80) { band = 'Tight Discipline'; bandColor = 'var(--mmm-green)'; }
-  else if (overallPct >= 60) { band = 'Developing Discipline'; bandColor = 'var(--mmm-gold-light)'; }
-  else if (overallPct >= 40) { band = 'Leaking Edge'; bandColor = 'var(--mmm-tiffany-light)'; }
-  else { band = 'Critical Leak'; bandColor = 'var(--mmm-red)'; }
-  var bandEl = document.getElementById('score-band');
-  bandEl.textContent = band;
-  bandEl.style.color = bandColor;
-
+  var band = overallPct >= 80 ? 'Tight Discipline' : overallPct >= 60 ? 'Developing Discipline' : overallPct >= 40 ? 'Leaking Edge' : 'Critical Leak';
   var catPct = {};
   CATEGORIES.forEach(function(c) { catPct[c] = catCounts[c] ? Math.round((catScores[c] / catCounts[c]) * 100) : 0; });
-
   var sorted = CATEGORIES.slice().sort(function(a, b) { return catPct[b] - catPct[a]; });
-  var strongest = sorted[0];
-  var weakest = sorted[sorted.length - 1];
-
-  document.getElementById('strong-area').innerHTML = '<span>' + strongest + '</span> (' + catPct[strongest] + '%)';
-  document.getElementById('strong-note').textContent = 'This is your most stable habit right now - protect it and repeat it.';
-  document.getElementById('weak-area').innerHTML = '<span>' + weakest + '</span> (' + catPct[weakest] + '%)';
-  document.getElementById('weak-note').textContent = 'This is where the biggest performance leak is most likely happening.';
-
-  document.getElementById('archetype-label').textContent = ARCHETYPES[weakest].label;
-
-  var barsWrap = document.getElementById('category-bars');
-  barsWrap.innerHTML = '';
-  CATEGORIES.forEach(function(c) {
-    var pct = catPct[c];
-    var color = pct >= 70 ? 'var(--mmm-green)' : pct >= 45 ? 'var(--mmm-gold-light)' : 'var(--mmm-red)';
-    var row = document.createElement('div');
-    row.innerHTML =
-      '<div class="flex items-center justify-between mb-1.5 text-sm">' +
-        '<span class="text-gray-300">' + c + '</span>' +
-        '<span class="num font-semibold" style="color:' + color + ';">' + pct + '%</span>' +
-      '</div>' +
-      '<div class="h-2 bg-gray-800 rounded-full overflow-hidden">' +
-        '<div class="bar-fill h-full rounded-full" style="width:' + pct + '%; background:' + color + ';"></div>' +
-      '</div>';
-    barsWrap.appendChild(row);
-  });
-
-  var flagsList = document.getElementById('flags-list');
-  var flagsWrap = document.getElementById('flags-wrap');
-  flagsList.innerHTML = '';
-  if (flagged.length === 0) {
-    flagsWrap.style.display = 'none';
-  } else {
-    flagsWrap.style.display = 'block';
-    flagged.slice(0, 8).forEach(function(q) {
-      var item = document.createElement('div');
-      item.className = 'bg-white/[0.02] border border-white/10 rounded-xl p-4 flex items-start gap-3';
-      item.innerHTML =
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--mmm-red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 flex-shrink-0 mt-0.5"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>' +
-        '<div><p class="text-sm text-gray-200 mb-1">' + q.text + '</p><p class="text-xs text-gray-500 leading-relaxed">' + q.flag + '</p></div>';
-      flagsList.appendChild(item);
-    });
-  }
-
+  var strongest = sorted[0], weakest = sorted[sorted.length - 1];
+  var payload = {
+    v: 1, ts: Date.now(), lang: lang, score: overallPct, band: band, bandLabel: tr(band),
+    archetype: ARCHETYPES[weakest].label, archetypeLabel: tr(ARCHETYPES[weakest].label), archetypeNote: tr(ARCHETYPES[weakest].note),
+    strongest: strongest, strongestLabel: tr(strongest), strongestPct: catPct[strongest],
+    weakest: weakest, weakestLabel: tr(weakest), weakestPct: catPct[weakest],
+    cats: CATEGORIES.map(function(c) { return { name: c, label: tr(c), pct: catPct[c] }; }),
+    flags: flagged.slice(0, 8).map(function(q) { return { text: tr(q.text), flag: tr(q.flag) }; })
+  };
+  try { localStorage.setItem('mmm-diagnostic-pending', JSON.stringify(payload)); } catch (e) {}
   show('screen-results');
   if (window.mmmApplyLang) mmmApplyLang(mmmGetLang());
 }
