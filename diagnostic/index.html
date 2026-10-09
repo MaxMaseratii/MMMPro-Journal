@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Free Trading Discipline Test | MMM Trading</title>
-<meta name="description" content="A free 2-minute diagnostic that scores your stop-loss discipline, revenge-trading risk, and trading process - built on the MMM method.">
+<meta name="description" content="A free 10-minute trader assessment that profiles your psychology, risk, stop-loss discipline and consistency, then gives you a personal fix plan - built on the MMM method.">
 <link rel="icon" href="../favicon.ico" sizes="any">
 <meta name="theme-color" content="#0a0a0a">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -60,11 +60,17 @@
 
   <!-- INTRO -->
   <section id="screen-intro" class="screen active fade-in">
-    <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-5" style="background:hsla(180,70%,55%,0.12); color:var(--mmm-tiffany-light); border:1px solid hsla(180,70%,55%,0.3);">Free &middot; 2 Minutes &middot; Free Account Saves Results</div>
+    <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-5" style="background:hsla(180,70%,55%,0.12); color:var(--mmm-tiffany-light); border:1px solid hsla(180,70%,55%,0.3);">Free &middot; 10 Minutes &middot; Free Account Saves Results</div>
     <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight mb-4">What's Actually Costing You Money?</h1>
-    <p class="text-gray-400 leading-relaxed mb-6">Twenty honest yes/no questions on your stop-loss habits, revenge trading, risk, planning and execution. Take it free, no account needed. Your score, profile and personal advice are saved to your free MMM Pro Journal account, so you can track your discipline over time.</p>
+    <p class="text-gray-400 leading-relaxed mb-6">A full trader assessment: your profile, 45 behavior checks across 9 areas and 9 real-market scenarios. It maps your psychology, risk, stops, process and consistency, catches contradictions in your own answers, and builds a prioritized fix plan. Take it free, no account needed. Your complete profile and plan are saved to your free MMM Pro Journal account, so you can track your discipline over time.</p>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-7">
+      <div class="bg-white/[0.03] border border-white/10 rounded-xl p-4"><div class="text-sm font-bold mb-1" style="color:var(--mmm-gold-light);">9 areas profiled</div><div class="text-xs text-gray-400 leading-relaxed">Emotions, risk, stops, revenge, process, ego, lifestyle and more.</div></div>
+      <div class="bg-white/[0.03] border border-white/10 rounded-xl p-4"><div class="text-sm font-bold mb-1" style="color:var(--mmm-gold-light);">Consistency check</div><div class="text-xs text-gray-400 leading-relaxed">Finds where what you say and what you do disagree.</div></div>
+      <div class="bg-white/[0.03] border border-white/10 rounded-xl p-4"><div class="text-sm font-bold mb-1" style="color:var(--mmm-gold-light);">Personal fix plan</div><div class="text-xs text-gray-400 leading-relaxed">Concrete steps for your biggest leaks, in priority order.</div></div>
+    </div>
     <p class="text-gray-400 leading-relaxed mb-8">Answer how you actually trade, not how you wish you traded. The MMM method is built on one idea: <span class="text-white font-semibold">the plan isn't the problem, the departures from it are.</span> This finds yours.</p>
     <button onclick="startQuiz()" class="w-full sm:w-auto font-bold text-black px-8 py-4 rounded-xl text-lg shadow-2xl hover:scale-[1.02] transition" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Start the Test</button>
+    <button id="resume-btn" onclick="resumeQuiz()" class="hidden w-full sm:w-auto sm:ml-3 mt-3 sm:mt-0 font-bold px-8 py-4 rounded-xl text-lg border-2 transition" style="border-color:var(--mmm-tiffany); color:var(--mmm-tiffany-light);">Resume where I left off</button>
   </section>
 
   <!-- QUIZ -->
@@ -77,11 +83,9 @@
       <div id="q-progress-bar" class="bar-fill h-full rounded-full" style="width:0%; background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-tiffany));"></div>
     </div>
     <div id="q-wrap" class="fade-in">
-      <h2 id="q-text" class="text-xl sm:text-2xl font-bold leading-snug mb-8"></h2>
-      <div class="grid grid-cols-2 gap-3">
-        <button class="opt-btn bg-white/[0.03] border-2 border-white/10 rounded-xl py-5 text-lg font-semibold" onclick="answer(true)">Yes</button>
-        <button class="opt-btn bg-white/[0.03] border-2 border-white/10 rounded-xl py-5 text-lg font-semibold" onclick="answer(false)">No</button>
-      </div>
+      <h2 id="q-text" class="text-xl sm:text-2xl font-bold leading-snug mb-3"></h2>
+      <p id="q-hint" class="text-xs text-gray-500 mb-6"></p>
+      <div id="q-opts"></div>
     </div>
     <button id="q-back" onclick="goBack()" class="mt-8 text-sm text-gray-500 hover:text-gray-300 transition">&larr; Previous question</button>
   </section>
@@ -105,9 +109,10 @@
       </div>
     </div>
     <ul class="text-sm text-gray-300 space-y-2 mb-8 max-w-md mx-auto">
-      <li>&bull; Your Discipline Score and band</li>
-      <li>&bull; Your trader archetype and biggest leak</li>
-      <li>&bull; Score by category and what to watch</li>
+      <li>&bull; Your Discipline Score and trader archetype</li>
+      <li>&bull; Your score in 9 areas and your biggest leaks</li>
+      <li>&bull; A consistency check on your own answers</li>
+      <li>&bull; A prioritized, personal fix plan</li>
       <li>&bull; Kept in your journal's Discipline page</li>
     </ul>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -126,128 +131,107 @@
   </div>
 </footer>
 
+<script src="./dx-data.js"></script>
+<script src="./dx-engine.js"></script>
 <script>
-// Each question: text, category, and "goodAnswer" (true=Yes, false=No) - the honest answer that scores a discipline point.
-var QUESTIONS = [
-  // Stop-Loss Discipline
-  { cat: 'Stop-Loss Discipline', text: 'Once your stop-loss is set, do you ever move it further away after the trade is already open?', good: false, flag: "Moving a stop after entry turns a planned loss into an unplanned one - the exact thing the stop was there to prevent." },
-  { cat: 'Stop-Loss Discipline', text: 'Have you ever removed a stop-loss completely in the middle of a trade?', good: false, flag: "A trade with no stop has no defined risk - it isn't a trade anymore, it's a hope." },
-  { cat: 'Stop-Loss Discipline', text: 'Do you place your stop-loss the moment you enter a trade, every single time?', good: true, flag: "Setting the stop after entry leaves a window where a trade runs with no defined risk at all." },
-  { cat: 'Stop-Loss Discipline', text: 'Has moving a stop ever turned a small loss into a much bigger one for you?', good: false, flag: "This is the clearest sign stop-loss discipline is costing real money, not just theoretical money." },
-  // Revenge Trading
-  { cat: 'Revenge Trading', text: "After a loss, do you feel an urge to immediately open a new trade to make it back?", good: false, flag: "The urge to recover fast is the single clearest early sign of revenge trading." },
-  { cat: 'Revenge Trading', text: 'Do you ever increase your position size right after a losing trade?', good: false, flag: "Sizing up after a loss turns one mistake into a much more expensive one." },
-  { cat: 'Revenge Trading', text: 'Have you re-entered the same symbol within 30 minutes of a stop-out?', good: false, flag: "A fast re-entry on the same symbol is rarely a new setup - it's usually the last trade in disguise." },
-  { cat: 'Revenge Trading', text: 'Does a losing streak ever make you trade more often, not less?', good: false, flag: "Trading more after losses is the opposite of what a losing streak should trigger." },
-  // Mindset & Emotions
-  { cat: 'Mindset & Emotions', text: 'Does watching your live P&L move around ever change your exit before your plan says to?', good: false, flag: "Reacting to every tick hands control from your plan to your emotions, trade by trade." },
-  { cat: 'Mindset & Emotions', text: "Do you take trades outside your plan because price is moving and you don't want to miss it?", good: false, flag: "FOMO entries happen after emotional pressure, not after your setup actually confirmed." },
-  { cat: 'Mindset & Emotions', text: 'Does fear after a loss ever stop you from taking your next valid setup?', good: false, flag: "Skipping a valid setup out of fear is still your plan being overridden by emotion - just quietly." },
-  // Risk Management Habits
-  { cat: 'Risk Management', text: 'Do you know your exact dollar risk before you click buy or sell, every single time?', good: true, flag: "Entering without a defined risk amount makes it easy to stay in a bad trade or resize emotionally." },
-  { cat: 'Risk Management', text: 'Do you ever increase your risk size after a losing trade, hoping to recover faster?', good: false, flag: "Raising risk after a loss is recovery behavior, not a trading decision - and it accelerates drawdowns." },
-  { cat: 'Risk Management', text: "Is your usual risk per trade ever bigger than your account's buffer could survive 20+ times in a row?", good: false, flag: "This is the core MMM buffer-first rule - size for survival first, profit second." },
-  // Planning & Process
-  { cat: 'Planning & Process', text: 'Do you write a daily plan - risk, target, and the setups you\'re allowed to take - before the session starts?', good: true, flag: "Without a written plan, every decision in the session gets made live, under pressure." },
-  { cat: 'Planning & Process', text: 'Do you log your trading day - win, loss, or no-trade - so you can review it later?', good: true, flag: "Without a journal, the same mistakes repeat because they're never actually measured." },
-  { cat: 'Planning & Process', text: 'Do you change your strategy after just a few losing trades in a row?', good: false, flag: "Switching systems after a short losing streak prevents you from ever finding out what actually works." },
-  // Execution & Discipline
-  { cat: 'Execution & Discipline', text: 'Do you only take trades that match your written setup criteria?', good: true, flag: "Trades outside your criteria add randomness and quietly erode your statistical edge." },
-  { cat: 'Execution & Discipline', text: "Do you ever skip your entry checklist when you're trying to recover a loss?", good: false, flag: "Skipping the checklist under pressure is exactly when it matters most." },
-  { cat: 'Execution & Discipline', text: 'Have you taken a trade this month with no predefined stop-loss or profit target?', good: false, flag: "A trade with no stop and no target isn't a plan being executed - it's a guess being hoped on." }
-];
+var PARTS = { 1: 'Part 1 · Your Trading Profile', 2: 'Part 2 · Behavior Check', 3: 'Part 3 · Real-Market Scenario' };
+var SEQ = [], current = 0, answers = {}, locked = false;
+var PROG_KEY = 'mmm-dx-progress';
 
-var CATEGORIES = ['Stop-Loss Discipline', 'Revenge Trading', 'Mindset & Emotions', 'Risk Management', 'Planning & Process', 'Execution & Discipline'];
-
-var ARCHETYPES = {
-  'Stop-Loss Discipline': { label: 'The Stop Mover', note: "Your stops aren't the problem - what happens to them after entry is. This is usually the single fastest fix available to you." },
-  'Revenge Trading': { label: 'The Revenge Trader', note: "Losses are triggering trades, not patience. The 30-minute rule (close the app after any loss) is built for exactly this." },
-  'Mindset & Emotions': { label: 'The Emotional Executor', note: "Your plan is probably fine - it's being overridden live, in the moment, by what the chart is doing to your nerves." },
-  'Risk Management': { label: 'The Risk Drifter', note: "Risk sizing is moving around based on how the last trade felt, not on what the account's buffer can actually survive." },
-  'Planning & Process': { label: 'The Unplanned Trader', note: "Decisions are being made live instead of in advance. A written plan and a journal entry turn guesses into a process." },
-  'Execution & Discipline': { label: 'The Rule Bender', note: "The plan exists - it's just not always the thing actually being executed, especially under pressure." }
-};
-
-var current = 0;
-var answers = [];
-
-function startQuiz() {
-  current = 0; answers = [];
-  show('screen-quiz');
-  renderQuestion();
+function buildSeq() {
+  SEQ = [];
+  DX.PROFILE.forEach(function (q) { SEQ.push({ type: 'choice', part: 1, id: q.id, text: q.text, opts: q.opts }); });
+  var byCat = {}; DX.CATS.forEach(function (c) { byCat[c.key] = []; });
+  DX.ITEMS.forEach(function (it) { byCat[it.cat].push(it); });
+  var scale = [], n = DX.CATS.length;
+  for (var k = 0; k < 5; k++) for (var j = 0; j < n; j++) { var c = DX.CATS[(j + k) % n]; scale.push(byCat[c.key][k]); }
+  scale.forEach(function (it, i) {
+    SEQ.push({ type: 'scale', part: 2, id: it.id, text: it.text });
+    if ((i + 1) % 5 === 0) { var s = DX.SCENARIOS[(i + 1) / 5 - 1]; SEQ.push({ type: 'choice', part: 3, id: s.id, text: s.text, opts: s.opts.map(function (o) { return o.t; }) }); }
+  });
 }
 
+function saveProgress() { try { localStorage.setItem(PROG_KEY, JSON.stringify({ v: 2, current: current, answers: answers })); } catch (e) {} }
+function clearProgress() { try { localStorage.removeItem(PROG_KEY); } catch (e) {} }
+function loadProgress() { try { var p = JSON.parse(localStorage.getItem(PROG_KEY) || 'null'); return p && p.v === 2 && p.current > 0 && p.current < SEQ.length ? p : null; } catch (e) { return null; } }
+
+function startQuiz() { clearProgress(); current = 0; answers = {}; show('screen-quiz'); renderQuestion(); }
+function resumeQuiz() { var p = loadProgress(); if (!p) return startQuiz(); current = p.current; answers = p.answers || {}; show('screen-quiz'); renderQuestion(); }
 function restartQuiz() { startQuiz(); }
 
 function show(id) {
-  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.screen').forEach(function (s) { s.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function renderQuestion() {
-  var q = QUESTIONS[current];
-  document.getElementById('q-category').textContent = q.cat;
-  document.getElementById('q-progress-label').textContent = (current + 1) + ' / ' + QUESTIONS.length;
-  document.getElementById('q-progress-bar').style.width = Math.round(((current) / QUESTIONS.length) * 100) + '%';
+  locked = false;
+  var q = SEQ[current];
+  document.getElementById('q-category').textContent = PARTS[q.part];
+  document.getElementById('q-progress-label').textContent = (current + 1) + ' / ' + SEQ.length;
+  document.getElementById('q-progress-bar').style.width = Math.round((current / SEQ.length) * 100) + '%';
   document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-hint').textContent = q.type === 'scale' ? 'Over the last 3 months, how often is this true for you?' : (q.part === 3 ? 'Choose what you would honestly do, not what you think is correct.' : '');
   document.getElementById('q-back').style.visibility = current === 0 ? 'hidden' : 'visible';
+  var box = document.getElementById('q-opts');
+  box.innerHTML = '';
+  var sel = answers[q.id];
+  if (q.type === 'scale') {
+    box.className = 'grid grid-cols-5 gap-2';
+    DX.SCALE.forEach(function (lab, i) {
+      var b = document.createElement('button');
+      b.className = 'opt-btn bg-white/[0.03] border-2 border-white/10 rounded-xl py-4 px-1 text-xs sm:text-sm font-semibold' + (sel === i ? ' selected' : '');
+      b.textContent = lab;
+      b.onclick = function () { choose(q, i); };
+      box.appendChild(b);
+    });
+  } else {
+    box.className = 'space-y-3';
+    q.opts.forEach(function (lab, i) {
+      var b = document.createElement('button');
+      b.className = 'opt-btn w-full text-left bg-white/[0.03] border-2 border-white/10 rounded-xl py-4 px-5 text-base font-semibold' + (sel === i ? ' selected' : '');
+      b.textContent = lab;
+      b.onclick = function () { choose(q, i); };
+      box.appendChild(b);
+    });
+  }
   var wrap = document.getElementById('q-wrap');
   wrap.classList.remove('fade-in'); void wrap.offsetWidth; wrap.classList.add('fade-in');
-  var btns = document.querySelectorAll('.opt-btn');
-  btns.forEach(function(b) { b.classList.remove('selected'); });
   if (window.mmmApplyLang) mmmApplyLang(mmmGetLang());
 }
 
-function answer(val) {
-  answers[current] = val;
-  if (current < QUESTIONS.length - 1) {
-    current++;
-    renderQuestion();
-  } else {
-    document.getElementById('q-progress-bar').style.width = '100%';
-    setTimeout(showResults, 200);
-  }
+function choose(q, i) {
+  if (locked) return;
+  locked = true;
+  answers[q.id] = i;
+  var btns = document.querySelectorAll('#q-opts .opt-btn');
+  btns.forEach(function (b, k) { b.classList.toggle('selected', k === i); });
+  setTimeout(function () {
+    if (current < SEQ.length - 1) { current++; saveProgress(); renderQuestion(); }
+    else { document.getElementById('q-progress-bar').style.width = '100%'; showResults(); }
+  }, 160);
 }
 
-function goBack() {
-  if (current === 0) return;
-  current--;
-  renderQuestion();
-}
+function goBack() { if (current === 0) return; current--; renderQuestion(); }
 
 function showResults() {
   var lang = (window.mmmGetLang && mmmGetLang()) || 'en';
-  var tr = function(t) {
+  var tr = function (t) {
     if (lang === 'en' || !window.MMM_TRANSLATIONS) return t;
     var e = MMM_TRANSLATIONS[t];
     return (e && e[lang]) || t;
   };
-  var catScores = {}, catCounts = {}, flagged = [], totalGood = 0;
-  CATEGORIES.forEach(function(c) { catScores[c] = 0; catCounts[c] = 0; });
-  QUESTIONS.forEach(function(q, i) {
-    catCounts[q.cat]++;
-    if (answers[i] === q.good) { catScores[q.cat]++; totalGood++; }
-    else { flagged.push(q); }
-  });
-  var overallPct = Math.round((totalGood / QUESTIONS.length) * 100);
-  var band = overallPct >= 80 ? 'Tight Discipline' : overallPct >= 60 ? 'Developing Discipline' : overallPct >= 40 ? 'Leaking Edge' : 'Critical Leak';
-  var catPct = {};
-  CATEGORIES.forEach(function(c) { catPct[c] = catCounts[c] ? Math.round((catScores[c] / catCounts[c]) * 100) : 0; });
-  var sorted = CATEGORIES.slice().sort(function(a, b) { return catPct[b] - catPct[a]; });
-  var strongest = sorted[0], weakest = sorted[sorted.length - 1];
-  var payload = {
-    v: 1, ts: Date.now(), lang: lang, score: overallPct, band: band, bandLabel: tr(band),
-    archetype: ARCHETYPES[weakest].label, archetypeLabel: tr(ARCHETYPES[weakest].label), archetypeNote: tr(ARCHETYPES[weakest].note),
-    strongest: strongest, strongestLabel: tr(strongest), strongestPct: catPct[strongest],
-    weakest: weakest, weakestLabel: tr(weakest), weakestPct: catPct[weakest],
-    cats: CATEGORIES.map(function(c) { return { name: c, label: tr(c), pct: catPct[c] }; }),
-    flags: flagged.slice(0, 8).map(function(q) { return { text: tr(q.text), flag: tr(q.flag) }; })
-  };
+  var payload = DX.score(answers, tr);
+  payload.ts = Date.now(); payload.lang = lang;
   try { localStorage.setItem('mmm-diagnostic-pending', JSON.stringify(payload)); } catch (e) {}
+  clearProgress();
   show('screen-results');
   if (window.mmmApplyLang) mmmApplyLang(mmmGetLang());
 }
+
+buildSeq();
+(function () { if (loadProgress()) { var r = document.getElementById('resume-btn'); r.classList.remove('hidden'); } })();
 </script>
 <script src="../i18n.js"></script>
 <script src="./i18n-diagnostic.js"></script>

@@ -385,6 +385,33 @@ Object.assign(TRANSLATIONS, {
   "system maximums for this account": { fr: "maximums du système pour ce compte", es: "máximos del sistema para esta cuenta", ht: "maksimòm sistèm pou kont sa a", pt: "máximos do sistema para esta conta", de: "Systemmaxima für dieses Konto", ja: "この口座のシステム上限", zh: "此账户的系统上限" },
 });
 
+Object.assign(TRANSLATIONS, {
+  "A full trader assessment: 61 questions that map your psychology, risk, stops, process and consistency, then build your personal fix plan. Your complete profile is saved here.": { fr: "Une évaluation complète du trader : 61 questions qui cartographient votre psychologie, votre risque, vos stops, votre processus et votre cohérence, puis construisent votre plan de correction personnel. Votre profil complet est enregistré ici.", es: "Una evaluación completa del trader: 61 preguntas que mapean tu psicología, riesgo, stops, proceso y consistencia, y luego construyen tu plan personal de mejora. Tu perfil completo se guarda aquí.", ht: "Yon evalyasyon konplè pou trader: 61 kesyon ki kartografye sikoloji, risk, stop, pwosesis ak konsistans ou, answit ki bati plan koreksyon pèsonèl ou. Pwofil konplè ou sere isit la.", pt: "Uma avaliação completa do trader: 61 perguntas que mapeiam sua psicologia, risco, stops, processo e consistência e depois montam seu plano pessoal de correção. Seu perfil completo fica salvo aqui.", de: "Eine vollständige Trader-Analyse: 61 Fragen, die deine Psychologie, dein Risiko, deine Stops, deinen Prozess und deine Konsistenz erfassen und daraus deinen persönlichen Verbesserungsplan erstellen. Dein komplettes Profil wird hier gespeichert.", ja: "トレーダーの総合診断：心理、リスク、ストップ、プロセス、一貫性を61問で分析し、あなた専用の改善プランを作成します。完全なプロファイルはここに保存されます。", zh: "完整的交易者评估：61个问题，全面分析你的心理、风险、止损、流程和一致性，并生成你的个人改进计划。完整档案保存在这里。" },
+  "Consistency": { fr: "Cohérence", es: "Consistencia", ht: "Konsistans", pt: "Consistência", de: "Konsistenz", ja: "一貫性", zh: "一致性" },
+  "Blow-up Risk": { fr: "Risque de blow-up", es: "Riesgo de quiebra", ht: "Risk pou kraze kont", pt: "Risco de estourar a conta", de: "Risiko eines Kontoverlusts", ja: "口座破綻リスク", zh: "爆仓风险" },
+  "Risk, stops and revenge combined": { fr: "Risque, stops et revanche combinés", es: "Riesgo, stops y revancha combinados", ht: "Risk, stop ak revanch ansanm", pt: "Risco, stops e vingança combinados", de: "Risiko, Stops und Rache-Trading zusammen", ja: "リスク・ストップ・リベンジの合算", zh: "风险、止损与报复性交易综合" },
+  "Answer Reliability": { fr: "Fiabilité des réponses", es: "Fiabilidad de las respuestas", ht: "Fyabilite repons yo", pt: "Confiabilidade das respostas", de: "Zuverlässigkeit der Antworten", ja: "回答の信頼性", zh: "回答可靠性" },
+  "Also shows traits of": { fr: "Présente aussi des traits de", es: "También muestra rasgos de", ht: "Montre tou karakteristik", pt: "Também mostra traços de", de: "Zeigt außerdem Züge von", ja: "次の特徴も見られます：", zh: "同时具有以下特征：" },
+  "What The Test Noticed": { fr: "Ce que le test a remarqué", es: "Lo que notó el test", ht: "Sa tès la remake", pt: "O que o teste percebeu", de: "Was der Test bemerkt hat", ja: "テストで気づいた点", zh: "测试发现的问题" },
+  "Your Personal Fix Plan": { fr: "Votre plan de correction personnel", es: "Tu plan personal de mejora", ht: "Plan koreksyon pèsonèl ou", pt: "Seu plano pessoal de correção", de: "Dein persönlicher Verbesserungsplan", ja: "あなた専用の改善プラン", zh: "你的个人改进计划" },
+  "Priority": { fr: "Priorité", es: "Prioridad", ht: "Priyorite", pt: "Prioridade", de: "Priorität", ja: "優先度", zh: "优先级" },
+  "Work on one priority at a time, then retake the test in 30 days to measure the change.": { fr: "Travaillez une priorité à la fois, puis repassez le test dans 30 jours pour mesurer le changement.", es: "Trabaja una prioridad a la vez y repite el test en 30 días para medir el cambio.", ht: "Travay sou yon priyorite alafwa, answit refè tès la nan 30 jou pou mezire chanjman an.", pt: "Trabalhe uma prioridade de cada vez e refaça o teste em 30 dias para medir a mudança.", de: "Arbeite eine Priorität nach der anderen ab und wiederhole den Test in 30 Tagen, um die Veränderung zu messen.", ja: "優先度を一つずつ取り組み、30日後にテストを再受験して変化を測定しましょう。", zh: "一次专注一个优先事项，30天后重新测试以衡量变化。" },
+  "Contradictions In Your Answers": { fr: "Contradictions dans vos réponses", es: "Contradicciones en tus respuestas", ht: "Kontradiksyon nan repons ou yo", pt: "Contradições nas suas respostas", de: "Widersprüche in deinen Antworten", ja: "回答の矛盾", zh: "你回答中的矛盾" },
+  "You said": { fr: "Vous avez dit", es: "Dijiste", ht: "Ou di", pt: "Você disse", de: "Du sagtest", ja: "あなたの回答", zh: "你说" },
+  "but also": { fr: "mais aussi", es: "pero también", ht: "men tou", pt: "mas também", de: "aber auch", ja: "しかし同時に", zh: "但同时也" },
+  "Your Strengths": { fr: "Vos points forts", es: "Tus fortalezas", ht: "Fòs ou yo", pt: "Seus pontos fortes", de: "Deine Stärken", ja: "あなたの強み", zh: "你的优势" },
+  "Trader Snapshot": { fr: "Aperçu du trader", es: "Resumen del trader", ht: "Apèsi trader a", pt: "Resumo do trader", de: "Trader-Überblick", ja: "トレーダーの概要", zh: "交易者概览" },
+  "This result is from the original short test. Retake the full assessment for your complete profile, consistency check and personal fix plan.": { fr: "Ce résultat provient du test court initial. Repassez l'évaluation complète pour obtenir votre profil complet, la vérification de cohérence et votre plan de correction personnel.", es: "Este resultado es del test corto original. Repite la evaluación completa para obtener tu perfil completo, la verificación de consistencia y tu plan personal de mejora.", ht: "Rezilta sa a soti nan premye tès kout la. Refè evalyasyon konplè a pou jwenn pwofil konplè ou, verifikasyon konsistans ak plan koreksyon pèsonèl ou.", pt: "Este resultado é do teste curto original. Refaça a avaliação completa para ter seu perfil completo, a verificação de consistência e seu plano pessoal de correção.", de: "Dieses Ergebnis stammt aus dem ursprünglichen Kurztest. Wiederhole die vollständige Analyse für dein komplettes Profil, den Konsistenz-Check und deinen persönlichen Verbesserungsplan.", ja: "この結果は最初の短いテストによるものです。完全な診断を再受験すると、完全なプロファイル、一貫性チェック、専用の改善プランが得られます。", zh: "此结果来自最初的简短测试。请重新进行完整评估，以获得完整档案、一致性检查和个人改进计划。" },
+  "Take the Full Assessment": { fr: "Passer l'évaluation complète", es: "Hacer la evaluación completa", ht: "Pase evalyasyon konplè a", pt: "Fazer a avaliação completa", de: "Vollständige Analyse starten", ja: "総合診断を受ける", zh: "进行完整评估" },
+  "Habits": { fr: "Habitudes", es: "Hábitos", ht: "Abitid", pt: "Hábitos", de: "Gewohnheiten", ja: "習慣", zh: "习惯" },
+  "Scenario": { fr: "Scénario", es: "Escenario", ht: "Senaryo", pt: "Cenário", de: "Szenario", ja: "シナリオ", zh: "情景" },
+});
+
+Object.assign(TRANSLATIONS, {
+  "The Trading Discipline Test is your starting line. It takes about 10 minutes and sets the baseline that every later score, check-in and psychology report is compared with. Until you take it, Mental Check, Flow State, Psychology and the Discipline page stay locked.": { fr: "Le test de discipline de trading est votre point de départ. Il prend environ 10 minutes et fixe la base à laquelle tous vos scores, bilans et rapports de psychologie seront comparés. Tant que vous ne l'avez pas passé, Bilan mental, Flow State, Psychologie et la page Discipline restent verrouillés.", es: "El test de disciplina de trading es tu punto de partida. Toma unos 10 minutos y fija la base con la que se comparan todas tus puntuaciones, chequeos e informes de psicología. Hasta que lo hagas, Chequeo mental, Flow State, Psicología y la página Disciplina permanecen bloqueados.", ht: "Tès Disiplin Trading a se pwen depa ou. Li pran apeprè 10 minit epi li etabli baz ki sèvi pou konpare tout nòt, chèk ak rapò sikoloji ou pita. Toutotan ou pa fè l, Chèk Mantal, Flow State, Sikoloji ak paj Disiplin nan rete bloke.", pt: "O teste de disciplina de trading é seu ponto de partida. Leva cerca de 10 minutos e define a base com que todas as pontuações, check-ins e relatórios de psicologia serão comparados. Até você fazê-lo, Mental Check, Flow State, Psicologia e a página Disciplina ficam bloqueados.", de: "Der Trading-Disziplin-Test ist dein Ausgangspunkt. Er dauert etwa 10 Minuten und legt die Basis fest, mit der alle späteren Scores, Check-ins und Psychologie-Berichte verglichen werden. Bis du ihn gemacht hast, bleiben Mental Check, Flow State, Psychologie und die Disziplin-Seite gesperrt.", ja: "トレーディング規律テストはスタート地点です。約10分で完了し、今後のスコア、チェックイン、心理レポートを比較する基準になります。受けるまで、メンタルチェック、フロー状態、心理、規律ページはロックされます。", zh: "交易纪律测试是你的起点。大约需要10分钟，它将成为之后所有得分、签到和心理报告的比较基准。在完成之前，心态检查、心流、心理和纪律页面将保持锁定。" },
+  "About 10 minutes. It is your baseline for measuring progress.": { fr: "Environ 10 minutes. C'est votre base pour mesurer vos progrès.", es: "Unos 10 minutos. Es tu base para medir el progreso.", ht: "Apeprè 10 minit. Se baz ou pou mezire pwogrè.", pt: "Cerca de 10 minutos. É sua base para medir o progresso.", de: "Etwa 10 Minuten. Das ist deine Basis, um Fortschritt zu messen.", ja: "約10分。進捗を測るための基準になります。", zh: "约10分钟。这是衡量进步的基准。" },
+});
+
 function applyTranslation(lang) {
   if (typeof document === 'undefined') return;
   const root = document.getElementById('root');
@@ -2861,7 +2888,7 @@ function DiagnosticResultCard(props) {
     return (
       <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-2"><Icon name="ClipboardCheck" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Trading Discipline Test</h2></div>
-        <p className="text-sm text-gray-400 mb-4">Twenty yes/no questions that find where your discipline leaks. Your score, profile and advice are saved here.</p>
+        <p className="text-sm text-gray-400 mb-4">A full trader assessment: 61 questions that map your psychology, risk, stops, process and consistency, then build your personal fix plan. Your complete profile is saved here.</p>
         <a href="../diagnostic/" className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-semibold"><Icon name="Play" className="h-4 w-4" /><span>Take the Free Test</span></a>
       </div>
     );
@@ -2870,6 +2897,7 @@ function DiagnosticResultCard(props) {
   const hist = r.history || [];
   const prev = hist.length >= 2 ? hist[hist.length - 2].score : null;
   const delta = prev === null ? null : r.score - prev;
+  const v2 = r.v >= 2;
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-6 space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-2">
@@ -2900,13 +2928,93 @@ function DiagnosticResultCard(props) {
           {(r.cats || []).map(function(c) {
             return (
               <div key={c.name}>
-                <div className="flex justify-between text-xs mb-1"><span className="text-gray-300">{c.label || c.name}</span><span className="num font-semibold" style={{ color: col(c.pct) }}>{c.pct}%</span></div>
+                <div className="flex justify-between text-xs mb-1"><span className="text-gray-300">{c.label || c.name}</span><span className="num font-semibold" style={{ color: col(c.pct) }}>{c.levelLabel ? c.levelLabel + ' · ' : ''}{c.pct}%</span></div>
                 <div className="h-2 bg-gray-800 rounded-full overflow-hidden"><div className="h-full rounded-full" style={{ width: c.pct + '%', background: col(c.pct) }}></div></div>
+                {c.scalePct !== undefined && <div className="flex gap-3 text-[10px] text-gray-500 mt-1 num"><span><span>Habits</span> {c.scalePct}%</span><span><span>Scenario</span> {c.scenPct}%</span></div>}
               </div>
             );
           })}
         </div>
       </div>
+      {v2 && (
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-black/30 border border-gray-800 rounded-xl p-3 text-center">
+            <div className="text-[11px] text-gray-500">Consistency</div>
+            <div className="num text-2xl font-extrabold" style={{ color: col(r.consistency.score) }}>{r.consistency.score}%</div>
+            <div className="text-[11px] text-gray-400">{r.consistency.label}</div>
+          </div>
+          <div className="bg-black/30 border border-gray-800 rounded-xl p-3 text-center">
+            <div className="text-[11px] text-gray-500">Blow-up Risk</div>
+            <div className="num text-2xl font-extrabold" style={{ color: col(r.risk.pct) }}>{r.risk.label}</div>
+            <div className="text-[11px] text-gray-400">Risk, stops and revenge combined</div>
+          </div>
+          <div className="bg-black/30 border border-gray-800 rounded-xl p-3 text-center">
+            <div className="text-[11px] text-gray-500">Answer Reliability</div>
+            <div className="num text-2xl font-extrabold" style={{ color: r.confidence.idx === 2 ? '#4ade80' : r.confidence.idx === 1 ? '#fbbf24' : '#f87171' }}>{r.confidence.idx === 2 ? '●●●' : r.confidence.idx === 1 ? '●●○' : '●○○'}</div>
+            <div className="text-[11px] text-gray-400">{r.confidence.label}</div>
+          </div>
+        </div>
+      )}
+      {v2 && r.secondaryLabel && (
+        <p className="text-xs text-gray-400"><span>Also shows traits of</span> <span className="text-white font-semibold">{r.secondaryLabel}</span></p>
+      )}
+      {v2 && (r.insights || []).length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-white mb-3">What The Test Noticed</h3>
+          <div className="space-y-2">
+            {r.insights.map(function(x, i) {
+              const good = x.kind === 'aware';
+              return (
+                <div key={i} className={"rounded-lg p-3 border flex items-start gap-2.5 " + (good ? 'bg-green-500/5 border-green-500/20' : 'bg-yellow-500/5 border-yellow-500/20')}>
+                  <Icon name={good ? 'CheckCircle2' : 'Lightbulb'} className={"h-4 w-4 flex-shrink-0 mt-0.5 " + (good ? 'text-green-400' : 'text-yellow-400')} />
+                  <div>
+                    <p className="text-sm font-semibold text-gray-100">{x.head}</p>
+                    <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">{x.body}</p>
+                    {(x.chips || []).length > 0 && <div className="flex flex-wrap gap-1.5 mt-1.5">{x.chips.map(function(c, k) { return <span key={k} className="text-[11px] px-2 py-0.5 rounded-full bg-gray-800 text-gray-300">{c}</span>; })}</div>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {v2 && (r.fixPlan || []).length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-white mb-3">Your Personal Fix Plan</h3>
+          <div className="space-y-3">
+            {r.fixPlan.map(function(f, i) {
+              return (
+                <div key={i} className="bg-black/30 border border-gray-800 rounded-xl p-4">
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <div className="flex items-center gap-2"><span className="text-[11px] font-bold text-black bg-yellow-400 rounded px-1.5 py-0.5"><span>Priority</span> <span>{i + 1}</span></span><span className="text-xs text-gray-400">{f.label}</span></div>
+                    <span className="num text-xs font-semibold" style={{ color: col(f.pct) }}>{f.pct}%</span>
+                  </div>
+                  <p className="text-sm font-bold text-white mt-2">{f.title}</p>
+                  <ul className="mt-2 space-y-1.5">
+                    {f.steps.map(function(st, k) { return <li key={k} className="flex items-start gap-2 text-xs text-gray-300 leading-relaxed"><Icon name="ChevronRight" className="h-3.5 w-3.5 mt-0.5 text-yellow-400 flex-shrink-0" /><span>{st}</span></li>; })}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-[11px] text-gray-500 mt-2">Work on one priority at a time, then retake the test in 30 days to measure the change.</p>
+        </div>
+      )}
+      {v2 && (r.contradictions || []).length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-white mb-3">Contradictions In Your Answers</h3>
+          <div className="space-y-2">
+            {r.contradictions.map(function(c, i) {
+              return (
+                <div key={i} className="bg-black/30 border border-gray-800 rounded-lg p-3 text-xs space-y-1.5">
+                  <div><span className="text-gray-500">You said</span> <span className="text-gray-200">{c.a}</span> <span className="num font-semibold text-yellow-300">{c.aAns}</span></div>
+                  <div><span className="text-gray-500">but also</span> <span className="text-gray-200">{c.b}</span> <span className="num font-semibold text-red-300">{c.bAns}</span></div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
       {(r.flags || []).length > 0 && (
         <div>
           <h3 className="text-sm font-semibold text-white mb-3">What To Watch</h3>
@@ -2915,11 +3023,31 @@ function DiagnosticResultCard(props) {
               return (
                 <div key={i} className="bg-black/30 border border-gray-800 rounded-lg p-3 flex items-start gap-2.5">
                   <Icon name="AlertTriangle" className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
-                  <div><p className="text-sm text-gray-200">{f.text}</p><p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{f.flag}</p></div>
+                  <div><p className="text-sm text-gray-200">{f.text}</p>{f.ans ? <p className="text-xs text-red-300 mt-0.5 num font-semibold">{f.ans}</p> : <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{f.flag}</p>}</div>
                 </div>
               );
             })}
           </div>
+        </div>
+      )}
+      {v2 && (r.strengths || []).length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-white mb-2">Your Strengths</h3>
+          <div className="flex flex-wrap gap-2">{r.strengths.map(function(x, i) { return <span key={i} className="text-xs px-2.5 py-1 rounded-full bg-green-500/10 border border-green-500/30 text-green-300">{x}</span>; })}</div>
+        </div>
+      )}
+      {v2 && (r.profile || []).length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-white mb-2">Trader Snapshot</h3>
+          <div className="grid md:grid-cols-2 gap-x-6 gap-y-1.5">
+            {r.profile.slice(0, 6).map(function(x, i) { return <div key={i} className="text-xs flex justify-between gap-3 border-b border-gray-800/70 py-1"><span className="text-gray-500">{x.q}</span><span className="text-gray-200 text-right">{x.a}</span></div>; })}
+          </div>
+        </div>
+      )}
+      {!v2 && (
+        <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap">
+          <p className="text-xs text-gray-300 leading-relaxed max-w-xl">This result is from the original short test. Retake the full assessment for your complete profile, consistency check and personal fix plan.</p>
+          <a href="../diagnostic/" className="text-xs font-semibold text-black bg-yellow-400 rounded-lg px-3 py-1.5">Take the Full Assessment</a>
         </div>
       )}
       {hist.length > 1 && (
@@ -3659,7 +3787,7 @@ function DisciplineTestGate(props) {
     <div className="bg-gradient-to-br from-yellow-950/30 to-black border border-yellow-500/30 rounded-2xl p-8 text-center max-w-2xl mx-auto">
       <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-yellow-500/10 border border-yellow-500/30 mb-4"><Icon name="Lock" className="h-8 w-8 text-yellow-400" /></div>
       <h2 className="text-xl font-bold text-white mb-2">Take the Discipline Test to unlock this</h2>
-      <p className="text-sm text-gray-400 leading-relaxed mb-5">The Trading Discipline Test is your starting line. It takes 2 minutes and sets the baseline that every later score, check-in and psychology report is compared with. Until you take it, Mental Check, Flow State, Psychology and the Discipline page stay locked.</p>
+      <p className="text-sm text-gray-400 leading-relaxed mb-5">The Trading Discipline Test is your starting line. It takes about 10 minutes and sets the baseline that every later score, check-in and psychology report is compared with. Until you take it, Mental Check, Flow State, Psychology and the Discipline page stay locked.</p>
       <a href="../diagnostic/" className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-6 py-3 rounded-xl font-bold"><Icon name="Play" className="h-4 w-4" /><span>Take the Discipline Test</span></a>
       <p className="text-xs text-gray-600 mt-4">Already took it? Come back through "Sign In to See Results" at the end of the test and it will appear here.</p>
     </div>
@@ -6357,7 +6485,7 @@ function MMMJournal(props) {
                 <React.Fragment>
                 {diagnosticReady && !diagnostic && (
                   <div className="border border-yellow-500/40 bg-yellow-500/10 rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap">
-                    <div className="flex items-start gap-3"><Icon name="ClipboardCheck" className="h-5 w-5 text-yellow-400 mt-0.5" /><div><p className="text-sm font-semibold text-yellow-200">Take the Discipline Test to unlock Mental Check, Flow State, Psychology and Discipline</p><p className="text-xs text-yellow-200/70">2 minutes. It is your baseline for measuring progress.</p></div></div>
+                    <div className="flex items-start gap-3"><Icon name="ClipboardCheck" className="h-5 w-5 text-yellow-400 mt-0.5" /><div><p className="text-sm font-semibold text-yellow-200">Take the Discipline Test to unlock Mental Check, Flow State, Psychology and Discipline</p><p className="text-xs text-yellow-200/70">About 10 minutes. It is your baseline for measuring progress.</p></div></div>
                     <a href="../diagnostic/" className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-semibold">Take the Test</a>
                   </div>
                 )}
