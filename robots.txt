@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /journal/
+Sitemap: https://www.maxmaserati.com/sitemap.xml

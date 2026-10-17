@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MMM Pro c · s · x - The MMM Order-Flow Indicators | MMM Trading</title>
+<meta name="description" content="MMM Pro c, MMM Pro s and MMM Pro x: three TradingView indicators that read the same auction between buyers and sellers three ways - by candle, by swing and by balance zone. The foundation of MMM order flow.">
+<link rel="canonical" href="https://www.maxmaserati.com/indicators/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MMM Trading">
+<meta property="og:title" content="MMM Pro c · s · x - The MMM Order-Flow Indicators">
+<meta property="og:description" content="Three engines, one order-flow language: candle, swing and balance-zone breaks for ES and NQ futures.">
+<meta property="og:url" content="https://www.maxmaserati.com/indicators/">
+<meta property="og:image" content="https://www.maxmaserati.com/mmm-logo-lockup.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
+<meta name="theme-color" content="#0a0a0a">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  body { background: hsl(0,0%,4%); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .num { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .glow { background-image: radial-gradient(circle at 15% 15%, hsla(45,100%,55%,0.16), transparent 40%), radial-gradient(circle at 85% 20%, hsla(180,70%,55%,0.14), transparent 45%); }
+  .eng { border-color: rgba(255,255,255,.1); }
+  .eng-c { --c: hsl(45,100%,58%); } .eng-s { --c: hsl(180,70%,55%); } .eng-x { --c: hsl(142,70%,48%); }
+  .eng .tag { color: var(--c); border-color: color-mix(in srgb, var(--c) 45%, transparent); background: color-mix(in srgb, var(--c) 10%, transparent); }
+  .eng .bar { background: var(--c); }
+  .eng h3 span { color: var(--c); }
+  .pill { border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); }
+  details summary::-webkit-details-marker { display:none; }
+</style>
+</head>
+<body class="text-white">
+<div id="mmm-header"></div>
+
+<!-- HERO -->
+<section class="glow border-b border-white/10" style="background:linear-gradient(135deg,#050505,#0a0a0a 50%,hsl(180,45%,9%));">
+  <div class="max-w-5xl mx-auto px-5 sm:px-8 pt-16 pb-20 sm:pt-24 sm:pb-24 text-center">
+    <div class="inline-flex items-center gap-2 text-xs font-bold px-4 py-1.5 rounded-full mb-6" style="background:linear-gradient(90deg,var(--mmm-tiffany),var(--mmm-tiffany-light));color:#04211f;">The foundation of MMM order flow</div>
+    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.06]"><span class="gold-text">MMM Pro</span> <span class="num text-[color:var(--mmm-gold-light)]">c</span><span class="text-gray-600"> · </span><span class="num text-[color:var(--mmm-tiffany-light)]">s</span><span class="text-gray-600"> · </span><span class="num text-green-400">x</span></h1>
+    <p class="mt-6 text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">Three indicators. One question: <b class="text-white">who is in control of price right now, buyers or sellers, and where did control change hands?</b></p>
+    <p class="mt-4 text-gray-400 max-w-2xl mx-auto leading-relaxed">MMM Pro <b class="text-[color:var(--mmm-gold-light)]">c</b> answers it candle by candle. MMM Pro <b class="text-[color:var(--mmm-tiffany-light)]">s</b> answers it swing by swing. MMM Pro <b class="text-green-400">x</b> answers it zone by zone. Same market, same language, three points of view.</p>
+    <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <a href="#engines" class="w-full sm:w-auto font-bold text-black px-7 py-3.5 rounded-xl transition hover:brightness-110" style="background:linear-gradient(90deg,var(--mmm-gold),var(--mmm-gold-light));">Meet the three engines</a>
+      <a href="#auction" class="w-full sm:w-auto font-bold px-7 py-3.5 rounded-xl border-2 border-[color:var(--mmm-tiffany)] text-[color:var(--mmm-tiffany-light)] hover:bg-[color:var(--mmm-tiffany)] hover:text-black transition">How price really moves</a>
+    </div>
+    <p class="mt-6 text-xs text-gray-500">TradingView indicators for ES / MES and NQ / MNQ futures &middot; closed candles only, no repaint &middot; launching on TradingView by invitation</p>
+  </div>
+</section>
+
+<!-- THE AUCTION -->
+<section id="auction" class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+  <div class="max-w-3xl">
+    <p class="text-xs font-bold uppercase tracking-widest text-[color:var(--mmm-gold-light)] mb-3">Step 1 &middot; the auction</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">Price only moves when one side runs out of the other side's orders</h2>
+    <p class="mt-5 text-gray-400 leading-relaxed text-lg">Every trade needs a buyer and a seller. What matters is <b class="text-white">who is in a hurry</b>. One side sends market orders and takes what is on offer. The other side waits with limit orders and lets the price come to them.</p>
+  </div>
+
+  <div class="mt-12 grid md:grid-cols-2 gap-5">
+    <div class="rounded-2xl border border-green-500/25 bg-green-500/[0.04] p-6">
+      <div class="flex items-center gap-3 mb-3"><span class="h-9 w-9 rounded-lg bg-green-500/15 text-green-400 flex items-center justify-center font-extrabold">&uarr;</span><h3 class="font-bold text-lg">Buy demand meets sell offers</h3></div>
+      <p class="text-gray-400 leading-relaxed">Buyers in a hurry lift the sell offers sitting above price. While the offers at a price are bigger than the demand, price holds. When demand eats the last offer at that price, the next offer is <b class="text-white">higher</b> &mdash; so price ticks up. Keep doing that and the candle closes up, above the area where sellers used to wait.</p>
+    </div>
+    <div class="rounded-2xl border border-red-500/25 bg-red-500/[0.04] p-6">
+      <div class="flex items-center gap-3 mb-3"><span class="h-9 w-9 rounded-lg bg-red-500/15 text-red-400 flex items-center justify-center font-extrabold">&darr;</span><h3 class="font-bold text-lg">Sell demand meets buy offers</h3></div>
+      <p class="text-gray-400 leading-relaxed">Sellers in a hurry hit the buy orders resting below price. When sell demand eats the last buy order at a price, the next buyer is <b class="text-white">lower</b> &mdash; so price ticks down. Keep doing that and the candle closes down, below the area where buyers used to defend.</p>
+    </div>
+  </div>
+
+  <div class="mt-5 grid md:grid-cols-3 gap-5">
+    <div class="pill rounded-2xl p-6">
+      <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">A wick</p>
+      <p class="text-gray-300 leading-relaxed">Price visited a level, but the other side answered and pushed it back. The orders there were <b class="text-white">tested</b>, not beaten.</p>
+    </div>
+    <div class="pill rounded-2xl p-6">
+      <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">A body close</p>
+      <p class="text-gray-300 leading-relaxed">The candle ended beyond the level. The market <b class="text-white">accepted</b> the new price. The defenders there were absorbed or gave up.</p>
+    </div>
+    <div class="pill rounded-2xl p-6">
+      <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">A break that matters</p>
+      <p class="text-gray-300 leading-relaxed">Most closes are noise. A few happen at the exact place where control was being defended. Finding <b class="text-white">those</b> closes is what the three engines do.</p>
+    </div>
+  </div>
+
+  <div class="mt-12 rounded-2xl border border-white/10 bg-black/50 p-6 sm:p-8">
+    <h3 class="font-bold text-xl mb-5">Think of it like a tug of war</h3>
+    <div class="grid sm:grid-cols-3 gap-6 text-gray-400 leading-relaxed">
+      <div><p class="font-semibold text-white mb-1">The rope = price</p><p>It only moves when one team pulls harder than the other team can hold.</p></div>
+      <div><p class="font-semibold text-white mb-1">The marker on the ground = the level</p><p>Where the losing team made its last stand. That is where the MMM engines draw the origin of the move.</p></div>
+      <div><p class="font-semibold text-white mb-1">Crossing the marker = the break</p><p>The rope crossed the line and stayed there at the end of the candle. Control changed hands &mdash; or the winning team pulled further.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SHARED LANGUAGE -->
+<section class="border-y border-white/10" style="background:linear-gradient(180deg,hsla(180,70%,10%,.35),transparent);">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20">
+    <div class="max-w-3xl">
+      <p class="text-xs font-bold uppercase tracking-widest text-[color:var(--mmm-tiffany-light)] mb-3">Step 2 &middot; one language for all three</p>
+      <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">Two events tell the whole story</h2>
+      <p class="mt-5 text-gray-400 leading-relaxed text-lg">Every MMM indicator speaks the same words, so you can move between them without learning anything new. The letter at the end tells you which engine made the call: <span class="num text-[color:var(--mmm-gold-light)]">c</span> candle, <span class="num text-[color:var(--mmm-tiffany-light)]">s</span> swing, <span class="num text-green-400">x</span> zone.</p>
+    </div>
+
+    <div class="mt-10 grid md:grid-cols-2 gap-5">
+      <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+        <div class="flex items-baseline justify-between mb-3"><h3 class="font-extrabold text-xl">The Flip</h3><span class="num text-sm text-gray-400">CDL &middot; CDS</span></div>
+        <p class="text-gray-400 leading-relaxed">Control changes hands. The side that was defending the trend gets broken at the level it had to hold. <b class="text-white">CDL</b> = buyers take over. <b class="text-white">CDS</b> = sellers take over. It starts a new leg: <b class="text-white">T1</b>.</p>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+        <div class="flex items-baseline justify-between mb-3"><h3 class="font-extrabold text-xl">The Continuation</h3><span class="num text-sm text-gray-400">LD &middot; SD</span></div>
+        <p class="text-gray-400 leading-relaxed">The side in control proves it again. After a pullback, it breaks through the counter-attack and resumes. <b class="text-white">LD</b> = long delivery, <b class="text-white">SD</b> = short delivery. Each one adds a step to the leg: <b class="text-white">T2, T3&hellip;</b></p>
+      </div>
+    </div>
+
+    <div class="mt-5 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="pill rounded-2xl p-5"><p class="num text-sm text-[color:var(--mmm-gold-light)] mb-1">BuPO4 / BePO4 &middot; T#</p><p class="text-sm text-gray-400 leading-relaxed">The <b class="text-white">origin</b> of a move &mdash; where the winning side started its push. It stays on the chart until price closes back through it.</p></div>
+      <div class="pill rounded-2xl p-5"><p class="num text-sm text-[color:var(--mmm-gold-light)] mb-1">P# &middot; R#</p><p class="text-sm text-gray-400 leading-relaxed">The live range: the <b class="text-white">pullback</b> the trend must break to continue, and the <b class="text-white">resumption</b> base that becomes the next origin.</p></div>
+      <div class="pill rounded-2xl p-5"><p class="num text-sm text-[color:var(--mmm-gold-light)] mb-1">eBlock &middot; iBlock</p><p class="text-sm text-gray-400 leading-relaxed">The zones born from a flip (<b class="text-white">eBlock</b>) and from a continuation (<b class="text-white">iBlock</b>). Each lives exactly as long as its origin.</p></div>
+      <div class="pill rounded-2xl p-5"><p class="num text-sm text-[color:var(--mmm-gold-light)] mb-1">🟢🟩 &middot; 🔴🟥</p><p class="text-sm text-gray-400 leading-relaxed">Trend markers: where the current leg <b class="text-white">started</b> and its <b class="text-white">newest</b> step. Everything between them is always drawn.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ENGINES -->
+<section id="engines" class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+  <div class="max-w-3xl mb-12">
+    <p class="text-xs font-bold uppercase tracking-widest text-[color:var(--mmm-gold-light)] mb-3">Step 3 &middot; three engines</p>
+    <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">Same auction. Three ways to read who is winning it.</h2>
+  </div>
+
+  <!-- c -->
+  <article class="eng eng-c border rounded-3xl overflow-hidden bg-white/[0.02] mb-8">
+    <div class="bar h-1"></div>
+    <div class="grid lg:grid-cols-5 gap-8 p-6 sm:p-10">
+      <div class="lg:col-span-3">
+        <span class="tag inline-block text-xs font-bold px-3 py-1 rounded-full border mb-4">Candle break engine</span>
+        <h3 class="text-3xl font-extrabold">MMM Pro <span class="num">c</span></h3>
+        <p class="mt-2 text-gray-300 text-lg">Reads control <b class="text-white">one candle at a time</b>.</p>
+        <p class="mt-5 text-gray-400 leading-relaxed">Every candle that closes beyond the one before it is a vote. MMM Pro c keeps score of those votes: the last time buyers forced a close, the last time sellers did, and which of those closes the other side failed to take back. It also separates <b class="text-white">urgent</b> moves &mdash; when one side was in such a hurry that it left price the other side never got to trade &mdash; from normal ones.</p>
+        <p class="mt-4 text-gray-400 leading-relaxed">When a candle closes through the level the trend had to defend, you get the flip. When the trend pushes through its own pullback, you get the continuation &mdash; each one numbered, each one with its origin and its zone.</p>
+        <ul class="mt-6 grid sm:grid-cols-2 gap-2 text-sm text-gray-300">
+          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>The earliest of the three to react</li>
+          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>Pullback and resumption levels, numbered by tier</li>
+          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>Urgency levels and structural voids</li>
+          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>Candle conviction colouring</li>
+        </ul>
+        <p class="mt-6 text-sm text-gray-500"><b class="text-gray-300">Best for:</b> precise, early entries on lower timeframes and traders who want to see every change in control.</p>
+      </div>
+      <div class="lg:col-span-2 flex items-center">
+        <svg viewBox="0 0 320 220" class="w-full rounded-2xl border border-white/10 bg-black/60" role="img" aria-label="Candle break illustration">
+          <line x1="20" y1="120" x2="300" y2="120" stroke="hsl(45,100%,58%)" stroke-dasharray="5 5" stroke-width="1.5"/>
+          <text x="22" y="112" fill="hsl(45,100%,65%)" font-size="10" font-family="JetBrains Mono">level to defend</text>
+          <g stroke-width="2">
+            <line x1="45" y1="70" x2="45" y2="150" stroke="#ef4444"/><rect x="38" y="85" width="14" height="45" fill="#ef4444"/>
+            <line x1="80" y1="95" x2="80" y2="170" stroke="#ef4444"/><rect x="73" y="110" width="14" height="45" fill="#ef4444"/>
+            <line x1="115" y1="125" x2="115" y2="190" stroke="#ef4444"/><rect x="108" y="140" width="14" height="38" fill="#ef4444"/>
+            <line x1="150" y1="130" x2="150" y2="195" stroke="#9ca3af"/><rect x="143" y="150" width="14" height="25" fill="#9ca3af"/>
+            <line x1="185" y1="98" x2="185" y2="175" stroke="#22c55e"/><rect x="178" y="105" width="14" height="60" fill="#22c55e"/>
+            <line x1="220" y1="72" x2="220" y2="128" stroke="#22c55e"/><rect x="213" y="80" width="14" height="38" fill="#22c55e"/>
+            <line x1="255" y1="48" x2="255" y2="100" stroke="#22c55e"/><rect x="248" y="55" width="14" height="35" fill="#22c55e"/>
+          </g>
+          <circle cx="185" cy="105" r="13" fill="none" stroke="hsl(45,100%,58%)" stroke-width="2"/>
+          <text x="200" y="210" fill="#d1d5db" font-size="11" font-family="JetBrains Mono">close beyond = vote</text>
+        </svg>
+      </div>
+    </div>
+  </article>
+
+  <!-- s -->
+  <article class="eng eng-s border rounded-3xl overflow-hidden bg-white/[0.02] mb-8">
+    <div class="bar h-1"></div>
+    <div class="grid lg:grid-cols-5 gap-8 p-6 sm:p-10">
+      <div class="lg:col-span-3">
+        <span class="tag inline-block text-xs font-bold px-3 py-1 rounded-full border mb-4">Swing break engine</span>
+        <h3 class="text-3xl font-extrabold">MMM Pro <span class="num">s</span></h3>
+        <p class="mt-2 text-gray-300 text-lg">Reads control <b class="text-white">at the turning points</b>.</p>
+        <p class="mt-5 text-gray-400 leading-relaxed">A swing forms where one side's push ran dry and the other side answered with a close of its own. That turning point is where the losing side last defended &mdash; real orders sat there. MMM Pro s watches every swing, without filters, and waits for a <b class="text-white">body close</b> through one.</p>
+        <p class="mt-4 text-gray-400 leading-relaxed">A wick through a swing is a <b class="text-white">sweep</b>: the orders there were taken, but the market refused the new price. A close through it is a <b class="text-white">break</b>: the defenders were absorbed. Every break is graded by the order flow behind it &mdash; how much volume came in and whether delta (aggressive buying minus aggressive selling) agreed with the move.</p>
+        <ul class="mt-6 grid sm:grid-cols-2 gap-2 text-sm text-gray-300">
+          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Break grade from volume and delta</li>
+          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Strong sweeps marked separately</li>
+          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Accelerator candles and un-auctioned prices</li>
+          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Footprint delta on supported plans</li>
+        </ul>
+        <p class="mt-6 text-sm text-gray-500"><b class="text-gray-300">Best for:</b> traders who want clean, classic market structure with the order flow that proves each break.</p>
+      </div>
+      <div class="lg:col-span-2 flex items-center">
+        <svg viewBox="0 0 320 220" class="w-full rounded-2xl border border-white/10 bg-black/60" role="img" aria-label="Swing break illustration">
+          <polyline points="20,170 70,90 110,140 165,60 205,120 245,95 300,30" fill="none" stroke="hsl(180,70%,60%)" stroke-width="2.5" stroke-linejoin="round"/>
+          <line x1="165" y1="60" x2="300" y2="60" stroke="#9ca3af" stroke-dasharray="4 4"/>
+          <text x="168" y="52" fill="#9ca3af" font-size="10" font-family="JetBrains Mono">swing high</text>
+          <line x1="110" y1="140" x2="300" y2="140" stroke="#9ca3af" stroke-dasharray="4 4"/>
+          <text x="113" y="155" fill="#9ca3af" font-size="10" font-family="JetBrains Mono">swing low = origin</text>
+          <circle cx="272" cy="60" r="12" fill="none" stroke="hsl(180,70%,60%)" stroke-width="2"/>
+          <text x="214" y="205" fill="#d1d5db" font-size="11" font-family="JetBrains Mono">close through = break</text>
+        </svg>
+      </div>
+    </div>
+  </article>
+
+  <!-- x -->
+  <article class="eng eng-x border rounded-3xl overflow-hidden bg-white/[0.02]">
+    <div class="bar h-1"></div>
+    <div class="grid lg:grid-cols-5 gap-8 p-6 sm:p-10">
+      <div class="lg:col-span-3">
+        <span class="tag inline-block text-xs font-bold px-3 py-1 rounded-full border mb-4">Balance-zone break engine</span>
+        <h3 class="text-3xl font-extrabold">MMM Pro <span class="num">x</span></h3>
+        <p class="mt-2 text-gray-300 text-lg">Reads control <b class="text-white">between balance and imbalance</b>.</p>
+        <p class="mt-5 text-gray-400 leading-relaxed">Markets breathe. After a strong push, buyers and sellers usually agree on a fair price for a while and rotate inside a range &mdash; that is <b class="text-white">balance</b>, or contraction. Then one side wins the argument and price leaves &mdash; that is <b class="text-white">imbalance</b>, or expansion.</p>
+        <p class="mt-4 text-gray-400 leading-relaxed">MMM Pro x maps those balance zones as boxes and colours them by who absorbed the most inside: accumulation, distribution or neutral. Only the boxes that hold a role in the trend &mdash; the pullback and the resumption &mdash; can make a break count. A body close out of the right box is a vote on <b class="text-white">value</b>, not just on price.</p>
+        <ul class="mt-6 grid sm:grid-cols-2 gap-2 text-sm text-gray-300">
+          <li class="flex gap-2"><span class="text-green-400">&#9656;</span>Balance boxes coloured by absorption</li>
+          <li class="flex gap-2"><span class="text-green-400">&#9656;</span>Two box styles to test: growing or fixed</li>
+          <li class="flex gap-2"><span class="text-green-400">&#9656;</span>Failed boxes cleaned up automatically</li>
+          <li class="flex gap-2"><span class="text-green-400">&#9656;</span>The calmest, most selective of the three</li>
+        </ul>
+        <p class="mt-6 text-sm text-gray-500"><b class="text-gray-300">Best for:</b> patient traders who think in ranges and value areas and want fewer, bigger decisions.</p>
+      </div>
+      <div class="lg:col-span-2 flex items-center">
+        <svg viewBox="0 0 320 220" class="w-full rounded-2xl border border-white/10 bg-black/60" role="img" aria-label="Balance zone break illustration">
+          <rect x="70" y="95" width="150" height="60" fill="hsla(142,70%,45%,.14)" stroke="hsl(142,70%,48%)" stroke-dasharray="5 4"/>
+          <text x="76" y="88" fill="hsl(142,70%,60%)" font-size="10" font-family="JetBrains Mono">balance (contraction)</text>
+          <polyline points="20,190 70,150 95,105 120,148 145,100 170,150 195,104 220,140 250,70 300,40" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="236" cy="92" r="12" fill="none" stroke="hsl(142,70%,48%)" stroke-width="2"/>
+          <text x="180" y="205" fill="#d1d5db" font-size="11" font-family="JetBrains Mono">close out = imbalance</text>
+        </svg>
+      </div>
+    </div>
+  </article>
+</section>
+
+<!-- COMPARE -->
+<section class="border-y border-white/10 bg-black/40">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20">
+    <h2 class="text-2xl sm:text-3xl font-extrabold mb-8">Which one fits the way you trade?</h2>
+    <div class="overflow-x-auto rounded-2xl border border-white/10">
+      <table class="w-full text-left text-sm min-w-[640px]">
+        <thead class="bg-white/[0.04] text-gray-400">
+          <tr><th class="p-4 font-semibold"></th><th class="p-4 font-bold text-[color:var(--mmm-gold-light)]">MMM Pro c</th><th class="p-4 font-bold text-[color:var(--mmm-tiffany-light)]">MMM Pro s</th><th class="p-4 font-bold text-green-400">MMM Pro x</th></tr>
+        </thead>
+        <tbody class="divide-y divide-white/10 text-gray-300">
+          <tr><td class="p-4 text-gray-500">Reads</td><td class="p-4">Every candle close</td><td class="p-4">Turning points (swings)</td><td class="p-4">Balance zones (boxes)</td></tr>
+          <tr><td class="p-4 text-gray-500">Order-flow idea</td><td class="p-4">Which side forced the last close, and how urgently</td><td class="p-4">Which defenders got absorbed, with volume and delta behind it</td><td class="p-4">Which side won the argument about value</td></tr>
+          <tr><td class="p-4 text-gray-500">Speed</td><td class="p-4">Fastest</td><td class="p-4">Medium</td><td class="p-4">Slowest, most selective</td></tr>
+          <tr><td class="p-4 text-gray-500">Signals</td><td class="p-4">Most</td><td class="p-4">Fewer, graded</td><td class="p-4">Fewest</td></tr>
+          <tr><td class="p-4 text-gray-500">Fits</td><td class="p-4">Scalpers, precise entries</td><td class="p-4">Structure traders</td><td class="p-4">Range and value traders</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT ALL THREE SHARE -->
+<section class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+  <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">Built the same way underneath</h2>
+  <p class="text-gray-400 mb-10 max-w-2xl">Whichever engine you pick, you get the same professional toolkit around it.</p>
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">Higher timeframe inside your chart</h3><p class="text-sm text-gray-400 leading-relaxed">Build the structure on a higher timeframe and trade it on your execution chart, without switching charts.</p></div>
+    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">No repaint</h3><p class="text-sm text-gray-400 leading-relaxed">Only closed candles count. What you see in the past is exactly what you would have seen live.</p></div>
+    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">Premium &amp; discount gate</h3><p class="text-sm text-gray-400 leading-relaxed">An optional filter that only confirms a pullback once the market has truly stretched both ways &mdash; or switch it off for raw structure.</p></div>
+    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">Higher-timeframe bias</h3><p class="text-sm text-gray-400 leading-relaxed">See when a break goes with or against the bigger picture, read by any of the three engines.</p></div>
+    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">News on the chart</h3><p class="text-sm text-gray-400 leading-relaxed">A warning dot before red-folder news, filled from the free <a href="/news/" class="text-[color:var(--mmm-tiffany-light)] hover:underline">MMM News Calendar</a>.</p></div>
+    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">Clean chart, your rules</h3><p class="text-sm text-gray-400 leading-relaxed">Everything inside the current trend range is drawn; outside it, you decide how much history to keep. A level and its break always leave together.</p></div>
+  </div>
+</section>
+
+<!-- TESTED -->
+<section class="border-y border-white/10" style="background:linear-gradient(180deg,hsla(45,100%,55%,.06),transparent);">
+  <div class="max-w-4xl mx-auto px-5 sm:px-8 py-16 sm:py-20 text-center">
+    <h2 class="text-2xl sm:text-3xl font-extrabold mb-4">Tested before they are sold</h2>
+    <p class="text-gray-400 leading-relaxed max-w-2xl mx-auto">The indicators read structure; they do not promise trades. Before launch, every signal type is tested against every entry, every stop and every exit, one by one, with out-of-sample checks. Only the combinations that survive go into the entry tools. No arrows that look good only in hindsight.</p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="max-w-4xl mx-auto px-5 sm:px-8 py-16 sm:py-24 text-center">
+  <h2 class="text-3xl sm:text-4xl font-extrabold"><span class="gold-text">Learn the language first.</span></h2>
+  <p class="mt-4 text-gray-400 max-w-xl mx-auto">The free MMM Mastery Course teaches the order-flow ideas behind all three engines. Access to the indicators opens on TradingView by invitation through Whop.</p>
+  <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+    <a href="/journal/?course=1" class="w-full sm:w-auto font-bold text-black px-7 py-3.5 rounded-xl transition hover:brightness-110" style="background:linear-gradient(90deg,var(--mmm-gold),var(--mmm-gold-light));">Start the free course</a>
+    <a href="/whop/" class="w-full sm:w-auto font-bold px-7 py-3.5 rounded-xl border-2 border-[color:var(--mmm-tiffany)] text-[color:var(--mmm-tiffany-light)] hover:bg-[color:var(--mmm-tiffany)] hover:text-black transition">Get access on Whop</a>
+  </div>
+  <p class="mt-8 text-xs text-gray-500 max-w-2xl mx-auto">Educational tools only, not financial advice. Indicators describe past and current price behaviour; they do not predict the future. Futures trading carries a high risk of loss.</p>
+</section>
+
+<div id="mmm-footer"></div>
+<script src="/assets/site.js"></script>
+<script src="/i18n.js"></script>
+</body>
+</html>

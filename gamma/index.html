@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gamma Levels for ES and NQ | MMM Trading</title>
+<meta name="description" content="Free daily gamma levels for ES and NQ futures: call wall, put wall, zero gamma and GEX flip, ready to paste into the MMM gamma indicator on TradingView.">
+<link rel="canonical" href="https://www.maxmaserati.com/gamma/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MMM Trading">
+<meta property="og:title" content="Gamma Levels for ES and NQ | MMM Trading">
+<meta property="og:description" content="Free daily gamma levels for ES and NQ futures: call wall, put wall, zero gamma and GEX flip, ready to paste into the MMM gamma indicator on TradingView.">
+<meta property="og:url" content="https://www.maxmaserati.com/gamma/">
+<meta property="og:image" content="https://www.maxmaserati.com/mmm-logo-lockup.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
+<meta name="theme-color" content="#0a0a0a">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  body { background: hsl(0,0%,4%); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .num { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .glow { background-image: radial-gradient(circle at 15% 15%, hsla(45,100%,55%,0.14), transparent 40%), radial-gradient(circle at 85% 20%, hsla(180,70%,55%,0.12), transparent 45%); }
+  .card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.1); border-radius: 1rem; }
+  pre.block { white-space: pre; overflow: auto; font: 12px/1.5 'JetBrains Mono', monospace; background: #050505; border: 1px solid rgba(255,255,255,.1); border-radius: .75rem; padding: 12px; max-height: 340px; color: #d1d5db; }
+  .btn-gold { background: linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light)); color: #000; font-weight: 700; border-radius: .75rem; padding: .8rem 1rem; width: 100%; transition: filter .15s; }
+  .btn-gold:hover { filter: brightness(1.08); }
+  input[type=checkbox] { accent-color: hsl(45,100%,55%); width: 16px; height: 16px; }
+  select { background: #0b0b0b; border: 1px solid rgba(255,255,255,.15); border-radius: .6rem; padding: .55rem .7rem; color: #fff; width: 100%; }
+
+</style>
+</head>
+<body class="text-white">
+<div id="mmm-header"></div>
+<section class="glow border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 pt-12 pb-10 sm:pt-16">
+    <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-4" style="background:hsla(45,100%,55%,0.12);color:var(--mmm-gold-light);border:1px solid hsla(45,100%,55%,0.3);">Free &middot; Updated every trading morning</div>
+    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight">Gamma Levels for <span class="gold-text">ES</span> and <span class="teal-text">NQ</span></h1>
+    <p id="g-sub" class="mt-4 text-gray-400">Loading today's levels&hellip;</p>
+  </div>
+</section>
+
+<main class="max-w-6xl mx-auto px-5 sm:px-8 py-10">
+  <p class="text-xs text-gray-400 border border-red-500/40 bg-red-500/[0.05] rounded-xl px-4 py-3 mb-8"><b class="text-gray-200">Not financial advice.</b> Educational levels only, modelled from delayed open-interest data. Futures trading carries a high risk of loss. By using this page you accept the <a href="/legal/#terms" class="underline hover:text-white">Terms</a>.</p>
+  <p id="g-err" class="hidden text-red-400 mb-6"></p>
+  <div class="grid lg:grid-cols-2 gap-6" id="g-cards"></div>
+
+  <div class="grid md:grid-cols-3 gap-5 mt-10">
+    <div class="card p-5"><p class="num text-[color:var(--mmm-gold-light)] text-sm mb-1">1 &middot; Copy</p><p class="text-sm text-gray-400">Click <b class="text-white">Copy</b> on your chart: the NQ block for NQ / MNQ, the ES block for ES / MES.</p></div>
+    <div class="card p-5"><p class="num text-[color:var(--mmm-gold-light)] text-sm mb-1">2 &middot; Open</p><p class="text-sm text-gray-400">In TradingView open the settings of <b class="text-white">Gamma Walls and Institutional Bias @MaxMaserati</b>.</p></div>
+    <div class="card p-5"><p class="num text-[color:var(--mmm-gold-light)] text-sm mb-1">3 &middot; Paste</p><p class="text-sm text-gray-400">Paste into <b class="text-white">Paste Daily Block</b>, leave the three 90D boxes at 0, click OK.</p></div>
+  </div>
+
+  <div class="card p-6 mt-10">
+    <h2 class="font-bold text-lg mb-3">What the levels mean</h2>
+    <div class="grid sm:grid-cols-2 gap-x-8 gap-y-3 text-sm text-gray-400 leading-relaxed">
+      <p><b class="text-green-400">Call Wall</b> &mdash; the strike with the biggest call positioning above price. Dealers hedging there often slow rallies down.</p>
+      <p><b class="text-red-400">Put Wall</b> &mdash; the strike with the biggest put positioning below price. Often a floor where selling gets absorbed.</p>
+      <p><b class="text-yellow-300">Zero Gamma / GEX Flip</b> &mdash; where dealer hedging changes from calming price to pushing it. Above it, moves tend to be calmer; below it, faster.</p>
+      <p><b class="text-white">90D vs Today</b> &mdash; 90D = the big picture over the next three months. Today = only the options that expire today (0DTE).</p>
+    </div>
+  </div>
+  <p class="text-xs text-gray-500 mt-6">Index prices (SPX / NDX); the indicator converts them to futures. CBOE delayed data, naive open-interest model, may differ from other providers. History: <a id="g-hist" href="#" class="underline hover:text-white">gex_history.csv</a></p>
+</main>
+<div id="mmm-footer"></div>
+<script src="/assets/site.js"></script>
+<script src="/i18n.js"></script>
+<script>
+(function () {
+  var BASE = 'https://maxmaseratii.github.io/gamma-levels/docs/';
+  document.getElementById('g-hist').href = BASE + 'gex_history.csv';
+  var ROWS = [['90D Call Wall', 'g'], ['90D Put Wall', 'r'], ['90D Zero Gamma', 'y'], ['Today Call Wall', 'g'], ['Today Put Wall', 'r'], ['Today GEX Flip', 'y']];
+  var COL = { g: 'text-green-400', r: 'text-red-400', y: 'text-yellow-300' };
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function parse(txt) {
+    var kv = {}, strikes = [], inStrikes = false, date = '', upd = '';
+    txt.split(/\r?\n/).forEach(function (ln) {
+      var m = ln.match(/^\s*(.+?)\s*=\s*(.+?)\s*$/);
+      if (m) kv[m[1]] = m[2];
+      if (/^Trading Date/.test(ln)) date = ln.replace('Trading Date', '').trim();
+      if (/^Updated/.test(ln)) upd = ln.replace('Updated', '').trim();
+      if (/^Today Strikes/.test(ln)) { inStrikes = true; return; }
+      var s = ln.match(/^\s*([\d.]+)\s*:\s*(-?[\d.]+)\s*$/);
+      if (inStrikes && s) strikes.push([parseFloat(s[1]), parseFloat(s[2])]);
+    });
+    return { kv: kv, strikes: strikes, date: date, upd: upd };
+  }
+  function card(tag, title, idx, d, raw) {
+    var rows = ROWS.map(function (r) { return '<tr class="border-b border-white/10"><td class="py-2 text-gray-400">' + r[0] + '</td><td class="py-2 text-right num font-bold ' + COL[r[1]] + '">' + esc(d.kv[r[0]] || '-') + '</td></tr>'; }).join('');
+    var max = d.strikes.reduce(function (a, s) { return Math.max(a, Math.abs(s[1])); }, 1);
+    var bars = d.strikes.map(function (s) {
+      var w = Math.max(2, Math.round(Math.abs(s[1]) / max * 100));
+      var neg = s[1] < 0;
+      return '<div class="flex items-center gap-2 text-[11px] num"><span class="w-14 text-right text-gray-400">' + s[0] + '</span><div class="flex-1 h-2.5 rounded bg-white/5"><div class="h-2.5 rounded ' + (neg ? 'bg-red-500/70' : 'bg-green-500/70') + '" style="width:' + w + '%"></div></div><span class="w-16 text-right ' + (neg ? 'text-red-300' : 'text-green-300') + '">' + s[1] + '</span></div>';
+    }).join('');
+    return '<section class="card p-6">' +
+      '<div class="flex items-baseline justify-between gap-3"><h2 class="text-xl font-extrabold">' + title + '</h2><span class="text-xs text-gray-500 num">' + esc(idx) + ' spot ' + esc(d.kv['Spot Price'] || '-') + '</span></div>' +
+      '<table class="w-full text-sm mt-4 mb-5"><tbody>' + rows + '</tbody></table>' +
+      '<button class="btn-gold" data-copy="' + tag + '">Copy ' + tag + ' block for the indicator</button>' +
+      (bars ? '<details class="mt-4"><summary class="cursor-pointer text-sm text-gray-400 hover:text-white">Today\'s strikes (gamma in $M)</summary><div class="mt-3 space-y-1.5">' + bars + '</div></details>' : '') +
+      '<details class="mt-3"><summary class="cursor-pointer text-sm text-gray-400 hover:text-white">Show the block</summary><pre class="block mt-3" id="blk-' + tag + '">' + esc(raw) + '</pre></details>' +
+      '</section>';
+  }
+  var t = '?t=' + Date.now();
+  Promise.all([fetch(BASE + 'latest_ES.txt' + t).then(function (r) { if (!r.ok) throw r.status; return r.text(); }),
+               fetch(BASE + 'latest_NQ.txt' + t).then(function (r) { if (!r.ok) throw r.status; return r.text(); })])
+    .then(function (res) {
+      var es = parse(res[0]), nq = parse(res[1]);
+      document.getElementById('g-sub').textContent = 'Trading date ' + (es.date || nq.date) + ' · updated ' + (es.upd || nq.upd);
+      document.getElementById('g-cards').innerHTML = card('ES', 'ES / MES chart', es.kv['Index'] || 'SPX', es, res[0]) + card('NQ', 'NQ / MNQ chart', nq.kv['Index'] || 'NDX', nq, res[1]);
+    })
+    .catch(function () {
+      document.getElementById('g-sub').textContent = 'The levels could not load right now.';
+      var e = document.getElementById('g-err'); e.classList.remove('hidden');
+      e.textContent = 'Please refresh in a minute. If it keeps failing, the morning update may be late.';
+    });
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-copy]'); if (!b) return;
+    var txt = document.getElementById('blk-' + b.dataset.copy).textContent;
+    navigator.clipboard.writeText(txt).then(function () { var o = b.textContent; b.textContent = 'Copied'; setTimeout(function () { b.textContent = o; }, 1500); });
+  });
+})();
+</script>
+
+</body>
+</html>

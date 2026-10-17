@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>News Calendar for the MMM Indicators | MMM Trading</title>
+<meta name="description" content="Free economic news calendar in New York time, formatted for the MMM indicators. Pick the impact and currency, copy, paste into TradingView.">
+<link rel="canonical" href="https://www.maxmaserati.com/news/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MMM Trading">
+<meta property="og:title" content="News Calendar for the MMM Indicators | MMM Trading">
+<meta property="og:description" content="Free economic news calendar in New York time, formatted for the MMM indicators. Pick the impact and currency, copy, paste into TradingView.">
+<meta property="og:url" content="https://www.maxmaserati.com/news/">
+<meta property="og:image" content="https://www.maxmaserati.com/mmm-logo-lockup.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
+<meta name="theme-color" content="#0a0a0a">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  body { background: hsl(0,0%,4%); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .num { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .glow { background-image: radial-gradient(circle at 15% 15%, hsla(45,100%,55%,0.14), transparent 40%), radial-gradient(circle at 85% 20%, hsla(180,70%,55%,0.12), transparent 45%); }
+  .card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.1); border-radius: 1rem; }
+  pre.block { white-space: pre; overflow: auto; font: 12px/1.5 'JetBrains Mono', monospace; background: #050505; border: 1px solid rgba(255,255,255,.1); border-radius: .75rem; padding: 12px; max-height: 340px; color: #d1d5db; }
+  .btn-gold { background: linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light)); color: #000; font-weight: 700; border-radius: .75rem; padding: .8rem 1rem; width: 100%; transition: filter .15s; }
+  .btn-gold:hover { filter: brightness(1.08); }
+  input[type=checkbox] { accent-color: hsl(45,100%,55%); width: 16px; height: 16px; }
+  select { background: #0b0b0b; border: 1px solid rgba(255,255,255,.15); border-radius: .6rem; padding: .55rem .7rem; color: #fff; width: 100%; }
+
+</style>
+</head>
+<body class="text-white">
+<div id="mmm-header"></div>
+<section class="glow border-b border-white/10">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 pt-12 pb-10 sm:pt-16">
+    <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-4" style="background:hsla(180,70%,55%,0.12);color:var(--mmm-tiffany-light);border:1px solid hsla(180,70%,55%,0.3);">Free &middot; Updated twice a day</div>
+    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight">News Calendar for the <span class="gold-text">MMM indicators</span></h1>
+    <p id="n-sub" class="mt-4 text-gray-400">Loading the calendar&hellip;</p>
+  </div>
+</section>
+
+<main class="max-w-6xl mx-auto px-5 sm:px-8 py-10">
+  <p class="text-xs text-gray-400 border border-red-500/40 bg-red-500/[0.05] rounded-xl px-4 py-3 mb-8"><b class="text-gray-200">Not financial advice.</b> News releases can cause fast moves, gaps and slippage. Times and events come from a free third-party feed and can change: always check the official schedule. By using this page you accept the <a href="/legal/#terms" class="underline hover:text-white">Terms</a>.</p>
+  <p id="n-err" class="hidden text-red-400 mb-6"></p>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+    <section class="card p-6">
+      <h2 class="text-xl font-extrabold">1. Pick your news</h2>
+      <p class="text-xs text-gray-500 mb-5">All times are New York time, the time the indicators use.</p>
+      <p class="text-sm font-semibold mb-2">Impact</p>
+      <div class="flex flex-wrap gap-x-5 gap-y-2 text-sm mb-5">
+        <label class="flex items-center gap-2"><input type="checkbox" class="imp" value="H" checked>🔴 High</label>
+        <label class="flex items-center gap-2"><input type="checkbox" class="imp" value="M">🟠 Medium</label>
+        <label class="flex items-center gap-2"><input type="checkbox" class="imp" value="L">🟡 Low</label>
+        <label class="flex items-center gap-2"><input type="checkbox" class="imp" value="N">⚪ Holiday</label>
+      </div>
+      <p class="text-sm font-semibold mb-2">Currency</p>
+      <div id="curs" class="flex flex-wrap gap-x-5 gap-y-2 text-sm mb-5"></div>
+      <p class="text-sm font-semibold mb-2">Period</p>
+      <select id="range" class="mb-5">
+        <option value="week" selected>This week</option>
+        <option value="ahead">From today on</option>
+        <option value="all">Everything saved (for backtests)</option>
+      </select>
+      <p class="text-sm font-semibold mb-2">Options</p>
+      <div class="space-y-2 text-sm">
+        <label class="flex items-center gap-2"><input type="checkbox" id="base" checked>Add the 2026&ndash;2027 NFP / CPI / FOMC list</label>
+        <label class="flex items-center gap-2"><input type="checkbox" id="merge" checked>One line per time (CPI &amp; Core CPI)</label>
+      </div>
+    </section>
+    <section class="card p-6 flex flex-col">
+      <h2 class="text-xl font-extrabold">2. Copy the block</h2>
+      <p id="count" class="text-xs text-gray-500 mb-4">&nbsp;</p>
+      <button id="copy" class="btn-gold">Copy the block for the indicator</button>
+      <pre id="out" class="block mt-4 flex-1"></pre>
+    </section>
+  </div>
+
+  <div class="grid md:grid-cols-4 gap-5 mt-8">
+    <div class="card p-5"><p class="num text-[color:var(--mmm-gold-light)] text-sm mb-1">1 &middot; Pick</p><p class="text-sm text-gray-400">Choose impact, currency and period, then click <b class="text-white">Copy</b>.</p></div>
+    <div class="card p-5"><p class="num text-[color:var(--mmm-gold-light)] text-sm mb-1">2 &middot; Open</p><p class="text-sm text-gray-400">Open <b class="text-white">MMM Pro c</b>, <b class="text-white">s</b> or <b class="text-white">x</b> settings, group <b class="text-white">News</b>.</p></div>
+    <div class="card p-5"><p class="num text-[color:var(--mmm-gold-light)] text-sm mb-1">3 &middot; Paste</p><p class="text-sm text-gray-400">In <b class="text-white">News Calendar</b>, select all (Ctrl/Cmd + A), paste, OK.</p></div>
+    <div class="card p-5"><p class="num text-[color:var(--mmm-gold-light)] text-sm mb-1">4 &middot; Match</p><p class="text-sm text-gray-400">Switch on the same impacts in the indicator. It only draws the ones that are on.</p></div>
+  </div>
+
+  <section class="card p-6 mt-8">
+    <div class="flex flex-wrap items-baseline justify-between gap-2 mb-4"><h2 class="text-xl font-extrabold">This week</h2><p id="weekmeta" class="text-xs text-gray-500"></p></div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm min-w-[560px]">
+        <thead><tr class="text-left text-xs text-gray-500 border-b border-white/10"><th class="py-2 pr-3">Time NY</th><th class="py-2 pr-3">Cur</th><th class="py-2 pr-3">Event</th><th class="py-2 pr-3">Forecast</th><th class="py-2">Previous</th></tr></thead>
+        <tbody id="tbl"></tbody>
+      </table>
+    </div>
+  </section>
+  <p class="text-xs text-gray-500 mt-6">Calendar data: Forex Factory weekly feed, collected twice a day and saved so past weeks stay available. NFP / CPI / FOMC list from the official BLS and Federal Reserve schedules. Files: <a id="f1" class="underline hover:text-white" href="#">news_history.csv</a> &middot; <a id="f2" class="underline hover:text-white" href="#">history_USD_high.txt</a></p>
+</main>
+<div id="mmm-footer"></div>
+<script src="/assets/site.js"></script>
+<script src="/i18n.js"></script>
+<script>
+(function () {
+  var BASE_URL = 'https://maxmaseratii.github.io/gamma-levels/docs/news/';
+  document.getElementById('f1').href = BASE_URL + 'news_history.csv';
+  document.getElementById('f2').href = BASE_URL + 'history_USD_high.txt';
+  var BASE = ["2026-01-09 08:30 USD H NFP", "2026-02-11 08:30 USD H NFP", "2026-03-06 08:30 USD H NFP", "2026-04-03 08:30 USD H NFP", "2026-05-08 08:30 USD H NFP", "2026-06-05 08:30 USD H NFP", "2026-07-02 08:30 USD H NFP", "2026-08-07 08:30 USD H NFP", "2026-09-04 08:30 USD H NFP", "2026-10-02 08:30 USD H NFP", "2026-11-06 08:30 USD H NFP", "2026-12-04 08:30 USD H NFP", "2027-01-08 08:30 USD H NFP", "2027-02-05 08:30 USD H NFP", "2027-03-05 08:30 USD H NFP", "2027-04-02 08:30 USD H NFP", "2027-05-07 08:30 USD H NFP", "2027-06-04 08:30 USD H NFP", "2027-07-02 08:30 USD H NFP", "2027-08-06 08:30 USD H NFP", "2027-09-03 08:30 USD H NFP", "2027-10-08 08:30 USD H NFP", "2027-11-05 08:30 USD H NFP", "2027-12-03 08:30 USD H NFP", "2026-01-13 08:30 USD H CPI", "2026-02-13 08:30 USD H CPI", "2026-03-11 08:30 USD H CPI", "2026-04-10 08:30 USD H CPI", "2026-05-12 08:30 USD H CPI", "2026-06-10 08:30 USD H CPI", "2026-07-14 08:30 USD H CPI", "2026-08-12 08:30 USD H CPI", "2026-09-11 08:30 USD H CPI", "2026-10-14 08:30 USD H CPI", "2026-11-10 08:30 USD H CPI", "2026-12-10 08:30 USD H CPI", "2027-01-13 08:30 USD H CPI", "2027-02-11 08:30 USD H CPI", "2027-03-10 08:30 USD H CPI", "2027-04-13 08:30 USD H CPI", "2027-05-12 08:30 USD H CPI", "2027-06-10 08:30 USD H CPI", "2027-07-14 08:30 USD H CPI", "2027-08-11 08:30 USD H CPI", "2027-09-14 08:30 USD H CPI", "2027-10-14 08:30 USD H CPI", "2027-11-10 08:30 USD H CPI", "2027-12-10 08:30 USD H CPI", "2026-01-28 14:00 USD H FOMC", "2026-01-28 14:30 USD H FOMC PC", "2026-03-18 14:00 USD H FOMC", "2026-03-18 14:30 USD H FOMC PC", "2026-04-29 14:00 USD H FOMC", "2026-04-29 14:30 USD H FOMC PC", "2026-06-17 14:00 USD H FOMC", "2026-06-17 14:30 USD H FOMC PC", "2026-07-29 14:00 USD H FOMC", "2026-07-29 14:30 USD H FOMC PC", "2026-09-16 14:00 USD H FOMC", "2026-09-16 14:30 USD H FOMC PC", "2026-10-28 14:00 USD H FOMC", "2026-10-28 14:30 USD H FOMC PC", "2026-12-09 14:00 USD H FOMC", "2026-12-09 14:30 USD H FOMC PC", "2027-01-27 14:00 USD H FOMC", "2027-01-27 14:30 USD H FOMC PC", "2027-03-17 14:00 USD H FOMC", "2027-03-17 14:30 USD H FOMC PC", "2027-04-28 14:00 USD H FOMC", "2027-04-28 14:30 USD H FOMC PC", "2027-06-09 14:00 USD H FOMC", "2027-06-09 14:30 USD H FOMC PC", "2027-07-28 14:00 USD H FOMC", "2027-07-28 14:30 USD H FOMC PC", "2027-09-15 14:00 USD H FOMC", "2027-09-15 14:30 USD H FOMC PC", "2027-10-27 14:00 USD H FOMC", "2027-10-27 14:30 USD H FOMC PC", "2027-12-08 14:00 USD H FOMC", "2027-12-08 14:30 USD H FOMC PC"];
+  var CURS = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'NZD', 'CHF', 'CNY'];
+  var RANK = { H: 4, M: 3, L: 2, N: 1 };
+  var DOT = { H: '#ef4444', M: '#f97316', L: '#eab308', N: '#9ca3af' };
+  var DATA = { events: [] };
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  $('curs').innerHTML = CURS.map(function (c) { return '<label class="flex items-center gap-2"><input type="checkbox" class="cur" value="' + c + '"' + (c === 'USD' ? ' checked' : '') + '>' + c + '</label>'; }).join('');
+  function nyToday() {
+    var p = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(new Date());
+    function g(t) { return p.filter(function (x) { return x.type === t; })[0].value; }
+    return g('year') + '-' + g('month') + '-' + g('day');
+  }
+  function baseRows() { return BASE.map(function (s) { var t = s.split(' '); return { date: t[0], time: t[1], cur: t[2], imp: t[3], title: t.slice(4).join(' ') }; }); }
+  function shortName(t) { return t.replace(/\s+(m\/m|y\/y|q\/q)$/i, '').trim(); }
+  function checked(sel) { return Array.prototype.map.call(document.querySelectorAll(sel + ':checked'), function (x) { return x.value; }); }
+  function build() {
+    var imps = checked('.imp'), curs = checked('.cur'), range = $('range').value, merge = $('merge').checked, today = nyToday();
+    var rows = DATA.events.slice();
+    if ($('base').checked) rows = rows.concat(baseRows());
+    rows = rows.filter(function (r) { return imps.indexOf(r.imp) >= 0 && curs.indexOf(r.cur) >= 0; });
+    if (range === 'week') rows = rows.filter(function (r) { return DATA.week_from && r.date >= DATA.week_from && r.date <= DATA.week_to; });
+    if (range === 'ahead') rows = rows.filter(function (r) { return r.date >= today; });
+    var seen = {}, order = [];
+    rows.forEach(function (r) {
+      var k = r.date + ' ' + r.time + ' ' + r.cur + (merge ? '' : ' ' + r.title);
+      var nm = merge ? shortName(r.title) : r.title;
+      if (!seen[k]) { seen[k] = { date: r.date, time: r.time, cur: r.cur, imp: r.imp, names: [nm] }; order.push(k); }
+      else { var o = seen[k]; if (RANK[r.imp] > RANK[o.imp]) o.imp = r.imp; if (o.names.indexOf(nm) < 0) o.names.push(nm); }
+    });
+    var out = order.map(function (k) { return seen[k]; }).sort(function (a, b) { return (a.date + a.time).localeCompare(b.date + b.time); })
+      .map(function (o) { return o.date + ' ' + o.time + ' ' + o.cur + ' ' + o.imp + ' ' + o.names.join(' & '); });
+    var txt = out.join('\n');
+    $('out').textContent = txt || '(nothing matches: switch on more impacts, currencies or a longer period)';
+    $('count').textContent = out.length + ' lines · ' + txt.length + ' characters';
+    return txt;
+  }
+  function table() {
+    var today = nyToday();
+    var wk = DATA.events.filter(function (r) { return DATA.week_from && r.date >= DATA.week_from && r.date <= DATA.week_to; });
+    function fmt(d) { return new Date(d + 'T12:00:00Z').toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }); }
+    var html = '', last = '';
+    wk.forEach(function (r) {
+      if (r.date !== last) { html += '<tr><td colspan="5" class="pt-4 pb-1 text-xs font-bold uppercase tracking-wider text-[color:var(--mmm-gold-light)]">' + fmt(r.date) + '</td></tr>'; last = r.date; }
+      html += '<tr class="border-b border-white/5' + (r.date < today ? ' opacity-40' : '') + '"><td class="py-2 pr-3 num text-gray-300">' + r.time + '</td><td class="py-2 pr-3 text-gray-400">' + esc(r.cur) + '</td><td class="py-2 pr-3"><span class="inline-block h-2.5 w-2.5 rounded-full mr-2 align-middle" style="background:' + DOT[r.imp] + '"></span>' + esc(r.title) + '</td><td class="py-2 pr-3 num text-gray-400">' + esc(r.forecast) + '</td><td class="py-2 num text-gray-400">' + esc(r.previous) + '</td></tr>';
+    });
+    $('tbl').innerHTML = html || '<tr><td colspan="5" class="py-4 text-gray-500">No events saved for this week yet.</td></tr>';
+    $('weekmeta').textContent = DATA.week_from ? DATA.week_from + ' to ' + DATA.week_to + ' · every currency and impact · faded rows = already passed' : '';
+  }
+  document.querySelectorAll('main input, main select').forEach(function (e) { e.addEventListener('change', build); });
+  $('copy').addEventListener('click', function () {
+    var t = build(), b = $('copy');
+    navigator.clipboard.writeText(t).then(function () { var o = b.textContent; b.textContent = 'Copied'; setTimeout(function () { b.textContent = o; }, 1500); });
+  });
+  fetch(BASE_URL + 'news.json?t=' + Date.now()).then(function (r) { if (!r.ok) throw r.status; return r.json(); }).then(function (d) {
+    DATA = d;
+    $('n-sub').textContent = 'Updated ' + d.updated + ' · this week ' + d.week_from + ' to ' + d.week_to + ' · ' + d.events.length + ' events saved';
+    table(); build();
+  }).catch(function () {
+    $('n-sub').textContent = 'The live calendar could not load, so only the NFP / CPI / FOMC list is shown.';
+    table(); build();
+  });
+})();
+</script>
+</body>
+</html>

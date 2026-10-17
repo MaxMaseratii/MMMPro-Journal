@@ -4,7 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>MMM Trading | Max Maserati Model</title>
-<meta name="description" content="MMM - the Max Maserati Model. The trading education, the MMM Pro indicators, and the PropTrader-style journal for ES/NQ futures traders, in one place.">
+<meta name="description" content="MMM - the Max Maserati Model. Order-flow education, the MMM Pro c, s and x indicators, a prop-firm journal and free daily gamma levels and news calendar for ES and NQ futures traders.">
+<link rel="canonical" href="https://www.maxmaserati.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MMM Trading">
+<meta property="og:title" content="MMM Trading | Max Maserati Model">
+<meta property="og:description" content="Order-flow education, the MMM Pro indicators and a prop-firm journal for ES and NQ futures traders.">
+<meta property="og:url" content="https://www.maxmaserati.com/">
+<meta property="og:image" content="https://www.maxmaserati.com/mmm-logo-lockup.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Max Maserati Trading University","alternateName":"MMM Trading","url":"https://www.maxmaserati.com/","logo":"https://www.maxmaserati.com/logo-icon-512.png","email":"infotrade@maxmaserati.com"}</script>
+<link rel="manifest" href="/manifest.json">
 <link rel="icon" href="./favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
@@ -37,33 +47,7 @@
 </head>
 <body class="text-white">
 
-<header class="sticky top-0 z-40 shadow-xl" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light), var(--mmm-gold));">
-  <div class="max-w-7xl mx-auto px-5 sm:px-8">
-    <div class="h-[72px] flex items-center justify-between">
-      <a href="./" class="flex items-center gap-3">
-        <div class="crown-badge h-11 w-11 rounded-lg flex items-center justify-center shadow-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--mmm-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7Zm3 15h14"/></svg>
-        </div>
-        <div class="flex flex-col leading-tight">
-          <span class="text-lg font-extrabold tracking-tight"><span class="text-black">MMM</span><span class="text-black/70"> Trading</span></span>
-          <span class="text-[11px] font-semibold text-black/70">Max Maserati Model</span>
-        </div>
-      </a>
-      <nav class="hidden md:flex items-center gap-7 text-sm font-semibold text-black/80">
-        <a href="#features" class="hover:text-black transition">Features</a>
-        <a href="#courses" class="hover:text-black transition">Courses</a>
-        <a href="./journal/" class="hover:text-black transition">Journal</a>
-        <a href="./diagnostic/" class="hover:text-black transition">Free Trading Test</a>
-        <a href="#gamma" class="hover:text-black transition">Gamma Levels</a>
-        <a href="#socials" class="hover:text-black transition">Watch Live</a>
-      </nav>
-      <div class="flex items-center gap-3">
-        <select id="lang-switch" aria-label="Language" class="bg-black/10 border border-black/25 text-black text-xs font-semibold rounded-lg px-2 py-2 outline-none cursor-pointer hover:bg-black/15 transition"></select>
-        <a href="./whop/" class="text-sm font-bold bg-black text-[color:var(--mmm-gold)] border-2 border-[color:var(--mmm-tiffany)] px-5 py-2.5 rounded-lg hover:bg-gray-900 transition">Join MMM Trading</a>
-      </div>
-    </div>
-  </div>
-</header>
+<div id="mmm-header"></div>
 
 <section class="glow relative overflow-hidden" style="background:linear-gradient(135deg, #050505, #0a0a0a 45%, hsl(180,45%,10%));">
   <div class="relative max-w-6xl mx-auto px-5 sm:px-8 pt-16 pb-24 sm:pt-20 sm:pb-32 text-center">
@@ -73,17 +57,47 @@
       <span class="teal-text">With Precision</span>
     </h1>
     <p class="mt-6 text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">
-      Max Maserati's order-flow system for ES and NQ futures. <span class="text-[color:var(--mmm-gold-light)] font-semibold">The MMM indicators</span>, the <span class="text-[color:var(--mmm-tiffany-light)] font-semibold">MMM Mastery Course</span>, and a full <span class="text-[color:var(--mmm-green)] font-semibold">prop-firm journal</span> - all built to keep you funded, not just entered.
+      Max Maserati's order-flow system for ES and NQ futures. <span class="text-[color:var(--mmm-gold-light)] font-semibold">The MMM Pro c · s · x indicators</span>, the <span class="text-[color:var(--mmm-tiffany-light)] font-semibold">MMM Mastery Course</span>, and a full <span class="text-[color:var(--mmm-green)] font-semibold">prop-firm journal</span> - all built to keep you funded, not just entered.
     </p>
     <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
       <a href="./whop/" class="w-full sm:w-auto text-center font-bold text-black px-8 py-4 rounded-xl text-lg shadow-2xl hover:scale-[1.03] transition" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Join MMM Trading</a>
-      <a href="./journal/" class="w-full sm:w-auto text-center font-bold px-8 py-4 rounded-xl text-lg border-2 border-[color:var(--mmm-tiffany)] text-[color:var(--mmm-tiffany-light)] hover:bg-[color:var(--mmm-tiffany)] hover:text-black transition">Open MMM Pro Journal</a>
+      <a href="#register" data-mmm="register" class="w-full sm:w-auto text-center font-bold px-8 py-4 rounded-xl text-lg border-2 border-[color:var(--mmm-tiffany)] text-[color:var(--mmm-tiffany-light)] hover:bg-[color:var(--mmm-tiffany)] hover:text-black transition">Create a Free Account</a>
     </div>
     <div class="mt-5">
       <a href="./diagnostic/" class="text-sm font-semibold text-gray-400 hover:text-[color:var(--mmm-gold-light)] transition inline-flex items-center gap-1.5">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.472V16h8v-2.528A6 6 0 0 0 12 3Z"/></svg>
         Not sure what's holding your trading back? Take the free 2-minute Trading Discipline Test
       </a>
+    </div>
+  </div>
+</section>
+
+<section id="indicators" class="border-b border-white/10" style="background:linear-gradient(180deg,#0a0a0a,hsla(45,100%,55%,0.04));">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center gap-2 text-xs font-bold px-4 py-1.5 rounded-full mb-5" style="background:hsla(45,100%,55%,0.12); color:var(--mmm-gold-light); border:1px solid hsla(45,100%,55%,0.3);">The foundation of MMM order flow</div>
+      <h2 class="text-3xl sm:text-4xl font-extrabold"><span class="gold-text">MMM Pro</span> <span class="num">c · s · x</span></h2>
+      <p class="text-gray-400 mt-3 max-w-2xl mx-auto">Three TradingView indicators that read the same auction between buyers and sellers three different ways. One language: flips, continuations, origins and zones.</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-5">
+      <a href="./indicators/#engines" class="card-hover block bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4"><span class="num text-3xl font-extrabold" style="color:var(--mmm-gold-light);">c</span><span class="text-xs font-bold text-gray-400 border border-white/15 rounded-full px-2.5 py-1">Candle break</span></div>
+        <h3 class="font-bold text-lg mb-2">MMM Pro c</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">Reads control one candle at a time: which side forced the last close, and how urgently. The fastest of the three.</p>
+      </a>
+      <a href="./indicators/#engines" class="card-hover block bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4"><span class="num text-3xl font-extrabold" style="color:var(--mmm-tiffany-light);">s</span><span class="text-xs font-bold text-gray-400 border border-white/15 rounded-full px-2.5 py-1">Swing break</span></div>
+        <h3 class="font-bold text-lg mb-2">MMM Pro s</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">Reads control at the turning points: which defenders got absorbed, graded by the volume and delta behind every break.</p>
+      </a>
+      <a href="./indicators/#engines" class="card-hover block bg-white/[0.03] border border-white/10 rounded-2xl p-6">
+        <div class="flex items-center justify-between mb-4"><span class="num text-3xl font-extrabold text-green-400">x</span><span class="text-xs font-bold text-gray-400 border border-white/15 rounded-full px-2.5 py-1">Balance-zone break</span></div>
+        <h3 class="font-bold text-lg mb-2">MMM Pro x</h3>
+        <p class="text-sm text-gray-400 leading-relaxed">Reads control between balance and imbalance: which side won the argument about value when price left the zone.</p>
+      </a>
+    </div>
+    <div class="text-center mt-10">
+      <a href="./indicators/" class="inline-block font-bold text-black px-7 py-3.5 rounded-xl transition hover:brightness-110" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">How the MMM indicators read order flow</a>
     </div>
   </div>
 </section>
@@ -103,7 +117,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-7 w-7"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
       </div>
       <h3 class="font-bold text-lg mb-2">The MMM Method</h3>
-      <p class="text-sm text-gray-400 leading-relaxed">The MMM indicator suite - structure, confluence, and quality-gated entries - taught step by step inside the MMM Mastery Course.</p>
+      <p class="text-sm text-gray-400 leading-relaxed">MMM Pro c, s and x - candle, swing and balance-zone order flow - taught step by step inside the MMM Mastery Course.</p>
     </div>
 
     <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6">
@@ -172,8 +186,8 @@
       <h2 class="text-2xl sm:text-3xl font-extrabold mb-4">The MMM Mastery Course</h2>
       <p class="text-gray-400 leading-relaxed mb-6">The full order-flow curriculum, free and interactive - 11 phases from reading a single candle to running the MMM Pro indicators and a full entry checklist. Every phase ends in a quiz, every section has homework, and your progress is saved to your MMM Pro Journal account as you go - sign in or create a free account to start.</p>
       <div class="flex flex-col sm:flex-row gap-3">
-        <a href="./journal/?course=1" target="_blank" rel="noopener" class="inline-block text-center font-bold text-black px-6 py-3 rounded-xl transition" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Start the Course Free</a>
-        <a href="./whop/" class="inline-block text-center font-bold px-6 py-3 rounded-xl border-2 transition" style="border-color:var(--mmm-tiffany); color:var(--mmm-tiffany-light);">See the Indicators on Whop</a>
+        <a href="./journal/?course=1" class="inline-block text-center font-bold text-black px-6 py-3 rounded-xl transition" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Start the Course Free</a>
+        <a href="./indicators/" class="inline-block text-center font-bold px-6 py-3 rounded-xl border-2 transition" style="border-color:var(--mmm-tiffany); color:var(--mmm-tiffany-light);">Meet the MMM Pro Indicators</a>
       </div>
     </div>
     <div class="bg-black/50 border border-white/10 rounded-2xl p-6 num text-sm text-gray-400 space-y-3">
@@ -208,54 +222,74 @@
   </div>
 </section>
 
-<section id="gamma" class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20 grid lg:grid-cols-5 gap-10 items-start">
-  <div class="lg:col-span-2">
-    <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-4" style="background:hsla(45,100%,55%,0.12); color:var(--mmm-gold-light); border:1px solid hsla(45,100%,55%,0.3);">Free &middot; Updated Daily</div>
-    <h2 class="text-2xl sm:text-3xl font-extrabold mb-4">Gamma Levels for ES and NQ</h2>
-    <p class="text-gray-400 leading-relaxed mb-6">Daily gamma walls and flip levels for E-mini S&amp;P 500 and Nasdaq-100 futures - call walls, put walls, zero-gamma and GEX flip - ready to copy into the MMM TradingView gamma indicator.</p>
-    <a href="https://maxmaseratii.github.io/gamma-levels/docs/" target="_blank" rel="noopener" class="inline-block font-bold text-black px-6 py-3 rounded-xl transition" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Open Gamma Levels</a>
-    <p class="text-xs text-gray-500 mt-4">Educational levels only, not financial advice. Levels are modelled from open interest and can differ from other providers.</p>
+<section id="tools" class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20">
+  <div class="text-center mb-12">
+    <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-4" style="background:hsla(45,100%,55%,0.12); color:var(--mmm-gold-light); border:1px solid hsla(45,100%,55%,0.3);">Free &middot; No account needed</div>
+    <h2 class="text-2xl sm:text-3xl font-extrabold">Free daily tools for ES and NQ</h2>
+    <p class="text-gray-400 mt-3 max-w-xl mx-auto">Copy, paste into TradingView, trade with the levels and the news on your chart.</p>
   </div>
-  <div class="lg:col-span-3 rounded-2xl overflow-hidden border border-white/10 bg-black/60 shadow-2xl">
-    <div class="flex items-center justify-between px-4 py-2.5 border-b border-white/10 text-xs text-gray-400">
-      <span class="font-semibold" style="color:var(--mmm-gold-light);">Live Gamma Levels</span>
-      <a href="https://maxmaseratii.github.io/gamma-levels/docs/" target="_blank" rel="noopener" class="hover:text-white transition">Open full screen &#8599;</a>
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-7 flex flex-col">
+      <div class="flex items-center justify-between mb-2"><h3 class="font-bold text-xl">Gamma Levels</h3><span class="text-xs text-gray-500">every trading morning</span></div>
+      <p class="text-sm text-gray-400 leading-relaxed mb-5">Call walls, put walls, zero gamma and GEX flip for ES and NQ, ready for the MMM gamma indicator.</p>
+      <div id="t-gamma" class="grid grid-cols-2 gap-3 num text-sm mb-6">
+        <div class="rounded-xl bg-black/50 border border-white/10 p-3"><p class="text-xs text-gray-500 mb-1">ES</p><p class="text-gray-500">loading&hellip;</p></div>
+        <div class="rounded-xl bg-black/50 border border-white/10 p-3"><p class="text-xs text-gray-500 mb-1">NQ</p><p class="text-gray-500">loading&hellip;</p></div>
+      </div>
+      <a href="./gamma/" class="mt-auto inline-block text-center font-bold text-black px-6 py-3 rounded-xl transition hover:brightness-110" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Open Gamma Levels</a>
     </div>
-    <iframe src="https://maxmaseratii.github.io/gamma-levels/docs/" title="Gamma Levels for ES and NQ" loading="lazy" referrerpolicy="no-referrer" class="w-full block bg-black" style="height:560px; border:0;"></iframe>
+    <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6 sm:p-7 flex flex-col">
+      <div class="flex items-center justify-between mb-2"><h3 class="font-bold text-xl">News Calendar</h3><span class="text-xs text-gray-500">updated twice a day</span></div>
+      <p class="text-sm text-gray-400 leading-relaxed mb-5">Red-folder news in New York time, formatted for the MMM indicators' news warning. Pick, copy, paste.</p>
+      <div id="t-news" class="rounded-xl bg-black/50 border border-white/10 p-3 text-sm mb-6 space-y-1.5"><p class="text-gray-500">loading&hellip;</p></div>
+      <a href="./news/" class="mt-auto inline-block text-center font-bold px-6 py-3 rounded-xl border-2 transition" style="border-color:var(--mmm-tiffany); color:var(--mmm-tiffany-light);">Open News Calendar</a>
+    </div>
   </div>
+  <p class="text-xs text-gray-500 mt-6 text-center">Educational data only, not financial advice. Gamma levels are modelled from delayed open interest and can differ from other providers.</p>
 </section>
+
 
 <section id="socials" class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20 text-center">
   <h2 class="text-2xl sm:text-3xl font-extrabold">Watch Max trade live</h2>
   <p class="text-gray-400 mt-2 mb-9">Live ES/NQ analysis and real-time calls, every session.</p>
   <div class="flex flex-wrap items-center justify-center gap-3 text-sm font-medium">
-    <a href="https://twitch.tv" target="_blank" rel="noopener" class="bg-white/5 hover:bg-white/10 border border-white/15 px-5 py-2.5 rounded-full transition">Twitch</a>
-    <a href="https://youtube.com" target="_blank" rel="noopener" class="bg-white/5 hover:bg-white/10 border border-white/15 px-5 py-2.5 rounded-full transition">YouTube</a>
-    <a href="https://tiktok.com" target="_blank" rel="noopener" class="bg-white/5 hover:bg-white/10 border border-white/15 px-5 py-2.5 rounded-full transition">TikTok</a>
-    <a href="https://x.com" target="_blank" rel="noopener" class="bg-white/5 hover:bg-white/10 border border-white/15 px-5 py-2.5 rounded-full transition">X</a>
-    <a href="https://facebook.com" target="_blank" rel="noopener" class="bg-white/5 hover:bg-white/10 border border-white/15 px-5 py-2.5 rounded-full transition">Facebook</a>
+    <a href="https://www.twitch.tv/maxmaserati" target="_blank" rel="noopener" class="bg-white/5 hover:bg-white/10 border border-white/15 px-5 py-2.5 rounded-full transition">Twitch</a>
+    <a href="https://www.youtube.com/@MaxMaserati" target="_blank" rel="noopener" class="bg-white/5 hover:bg-white/10 border border-white/15 px-5 py-2.5 rounded-full transition">YouTube</a>
+    <a href="https://www.tiktok.com/@maxmaserati" target="_blank" rel="noopener" class="bg-white/5 hover:bg-white/10 border border-white/15 px-5 py-2.5 rounded-full transition">TikTok</a>
+    <a href="https://x.com/MaxMaserati" target="_blank" rel="noopener" class="bg-white/5 hover:bg-white/10 border border-white/15 px-5 py-2.5 rounded-full transition">X</a>
+    <a href="https://www.facebook.com/MaxMaserati" target="_blank" rel="noopener" class="bg-white/5 hover:bg-white/10 border border-white/15 px-5 py-2.5 rounded-full transition">Facebook</a>
   </div>
 </section>
 
-<footer class="border-t border-white/10">
-  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-    <div class="flex items-center gap-2.5">
-      <div class="crown-badge h-8 w-8 rounded-lg flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--mmm-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7Zm3 15h14"/></svg>
-      </div>
-      <span>Max Maserati Trading University</span>
-    </div>
-    <div class="flex items-center gap-5">
-      <a href="./journal/" class="hover:text-white transition">Journal</a>
-      <a href="./journal/?course=1" class="hover:text-white transition">Course</a>
-      <a href="./diagnostic/" class="hover:text-white transition">Trading Test</a>
-      <a href="./whop/" class="hover:text-white transition">Indicators</a>
-      <a href="https://maxmaseratii.github.io/gamma-levels/docs/" target="_blank" rel="noopener" class="hover:text-white transition">Gamma Levels</a>
-      <a href="mailto:infotrade@maxmaserati.com" class="hover:text-white transition">infotrade@maxmaserati.com</a>
-    </div>
-  </div>
-</footer>
+<div id="mmm-footer"></div>
 
+<script src="/assets/site.js"></script>
 <script src="./i18n.js"></script>
+<script>
+(function () {
+  var G = 'https://maxmaseratii.github.io/gamma-levels/docs/';
+  function esc(s) { return String(s || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function kv(txt) { var o = {}; txt.split(/\r?\n/).forEach(function (l) { var m = l.match(/^\s*(.+?)\s*=\s*(.+?)\s*$/); if (m) o[m[1]] = m[2]; }); return o; }
+  function box(name, o) {
+    return '<div class="rounded-xl bg-black/50 border border-white/10 p-3"><p class="text-xs text-gray-500 mb-1">' + name + ' &middot; spot ' + esc(o['Spot Price'] || '-') + '</p>' +
+      '<p class="flex justify-between"><span class="text-gray-500">Call wall</span><span class="text-green-400 font-bold">' + esc(o['90D Call Wall'] || '-') + '</span></p>' +
+      '<p class="flex justify-between"><span class="text-gray-500">Put wall</span><span class="text-red-400 font-bold">' + esc(o['90D Put Wall'] || '-') + '</span></p>' +
+      '<p class="flex justify-between"><span class="text-gray-500">Zero gamma</span><span class="text-yellow-300 font-bold">' + esc(o['90D Zero Gamma'] || '-') + '</span></p></div>';
+  }
+  var t = '?t=' + Date.now();
+  Promise.all([fetch(G + 'latest_ES.txt' + t).then(function (r) { return r.text(); }), fetch(G + 'latest_NQ.txt' + t).then(function (r) { return r.text(); })])
+    .then(function (r) { document.getElementById('t-gamma').innerHTML = box('ES', kv(r[0])) + box('NQ', kv(r[1])); })
+    .catch(function () { document.getElementById('t-gamma').innerHTML = '<p class="col-span-2 text-gray-500">Open the page for today\'s levels.</p>'; });
+  fetch(G + 'news/news.json' + t).then(function (r) { return r.json(); }).then(function (d) {
+    var now = new Date(), p = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(now);
+    function g(k) { return p.filter(function (x) { return x.type === k; })[0].value; }
+    var nowNY = g('year') + '-' + g('month') + '-' + g('day') + ' ' + g('hour') + ':' + g('minute');
+    var up = d.events.filter(function (e) { return e.cur === 'USD' && e.imp === 'H' && (e.date + ' ' + e.time) >= nowNY; }).slice(0, 4);
+    var rows = up.map(function (e) { return '<p class="flex justify-between gap-3"><span class="text-gray-300"><span class="inline-block h-2 w-2 rounded-full bg-red-500 mr-2 align-middle"></span>' + esc(e.title) + '</span><span class="num text-gray-500 shrink-0">' + e.date.slice(5) + ' ' + e.time + '</span></p>'; }).join('');
+    document.getElementById('t-news').innerHTML = rows || '<p class="text-gray-500">No more USD red-folder news this week. The new week loads over the weekend.</p>';
+  }).catch(function () { document.getElementById('t-news').innerHTML = '<p class="text-gray-500">Open the page for this week\'s news.</p>'; });
+})();
+</script>
+
 </body>
 </html>

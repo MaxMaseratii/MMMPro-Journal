@@ -3,16 +3,19 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Join MMM Trading | Max Maserati</title>
-<meta name="description" content="Join MMM Trading - Max Maserati's indicators and trading education for ES/NQ futures. MMM 1.0, 2.0, 3.0 and Perfect Entry.">
+<title>Pricing &amp; Access | MMM Trading</title>
+<meta name="description" content="Join MMM Trading - the MMM Pro indicators, TradingView access and the trading community for ES and NQ futures, through Whop.">
+<link rel="canonical" href="https://www.maxmaserati.com/whop/">
+<meta property="og:title" content="Pricing &amp; Access | MMM Trading">
+<meta property="og:image" content="https://www.maxmaserati.com/mmm-logo-lockup.jpg">
 <link rel="icon" href="../favicon.ico" sizes="any">
-<meta name="theme-color" content="#1a3e6f">
+<meta name="theme-color" content="#0a0a0a">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  body { background:#050914; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { background:hsl(0,0%,4%); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   .grid-glow { background-image: radial-gradient(circle at 15% 0%, rgba(250,204,21,0.10), transparent 45%), radial-gradient(circle at 90% 10%, rgba(26,62,111,0.55), transparent 50%); }
   .card-hover { transition: transform .2s ease, border-color .2s ease; }
   .card-hover:hover { transform: translateY(-3px); border-color: rgba(250,204,21,0.4); }
@@ -20,15 +23,7 @@
 </head>
 <body class="text-white">
 
-<header class="sticky top-0 z-40 backdrop-blur bg-[#050914]/85 border-b border-white/10">
-  <div class="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-    <a href="../" class="flex items-center gap-2.5">
-      <img src="../logo-icon-192.png" alt="Max Maserati" class="h-9 w-9 rounded-lg" />
-      <span class="font-bold tracking-tight text-[15px] sm:text-base">Max Maserati <span class="text-yellow-400">Trading</span></span>
-    </a>
-    <a href="../" class="text-sm text-gray-400 hover:text-white transition">&larr; Back to home</a>
-  </div>
-</header>
+<div id="mmm-header"></div>
 
 <section class="grid-glow border-b border-white/10">
   <div class="max-w-4xl mx-auto px-5 sm:px-8 pt-14 pb-12 sm:pt-20 sm:pb-16 text-center">
@@ -41,6 +36,16 @@
 </section>
 
 <section class="max-w-5xl mx-auto px-5 sm:px-8 py-14 sm:py-16">
+  <a href="../indicators/" class="card-hover block mb-5 rounded-2xl p-6 sm:p-7 border border-yellow-400/30" style="background:linear-gradient(135deg,hsla(45,100%,55%,0.10),hsla(180,70%,55%,0.06));">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div>
+        <p class="text-xs font-bold uppercase tracking-widest text-yellow-300 mb-1">New &middot; the foundation of MMM order flow</p>
+        <h3 class="font-extrabold text-xl">MMM Pro <span class="font-mono">c &middot; s &middot; x</span></h3>
+        <p class="text-sm text-gray-400 mt-1 max-w-xl">Candle, swing and balance-zone break engines. Opening on TradingView by invitation &mdash; see how they read the auction between buyers and sellers.</p>
+      </div>
+      <span class="shrink-0 text-center text-sm font-semibold bg-yellow-400 text-black px-5 py-2.5 rounded-lg">Explore the indicators &rarr;</span>
+    </div>
+  </a>
   <div class="grid sm:grid-cols-2 gap-5">
 
     <div class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-6 flex flex-col">
@@ -78,12 +83,9 @@
   </div>
 </section>
 
-<footer class="border-t border-white/10">
-  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-    <span>Max Maserati Trading University</span>
-    <a href="mailto:infotrade@maxmaserati.com" class="hover:text-white transition">infotrade@maxmaserati.com</a>
-  </div>
-</footer>
+<div id="mmm-footer"></div>
+<script src="/assets/site.js"></script>
+<script src="/i18n.js"></script>
 
 </body>
 </html>
