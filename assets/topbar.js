@@ -39,6 +39,8 @@
     '#mmm-tb .home{display:flex;align-items:center;gap:9px;font-weight:800;font-size:16px;color:#000;margin-right:6px}',
     '#mmm-tb .crown{height:32px;width:32px;border-radius:8px;background:#0a0a0a;border:2px solid hsl(180,70%,55%);display:flex;align-items:center;justify-content:center}',
     '#mmm-tb nav{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:8px 0}',
+    '#mmm-tb .lang{margin-left:auto;background:rgba(0,0,0,.1);border:1px solid rgba(0,0,0,.25);border-radius:8px;height:32px;padding:0 6px;font:600 12px/1 Inter,system-ui,sans-serif;color:#000;cursor:pointer}',
+    '#mmm-tb .lang+.x{margin-left:0}',
     '#mmm-tb .x{margin-left:auto;background:rgba(0,0,0,.1);border:1px solid rgba(0,0,0,.25);border-radius:8px;height:32px;min-width:32px;cursor:pointer;font:700 16px/1 system-ui;color:#000}',
     '#mmm-tb-tab{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:2147483000;display:none;border:0;cursor:pointer;',
     ' background:linear-gradient(90deg,hsl(45,100%,55%),hsl(45,100%,65%));color:#000;font:800 11px/1 Inter,system-ui,sans-serif;letter-spacing:.06em;',
@@ -58,7 +60,8 @@
     bar.innerHTML = '<div class="in"><a class="home" href="/" aria-label="MMM Trading home"><span class="crown">' + CROWN + '</span>MMM Trading</a>' +
       '<nav aria-label="Site menu">' + NAV.map(function (n) {
         return '<a href="' + n[1] + '"' + (active(n[1]) ? ' class="on" aria-current="page"' : '') + '>' + n[0] + '</a>';
-      }).join('') + '</nav><button type="button" class="x" aria-label="Close menu">&times;</button></div>';
+      }).join('') + '</nav>' + (typeof window.mmmSetLang === 'function' ? '<select class="mmm-lang lang" aria-label="Language"></select>' : '') +
+      '<button type="button" class="x" aria-label="Close menu">&times;</button></div>';
     var tab = document.createElement('button'); tab.id = 'mmm-tb-tab'; tab.type = 'button';
     tab.setAttribute('aria-label', 'Open the site menu'); tab.setAttribute('aria-expanded', 'false'); tab.textContent = 'MMM ▾';
     document.body.insertBefore(bar, document.body.firstChild); document.body.appendChild(zone); document.body.appendChild(tab);

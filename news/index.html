@@ -152,7 +152,7 @@
     var html = '', last = '';
     wk.forEach(function (r) {
       if (r.date !== last) { html += '<tr><td colspan="5" class="pt-4 pb-1 text-xs font-bold uppercase tracking-wider text-[color:var(--mmm-gold-light)]">' + fmt(r.date) + '</td></tr>'; last = r.date; }
-      html += '<tr class="border-b border-white/5' + (r.date < today ? ' opacity-40' : '') + '"><td class="py-2 pr-3 num text-gray-300">' + r.time + '</td><td class="py-2 pr-3 text-gray-400">' + esc(r.cur) + '</td><td class="py-2 pr-3"><span class="inline-block h-2.5 w-2.5 rounded-full mr-2 align-middle" style="background:' + DOT[r.imp] + '"></span>' + esc(r.title) + '</td><td class="py-2 pr-3 num text-gray-400">' + esc(r.forecast) + '</td><td class="py-2 num text-gray-400">' + esc(r.previous) + '</td></tr>';
+      html += '<tr translate="no" class="border-b border-white/5' + (r.date < today ? ' opacity-40' : '') + '"><td class="py-2 pr-3 num text-gray-300">' + r.time + '</td><td class="py-2 pr-3 text-gray-400">' + esc(r.cur) + '</td><td class="py-2 pr-3"><span class="inline-block h-2.5 w-2.5 rounded-full mr-2 align-middle" style="background:' + DOT[r.imp] + '"></span>' + esc(r.title) + '</td><td class="py-2 pr-3 num text-gray-400">' + esc(r.forecast) + '</td><td class="py-2 num text-gray-400">' + esc(r.previous) + '</td></tr>';
     });
     $('tbl').innerHTML = html || '<tr><td colspan="5" class="py-4 text-gray-500">No events saved for this week yet.</td></tr>';
     $('weekmeta').textContent = DATA.week_from ? DATA.week_from + ' to ' + DATA.week_to + ' · every currency and impact · faded rows = already passed' : '';

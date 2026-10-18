@@ -193,7 +193,7 @@ table.g tbody tr:hover td{background:var(--sel)}
 
 
 <div class="top">
-  <div class="title"><h1>MMM <b>Indicators</b> · Backtests · Strategies</h1><span class="sub" id="sub">NQ 1m 2022–25 + fresh MNQ Dec 2025 – Oct 2026 · every number after costs (1 pt a trade)</span></div>
+  <div class="title"><h1>MMM <b>Indicators</b> · Backtests · Strategies</h1><select class="mmm-lang" aria-label="Language" style="margin-left:auto;font-family:var(--f-ui);font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:3px 6px"></select><span class="sub" id="sub">NQ 1m 2022–25 + fresh MNQ Dec 2025 – Oct 2026 · every number after costs (1 pt a trade)</span></div>
   <div class="bar" id="bar"></div>
 </div>
 <main><div class="scroll" id="scroll"><div class="loading">Loading…</div></div></main>
@@ -1002,7 +1002,7 @@ function grid(t,D,key,pre){
   cols.forEach((c,i)=>{const th=document.createElement('th');th.innerHTML=c.l+(c.h?`<small>${c.h}</small>`:'');if(c.code)th.classList.add('code');th.title='Sort by '+c.l.replace(/<[^>]+>/g,'');
     th.onclick=()=>{if(st.sort===i)st.dir*=-1;else{st.sort=i;st.dir=c.t==='s'?1:-1}render()};hr.appendChild(th)});
   thead.appendChild(hr);tbl.appendChild(thead);
-  const tb=document.createElement('tbody');tbl.appendChild(tb);sc.appendChild(tbl);
+  const tb=document.createElement('tbody');tb.setAttribute('translate','no');tbl.appendChild(tb);sc.appendChild(tbl);
   const RH=26;let view=[];
   function filtered(){
     let rows=D.rows;
@@ -1048,6 +1048,7 @@ show(TABS.some(t=>t.id===start)?start:'start');
 window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(TABS.some(t=>t.id===h))show(h)});
 
 </script>
+<script src="/i18n.js"></script>
 <script src="/assets/nav.js"></script>
 <script src="/assets/topbar.js" defer></script>
 </body>

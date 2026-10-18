@@ -94,76 +94,259 @@ const MMM_TRANSLATIONS = {
   "Max Maserati Model - Highest Entry Precision. Minimal Drawdown. Absolute Risk Control.": { fr: "Modèle Max Maserati - Précision d'entrée maximale. Drawdown minimal. Contrôle absolu du risque.", es: "Modelo Max Maserati - Máxima precisión de entrada. Drawdown mínimo. Control absoluto del riesgo.", ht: "Modèl Max Maserati - Pi Gwo Presizyon Antre. Drawdown Minimal. Kontwòl Risk Absoli.", ja: "マックス・マセラティ・モデル - 最高のエントリー精度。最小限のドローダウン。絶対的なリスク管理。", zh: "Max Maserati 模型 - 极致入场精准度。最小回撤。绝对风险控制。", de: "Max-Maserati-Modell - Höchste Einstiegspräzision. Minimaler Drawdown. Absolute Risikokontrolle." },
 };
 
+
+/* ───────── MMM i18n engine v2 ─────────
+ * Translates the WHOLE page, including content that apps draw later (tabs, tables, charts).
+ *  1. "Units" = the smallest elements that hold text and only inline tags (p, li, td, h2, button…).
+ *     A unit is translated as one piece (its innerHTML), so <b>, <a>, <span> stay in place.
+ *  2. Numbers are placeholders: "Max 2 open" and "Max 1 open" share the key "Max {0} open".
+ *  3. Loose text nodes and title / aria-label / placeholder / alt are translated too.
+ *  4. Dictionaries load only when a language other than English is picked:
+ *     /i18n/<lang>/common.json (menu, footer, account box) + /i18n/<lang>/<page>.json.
+ *  5. A MutationObserver translates anything the page adds or changes later.
+ *  Mark anything that must stay as it is with translate="no" (or class "notranslate").
+ *  The old flat MMM_TRANSLATIONS list (above) still works as a fallback.
+ */
+var MMM_DICT = {};          // lang -> { key: translation }
+var MMM_DICT_LOADED = {};   // lang -> Promise
+var __mmmLang = 'en';
+var __mmmBusy = false;
+var __mmmObs = null;
+var MMM_INLINE = { A:1, ABBR:1, B:1, BDI:1, BDO:1, BR:1, CITE:1, DATA:1, DFN:1, EM:1, I:1, KBD:1, MARK:1, Q:1, S:1, SAMP:1, SMALL:1, SPAN:1, STRONG:1, SUB:1, SUP:1, TIME:1, U:1, VAR:1, WBR:1, IMG:1, tspan:1 };
+var MMM_SKIP = { SCRIPT:1, STYLE:1, NOSCRIPT:1, TEXTAREA:1, INPUT:1, CODE:1, PRE:1, TEMPLATE:1, IFRAME:1, CANVAS:1, VIDEO:1, AUDIO:1 };
+var MMM_ATTRS = ['title', 'aria-label', 'placeholder', 'alt'];
+var MMM_HAS_WORD = /[A-Za-zÀ-ÿ]{2}/;
+
 function mmmGetLang() {
   try { return localStorage.getItem('mmm-language') || 'en'; } catch (e) { return 'en'; }
 }
-
-function mmmApplyLang(lang) {
-  const body = document.body;
-  if (!window.__mmmOriginalText) window.__mmmOriginalText = new WeakMap();
-  const originalMap = window.__mmmOriginalText;
-
-  const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, {
-    acceptNode: function(node) {
-      const p = node.parentElement;
-      if (!p) return NodeFilter.FILTER_REJECT;
-      if (p.closest('script,style,select,option')) return NodeFilter.FILTER_REJECT;
-      return NodeFilter.FILTER_ACCEPT;
-    }
-  });
-  let node;
-  while ((node = walker.nextNode())) {
-    if (!originalMap.has(node)) originalMap.set(node, node.nodeValue);
-    const original = originalMap.get(node);
-    const trimmed = original.trim();
-    if (!trimmed) continue;
-    const idx = original.indexOf(trimmed);
-    const leading = original.slice(0, idx);
-    const trailing = original.slice(idx + trimmed.length);
-    const entry = MMM_TRANSLATIONS[trimmed];
-    const translated = (lang === 'en' || !entry) ? trimmed : (entry[lang] || trimmed);
-    const next = leading + translated + trailing;
-    if (node.nodeValue !== next) node.nodeValue = next;
-  }
-
-  const attrEls = body.querySelectorAll('[alt], [placeholder]');
-  attrEls.forEach(function(el) {
-    ['alt', 'placeholder'].forEach(function(attr) {
-      if (!el.hasAttribute(attr)) return;
-      const cacheKey = attr + ':' + (originalMap.has(el) ? '' : '');
-      if (!el.__mmmOrig) el.__mmmOrig = {};
-      if (el.__mmmOrig[attr] === undefined) el.__mmmOrig[attr] = el.getAttribute(attr);
-      const original = el.__mmmOrig[attr];
-      const trimmed = original.trim();
-      if (!trimmed) return;
-      const entry = MMM_TRANSLATIONS[trimmed];
-      const translated = (lang === 'en' || !entry) ? trimmed : (entry[lang] || trimmed);
-      if (el.getAttribute(attr) !== translated) el.setAttribute(attr, translated);
-    });
-  });
-
-  document.documentElement.lang = lang;
+function mmmPageKey() {
+  var m = document.querySelector('meta[name="mmm-page"]');
+  if (m && m.content) return m.content;
+  var p = location.pathname.replace(/index\.html$/, '').replace(/^\/+|\/+$/g, '');
+  return p ? p.split('/')[0].replace(/\.html$/, '') : 'home';
 }
-
+// Key = text with collapsed spaces, numbers outside tags replaced by {0}, {1}…
+function mmmKey(s) {
+  var nums = [];
+  var norm = String(s).replace(/\s+/g, ' ').trim();
+  var key = norm.split(/(<[^>]*>)/).map(function (part) {
+    if (part.charAt(0) === '<') return part;
+    return part.replace(/\d+(?:[.,]\d+)*/g, function (m) { nums.push(m); return '{' + (nums.length - 1) + '}'; });
+  }).join('');
+  return { key: key, nums: nums };
+}
+function mmmFill(tr, nums) {
+  return tr.replace(/\{(\d+)\}/g, function (m, i) { return nums[+i] !== undefined ? nums[+i] : m; });
+}
+function mmmLookup(raw, lang) {
+  if (lang === 'en') return null;
+  var k = mmmKey(raw), d = MMM_DICT[lang];
+  if (d && d[k.key] !== undefined) return mmmFill(d[k.key], k.nums);
+  var legacy = typeof MMM_TRANSLATIONS !== 'undefined' ? MMM_TRANSLATIONS[String(raw).trim()] : null;
+  if (legacy && legacy[lang]) return legacy[lang];
+  return null;
+}
+function mmmSkipEl(el) {
+  if (!el || el.nodeType !== 1) return true;
+  if (MMM_SKIP[el.tagName]) return true;
+  if (el.isContentEditable) return true;
+  return !!(el.closest && el.closest('[translate="no"],.notranslate'));
+}
+// a unit: has words, and every child is text or an inline element made of inline elements
+function mmmIsUnit(el) {
+  if (!el.firstChild) return false;
+  var words = false;
+  function ok(node) {
+    for (var c = node.firstChild; c; c = c.nextSibling) {
+      if (c.nodeType === 3) { if (MMM_HAS_WORD.test(c.nodeValue)) words = true; continue; }
+      if (c.nodeType !== 1) continue;
+      if (!MMM_INLINE[c.tagName] && !MMM_INLINE[c.localName]) return false;
+      if (c.getAttribute && (c.getAttribute('translate') === 'no' || (c.classList && c.classList.contains('notranslate')))) return false;
+      if (!ok(c)) return false;
+    }
+    return true;
+  }
+  if (!ok(el) || !words) return false;
+  // a box of links / labels with no words of its own (a menu, a row of spans) is not one sentence:
+  // translate each child on its own, so the key does not change with the active link
+  var own = false, kids = 0;
+  for (var d = el.firstChild; d; d = d.nextSibling) {
+    if (d.nodeType === 3 && MMM_HAS_WORD.test(d.nodeValue)) own = true;
+    else if (d.nodeType === 1 && d.tagName !== 'BR') kids++;
+  }
+  return own || kids <= 1;
+}
+function mmmDoUnit(el, lang) {
+  // an <option> with no value uses its text as the value: pin it so translating keeps the app working
+  if (el.tagName === 'OPTION' && !el.hasAttribute('value')) el.setAttribute('value', el.textContent);
+  if (el.__mmmSrc === undefined) el.__mmmSrc = el.innerHTML;
+  var src = el.__mmmSrc;
+  var tr = mmmLookup(src, lang);
+  // keep the spaces around the text (e.g. "<span> Trading</span>")
+  var next = tr === null ? src : (src.match(/^\s*/)[0] + tr + src.match(/\s*$/)[0]);
+  if (el.innerHTML !== next) el.innerHTML = next;
+  el.__mmmShown = el.innerHTML;
+}
+var __mmmTextSrc = new WeakMap();
+function mmmDoText(node, lang) {
+  if (!__mmmTextSrc.has(node)) __mmmTextSrc.set(node, node.nodeValue);
+  var src = __mmmTextSrc.get(node);
+  var t = src.trim();
+  if (!MMM_HAS_WORD.test(t)) return;
+  var tr = mmmLookup(t, lang);
+  var lead = src.slice(0, src.indexOf(t)), trail = src.slice(src.indexOf(t) + t.length);
+  var next = tr === null ? src : lead + tr + trail;
+  if (node.nodeValue !== next) node.nodeValue = next;
+  node.__mmmShown = node.nodeValue;
+}
+function mmmDoAttrs(el, lang) {
+  for (var i = 0; i < MMM_ATTRS.length; i++) {
+    var a = MMM_ATTRS[i];
+    if (!el.hasAttribute(a)) continue;
+    if (!el.__mmmAttr) el.__mmmAttr = {};
+    var cur = el.getAttribute(a);
+    if (el.__mmmAttr[a] === undefined || (el.__mmmAttrShown && el.__mmmAttrShown[a] !== cur)) el.__mmmAttr[a] = cur;
+    var src = el.__mmmAttr[a];
+    if (!MMM_HAS_WORD.test(src)) continue;
+    var tr = mmmLookup(src, lang);
+    var next = tr === null ? src : tr;
+    if (cur !== next) el.setAttribute(a, next);
+    if (!el.__mmmAttrShown) el.__mmmAttrShown = {};
+    el.__mmmAttrShown[a] = next;
+  }
+}
+function mmmIsField(el) {
+  return el && el.nodeType === 1 && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') && !(el.closest && el.closest('[translate="no"],.notranslate'));
+}
+function mmmWalk(el, lang) {
+  if (mmmIsField(el)) { mmmDoAttrs(el, lang); return; }   // placeholder / title only, never the typed value
+  if (mmmSkipEl(el)) return;
+  mmmDoAttrs(el, lang);
+  // the app changed this unit's content since we last drew it → its English source is new
+  if (el.__mmmSrc !== undefined && el.innerHTML !== el.__mmmShown) el.__mmmSrc = undefined;
+  if (el.__mmmSrc !== undefined || mmmIsUnit(el)) {
+    // keep tooltips of inline children
+    var kids = el.querySelectorAll('[title],[aria-label]');
+    mmmDoUnit(el, lang);
+    kids = el.querySelectorAll('[title],[aria-label]');
+    for (var j = 0; j < kids.length; j++) mmmDoAttrs(kids[j], lang);
+    return;
+  }
+  for (var c = el.firstChild; c; c = c.nextSibling) {
+    if (c.nodeType === 3) {
+      if (__mmmTextSrc.has(c) && c.nodeValue !== c.__mmmShown) __mmmTextSrc.set(c, c.nodeValue);
+      mmmDoText(c, lang);
+    } else if (c.nodeType === 1) mmmWalk(c, lang);
+  }
+}
+function mmmApplyLang(lang, root) {
+  __mmmLang = lang || 'en';
+  if (!document.body) return;
+  __mmmBusy = true;
+  try {
+    mmmWalk(root || document.body, __mmmLang);
+    if (!root) {
+      if (document.__mmmTitle === undefined) document.__mmmTitle = document.title;
+      var t = mmmLookup(document.__mmmTitle, __mmmLang);
+      document.title = t === null ? document.__mmmTitle : t;
+      document.documentElement.lang = __mmmLang;
+    }
+  } finally {
+    if (__mmmObs) __mmmObs.takeRecords();
+    __mmmBusy = false;
+  }
+}
+function mmmLoadDict(lang) {
+  if (lang === 'en') return Promise.resolve();
+  if (MMM_DICT_LOADED[lang]) return MMM_DICT_LOADED[lang];
+  MMM_DICT[lang] = MMM_DICT[lang] || {};
+  function get(url) {
+    return fetch(url, { cache: 'force-cache' }).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; })
+      .then(function (j) { for (var k in j) MMM_DICT[lang][k] = j[k]; });
+  }
+  MMM_DICT_LOADED[lang] = Promise.all([get('/i18n/' + lang + '/common.json'), get('/i18n/' + lang + '/' + mmmPageKey() + '.json')]);
+  return MMM_DICT_LOADED[lang];
+}
+function mmmSyncSelects(lang) {
+  var sels = document.querySelectorAll('#lang-switch, select.mmm-lang');
+  for (var i = 0; i < sels.length; i++) if (sels[i].value !== lang) sels[i].value = lang;
+}
 function mmmSetLang(lang) {
   try { localStorage.setItem('mmm-language', lang); } catch (e) {}
-  mmmApplyLang(lang);
-  const sel = document.getElementById('lang-switch');
-  if (sel && sel.value !== lang) sel.value = lang;
+  __mmmLang = lang;
+  mmmSyncSelects(lang);
+  mmmLoadDict(lang).then(function () { if (__mmmLang === lang) mmmApplyLang(lang); });
 }
-
-(function mmmInitLangSwitcher() {
-  const sel = document.getElementById('lang-switch');
-  if (sel) {
-    MMM_LANGS.forEach(function(l) {
-      const opt = document.createElement('option');
-      opt.value = l.code;
-      opt.textContent = l.label;
-      sel.appendChild(opt);
+function mmmFillSelect(sel) {
+  if (!sel || sel.__mmmFilled) return;
+  sel.__mmmFilled = true;
+  sel.setAttribute('translate', 'no');
+  if (!sel.options.length) MMM_LANGS.forEach(function (l) { var o = document.createElement('option'); o.value = l.code; o.textContent = l.label; sel.appendChild(o); });
+  sel.value = __mmmLang;
+  sel.addEventListener('change', function (e) { mmmSetLang(e.target.value); });
+}
+(function mmmInit() {
+  __mmmLang = mmmGetLang();
+  var ls = document.querySelectorAll('#lang-switch, select.mmm-lang');
+  for (var z = 0; z < ls.length; z++) ls[z].setAttribute('translate', 'no');
+  var sels = document.querySelectorAll('#lang-switch, select.mmm-lang');
+  for (var i = 0; i < sels.length; i++) mmmFillSelect(sels[i]);
+  // anything added or changed later (tabs, tables, menus) is translated too
+  if (window.MutationObserver && document.body) {
+    __mmmObs = new MutationObserver(function (recs) {
+      if (__mmmBusy) return;
+      var roots = [];
+      for (var i = 0; i < recs.length; i++) {
+        var r = recs[i], el = r.type === 'characterData' ? r.target.parentElement : r.target;
+        if (!el || el.nodeType !== 1) continue;
+        if (r.type === 'childList') for (var j = 0; j < r.addedNodes.length; j++) {
+          var n = r.addedNodes[j];
+          if (n.nodeType === 1 && n.matches && n.matches('select.mmm-lang,#lang-switch')) mmmFillSelect(n);
+          if (n.nodeType === 1 && n.querySelectorAll) { var ss = n.querySelectorAll('select.mmm-lang,#lang-switch'); for (var q = 0; q < ss.length; q++) mmmFillSelect(ss[q]); }
+        }
+        // climb to the unit that holds this change, if any
+        var u = el, unit = null;
+        while (u && u !== document.body) { if (u.__mmmSrc !== undefined) { unit = u; } u = u.parentElement; }
+        roots.push(unit || el);
+      }
+      if (__mmmLang === 'en' && !roots.length) return;
+      __mmmBusy = true;
+      try {
+        for (var k = 0; k < roots.length; k++) if (document.body.contains(roots[k])) mmmWalk(roots[k], __mmmLang);
+      } finally { __mmmObs.takeRecords(); __mmmBusy = false; }
     });
-    sel.addEventListener('change', function(e) { mmmSetLang(e.target.value); });
+    __mmmObs.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: MMM_ATTRS });
   }
-  const lang = mmmGetLang();
-  if (sel) sel.value = lang;
-  mmmApplyLang(lang);
+  if (__mmmLang === 'en') mmmApplyLang('en');
+  else mmmLoadDict(__mmmLang).then(function () { mmmApplyLang(__mmmLang); });
 })();
+
+/* For the translation build: list every key on the page right now. */
+window.mmmI18nCollect = function () {
+  var out = {}, COMMON = '#mmm-tb,#mmm-tb-tab,#mmm-auth,header,footer';
+  function add(raw, el) {
+    var t = String(raw).replace(/\s+/g, ' ').trim();
+    if (!MMM_HAS_WORD.test(t.replace(/<[^>]*>/g, ''))) return;
+    var k = mmmKey(t).key, common = !!(el && el.closest && el.closest(COMMON));
+    if (!out[k]) out[k] = { common: common }; else if (!common) out[k].common = false;
+  }
+  function walk(el) {
+    if (mmmIsField(el)) { for (var f = 0; f < MMM_ATTRS.length; f++) if (el.hasAttribute(MMM_ATTRS[f])) add(el.__mmmAttr && el.__mmmAttr[MMM_ATTRS[f]] !== undefined ? el.__mmmAttr[MMM_ATTRS[f]] : el.getAttribute(MMM_ATTRS[f]), el); return; }
+    if (mmmSkipEl(el)) return;
+    for (var i = 0; i < MMM_ATTRS.length; i++) if (el.hasAttribute(MMM_ATTRS[i])) add(el.__mmmAttr && el.__mmmAttr[MMM_ATTRS[i]] !== undefined ? el.__mmmAttr[MMM_ATTRS[i]] : el.getAttribute(MMM_ATTRS[i]), el);
+    if (el.__mmmSrc !== undefined || mmmIsUnit(el)) {
+      add(el.__mmmSrc !== undefined ? el.__mmmSrc : el.innerHTML, el);
+      var kids = el.querySelectorAll('[title],[aria-label]');
+      for (var j = 0; j < kids.length; j++) for (var a = 0; a < 2; a++) if (kids[j].hasAttribute(MMM_ATTRS[a])) add(kids[j].getAttribute(MMM_ATTRS[a]), el);
+      return;
+    }
+    for (var c = el.firstChild; c; c = c.nextSibling) {
+      if (c.nodeType === 3) add(__mmmTextSrc.has(c) ? __mmmTextSrc.get(c) : c.nodeValue, el);
+      else if (c.nodeType === 1) walk(c);
+    }
+  }
+  walk(document.body);
+  add(document.__mmmTitle !== undefined ? document.__mmmTitle : document.title, null);
+  return out;
+};
