@@ -17,12 +17,14 @@
   var FB_APP = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js';
   var FB_AUTH = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js';
 
-  var NAV = [
+  // The menu lives in /assets/nav.js (shared with the app pages). Fallback copy below.
+  var NAV = window.MMM_NAV || [
     ['Indicators', '/indicators/'],
+    ['Backtests', '/backtests/'],
     ['Course', '/journal/?course=1'],
     ['Journal', '/journal/'],
-    ['Gamma Levels', '/gamma/'],
-    ['News Calendar', '/news/'],
+    ['Gamma', '/gamma/'],
+    ['News', '/news/'],
     ['Free Test', '/diagnostic/'],
     ['Pricing', '/whop/']
   ];
@@ -121,7 +123,7 @@
       '<span class="font-bold text-gray-200">Max Maserati Trading University</span></div>' +
       '<p class="leading-relaxed max-w-sm">Order-flow education, the MMM Pro indicators and a prop-firm journal for ES and NQ futures traders.</p>' +
       '<p class="mt-4"><a href="mailto:infotrade@maxmaserati.com" class="hover:text-white transition">infotrade@maxmaserati.com</a></p></div>' +
-      col('MMM', [['MMM Pro Indicators', '/indicators/'], ['Free Course', '/journal/?course=1'], ['MMM Pro Journal', '/journal/'], ['Pricing', '/whop/']]) +
+      col('MMM', [['MMM Pro Indicators', '/indicators/'], ['Backtests & Strategies', '/backtests/'], ['Free Course', '/journal/?course=1'], ['MMM Pro Journal', '/journal/'], ['Pricing', '/whop/']]) +
       col('Free tools', [['Gamma Levels', '/gamma/'], ['News Calendar', '/news/'], ['Trading Discipline Test', '/diagnostic/']]) +
       col('Watch live', SOCIAL) +
       '</div>' +
