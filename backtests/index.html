@@ -961,14 +961,29 @@ G.retest=sc=>{
 
 // ───────────────── content: strategy book ─────────────────
 // one sheet per strategy that held: 2022–25 → 2026 · Blended
-let BOOK=null;const BK={c:'MNQ',n:1,per:{},pick:{}};
-const BK_PTV={MNQ:2,NQ:20};
+let BOOK=null,BKA=null;const BK={c:'MNQ',n:1,per:{},pick:{}};
+// contract · family · name · $ per point · tick
+const BK_CT=[['NQ','NQ','Nasdaq-100 E-mini',20,'0.25'],['MNQ','NQ','Nasdaq-100 Micro',2,'0.25'],['NNQ','NQ','Nasdaq-100 E-nano',0.2,'0.25'],
+ ['ES','ES','S&P 500 E-mini',50,'0.25'],['MES','ES','S&P 500 Micro',5,'0.25'],['NES','ES','S&P 500 E-nano',0.5,'0.25'],
+ ['GC','GC','Gold Standard',100,'0.10'],['MGC','GC','Gold Micro',10,'0.10'],['1OZ','GC','Gold Nano',1,'0.25']];
+const BK_PTV=Object.fromEntries(BK_CT.map(c=>[c[0],c[3]])),BK_FAMOF=Object.fromEntries(BK_CT.map(c=>[c[0],c[1]]));
+const BK_GRP=[['NQ','Nasdaq-100'],['ES','S&P 500'],['GC','Gold']];
+function bkFam(){return BK_FAMOF[BK.c]||'NQ'}
+function bkPv(v){return '$'+(v<1?v.toFixed(2):v)}
+function bkA(){const f=bkFam();return f==='NQ'||!BKA?null:BKA[f]}
+// the periods shown: NQ family = 2022–25 → 2026 · Blended · ES / gold = that market 2026 · NQ Blended to compare
+function bkPer(){const a=bkA();if(!a)return BK_PER;return [['fresh',a.name+' 2026',a.from+' – '+a.to],['all','NQ Blended','to compare · R only']]}
+function bkSv(s){const a=bkA();if(!a)return s;const x=a.sheets[s.code];if(!x)return null;
+  const per={fresh:x.per,all:s.per.all,old:[]};const xb=x.per[s.labels.length>1?s.best:0];
+  return Object.assign({},s,{per,ok:x.ok,why:x.why,status:s.status==='trade'&&xb&&xb.t>=2?'trade':'watch',years:[['2026 '+a.name,x.per[s.labels.length>1?s.best:0]]],
+    sides:(x.sides||[]).map(([d,b])=>[d,{fresh:b,all:((s.sides.find(z=>z[0]===d)||[0,{}])[1]||{}).all}]),
+    months:x.months||{n:0,up:0,best:['—',0],worst:['—',0]},curve:x.curve||[],asset:true})}
 const BK_IND={EP:'MMM EDGE PRO',x:'MMM PRO x',c:'MMM PRO c',s:'MMM PRO s',XCS:'MMM Pro XCS One',MPD:'MMPD'};
 const BK_NAMES=[['X','MMM PRO x','The zone engine: balanced zones, zone breaks, eBlocks and iBlocks.'],['C','MMM PRO c','The candle engine: PO4, GMC, candle breaks.'],['S','MMM PRO s','The swing engine: swing breaks.'],['XCS','MMM Pro XCS One','x, c and s together on one chart.'],['EP','MMM EDGE PRO','The 5 EDGE PRO setups (Z, B, C, G, M) with ½ out.'],['MPD','MMPD','Premium / discount oscillator. No stand-alone strategy yet: it is used as a gate (filter).']];
-const BK_PER=[['old','2022–25','NQ · 3 years'],['fresh','2026','MNQ · 10 months'],['all','Blended','both together']];
+const BK_PER=[['old','2022–25','NQ · 3 years · where the idea was found'],['fresh','2026','MNQ · 10 months · fresh check'],['all','Blended','both together · the total']];
 function bkUsd(p){if(p==null||isNaN(p))return'—';const v=p*BK_PTV[BK.c]*BK.n;return(v<0?'−$':'$')+Math.abs(Math.round(v)).toLocaleString('en-US')}
 function bkBe(b,j,s){if(!b||s.labels.length<2)return null;return 100*(1+1/b.risk)/(j+2)}
-function bkTrio(s,j,f){const p=s.per;return `${f(p.old[j])} → ${f(p.fresh[j])} · <b>${f(p.all[j])}</b>`}
+function bkTrio(s,j,f){const p=s.per;if(s.asset)return `<b>${f(p.fresh[j])}</b> · <span style="color:var(--muted)">${f(p.all[j])}</span>`;return `${f(p.old[j])} → ${f(p.fresh[j])} · <b>${f(p.all[j])}</b>`}
 function bkBest2(s){if(s.best2!=null||s.labels.length<2)return;let bi=s.best,bv=-1e9;
   s.per.old.forEach((b,j)=>{const f=s.per.fresh[j],a=s.per.all[j];if(!b||!f||!a||b.t==null||f.t==null||b.t<2||f.t<1)return;if(a.av>bv){bv=a.av;bi=j}});s.best2=bi}
 function bkCurve(c){if(!c||!c.length)return'';const W=900,H=220,pl=50,pr=12,pt=14,pb=28;const ys=c.map(p=>p[1]);const mn=Math.min(0,...ys),mx=Math.max(0,...ys);
@@ -987,47 +1002,62 @@ const BK_ROWS=[
  ['Net result',b=>bkUsd(b.netPts),0,b=>PC(b.netPts)],['Money won (all winning trades)',b=>bkUsd(b.winPts)],['Money lost (all losing trades)',b=>bkUsd(-b.lossPts)],
  ['Average win',b=>bkUsd(b.avgWinPts)],['Average loss',b=>bkUsd(b.avgLossPts==null?null:-b.avgLossPts)],['Biggest win',b=>bkUsd(b.bigWinPts)],['Biggest loss',b=>bkUsd(-b.bigLossPts)],
  ['Max wins in a row',b=>N0(b.maxWin)],['Max losses in a row',b=>N0(b.maxLoss)],['Max drawdown',b=>bkUsd(-b.ddPts)],['Max drawdown in R',b=>T1(b.ddR)+'R'],['Average risk per trade',b=>N0(b.risk)+' pts']];
+const BK_MONEY=new Set(['Net result','Money won (all winning trades)','Money lost (all losing trades)','Average win','Average loss','Biggest win','Biggest loss','Max drawdown']);
 G.book=async sc=>{
   sc.innerHTML='<div class="loading">Loading the strategy book…</div>';
   if(!BOOK){try{BOOK=await (await fetch('d_book.json')).json()}catch(e){sc.innerHTML='<div class="loading">This tab could not load. Reload the page to try again.</div>';return}}
+  if(!BKA){try{BKA=await (await fetch('d_book_assets.json')).json()}catch(e){BKA=null}}
   if(!cur||cur.id!=='book')return;
   BOOK.forEach(bkBest2);
-  const bar=$('#bar');bar.innerHTML=`<label>Contract<select id="bkc"><option value="MNQ">MNQ ($2 a point)</option><option value="NQ">NQ ($20 a point)</option></select></label><label>Contracts<select id="bkn">${[1,2,3,4,5,10].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Jump to<select id="bkj"><option value="">—</option>${BOOK.map(s=>`<option value="${s.code}">${s.code} · ${esc(s.name)}</option>`).join('')}</select></label>`;
+  const bar=$('#bar');bar.innerHTML=`<label>Contract<select id="bkc">${BK_GRP.map(([g,gn])=>`<optgroup label="${gn}">${BK_CT.filter(c=>c[1]===g).map(c=>`<option value="${c[0]}">${c[0]} (${bkPv(c[3])} a point)</option>`).join('')}</optgroup>`).join('')}</select></label><label>Contracts<select id="bkn">${[1,2,3,4,5,10].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Jump to<select id="bkj"></select></label>`;
+  function jump(){const L=BOOK.map(bkSv).filter(s=>s&&s.ok!==false);$('#bkj').innerHTML=`<option value="">—</option>${L.map(s=>`<option value="${s.code}">${s.code} · ${esc(s.name)}</option>`).join('')}`}
   $('#bkc').value=BK.c;$('#bkn').value=BK.n;
-  $('#bkc').onchange=e=>{BK.c=e.target.value;paint()};$('#bkn').onchange=e=>{BK.n=+e.target.value;paint()};
+  $('#bkc').onchange=e=>{BK.c=e.target.value;jump();paint()};$('#bkn').onchange=e=>{BK.n=+e.target.value;paint()};
   $('#bkj').onchange=e=>{const t=document.getElementById('bk-'+e.target.value);if(t)t.scrollIntoView({block:'start'})};
-  function sheet(s){const j=BK.pick[s.code]??s.best;const multi=s.labels.length>1;const pv=BK.per[s.code]||'all';
+  function sheet(s){const j=BK.pick[s.code]??s.best;const multi=s.labels.length>1;const PR=bkPer(),PK=PR.map(p=>p[0]);let pv=BK.per[s.code]||(s.asset?'fresh':'all');if(!PK.includes(pv))pv=PK[0];const a=bkA();
+    const noM=w=>s.asset&&w==='all';
     const st=s.status==='trade'?'trade':'watch';
-    const rows=BK_ROWS.filter(r=>multi||!r[2]).map(([lab,f,_,c])=>`<tr><td class="l">${lab}</td>${['old','fresh','all'].map(w=>{const b=s.per[w][j];return `<td class="${b&&c?c(b):''}">${b?(w==='all'?'<b>'+f(b,j,s)+'</b>':f(b,j,s)):'—'}</td>`}).join('')}</tr>`).join('');
+    const rows=BK_ROWS.filter(r=>multi||!r[2]).map(([lab,f,_,c])=>`<tr><td class="l">${lab}</td>${PK.map(w=>{const b=s.per[w][j];if(!b||(noM(w)&&BK_MONEY.has(lab)))return '<td>—</td>';const bold=s.asset?w==='fresh':w==='all';return `<td class="${c?c(b):''}">${bold?'<b>'+f(b,j,s)+'</b>':f(b,j,s)}</td>`}).join('')}</tr>`).join('');
     let h=`<section class="wide" id="bk-${s.code}"><div class="h" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="tag" style="font-size:13px;color:var(--teal)">${s.code}</span><h2 style="margin:0">${esc(s.name)}</h2><span class="st ${st}">${ST[st]}</span><span class="tag">${BK_IND[s.ind]}</span></div>
-    <p class="note">${esc(s.note)}</p><h3>Exact rules</h3><ol>${s.rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ol>`;
+    <p class="note">${esc(s.note)}</p><h3>Exact rules</h3><ol>${s.rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ol>${s.asset?`<p class="note">On ${a.name}: the fixed 50 pt stop is <b>${a.fx} pts</b>, cost <b>${a.cost} pt</b> per trade. ATR stops and candle stops size themselves.</p>`:''}`;
     if(multi&&s.best2!==s.best)h+=`<div class="ctl" style="margin:6px 0"><span class="lab">Target</span><div class="chips"><button type="button" class="chip${j===s.best?' on':''}" data-pk="${s.code}" data-v="${s.best}">★ Steady ${s.labels[s.best]}</button><button type="button" class="chip${j===s.best2?' on':''}" data-pk="${s.code}" data-v="${s.best2}">◆ Max profit ${s.labels[s.best2]}</button></div></div>`;
-    h+=`<h3>At a glance · ${esc(s.labels[j])}</h3><div class="tw"><table><tr><th class="l"></th>${BK_PER.map(p=>`<th>${p[1]}<small>${p[2]}</small></th>`).join('')}</tr>${rows}</table></div>`;
-    if(multi){const T=s.per[pv].map((b,k)=>!b?'':`<tr class="${k===j?'me':''}"><td class="l">${s.labels[k]}${k===s.best?' ★':''}${k===s.best2&&s.best2!==s.best?' ◆':''}</td><td>${N0(b.n)}</td><td>${P0(100*b.wr)}</td><td>${P0(bkBe(b,k,s))}</td><td class="${PC(b.av)}">${R2(b.av)}</td><td>${F2(b.pf)}</td><td>${R2(b.t,1)}</td><td class="${PC(b.netPts)}">${bkUsd(b.netPts)}</td><td>${bkUsd(-b.ddPts)}</td><td>${N0(b.maxWin)}</td><td>${N0(b.maxLoss)}</td></tr>`).join('');
-      h+=`<h3>Every target</h3><div class="ctl"><div class="chips">${BK_PER.map(p=>`<button type="button" class="chip${pv===p[0]?' on':''}" data-pv="${s.code}" data-v="${p[0]}">${p[1]}</button>`).join('')}</div></div>
+    h+=`<h3>At a glance · ${esc(s.labels[j])}</h3><div class="tw"><table><tr><th class="l"></th>${PR.map(p=>`<th>${p[1]}<small>${p[2]}</small></th>`).join('')}</tr>${rows}</table></div>`;
+    if(multi){const T=s.per[pv].map((b,k)=>!b?'':`<tr class="${k===j?'me':''}"><td class="l">${s.labels[k]}${k===s.best?' ★':''}${k===s.best2&&s.best2!==s.best?' ◆':''}</td><td>${N0(b.n)}</td><td>${P0(100*b.wr)}</td><td>${P0(bkBe(b,k,s))}</td><td class="${PC(b.av)}">${R2(b.av)}</td><td>${F2(b.pf)}</td><td>${R2(b.t,1)}</td><td class="${PC(b.netPts)}">${noM(pv)?'—':bkUsd(b.netPts)}</td><td>${noM(pv)?'—':bkUsd(-b.ddPts)}</td><td>${N0(b.maxWin)}</td><td>${N0(b.maxLoss)}</td></tr>`).join('');
+      h+=`<h3>Every target</h3><div class="ctl"><div class="chips">${PR.map(p=>`<button type="button" class="chip${pv===p[0]?' on':''}" data-pv="${s.code}" data-v="${p[0]}">${p[1]}</button>`).join('')}</div></div>
       <div class="tw"><table><tr><th class="l">Target</th><th>Trades</th><th>WR</th><th>Break-even WR</th><th>Avg RR</th><th>PF</th><th>t-score</th><th>Net</th><th>Max drawdown</th><th>Max wins in a row</th><th>Max losses in a row</th></tr>${T}</table></div>
       <p class="note">★ = steady pick. ◆ = max-profit pick: the biggest blended avg RR among targets with t ≥ 2 in 2022–25 and t ≥ 1 in 2026. At big targets, WR also counts trades closed on time with a small profit.</p>`}
     const yr=s.years.map(([y,x])=>x?`<tr><td class="l">${y}</td><td>${N0(x.n)}</td><td>${P0(100*x.wr)}</td><td class="${PC(x.av)}">${R2(x.av)}</td><td>${F2(x.pf)}</td><td>${R2(x.t,1)}</td><td class="${PC(x.netPts)}">${bkUsd(x.netPts)}</td><td>${bkUsd(-x.ddPts)}</td><td>${N0(x.maxWin)}</td><td>${N0(x.maxLoss)}</td></tr>`:'').join('');
-    const sd=s.sides.map(([d,o])=>`<tr><td class="l">${d==='LONG'?'Long':'Short'}</td>${['old','fresh','all'].map(w=>{const x=o[w];return x?`<td>${N0(x.n)}</td><td>${P0(100*x.wr)}</td><td class="${PC(x.av)}">${R2(x.av)}</td>`:'<td>—</td><td>—</td><td>—</td>'}).join('')}</tr>`).join('');
+    const sd=s.sides.map(([d,o])=>`<tr><td class="l">${d==='LONG'?'Long':'Short'}</td>${PK.map(w=>{const x=o[w];return x?`<td>${N0(x.n)}</td><td>${P0(100*x.wr)}</td><td class="${PC(x.av)}">${R2(x.av)}</td>`:'<td>—</td><td>—</td><td>—</td>'}).join('')}</tr>`).join('');
     const m=s.months;const bl=s.labels[s.best];
     h+=`<div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))"><div style="min-width:0"><h3>Year by year · ${bl}</h3><div class="tw"><table><tr><th class="l">Year</th><th>Trades</th><th>WR</th><th>Avg RR</th><th>PF</th><th>t-score</th><th>Net</th><th>Max drawdown</th><th>Max wins in a row</th><th>Max losses in a row</th></tr>${yr}</table></div></div>
-    <div style="min-width:0"><h3>Long vs short · ${bl}</h3><div class="tw"><table><tr><th class="l"></th>${BK_PER.map(p=>`<th colspan="3">${p[1]}</th>`).join('')}</tr><tr><th class="l">Side</th>${'<th>Trades</th><th>WR</th><th>Avg RR</th>'.repeat(3)}</tr>${sd}</table></div>
+    <div style="min-width:0"><h3>Long vs short · ${bl}</h3><div class="tw"><table><tr><th class="l"></th>${PR.map(p=>`<th colspan="3">${p[1]}</th>`).join('')}</tr><tr><th class="l">Side</th>${'<th>Trades</th><th>WR</th><th>Avg RR</th>'.repeat(PK.length)}</tr>${sd}</table></div>
     <p class="note">Months: ${m.up} of ${m.n} in profit. Best month ${m.best[0]} (${R2(m.best[1],1)}R). Worst month ${m.worst[0]} (${R2(m.worst[1],1)}R).</p></div></div>
     <h3>Equity curve · ${bl} · in R</h3><div class="ch">${bkCurve(s.curve)}</div>${KEY}</section>`;return h}
-  function paint(){const y=sc.scrollTop;const B=BOOK;
-    const idx=B.map(s=>{const j=s.best,a=s.per.all[j];const st=s.status==='trade'?'trade':'watch';return `<tr><td class="l"><a href="#bk-${s.code}" data-j="${s.code}"><b>${s.code}</b></a></td><td class="l">${esc(s.name)}</td><td class="l"><span class="st ${st}">${ST[st]}</span></td><td class="l">${s.labels[j]}</td>
+  function paint(){const y=sc.scrollTop;const A=bkA(),fam=bkFam();if(fam!=='NQ'&&!BKA){sc.innerHTML='<div class="loading">The ES and gold tests could not load. Reload the page to try again.</div>';return}const V=BOOK.map(bkSv);const B=V.filter(s=>s&&s.ok!==false);
+    const hid=A?BOOK.filter((s,i)=>!V[i]||!V[i].ok):[];
+    const idx=B.map(s=>{const j=s.best,a=(A?s.per.fresh:s.per.all)[j];const st=s.status==='trade'?'trade':'watch';return `<tr><td class="l"><a href="#bk-${s.code}" data-j="${s.code}"><b>${s.code}</b></a></td><td class="l">${esc(s.name)}</td><td class="l"><span class="st ${st}">${ST[st]}</span></td><td class="l">${s.labels[j]}</td>
       <td>${bkTrio(s,j,b=>b?N0(b.n):'—')}</td><td>${bkTrio(s,j,b=>b?P0(100*b.wr):'—')}</td><td>${bkTrio(s,j,b=>b?R2(b.av):'—')}</td><td>${bkTrio(s,j,b=>b?F2(b.pf):'—')}</td><td>${bkTrio(s,j,b=>b?R2(b.t,1):'—')}</td>
       <td class="${PC(a.netPts)}">${bkUsd(a.netPts)}</td><td>${bkUsd(-a.ddPts)}</td><td>${N0(a.maxLoss)}</td><td>${N0(a.maxWin)}</td></tr>`}).join('');
-    let h=`<div class="doc"><section class="wide"><p class="lede">Every strategy that held in <b>both</b> test periods, in one format. Each number is shown as <b>2022–25 → 2026 · Blended</b>: the NQ result 2022–25, then the fresh MNQ result 2026, then both periods together as one run. Money = ${BK.n} ${BK.c} contract${BK.n>1?'s':''} (change it at the top), after a 1 pt cost on every trade.</p></section>
+    const ct=BK_CT.find(c=>c[0]===BK.c)||BK_CT[1];
+    const sub=A?`<b>${A.name} 2026</b> · <span>NQ both</span>`:`<span>2022–25</span> → <span>2026</span> · <b>Both</b>`;
+    const subR=A?`<span>${A.name} 2026</span>`:`<span>both periods</span>`;
+    const key=A?`<div class="chips" style="margin:4px 0 8px;font-size:12px"><span class="tag"><b>${A.name} 2026</b> = this market only · <span>${A.from} – ${A.to}</span> · <span>${A.days}</span> trading days</span><span class="tag" style="color:var(--muted)">NQ both = NQ 2022–25 + MNQ 2026 together, in R, to compare</span></div>`
+      :`<div class="chips" style="margin:4px 0 8px;font-size:12px"><span class="tag"><b>2022–25</b> = NQ, 3 years: where the idea was found</span><span class="tag">→ <b>2026</b> = MNQ, 10 months: fresh data the idea never saw (the real check)</span><span class="tag">· <b>Both</b> (bold) = the two runs together: the total</span></div>`;
+    const lede=A?`<p class="lede">Strategy book on <b>${A.name}</b> (${A.fam}). Every strategy was run again with the same code on ${A.name} data <b>${A.from} – ${A.to}</b> (<b>${A.days}</b> trading days, the finest bars we have). Only the strategies that also worked on ${A.name} are shown: avg RR above 0, PF above 1, t-score 1 or more, at least 20 trades. Money = ${BK.n} ${ct[0]} contract${BK.n>1?'s':''} (${bkPv(ct[3])} a point), after a ${A.cost} pt cost on every trade. The fixed 50 pt stop of NQ = ${A.fx} pts here. Status: TRADE only if the t-score on ${A.name} is 2 or more, else WATCH.</p>
+      ${A.days<120?`<p class="verdict" style="margin-top:8px">Short history: only <b>${A.days}</b> trading days of ${A.name} data. Treat every ${A.name} number as a first look, not proof.</p>`:''}
+      <p class="verdict" style="margin-top:8px">Not shown on ${A.name} (did not work there): ${hid.length?hid.map(s=>`<b>${s.code}</b>`).join(' · '):'none'}</p>`
+      :`<p class="lede">Every strategy that held in <b>both</b> test periods, in one format. Each number is shown as <b>2022–25 → 2026 · Blended</b>: the NQ result 2022–25, then the fresh MNQ result 2026, then both periods together as one run. Money = ${BK.n} ${ct[0]} contract${BK.n>1?'s':''} (${bkPv(ct[3])} a point, change it at the top), after a 1 pt cost on every trade.</p>`;
+    let h=`<div class="doc"><section class="wide">${lede}</section>
     <section><h2>Strategy names</h2><p>Every strategy has a code: the indicator letters, then M1, M2, M3… (M = model).</p><div class="tw"><table><tr><th class="l">Code</th><th class="l">Indicator</th><th class="l">What it focuses on</th></tr>${BK_NAMES.map(n=>`<tr><td class="l"><b>${n[0]}.M1, ${n[0]}.M2…</b></td><td class="l">${n[1]}</td><td class="l">${n[2]}</td></tr>`).join('')}</table></div></section>
-    <section><h2>How to read</h2><ul><li><b>WR</b> = win rate: the share of trades that end in profit. <b>Break-even WR</b> = the WR you need just to not lose at that target.</li><li><b>Avg RR</b> = the average result per trade in R (1R = your stop), after costs. <b>PF</b> = money won ÷ money lost.</li><li><b>t-score</b> = 2 or more means probably real. Under 2 can still be luck.</li><li><b>Max drawdown</b> = the biggest drop from the account’s high point. <b>Max losses / wins in a row</b> = the longest streaks seen.</li><li><b>TRADE</b> = held in both periods with enough trades. <b>WATCH</b> = held, but a small sample or a caveat: paper-trade it first.</li><li><b>Limit entries</b> (EP.M4, X.M2, X.M3): 2026 uses only the months with 1-min or 5-min data. 15-min bars made limit fills look better than they were.</li></ul></section>
-    <section class="wide"><h2>All strategies</h2><p class="note">Each cell = <b>2022–25 → 2026 · Blended</b>. Net, max drawdown and streaks are for the blended run.</p><div class="tw"><table><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Status</th><th class="l">Target</th><th>Trades</th><th>WR</th><th>Avg RR</th><th>PF</th><th>t-score</th><th>Net (blended)</th><th>Max drawdown</th><th>Max losses in a row</th><th>Max wins in a row</th></tr>${idx}</table></div></section>`;
+    <section><h2>How to read</h2><ul><li><b>WR</b> = win rate: the share of trades that end in profit. <b>Break-even WR</b> = the WR you need just to not lose at that target.</li><li><b>Avg RR</b> = the average result per trade in R (1R = your stop), after costs. <b>PF</b> = money won ÷ money lost.</li><li><b>t-score</b> = 2 or more means probably real. Under 2 can still be luck.</li><li><b>Max drawdown</b> = the biggest drop from the account’s high point. <b>Max losses / wins in a row</b> = the longest streaks seen.</li><li><b>TRADE</b> = held in both periods with enough trades. <b>WATCH</b> = held, but a small sample or a caveat: paper-trade it first.</li><li><b>Limit entries</b> (EP.M4, X.M2, X.M3): 2026 uses only the months with 1-min or 5-min data. 15-min bars made limit fills look better than they were.</li><li><b>Contract</b>: NQ, MNQ and NNQ use the NQ tests. ES, MES and NES use the ES tests. GC, MGC and 1OZ use the gold tests. Only the money changes inside a group.</li></ul></section>
+    <section class="wide"><h2>All strategies${A?' · '+A.name:''}</h2>${key}<div class="tw"><table><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Status</th><th class="l">Target</th><th>Trades</th><th>WR</th><th>Avg RR</th><th>PF</th><th>t-score</th><th>Net</th><th>Max drawdown</th><th>Max losses in a row</th><th>Max wins in a row</th></tr>
+    <tr><th class="l"></th><th class="l"></th><th class="l"></th><th class="l"></th>${('<th style="font-size:10px;font-weight:400;color:var(--muted);padding-top:0">'+sub+'</th>').repeat(5)}${('<th style="font-size:10px;font-weight:400;color:var(--muted);padding-top:0">'+subR+'</th>').repeat(4)}</tr>${idx||`<tr><td class="l" colspan="13">No strategy passed on ${A?A.name:'NQ'} yet.</td></tr>`}</table></div></section>`;
     for(const ind of ['EP','x','c','XCS']){const L=B.filter(s=>s.ind===ind);if(!L.length)continue;h+=`<section class="wide flat"><h2 style="font-size:17px;margin:8px 0 0">${BK_IND[ind]}</h2></section>`+L.map(sheet).join('')}
     sc.innerHTML=h+'</div>';sc.scrollTop=y;
     sc.querySelectorAll('[data-j]').forEach(a=>a.onclick=e=>{e.preventDefault();const t=document.getElementById('bk-'+a.dataset.j);if(t)t.scrollIntoView({block:'start'})});
     sc.querySelectorAll('button[data-pk]').forEach(b=>b.onclick=()=>{BK.pick[b.dataset.pk]=+b.dataset.v;paint()});
     sc.querySelectorAll('button[data-pv]').forEach(b=>b.onclick=()=>{BK.per[b.dataset.pv]=b.dataset.v;paint()})}
-  paint();
+  jump();paint();
 };
 
 // ───────────────── content: blocks % (block profiles) ─────────────────
