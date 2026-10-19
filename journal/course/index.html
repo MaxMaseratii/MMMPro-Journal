@@ -334,6 +334,13 @@ dialog.cert::backdrop{background:var(--scrim)}
 .cert-img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--line);background:var(--ground)}
 .cert-actions{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center}
 .cert-hint{margin:0;font-size:.84rem;color:var(--ink-3)}
+.cert-mail{display:grid;gap:.6rem;padding:1rem;border:1px solid var(--line);border-radius:12px;background:var(--raise)}
+.cert-mail h3{margin:0;font:700 1rem/1.2 var(--f-display)}
+.cert-mail-who{margin:0;font-size:.88rem;color:var(--ink-2);overflow-wrap:anywhere}
+.cert-mail-msg{margin:0;font-size:.88rem;color:var(--ink-2);min-height:1.2em}
+.cert-mail-msg.ok{color:var(--bull)}.cert-mail-msg.bad{color:var(--bear)}
+.cert-link{display:flex;gap:.5rem;align-items:center;min-width:0}
+.cert-link .field{flex:1;min-width:0;font:500 .82rem/1.3 var(--f-code);padding:.55rem .7rem}
 
 .toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;max-width:min(520px,calc(100vw - 32px));padding:.75rem 1rem;border-radius:10px;background:var(--ink);color:var(--ground);font-size:.9rem;font-weight:500;box-shadow:var(--shadow)}
 
@@ -618,6 +625,22 @@ dialog.cert::backdrop{background:var(--scrim)}
       <button class="btn" type="button" data-act="cert-close" data-i18n="close">Close</button>
     </div>
     <p class="cert-hint" data-i18n="cert_hint"></p>
+    <section class="cert-mail" id="cert-mail" hidden aria-labelledby="cert-mail-h">
+      <h3 id="cert-mail-h" data-i18n="cert_mail_h">Get it by email</h3>
+      <p class="cert-mail-who" id="cert-mail-who"></p>
+      <div class="cert-actions">
+        <button class="btn btn-gold" type="button" data-act="cert-mail" id="cert-mail-btn" data-i18n="cert_mail_btn" hidden>Email it to me</button>
+        <a class="btn" id="cert-login" href="/journal/?course=1" data-i18n="cert_login" hidden>Log in to get it by email</a>
+      </div>
+      <p class="cert-mail-msg" id="cert-mail-msg" role="status" aria-live="polite"></p>
+      <div id="cert-link-box" hidden>
+        <label for="cert-link" class="cert-hint" data-i18n="cert_link_label">Proof link (anyone can check your certificate is real)</label>
+        <div class="cert-link">
+          <input class="field" id="cert-link" type="text" readonly>
+          <button class="btn" type="button" data-act="cert-copy" data-i18n="cert_copy">Copy</button>
+        </div>
+      </div>
+    </section>
   </div>
 </dialog>
 
@@ -650,6 +673,7 @@ en:{
   pledge:'"I commit to trading my chosen system — and only my chosen system — for a minimum of 3 consecutive months. I will not change strategies, add indicators, or skip my checklist. I will backtest a minimum of 100 trades before going live."',
   save_identity:'Save my trading plan', identity_saved:'Trading plan saved on this device', copy_plan:'Copy plan as text', copied:'Plan copied', copy_fail:'Copy did not work here. Select the text in the fields and copy it yourself.', plan_head:'My MMM Trading Identity',
   done_title:"You've Mastered the MMM!", done_lead:'Congratulations. You have completed all {n} phases of the MMM Mastery Course. Your certificate of completion is ready.', get_cert:'Get my certificate',
+  cert_mail_h:'Get it by email', cert_mail_btn:'Email it to me', cert_login:'Log in to get it by email', cert_who:'Signed in as {e}. We send the certificate to this address.', cert_who_out:'Log in with your free MMM account and we email the certificate to you.', cert_need_name:'Type your name first. It goes on the certificate.', cert_sending:'Sending…', cert_sent:'Sent to {e}. It can take a minute. Check spam too.', cert_delivered:'Delivered to {e}.', cert_already:'We already emailed you today. Check your inbox and spam. You can download it here any time.', cert_mail_off:'Email is not switched on yet. Download your certificate for now.', cert_mail_err:'The email did not go out. Download your certificate for now.', cert_link_label:'Proof link: anyone can open it to check your certificate is real', cert_copy:'Copy', cert_copied:'Link copied', cert_id:'ID', mail_subject:'Your MMM Mastery Course certificate', mail_hi:'Congratulations {n}!', mail_body:'You finished the MMM Mastery Course: The Order Flow Bible. Your certificate is attached to this email.', mail_proof:'Anyone can check it is real here:', mail_sign:'Keep reading the flow. Max Maserati', 
   cert_btn:'Certificate', cert_heading:'Your certificate', cert_name_label:'Name on certificate', cert_name_ph:'Your full name', cert_dl:'Download certificate', cert_hint:'You can also right-click or long-press the image to save it.', close:'Close',
   cert_brand:'MAX MASERATI MODEL  ·  OFFICIAL CERTIFICATION', cert_title:'Certificate of Completion', cert_certifies:'This certifies that', cert_completed:'has successfully completed', cert_course:'The MMM Mastery Course — The Order Flow Bible', cert_date:'Completed', cert_default:'MMM Trader',
   theme_to_light:'Switch to light theme', theme_to_dark:'Switch to dark theme', lang_label:'Language',
@@ -684,6 +708,7 @@ fr:{
   pledge:"\"Je m'engage à trader mon système choisi — et uniquement mon système choisi — pendant un minimum de 3 mois consécutifs. Je ne changerai pas de stratégie, n'ajouterai pas d'indicateurs et ne sauterai pas ma checklist. Je ferai un backtest d'un minimum de 100 trades avant de trader en live.\"",
   save_identity:'Sauvegarder mon plan de trading', identity_saved:'Plan de trading sauvegardé sur cet appareil', copy_plan:'Copier le plan en texte', copied:'Plan copié', copy_fail:"La copie n'a pas fonctionné ici. Sélectionnez le texte des champs et copiez-le vous-même.", plan_head:'Mon Identité de Trading MMM',
   done_title:'Vous Maîtrisez le MMM !', done_lead:'Félicitations. Vous avez complété les {n} phases du Cours de Maîtrise MMM. Votre certificat est prêt.', get_cert:'Obtenir mon certificat',
+  cert_mail_h:'Le recevoir par email', cert_mail_btn:"M'envoyer par email", cert_login:'Connectez-vous pour le recevoir par email', cert_who:'Connecté en tant que {e}. Le certificat est envoyé à cette adresse.', cert_who_out:'Connectez-vous avec votre compte MMM gratuit et nous vous envoyons le certificat par email.', cert_need_name:"Écrivez d'abord votre nom. Il va sur le certificat.", cert_sending:'Envoi…', cert_sent:'Envoyé à {e}. Cela peut prendre une minute. Regardez aussi les spams.', cert_delivered:'Livré à {e}.', cert_already:"Nous vous l'avons déjà envoyé aujourd'hui. Regardez votre boîte et vos spams. Vous pouvez le télécharger ici à tout moment.", cert_mail_off:"L'envoi par email n'est pas encore activé. Téléchargez votre certificat pour l'instant.", cert_mail_err:"L'email n'est pas parti. Téléchargez votre certificat pour l'instant.", cert_link_label:"Lien de preuve : tout le monde peut l'ouvrir pour vérifier que votre certificat est vrai", cert_copy:'Copier', cert_copied:'Lien copié', cert_id:'ID', mail_subject:'Votre certificat du Cours MMM Maîtrise', mail_hi:'Félicitations {n} !', mail_body:"Vous avez terminé le Cours MMM Maîtrise : La Bible du Flux d'Ordres. Votre certificat est joint à cet email.", mail_proof:'Tout le monde peut vérifier qu\'il est vrai ici :', mail_sign:'Continuez à lire le flux. Max Maserati', 
   cert_btn:'Certificat', cert_heading:'Votre certificat', cert_name_label:'Nom sur le certificat', cert_name_ph:'Votre nom complet', cert_dl:'Télécharger le certificat', cert_hint:"Vous pouvez aussi faire un clic droit ou un appui long sur l'image pour l'enregistrer.", close:'Fermer',
   cert_brand:'MAX MASERATI MODEL  ·  CERTIFICATION OFFICIELLE', cert_title:'Certificat de Fin de Cours', cert_certifies:'Ceci certifie que', cert_completed:'a terminé avec succès', cert_course:"Le Cours MMM Maîtrise — La Bible du Flux d'Ordres", cert_date:'Terminé le', cert_default:'Trader MMM',
   theme_to_light:'Passer au thème clair', theme_to_dark:'Passer au thème sombre', lang_label:'Langue',
@@ -2223,6 +2248,499 @@ const OLD_ORDER=[];COURSE.forEach(ph=>ph.lessons.forEach(ls=>ls.cards.forEach((c
 
 
 /* ============================================================
+   NEW LESSONS (round 3): the tested order flow — urgency vs liquidity,
+   balance control, the fuel gauge + pullback ladder, the GMC, exits,
+   judging an edge, and MMM Pro XCS One.
+   Every number comes from the Oct 2026 MMM research:
+   NQ 1m Dec 2022 – Dec 2025 (1m replay) re-checked on MNQ Jul – Oct 2026.
+   "A → B" = NQ 2022–25 → MNQ 2026.
+============================================================ */
+
+/* ---------- charts ---------- */
+CHARTS['ofc-cycle']={first:'nbc',title:L('The order-flow loop','La boucle du flux d\'ordres'),lo:98.8,hi:107.6,
+ candles:[[100.0,100.8,99.4,100.4],[100.4,101.0,99.6,100.1],[100.1,100.9,99.7,100.6],[100.6,103.6,100.4,103.4],[103.4,105.2,103.0,105.0],[105.0,105.3,104.6,104.8],[104.8,105.1,104.5,104.9],[104.9,107.0,104.8,106.8]],steps:[
+ {n:3,t:L('Balance','Équilibre'),note:L('Three NBC candles. Patient buyers and sellers both accept these prices. Nobody is in a hurry, so price swings inside a range.','Trois bougies NBC. Les acheteurs et vendeurs patients acceptent ces prix. Personne n\'est pressé, donc le prix oscille dans une plage.'),
+  ann:[{t:'band',y1:99.4,y2:101.0,from:0,to:2,cls:'wall',label:L('Balance','Équilibre')}]},
+ {n:4,t:L('One side gives up','Un camp abandonne'),note:L('A body close above the box. The sellers waiting there are used up, so buyers must pay higher prices to get filled. The close sits near the top: full tank.','Une clôture au-dessus de la boîte. Les vendeurs qui attendaient là sont épuisés, donc les acheteurs doivent payer plus cher pour être remplis. La clôture est près du haut : réservoir plein.'),
+  ann:[{t:'band',y1:99.4,y2:101.0,from:0,to:2,cls:'wall',label:L('Balance','Équilibre')},{t:'mark',i:3,pos:'above',label:L('BC+','BC+'),cls:'bull'}]},
+ {n:6,t:L('Expansion + pullback','Expansion + pullback'),note:L('The run continues, then pauses. A plus candle pulls back only a little: here to MP (75% of its range). Patient sellers come in at better prices.','La course continue, puis fait une pause. Une bougie plus recule seulement un peu : ici jusqu\'à MP (75 % de sa plage). Les vendeurs patients reviennent à de meilleurs prix.'),
+  ann:[{t:'line',y:104.93,from:4,cls:'bull',dash:true,label:L('P 87.5%','P 87,5 %')},{t:'line',y:104.65,from:4,cls:'gold',dash:true,label:L('MP 75%','MP 75 %')},{t:'mark',i:5,pos:'below',label:L('tags MP','touche MP'),cls:'gold'}]},
+ {n:7,t:L('New balance','Nouvel équilibre'),note:L('Two NBC candles in a row: urgency is spent and a new balance starts. This is the 2-NBC exit: it lifts win rate by about 10 points, but adds no money on average.','Deux bougies NBC d\'affilée : l\'urgence est épuisée et un nouvel équilibre commence. C\'est la sortie 2-NBC : elle monte le taux de réussite d\'environ 10 points, mais n\'ajoute pas d\'argent en moyenne.'),
+  ann:[{t:'band',y1:104.5,y2:105.3,from:5,to:6,cls:'neu',rlabel:L('2 NBC = new box','2 NBC = nouvelle boîte')},{t:'line',y:104.65,from:4,cls:'gold',dash:true,label:L('MP 75%','MP 75 %')}]},
+ {n:8,t:L('Break again','Nouvelle cassure'),note:L('A body close leaves the new box in the same direction: a continuation (LDx). The loop starts over.','Une clôture sort de la nouvelle boîte dans le même sens : une continuation (LDx). La boucle recommence.'),
+  ann:[{t:'band',y1:104.5,y2:105.3,from:5,to:6,cls:'neu'},{t:'mark',i:7,pos:'above',label:L('LDx','LDx'),cls:'bull'}]}
+]};
+
+CHARTS['ofc-control']={title:L('Who controls the box','Qui contrôle la boîte'),lo:100.4,hi:105.8,
+ candles:[[101.0,103.4,100.8,103.2],[103.2,103.6,102.2,102.6],[102.6,103.3,102.0,103.0],[103.0,103.5,102.5,103.3],[103.3,103.6,102.9,103.4],[103.4,105.2,103.2,105.0]],first:'bu',steps:[
+ {n:3,t:L('The box and its thirds','La boîte et ses tiers'),note:L('Candles close back inside: a balance box. Split it in three. The green line starts the top third, the red line ends the bottom third. Closes in the middle = nobody in control, about 50%.','Les bougies clôturent à l\'intérieur : une boîte d\'équilibre. Coupez-la en trois. La ligne verte commence le tiers haut, la ligne rouge termine le tiers bas. Clôtures au milieu = personne ne contrôle, environ 50 %.'),
+  ann:[{t:'band',y1:102.0,y2:103.6,from:1,to:2,cls:'wall',label:L('Balance box','Boîte d\'équilibre')},{t:'line',y:103.07,from:1,cls:'bull',w:1.4,label:L('Buyers line (2/3)','Ligne acheteurs (2/3)')},{t:'line',y:102.53,from:1,cls:'bear',w:1.4,label:L('Sellers line (1/3)','Ligne vendeurs (1/3)')}]},
+ {n:5,t:L('Closes lean on the top','Les clôtures s\'appuient en haut'),note:L('Two closes in a row above the green line. Buyers lean on the sellers\' wall at the top. Tested live: a close in the top third breaks UP first 65–72% of the time (NQ), and 72–78% after 7+ candles.','Deux clôtures d\'affilée au-dessus de la ligne verte. Les acheteurs s\'appuient sur le mur des vendeurs en haut. Testé en direct : une clôture dans le tiers haut casse vers le HAUT d\'abord 65–72 % du temps (NQ), et 72–78 % après 7+ bougies.'),
+  ann:[{t:'band',y1:102.0,y2:103.6,from:1,to:4,cls:'wall',label:L('Balance box','Boîte d\'équilibre')},{t:'line',y:103.07,from:1,cls:'bull',w:3,label:L('BUYERS in control','ACHETEURS en contrôle')},{t:'line',y:102.53,from:1,cls:'bear',w:1,label:L('Sellers line (1/3)','Ligne vendeurs (1/3)')}]},
+ {n:6,t:L('The wall gives way','Le mur cède'),note:L('A body close above the box. The side that leaned on the edge won. Before this close, the thirds told you which edge was more likely to break. Odds, not proof.','Une clôture au-dessus de la boîte. Le camp qui s\'appuyait sur le bord a gagné. Avant cette clôture, les tiers vous disaient quel bord avait le plus de chances de casser. Des chances, pas une preuve.'),
+  ann:[{t:'band',y1:102.0,y2:103.6,from:1,to:4,cls:'wall',label:L('Balance box','Boîte d\'équilibre')},{t:'line',y:103.07,from:1,to:4,cls:'bull',w:3},{t:'mark',i:5,pos:'above',label:L('Break ✓','Cassure ✓'),cls:'bull'}]}
+]};
+
+CHARTS['ofc-ladder-plus']={first:'nbc',title:L('Plus candle','Bougie plus'),lo:99.2,hi:106.2,
+ candles:[[100.6,100.9,99.9,100.3],[100.3,104.1,100.0,103.9],[103.9,104.0,103.0,103.3],[103.3,105.6,103.2,105.4]],steps:[
+ {n:2,t:L('Full tank','Réservoir plein'),note:L('A BuBC+ closes near its top. Mark its ladder: P (87.5%), MP (75%), BAL (50%). Plus candles that take their high usually pull back only to P or MP first.','Une BuBC+ clôture près de son haut. Marquez son échelle : P (87,5 %), MP (75 %), BAL (50 %). Les bougies plus qui prennent leur haut reculent en général seulement jusqu\'à P ou MP d\'abord.'),
+  ann:[{t:'band',y1:103.08,y2:103.59,from:1,cls:'bull',rlabel:L('P–MP zone','Zone P–MP')},{t:'line',y:102.05,from:1,cls:'dim',dash:true,label:L('BAL 50%','BAL 50 %')},{t:'line',y:104.1,from:1,cls:'gold',label:L('Target: its high','Objectif : son haut')}]},
+ {n:3,t:L('Pullback to MP','Pullback jusqu\'à MP'),note:L('The next candle dips into the P–MP zone. Tested on 1h: P fills 90%, then the high comes 75%. MP fills 79%, then 58%.','La bougie suivante plonge dans la zone P–MP. Testé en 1h : P est rempli 90 %, puis le haut arrive 75 %. MP est rempli 79 %, puis 58 %.'),
+  ann:[{t:'band',y1:103.08,y2:103.59,from:1,cls:'bull',rlabel:L('P–MP zone','Zone P–MP')},{t:'line',y:102.05,from:1,cls:'dim',dash:true,label:L('BAL 50%','BAL 50 %')},{t:'line',y:104.1,from:1,cls:'gold',label:L('Target: its high','Objectif : son haut')},{t:'mark',i:2,pos:'below',label:L('fills MP','remplit MP'),cls:'bull'}]},
+ {n:4,t:L('Target taken','Objectif pris'),note:L('Price takes the high of the plus candle. That is what full fuel does: a shallow pullback, then the target.','Le prix prend le haut de la bougie plus. C\'est ce que fait un réservoir plein : un petit pullback, puis l\'objectif.'),
+  ann:[{t:'band',y1:103.08,y2:103.59,from:1,to:2,cls:'bull'},{t:'line',y:104.1,from:1,to:3,cls:'gold'},{t:'mark',i:3,pos:'above',label:L('target ✓','objectif ✓'),cls:'gold'}]}
+]};
+CHARTS['ofc-ladder-minus']={first:'nbc',title:L('Minus candle','Bougie moins'),lo:99.2,hi:105.4,
+ candles:[[100.6,100.9,99.9,100.3],[100.3,104.1,100.0,102.6],[102.6,103.2,101.8,102.2],[102.2,104.5,102.0,104.3]],steps:[
+ {n:2,t:L('Half tank','Réservoir à moitié'),note:L('A BuBC− closes through the prior high, but far from its own top. The wall pushed back inside the candle. Its zone is deeper: BAL (50%) to MD (25%).','Une BuBC− clôture au-dessus du haut précédent, mais loin de son propre haut. Le mur a repoussé à l\'intérieur de la bougie. Sa zone est plus profonde : BAL (50 %) à MD (25 %).'),
+  ann:[{t:'band',y1:101.03,y2:102.05,from:1,cls:'bull2',rlabel:L('BAL–MD zone','Zone BAL–MD')},{t:'line',y:104.1,from:1,cls:'gold',label:L('Target: its high','Objectif : son haut')}]},
+ {n:3,t:L('Deep pullback','Pullback profond'),note:L('Price comes back to BAL. Minus candles return to 50% about 80% of the time. But only about 1 in 3 then takes the high.','Le prix revient à BAL. Les bougies moins reviennent à 50 % environ 80 % du temps. Mais seulement environ 1 sur 3 prend ensuite le haut.'),
+  ann:[{t:'band',y1:101.03,y2:102.05,from:1,cls:'bull2',rlabel:L('BAL–MD zone','Zone BAL–MD')},{t:'line',y:104.1,from:1,cls:'gold',label:L('Target: its high','Objectif : son haut')},{t:'mark',i:2,pos:'below',label:L('fills BAL','remplit BAL'),cls:'bull'}]},
+ {n:4,t:L('Sometimes it works','Parfois ça marche'),note:L('Here the high is taken. But a minus candle takes its high only ~45% of the time overall. Half a tank means half the odds.','Ici le haut est pris. Mais une bougie moins prend son haut seulement ~45 % du temps au total. Un demi-réservoir, c\'est la moitié des chances.'),
+  ann:[{t:'band',y1:101.03,y2:102.05,from:1,to:2,cls:'bull2'},{t:'line',y:104.1,from:1,to:3,cls:'gold'},{t:'mark',i:3,pos:'above',label:L('target ✓','objectif ✓'),cls:'gold'}]}
+]};
+
+CHARTS['ofc-gmc']={first:'nbc',title:L('GMC holds','Le GMC tient'),lo:99.2,hi:106.4,
+ candles:[[100.2,100.9,99.8,100.5],[100.5,101.2,100.2,101.0],[101.0,103.6,100.9,103.4],[103.4,104.4,102.6,103.9],[103.9,105.6,103.7,105.4]],steps:[
+ {n:3,t:L('c1 + c2: urgency','c1 + c2 : urgence'),note:L('c2 closes above c1\'s high: a body close (MC). Its open is the level to watch.','c2 clôture au-dessus du haut de c1 : une clôture de corps (MC). Son ouverture est le niveau à surveiller.'),
+  ann:[{t:'mark',i:1,pos:'below',label:L('c1','c1'),cls:'bull'},{t:'mark',i:2,pos:'above',label:L('c2','c2'),cls:'bull'},{t:'line',y:101.0,from:2,cls:'bull',label:L('MC · c2 open','MC · ouverture c2')}]},
+ {n:4,t:L('c3 leaves a gap: GMC','c3 laisse un gap : GMC'),note:L('c3\'s low stays above c1\'s high. Those prices were skipped. MC upgrades to GMC: extreme urgency. Here c3 closes above c2 but not in its top 25%: a "c3 BC−", the best tested type on 4H.','Le bas de c3 reste au-dessus du haut de c1. Ces prix ont été sautés. Le MC devient GMC : urgence extrême. Ici c3 clôture au-dessus de c2 mais pas dans son quart haut : un « c3 BC− », le meilleur type testé en 4H.'),
+  ann:[{t:'band',y1:101.2,y2:102.6,from:1,to:3,cls:'gold',rlabel:L('Gap (skipped prices)','Gap (prix sautés)')},{t:'line',y:101.0,from:2,cls:'gold',w:2.5,label:L('GMC open','Ouverture GMC')},{t:'mark',i:3,pos:'above',label:L('c3 BC−','c3 BC−'),cls:'gold'}]},
+ {n:5,t:L('It holds','Il tient'),note:L('Price keeps closing above the GMC open. The line stays on the chart. Tested entry: the c3 close, not the GMC open itself.','Le prix continue de clôturer au-dessus de l\'ouverture GMC. La ligne reste sur le graphique. Entrée testée : la clôture de c3, pas l\'ouverture GMC elle-même.'),
+  ann:[{t:'band',y1:101.2,y2:102.6,from:1,to:3,cls:'gold'},{t:'line',y:101.0,from:2,cls:'gold',w:2.5,label:L('GMC open (live)','Ouverture GMC (active)')},{t:'line',y:103.9,from:3,cls:'bull',dash:true,label:L('Entry: c3 close','Entrée : clôture c3')}]}
+]};
+CHARTS['ofc-gmc-fail']={first:'nbc',title:L('GMC violated','GMC violé'),lo:99.6,hi:105.0,
+ candles:[[100.2,100.9,99.8,100.5],[100.5,101.2,100.2,101.0],[101.0,103.6,100.9,103.4],[103.4,104.4,102.6,103.9],[103.9,104.1,102.2,102.4],[102.4,102.7,100.4,100.6]],steps:[
+ {n:4,t:L('GMC confirmed','GMC confirmé'),note:L('Same start: c1, c2, and a c3 that leaves a gap.','Même départ : c1, c2, et un c3 qui laisse un gap.'),
+  ann:[{t:'band',y1:101.2,y2:102.6,from:1,to:3,cls:'gold',rlabel:L('Gap','Gap')},{t:'line',y:101.0,from:2,cls:'gold',w:2.5,label:L('GMC open','Ouverture GMC')}]},
+ {n:5,t:L('The gap fills','Le gap se remplit'),note:L('A bearish body close back into the gap. The urgency is fading. The level still lives: only a close through the GMC open kills it.','Une clôture baissière revient dans le gap. L\'urgence faiblit. Le niveau vit encore : seule une clôture à travers l\'ouverture GMC le tue.'),
+  ann:[{t:'band',y1:101.2,y2:102.6,from:1,to:4,cls:'gold'},{t:'line',y:101.0,from:2,cls:'gold',w:2.5,label:L('GMC open','Ouverture GMC')}]},
+ {n:6,t:L('Close through: deleted','Clôture à travers : supprimé'),note:L('A candle closes below the GMC open. The last point of extreme urgency failed. The GMC is violated and removed from the chart. Treat the old direction as broken.','Une bougie clôture sous l\'ouverture GMC. Le dernier point d\'urgence extrême a échoué. Le GMC est violé et retiré du graphique. Considérez l\'ancienne direction comme cassée.'),
+  ann:[{t:'line',y:101.0,from:2,to:5,cls:'dim',w:1.2},{t:'mark',i:5,pos:'below',label:L('violated ✗','violé ✗'),cls:'bear'}]}
+]};
+
+/* ---------- PHASE 0 · Who Pushes, Who Waits ---------- */
+const LESSON_F3={id:'F3',title:{en:'Who Pushes, Who Waits',fr:'Qui Pousse, Qui Attend'},cards:[
+{type:'intro',
+ en(){return `<div class="intro-card">${eyebrow('📖',`Foreword`)}<div class="intro-emblem">🔁</div>${h1(`Who Pushes, Who Waits`)}${lead(`Price is a loop: balance, break, expansion, pullback, new balance. Learn who builds each part of the loop and what proves one side has run out of fuel.`)}</div>`;},
+ fr(){return `<div class="intro-card">${eyebrow('📖',`Avant-propos`)}<div class="intro-emblem">🔁</div>${h1(`Qui Pousse, Qui Attend`)}${lead(`Le prix est une boucle : équilibre, cassure, expansion, pullback, nouvel équilibre. Apprenez qui construit chaque partie de la boucle et ce qui prouve qu'un camp n'a plus de carburant.`)}</div>`;}},
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('📖',`Two Kinds of Big Flow`)}${h1(`Patient Money vs. Forced Money`)}${lead(`Hammers (market orders) are not all the same. Some traders choose to be fast. Others are forced to be fast.`)}
+${tbl([`Patient money`,`Forced money`],[
+ [`Builds positions quietly inside the balance.`,`Stop losses, margin calls, news, fear of missing out.`],
+ [`Hates moving price. Wants a good average price.`,`Does not care about price. Must get out NOW.`],
+ [`Uses Walls (limit orders), splits big orders into small pieces.`,`Uses Hammers (market orders).`],
+ [`<strong>Builds the balance.</strong>`,`<strong>Fuels the expansion.</strong>`]])}
+${ib('gold','⭐',`<strong>Why price moves:</strong> price moves only when urgency eats ALL the waiting orders at a price. Then it must jump to the next price where orders wait. Think of a wall of bricks: every market order pulls out one brick. When the wall is gone, price falls through to the next wall.`)}
+${ib('blue','🧱',`<strong>Why expansions stop:</strong> nobody patient wants to buy expensive or sell cheap. As price runs, the patient side waits for better prices, and the forced flow runs out. A new balance forms. This is why every run ends in a pause.`)}
+${ib('cyan','🔗',`<strong>Why sweeps matter:</strong> when price runs past a box edge, it fills the stops waiting there. That forced flow is often filled by the patient side. This is the X / X+ sweep of Phase 7.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('📖',`Deux Sortes de Gros Flux`)}${h1(`Argent Patient vs. Argent Forcé`)}${lead(`Les Marteaux (ordres au marché) ne sont pas tous pareils. Certains traders choisissent d'être rapides. D'autres sont forcés d'être rapides.`)}
+${tbl([`Argent patient`,`Argent forcé`],[
+ [`Construit des positions en silence dans l'équilibre.`,`Stop loss, appels de marge, nouvelles, peur de rater.`],
+ [`Déteste faire bouger le prix. Veut un bon prix moyen.`,`Le prix ne compte pas. Doit sortir MAINTENANT.`],
+ [`Utilise les Murs (ordres limites), coupe les gros ordres en petits morceaux.`,`Utilise les Marteaux (ordres au marché).`],
+ [`<strong>Construit l'équilibre.</strong>`,`<strong>Alimente l'expansion.</strong>`]])}
+${ib('gold','⭐',`<strong>Pourquoi le prix bouge :</strong> le prix bouge seulement quand l'urgence mange TOUS les ordres qui attendent à un prix. Il doit alors sauter au prix suivant où des ordres attendent. Pensez à un mur de briques : chaque ordre au marché retire une brique. Quand le mur a disparu, le prix tombe jusqu'au mur suivant.`)}
+${ib('blue','🧱',`<strong>Pourquoi les expansions s'arrêtent :</strong> personne de patient ne veut acheter cher ou vendre bon marché. Quand le prix court, le camp patient attend de meilleurs prix, et le flux forcé s'épuise. Un nouvel équilibre se forme. C'est pour ça que chaque course finit par une pause.`)}
+${ib('cyan','🔗',`<strong>Pourquoi les balayages comptent :</strong> quand le prix dépasse le bord d'une boîte, il remplit les stops qui y attendent. Ce flux forcé est souvent rempli par le camp patient. C'est le balayage X / X+ de la Phase 7.`)}</div>`;}},
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('📖',`The Loop`)}${h1(`Balance, Break, Pullback, New Balance`)}${lead(`Every MMM tool sits somewhere on this loop. Step through it.`)}
+${WG('chart','data-charts="ofc-cycle"')}
+${tbl([`Loop step`,`What happens`,`MMM read`],[
+ [`Balance`,`Urgency on both sides matches the orders waiting. Price swings in a range.`,`NBC cluster, x box, thirds lines`],
+ [`One side gives up`,`One side's waiting orders are used up.`,`Body close out of the box: CDLx / CDSx / LDx / SDx`],
+ [`Expansion`,`Forced flow runs price to the next wall.`,`BC run, GMC`],
+ [`Pullback`,`Patient orders come back at better prices.`,`P / MP after plus candles, BAL after minus candles`],
+ [`New balance`,`Urgency is spent.`,`2 NBC in a row`]])}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('📖',`La Boucle`)}${h1(`Équilibre, Cassure, Pullback, Nouvel Équilibre`)}${lead(`Chaque outil MMM se trouve quelque part sur cette boucle. Avancez étape par étape.`)}
+${WG('chart','data-charts="ofc-cycle"')}
+${tbl([`Étape`,`Ce qui se passe`,`Lecture MMM`],[
+ [`Équilibre`,`L'urgence des deux côtés égale les ordres qui attendent. Le prix oscille dans une plage.`,`Groupe NBC, boîte x, lignes des tiers`],
+ [`Un camp abandonne`,`Les ordres qui attendaient d'un côté sont épuisés.`,`Clôture hors de la boîte : CDLx / CDSx / LDx / SDx`],
+ [`Expansion`,`Le flux forcé pousse le prix jusqu'au mur suivant.`,`Course de BC, GMC`],
+ [`Pullback`,`Les ordres patients reviennent à de meilleurs prix.`,`P / MP après les bougies plus, BAL après les bougies moins`],
+ [`Nouvel équilibre`,`L'urgence est épuisée.`,`2 NBC d'affilée`]])}</div>`;}},
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('📖',`Proof, Not Hope`)}${h1(`How Do You Know a Side Ran Out of Fuel?`)}${lead(`There is no 100% proof in markets, only odds. But the tests ranked the clues clearly.`)}
+${tbl([`Clue`,`Verdict`,`Tested result`],[
+ [`<strong>Body close through the level</strong>`,`<strong style="color:var(--gr)">Proven</strong>`,`The core of all three engines. A close means "this side still held price when time ran out".`],
+ [`<strong>Where the closes sit in the box, and how long</strong>`,`<strong style="color:var(--gr)">Proven</strong>`,`Top third → breaks up 65–72% first (72–78% after 7+ candles). Bottom third → breaks down 61–70%.`],
+ [`<strong>A failed push (AFs)</strong>`,`<strong style="color:var(--gr)">Proven</strong>`,`The other side reached past the edge, took the stops and could NOT close there. 1h AFs+ at P = an edge; GMC with c3 "AFs against" held in both tests.`],
+ [`Big volume, small move (absorption)`,`<span style="color:var(--rd)">Not proven</span>`,`Did not predict which edge breaks.`],
+ [`Delta`,`<span style="color:var(--rd)">Not proven</span>`,`Moves the odds only about ±3 points: a tie-breaker.`],
+ [`Smaller and smaller pushes`,`<span style="color:var(--rd)">Not proven</span>`,`Counting pushes added nothing.`]])}
+${ib('gold','⭐',`<strong>Volume shows effort. The close shows the result.</strong> Fuel is measured by where price is ACCEPTED (where it closes), not by how much volume traded.`)}
+${ib('red','⚠️',`<strong>The hindsight trap:</strong> "the last candle before the break closed in the top third → 81% broke up" looks amazing. But you only know which candle was the last one AFTER the break. Live, at every close, the honest number is 65–72%.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('📖',`Des Preuves, Pas de l'Espoir`)}${h1(`Comment Savoir qu'un Camp n'a Plus de Carburant ?`)}${lead(`Il n'y a pas de preuve à 100 % sur les marchés, seulement des chances. Mais les tests ont classé les indices clairement.`)}
+${tbl([`Indice`,`Verdict`,`Résultat testé`],[
+ [`<strong>Clôture de corps à travers le niveau</strong>`,`<strong style="color:var(--gr)">Prouvé</strong>`,`Le cœur des trois moteurs. Une clôture veut dire « ce camp tenait encore le prix quand le temps s'est écoulé ».`],
+ [`<strong>Où sont les clôtures dans la boîte, et depuis combien de temps</strong>`,`<strong style="color:var(--gr)">Prouvé</strong>`,`Tiers haut → casse vers le haut d'abord 65–72 % (72–78 % après 7+ bougies). Tiers bas → casse vers le bas 61–70 %.`],
+ [`<strong>Une poussée ratée (AFs)</strong>`,`<strong style="color:var(--gr)">Prouvé</strong>`,`L'autre camp a dépassé le bord, a pris les stops et n'a PAS pu clôturer là. AFs+ 1h à P = un avantage ; GMC avec c3 « AFs contre » a tenu dans les deux tests.`],
+ [`Gros volume, petit mouvement (absorption)`,`<span style="color:var(--rd)">Pas prouvé</span>`,`N'a pas prédit quel bord casse.`],
+ [`Delta`,`<span style="color:var(--rd)">Pas prouvé</span>`,`Change les chances d'environ ±3 points seulement : un départage.`],
+ [`Des poussées de plus en plus petites`,`<span style="color:var(--rd)">Pas prouvé</span>`,`Compter les poussées n'a rien apporté.`]])}
+${ib('gold','⭐',`<strong>Le volume montre l'effort. La clôture montre le résultat.</strong> Le carburant se mesure à l'endroit où le prix est ACCEPTÉ (où il clôture), pas à la quantité de volume échangée.`)}
+${ib('red','⚠️',`<strong>Le piège du recul :</strong> « la dernière bougie avant la cassure a clôturé dans le tiers haut → 81 % ont cassé vers le haut » semble incroyable. Mais vous ne savez quelle bougie était la dernière qu'APRÈS la cassure. En direct, à chaque clôture, le chiffre honnête est 65–72 %.`)}</div>`;}},
+{type:'quiz',id:'q-F3-1',
+ en:{q:'Who usually FUELS an expansion run?',opts:['A — Patient money resting limit orders','B — Forced money: stops, margin calls and late chasers using market orders','C — The exchange','D — Nobody: price moves on its own'],correct:1,fb:'Patient money builds the balance with limit orders and hates moving price. Forced money must trade now at any price, so it eats through the waiting orders and runs price to the next wall.'},
+ fr:{q:"Qui ALIMENTE en général une course d'expansion ?",opts:["A — L'argent patient avec des ordres limites","B — L'argent forcé : stops, appels de marge et retardataires avec des ordres au marché","C — La bourse","D — Personne : le prix bouge tout seul"],correct:1,fb:"L'argent patient construit l'équilibre avec des ordres limites et déteste faire bouger le prix. L'argent forcé doit trader maintenant à n'importe quel prix, donc il mange les ordres qui attendent et pousse le prix jusqu'au mur suivant."}},
+{type:'quiz',id:'q-F3-2',
+ en:{q:'Which clue was PROVEN by the tests to show who controls a balance box?',opts:['A — Big volume with a small move','B — Delta inside the box','C — Where the closes sit in the box (top / middle / bottom third) and how long price stays there','D — Counting smaller and smaller pushes'],correct:2,fb:'Close location plus time in the box was the strongest live read: top third breaks up 65–72% first, 72–78% after 7+ candles. Delta moved the odds only ±3 points, and absorption and push counting did not predict the break.'},
+ fr:{q:"Quel indice a été PROUVÉ par les tests pour montrer qui contrôle une boîte d'équilibre ?",opts:["A — Gros volume avec un petit mouvement","B — Le delta dans la boîte","C — Où les clôtures se trouvent dans la boîte (tiers haut / milieu / bas) et combien de temps le prix y reste","D — Compter des poussées de plus en plus petites"],correct:2,fb:"L'emplacement des clôtures plus le temps dans la boîte était la meilleure lecture en direct : tiers haut casse vers le haut 65–72 % d'abord, 72–78 % après 7+ bougies. Le delta change les chances de ±3 points seulement, et l'absorption et le comptage des poussées n'ont pas prédit la cassure."}},
+{type:'quiz',id:'q-F3-3',
+ en:{q:'A study says "the last candle before a break closed in the top third 81% of the time". Why can you not trade that number live?',opts:['A — It is hindsight: you only know which candle was the last one after the break happens. Live, at every close, the odds are 65–72%','B — 81% is too low to trade','C — It only works on Fridays','D — The number is for stocks only'],correct:0,fb:'You cannot know a candle is the LAST one before the break while it is forming. The live test reads every close inside the box, and that gives the honest odds: 65–72% for a top-third close.'},
+ fr:{q:"Une étude dit « la dernière bougie avant une cassure a clôturé dans le tiers haut 81 % du temps ». Pourquoi ne pouvez-vous pas trader ce chiffre en direct ?",opts:["A — C'est du recul : vous ne savez quelle bougie était la dernière qu'après la cassure. En direct, à chaque clôture, les chances sont de 65–72 %","B — 81 % est trop bas pour trader","C — Ça ne marche que le vendredi","D — Le chiffre est seulement pour les actions"],correct:0,fb:"Vous ne pouvez pas savoir qu'une bougie est la DERNIÈRE avant la cassure pendant qu'elle se forme. Le test en direct lit chaque clôture dans la boîte, et ça donne les chances honnêtes : 65–72 % pour une clôture dans le tiers haut."}},
+{type:'hw',hwKey:'hw-F3',items:[
+ {id:'hw-F3-1',chart:true,en:'On a 15M chart, mark one full loop: balance box → body close out → expansion → pullback → 2 NBC (new balance). Label each step. Upload your screenshot:',fr:"Sur un graphique 15M, marquez une boucle complète : boîte d'équilibre → clôture hors de la boîte → expansion → pullback → 2 NBC (nouvel équilibre). Nommez chaque étape. Chargez votre capture :"},
+ {id:'hw-F3-2',chart:false,en:'In your loop, which side gave up first, and what was the proof (the close, the thirds, a failed push)? Write 3–5 sentences.',fr:"Dans votre boucle, quel camp a abandonné en premier, et quelle était la preuve (la clôture, les tiers, une poussée ratée) ? Écrivez 3–5 phrases."}
+]}
+]};
+
+
+/* ---------- NEW PHASE · Order Flow Control (Tested) ---------- */
+const LESSON_OFC1={id:'OFC-1',title:{en:'Who Controls the Balance',fr:"Qui Contrôle l'Équilibre"},cards:[
+{type:'intro',
+ en(){return `<div class="intro-card">${eyebrow('Phase 8',`Order Flow Control (Tested)`)}<div class="intro-emblem">🧭</div>${h1(`Order Flow Control`)}${lead(`This phase is the MMM read, checked on real data: NQ 1-minute data from Dec 2022 to Dec 2025, re-checked on MNQ from Jul to Oct 2026. Every number shows "NQ → MNQ" so you can see what held.`)}</div>`;},
+ fr(){return `<div class="intro-card">${eyebrow('Phase 8',`Contrôle du Flux d'Ordres (Testé)`)}<div class="intro-emblem">🧭</div>${h1(`Contrôle du Flux d'Ordres`)}${lead(`Cette phase, c'est la lecture MMM vérifiée sur de vraies données : NQ en 1 minute de déc. 2022 à déc. 2025, revérifiée sur MNQ de juil. à oct. 2026. Chaque chiffre s'écrit « NQ → MNQ » pour voir ce qui a tenu.`)}</div>`;}},
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('Phase 8',`Balance Control`)}${h1(`The Thirds and the Clock`)}${lead(`Inside a live balance box, two things tell you which edge is more likely to break: WHERE the last close sits, and HOW LONG price has been inside.`)}
+${WG('chart','data-charts="ofc-control"')}
+${tbl([`Last close sits in…`,`1 candle`,`2–3 candles`,`4–6 candles`,`7+ candles`],[
+ [`<span style="color:var(--gr)">Top third → breaks UP first</span>`,`65% → 62%`,`67% → 65%`,`70% → 67%`,`<strong>72% → 78%</strong>`],
+ [`Middle third → breaks UP first`,`52% → 51%`,`53% → 49%`,`53% → 46%`,`52% → 53%`],
+ [`<span style="color:var(--rd)">Bottom third → breaks DOWN first</span>`,`61% → 64%`,`62% → 66%`,`64% → 70%`,`<strong>68% → 69%</strong>`]])}
+${p(`Tested on every close inside a live Contraction box (G1): NQ 2022–25, 60,743 boxes and 191,416 closes; MNQ 2026, 8,152 boxes and 23,476 closes.`)}
+${ib('gold','⭐',`<strong>Think of a tug of war.</strong> The team that holds the rope close to its own side, for a long time, usually wins. A close at the top edge, again and again, means buyers are leaning on the sellers' wall.`)}
+${ib('red','🚫',`<strong>The middle is a coin flip.</strong> Closes in the middle third give about 50%. That is not control. Wait.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 8',`Contrôle de l'Équilibre`)}${h1(`Les Tiers et l'Horloge`)}${lead(`Dans une boîte d'équilibre active, deux choses vous disent quel bord a le plus de chances de casser : OÙ se trouve la dernière clôture, et DEPUIS COMBIEN DE TEMPS le prix est à l'intérieur.`)}
+${WG('chart','data-charts="ofc-control"')}
+${tbl([`La dernière clôture est dans…`,`1 bougie`,`2–3 bougies`,`4–6 bougies`,`7+ bougies`],[
+ [`<span style="color:var(--gr)">Tiers haut → casse vers le HAUT d'abord</span>`,`65 % → 62 %`,`67 % → 65 %`,`70 % → 67 %`,`<strong>72 % → 78 %</strong>`],
+ [`Tiers du milieu → casse vers le HAUT d'abord`,`52 % → 51 %`,`53 % → 49 %`,`53 % → 46 %`,`52 % → 53 %`],
+ [`<span style="color:var(--rd)">Tiers bas → casse vers le BAS d'abord</span>`,`61 % → 64 %`,`62 % → 66 %`,`64 % → 70 %`,`<strong>68 % → 69 %</strong>`]])}
+${p(`Testé sur chaque clôture dans une boîte Contraction active (G1) : NQ 2022–25, 60 743 boîtes et 191 416 clôtures ; MNQ 2026, 8 152 boîtes et 23 476 clôtures.`)}
+${ib('gold','⭐',`<strong>Pensez au tir à la corde.</strong> L'équipe qui garde la corde près de son côté, longtemps, gagne en général. Une clôture au bord du haut, encore et encore, veut dire que les acheteurs s'appuient sur le mur des vendeurs.`)}
+${ib('red','🚫',`<strong>Le milieu, c'est pile ou face.</strong> Les clôtures dans le tiers du milieu donnent environ 50 %. Ce n'est pas du contrôle. Attendez.`)}</div>`;}},
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('Phase 8',`What Does NOT Decide Control`)}${h1(`Information, Not Signals`)}${lead(`These tools look powerful. The tests say they add little to the close location.`)}
+${tbl([`Tool`,`Tested result`,`How to use it`],[
+ [`Delta inside the box`,`Moves the odds only about ±3 points, and not always the same way.`,`Tie-breaker only.`],
+ [`Absorption (big volume, small move)`,`Did not predict which edge breaks.`,`Information only.`],
+ [`POC as the entry`,`BC+ candles that took their target touched the POC first only 5–11% of the time. As trades, every entry spot was within ±0.02 avg RR of the others.`,`Information, not the entry.`],
+ [`Candle types inside the box`,`An AFs+ rejection WITH the run: the next BC continues 56–57%; AGAINST it: 46–47%. But the move after is about zero.`,`Does not change the exit result.`],
+ [`The last candle before the break`,`Top third → 81% up, but only known in hindsight.`,`Use the live odds (65–72%).`]])}
+${ib('gold','⭐',`<strong>One sentence to remember:</strong> the close location, plus the time spent there, is the control read. Everything else is a tie-breaker.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 8',`Ce Qui NE Décide PAS du Contrôle`)}${h1(`De l'Information, Pas des Signaux`)}${lead(`Ces outils semblent puissants. Les tests disent qu'ils ajoutent peu à l'emplacement de la clôture.`)}
+${tbl([`Outil`,`Résultat testé`,`Comment l'utiliser`],[
+ [`Delta dans la boîte`,`Change les chances d'environ ±3 points seulement, et pas toujours dans le même sens.`,`Départage seulement.`],
+ [`Absorption (gros volume, petit mouvement)`,`N'a pas prédit quel bord casse.`,`Information seulement.`],
+ [`POC comme entrée`,`Les bougies BC+ qui ont pris leur objectif ont touché le POC d'abord seulement 5–11 % du temps. En trades, chaque point d'entrée était à ±0,02 RR moyen des autres.`,`Information, pas l'entrée.`],
+ [`Types de bougies dans la boîte`,`Un rejet AFs+ DANS le sens de la course : le BC suivant continue 56–57 % ; CONTRE : 46–47 %. Mais le mouvement qui suit est d'environ zéro.`,`Ne change pas le résultat de la sortie.`],
+ [`La dernière bougie avant la cassure`,`Tiers haut → 81 % vers le haut, mais connu seulement avec du recul.`,`Utilisez les chances en direct (65–72 %).`]])}
+${ib('gold','⭐',`<strong>Une phrase à retenir :</strong> l'emplacement de la clôture, plus le temps passé là, c'est la lecture du contrôle. Tout le reste est un départage.`)}</div>`;}},
+{type:'quiz',id:'q-ofc1-1',
+ en:{q:'Price has closed in the TOP third of a live balance box for 8 candles. What do the tests say?',opts:['A — 50/50, wait','B — Breaks DOWN first about 70%','C — Breaks UP first about 72% (NQ) → 78% (MNQ)','D — The box will never break'],correct:2,fb:'Top third after 7+ candles is the strongest cell: 72% (NQ 2022–25) and 78% (MNQ 2026) broke up first. Buyers leaning on the top wall for a long time usually win.'},
+ fr:{q:"Le prix clôture dans le tiers HAUT d'une boîte d'équilibre active depuis 8 bougies. Que disent les tests ?",opts:["A — 50/50, attendre","B — Casse vers le BAS d'abord environ 70 %","C — Casse vers le HAUT d'abord environ 72 % (NQ) → 78 % (MNQ)","D — La boîte ne cassera jamais"],correct:2,fb:"Le tiers haut après 7+ bougies est la case la plus forte : 72 % (NQ 2022–25) et 78 % (MNQ 2026) ont cassé vers le haut d'abord. Des acheteurs qui s'appuient longtemps sur le mur du haut gagnent en général."}},
+{type:'quiz',id:'q-ofc1-2',
+ en:{q:'The box delta is strongly positive, but the last close sits in the BOTTOM third. Which read wins?',opts:['A — Delta: buyers will win','B — The close location: bottom third favors a break DOWN. Delta moves the odds only about ±3 points','C — Neither, delta and close cancel out','D — Volume decides'],correct:1,fb:'Close location is the control read. Delta changed the odds by only about ±3 points in the tests, so it can tip a close call, not overrule the thirds.'},
+ fr:{q:"Le delta de la boîte est très positif, mais la dernière clôture est dans le tiers BAS. Quelle lecture gagne ?",opts:["A — Le delta : les acheteurs vont gagner","B — L'emplacement de la clôture : le tiers bas favorise une cassure vers le BAS. Le delta change les chances d'environ ±3 points seulement","C — Aucune, le delta et la clôture s'annulent","D — Le volume décide"],correct:1,fb:"L'emplacement de la clôture est la lecture du contrôle. Le delta a changé les chances d'environ ±3 points seulement dans les tests, donc il peut départager un cas serré, pas annuler les tiers."}},
+{type:'quiz',id:'q-ofc1-3',
+ en:{q:'Is the POC (the price with the most volume) the best place to enter a pullback?',opts:['A — Yes, always','B — Only on the daily chart','C — Yes, if delta agrees','D — No: winners touched the POC first only 5–11% of the time, and as trades it did no better than P / MP / BAL'],correct:3,fb:'The POC is where most people agreed, but agreement is not reaction. Plus candles that take their target usually pull back only to P or MP. Every entry spot tested within ±0.02 avg RR.'},
+ fr:{q:"Le POC (le prix avec le plus de volume) est-il le meilleur endroit pour entrer sur un pullback ?",opts:["A — Oui, toujours","B — Seulement sur le journalier","C — Oui, si le delta est d'accord","D — Non : les gagnants ont touché le POC d'abord seulement 5–11 % du temps, et en trades il n'a pas fait mieux que P / MP / BAL"],correct:3,fb:"Le POC est là où le plus de gens étaient d'accord, mais l'accord n'est pas la réaction. Les bougies plus qui prennent leur objectif reculent en général seulement jusqu'à P ou MP. Chaque point d'entrée testé était à ±0,02 RR moyen."}},
+{type:'hw',hwKey:'hw-OFC1',items:[
+ {id:'hw-OFC1-1',chart:true,en:'Find 5 balance boxes on a 15M chart. Draw the two thirds lines in each. Before the break, write where the last close sat and how many candles were inside. Upload one example:',fr:"Trouvez 5 boîtes d'équilibre sur un graphique 15M. Tracez les deux lignes des tiers dans chacune. Avant la cassure, notez où était la dernière clôture et combien de bougies étaient à l'intérieur. Chargez un exemple :"},
+ {id:'hw-OFC1-2',chart:false,en:'For your 5 boxes: how many broke on the side the thirds pointed to? Did boxes with 7+ candles at an edge work better?',fr:"Pour vos 5 boîtes : combien ont cassé du côté indiqué par les tiers ? Les boîtes avec 7+ bougies sur un bord ont-elles mieux marché ?"}
+]}
+]};
+
+const LESSON_OFC2={id:'OFC-2',title:{en:'Fuel Gauge & Pullback Ladder',fr:'Jauge de Carburant & Échelle de Pullback'},cards:[
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('Phase 8',`The Fuel Gauge`)}${h1(`Where the Close Sits = Fuel Left`)}${lead(`The close of a body-close candle is a fuel gauge. A close near the top means urgency was still pushing when time ran out.`)}
+${tbl([`Candle (15M)`,`What happened`,`Next candle takes its target`],[
+ [tag('badge-bu','BuBC+'),`Closed above the prior high, in its top 25%. Full tank.`,`<strong>79% → 80%</strong>`],
+ [tag('badge-bu','BuC2+'),`Swept the prior low, then closed above the prior high near its top.`,`<strong>80% → 76%</strong>`],
+ [tag('badge-bu','BuAFs+'),`Took the prior low, closed back in its top half (a failed push down).`,`67% → 64%`],
+ [tag('badge-neu','BuBC−'),`Closed above the prior high, but far from its top. Half tank.`,`45% → 41%`],
+ [tag('badge-neu','BuC2−'),`Swept and closed through, but weak.`,`42% → 42%`]])}
+${p(`"Target" = the next candle takes the high (long lean) before the candle's protected end (its low). NQ 2022–25 → MNQ 2026. Bearish candles mirror these numbers (BeBC+ 78% → 81%). On the daily chart a BuBC+ takes its high 89% of the time.`)}
+${ib('gold','⭐',`<strong>The fuel gauge rule:</strong> trade the plus candles. A minus candle crossed the line but the wall pushed back inside it: it takes its target less than half the time.`)}
+${ib('blue','🔗',`<strong>Same alphabet as Phase 1:</strong> this is why the course says "never enter a BC-minus". Now you have the numbers behind the rule.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 8',`La Jauge de Carburant`)}${h1(`Où Est la Clôture = Carburant Restant`)}${lead(`La clôture d'une bougie à clôture de corps est une jauge de carburant. Une clôture près du haut veut dire que l'urgence poussait encore quand le temps s'est écoulé.`)}
+${tbl([`Bougie (15M)`,`Ce qui s'est passé`,`La bougie suivante prend son objectif`],[
+ [tag('badge-bu','BuBC+'),`A clôturé au-dessus du haut précédent, dans son quart haut. Réservoir plein.`,`<strong>79 % → 80 %</strong>`],
+ [tag('badge-bu','BuC2+'),`A balayé le bas précédent, puis a clôturé au-dessus du haut précédent près de son haut.`,`<strong>80 % → 76 %</strong>`],
+ [tag('badge-bu','BuAFs+'),`A pris le bas précédent, a clôturé dans sa moitié haute (une poussée baissière ratée).`,`67 % → 64 %`],
+ [tag('badge-neu','BuBC−'),`A clôturé au-dessus du haut précédent, mais loin de son haut. Demi-réservoir.`,`45 % → 41 %`],
+ [tag('badge-neu','BuC2−'),`A balayé et clôturé à travers, mais faiblement.`,`42 % → 42 %`]])}
+${p(`« Objectif » = la bougie suivante prend le haut (penchant long) avant la fin protégée de la bougie (son bas). NQ 2022–25 → MNQ 2026. Les bougies baissières sont le miroir (BeBC+ 78 % → 81 %). Sur le journalier, une BuBC+ prend son haut 89 % du temps.`)}
+${ib('gold','⭐',`<strong>La règle de la jauge :</strong> tradez les bougies plus. Une bougie moins a passé la ligne mais le mur l'a repoussée à l'intérieur : elle prend son objectif moins d'une fois sur deux.`)}
+${ib('blue','🔗',`<strong>Même alphabet que la Phase 1 :</strong> c'est pour ça que le cours dit « n'entrez jamais sur un BC-moins ». Vous avez maintenant les chiffres derrière la règle.`)}</div>`;}},
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('Phase 8',`The Pullback Ladder`)}${h1(`Plus Candles Pull Back Less`)}${lead(`Every body-close candle has a ladder: P (87.5% of its range), MP (75%), BAL (50%), MD (25%). The fuel decides which rung price comes back to.`)}
+${WG('chart','data-charts="ofc-ladder-plus,ofc-ladder-minus"')}
+${tbl([`BuBC+ ladder`,`15M`,`1H`,`Daily`],[
+ [`P 87.5%: fills → then the high`,`89% → 72%`,`90% → 75%`,`89% → 79%`],
+ [`MP 75%: fills → then the high`,`78% → 55%`,`79% → 58%`,`76% → 62%`],
+ [`BAL 50%: fills → then the high`,`48% → 26%`,`46% → 27%`,`43% → 37%`]])}
+${p(`NQ 2022–25. A BuBC− comes back to BAL about 78–79% of the time (15M / 1H), but then takes the high only 31–33%.`)}
+${ib('gold','⭐',`<strong>Read it like this:</strong> the deeper price comes back into a plus candle, the less likely the target becomes. A plus candle that falls to 50% has lost most of its fuel.`)}
+${ib('red','⚠️',`<strong>Limit orders miss some winners.</strong> On daily BuBC+ candles that took the high, the median pullback reached only about 81% of the range, just under P. A limit at MP or BAL misses those trades.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 8',`L'Échelle de Pullback`)}${h1(`Les Bougies Plus Reculent Moins`)}${lead(`Chaque bougie à clôture de corps a une échelle : P (87,5 % de sa plage), MP (75 %), BAL (50 %), MD (25 %). Le carburant décide sur quel barreau le prix revient.`)}
+${WG('chart','data-charts="ofc-ladder-plus,ofc-ladder-minus"')}
+${tbl([`Échelle BuBC+`,`15M`,`1H`,`Journalier`],[
+ [`P 87,5 % : rempli → puis le haut`,`89 % → 72 %`,`90 % → 75 %`,`89 % → 79 %`],
+ [`MP 75 % : rempli → puis le haut`,`78 % → 55 %`,`79 % → 58 %`,`76 % → 62 %`],
+ [`BAL 50 % : rempli → puis le haut`,`48 % → 26 %`,`46 % → 27 %`,`43 % → 37 %`]])}
+${p(`NQ 2022–25. Une BuBC− revient à BAL environ 78–79 % du temps (15M / 1H), mais prend ensuite le haut seulement 31–33 %.`)}
+${ib('gold','⭐',`<strong>Lisez-le comme ça :</strong> plus le prix revient profond dans une bougie plus, moins l'objectif devient probable. Une bougie plus qui tombe à 50 % a perdu la plupart de son carburant.`)}
+${ib('red','⚠️',`<strong>Les ordres limites ratent certains gagnants.</strong> Sur les BuBC+ journalières qui ont pris le haut, le pullback médian est allé seulement à environ 81 % de la plage, juste sous P. Une limite à MP ou BAL rate ces trades.`)}</div>`;}},
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('Phase 8',`HTF Idea, LTF Entry`)}${h1(`The Magnifier Trap`)}${lead(`A big-timeframe signal with a tiny lower-timeframe stop looks like a 1:5 dream. The tests say it is a trap.`)}
+${tbl([`Plan`,`Tested result (NQ 2022–25)`],[
+ [`Daily signal, 15M trigger with its own tight stop`,`The target is 2R+ away 92% of the time, but only 19% win. Avg RR −0.09.`],
+ [`Daily signal, 1M trigger`,`Only 6% win. Avg RR −0.38.`],
+ [`HTF touch, then wait for an LTF flip (CDL / CDS) with the new LTF stop`,`Daily → 1M −0.24, 4H → 1M −0.18, 1H → 1M −0.13, 15M → 1M −0.20 avg RR. In 61–68% of signals the HTF target came BEFORE the LTF flip printed.`],
+ [`One pocket that held: 4H BC− candle, limit at its open, stop at the 4H candle's extreme`,`Bull +0.35 → +0.40, bear +0.20 → +0.72 avg RR, but only 21–26 new trades.`]])}
+${ib('gold','⭐',`<strong>The lesson:</strong> an HTF idea needs an HTF stop. A tight LTF stop sits inside the normal noise of the big candle, so it gets hit first.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 8',`Idée HTF, Entrée LTF`)}${h1(`Le Piège de la Loupe`)}${lead(`Un signal de grande unité de temps avec un tout petit stop en petite unité ressemble à un rêve 1:5. Les tests disent que c'est un piège.`)}
+${tbl([`Plan`,`Résultat testé (NQ 2022–25)`],[
+ [`Signal journalier, déclencheur 15M avec son propre stop serré`,`L'objectif est à 2R+ 92 % du temps, mais seulement 19 % gagnent. RR moyen −0,09.`],
+ [`Signal journalier, déclencheur 1M`,`Seulement 6 % gagnent. RR moyen −0,38.`],
+ [`Contact HTF, puis attendre un retournement LTF (CDL / CDS) avec le nouveau stop LTF`,`Journalier → 1M −0,24, 4H → 1M −0,18, 1H → 1M −0,13, 15M → 1M −0,20 RR moyen. Dans 61–68 % des signaux, l'objectif HTF est arrivé AVANT le retournement LTF.`],
+ [`Une poche qui a tenu : bougie 4H BC−, limite à son ouverture, stop à l'extrême de la bougie 4H`,`Haussier +0,35 → +0,40, baissier +0,20 → +0,72 RR moyen, mais seulement 21–26 nouveaux trades.`]])}
+${ib('gold','⭐',`<strong>La leçon :</strong> une idée HTF a besoin d'un stop HTF. Un stop LTF serré est dans le bruit normal de la grande bougie, donc il est touché en premier.`)}</div>`;}},
+{type:'quiz',id:'q-ofc2-1',
+ en:{q:'A 15M BuBC+ and a 15M BuBC− both just closed. Which is more likely to see its high taken by the next candle?',opts:['A — The BuBC+: about 79–80%, against 41–45% for the BuBC−','B — The BuBC−','C — Both about 50%','D — Neither, wait for the daily close'],correct:0,fb:'The close location is the fuel gauge. A plus candle closed near its top with urgency still pushing. A minus candle was pushed back inside its own range, so it takes its target less than half the time.'},
+ fr:{q:"Une BuBC+ 15M et une BuBC− 15M viennent de clôturer. Laquelle a le plus de chances de voir son haut pris par la bougie suivante ?",opts:["A — La BuBC+ : environ 79–80 %, contre 41–45 % pour la BuBC−","B — La BuBC−","C — Les deux environ 50 %","D — Aucune, attendre la clôture journalière"],correct:0,fb:"L'emplacement de la clôture est la jauge de carburant. Une bougie plus a clôturé près de son haut avec l'urgence qui poussait encore. Une bougie moins a été repoussée dans sa propre plage, donc elle prend son objectif moins d'une fois sur deux."}},
+{type:'quiz',id:'q-ofc2-2',
+ en:{q:'A 1H BuBC+ pulls back all the way to its 50% (BAL). What do the numbers say?',opts:['A — Best entry: target 90%','B — Only about 27% of those then take the high: most of the fuel is gone','C — The candle is now bearish','D — BAL is the POC'],correct:1,fb:'On 1H, P fills 90% then the high comes 75%. MP fills 79%, then 58%. BAL fills 46%, then only 27%. The deeper the pullback into a plus candle, the weaker it is.'},
+ fr:{q:"Une BuBC+ 1H recule jusqu'à ses 50 % (BAL). Que disent les chiffres ?",opts:["A — Meilleure entrée : objectif 90 %","B — Seulement environ 27 % prennent ensuite le haut : la plupart du carburant est parti","C — La bougie est maintenant baissière","D — BAL est le POC"],correct:1,fb:"En 1H, P est rempli 90 % puis le haut arrive 75 %. MP est rempli 79 %, puis 58 %. BAL est rempli 46 %, puis seulement 27 %. Plus le pullback est profond dans une bougie plus, plus elle est faible."}},
+{type:'quiz',id:'q-ofc2-3',
+ en:{q:'You have a Daily long idea. Is it smart to enter on a 1M flip with a 1M stop to get a huge risk to reward?',opts:['A — Yes, 1:10 is easy','B — Yes, but only on Mondays','C — No: tested, Daily → 1M flips lost −0.24 avg RR. The tight stop sits inside the big candle\'s normal noise. Use an HTF stop for an HTF idea','D — Only with double size'],correct:2,fb:'The magnifier looks great on paper: big targets, tiny stops. In the data the tiny stop is hit first, and in 61–68% of signals the HTF target came before the LTF flip even printed.'},
+ fr:{q:"Vous avez une idée longue en journalier. Est-ce malin d'entrer sur un retournement 1M avec un stop 1M pour avoir un énorme risque / rendement ?",opts:["A — Oui, 1:10 c'est facile","B — Oui, mais seulement le lundi","C — Non : testé, les retournements journalier → 1M ont perdu −0,24 RR moyen. Le stop serré est dans le bruit normal de la grande bougie. Utilisez un stop HTF pour une idée HTF","D — Seulement en double taille"],correct:2,fb:"La loupe est belle sur le papier : gros objectifs, petits stops. Dans les données, le petit stop est touché en premier, et dans 61–68 % des signaux l'objectif HTF est arrivé avant même le retournement LTF."}},
+{type:'hw',hwKey:'hw-OFC2',items:[
+ {id:'hw-OFC2-1',chart:true,en:'Find 10 BuBC+ or BeBC+ candles on a 1H chart. Draw P, MP and BAL on each. Mark the deepest pullback before the target (or the failure). Upload one example:',fr:"Trouvez 10 bougies BuBC+ ou BeBC+ sur un graphique 1H. Tracez P, MP et BAL sur chacune. Marquez le pullback le plus profond avant l'objectif (ou l'échec). Chargez un exemple :"},
+ {id:'hw-OFC2-2',chart:false,en:'Count how many of your 10 reached P, MP and BAL, and how many then took the target. Compare with the ladder table.',fr:"Comptez combien de vos 10 ont atteint P, MP et BAL, et combien ont ensuite pris l'objectif. Comparez avec le tableau de l'échelle."}
+]}
+]};
+
+const LESSON_OFC3={id:'OFC-3',title:{en:'The GMC, Tested',fr:'Le GMC, Testé'},cards:[
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('Phase 8',`GMC Anatomy`)}${h1(`The Last Point of Extreme Urgency`)}${lead(`A GMC is three candles: c2 closes through c1, and c3 leaves a gap. The open of c2 (the gap candle) is the GMC open: the price where extreme urgency started.`)}
+${WG('chart','data-charts="ofc-gmc,ofc-gmc-fail"')}
+${tbl([`Candle 3 type (bull GMC)`,`What it means`],[
+ [`c3 BC+`,`Closes above c2's high, in its top 25%. Urgency keeps pushing.`],
+ [`<strong style="color:var(--gold)">c3 BC−</strong>`,`Closes above c2's high, but not in its top 25%. The best tested type on 4H.`],
+ [`c3 CI`,`Stays inside c2. A pause.`],
+ [`<strong style="color:var(--gold)">c3 AFs against</strong>`,`Takes c2's high, then closes back inside c2. The push was tested, the gap still holds.`],
+ [`Violated`,`A later candle closes back through the GMC open. The urgency failed: the GMC is deleted.`]])}
+${ib('blue','🔗',`<strong>Same GMC as Phase 0 and MMM Pro:</strong> MC is a raw body close; MC upgrades to GMC when the next candle leaves a gap. The GMC open is the MC level.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 8',`Anatomie du GMC`)}${h1(`Le Dernier Point d'Urgence Extrême`)}${lead(`Un GMC, c'est trois bougies : c2 clôture à travers c1, et c3 laisse un gap. L'ouverture de c2 (la bougie du gap) est l'ouverture GMC : le prix où l'urgence extrême a commencé.`)}
+${WG('chart','data-charts="ofc-gmc,ofc-gmc-fail"')}
+${tbl([`Type de la bougie 3 (GMC haussier)`,`Ce que ça veut dire`],[
+ [`c3 BC+`,`Clôture au-dessus du haut de c2, dans son quart haut. L'urgence continue de pousser.`],
+ [`<strong style="color:var(--gold)">c3 BC−</strong>`,`Clôture au-dessus du haut de c2, mais pas dans son quart haut. Le meilleur type testé en 4H.`],
+ [`c3 CI`,`Reste dans c2. Une pause.`],
+ [`<strong style="color:var(--gold)">c3 AFs contre</strong>`,`Prend le haut de c2, puis clôture à l'intérieur de c2. La poussée a été testée, le gap tient encore.`],
+ [`Violé`,`Une bougie plus tard clôture à travers l'ouverture GMC. L'urgence a échoué : le GMC est supprimé.`]])}
+${ib('blue','🔗',`<strong>Le même GMC qu'en Phase 0 et dans MMM Pro :</strong> MC est une clôture brute ; le MC devient GMC quand la bougie suivante laisse un gap. L'ouverture GMC est le niveau MC.`)}</div>`;}},
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('Phase 8',`What the Data Says`)}${h1(`GMC by Timeframe`)}${lead(`Entry at the c3 close, all sessions, fixed 50-point stop, target 1:2 unless stated. NQ 2022–25 → MNQ 2026.`)}
+${tbl([`GMC`,`Trades`,`WR (win rate)`,`Avg RR`],[
+ [`5M, any type`,`thousands`,`≈ 33–43%`,`≈ 0 or losing after costs`],
+ [`15M, any type`,`thousands`,`≈ 34–40%`,`≈ 0`],
+ [`1H ▲ c3 BC+`,`668 → 175`,`40% → 37%`,`+0.17 → +0.07`],
+ [`<strong style="color:var(--gold)">1H ▲ c3 AFs against ★</strong>`,`626 → 185`,`40% → 37%`,`+0.16 → +0.10`],
+ [`<strong style="color:var(--gold)">1H ▼ c3 BC−, Asia + NY AM ★</strong>`,`176 → 62`,`42% → 39%`,`+0.24 → +0.14`],
+ [`<strong style="color:var(--gold)">4H ▲ c3 BC− ★</strong>`,`130 → 41`,`48% → 37%`,`+0.43 → +0.08`],
+ [`4H ▲ c3 BC−, ATR × 1.5 stop, exit at the 2nd NBC`,`130 → 41`,`<strong>55% → 56%</strong>`,`<strong>+0.19 → +0.22</strong>`],
+ [`<strong style="color:var(--gold)">15M c3 AFs against, Asia + NY AM ★</strong> (1 ATR stop, 1:6)`,`2,388 → 262`,`19% → 19%`,`+0.19 → +0.20`]])}
+${ib('gold','⭐',`<strong>★ = held in both periods.</strong> The best GMC is on bigger timeframes. On 5M and 15M a plain GMC is about zero after costs.`)}
+${ib('blue','🎯',`<strong>Where to enter:</strong> the c3 close works. Entering AT the GMC open (XU, the gap candle's open) was the worst entry on 1H: c3 BC+ at XU −0.07 against +0.11 at the c3 close (NQ). On 4H c3 BC−, deeper entries did a bit better (c2 at P +0.29, c3 low +0.24, c3 close +0.19, medians over all stops and exits).`)}
+${ib('red','🚫',`<strong>Violation = delete.</strong> A close back through the GMC open kills it. "GMC fails → trade the flip" makes sense, but it is not tested yet. Treat it as an idea, not an edge.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 8',`Ce Que Disent les Données`)}${h1(`Le GMC par Unité de Temps`)}${lead(`Entrée à la clôture de c3, toutes sessions, stop fixe de 50 points, objectif 1:2 sauf indication. NQ 2022–25 → MNQ 2026.`)}
+${tbl([`GMC`,`Trades`,`WR (taux de réussite)`,`RR moyen`],[
+ [`5M, tout type`,`des milliers`,`≈ 33–43 %`,`≈ 0 ou perdant après coûts`],
+ [`15M, tout type`,`des milliers`,`≈ 34–40 %`,`≈ 0`],
+ [`1H ▲ c3 BC+`,`668 → 175`,`40 % → 37 %`,`+0,17 → +0,07`],
+ [`<strong style="color:var(--gold)">1H ▲ c3 AFs contre ★</strong>`,`626 → 185`,`40 % → 37 %`,`+0,16 → +0,10`],
+ [`<strong style="color:var(--gold)">1H ▼ c3 BC−, Asie + NY matin ★</strong>`,`176 → 62`,`42 % → 39 %`,`+0,24 → +0,14`],
+ [`<strong style="color:var(--gold)">4H ▲ c3 BC− ★</strong>`,`130 → 41`,`48 % → 37 %`,`+0,43 → +0,08`],
+ [`4H ▲ c3 BC−, stop ATR × 1,5, sortie au 2e NBC`,`130 → 41`,`<strong>55 % → 56 %</strong>`,`<strong>+0,19 → +0,22</strong>`],
+ [`<strong style="color:var(--gold)">15M c3 AFs contre, Asie + NY matin ★</strong> (stop 1 ATR, 1:6)`,`2 388 → 262`,`19 % → 19 %`,`+0,19 → +0,20`]])}
+${ib('gold','⭐',`<strong>★ = a tenu dans les deux périodes.</strong> Le meilleur GMC est sur les grandes unités de temps. En 5M et 15M, un GMC simple fait environ zéro après coûts.`)}
+${ib('blue','🎯',`<strong>Où entrer :</strong> la clôture de c3 marche. Entrer SUR l'ouverture GMC (XU, l'ouverture de la bougie du gap) était la pire entrée en 1H : c3 BC+ à XU −0,07 contre +0,11 à la clôture de c3 (NQ). En 4H c3 BC−, les entrées plus profondes ont fait un peu mieux (c2 à P +0,29, bas de c3 +0,24, clôture de c3 +0,19, médianes sur tous les stops et sorties).`)}
+${ib('red','🚫',`<strong>Violation = suppression.</strong> Une clôture à travers l'ouverture GMC le tue. « Le GMC échoue → trader le retournement » a du sens, mais ce n'est pas encore testé. Prenez-le comme une idée, pas comme un avantage.`)}</div>`;}},
+{type:'quiz',id:'q-ofc3-1',
+ en:{q:'Where is the GMC open?',opts:['A — The high of candle 3','B — The open of candle 2, the gap candle: where extreme urgency started','C — The middle of the gap','D — The daily open'],correct:1,fb:'c2 is the body close that created the gap; its open is the MC level, upgraded to GMC when c3 leaves the gap. That is the line the indicator draws, and a close back through it deletes the GMC.'},
+ fr:{q:"Où est l'ouverture GMC ?",opts:["A — Le haut de la bougie 3","B — L'ouverture de la bougie 2, la bougie du gap : là où l'urgence extrême a commencé","C — Le milieu du gap","D — L'ouverture du jour"],correct:1,fb:"c2 est la clôture de corps qui a créé le gap ; son ouverture est le niveau MC, qui devient GMC quand c3 laisse le gap. C'est la ligne que trace l'indicateur, et une clôture à travers elle supprime le GMC."}},
+{type:'quiz',id:'q-ofc3-2',
+ en:{q:'Which GMC held up best in both test periods?',opts:['A — Any 5M GMC','B — 15M GMC with c3 BC+','C — 4H bullish GMC with c3 BC− (ATR × 1.5 stop, exit at the 2nd NBC): WR 55% → 56%, +0.19 → +0.22 avg RR','D — Daily GMC with a 1M stop'],correct:2,fb:'The 4H GMC long with a c3 BC− was the closest thing to a prop-grade setup, and a separate program re-checked it. The sample is small (130 → 41 trades), so size it small.'},
+ fr:{q:"Quel GMC a le mieux tenu dans les deux périodes de test ?",opts:["A — N'importe quel GMC 5M","B — GMC 15M avec c3 BC+","C — GMC haussier 4H avec c3 BC− (stop ATR × 1,5, sortie au 2e NBC) : WR 55 % → 56 %, +0,19 → +0,22 RR moyen","D — GMC journalier avec un stop 1M"],correct:2,fb:"Le GMC long 4H avec un c3 BC− était ce qui ressemblait le plus à un setup de niveau prop, et un programme séparé l'a revérifié. L'échantillon est petit (130 → 41 trades), donc petite taille."}},
+{type:'quiz',id:'q-ofc3-3',
+ en:{q:'A bullish GMC formed. Two candles later, a candle closes BELOW the GMC open. What now?',opts:['A — Buy more, it is cheaper','B — The GMC is violated: the last point of extreme urgency failed. Delete it and treat the old direction as broken','C — Nothing changes until the daily close','D — It becomes a stronger GMC'],correct:1,fb:'A close back through the GMC open means the buyers who created the gap could not defend it. The indicator deletes the line. A flip trade the other way is a logical idea, but it is not tested yet.'},
+ fr:{q:"Un GMC haussier s'est formé. Deux bougies plus tard, une bougie clôture SOUS l'ouverture GMC. Et maintenant ?",opts:["A — Acheter plus, c'est moins cher","B — Le GMC est violé : le dernier point d'urgence extrême a échoué. Supprimez-le et considérez l'ancienne direction comme cassée","C — Rien ne change jusqu'à la clôture journalière","D — Il devient un GMC plus fort"],correct:1,fb:"Une clôture à travers l'ouverture GMC veut dire que les acheteurs qui ont créé le gap n'ont pas pu le défendre. L'indicateur supprime la ligne. Un trade de retournement dans l'autre sens est une idée logique, mais pas encore testée."}},
+{type:'hw',hwKey:'hw-OFC3',items:[
+ {id:'hw-OFC3-1',chart:true,en:'On a 4H chart, find 5 bullish GMCs. For each, mark c1, c2, c3, the gap and the GMC open, and name the c3 type (BC+, BC−, CI, AFs against). Upload one example:',fr:"Sur un graphique 4H, trouvez 5 GMC haussiers. Pour chacun, marquez c1, c2, c3, le gap et l'ouverture GMC, et nommez le type de c3 (BC+, BC−, CI, AFs contre). Chargez un exemple :"},
+ {id:'hw-OFC3-2',chart:false,en:'For your 5 GMCs: which were violated (a close back through the GMC open) and which held? From the c3 close, did price reach 2R with a 1.5 ATR stop?',fr:"Pour vos 5 GMC : lesquels ont été violés (une clôture à travers l'ouverture GMC) et lesquels ont tenu ? Depuis la clôture de c3, le prix a-t-il atteint 2R avec un stop de 1,5 ATR ?"}
+]}
+]};
+
+const LESSON_OFC4={id:'OFC-4',title:{en:'Exits & Judging an Edge',fr:'Sorties & Juger un Avantage'},cards:[
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('Phase 8',`Exits`)}${h1(`When Urgency Is Spent`)}${lead(`652,872 combinations of entry × stop × exit were compared. No close-based exit beat a plain stop and target on average RR. But some change your win rate.`)}
+${tbl([`Exit`,`Win rate`,`Avg RR`,`Use it for`],[
+ [`<strong>2 NBC in a row</strong> (a new balance starts)`,`<strong>+10 to +11 points</strong> (33% → 45–47%)`,`−0.002 to −0.004 (about the same)`,`Prop accounts that need win rate`],
+ [`MMM PRO PLUS stall exit`,`—`,`−0.005 to −0.009`,`No gain`],
+ [`SuperTrend flip only`,`—`,`0.000`,`No gain`],
+ [`Any early exit at 1:4 – 1:6`,`—`,`Costs the most`,`Let big targets run`]])}
+${ib('gold','⭐',`<strong>Why the 2-NBC exit works:</strong> two NBC candles mean a new balance is forming and urgency is spent. You bank more small wins. Sometimes the box breaks your way again, so you give up about as much as you save.`)}
+${ib('blue','🔗',`<strong>The PCX Override still stands:</strong> an opposite BC+ is your forced exit (Phase 0). The 2-NBC exit is an extra, optional win-rate tool on top of it.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 8',`Sorties`)}${h1(`Quand l'Urgence Est Épuisée`)}${lead(`652 872 combinaisons entrée × stop × sortie ont été comparées. Aucune sortie basée sur les clôtures n'a battu un simple stop et objectif en RR moyen. Mais certaines changent votre taux de réussite.`)}
+${tbl([`Sortie`,`Taux de réussite`,`RR moyen`,`À utiliser pour`],[
+ [`<strong>2 NBC d'affilée</strong> (un nouvel équilibre commence)`,`<strong>+10 à +11 points</strong> (33 % → 45–47 %)`,`−0,002 à −0,004 (à peu près pareil)`,`Les comptes prop qui ont besoin de taux de réussite`],
+ [`Sortie « stall » de MMM PRO PLUS`,`—`,`−0,005 à −0,009`,`Aucun gain`],
+ [`Retournement SuperTrend seul`,`—`,`0,000`,`Aucun gain`],
+ [`Toute sortie anticipée à 1:4 – 1:6`,`—`,`Coûte le plus`,`Laissez courir les gros objectifs`]])}
+${ib('gold','⭐',`<strong>Pourquoi la sortie 2-NBC marche :</strong> deux bougies NBC veulent dire qu'un nouvel équilibre se forme et que l'urgence est épuisée. Vous encaissez plus de petits gains. Parfois la boîte casse encore dans votre sens, donc vous perdez à peu près autant que vous économisez.`)}
+${ib('blue','🔗',`<strong>Le PCX Override reste valable :</strong> un BC+ opposé est votre sortie forcée (Phase 0). La sortie 2-NBC est un outil en plus, optionnel, pour le taux de réussite.`)}</div>`;}},
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('Phase 8',`Read a Backtest Like a Fund`)}${h1(`WR, PF, Avg RR and t-score`)}${lead(`Funds do not chase win rate. They want a small edge that is real, repeats and survives costs.`)}
+${tbl([`Number`,`What it means`,`Good`],[
+ [`<strong>Avg RR</strong>`,`Average result per trade in risk units. The most important number.`,`+0.20 is a good edge. +0.40 or more: check for mistakes.`],
+ [`<strong>WR</strong> (win rate)`,`How often you win. Means nothing alone: at 1:2 you break even at 33%.`,`40% at 1:2 = +0.20 avg RR.`],
+ [`<strong>PF</strong> (profit factor)`,`Money won ÷ money lost.`,`1.3–2.0. Above 3 is suspicious.`],
+ [`<strong>t-score</strong>`,`Is the edge real or luck? Avg RR ÷ (spread of results ÷ √trades).`,`2 or more. 3 or more if you tested many ideas.`],
+ [`<strong>Max DD</strong> (drawdown)`,`The biggest drop from a peak.`,`Must fit your account's loss limit.`],
+ [`<strong>Out-of-sample</strong>`,`Checked on data never used to build it.`,`Must still be positive.`]])}
+${tbl([`Same edge: 40% WR at 1:2 (+0.20 avg RR)`,`10 trades`,`100 trades`,`~220 trades`,`~490 trades`],[
+ [`t-score`,`0.4 (luck?)`,`1.4 (not proven)`,`<strong>2.0</strong> (probably real)`,`<strong>3.0</strong> (real)`]])}
+${ib('red','⚠️',`<strong>The luck check:</strong> of 652,872 combos, 2,217 passed a strict filter in both periods, but luck alone would give about 2,000. So trust THEMES that hold across stops and exits, not one perfect combo.`)}
+${ib('gold','⭐',`<strong>60% win rate at 1:2 was not reached</strong> by any setup in both periods. The closest: 4H GMC ▲ c3 BC−, 55% → 56% with an ATR stop, 55% → 61% with the candle stop. A fund would happily run 40–55% WR at +0.2 avg RR.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 8',`Lire un Backtest Comme un Fonds`)}${h1(`WR, PF, RR Moyen et t-score`)}${lead(`Les fonds ne courent pas après le taux de réussite. Ils veulent un petit avantage réel, qui se répète et qui survit aux coûts.`)}
+${tbl([`Chiffre`,`Ce que ça veut dire`,`Bon`],[
+ [`<strong>RR moyen</strong>`,`Résultat moyen par trade en unités de risque. Le chiffre le plus important.`,`+0,20 est un bon avantage. +0,40 ou plus : cherchez une erreur.`],
+ [`<strong>WR</strong> (taux de réussite)`,`Combien de fois vous gagnez. Seul, il ne veut rien dire : à 1:2 l'équilibre est à 33 %.`,`40 % à 1:2 = +0,20 RR moyen.`],
+ [`<strong>PF</strong> (profit factor)`,`Argent gagné ÷ argent perdu.`,`1,3–2,0. Au-dessus de 3, c'est suspect.`],
+ [`<strong>t-score</strong>`,`L'avantage est-il réel ou de la chance ? RR moyen ÷ (dispersion des résultats ÷ √trades).`,`2 ou plus. 3 ou plus si vous avez testé beaucoup d'idées.`],
+ [`<strong>Max DD</strong> (drawdown)`,`La plus grosse baisse depuis un sommet.`,`Doit rentrer dans la limite de perte du compte.`],
+ [`<strong>Hors échantillon</strong>`,`Vérifié sur des données jamais utilisées pour le construire.`,`Doit rester positif.`]])}
+${tbl([`Même avantage : 40 % WR à 1:2 (+0,20 RR moyen)`,`10 trades`,`100 trades`,`~220 trades`,`~490 trades`],[
+ [`t-score`,`0,4 (chance ?)`,`1,4 (pas prouvé)`,`<strong>2,0</strong> (probablement réel)`,`<strong>3,0</strong> (réel)`]])}
+${ib('red','⚠️',`<strong>Le test de la chance :</strong> sur 652 872 combinaisons, 2 217 ont passé un filtre strict dans les deux périodes, mais la chance seule en donnerait environ 2 000. Faites donc confiance aux THÈMES qui tiennent à travers les stops et les sorties, pas à une combinaison parfaite.`)}
+${ib('gold','⭐',`<strong>60 % de réussite à 1:2 n'a été atteint</strong> par aucun setup dans les deux périodes. Le plus proche : GMC 4H ▲ c3 BC−, 55 % → 56 % avec un stop ATR, 55 % → 61 % avec le stop de la bougie. Un fonds ferait tourner avec plaisir 40–55 % de WR à +0,2 RR moyen.`)}</div>`;}},
+{type:'quiz',id:'q-ofc4-1',
+ en:{q:'What does the 2-NBC exit (exit when 2 NBC candles print in a row) do, according to the tests?',opts:['A — Doubles your average RR','B — Raises win rate by about 10 points (33% → 45%) for about the same average RR','C — Loses money every time','D — Only works on gold'],correct:1,fb:'Two NBC candles mean a new balance and spent urgency. You lock in more small wins, but sometimes the box breaks your way again. Net: much higher win rate, about the same avg RR (−0.002 to −0.004).'},
+ fr:{q:"Que fait la sortie 2-NBC (sortir quand 2 bougies NBC apparaissent d'affilée), d'après les tests ?",opts:["A — Double votre RR moyen","B — Monte le taux de réussite d'environ 10 points (33 % → 45 %) pour à peu près le même RR moyen","C — Perd de l'argent à chaque fois","D — Ne marche que sur l'or"],correct:1,fb:"Deux bougies NBC veulent dire un nouvel équilibre et une urgence épuisée. Vous bloquez plus de petits gains, mais parfois la boîte casse encore dans votre sens. Net : taux de réussite bien plus haut, RR moyen à peu près pareil (−0,002 à −0,004)."}},
+{type:'quiz',id:'q-ofc4-2',
+ en:{q:'Your setup: 40% WR at 1:2, +0.20 avg RR, after 60 trades, t-score 1.1. What is the honest verdict?',opts:['A — Proven edge, go live big','B — Losing strategy','C — Promising but not proven: the t-score is under 2. You need roughly 220 trades at this rate','D — Win rate too low, delete it'],correct:2,fb:'+0.20 avg RR is a good edge IF it is real. With 60 trades the luck wobble is still bigger than the edge. At this win rate and payoff, about 220 trades bring the t-score to 2.'},
+ fr:{q:"Votre setup : 40 % WR à 1:2, +0,20 RR moyen, après 60 trades, t-score 1,1. Quel est le verdict honnête ?",opts:["A — Avantage prouvé, passez en live en grand","B — Stratégie perdante","C — Prometteur mais pas prouvé : le t-score est sous 2. Il faut environ 220 trades à ce rythme","D — Taux de réussite trop bas, supprimez-le"],correct:2,fb:"+0,20 RR moyen est un bon avantage S'IL est réel. Avec 60 trades, la variation due à la chance est encore plus grande que l'avantage. À ce taux et ce gain, environ 220 trades amènent le t-score à 2."}},
+{type:'quiz',id:'q-ofc4-3',
+ en:{q:'You tested 650,000 combinations and found one with a beautiful result. What should you trust?',opts:['A — That one combo','B — The combo with the highest win rate','C — Whatever worked last week','D — Themes that hold across many stops and exits, in both periods. With that many tests, luck alone makes about 2,000 combos look good'],correct:3,fb:'Test enough ideas and some will look great by pure luck. The research found 2,217 survivors against about 2,000 expected by luck. Trust the patterns that repeat, not the single best line.'},
+ fr:{q:"Vous avez testé 650 000 combinaisons et trouvé une avec un résultat magnifique. À quoi faire confiance ?",opts:["A — À cette combinaison","B — À la combinaison avec le meilleur taux de réussite","C — À ce qui a marché la semaine dernière","D — Aux thèmes qui tiennent à travers beaucoup de stops et de sorties, dans les deux périodes. Avec autant de tests, la chance seule fait paraître bonnes environ 2 000 combinaisons"],correct:3,fb:"Testez assez d'idées et certaines paraîtront géniales par pure chance. La recherche a trouvé 2 217 survivantes contre environ 2 000 attendues par chance. Faites confiance aux motifs qui se répètent, pas à la meilleure ligne seule."}},
+{type:'hw',hwKey:'hw-OFC4',items:[
+ {id:'hw-OFC4-1',chart:false,en:'Take your last 30 backtest trades. Write their WR, avg RR, PF and max drawdown. Then compute the t-score with the Google Sheets formula: =AVERAGE(A:A)/(STDEV(A:A)/SQRT(COUNT(A:A))). Is it proven?',fr:"Prenez vos 30 derniers trades de backtest. Écrivez leur WR, RR moyen, PF et drawdown max. Puis calculez le t-score avec la formule Google Sheets : =AVERAGE(A:A)/(STDEV(A:A)/SQRT(COUNT(A:A))). Est-ce prouvé ?"},
+ {id:'hw-OFC4-2',chart:false,en:'Replay the same 30 trades with the 2-NBC exit. How did WR and avg RR change? Which version fits your account rules better?',fr:"Rejouez les mêmes 30 trades avec la sortie 2-NBC. Comment le WR et le RR moyen ont-ils changé ? Quelle version convient mieux aux règles de votre compte ?"}
+]}
+]};
+
+const PHASE_OFC={phase:8,icon:'🧭',title:{en:'Order Flow Control (Tested)',fr:"Contrôle du Flux d'Ordres (Testé)"},lessons:[LESSON_OFC1,LESSON_OFC2,LESSON_OFC3,LESSON_OFC4],
+ outline:{desc:'The MMM read, checked on real data: NQ 1-minute Dec 2022 – Dec 2025, re-checked on MNQ Jul – Oct 2026 (every number shows NQ → MNQ). <strong>Balance control</strong>: where the last close sits in the box and how long price stays there (top third breaks up 65–72% first, 72–78% after 7+ candles). <strong>The fuel gauge</strong>: plus candles take their target about 80% of the time, minus candles about 45%, and plus candles pull back only to P / MP. <strong>The GMC</strong>: c1–c3 anatomy, the GMC open, c3 types, results by timeframe and the setups that held in both periods. <strong>Exits and edges</strong>: the 2-NBC exit (+10 points of win rate), and how to read WR, PF, avg RR and t-score like a fund.',
+  lessons:['Who controls the balance — the thirds, time in the box, the tested odds, the hindsight trap','Fuel gauge & pullback ladder — plus vs minus candles, P / MP / BAL fill and target odds, the HTF→LTF magnifier trap','The GMC, tested — c1 / c2 / c3, GMC open, c3 types, results by timeframe, violation','Exits & judging an edge — 2-NBC exit, stall and SuperTrend exits, WR / PF / avg RR / t-score, the luck check']}};
+
+/* ---------- PHASE 9 · MMM Pro XCS One ---------- */
+const LESSON_XCS={id:'XCS-1',title:{en:'MMM Pro XCS One',fr:'MMM Pro XCS One'},cards:[
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('Phase 9',`MMM Pro XCS One @MaxMaserati`)}${h1(`One Map, Three Engines`)}${lead(`XCS One blends the three MMM engines into one chart: x (the balance box and its breaks), c (candle types and GMC) and s (swing protected levels). It gives no signals. It shows the tested facts, so you decide.`)}
+${tbl([`On the chart`,`What it shows`],[
+ [`Balance box`,`The live box, with no border. Its fill color = the box delta (green / red / grey).`],
+ [`<strong style="color:var(--gr)">Green line</strong> / <strong style="color:var(--rd)">red line</strong>`,`Start of the top third / end of the bottom third. The side in control gets a thick line (3 when the odds reach your highlight level).`],
+ [`Control text`,`For example "BUYERS 72% up · 8c · Δ+": the tested odds, the candles inside, delta as a tie-breaker. Hover for the NQ and MNQ odds of that exact cell.`],
+ [`vPOC`,`Solid line at the price with the most volume in the box. Width 1–6 = its volume vs the average of the last 20 boxes. Green = above the green line (buyers), red = below the red line (sellers), yellow = middle.`],
+ [`Pullback zone`,`P–MP after a plus candle, BAL–MD after a minus candle, with its tested fill and target odds.`],
+ [`GMC lines`,`A solid line at the GMC open, ONE per type (side + c3 type), newest only, with its tested stats. ★ gold = held in both periods.`],
+ [`SL s / SH s`,`Swing protected levels: where the stop belongs.`],
+ [`Candle tags`,`The MMCB type of recent candles. The newest is bright, older ones fade. Hover = the odds and the result.`]])}
+${ib('gold','⭐',`<strong>Everything cleans itself up.</strong> PO4s, breaks and blocks die on a close through them. A box dies with its POC. Swing levels die when broken. A GMC dies when a close goes back through its open. Pullback zones end on the target, the protected end, or after 3 candles.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 9',`MMM Pro XCS One @MaxMaserati`)}${h1(`Une Carte, Trois Moteurs`)}${lead(`XCS One réunit les trois moteurs MMM sur un seul graphique : x (la boîte d'équilibre et ses cassures), c (les types de bougies et le GMC) et s (les niveaux protégés de swing). Il ne donne pas de signaux. Il montre les faits testés, et c'est vous qui décidez.`)}
+${tbl([`Sur le graphique`,`Ce que ça montre`],[
+ [`Boîte d'équilibre`,`La boîte active, sans bordure. Sa couleur de fond = le delta de la boîte (vert / rouge / gris).`],
+ [`<strong style="color:var(--gr)">Ligne verte</strong> / <strong style="color:var(--rd)">ligne rouge</strong>`,`Début du tiers haut / fin du tiers bas. Le camp qui contrôle a une ligne épaisse (3 quand les chances atteignent votre niveau de mise en avant).`],
+ [`Texte de contrôle`,`Par exemple « BUYERS 72% up · 8c · Δ+ » : les chances testées, les bougies à l'intérieur, le delta comme départage. Survolez pour les chances NQ et MNQ de cette case exacte.`],
+ [`vPOC`,`Ligne pleine au prix avec le plus de volume dans la boîte. Épaisseur 1–6 = son volume vs la moyenne des 20 dernières boîtes. Vert = au-dessus de la ligne verte (acheteurs), rouge = sous la ligne rouge (vendeurs), jaune = milieu.`],
+ [`Zone de pullback`,`P–MP après une bougie plus, BAL–MD après une bougie moins, avec ses chances testées de remplissage et d'objectif.`],
+ [`Lignes GMC`,`Une ligne pleine à l'ouverture GMC, UNE par type (côté + type de c3), la plus récente seulement, avec ses statistiques testées. ★ or = a tenu dans les deux périodes.`],
+ [`SL s / SH s`,`Niveaux protégés de swing : là où va le stop.`],
+ [`Étiquettes de bougies`,`Le type MMCB des bougies récentes. La plus récente est vive, les plus anciennes s'estompent. Survol = les chances et le résultat.`]])}
+${ib('gold','⭐',`<strong>Tout se nettoie tout seul.</strong> Les PO4, cassures et blocs meurent sur une clôture à travers eux. Une boîte meurt avec son POC. Les niveaux de swing meurent quand ils cassent. Un GMC meurt quand une clôture repasse à travers son ouverture. Les zones de pullback finissent sur l'objectif, la fin protégée, ou après 3 bougies.`)}</div>`;}},
+{type:'concept',
+ en(){return `<div class="card-inner">${eyebrow('Phase 9',`The MAP Panel`)}${h1(`The Whole Map in One Read`)}${lead(`The panel starts with the test data, then the live read, then the research facts.`)}
+${tbl([`Row`,`What it tells you`],[
+ [`DATA`,`The periods the numbers come from: NQ Dec 2022 – Dec 2025, re-check MNQ Jul – Oct 2026.`],
+ [`TESTED`,`How many candles of your timeframe were tested, and how many boxes. "A → B" = NQ → MNQ.`],
+ [`STRUCTURE`,`Trend side and T#, with P# / R#.`],
+ [`BALANCE`,`Who controls the live box, where the close sits, the NQ → MNQ odds and the sample size.`],
+ [`CANDLE`,`The last candle type and how often it takes its target.`],
+ [`PULLBACK`,`The live zone and its fill → target odds.`],
+ [`GMC`,`The newest live GMC, its open and its stats, or how many were violated.`],
+ [`PROTECTED / HTF / SESSION / NEWS`,`Swing levels, higher-timeframe bias, whether you are in the tested window (Asia + NY AM), news warnings.`],
+ [`FACTS`,`2-NBC exit, stall exit, POC entry, LTF entry, the 60% at 1:2 goal.`]])}
+${ib('blue','🎛',`<strong>Your screen, your sizes:</strong> one "ALL Labels & Panels" switch sets every label and table size at once, or set each item yourself. Any table you switch off disappears completely.`)}
+${ib('green','🎯',`<strong>How to use it:</strong> read STRUCTURE and BALANCE first. Trade with the side in control, at a plus-candle pullback zone or a gold GMC, with your stop at the SL s / SH s. Use the 2-NBC exit when your account needs win rate.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 9',`Le Panneau MAP`)}${h1(`Toute la Carte en Une Lecture`)}${lead(`Le panneau commence par les données de test, puis la lecture en direct, puis les faits de la recherche.`)}
+${tbl([`Ligne`,`Ce qu'elle vous dit`],[
+ [`DATA`,`Les périodes d'où viennent les chiffres : NQ déc. 2022 – déc. 2025, revérifié sur MNQ juil. – oct. 2026.`],
+ [`TESTED`,`Combien de bougies de votre unité de temps ont été testées, et combien de boîtes. « A → B » = NQ → MNQ.`],
+ [`STRUCTURE`,`Côté de la tendance et T#, avec P# / R#.`],
+ [`BALANCE`,`Qui contrôle la boîte active, où est la clôture, les chances NQ → MNQ et la taille de l'échantillon.`],
+ [`CANDLE`,`Le type de la dernière bougie et combien de fois il prend son objectif.`],
+ [`PULLBACK`,`La zone active et ses chances remplissage → objectif.`],
+ [`GMC`,`Le GMC actif le plus récent, son ouverture et ses statistiques, ou combien ont été violés.`],
+ [`PROTECTED / HTF / SESSION / NEWS`,`Niveaux de swing, biais de l'unité supérieure, si vous êtes dans la fenêtre testée (Asie + NY matin), alertes de nouvelles.`],
+ [`FACTS`,`Sortie 2-NBC, sortie « stall », entrée au POC, entrée LTF, l'objectif de 60 % à 1:2.`]])}
+${ib('blue','🎛',`<strong>Votre écran, vos tailles :</strong> un seul réglage « ALL Labels & Panels » règle la taille de toutes les étiquettes et tableaux d'un coup, ou réglez chaque élément vous-même. Tout tableau désactivé disparaît complètement.`)}
+${ib('green','🎯',`<strong>Comment l'utiliser :</strong> lisez d'abord STRUCTURE et BALANCE. Tradez avec le camp qui contrôle, sur une zone de pullback de bougie plus ou un GMC or, avec votre stop au SL s / SH s. Utilisez la sortie 2-NBC quand votre compte a besoin de taux de réussite.`)}</div>`;}},
+{type:'quiz',id:'q-xcs-1',
+ en:{q:'On XCS One, the green line inside the live box is thick and the text reads "BUYERS 70% up · 5c". What does it mean?',opts:['A — Buy now at market','B — The last close sits in the top third after 5 candles: the box has tested odds of about 70% to break UP first','C — Delta is 70% positive','D — The box is about to be deleted'],correct:1,fb:'The control text shows the tested odds for where the last close sits (top third) and how long price has been inside (4–6 candles). It is odds, not a signal: wait for the body close out of the box.'},
+ fr:{q:"Sur XCS One, la ligne verte dans la boîte active est épaisse et le texte dit « BUYERS 70% up · 5c ». Qu'est-ce que ça veut dire ?",opts:["A — Acheter maintenant au marché","B — La dernière clôture est dans le tiers haut après 5 bougies : la boîte a des chances testées d'environ 70 % de casser vers le HAUT d'abord","C — Le delta est positif à 70 %","D — La boîte va être supprimée"],correct:1,fb:"Le texte de contrôle montre les chances testées selon l'endroit de la dernière clôture (tiers haut) et le temps passé dedans (4–6 bougies). Ce sont des chances, pas un signal : attendez la clôture qui sort de la boîte."}},
+{type:'quiz',id:'q-xcs-2',
+ en:{q:'A GMC line disappears from the chart. Why?',opts:['A — A candle closed back through its GMC open (violated), or a newer GMC of the same type replaced it','B — The session ended','C — TradingView lag','D — Volume was low'],correct:0,fb:'XCS One keeps one GMC line per type (side + c3 type), newest only, and deletes any GMC whose open is closed through. A clean chart shows only live, useful levels.'},
+ fr:{q:"Une ligne GMC disparaît du graphique. Pourquoi ?",opts:["A — Une bougie a clôturé à travers son ouverture GMC (violé), ou un GMC plus récent du même type l'a remplacé","B — La session est finie","C — Un retard de TradingView","D — Le volume était faible"],correct:0,fb:"XCS One garde une ligne GMC par type (côté + type de c3), la plus récente seulement, et supprime tout GMC dont l'ouverture est traversée par une clôture. Un graphique propre montre seulement les niveaux actifs et utiles."}},
+{type:'quiz',id:'q-xcs-3',
+ en:{q:'The vPOC line is RED. What does it tell you?',opts:['A — Price must go down','B — Sell at the POC','C — The most-traded price in the box sits below the red line (the bottom third): sellers control the volume. It is a read, not a tested edge','D — The POC is broken'],correct:2,fb:'The vPOC color shows where the volume sits in the box: green above the green line, red below the red line, yellow in the middle. The POC color itself was not tested as an edge, and the POC was not a better entry.'},
+ fr:{q:"La ligne vPOC est ROUGE. Qu'est-ce qu'elle vous dit ?",opts:["A — Le prix doit baisser","B — Vendre au POC","C — Le prix le plus échangé dans la boîte est sous la ligne rouge (le tiers bas) : les vendeurs contrôlent le volume. C'est une lecture, pas un avantage testé","D — Le POC est cassé"],correct:2,fb:"La couleur du vPOC montre où est le volume dans la boîte : vert au-dessus de la ligne verte, rouge sous la ligne rouge, jaune au milieu. La couleur du POC n'a pas été testée comme un avantage, et le POC n'était pas une meilleure entrée."}},
+{type:'hw',hwKey:'hw-XCS',items:[
+ {id:'hw-XCS-1',chart:true,en:'Load MMM Pro XCS One on a 15M MNQ chart with the structure timeframe left empty. Screenshot a live box with its control lines, vPOC and the MAP panel. Upload it:',fr:"Chargez MMM Pro XCS One sur un graphique MNQ 15M avec l'unité de temps de structure laissée vide. Faites une capture d'une boîte active avec ses lignes de contrôle, son vPOC et le panneau MAP. Chargez-la :"},
+ {id:'hw-XCS-2',chart:false,en:'Over one session, write each time the BALANCE row changed side, and whether the box then broke that way. How did it compare with the tested odds?',fr:"Pendant une session, notez chaque fois que la ligne BALANCE a changé de camp, et si la boîte a ensuite cassé dans ce sens. Comment ça se compare aux chances testées ?"}
+]}
+]};
+
+/* ============================================================
+   COURSE ASSEMBLY (round 3): F3 into the Foreword, the new Order Flow
+   Control phase before the indicators, XCS One into the indicators
+============================================================ */
+(function assemble3(){
+  const byPhase=n=>COURSE.find(p=>p.phase===n);
+  const wrap=(ls,from,to)=>ls.cards.forEach(c=>['en','fr'].forEach(lg=>{const f=c[lg];if(typeof f==='function')c[lg]=function(){return f.call(this).split(from).join(to);};}));
+  // Foreword: F3 after F2
+  const p0=byPhase(0);
+  if(p0){const i=p0.lessons.findIndex(l=>l.id==='F2');p0.lessons.splice(i>=0?i+1:p0.lessons.length,0,LESSON_F3);
+    if(p0.outline){const j=p0.outline.lessons.indexOf(NEW_OUTLINE.F2);p0.outline.lessons.splice(j>=0?j+1:p0.outline.lessons.length,0,'Who pushes, who waits — patient vs forced money, the order-flow loop, the fuel gauge, what proves a side ran out of fuel');}}
+  // Renumber: indicators 8 → 9, LTF 9 → 10, identity 10 → 11, then insert the new phase 8
+  const pMMP=PHASE_MMP, pLTF=byPhase(9), pID=byPhase(10);
+  if(pID) pID.phase=11;
+  if(pLTF){pLTF.phase=10;pLTF.lessons.forEach(ls=>wrap(ls,'Phase 9','Phase 10'));}
+  pMMP.phase=9; pMMP.lessons.forEach(ls=>wrap(ls,'Phase 8','Phase 9'));
+  const bz=(byPhase(6)||{lessons:[]}).lessons.find(l=>l.id==='BZ-1'); if(bz) wrap(bz,'MMM Pro (Phase 8)','MMM Pro (Phase 9)');
+  if(pID&&pID.outline) pID.outline.desc=pID.outline.desc.replace('Phase 9 establishes','This final phase establishes');
+  // XCS One closes the indicators phase
+  pMMP.lessons.push(LESSON_XCS);
+  if(pMMP.outline){pMMP.outline={desc:pMMP.outline.desc+' <strong>MMM Pro XCS One</strong> blends the x, c and s engines into one map: green / red balance-control lines with tested odds, a vPOC colored by who controls it, GMC lines that delete themselves when violated, and a MAP panel that shows the test data and the research facts.',lessons:pMMP.outline.lessons.concat(['MMM Pro XCS One — the one map: control lines, vPOC, GMC lines, the MAP panel, clean-up rules'])};}
+  COURSE.splice(COURSE.indexOf(pMMP),0,PHASE_OFC);
+})();
+
+
+/* ============================================================
    STATE + STORAGE
 ============================================================ */
 const KEY='mmm_course_v4';
@@ -2293,6 +2811,7 @@ function applyStatic(){
 }
 function setLang(l){
   lang=l; store.set('mmm_course_lang',l); applyStatic();
+  if($('cert-dialog').open){drawCert();renderMailUI();}
   renderLanding();
   if(started){renderRail();renderCard(cardIndex,null);}
 }
@@ -2402,7 +2921,7 @@ function renderTopProgress(){
     if(fh>0) s+=`<rect x="${cx-3.5}" y="${top+bh-fh}" width="7" height="${fh}" rx="1" fill="${col}"/>`;
     s+='</g>';
   });
-  svg.innerHTML=s; const pct=pctAll();
+  svg.innerHTML=s; svg.setAttribute('viewBox','0 0 '+(COURSE.length*w)+' 30'); svg.style.width=(COURSE.length*w)+'px'; const pct=pctAll();
   svg.setAttribute('aria-label',pct+'%');
   $('tb-pct').textContent=fmt(t('pct_done'),{pct});
   updateCertButton();
@@ -2631,9 +3150,9 @@ function jumpToLesson(id){const i=allCards.findIndex(c=>c.lessonId===id);if(i>=0
 ============================================================ */
 function openCert(){
   const comp=allCards.find(c=>c.type==='complete'); if(comp){completed.add(comp.key);saveProgress();renderTopProgress();}
-  $('cert-name').value=certName;
+  $('cert-name').value=certName; mailState=null; mailMsg('');
   const d=$('cert-dialog'); if(!d.open){try{d.showModal();}catch(e){d.setAttribute('open','');}}
-  drawCert();
+  drawCert(); initMail();
 }
 function closeCert(){const d=$('cert-dialog');try{d.close();}catch(e){d.removeAttribute('open');}}
 async function drawCert(){
@@ -2665,13 +3184,138 @@ async function drawCert(){
   COURSE.forEach((ph,i)=>{const col=i<rows?0:1,row=i%rows,x=colX[col],y=694+row*Math.min(40,220/Math.max(1,rows-1));
     g.fillStyle='#35C281';g.fillText('✓',x,y);g.fillStyle=dim;g.fillText(`${t('phase')} ${ph.phase}  ${ph.title[lang]}`,x+34,y);});
   g.textAlign='center';
-  const date=new Date().toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'long',year:'numeric'});
+  const rec=certFor(name), dObj=rec?new Date(rec.issued+'T12:00:00'):new Date();
+  const date=dObj.toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'long',year:'numeric'});
   g.font='500 22px "IBM Plex Sans", sans-serif';g.fillStyle=dim;g.fillText(`${t('cert_date')} ${date}`,W/2,952);
   g.font='700 28px Archivo, sans-serif';g.fillStyle=gold;g.fillText(t('motto'),W/2,1010);
+  if(rec){g.font='500 18px "IBM Plex Mono", monospace';g.fillStyle=dim;g.fillText(`${t('cert_id')} ${rec.id}  ·  maxmaserati.com/certificate`,W/2,1052);}
   $('cert-img').src=cv.toDataURL('image/png');
 }
-function downloadCert(){
-  const a=document.createElement('a');a.href=$('cert-img').src;a.download='MMM-Mastery-Certificate.png';document.body.appendChild(a);a.click();a.remove();
+/* ============================================================
+   CERTIFICATE BY EMAIL (maxmaserati.com)
+   Same Firebase project as the journal and the site log-in, so a student who is
+   logged in on maxmaserati.com is logged in here too.
+   1) certificates/{MMM-XXXX-XXXX}: public proof record (name, date, phases; no email)
+   2) mail/cert_{uid}_{yyyymmdd}: read by the Firebase "Trigger Email" extension,
+      which sends the email. One per student per day. Rules: see the setup notes.
+============================================================ */
+const FB_CFG={apiKey:'AIzaSyDcrEEhcY6kHLQxZ7RQ37KmAcCDPgol0gg',authDomain:'mmm-pro-journal.firebaseapp.com',projectId:'mmm-pro-journal',storageBucket:'mmm-pro-journal.firebasestorage.app',messagingSenderId:'46182009652',appId:'1:46182009652:web:14574d6cfee75fe483f361'};
+const FB_BASE='https://www.gstatic.com/firebasejs/10.12.2/';
+const CERT_KEY='mmm_course_cert';
+let fbP=null, fbUser=null, fbWatching=false, mailUnsub=null, mailState=null;
+let certRecs=store.get(CERT_KEY,[]); if(!Array.isArray(certRecs)) certRecs=[];
+function loadJs(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.async=true;s.onload=()=>res();s.onerror=()=>rej(new Error('load '+src));document.head.appendChild(s);});}
+function fb(){
+  if(!/^https?:$/.test(location.protocol)) return Promise.reject(new Error('offline page'));
+  if(!fbP){
+    const ready=()=>window.firebase&&firebase.auth&&firebase.firestore;
+    fbP=(ready()?Promise.resolve():(window.firebase?Promise.resolve():loadJs(FB_BASE+'firebase-app-compat.js'))
+      .then(()=>Promise.all([firebase.auth?0:loadJs(FB_BASE+'firebase-auth-compat.js'),firebase.firestore?0:loadJs(FB_BASE+'firebase-firestore-compat.js')])))
+      .then(()=>{if(!firebase.apps.length) firebase.initializeApp(FB_CFG);return firebase;});
+    fbP.catch(()=>{fbP=null;});
+  }
+  return fbP;
+}
+function certFor(name){
+  const n=(name||'').trim(), uid=fbUser?fbUser.uid:null;
+  return certRecs.find(r=>r.name===n&&(!uid||r.uid===uid))||null;
+}
+function newCertId(){
+  const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', b=new Uint8Array(8); crypto.getRandomValues(b);
+  const s=[...b].map(x=>A[x%A.length]).join(''); return `MMM-${s.slice(0,4)}-${s.slice(4)}`;
+}
+function isoToday(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function proofUrl(id){return `${location.origin}/certificate/?id=${encodeURIComponent(id)}`;}
+function mailMsg(key,cls){const el=$('cert-mail-msg');el.textContent=key?t(key).replace('{e}',fbUser&&fbUser.email||''):'';el.className='cert-mail-msg'+(cls?' '+cls:'');}
+function renderMailUI(){
+  const box=$('cert-mail'); if(!box||box.hidden) return;
+  const inn=!!(fbUser&&fbUser.email);
+  $('cert-mail-who').textContent=inn?t('cert_who').replace('{e}',fbUser.email):t('cert_who_out');
+  $('cert-mail-btn').hidden=!inn; $('cert-login').hidden=inn;
+  const rec=certFor(certName);
+  $('cert-link-box').hidden=!rec; if(rec) $('cert-link').value=proofUrl(rec.id);
+  if(mailState) mailMsg(mailState[0],mailState[1]);
+}
+function initMail(){
+  if(fbWatching) {renderMailUI();return;}
+  fb().then(f=>{
+    fbWatching=true; $('cert-mail').hidden=false;
+    f.auth().onAuthStateChanged(u=>{fbUser=u;renderMailUI();if($('cert-dialog').open) drawCert();});
+  }).catch(()=>{$('cert-mail').hidden=true;});
+}
+function escHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function mailHtml(name,url){
+  const gold='#D6B15E';
+  return `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0;background:#0E1114;font-family:Arial,Helvetica,sans-serif;color:#ECE5D3">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0E1114"><tr><td align="center" style="padding:28px 12px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#151A1F;border:1px solid #27303A;border-radius:14px">
+<tr><td style="padding:28px 28px 8px;text-align:center;color:${gold};font-size:12px;letter-spacing:3px;font-weight:bold">MAX MASERATI MODEL</td></tr>
+<tr><td style="padding:4px 28px 4px;text-align:center;font-size:26px;font-weight:bold;color:#ECE5D3">${escHtml(t('mail_hi').replace('{n}',name))}</td></tr>
+<tr><td style="padding:10px 28px 18px;text-align:center;font-size:15px;line-height:1.6;color:#A9AFB5">${escHtml(t('mail_body'))}</td></tr>
+<tr><td style="padding:0 20px"><img src="cid:mmmcert" width="560" alt="${escHtml(t('cert_title'))}" style="display:block;width:100%;max-width:560px;height:auto;border-radius:8px;border:1px solid #27303A"></td></tr>
+<tr><td style="padding:20px 28px 6px;text-align:center;font-size:14px;color:#A9AFB5">${escHtml(t('mail_proof'))}</td></tr>
+<tr><td style="padding:0 28px 24px;text-align:center"><a href="${escHtml(url)}" style="color:${gold};font-size:14px;word-break:break-all">${escHtml(url)}</a></td></tr>
+<tr><td style="padding:16px 28px 26px;text-align:center;font-size:13px;color:#7A838D;border-top:1px solid #27303A">${escHtml(t('mail_sign'))} · <a href="https://www.maxmaserati.com" style="color:#7A838D">maxmaserati.com</a></td></tr>
+</table></td></tr></table></body></html>`;
+}
+async function emailCert(){
+  if(!fbUser||!fbUser.email) return;
+  const name=(certName||'').trim();
+  if(!name){mailState=['cert_need_name','bad'];mailMsg(...mailState);$('cert-name').focus();return;}
+  const btn=$('cert-mail-btn'); btn.disabled=true; mailState=['cert_sending',''];mailMsg(...mailState);
+  if(mailUnsub){try{mailUnsub();}catch(e){} mailUnsub=null;}
+  try{
+    const f=await fb(), db=f.firestore(), uid=fbUser.uid;
+    // 1) the public proof record (re-used while the name stays the same)
+    let rec=certFor(name);
+    if(!rec){
+      const id=newCertId(), issued=isoToday();
+      try{
+        await db.collection('certificates').doc(id).set({uid,name,lang,issued,v:1,
+          phases:COURSE.map(ph=>`${t('phase')} ${ph.phase}  ${ph.title[lang]}`),
+          createdAt:f.firestore.FieldValue.serverTimestamp()});
+      }catch(e){mailState=['cert_mail_off','bad'];mailMsg(...mailState);return;}
+      rec={id,uid,name,issued}; certRecs=[rec,...certRecs.filter(r=>r.id!==id)].slice(0,10); store.set(CERT_KEY,certRecs);
+    }
+    await drawCert(); renderMailUI();
+    // 2) the email
+    const ref=db.collection('mail').doc(`cert_${uid}_${isoToday().replace(/-/g,'')}`);
+    const old=await ref.get().catch(()=>null);
+    if(old&&old.exists){mailState=['cert_already',''];mailMsg(...mailState);return;}
+    const url=proofUrl(rec.id), png=$('cert-img').src.split(',')[1];
+    try{
+      await ref.set({to:fbUser.email,uid,certId:rec.id,message:{
+        subject:t('mail_subject'),
+        text:`${t('mail_hi').replace('{n}',name)}\n\n${t('mail_body')}\n\n${t('mail_proof')} ${url}\n\n${t('mail_sign')}`,
+        html:mailHtml(name,url),
+        attachments:[{filename:'MMM-Mastery-Certificate.png',content:png,encoding:'base64',contentType:'image/png',cid:'mmmcert'}]}});
+    }catch(e){mailState=[e&&e.code==='permission-denied'?'cert_already':'cert_mail_err',''];mailMsg(...mailState);return;}
+    mailState=['cert_sent','ok'];mailMsg(...mailState);
+    // the extension writes delivery.state back on the same document
+    mailUnsub=ref.onSnapshot(s=>{const d=s.data(),st=d&&d.delivery&&d.delivery.state;
+      if(st==='SUCCESS'){mailState=['cert_delivered','ok'];mailMsg(...mailState);}
+      else if(st==='ERROR'){mailState=['cert_mail_err','bad'];mailMsg(...mailState);}},()=>{});
+  }catch(e){mailState=['cert_mail_err','bad'];mailMsg(...mailState);}
+  finally{btn.disabled=false;}
+}
+function copyProof(){
+  const v=$('cert-link').value; if(!v) return;
+  const done=()=>toast(t('cert_copied'));
+  if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(v).then(done,()=>{$('cert-link').select();document.execCommand('copy');done();});
+  else{$('cert-link').select();document.execCommand('copy');done();}
+}
+async function downloadCert(){
+  const src=$('cert-img').src, filename='MMM-Mastery-Certificate.png';
+  if(!src) return;
+  // Inside the claude.ai viewer the page cannot download by itself: ask the viewer through the downloads capability.
+  let dl=null;
+  try{ if(window.claude&&typeof window.claude.use==='function') dl=await window.claude.use('downloads'); }catch(e){ dl=null; }
+  if(dl){
+    try{ const blob=await (await fetch(src)).blob(); await dl.save({filename,data:blob}); toast(lang==='fr'?'Certificat enregistré':'Certificate saved'); return; }
+    catch(e){ if(e&&(e.code==='declined'||e.code==='rate_limited')) return; }
+  }
+  // Anywhere else (your own website, a saved copy): a normal download link.
+  const a=document.createElement('a');a.href=src;a.download=filename;document.body.appendChild(a);a.click();a.remove();
 }
 
 /* ============================================================
@@ -2704,6 +3348,8 @@ document.addEventListener('click',e=>{
     case 'cert': openCert(); break;
     case 'cert-close': closeCert(); break;
     case 'cert-dl': downloadCert(); break;
+    case 'cert-mail': emailCert(); break;
+    case 'cert-copy': copyProof(); break;
     default: widgetAction(a,el);
   }
 });
@@ -2712,7 +3358,7 @@ document.addEventListener('input',e=>{
   if(widgetInput(el)) return;
   if(el.dataset.hw) onHwInput(el.dataset.hw,el.value);
   else if(el.dataset.idf){identityData[el.dataset.idf]=el.value;saveProgress();}
-  else if(el.id==='cert-name'){certName=el.value;saveProgress();clearTimeout(window._cn);window._cn=setTimeout(drawCert,250);}
+  else if(el.id==='cert-name'){certName=el.value;saveProgress();clearTimeout(window._cn);window._cn=setTimeout(()=>{drawCert();mailState=null;mailMsg('');renderMailUI();},250);}
 });
 document.addEventListener('change',e=>{
   const el=e.target;

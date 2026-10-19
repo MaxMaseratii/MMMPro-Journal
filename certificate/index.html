@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Certificate Check | MMM Mastery Course</title>
+<meta name="description" content="Check that an MMM Mastery Course certificate is real.">
+<meta name="robots" content="noindex">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MMM Trading">
+<meta property="og:title" content="MMM Mastery Course certificate">
+<meta property="og:description" content="A verified certificate of completion for the MMM Mastery Course: The Order Flow Bible.">
+<meta property="og:image" content="https://www.maxmaserati.com/mmm-logo-lockup.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
+<meta name="theme-color" content="#0a0a0a">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&family=Archivo:wdth,wght@62..125,500..900&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!-- Firebase (same project as the journal). Loaded before site.js so site.js re-uses it. -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+  [hidden] { display: none !important; }
+  body { background: hsl(0,0%,4%); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .num { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .glow { background-image: radial-gradient(circle at 15% 15%, hsla(45,100%,55%,0.14), transparent 40%), radial-gradient(circle at 85% 20%, hsla(180,70%,55%,0.12), transparent 45%); }
+  .card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.1); border-radius: 1rem; }
+  .btn-gold { display:inline-flex; align-items:center; justify-content:center; background: linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light)); color: #000; font-weight: 700; border-radius: .75rem; padding: .75rem 1.1rem; transition: filter .15s; }
+  .btn-gold:hover { filter: brightness(1.08); }
+  .btn-line { display:inline-flex; align-items:center; justify-content:center; border: 1px solid rgba(255,255,255,.18); color: #fff; font-weight: 600; border-radius: .75rem; padding: .75rem 1.1rem; }
+  .btn-line:hover { border-color: rgba(255,255,255,.35); }
+  .cert-img { display:block; width:100%; height:auto; border-radius: .75rem; border: 1px solid rgba(255,255,255,.1); background:#0E1114; }
+  .badge { display:inline-flex; align-items:center; gap:.45rem; padding:.35rem .75rem; border-radius:999px; font-weight:700; font-size:.85rem; }
+  .badge.ok { color:#35C281; background:rgba(53,194,129,.12); border:1px solid rgba(53,194,129,.35); }
+  .badge.bad { color:#EF5B60; background:rgba(239,91,96,.12); border:1px solid rgba(239,91,96,.35); }
+  dl.facts { display:grid; grid-template-columns: max-content 1fr; gap:.45rem 1rem; }
+  dl.facts dt { color:#9ca3af; }
+  dl.facts dd { color:#fff; font-weight:600; overflow-wrap:anywhere; }
+</style>
+</head>
+<body class="text-white">
+<div id="mmm-header"></div>
+
+<section class="glow border-b border-white/10">
+  <div class="max-w-4xl mx-auto px-5 sm:px-8 pt-12 pb-8 sm:pt-16">
+    <p class="text-sm font-bold tracking-widest" style="color:var(--mmm-gold)" id="kicker">MMM MASTERY COURSE</p>
+    <h1 class="mt-2 text-3xl sm:text-5xl font-extrabold tracking-tight" id="title">Certificate check</h1>
+    <p class="mt-4 text-gray-400" id="lead">Every certificate has its own ID. This page shows if it is real.</p>
+  </div>
+</section>
+
+<main class="max-w-4xl mx-auto px-5 sm:px-8 py-10">
+  <!-- no ID in the link: let the visitor type one -->
+  <form id="lookup" class="card p-5 sm:p-6 grid gap-3" hidden>
+    <label for="cid" class="font-semibold" id="lookup-label">Certificate ID</label>
+    <div class="flex flex-col sm:flex-row gap-3">
+      <input id="cid" class="num flex-1 min-w-0 rounded-xl px-3 py-3 text-white outline-none" style="background:#0b0b0b;border:1px solid rgba(255,255,255,.15)" placeholder="MMM-XXXX-XXXX" autocomplete="off" autocapitalize="characters" maxlength="13">
+      <button class="btn-gold" type="submit" id="lookup-go">Check</button>
+    </div>
+  </form>
+
+  <p id="status" class="text-gray-400" role="status" aria-live="polite">Checking the certificate…</p>
+
+  <div id="result" class="grid gap-6" hidden>
+    <div class="flex flex-wrap items-center gap-3">
+      <span class="badge ok" id="badge">✓ Verified certificate</span>
+      <span class="num text-sm text-gray-400" id="rid"></span>
+    </div>
+    <img id="cert-img" class="cert-img" alt="Certificate of completion">
+    <div class="card p-5 sm:p-6">
+      <dl class="facts">
+        <dt id="l-name">Issued to</dt><dd id="v-name"></dd>
+        <dt id="l-course">Course</dt><dd id="v-course"></dd>
+        <dt id="l-date">Completed</dt><dd id="v-date"></dd>
+        <dt id="l-id">ID</dt><dd id="v-id" class="num"></dd>
+      </dl>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <button class="btn-gold" type="button" id="dl">Download certificate</button>
+      <button class="btn-line" type="button" id="copy">Copy link</button>
+      <a class="btn-line" id="share" target="_blank" rel="noopener noreferrer" href="#">Share on LinkedIn</a>
+    </div>
+  </div>
+
+  <div class="card p-5 sm:p-6 mt-10 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+    <div>
+      <p class="font-bold" id="cta-h">Want your own certificate?</p>
+      <p class="text-gray-400 text-sm" id="cta-p">The MMM Mastery Course is free with an MMM account: 12 phases, quizzes, homework and a certificate at the end.</p>
+    </div>
+    <a class="btn-gold shrink-0" href="/journal/?course=1" id="cta-go">Start the course free</a>
+  </div>
+</main>
+
+<div id="mmm-footer"></div>
+<script src="/assets/nav.js"></script>
+<script src="/assets/site.js"></script>
+<script src="/i18n.js"></script>
+<script>
+(function () {
+  'use strict';
+  var CFG = {
+    apiKey: 'AIzaSyDcrEEhcY6kHLQxZ7RQ37KmAcCDPgol0gg',
+    authDomain: 'mmm-pro-journal.firebaseapp.com',
+    projectId: 'mmm-pro-journal',
+    storageBucket: 'mmm-pro-journal.firebasestorage.app',
+    messagingSenderId: '46182009652',
+    appId: '1:46182009652:web:14574d6cfee75fe483f361'
+  };
+  // Certificate texts: the same words the course prints, in the language the student used.
+  var T = {
+    en: {
+      brand: 'MAX MASERATI MODEL  ·  OFFICIAL CERTIFICATION', title: 'Certificate of Completion', certifies: 'This certifies that',
+      completed: 'has successfully completed', course: 'The MMM Mastery Course — The Order Flow Bible', date: 'Completed',
+      motto: 'Move with the Hammer. Never fight the Wall. Trade only in the Value Zones.', id: 'ID',
+      ok: '✓ Verified certificate', bad: '✕ No certificate with this ID', checking: 'Checking the certificate…',
+      notfound: 'We could not find this ID. Check that the link is complete, or type the ID below.',
+      error: 'We could not reach the certificate list right now. Try again in a minute.',
+      lName: 'Issued to', lCourse: 'Course', lDate: 'Completed', dl: 'Download certificate', copy: 'Copy link', copied: 'Link copied',
+      share: 'Share on LinkedIn'
+    },
+    fr: {
+      brand: 'MAX MASERATI MODEL  ·  CERTIFICATION OFFICIELLE', title: 'Certificat de Fin de Cours', certifies: 'Ceci certifie que',
+      completed: 'a terminé avec succès', course: "Le Cours MMM Maîtrise — La Bible du Flux d'Ordres", date: 'Terminé le',
+      motto: 'Bougez avec le Marteau. Ne combattez jamais le Mur. Tradez uniquement dans les Zones de Valeur.', id: 'ID',
+      ok: '✓ Certificat vérifié', bad: '✕ Aucun certificat avec cet ID', checking: 'Vérification du certificat…',
+      notfound: "Nous n'avons pas trouvé cet ID. Vérifiez que le lien est complet, ou tapez l'ID ci-dessous.",
+      error: "Impossible de joindre la liste des certificats pour l'instant. Réessayez dans une minute.",
+      lName: 'Délivré à', lCourse: 'Cours', lDate: 'Terminé le', dl: 'Télécharger le certificat', copy: 'Copier le lien', copied: 'Lien copié',
+      share: 'Partager sur LinkedIn'
+    }
+  };
+  var ID_RE = /^MMM-[A-Z0-9]{4}-[A-Z0-9]{4}$/;
+  var $ = function (id) { return document.getElementById(id); };
+  var pngUrl = '';
+
+  function show(id, on) { $(id).hidden = !on; }
+  function status(text, cls) { var s = $('status'); s.textContent = text || ''; s.hidden = !text; s.className = cls || 'text-gray-400'; }
+
+  function fmtDate(iso, lang) {
+    var d = new Date(String(iso) + 'T12:00:00');
+    if (isNaN(d)) return String(iso || '');
+    return d.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  // Same drawing as the course certificate (1600 x 1130).
+  function draw(rec, L) {
+    var W = 1600, H = 1130, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    var g = cv.getContext('2d'), gold = '#D6B15E', ink = '#ECE5D3', dim = '#9AA1A8', bg = '#0E1114';
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.strokeStyle = 'rgba(120,140,160,.07)'; g.lineWidth = 1;
+    for (var x = 0; x < W; x += 48) { g.beginPath(); g.moveTo(x + .5, 0); g.lineTo(x + .5, H); g.stroke(); }
+    for (var y = 0; y < H; y += 48) { g.beginPath(); g.moveTo(0, y + .5); g.lineTo(W, y + .5); g.stroke(); }
+    g.strokeStyle = gold; g.lineWidth = 4; g.strokeRect(44, 44, W - 88, H - 88); g.lineWidth = 1.5; g.strokeRect(62, 62, W - 124, H - 124);
+    g.fillStyle = gold; g.beginPath(); g.moveTo(W / 2, 118); g.lineTo(W / 2 + 30, 148); g.lineTo(W / 2, 178); g.lineTo(W / 2 - 30, 148); g.closePath(); g.fill();
+    g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+    g.fillStyle = gold; g.font = '600 22px "IBM Plex Sans", sans-serif';
+    if ('letterSpacing' in g) g.letterSpacing = '6px';
+    g.fillText(L.brand, W / 2, 232);
+    if ('letterSpacing' in g) g.letterSpacing = '0px';
+    g.font = '900 76px Archivo, "Arial Narrow", sans-serif'; g.fillStyle = gold; g.fillText(L.title, W / 2, 330);
+    g.font = '500 28px "IBM Plex Sans", sans-serif'; g.fillStyle = dim; g.fillText(L.certifies, W / 2, 400);
+    var name = String(rec.name || ''), fs = 72;
+    g.font = '800 ' + fs + 'px Archivo, sans-serif';
+    while (g.measureText(name).width > 1100 && fs > 36) { fs -= 4; g.font = '800 ' + fs + 'px Archivo, sans-serif'; }
+    g.fillStyle = ink; g.fillText(name, W / 2, 492);
+    g.strokeStyle = gold; g.lineWidth = 2; g.beginPath(); g.moveTo(W / 2 - 360, 520); g.lineTo(W / 2 + 360, 520); g.stroke();
+    g.font = '500 28px "IBM Plex Sans", sans-serif'; g.fillStyle = dim; g.fillText(L.completed, W / 2, 580);
+    g.font = '600 34px "IBM Plex Sans", sans-serif'; g.fillStyle = ink; g.fillText(L.course, W / 2, 632);
+    g.textAlign = 'left'; g.font = '500 22px "IBM Plex Sans", sans-serif';
+    var phases = Array.isArray(rec.phases) ? rec.phases.slice(0, 20) : [];
+    var colX = [W / 2 - 520, W / 2 + 40], rows = Math.max(1, Math.ceil(phases.length / 2));
+    phases.forEach(function (p, i) {
+      var col = i < rows ? 0 : 1, row = i % rows, px = colX[col], py = 694 + row * Math.min(40, 220 / Math.max(1, rows - 1));
+      g.fillStyle = '#35C281'; g.fillText('✓', px, py); g.fillStyle = dim; g.fillText(String(p), px + 34, py);
+    });
+    g.textAlign = 'center';
+    g.font = '500 22px "IBM Plex Sans", sans-serif'; g.fillStyle = dim; g.fillText(L.date + ' ' + fmtDate(rec.issued, rec.lang), W / 2, 952);
+    g.font = '700 28px Archivo, sans-serif'; g.fillStyle = gold; g.fillText(L.motto, W / 2, 1010);
+    g.font = '500 18px "IBM Plex Mono", monospace'; g.fillStyle = dim; g.fillText(L.id + ' ' + rec.id + '  ·  maxmaserati.com/certificate', W / 2, 1052);
+    return cv.toDataURL('image/png');
+  }
+
+  function render(rec) {
+    var L = T[rec.lang === 'fr' ? 'fr' : 'en'];
+    document.documentElement.lang = rec.lang === 'fr' ? 'fr' : 'en';
+    $('badge').textContent = L.ok; $('badge').className = 'badge ok';
+    $('rid').textContent = rec.id;
+    $('l-name').textContent = L.lName; $('l-course').textContent = L.lCourse; $('l-date').textContent = L.lDate; $('l-id').textContent = L.id;
+    $('v-name').textContent = rec.name; $('v-course').textContent = L.course; $('v-date').textContent = fmtDate(rec.issued, rec.lang); $('v-id').textContent = rec.id;
+    $('dl').textContent = L.dl; $('copy').textContent = L.copy; $('share').textContent = L.share;
+    $('share').href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(location.href);
+    $('cert-img').alt = L.title + ': ' + rec.name;
+    document.title = rec.name + ' | MMM Mastery Course certificate';
+    var fonts = ['900 80px Archivo', '800 72px Archivo', '600 28px "IBM Plex Sans"', '500 28px "IBM Plex Sans"', '500 18px "IBM Plex Mono"'];
+    var ready = document.fonts && document.fonts.load ? Promise.all(fonts.map(function (f) { return document.fonts.load(f); })).catch(function () { }) : Promise.resolve();
+    ready.then(function () { pngUrl = draw(rec, L); $('cert-img').src = pngUrl; });
+    status(''); show('result', true);
+    $('copy').onclick = function () {
+      var done = function () { $('copy').textContent = L.copied; setTimeout(function () { $('copy').textContent = L.copy; }, 2000); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(location.href).then(done, function () { });
+    };
+    $('dl').onclick = function () {
+      if (!pngUrl) return;
+      var a = document.createElement('a'); a.href = pngUrl; a.download = 'MMM-Mastery-Certificate-' + rec.id + '.png';
+      document.body.appendChild(a); a.click(); a.remove();
+    };
+  }
+
+  function lookup(id) {
+    show('result', false);
+    var L = T[(navigator.language || '').toLowerCase().indexOf('fr') === 0 ? 'fr' : 'en'];
+    if (!ID_RE.test(id)) { status(id ? L.notfound : '', id ? 'text-red-400' : ''); show('lookup', true); return; }
+    status(L.checking);
+    if (!window.firebase || !firebase.firestore) { status(L.error, 'text-red-400'); return; }
+    if (!firebase.apps.length) firebase.initializeApp(CFG);
+    firebase.firestore().collection('certificates').doc(id).get().then(function (snap) {
+      if (!snap.exists) { status(L.notfound, 'text-red-400'); $('cid').value = id; show('lookup', true); return; }
+      var d = snap.data() || {};
+      show('lookup', false);
+      render({ id: id, name: d.name, issued: d.issued, lang: d.lang, phases: d.phases });
+    }).catch(function () { status(L.error, 'text-red-400'); show('lookup', true); });
+  }
+
+  $('lookup').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var id = $('cid').value.trim().toUpperCase();
+    history.replaceState(null, '', '?id=' + encodeURIComponent(id));
+    lookup(id);
+  });
+
+  var q = '';
+  try { q = (new URLSearchParams(location.search).get('id') || '').trim().toUpperCase(); } catch (e) { }
+  lookup(q);
+})();
+</script>
+</body>
+</html>
