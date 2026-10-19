@@ -10,7 +10,5 @@ window.MMM_NAV = [
   ['Gamma', '/gamma/'],
   ['News', '/news/'],
   ['Free Test', '/diagnostic/'],
-  ['Live', '/live/'],
-  ['Replay', '/replay/'],
   ['Pricing', '/whop/']
 ];

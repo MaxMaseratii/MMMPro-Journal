@@ -419,6 +419,10 @@ Object.assign(TRANSLATIONS, {
   "Live Room": { fr: "Salle live", es: "Sala en vivo", ht: "Sal dirèk", pt: "Sala ao vivo", de: "Live-Raum", ja: "ライブルーム", zh: "直播间" },
 });
 
+Object.assign(TRANSLATIONS, {
+  "Replay": { fr: "Replay", es: "Repetición", ht: "Repriz", pt: "Replay", de: "Wiederholung", ja: "リプレイ", zh: "回放" },
+});
+
 function applyTranslation(lang) {
   if (typeof document === 'undefined') return;
   const root = document.getElementById('root');
@@ -6311,6 +6315,9 @@ function MMMJournal(props) {
               </a>
               <a href="../live/" className="flex items-center gap-1.5 bg-red-600/90 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-sm font-semibold transition">
                 <Icon name="Video" className="h-4 w-4" /><span>Live Room</span>
+              </a>
+              <a href="../replay/" className="flex items-center gap-1.5 bg-gray-900 border border-gray-800 text-gray-300 hover:text-yellow-300 hover:border-yellow-500/40 px-3 py-1.5 rounded-lg text-sm font-semibold transition">
+                <Icon name="PlayCircle" className="h-4 w-4" /><span>Replay</span>
               </a>
               <button onClick={function() { setShowInstall(true); }} title="Put MMM Pro Journal on your phone" className="bg-gray-900 border border-gray-800 text-gray-400 hover:text-yellow-300 hover:border-yellow-500/40 rounded-lg p-1.5 transition">
                 <Icon name="Smartphone" className="h-4 w-4" />

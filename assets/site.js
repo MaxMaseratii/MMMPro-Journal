@@ -26,8 +26,6 @@
     ['Gamma', '/gamma/'],
     ['News', '/news/'],
     ['Free Test', '/diagnostic/'],
-    ['Live', '/live/'],
-    ['Replay', '/replay/'],
     ['Pricing', '/whop/']
   ];
   // Max's channels (handle @MaxMaserati)
