@@ -62,7 +62,7 @@
   <section id="screen-intro" class="screen active fade-in">
     <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-5" style="background:hsla(180,70%,55%,0.12); color:var(--mmm-tiffany-light); border:1px solid hsla(180,70%,55%,0.3);">Free &middot; 10 Minutes &middot; Free Account Saves Results</div>
     <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight mb-4">What's Actually Costing You Money?</h1>
-    <p class="text-gray-400 leading-relaxed mb-6">A full trader assessment: your profile, 45 behavior checks across 9 areas and 9 real-market scenarios. It maps your psychology, risk, stops, process and consistency, catches contradictions in your own answers, and builds a prioritized fix plan. Take it free, no account needed. Your complete profile and plan are saved to your free MMM Pro Journal account, so you can track your discipline over time.</p>
+    <p class="text-gray-400 leading-relaxed mb-6">A full trader assessment: your profile, 45 behavior checks across 9 areas, 9 real-market scenarios and 11 trading-style questions that match you to the tested MMM strategies. It maps your psychology, risk, stops, process and consistency, catches contradictions in your own answers, and builds a prioritized fix plan. Take it free, no account needed. Your complete profile and plan are saved to your free MMM Pro Journal account, so you can track your discipline over time.</p>
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-7">
       <div class="bg-white/[0.03] border border-white/10 rounded-xl p-4"><div class="text-sm font-bold mb-1" style="color:var(--mmm-gold-light);">9 areas profiled</div><div class="text-xs text-gray-400 leading-relaxed">Emotions, risk, stops, revenge, process, ego, lifestyle and more.</div></div>
       <div class="bg-white/[0.03] border border-white/10 rounded-xl p-4"><div class="text-sm font-bold mb-1" style="color:var(--mmm-gold-light);">Consistency check</div><div class="text-xs text-gray-400 leading-relaxed">Finds where what you say and what you do disagree.</div></div>
@@ -99,6 +99,16 @@
       <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">Your result is ready</h2>
       <p class="text-gray-400 leading-relaxed max-w-lg mx-auto">Create a free account or sign in to unlock your Trading Discipline Score, your trader profile and your personal advice. They are saved inside your MMM Pro Journal.</p>
     </div>
+    <div id="fit-teaser" class="hidden mb-8">
+      <div class="text-center mb-5">
+        <div class="text-xs font-bold tracking-widest text-gray-500 mb-1">MY NUMBER</div>
+        <div id="my-number" class="num text-3xl sm:text-4xl font-extrabold gold-text"></div>
+        <p class="text-xs text-gray-500 mt-2">Your personal MMM number. Write it down: it stays with your result in your journal.</p>
+      </div>
+      <div class="text-sm font-bold mb-3">The tested MMM strategies that fit your style best</div>
+      <div id="fit-list" class="space-y-2"></div>
+      <p class="text-xs text-gray-500 mt-3">Why they fit you, their win rate, average result and worst losing run are in your journal, next to your discipline score.</p>
+    </div>
     <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-6 mb-8 relative overflow-hidden">
       <div class="text-center select-none" style="filter:blur(7px);" aria-hidden="true">
         <div class="text-6xl font-extrabold num mb-2">--%</div>
@@ -113,6 +123,7 @@
       <li>&bull; Your score in 9 areas and your biggest leaks</li>
       <li>&bull; A consistency check on your own answers</li>
       <li>&bull; A prioritized, personal fix plan</li>
+      <li>&bull; The tested MMM strategies that fit your trading style</li>
       <li>&bull; Kept in your journal's Discipline page</li>
     </ul>
     <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -133,8 +144,9 @@
 
 <script src="./dx-data.js"></script>
 <script src="./dx-engine.js"></script>
+<script src="./dx-style.js"></script>
 <script>
-var PARTS = { 1: 'Part 1 · Your Trading Profile', 2: 'Part 2 · Behavior Check', 3: 'Part 3 · Real-Market Scenario' };
+var PARTS = { 1: 'Part 1 · Your Trading Profile', 2: 'Part 2 · Behavior Check', 3: 'Part 3 · Real-Market Scenario', 4: 'Part 4 · Your Trading Style' };
 var SEQ = [], current = 0, answers = {}, locked = false;
 var PROG_KEY = 'mmm-dx-progress';
 
@@ -149,6 +161,7 @@ function buildSeq() {
     SEQ.push({ type: 'scale', part: 2, id: it.id, text: it.text });
     if ((i + 1) % 5 === 0) { var s = DX.SCENARIOS[(i + 1) / 5 - 1]; SEQ.push({ type: 'choice', part: 3, id: s.id, text: s.text, opts: s.opts.map(function (o) { return o.t; }) }); }
   });
+  DX.STYLE.forEach(function (q) { SEQ.push({ type: 'choice', part: 4, id: q.id, text: q.text, opts: q.opts }); });
 }
 
 function saveProgress() { try { localStorage.setItem(PROG_KEY, JSON.stringify({ v: 2, current: current, answers: answers })); } catch (e) {} }
@@ -224,10 +237,27 @@ function showResults() {
   };
   var payload = DX.score(answers, tr);
   payload.ts = Date.now(); payload.lang = lang;
+  // Part 4: trading style → the tested MMM edges that fit you best · your personal My Number
+  var fit = DX.fit(answers, payload.score);
+  payload.myNumber = DX.myNumber();
+  payload.style = {}; DX.STYLE.forEach(function (q) { if (answers[q.id] !== undefined) payload.style[q.id] = q.opts[answers[q.id]]; });
+  payload.fit = { market: fit.market, avoid: fit.avoid, top: fit.list.slice(0, 3).map(function (x) { var e = x.e; return { code: e.code, name: e.name, ind: e.ind, status: e.t === 'T' ? 'TRADE' : 'WATCH', wr: e.wr, av: e.av, maxL: e.maxL, pm: e.pm, score: x.score, why: x.why.map(tr) }; }) };
+  renderFitTeaser(payload);
   try { localStorage.setItem('mmm-diagnostic-pending', JSON.stringify(payload)); } catch (e) {}
   clearProgress();
   show('screen-results');
   if (window.mmmApplyLang) mmmApplyLang(mmmGetLang());
+}
+
+function renderFitTeaser(p) {
+  var el = document.getElementById('fit-teaser'); if (!el) return;
+  document.getElementById('my-number').textContent = p.myNumber;
+  var html = '';
+  p.fit.top.forEach(function (t, i) {
+    html += '<div class="flex items-center justify-between gap-3 bg-white/[0.03] border border-white/10 rounded-xl px-4 py-3"><div><div class="text-xs text-gray-500">#' + (i + 1) + ' · ' + t.ind + '</div><div class="font-bold" style="color:var(--mmm-gold-light);">' + t.code + ' · ' + t.name + '</div></div><span class="text-[11px] font-bold px-2 py-1 rounded" style="background:' + (t.status === 'TRADE' ? 'hsla(142,76%,36%,0.2);color:#4ade80' : 'hsla(45,100%,55%,0.15);color:var(--mmm-gold-light)') + '">' + t.status + '</span></div>';
+  });
+  document.getElementById('fit-list').innerHTML = html;
+  el.classList.remove('hidden');
 }
 
 buildSeq();

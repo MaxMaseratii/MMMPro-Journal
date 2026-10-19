@@ -1997,4 +1997,625 @@ Object.assign(MMM_TRANSLATIONS, {
 }
 });
 
+Object.assign(MMM_TRANSLATIONS, {
+"Which futures market do you trade most?": {
+"fr": "Quel marché futures trades-tu le plus ?",
+"es": "¿Qué mercado de futuros operas más?",
+"ht": "Ki mache futures ou trade plis?",
+"ja": "いちばんよくトレードする先物市場は？",
+"zh": "你最常交易哪个期货市场？",
+"de": "Welchen Futures-Markt tradest du am meisten?"
+},
+"NQ or MNQ (Nasdaq)": {
+"fr": "NQ ou MNQ (Nasdaq)",
+"es": "NQ o MNQ (Nasdaq)",
+"ht": "NQ oswa MNQ (Nasdaq)",
+"ja": "NQ または MNQ（ナスダック）",
+"zh": "NQ 或 MNQ（纳斯达克）",
+"de": "NQ oder MNQ (Nasdaq)"
+},
+"ES or MES (S&P 500)": {
+"fr": "ES ou MES (S&P 500)",
+"es": "ES o MES (S&P 500)",
+"ht": "ES oswa MES (S&P 500)",
+"ja": "ES または MES（S&P 500）",
+"zh": "ES 或 MES（标普 500）",
+"de": "ES oder MES (S&P 500)"
+},
+"Gold (GC or MGC)": {
+"fr": "Or (GC ou MGC)",
+"es": "Oro (GC o MGC)",
+"ht": "Lò (GC oswa MGC)",
+"ja": "ゴールド（GC または MGC）",
+"zh": "黄金（GC 或 MGC）",
+"de": "Gold (GC oder MGC)"
+},
+"Something else": {
+"fr": "Autre chose",
+"es": "Otra cosa",
+"ht": "Yon lòt bagay",
+"ja": "その他",
+"zh": "其他",
+"de": "Etwas anderes"
+},
+"When can you sit at the screen and trade?": {
+"fr": "Quand peux-tu être devant l'écran pour trader ?",
+"es": "¿Cuándo puedes estar frente a la pantalla y operar?",
+"ht": "Kilè ou ka chita devan ekran an pou trade?",
+"ja": "画面の前に座ってトレードできるのはいつ？",
+"zh": "你什么时候能坐在屏幕前交易？",
+"de": "Wann kannst du am Bildschirm sitzen und traden?"
+},
+"Evening Asia session (18:00 to 00:00 New York)": {
+"fr": "Session Asie du soir (18:00 à 00:00 heure de New York)",
+"es": "Sesión de Asia por la noche (18:00 a 00:00 hora de Nueva York)",
+"ht": "Sesyon Azi nan aswè (18:00 rive 00:00 lè New York)",
+"ja": "夜のアジアセッション（ニューヨーク時間 18:00〜00:00）",
+"zh": "晚间亚洲时段（纽约时间 18:00 至 00:00）",
+"de": "Abendliche Asien-Session (18:00 bis 00:00 New Yorker Zeit)"
+},
+"New York morning (09:30 to 13:30)": {
+"fr": "Matin de New York (09:30 à 13:30)",
+"es": "Mañana de Nueva York (09:30 a 13:30)",
+"ht": "Maten New York (09:30 rive 13:30)",
+"ja": "ニューヨークの午前（09:30〜13:30）",
+"zh": "纽约上午（09:30 至 13:30）",
+"de": "New Yorker Vormittag (09:30 bis 13:30)"
+},
+"Both of them": {
+"fr": "Les deux",
+"es": "Las dos",
+"ht": "Toude",
+"ja": "両方",
+"zh": "两个都可以",
+"de": "Beide"
+},
+"Only a short window, under 1 hour": {
+"fr": "Seulement un court moment, moins d'1 heure",
+"es": "Solo un rato corto, menos de 1 hora",
+"ht": "Sèlman yon ti moman, mwens pase 1 è",
+"ja": "短い時間だけ（1時間未満）",
+"zh": "只有很短的时间，不到 1 小时",
+"de": "Nur ein kurzes Zeitfenster, unter 1 Stunde"
+},
+"Which kind of results feel better to you?": {
+"fr": "Quel genre de résultats te convient le mieux ?",
+"es": "¿Qué tipo de resultados te sientan mejor?",
+"ht": "Ki kalite rezilta ki pi bon pou ou?",
+"ja": "どんな結果のほうがしっくりくる？",
+"zh": "哪种结果让你感觉更好？",
+"de": "Welche Art von Ergebnissen fühlt sich für dich besser an?"
+},
+"Win often, with smaller wins (60 to 75% winners)": {
+"fr": "Gagner souvent, avec des gains plus petits (60 à 75% de gagnants)",
+"es": "Ganar seguido, con ganancias más pequeñas (60 a 75% ganadoras)",
+"ht": "Genyen souvan, ak pi piti genyen (60 a 75% ki genyen)",
+"ja": "よく勝つが、勝ちは小さめ（勝率 60〜75%）",
+"zh": "经常赢，但每次赢得少（60% 到 75% 的交易赚钱）",
+"de": "Oft gewinnen, mit kleineren Gewinnen (60 bis 75% Gewinner)"
+},
+"Win less often, but with big winners (30 to 45% winners)": {
+"fr": "Gagner moins souvent, mais avec de gros gains (30 à 45% de gagnants)",
+"es": "Ganar menos seguido, pero con ganancias grandes (30 a 45% ganadoras)",
+"ht": "Genyen mwens souvan, men ak gwo genyen (30 a 45% ki genyen)",
+"ja": "勝つ回数は少ないが、勝ちは大きい（勝率 30〜45%）",
+"zh": "赢得少，但每次赢得多（30% 到 45% 的交易赚钱）",
+"de": "Seltener gewinnen, aber mit großen Gewinnern (30 bis 45% Gewinner)"
+},
+"Something in the middle": {
+"fr": "Entre les deux",
+"es": "Algo intermedio",
+"ht": "Yon bagay nan mitan",
+"ja": "その中間",
+"zh": "介于两者之间",
+"de": "Etwas dazwischen"
+},
+"I am not sure yet": {
+"fr": "Je ne sais pas encore",
+"es": "Todavía no lo sé",
+"ht": "Mwen poko konnen",
+"ja": "まだわからない",
+"zh": "我还不确定",
+"de": "Ich weiß es noch nicht"
+},
+"How many losses in a row can you take and still follow your rules?": {
+"fr": "Combien de pertes d'affilée peux-tu encaisser en suivant toujours tes règles ?",
+"es": "¿Cuántas pérdidas seguidas aguantas sin dejar de seguir tus reglas?",
+"ht": "Konbyen pèt youn dèyè lòt ou ka pran epi toujou swiv règ ou yo?",
+"ja": "何回連続で負けても、ルールを守り続けられる？",
+"zh": "连续亏损几次，你还能坚持自己的规则？",
+"de": "Wie viele Verluste in Folge hältst du aus und folgst trotzdem deinen Regeln?"
+},
+"3 or fewer": {
+"fr": "3 ou moins",
+"es": "3 o menos",
+"ht": "3 oswa mwens",
+"ja": "3回以下",
+"zh": "3 次或更少",
+"de": "3 oder weniger"
+},
+"4 to 7": {
+"fr": "4 à 7",
+"es": "4 a 7",
+"ht": "4 a 7",
+"ja": "4〜7回",
+"zh": "4 到 7 次",
+"de": "4 bis 7"
+},
+"8 to 15": {
+"fr": "8 à 15",
+"es": "8 a 15",
+"ht": "8 a 15",
+"ja": "8〜15回",
+"zh": "8 到 15 次",
+"de": "8 bis 15"
+},
+"More than 15": {
+"fr": "Plus de 15",
+"es": "Más de 15",
+"ht": "Plis pase 15",
+"ja": "16回以上",
+"zh": "超过 15 次",
+"de": "Mehr als 15"
+},
+"How do you like to get into a trade?": {
+"fr": "Comment aimes-tu entrer dans un trade ?",
+"es": "¿Cómo te gusta entrar en un trade?",
+"ht": "Kijan ou renmen antre nan yon trade?",
+"ja": "どうやってトレードに入るのが好き？",
+"zh": "你喜欢怎么进场？",
+"de": "Wie steigst du am liebsten in einen Trade ein?"
+},
+"At the close of the signal candle (market order)": {
+"fr": "À la clôture de la bougie signal (ordre au marché)",
+"es": "Al cierre de la vela de señal (orden a mercado)",
+"ht": "Lè bouji siyal la fèmen (lòd mache)",
+"ja": "シグナル足の確定時（成行注文）",
+"zh": "在信号K线收盘时（市价单）",
+"de": "Beim Schluss der Signalkerze (Market-Order)"
+},
+"With a limit order waiting at a level": {
+"fr": "Avec un ordre limite qui attend à un niveau",
+"es": "Con una orden limitada esperando en un nivel",
+"ht": "Ak yon lòd limit k ap tann nan yon nivo",
+"ja": "レベルで待つ指値注文で",
+"zh": "用限价单在某个价位等待",
+"de": "Mit einer Limit-Order, die an einem Level wartet"
+},
+"Both are fine for me": {
+"fr": "Les deux me vont",
+"es": "Las dos me sirven",
+"ht": "Toude bon pou mwen",
+"ja": "どちらでもいい",
+"zh": "两种都可以",
+"de": "Beides ist okay für mich"
+},
+"Which direction are you comfortable trading?": {
+"fr": "Dans quel sens es-tu à l'aise pour trader ?",
+"es": "¿En qué dirección te sientes cómodo operando?",
+"ht": "Nan ki direksyon ou alèz pou trade?",
+"ja": "どの方向のトレードなら安心してできる？",
+"zh": "你习惯做哪个方向？",
+"de": "In welche Richtung tradest du gern?"
+},
+"Long only (buying)": {
+"fr": "Long seulement (acheter)",
+"es": "Solo long (comprar)",
+"ht": "Long sèlman (achte)",
+"ja": "ロングのみ（買い）",
+"zh": "只做多（买入）",
+"de": "Nur Long (kaufen)"
+},
+"Long and short": {
+"fr": "Long et short",
+"es": "Long y short",
+"ht": "Long ak short",
+"ja": "ロングとショート",
+"zh": "做多和做空",
+"de": "Long und Short"
+},
+"Short only (selling)": {
+"fr": "Short seulement (vendre)",
+"es": "Solo short (vender)",
+"ht": "Short sèlman (vann)",
+"ja": "ショートのみ（売り）",
+"zh": "只做空（卖出）",
+"de": "Nur Short (verkaufen)"
+},
+"How many trades a day do you want?": {
+"fr": "Combien de trades par jour veux-tu ?",
+"es": "¿Cuántos trades al día quieres?",
+"ht": "Konbyen trade pa jou ou vle?",
+"ja": "1日に何回トレードしたい？",
+"zh": "你每天想做几笔交易？",
+"de": "Wie viele Trades pro Tag willst du?"
+},
+"1 or fewer": {
+"fr": "1 ou moins",
+"es": "1 o menos",
+"ht": "1 oswa mwens",
+"ja": "1回以下",
+"zh": "1 笔或更少",
+"de": "1 oder weniger"
+},
+"2 to 3": {
+"fr": "2 à 3",
+"es": "2 a 3",
+"ht": "2 a 3",
+"ja": "2〜3回",
+"zh": "2 到 3 笔",
+"de": "2 bis 3"
+},
+"4 to 6": {
+"fr": "4 à 6",
+"es": "4 a 6",
+"ht": "4 a 6",
+"ja": "4〜6回",
+"zh": "4 到 6 笔",
+"de": "4 bis 6"
+},
+"As many as the setups give me": {
+"fr": "Autant que les setups m'en donnent",
+"es": "Tantos como me den los setups",
+"ht": "Otan setup yo ban mwen",
+"ja": "セットアップが出るだけ全部",
+"zh": "有多少机会就做多少",
+"de": "So viele, wie die Setups mir geben"
+},
+"How do you like to handle a trade that is winning?": {
+"fr": "Comment aimes-tu gérer un trade gagnant ?",
+"es": "¿Cómo te gusta manejar un trade que va ganando?",
+"ht": "Kijan ou renmen jere yon trade k ap genyen?",
+"ja": "勝っているトレードはどう扱うのが好き？",
+"zh": "交易在赚钱时，你喜欢怎么处理？",
+"de": "Wie gehst du am liebsten mit einem Trade im Gewinn um?"
+},
+"Take half off early, let the rest run": {
+"fr": "Prendre la moitié tôt, laisser courir le reste",
+"es": "Cerrar la mitad pronto, dejar correr el resto",
+"ht": "Retire mwatye bonè, kite rès la kouri",
+"ja": "早めに半分利確して、残りを伸ばす",
+"zh": "先早早平掉一半，剩下的让它继续跑",
+"de": "Früh die Hälfte nehmen, den Rest laufen lassen"
+},
+"Keep the whole position until the target": {
+"fr": "Garder toute la position jusqu'à l'objectif",
+"es": "Mantener toda la posición hasta el objetivo",
+"ht": "Kenbe tout pozisyon an jiska objektif la",
+"ja": "目標まで全部持ち続ける",
+"zh": "整个仓位一直拿到目标",
+"de": "Die ganze Position bis zum Ziel halten"
+},
+"Trail my stop behind the candles": {
+"fr": "Remonter mon stop derrière les bougies",
+"es": "Mover mi stop detrás de las velas",
+"ht": "Deplase stop mwen dèyè bouji yo",
+"ja": "ストップをローソク足の後ろに追わせる",
+"zh": "把止损跟在K线后面移动",
+"de": "Meinen Stop hinter den Kerzen nachziehen"
+},
+"How long do you like to stay in a trade?": {
+"fr": "Combien de temps aimes-tu rester dans un trade ?",
+"es": "¿Cuánto tiempo te gusta quedarte en un trade?",
+"ht": "Konbyen tan ou renmen rete nan yon trade?",
+"ja": "どのくらいトレードを持っていたい？",
+"zh": "你喜欢一笔交易拿多久？",
+"de": "Wie lange bleibst du gern in einem Trade?"
+},
+"Minutes": {
+"fr": "Quelques minutes",
+"es": "Minutos",
+"ht": "Kèk minit",
+"ja": "数分",
+"zh": "几分钟",
+"de": "Minuten"
+},
+"One to a few hours": {
+"fr": "Une à quelques heures",
+"es": "De una a unas horas",
+"ht": "Youn a kèk èdtan",
+"ja": "1時間〜数時間",
+"zh": "一到几个小时",
+"de": "Eine bis ein paar Stunden"
+},
+"Most of the day or overnight": {
+"fr": "Presque toute la journée ou la nuit",
+"es": "Casi todo el día o toda la noche",
+"ht": "Pifò nan jounen an oswa tout nwit lan",
+"ja": "ほぼ1日中、または翌日まで",
+"zh": "大半天或过夜",
+"de": "Fast den ganzen Tag oder über Nacht"
+},
+"I do not mind": {
+"fr": "Peu importe",
+"es": "Me da igual",
+"ht": "Sa pa fè m anyen",
+"ja": "こだわらない",
+"zh": "无所谓",
+"de": "Ist mir egal"
+},
+"Which stop do you trust the most?": {
+"fr": "En quel stop as-tu le plus confiance ?",
+"es": "¿En qué stop confías más?",
+"ht": "Nan ki stop ou fè plis konfyans?",
+"ja": "いちばん信頼できるストップは？",
+"zh": "你最信任哪种止损？",
+"de": "Welchem Stop vertraust du am meisten?"
+},
+"A fixed stop in points (50 NQ or 20 ES)": {
+"fr": "Un stop fixe en points (50 NQ ou 20 ES)",
+"es": "Un stop fijo en puntos (50 NQ o 20 ES)",
+"ht": "Yon stop fiks an pwen (50 NQ oswa 20 ES)",
+"ja": "ポイント固定のストップ（50 NQ または 20 ES）",
+"zh": "固定点数止损（50 NQ 或 20 ES）",
+"de": "Ein fester Stop in Punkten (50 NQ oder 20 ES)"
+},
+"A volatility stop that changes with ATR": {
+"fr": "Un stop de volatilité qui change avec l'ATR",
+"es": "Un stop de volatilidad que cambia con el ATR",
+"ht": "Yon stop volatilite ki chanje ak ATR",
+"ja": "ATR に合わせて変わるボラティリティ・ストップ",
+"zh": "随 ATR 变化的波动止损",
+"de": "Ein Volatilitäts-Stop, der sich mit der ATR ändert"
+},
+"A tight stop just behind the candle": {
+"fr": "Un stop serré juste derrière la bougie",
+"es": "Un stop ajustado justo detrás de la vela",
+"ht": "Yon stop sere jis dèyè bouji a",
+"ja": "ローソク足のすぐ後ろのタイトなストップ",
+"zh": "紧贴K线后面的窄止损",
+"de": "Ein enger Stop direkt hinter der Kerze"
+},
+"No preference": {
+"fr": "Pas de préférence",
+"es": "Sin preferencia",
+"ht": "Pa gen preferans",
+"ja": "特になし",
+"zh": "没有偏好",
+"de": "Keine Vorliebe"
+},
+"Which MMM indicator do you use most?": {
+"fr": "Quel indicateur MMM utilises-tu le plus ?",
+"es": "¿Qué indicador MMM usas más?",
+"ht": "Ki endikatè MMM ou itilize plis?",
+"ja": "いちばんよく使う MMM インジケーターは？",
+"zh": "你最常用哪个 MMM 指标？",
+"de": "Welchen MMM-Indikator nutzt du am meisten?"
+},
+"MMM EDGE PRO": {
+"fr": "MMM EDGE PRO",
+"es": "MMM EDGE PRO",
+"ht": "MMM EDGE PRO",
+"ja": "MMM EDGE PRO",
+"zh": "MMM EDGE PRO",
+"de": "MMM EDGE PRO"
+},
+"MMM Pro XCS One": {
+"fr": "MMM Pro XCS One",
+"es": "MMM Pro XCS One",
+"ht": "MMM Pro XCS One",
+"ja": "MMM Pro XCS One",
+"zh": "MMM Pro XCS One",
+"de": "MMM Pro XCS One"
+},
+"MMM PRO x, c or s": {
+"fr": "MMM PRO x, c ou s",
+"es": "MMM PRO x, c o s",
+"ht": "MMM PRO x, c oswa s",
+"ja": "MMM PRO x、c または s",
+"zh": "MMM PRO x、c 或 s",
+"de": "MMM PRO x, c oder s"
+},
+"None yet": {
+"fr": "Aucun pour l'instant",
+"es": "Ninguno todavía",
+"ht": "Okenn poko",
+"ja": "まだ使っていない",
+"zh": "还没有",
+"de": "Noch keinen"
+},
+"Worked on your market in the tests": {
+"fr": "A marché sur ton marché dans les tests",
+"es": "Funcionó en tu mercado en las pruebas",
+"ht": "Li te mache sou mache ou nan tès yo",
+"ja": "テストであなたの市場で機能した",
+"zh": "在测试中对你的市场有效",
+"de": "Hat in den Tests auf deinem Markt funktioniert"
+},
+"Fires in the hours you can trade": {
+"fr": "Donne des signaux aux heures où tu peux trader",
+"es": "Da señales en las horas en que puedes operar",
+"ht": "Li bay siyal nan lè ou ka trade yo",
+"ja": "あなたがトレードできる時間にシグナルが出る",
+"zh": "在你能交易的时间发出信号",
+"de": "Gibt Signale in den Stunden, in denen du traden kannst"
+},
+"Few trades, so a short window is enough": {
+"fr": "Peu de trades, donc un court moment suffit",
+"es": "Pocos trades, así que basta con un rato corto",
+"ht": "Pa anpil trade, kidonk yon ti moman ase",
+"ja": "トレード回数が少ないので、短い時間で足りる",
+"zh": "交易次数少，所以短时间就够了",
+"de": "Wenige Trades, also reicht ein kurzes Zeitfenster"
+},
+"Wins often, like you prefer": {
+"fr": "Gagne souvent, comme tu préfères",
+"es": "Gana seguido, como prefieres",
+"ht": "Li genyen souvan, jan ou pito a",
+"ja": "あなたの好みどおり、よく勝つ",
+"zh": "经常赢，正合你意",
+"de": "Gewinnt oft, wie du es magst"
+},
+"Fewer wins but bigger winners, like you prefer": {
+"fr": "Moins de gains mais des gains plus gros, comme tu préfères",
+"es": "Menos ganancias pero más grandes, como prefieres",
+"ht": "Mwens genyen men pi gwo genyen, jan ou pito a",
+"ja": "あなたの好みどおり、勝ちは少ないが大きい",
+"zh": "赢得少但赢得大，正合你意",
+"de": "Weniger Gewinne, aber größere Gewinner, wie du es magst"
+},
+"Its worst losing run fits what you can handle": {
+"fr": "Sa pire série de pertes reste dans ce que tu peux supporter",
+"es": "Su peor racha de pérdidas está dentro de lo que aguantas",
+"ht": "Pi move seri pèt li rantre nan sa ou ka sipòte",
+"ja": "最悪の連敗が、あなたが耐えられる範囲に収まる",
+"zh": "它最长的连亏在你能承受的范围内",
+"de": "Die schlimmste Verlustserie passt zu dem, was du aushältst"
+},
+"Uses limit orders, like you prefer": {
+"fr": "Utilise des ordres limites, comme tu préfères",
+"es": "Usa órdenes limitadas, como prefieres",
+"ht": "Li itilize lòd limit, jan ou pito a",
+"ja": "あなたの好みどおり、指値注文を使う",
+"zh": "使用限价单，正合你意",
+"de": "Nutzt Limit-Orders, wie du es magst"
+},
+"Enters at the candle close, like you prefer": {
+"fr": "Entre à la clôture de la bougie, comme tu préfères",
+"es": "Entra al cierre de la vela, como prefieres",
+"ht": "Li antre lè bouji a fèmen, jan ou pito a",
+"ja": "あなたの好みどおり、足の確定でエントリーする",
+"zh": "在K线收盘时进场，正合你意",
+"de": "Steigt beim Kerzenschluss ein, wie du es magst"
+},
+"Trades the direction you are comfortable with": {
+"fr": "Trade dans le sens où tu es à l'aise",
+"es": "Opera en la dirección en la que estás cómodo",
+"ht": "Li trade nan direksyon ou alèz la",
+"ja": "あなたが安心できる方向でトレードする",
+"zh": "做你习惯的方向",
+"de": "Tradet in die Richtung, die dir liegt"
+},
+"Gives about the number of trades you want": {
+"fr": "Donne à peu près le nombre de trades que tu veux",
+"es": "Da más o menos el número de trades que quieres",
+"ht": "Li bay apeprè kantite trade ou vle a",
+"ja": "あなたが望むくらいのトレード回数になる",
+"zh": "交易次数和你想要的差不多",
+"de": "Gibt ungefähr so viele Trades, wie du willst"
+},
+"Takes half off early, like you prefer": {
+"fr": "Prend la moitié tôt, comme tu préfères",
+"es": "Cierra la mitad pronto, como prefieres",
+"ht": "Li retire mwatye bonè, jan ou pito a",
+"ja": "あなたの好みどおり、早めに半分利確する",
+"zh": "早早平掉一半，正合你意",
+"de": "Nimmt früh die Hälfte, wie du es magst"
+},
+"Holds the whole position to the target, like you prefer": {
+"fr": "Garde toute la position jusqu'à l'objectif, comme tu préfères",
+"es": "Mantiene toda la posición hasta el objetivo, como prefieres",
+"ht": "Li kenbe tout pozisyon an jiska objektif la, jan ou pito a",
+"ja": "あなたの好みどおり、目標まで全部持ち続ける",
+"zh": "整个仓位拿到目标，正合你意",
+"de": "Hält die ganze Position bis zum Ziel, wie du es magst"
+},
+"Holds as long as you like to hold": {
+"fr": "Reste en position aussi longtemps que tu aimes",
+"es": "Se mantiene tanto tiempo como te gusta",
+"ht": "Li kenbe otan tan ou renmen kenbe",
+"ja": "あなたが持ちたい長さだけ持つ",
+"zh": "持仓时间和你喜欢的一样长",
+"de": "Hält so lange, wie du gern hältst"
+},
+"Uses the stop you trust": {
+"fr": "Utilise le stop auquel tu fais confiance",
+"es": "Usa el stop en el que confías",
+"ht": "Li itilize stop ou fè konfyans lan",
+"ja": "あなたが信頼するストップを使う",
+"zh": "用你信任的止损",
+"de": "Nutzt den Stop, dem du vertraust"
+},
+"Runs on the indicator you already use": {
+"fr": "Fonctionne sur l'indicateur que tu utilises déjà",
+"es": "Funciona en el indicador que ya usas",
+"ht": "Li mache sou endikatè ou deja itilize a",
+"ja": "すでに使っているインジケーターで動く",
+"zh": "在你已经在用的指标上运行",
+"de": "Läuft auf dem Indikator, den du schon nutzt"
+},
+"Passed both test periods (TRADE)": {
+"fr": "A réussi les deux périodes de test (À TRADER)",
+"es": "Pasó los dos periodos de prueba (OPERAR)",
+"ht": "Li pase toude peryòd tès yo (FÈ TRADE)",
+"ja": "2つのテスト期間を両方クリア（トレード可）",
+"zh": "通过了两个测试期（可交易）",
+"de": "Hat beide Testzeiträume bestanden (TRADEN)"
+},
+"Short losing runs protect your discipline": {
+"fr": "Des séries de pertes courtes protègent ta discipline",
+"es": "Rachas de pérdidas cortas protegen tu disciplina",
+"ht": "Seri pèt ki kout pwoteje disiplin ou",
+"ja": "連敗が短いので、規律を守りやすい",
+"zh": "连亏短，能保护你的纪律",
+"de": "Kurze Verlustserien schützen deine Disziplin"
+},
+"Small drawdowns suit a prop account": {
+"fr": "De petits drawdowns conviennent à un compte prop",
+"es": "Drawdowns pequeños van bien con una cuenta prop",
+"ht": "Ti drawdown yo bon pou yon kont prop",
+"ja": "ドローダウンが小さく、プロップ口座に向いている",
+"zh": "回撤小，适合 prop 账户",
+"de": "Kleine Drawdowns passen zu einem Prop-Konto"
+},
+"Part 4 · Your Trading Style": {
+"fr": "Partie 4 · Ton style de trading",
+"es": "Parte 4 · Tu estilo de trading",
+"ht": "Pati 4 · Stil trading ou",
+"ja": "パート4 · あなたのトレードスタイル",
+"zh": "第 4 部分 · 你的交易风格",
+"de": "Teil 4 · Dein Trading-Stil"
+},
+"MY NUMBER": {
+"fr": "MON NUMÉRO",
+"es": "MI NÚMERO",
+"ht": "NIMEWO MWEN",
+"ja": "わたしの番号",
+"zh": "我的号码",
+"de": "MEINE NUMMER"
+},
+"Your personal MMM number. Write it down: it stays with your result in your journal.": {
+"fr": "Ton numéro MMM personnel. Note-le : il reste avec ton résultat dans ton journal.",
+"es": "Tu número MMM personal. Anótalo: se queda con tu resultado en tu diario.",
+"ht": "Nimewo MMM pa ou. Ekri l: li rete ak rezilta ou nan jounal ou.",
+"ja": "あなた専用の MMM 番号です。メモしておこう。ジャーナルの結果と一緒に残ります。",
+"zh": "你的专属 MMM 号码。把它记下来：它会和你的结果一起保存在你的日志里。",
+"de": "Deine persönliche MMM-Nummer. Schreib sie auf: Sie bleibt bei deinem Ergebnis in deinem Journal."
+},
+"The tested MMM strategies that fit your style best": {
+"fr": "Les stratégies MMM testées qui collent le mieux à ton style",
+"es": "Las estrategias MMM probadas que mejor encajan con tu estilo",
+"ht": "Estrateji MMM nou teste ki pi byen mache ak stil ou",
+"ja": "あなたのスタイルにいちばん合う、テスト済みの MMM 戦略",
+"zh": "最适合你风格的、经过测试的 MMM 策略",
+"de": "Die getesteten MMM-Strategien, die am besten zu deinem Stil passen"
+},
+"Why they fit you, their win rate, average result and worst losing run are in your journal, next to your discipline score.": {
+"fr": "Pourquoi elles te conviennent, leur taux de réussite, leur résultat moyen et leur pire série de pertes sont dans ton journal, à côté de ton score de discipline.",
+"es": "Por qué encajan contigo, su tasa de acierto, su resultado medio y su peor racha de pérdidas están en tu diario, junto a tu puntuación de disciplina.",
+"ht": "Poukisa yo bon pou ou, to genyen yo, rezilta mwayen yo ak pi move seri pèt yo nan jounal ou, bò kote nòt disiplin ou.",
+"ja": "あなたに合う理由、勝率、平均結果、最悪の連敗は、ジャーナルの規律スコアの横に載っています。",
+"zh": "它们为什么适合你、胜率、平均结果和最长连亏，都在你的日志里，就在你的纪律分数旁边。",
+"de": "Warum sie zu dir passen, ihre Trefferquote, ihr Durchschnittsergebnis und ihre schlimmste Verlustserie stehen in deinem Journal, neben deinem Disziplin-Score."
+},
+"• The tested MMM strategies that fit your trading style": {
+"fr": "• Les stratégies MMM testées qui collent à ton style de trading",
+"es": "• Las estrategias MMM probadas que encajan con tu estilo de trading",
+"ht": "• Estrateji MMM nou teste ki mache ak stil trading ou",
+"ja": "• あなたのトレードスタイルに合う、テスト済みの MMM 戦略",
+"zh": "• 适合你交易风格的、经过测试的 MMM 策略",
+"de": "• Die getesteten MMM-Strategien, die zu deinem Trading-Stil passen"
+},
+"A full trader assessment: your profile, 45 behavior checks across 9 areas, 9 real-market scenarios and 11 trading-style questions that match you to the tested MMM strategies. It maps your psychology, risk, stops, process and consistency, catches contradictions in your own answers, and builds a prioritized fix plan. Take it free, no account needed. Your complete profile and plan are saved to your free MMM Pro Journal account, so you can track your discipline over time.": {
+"fr": "Un bilan complet de trader : ton profil, 45 tests de comportement dans 9 domaines, 9 scénarios de marché réels et 11 questions sur ton style de trading qui te relient aux stratégies MMM testées. Il analyse ta psychologie, ton risque, tes stops, ta méthode et ta régularité, repère les contradictions dans tes propres réponses et crée un plan de correction par priorité. Fais-le gratuitement, sans compte. Ton profil complet et ton plan sont enregistrés dans ton compte gratuit MMM Pro Journal, pour suivre ta discipline dans le temps.",
+"es": "Una evaluación completa de trader: tu perfil, 45 pruebas de comportamiento en 9 áreas, 9 escenarios de mercado reales y 11 preguntas de estilo de trading que te conectan con las estrategias MMM probadas. Analiza tu psicología, tu riesgo, tus stops, tu proceso y tu constancia, detecta contradicciones en tus propias respuestas y crea un plan de mejora por prioridad. Hazla gratis, sin cuenta. Tu perfil completo y tu plan se guardan en tu cuenta gratis de MMM Pro Journal, para que sigas tu disciplina con el tiempo.",
+"ht": "Yon evalyasyon trader konplè: pwofil ou, 45 tès konpòtman nan 9 domèn, 9 senaryo mache reyèl ak 11 kesyon sou stil trading ou ki konekte ou ak estrateji MMM nou teste yo. Li montre sikoloji ou, risk ou, stop ou, pwosesis ou ak konsistans ou, li jwenn kontradiksyon nan pwòp repons ou, epi li fè yon plan pou korije bagay yo pa lòd enpòtans. Fè l gratis, ou pa bezwen kont. Pwofil konplè ou ak plan ou anrejistre nan kont MMM Pro Journal gratis ou, pou ou ka swiv disiplin ou avèk tan.",
+"ja": "トレーダー向けの総合診断：あなたのプロフィール、9分野・45項目の行動チェック、9つの実際の相場シナリオ、そしてテスト済みの MMM 戦略とあなたを結びつける11のトレードスタイル質問。心理、リスク、ストップ、プロセス、一貫性を見える化し、あなた自身の答えの矛盾を見つけ、優先順位つきの改善プランを作ります。無料・アカウント不要で受けられます。プロフィールとプランは無料の MMM Pro Journal アカウントに保存されるので、規律の変化をずっと追えます。",
+"zh": "一套完整的交易者评估：你的个人档案、9 个方面的 45 项行为检查、9 个真实市场场景，以及 11 个交易风格问题，帮你匹配经过测试的 MMM 策略。它会分析你的心理、风险、止损、流程和稳定性，找出你自己答案里的矛盾，并制定按优先级排列的改进计划。免费参加，不需要账号。你的完整档案和计划会保存到你的免费 MMM Pro Journal 账户，方便你长期跟踪自己的纪律。",
+"de": "Ein kompletter Trader-Check: dein Profil, 45 Verhaltens-Checks in 9 Bereichen, 9 echte Marktszenarien und 11 Fragen zum Trading-Stil, die dich mit den getesteten MMM-Strategien verbinden. Er zeigt deine Psychologie, dein Risiko, deine Stops, deinen Ablauf und deine Beständigkeit, findet Widersprüche in deinen eigenen Antworten und baut einen Plan nach Prioritäten, um alles zu verbessern. Kostenlos, ohne Konto. Dein komplettes Profil und dein Plan werden in deinem kostenlosen MMM Pro Journal-Konto gespeichert, damit du deine Disziplin über die Zeit verfolgen kannst."
+}
+});
+
+Object.assign(MMM_TRANSLATIONS, {"ES or MES (S&amp;P 500)": {"fr": "ES ou MES (S&amp;P 500)", "es": "ES o MES (S&amp;P 500)", "ht": "ES oswa MES (S&amp;P 500)", "ja": "ES または MES（S&amp;P 500）", "zh": "ES 或 MES（标普 500）", "de": "ES oder MES (S&amp;P 500)"}});
+
 mmmApplyLang(mmmGetLang());

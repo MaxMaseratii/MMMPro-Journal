@@ -386,13 +386,16 @@ Object.assign(TRANSLATIONS, {
 });
 
 Object.assign(TRANSLATIONS, {
-  "A full trader assessment: 61 questions that map your psychology, risk, stops, process and consistency, then build your personal fix plan. Your complete profile is saved here.": { fr: "Une évaluation complète du trader : 61 questions qui cartographient votre psychologie, votre risque, vos stops, votre processus et votre cohérence, puis construisent votre plan de correction personnel. Votre profil complet est enregistré ici.", es: "Una evaluación completa del trader: 61 preguntas que mapean tu psicología, riesgo, stops, proceso y consistencia, y luego construyen tu plan personal de mejora. Tu perfil completo se guarda aquí.", ht: "Yon evalyasyon konplè pou trader: 61 kesyon ki kartografye sikoloji, risk, stop, pwosesis ak konsistans ou, answit ki bati plan koreksyon pèsonèl ou. Pwofil konplè ou sere isit la.", pt: "Uma avaliação completa do trader: 61 perguntas que mapeiam sua psicologia, risco, stops, processo e consistência e depois montam seu plano pessoal de correção. Seu perfil completo fica salvo aqui.", de: "Eine vollständige Trader-Analyse: 61 Fragen, die deine Psychologie, dein Risiko, deine Stops, deinen Prozess und deine Konsistenz erfassen und daraus deinen persönlichen Verbesserungsplan erstellen. Dein komplettes Profil wird hier gespeichert.", ja: "トレーダーの総合診断：心理、リスク、ストップ、プロセス、一貫性を61問で分析し、あなた専用の改善プランを作成します。完全なプロファイルはここに保存されます。", zh: "完整的交易者评估：61个问题，全面分析你的心理、风险、止损、流程和一致性，并生成你的个人改进计划。完整档案保存在这里。" },
+  "A full trader assessment: 72 questions that map your psychology, risk, stops, process and consistency, then build your personal fix plan. Your complete profile is saved here.": { fr: "Une évaluation complète du trader : 72 questions qui cartographient votre psychologie, votre risque, vos stops, votre processus et votre cohérence, puis construisent votre plan de correction personnel. Votre profil complet est enregistré ici.", es: "Una evaluación completa del trader: 72 preguntas que mapean tu psicología, riesgo, stops, proceso y consistencia, y luego construyen tu plan personal de mejora. Tu perfil completo se guarda aquí.", ht: "Yon evalyasyon konplè pou trader: 72 kesyon ki kartografye sikoloji, risk, stop, pwosesis ak konsistans ou, answit ki bati plan koreksyon pèsonèl ou. Pwofil konplè ou sere isit la.", pt: "Uma avaliação completa do trader: 72 perguntas que mapeiam sua psicologia, risco, stops, processo e consistência e depois montam seu plano pessoal de correção. Seu perfil completo fica salvo aqui.", de: "Eine vollständige Trader-Analyse: 72 Fragen, die deine Psychologie, dein Risiko, deine Stops, deinen Prozess und deine Konsistenz erfassen und daraus deinen persönlichen Verbesserungsplan erstellen. Dein komplettes Profil wird hier gespeichert.", ja: "トレーダーの総合診断：心理、リスク、ストップ、プロセス、一貫性を72問で分析し、あなた専用の改善プランを作成します。完全なプロファイルはここに保存されます。", zh: "完整的交易者评估：72个问题，全面分析你的心理、风险、止损、流程和一致性，并生成你的个人改进计划。完整档案保存在这里。" },
   "Consistency": { fr: "Cohérence", es: "Consistencia", ht: "Konsistans", pt: "Consistência", de: "Konsistenz", ja: "一貫性", zh: "一致性" },
   "Blow-up Risk": { fr: "Risque de blow-up", es: "Riesgo de quiebra", ht: "Risk pou kraze kont", pt: "Risco de estourar a conta", de: "Risiko eines Kontoverlusts", ja: "口座破綻リスク", zh: "爆仓风险" },
   "Risk, stops and revenge combined": { fr: "Risque, stops et revanche combinés", es: "Riesgo, stops y revancha combinados", ht: "Risk, stop ak revanch ansanm", pt: "Risco, stops e vingança combinados", de: "Risiko, Stops und Rache-Trading zusammen", ja: "リスク・ストップ・リベンジの合算", zh: "风险、止损与报复性交易综合" },
   "Answer Reliability": { fr: "Fiabilité des réponses", es: "Fiabilidad de las respuestas", ht: "Fyabilite repons yo", pt: "Confiabilidade das respostas", de: "Zuverlässigkeit der Antworten", ja: "回答の信頼性", zh: "回答可靠性" },
   "Also shows traits of": { fr: "Présente aussi des traits de", es: "También muestra rasgos de", ht: "Montre tou karakteristik", pt: "Também mostra traços de", de: "Zeigt außerdem Züge von", ja: "次の特徴も見られます：", zh: "同时具有以下特征：" },
   "What The Test Noticed": { fr: "Ce que le test a remarqué", es: "Lo que notó el test", ht: "Sa tès la remake", pt: "O que o teste percebeu", de: "Was der Test bemerkt hat", ja: "テストで気づいた点", zh: "测试发现的问题" },
+  "Numbers: NQ 2022–25 + MNQ 2026 together, after costs. Full details: maxmaserati.com/backtests": { fr: "Chiffres : NQ 2022–25 + MNQ 2026 ensemble, après frais. Détails : maxmaserati.com/backtests", es: "Cifras: NQ 2022–25 + MNQ 2026 juntos, después de costos. Detalles: maxmaserati.com/backtests", ht: "Chif: NQ 2022–25 + MNQ 2026 ansanm, apre frè. Detay: maxmaserati.com/backtests", pt: "Números: NQ 2022–25 + MNQ 2026 juntos, após custos. Detalhes: maxmaserati.com/backtests", de: "Zahlen: NQ 2022–25 + MNQ 2026 zusammen, nach Kosten. Details: maxmaserati.com/backtests", ja: "数値：NQ 2022–25 + MNQ 2026 合算、コスト控除後。詳細：maxmaserati.com/backtests", zh: "数据：NQ 2022–25 + MNQ 2026 合计，已扣成本。详情：maxmaserati.com/backtests" },
+  "Your Strategy Fit": { fr: "Vos stratégies idéales", es: "Tus estrategias ideales", ht: "Estrateji ki fèt pou ou", pt: "Suas estratégias ideais", de: "Deine passenden Strategien", ja: "あなたに合う戦略", zh: "适合你的策略" },
+  "Not tested OK on your market:": { fr: "Pas validé sur votre marché :", es: "No validado en tu mercado:", ht: "Pa valide sou mache ou:", pt: "Não validado no seu mercado:", de: "Auf deinem Markt nicht bestätigt:", ja: "あなたの市場では未確認:", zh: "在你的市场未通过测试：" },
   "Your Personal Fix Plan": { fr: "Votre plan de correction personnel", es: "Tu plan personal de mejora", ht: "Plan koreksyon pèsonèl ou", pt: "Seu plano pessoal de correção", de: "Dein persönlicher Verbesserungsplan", ja: "あなた専用の改善プラン", zh: "你的个人改进计划" },
   "Priority": { fr: "Priorité", es: "Prioridad", ht: "Priyorite", pt: "Prioridade", de: "Priorität", ja: "優先度", zh: "优先级" },
   "Work on one priority at a time, then retake the test in 30 days to measure the change.": { fr: "Travaillez une priorité à la fois, puis repassez le test dans 30 jours pour mesurer le changement.", es: "Trabaja una prioridad a la vez y repite el test en 30 días para medir el cambio.", ht: "Travay sou yon priyorite alafwa, answit refè tès la nan 30 jou pou mezire chanjman an.", pt: "Trabalhe uma prioridade de cada vez e refaça o teste em 30 dias para medir a mudança.", de: "Arbeite eine Priorität nach der anderen ab und wiederhole den Test in 30 Tagen, um die Veränderung zu messen.", ja: "優先度を一つずつ取り組み、30日後にテストを再受験して変化を測定しましょう。", zh: "一次专注一个优先事项，30天后重新测试以衡量变化。" },
@@ -2892,7 +2895,7 @@ function DiagnosticResultCard(props) {
     return (
       <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-6">
         <div className="flex items-center gap-2 mb-2"><Icon name="ClipboardCheck" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Trading Discipline Test</h2></div>
-        <p className="text-sm text-gray-400 mb-4">A full trader assessment: 61 questions that map your psychology, risk, stops, process and consistency, then build your personal fix plan. Your complete profile is saved here.</p>
+        <p className="text-sm text-gray-400 mb-4">A full trader assessment: 72 questions that map your psychology, risk, stops, process and consistency, then build your personal fix plan. Your complete profile is saved here.</p>
         <a href="../diagnostic/" className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-semibold"><Icon name="Play" className="h-4 w-4" /><span>Take the Free Test</span></a>
       </div>
     );
@@ -3046,6 +3049,30 @@ function DiagnosticResultCard(props) {
           <div className="grid md:grid-cols-2 gap-x-6 gap-y-1.5">
             {r.profile.slice(0, 6).map(function(x, i) { return <div key={i} className="text-xs flex justify-between gap-3 border-b border-gray-800/70 py-1"><span className="text-gray-500">{x.q}</span><span className="text-gray-200 text-right">{x.a}</span></div>; })}
           </div>
+        </div>
+      )}
+      {(r.myNumber || r.fit) && (
+        <div className="bg-black/30 border border-yellow-500/30 rounded-xl p-5">
+          <div className="flex items-center justify-between flex-wrap gap-3 mb-3">
+            <h3 className="text-sm font-semibold text-white">Your Strategy Fit</h3>
+            {r.myNumber && <div className="text-right"><div className="text-[10px] tracking-widest text-gray-500">MY NUMBER</div><div className="num text-lg font-extrabold text-yellow-400">{r.myNumber}</div></div>}
+          </div>
+          {r.fit && (r.fit.top || []).length > 0 && (
+            <div className="grid md:grid-cols-3 gap-3">
+              {r.fit.top.map(function(t, i) {
+                return (
+                  <div key={t.code} className="bg-gray-900/70 border border-gray-800 rounded-lg p-3">
+                    <div className="flex items-center justify-between gap-2 mb-1"><span className="text-[11px] text-gray-500">{'#' + (i + 1) + ' · ' + t.ind}</span><span className={"text-[10px] font-bold px-1.5 py-0.5 rounded " + (t.status === 'TRADE' ? 'bg-green-500/15 text-green-400' : 'bg-yellow-500/15 text-yellow-300')}>{t.status}</span></div>
+                    <div className="text-sm font-bold text-yellow-300">{t.code + ' · ' + t.name}</div>
+                    <div className="num text-[11px] text-gray-400 mt-1">{'WR ' + t.wr + '% · avg RR ' + (t.av > 0 ? '+' : '') + t.av.toFixed(2) + ' · max ' + t.maxL + ' losses in a row · ' + t.pm + ' trades a month'}</div>
+                    <ul className="mt-2 space-y-0.5">{(t.why || []).map(function(w, j) { return <li key={j} className="text-[11px] text-gray-300">{'✔ ' + w}</li>; })}</ul>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          {r.fit && (r.fit.avoid || []).length > 0 && <p className="text-[11px] text-gray-500 mt-3"><span>Not tested OK on your market:</span>{' ' + r.fit.avoid.join(' · ')}</p>}
+          <p className="text-[11px] text-gray-500 mt-2">Numbers: NQ 2022–25 + MNQ 2026 together, after costs. Full details: maxmaserati.com/backtests</p>
         </div>
       )}
       {!v2 && (
@@ -5566,6 +5593,8 @@ function MMMJournal(props) {
       if (pending && pending.score !== undefined) {
         const history = ((existing && existing.history) || []).concat([{ ts: pending.ts, score: pending.score }]).slice(-12);
         const merged = Object.assign({}, pending, { history: history });
+        // My Number never changes once it is saved on the account
+        if (existing && existing.myNumber) merged.myNumber = existing.myNumber;
         try { localStorage.setItem(localKey, JSON.stringify(merged)); } catch (e) {}
         try { await docRef.set(merged); } catch (e) {}
         try { localStorage.removeItem('mmm-diagnostic-pending'); } catch (e) {}
