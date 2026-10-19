@@ -457,9 +457,9 @@ const ST={trade:'TRADE',filter:'USE AS FILTER',watch:'WATCH',no:'DON’T TRADE'}
 const IND=[['all','All'],['edge','EDGE PRO'],['x','MMM PRO x'],['c','MMM PRO c'],['s','MMM PRO s'],['xcs','MMM Pro XCS One'],['mmpd','MMPD'],['gen','General']];
 const VERD=[
 ['trade','edge','EP.M1 · Z · T3+ Break (15m, long + short)','LDx2+ / SDx2+ of the box engine (expander, G1). Entry at the break close, 1.5 ATR stop, ½ out at +0.5R, runner to the opposite break or 1:6. Yesterday’s daily candle must agree.','A trend that beat the other side three times keeps trapping faders. The strongest of the 5.','½ out, skip 00–02. 2022–25 → 2026: 567 → 189 trades · WR 70% → 77% · avg RR +0.15 → +0.26 · PF 1.56 → 2.25 · t-score +3.9 → +4.0 · Blended: WR 72% · avg RR +0.18 · PF 1.71 · t-score +5.4 · max 4 losses / 15 wins in a row · max drawdown 16.4R'],
-['trade','edge','EP.M2 · B · GMC AFs Long (15m)','A bullish GMC where c3 makes a new high and closes back inside c2 (AFs against). Entry c3 close, 1 ATR stop, ½ out +0.5R, runner 1:6. Daily green + 1h box trend up.','The “rejection” cannot reach the void, so it is only a shakeout of weak longs.','½ out. 2022–25 → 2026: 391 → 129 trades · WR 70% → 74% · avg RR +0.13 → +0.31 · PF 1.45 → 2.28 · t-score +2.6 → +3.3 · Blended: WR 71% · avg RR +0.17 · PF 1.63 · t-score +3.9 · max 5 losses / 11 wins in a row · max drawdown 7.8R'],
-['watch','edge','EP.M3 · C · Contraction Limit Long (15m, Asia fill)','After a bullish LDx of a contraction box, a buy limit at 75% (MP) of the break candle, 1 tick through, filled in Asia. Fixed 50 stop, ½ out +0.5R, runner 1:2.','A tight box stores energy. The first small dip is the people who missed the break. Moved to WATCH: on 15-min bars a limit fill looked better than it was. On fine bars 2026 is only +0.06.','½ out. 2026 = 1-min / 5-min months only. 2022–25 → 2026: 309 → 54 trades · WR 61% → 69% · avg RR +0.08 → +0.06 · PF 1.38 → 1.22 · t-score +2.3 → +0.6 · Blended: WR 63% · avg RR +0.08 · PF 1.35 · t-score +2.3 · max 5 losses / 11 wins in a row · max drawdown 12.0R'],
-['trade','edge','EP.M4 · G · GMC Long (15m)','Every bullish GMC. Entry c3 close, 1 ATR stop, ½ out at +0.75R, runner 1:3. Daily candle green.','Urgency: buyers wanted in so badly that price never came back to c1.','½ out. 2022–25 → 2026: 1,891 → 540 trades · WR 59% → 64% · avg RR +0.06 → +0.14 · PF 1.15 → 1.40 · t-score +2.7 → +3.4 · Blended: WR 60% · avg RR +0.08 · PF 1.21 · t-score +4.0 · max 10 losses / 16 wins in a row · max drawdown 39.2R'],
+['trade','edge','EP.M2 · G · GMC Long (15m)','Every bullish GMC. Entry c3 close, 1 ATR stop, ½ out at +0.75R, runner 1:3. Daily candle green.','Urgency: buyers wanted in so badly that price never came back to c1.','½ out. 2022–25 → 2026: 1,891 → 540 trades · WR 59% → 64% · avg RR +0.06 → +0.14 · PF 1.15 → 1.40 · t-score +2.7 → +3.4 · Blended: WR 60% · avg RR +0.08 · PF 1.21 · t-score +4.0 · max 10 losses / 16 wins in a row · max drawdown 39.2R'],
+['trade','edge','EP.M3 · B · GMC AFs Long (15m)','A bullish GMC where c3 makes a new high and closes back inside c2 (AFs against). Entry c3 close, 1 ATR stop, ½ out +0.5R, runner 1:6. Daily green + 1h box trend up.','The “rejection” cannot reach the void, so it is only a shakeout of weak longs.','½ out. 2022–25 → 2026: 391 → 129 trades · WR 70% → 74% · avg RR +0.13 → +0.31 · PF 1.45 → 2.28 · t-score +2.6 → +3.3 · Blended: WR 71% · avg RR +0.17 · PF 1.63 · t-score +3.9 · max 5 losses / 11 wins in a row · max drawdown 7.8R'],
+['watch','edge','EP.M4 · C · Contraction Limit Long (15m, Asia fill)','After a bullish LDx of a contraction box, a buy limit at 75% (MP) of the break candle, 1 tick through, filled in Asia. Fixed 50 stop, ½ out +0.5R, runner 1:2.','A tight box stores energy. The first small dip is the people who missed the break. Moved to WATCH: on 15-min bars a limit fill looked better than it was. On fine bars 2026 is only +0.06.','½ out. 2026 = 1-min / 5-min months only. 2022–25 → 2026: 309 → 54 trades · WR 61% → 69% · avg RR +0.08 → +0.06 · PF 1.38 → 1.22 · t-score +2.3 → +0.6 · Blended: WR 63% · avg RR +0.08 · PF 1.35 · t-score +2.3 · max 5 losses / 11 wins in a row · max drawdown 12.0R'],
 ['trade','edge','EP.M5 · M · BC+ Long (15m)','A BC+ bull candle (close above the previous high, no lower low, close in the upper half). Fixed 50 stop, ½ out +0.5R, runner 1:2. Daily green + 1h trend up.','A clean winning candle inside a trend that is already working.','½ out. 2022–25 → 2026: 2,312 → 717 trades · WR 61% → 68% · avg RR +0.06 → +0.07 · PF 1.26 → 1.23 · t-score +4.5 → +2.4 · Blended: WR 63% · avg RR +0.07 · PF 1.25 · t-score +5.1 · max 10 losses / 30 wins in a row · max drawdown 31.9R'],
 ['trade','x','X.M1 · 15m G1 zone T3+ · close · 1.5 ATR · X5 OPP · 1:6 (Asia + NY AM)','The MMM PRO x “Edge Z”: the same signal as EDGE PRO Z, but a full trade (no ½ out).','The only setup that held in both fresh windows (Mar–May and Aug–Oct 2026).','2022–25 → 2026: 937 → 353 trades · WR 42% → 42% · avg RR +0.20 → +0.29 · PF 1.43 → 1.66 · t-score +3.9 → +3.5 · Blended: WR 42% · avg RR +0.23 · PF 1.49 · t-score +5.2 · max 16 losses / 12 wins in a row · max drawdown 25.4R'],
 ['watch','x','X.M2 · 15m CONTRACTION T3+ · L4 MP limit · fixed 50 · 1:2','MMM PRO x “Edge C”: a limit at 75% of the T3+ break candle in a contraction box.','Same stored-energy idea as EDGE PRO C. Moved to WATCH: on 15-min bars a limit fill looked better than it was. On fine bars 2026 is only +0.05.','2026 = 1-min / 5-min months only. 2022–25 → 2026: 699 → 128 trades · WR 44% → 39% · avg RR +0.14 → +0.05 · PF 1.31 → 1.07 · t-score +3.1 → +0.4 · Blended: WR 43% · avg RR +0.12 · PF 1.26 · t-score +2.9 · max 9 losses / 8 wins in a row · max drawdown 16.3R'],
@@ -585,6 +585,7 @@ G.start=sc=>{
 <button type="button" data-go="ind"><b>INDICATORS</b><span>MMM Pro XCS One, MMM PRO c, x, s, EDGE PRO and MMPD: what you see on the chart.</span></button>
 <button type="button" data-go="tested"><b>HOW WE TESTED</b><span>Entries, stops, exits, the candle ladder and the 7 proof checks.</span></button>
 <button type="button" data-go="book"><b>STRATEGY BOOK</b><span>Every strategy that works, with its code (EP.M1, X.M1, XCS.M1…): rules, WR, avg RR, PF, t-score, money, streaks, drawdown.</span></button>
+<button type="button" data-go="blocks"><b>BLOCKS %</b><span>When eBlocks, iBlocks and balanced blocks hold and react, by time, depth, volume, delta and POC. The one block strategy that held: XCS.M5.</span></button>
 <button type="button" data-go="verdicts"><b>VERDICTS</b><span>The decision board: trade, filter, watch or don’t trade.</span></button>
 <button type="button" data-go="edge"><b>EDGE PRO LAB</b><span>Switch gate, stop, exit and max open. Time of day. Entry offsets.</span></button>
 <button type="button" data-go="prop"><b>PROP &amp; SIZE</b><span>Size your account and see the 50k eval pass rates.</span></button>
@@ -731,7 +732,7 @@ G.verdicts=sc=>{
 };
 
 // EDGE PRO LAB
-const SN={Z:'EP.M1 · Z · T3+ Break',G:'EP.M4 · G · GMC Long',B:'EP.M2 · B · GMC AFs',C:'EP.M3 · C · Contraction',M:'EP.M5 · M · BC+ Long',A:'ALL 5'};
+const SN={Z:'EP.M1 · Z · T3+ Break',G:'EP.M2 · G · GMC Long',B:'EP.M3 · B · GMC AFs',C:'EP.M4 · C · Contraction',M:'EP.M5 · M · BC+ Long',A:'ALL 5'};
 const GATES=[['NONE','No gate'],['27|MOMENTUM','MMPD 27 · Momentum'],['9|MOMENTUM','MMPD 9 · Momentum'],['DMA|TOUCH','Delta · Touch first'],['DMA|TOUCH+50','Delta · Touch + 50']];
 const EL={g:'27|MOMENTUM',st:'ATR',ex:'half',mo:'0',tk:'A',tm:'w',om:'prop',og:'MOM',ov:0,mk:'ALL',mm:'prop',fe:'X1 · MMPD leaves the extreme',fs:'ALL'};
 G.edge=async sc=>{
@@ -742,7 +743,7 @@ G.edge=async sc=>{
 <div class="ctl"><span><span class="lab">Gate</span><span class="seg" id="eg"></span></span></div>
 <div class="ctl" style="margin-top:8px"><span><span class="lab">Stop</span><span class="seg" id="est"></span></span><span><span class="lab">Exit</span><span class="seg" id="eex"></span></span><span><span class="lab">Max open</span><span class="seg" id="emo"></span></span></div>
 <p class="note" id="enote"></p>
-<div class="tw" id="etab"></div><p class="note"><b>C (EP.M3) in 2026:</b> these numbers include months with only 15-min bars, which flatter limit fills. On the 1-min / 5-min months C is +0.06 (WATCH). It changes ALL 5 very little (2026: +0.142 → +0.136).</p><p class="note"><b>How to read it:</b> every cell shows 2022–25 first, then 2026. <b>R</b> = one full stop. Example: “71% → 76%” = 71% of trades were winners in 2022–25 and 76% in 2026. “+0.16” = on average each trade made 16% of what it risked: risking $100 a trade, about +$16 a trade.</p></section>
+<div class="tw" id="etab"></div><p class="note"><b>C (EP.M4) in 2026:</b> these numbers include months with only 15-min bars, which flatter limit fills. On the 1-min / 5-min months C is +0.06 (WATCH). It changes ALL 5 very little (2026: +0.142 → +0.136).</p><p class="note"><b>How to read it:</b> every cell shows 2022–25 first, then 2026. <b>R</b> = one full stop. Example: “71% → 76%” = 71% of trades were winners in 2022–25 and 76% in 2026. “+0.16” = on average each trade made 16% of what it risked: risking $100 a trade, about +$16 a trade.</p></section>
 <section><h2>Average result per trade (R), by setup</h2>${KEY}<div class="ch" id="ech"></div></section>
 <section><h2>Same settings, every gate <span class="note">· ALL 5</span></h2><div class="tw" id="egt"></div><div id="eps"></div></section>
 <section class="wide"><h2>Win rate by time of day and weekday</h2><div class="ctl"><span><span class="lab">Setup</span><span class="seg" id="tk"></span></span><span><span class="lab">View</span><span class="seg" id="tm"></span></span></div>${KEY}<div class="ch" id="tch"></div><p class="note"><b>How to read it:</b> each bar = the win rate of the trades that started in that window (New York time). The small numbers under each window = how many trades: 2022–25 / 2026. The dotted line = 60% win rate. ½ out, no gate. One rule holds everywhere: 00:00–02:00 is the weakest window for every setup, so the indicator skips it (except C).</p></section>
@@ -1019,13 +1020,80 @@ G.book=async sc=>{
       <td class="${PC(a.netPts)}">${bkUsd(a.netPts)}</td><td>${bkUsd(-a.ddPts)}</td><td>${N0(a.maxLoss)}</td><td>${N0(a.maxWin)}</td></tr>`}).join('');
     let h=`<div class="doc"><section class="wide"><p class="lede">Every strategy that held in <b>both</b> test periods, in one format. Each number is shown as <b>2022–25 → 2026 · Blended</b>: the NQ result 2022–25, then the fresh MNQ result 2026, then both periods together as one run. Money = ${BK.n} ${BK.c} contract${BK.n>1?'s':''} (change it at the top), after a 1 pt cost on every trade.</p></section>
     <section><h2>Strategy names</h2><p>Every strategy has a code: the indicator letters, then M1, M2, M3… (M = model).</p><div class="tw"><table><tr><th class="l">Code</th><th class="l">Indicator</th><th class="l">What it focuses on</th></tr>${BK_NAMES.map(n=>`<tr><td class="l"><b>${n[0]}.M1, ${n[0]}.M2…</b></td><td class="l">${n[1]}</td><td class="l">${n[2]}</td></tr>`).join('')}</table></div></section>
-    <section><h2>How to read</h2><ul><li><b>WR</b> = win rate: the share of trades that end in profit. <b>Break-even WR</b> = the WR you need just to not lose at that target.</li><li><b>Avg RR</b> = the average result per trade in R (1R = your stop), after costs. <b>PF</b> = money won ÷ money lost.</li><li><b>t-score</b> = 2 or more means probably real. Under 2 can still be luck.</li><li><b>Max drawdown</b> = the biggest drop from the account’s high point. <b>Max losses / wins in a row</b> = the longest streaks seen.</li><li><b>TRADE</b> = held in both periods with enough trades. <b>WATCH</b> = held, but a small sample or a caveat: paper-trade it first.</li><li><b>Limit entries</b> (EP.M3, X.M2, X.M3): 2026 uses only the months with 1-min or 5-min data. 15-min bars made limit fills look better than they were.</li></ul></section>
+    <section><h2>How to read</h2><ul><li><b>WR</b> = win rate: the share of trades that end in profit. <b>Break-even WR</b> = the WR you need just to not lose at that target.</li><li><b>Avg RR</b> = the average result per trade in R (1R = your stop), after costs. <b>PF</b> = money won ÷ money lost.</li><li><b>t-score</b> = 2 or more means probably real. Under 2 can still be luck.</li><li><b>Max drawdown</b> = the biggest drop from the account’s high point. <b>Max losses / wins in a row</b> = the longest streaks seen.</li><li><b>TRADE</b> = held in both periods with enough trades. <b>WATCH</b> = held, but a small sample or a caveat: paper-trade it first.</li><li><b>Limit entries</b> (EP.M4, X.M2, X.M3): 2026 uses only the months with 1-min or 5-min data. 15-min bars made limit fills look better than they were.</li></ul></section>
     <section class="wide"><h2>All strategies</h2><p class="note">Each cell = <b>2022–25 → 2026 · Blended</b>. Net, max drawdown and streaks are for the blended run.</p><div class="tw"><table><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Status</th><th class="l">Target</th><th>Trades</th><th>WR</th><th>Avg RR</th><th>PF</th><th>t-score</th><th>Net (blended)</th><th>Max drawdown</th><th>Max losses in a row</th><th>Max wins in a row</th></tr>${idx}</table></div></section>`;
     for(const ind of ['EP','x','c','XCS']){const L=B.filter(s=>s.ind===ind);if(!L.length)continue;h+=`<section class="wide flat"><h2 style="font-size:17px;margin:8px 0 0">${BK_IND[ind]}</h2></section>`+L.map(sheet).join('')}
     sc.innerHTML=h+'</div>';sc.scrollTop=y;
     sc.querySelectorAll('[data-j]').forEach(a=>a.onclick=e=>{e.preventDefault();const t=document.getElementById('bk-'+a.dataset.j);if(t)t.scrollIntoView({block:'start'})});
     sc.querySelectorAll('button[data-pk]').forEach(b=>b.onclick=()=>{BK.pick[b.dataset.pk]=+b.dataset.v;paint()});
     sc.querySelectorAll('button[data-pv]').forEach(b=>b.onclick=()=>{BK.per[b.dataset.pv]=b.dataset.v;paint()})}
+  paint();
+};
+
+// ───────────────── content: blocks % (block profiles) ─────────────────
+let BLK=null;const BS={tf:'M15',per:'all',tt:'M15',tp:'all'};
+const BL_TF=[['M5','5m'],['M15','15m'],['H1','1h'],['H4','4h']];
+const BL_PER=[['old','2022–25'],['fresh','2026'],['all','Blended']];
+const BL_F=[['depth','How deep the touch goes into the box'],['tdelta','Touch candle delta (proxy, + = with the box)'],['hatr','Box height × ATR'],['tvol','Touch candle volume ÷ average'],['ses','Session of the touch'],['age','Candles from birth to touch'],['poc','Where the box POC sits (0 = far edge, 1 = near edge)'],['trend','HTF trend'],['dprev','Yesterday’s daily candle'],['volb','Daily volatility']];
+const BP=v=>v==null?'—':Math.round(100*v)+'%';
+G.blocks=async sc=>{
+  sc.innerHTML='<div class="loading">Loading the block tests…</div>';
+  try{if(!BLK)BLK=await (await fetch('d_blocks.json')).json();if(!BOOK)BOOK=await (await fetch('d_book.json')).json()}catch(e){sc.innerHTML='<div class="loading">This tab could not load. Reload the page to try again.</div>';return}
+  if(!cur||cur.id!=='blocks')return;
+  $('#bar').innerHTML='';
+  const m5=BOOK.find(s=>s.code==='XCS.M5');
+  function paint(){const y=sc.scrollTop;
+    // ── 1 · the good news first ──
+    let h=`<div class="doc"><section class="wide"><p class="verdict ok"><b>Hold % and 1:2 % are driven by WHEN and HOW price touches, not by the block.</b> The same factors move random boxes by the same amount: time of day, how deep the touch goes, the touch candle’s volume and delta, and the box height. No factor makes a block give 1:2 more often than a random box. Only one block pattern held in every year: <b>XCS.M5</b> (below), and it is a WATCH.</p>
+    <h2 style="margin-top:12px">What works with blocks</h2><ul>
+    <li class="pos"><b>XCS.M5 · 15m iBlock touched 08:00–09:15 NY → AFs+ → enter at the close</b>: plus in every year (2023 +0.27 · 2024 +0.22 · 2025 +0.20 · 2026 +0.36 avg RR at 1:2).</li>
+    <li class="pos"><b>Shallow touch</b> (less than 10% into the box): the box holds <b>76%</b> of the time (15m).</li>
+    <li class="pos"><b>Tall box</b> (2 × ATR or more): holds <b>76%</b>.</li>
+    <li class="pos"><b>Absorbed touch</b> (the touch candle’s delta is already with the box): holds <b>73%</b>.</li>
+    <li class="pos"><b>Quiet touch</b> (touch candle volume under ¾ of normal): holds <b>66%</b>.</li>
+    <li class="pos"><b>Best hours</b> (NY): 21:00–23:30, 15:30–16:30 and 11:00–13:30 hold <b>66–81%</b>.</li></ul>
+    <p class="note">Use these to place or keep a limit order and to manage a trade. They work the same on any box, so they are a read of the market, not a reason to trust one block over another.</p></section>`;
+    // ── 2 · XCS.M5 sheet ──
+    if(m5){const k=m5.best,P=['old','fresh','all'].map(w=>m5.per[w][k]);
+      const row=(lab,f)=>`<tr><td class="l">${lab}</td>${P.map((b,i)=>`<td>${i===2?'<b>'+f(b)+'</b>':f(b)}</td>`).join('')}</tr>`;
+      h+=`<section class="wide"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="tag" style="font-size:13px;color:var(--teal)">XCS.M5</span><h2 style="margin:0">${esc(m5.name)}</h2><span class="st watch">${ST.watch}</span><span class="tag">MMM Pro XCS One</span></div>
+      <p class="note">${esc(m5.note)}</p><h3>Exact rules</h3><ol>${m5.rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ol>
+      <h3>At a glance · ${m5.labels[k]}</h3><div class="tw"><table><tr><th class="l"></th><th>2022–25<small>NQ · 3 years</small></th><th>2026<small>MNQ · 10 months</small></th><th>Blended<small>both together</small></th></tr>
+      ${row('Trades',b=>N0(b.n))}${row('Win rate (WR)',b=>P0(100*b.wr))}${row('Avg RR per trade',b=>R2(b.av))}${row('Profit factor (PF)',b=>F2(b.pf))}${row('t-score',b=>R2(b.t,1))}${row('Max wins in a row',b=>N0(b.maxWin))}${row('Max losses in a row',b=>N0(b.maxLoss))}${row('Max drawdown in R',b=>T1(b.ddR)+'R')}${row('Average risk per trade',b=>N0(b.risk)+' pts')}</table></div>
+      <p class="note">Year by year (avg RR at 1:2): ${m5.years.filter(x=>x[1]).map(([yy,x])=>`${yy} ${R2(x.av)}`).join(' · ')}. Full sheet: <a href="#book" data-go="book">STRATEGY BOOK</a>.</p></section>`}
+    // ── 3 · when boxes hold best ──
+    const fac=f=>BLK.fac[`${BS.tf}|${BS.per}|${f}`]||[];
+    const fr=BL_F.map(([f,fn])=>{const L=fac(f).filter(x=>x[1]>=150);if(!L.length)return'';const best=L.reduce((a,b)=>b[2]>a[2]?b:a),worst=L.reduce((a,b)=>b[2]<a[2]?b:a);
+      return `<tr><td class="l">${fn}</td><td class="l pos">${esc(best[0])}</td><td class="pos"><b>${BP(best[2])}</b></td><td>${BP(best[4])}</td><td class="l">${esc(worst[0])}</td><td>${BP(worst[2])}</td><td>${BP(worst[4])}</td></tr>`}).join('');
+    h+=`<section class="wide"><h2>When boxes hold best</h2><div class="ctl"><span class="lab">Timeframe</span><div class="seg" id="blTf"></div><span class="lab">Period</span><div class="seg" id="blPer"></div></div>
+    <p class="note">Hold = no candle closes through the box in the 10 candles after the first touch. Best and worst bucket of each factor (buckets with 150+ touches), blocks and the random box next to them.</p>
+    <div class="tw"><table><tr><th class="l">Factor</th><th class="l">Holds best when</th><th>Block hold</th><th>Random box</th><th class="l">Breaks most when</th><th>Block hold</th><th>Random box</th></tr>${fr}</table></div></section>`;
+    // ── 4 · time of day ──
+    const tb=(BLK.tb[`${BS.tt}|${BS.tp}`]||[]).slice().sort((a,b)=>{const f=x=>{const [hh,mm]=x[0].split(':').map(Number);return ((hh*60+mm)-1080+1440)%1440};return f(a)-f(b)});
+    const tr=tb.map(x=>`<tr><td class="l">${x[0]}</td><td>${N0(x[1])}</td><td class="${x[2]>=0.65?'pos':x[2]<0.45?'neg':''}"><b>${BP(x[2])}</b></td><td>${BP(x[7])}</td><td>${BP(x[3])}</td><td>${BP(x[8])}</td><td>${BP(x[4])}</td><td>${BP(x[9])}</td><td class="${PC(x[5])}">${R2(x[5])}</td><td>${R2(x[6],1)}</td></tr>`).join('');
+    h+=`<section class="wide"><h2>Hold % by time of the touch (New York)</h2><div class="ctl"><span class="lab">Timeframe</span><div class="seg" id="blTt"></div><span class="lab">Period</span><div class="seg" id="blTp"></div></div>
+    <p class="note">Every 30 minutes (4h: every 4 hours), by the open time of the touch candle. Green = holds 65%+ · red = under 45%. Gave 1:2 = reacted (BC or AFs) and the trade (enter at the reaction close, stop at the reaction candle) reached 2R. Avg RR = that trade at 1:2 after costs.</p>
+    <div class="tw"><table><tr><th class="l">Touch time</th><th>Touches</th><th>Hold · block</th><th>Hold · random</th><th>Reaction · block</th><th>Reaction · random</th><th>Gave 1:2 · block</th><th>Gave 1:2 · random</th><th>Avg RR 1:2</th><th>t-score</th></tr>${tr}</table></div></section>`;
+    // ── 5 · what did not work (later in the page) ──
+    const tfr=BLK.tf.filter(x=>x[0]===BS.per).map(x=>`<tr><td class="l">${({M5:'5m',M15:'15m',H1:'1h',H4:'4h',D:'Daily',W:'Weekly',M:'Monthly'})[x[1]]}</td><td>${N0(x[2])}</td><td>${BP(x[3])}</td><td>${BP(x[4])}</td><td>${BP(x[5])}</td><td>${BP(x[6])}</td><td>${BP(x[7])}</td><td class="${PC(x[8])}">${R2(x[8])}</td></tr>`).join('');
+    const ht=BLK.htf.filter(x=>x[0]===BS.per).map(x=>`<tr${x[2]==='RAND'?' class="me"':''}><td class="l">${x[1]==='M5'?'5m':'15m'}</td><td class="l">${x[2]==='RAND'?'Random BC or AFs (no block)':({M15:'15m',H1:'1h',H4:'4h',D:'Daily',W:'Weekly',M:'Monthly'})[x[2]]+' block'}</td><td>${N0(x[3])}</td><td>${N0(x[7])} pts</td><td>${BP(x[4])}</td><td class="${PC(x[5])}">${R2(x[5])}</td><td>${R2(x[6],1)}</td></tr>`).join('');
+    const ml=BLK.ml,dec=k=>(ml[k]||[]).map(r=>`<td>${Math.round(100*r[2])}%</td>`).join('');
+    h+=`<section class="wide"><h2>What did not work</h2>
+    <h3>Blocks vs a random box, every timeframe · ${BL_PER.find(p=>p[0]===BS.per)[1]}</h3><p class="note">Any eBlock, iBlock or balanced block, long + short. A random box holds and reacts as often, or more often.</p>
+    <div class="tw"><table><tr><th class="l">TF</th><th>Touched</th><th>Hold · block</th><th>Hold · random</th><th>Reaction · block</th><th>Reaction · random</th><th>Hit 1:2</th><th>Avg RR 1:2</th></tr>${tfr}</table></div>
+    <h3>HTF block → enter on 5m / 15m, stop on the entry candle</h3><p class="note">First touch of the live HTF block, then the first 5m / 15m BC or AFs in its direction, entry at its close, stop past that candle. The highlighted rows have no block: same result.</p>
+    <div class="tw"><table><tr><th class="l">Entry TF</th><th class="l">Block</th><th>Trades</th><th>Avg stop</th><th>Hit 1:2</th><th>Avg RR 1:2</th><th>t-score</th></tr>${ht}</table></div>
+    <ul><li><b>Limit orders inside the box</b> (XD, D, MD, BAL, MP, P, XP) with no reaction: they lost in both periods on 5m, 15m, 1h and 4h.</li>
+    <li><b>Waiting for a reaction candle</b> (BC+, BC−, AFs+, AFs−) and entering at its open, close or ladder level: about zero, with your violation exit too.</li>
+    <li><b>Edge scan</b>: ${N0(ml.scan.False.tested)} block buckets tested (time × volume × delta × POC × depth…). Only ${ml.scan.False.both} passed in both periods, about what luck alone gives.</li></ul>
+    <h3>Can a model pick the winning touches? (trained on 2022–25, tested on 2026)</h3>
+    <div class="tw"><table><tr><th class="l"></th>${[...Array(10)].map((_,i)=>`<th>${i===0?'Worst 10%':i===9?'Best 10%':['','2nd','3rd','4th','5th','6th','7th','8th','9th'][i]}</th>`).join('')}</tr>
+    <tr><td class="l">Gave 1:2 · 2022–25 (what the model saw)</td>${dec('BLOCKS_give12_in')}</tr><tr><td class="l">Gave 1:2 · 2026 (new data)</td>${dec('BLOCKS_give12')}</tr><tr><td class="l">Hold % · 2026</td>${dec('BLOCKS_hold')}</tr><tr><td class="l">Hold % · 2026 · random boxes</td>${dec('RANDOM_hold')}</tr></table></div>
+    <p class="note">On new data the 1:2 rate is about the same in every tenth: no pick. Hold % can be ranked, but just as well for random boxes: hold is about the touch, not the block.</p></section></div>`;
+    sc.innerHTML=h;sc.scrollTop=y;
+    seg('blTf',BL_TF,BS.tf,v=>{BS.tf=v;paint()});seg('blPer',BL_PER,BS.per,v=>{BS.per=v;paint()});
+    seg('blTt',BL_TF,BS.tt,v=>{BS.tt=v;paint()});seg('blTp',BL_PER,BS.tp,v=>{BS.tp=v;paint()});
+    sc.querySelectorAll('[data-go]').forEach(a=>a.onclick=e=>{e.preventDefault();go(a.dataset.go)})}
   paint();
 };
 
@@ -1037,6 +1105,7 @@ const TABS=[
  {id:'ind',name:'INDICATORS',kind:'guide'},
  {id:'tested',name:'HOW WE TESTED',kind:'guide'},
  {id:'book',name:'STRATEGY BOOK',kind:'guide',win:true},
+ {id:'blocks',name:'BLOCKS %',kind:'guide',win:true},
  {id:'verdicts',name:'VERDICTS',kind:'guide',win:true},
  {id:'edge',name:'EDGE PRO LAB',kind:'guide'},
  {id:'prop',name:'PROP & SIZE',kind:'guide'},
