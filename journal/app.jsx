@@ -412,6 +412,10 @@ Object.assign(TRANSLATIONS, {
   "About 10 minutes. It is your baseline for measuring progress.": { fr: "Environ 10 minutes. C'est votre base pour mesurer vos progrès.", es: "Unos 10 minutos. Es tu base para medir el progreso.", ht: "Apeprè 10 minit. Se baz ou pou mezire pwogrè.", pt: "Cerca de 10 minutos. É sua base para medir o progresso.", de: "Etwa 10 Minuten. Das ist deine Basis, um Fortschritt zu messen.", ja: "約10分。進捗を測るための基準になります。", zh: "约10分钟。这是衡量进步的基准。" },
 });
 
+Object.assign(TRANSLATIONS, {
+  "Live Room": { fr: "Salle live", es: "Sala en vivo", ht: "Sal dirèk", pt: "Sala ao vivo", de: "Live-Raum", ja: "ライブルーム", zh: "直播间" },
+});
+
 function applyTranslation(lang) {
   if (typeof document === 'undefined') return;
   const root = document.getElementById('root');
@@ -6275,6 +6279,9 @@ function MMMJournal(props) {
               <a href="course/index.html" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-1.5 bg-gradient-to-r from-[#D6B15E] to-[#b8903f] text-black px-3 py-1.5 rounded-lg text-sm font-semibold hover:from-[#e0c074] hover:to-[#c89f4c] transition">
                 <Icon name="GraduationCap" className="h-4 w-4" /><span>Course</span>
+              </a>
+              <a href="../live/" className="flex items-center gap-1.5 bg-red-600/90 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-sm font-semibold transition">
+                <Icon name="Video" className="h-4 w-4" /><span>Live Room</span>
               </a>
               <button onClick={function() { setShowInstall(true); }} title="Put MMM Pro Journal on your phone" className="bg-gray-900 border border-gray-800 text-gray-400 hover:text-yellow-300 hover:border-yellow-500/40 rounded-lg p-1.5 transition">
                 <Icon name="Smartphone" className="h-4 w-4" />

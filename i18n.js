@@ -13,6 +13,7 @@ const MMM_TRANSLATIONS = {
   "Courses": { fr: "Cours", es: "Cursos", ht: "Kou", ja: "コース", zh: "课程", de: "Kurse" },
   "Journal": { fr: "Journal", es: "Diario", ht: "Jounal", ja: "ジャーナル", zh: "交易日志", de: "Journal" },
   "Free Trading Test": { fr: "Test de trading gratuit", es: "Prueba de trading gratuita", ht: "Tès Tranzaksyon Gratis", ja: "無料トレーディングテスト", zh: "免费交易测试", de: "Kostenloser Trading-Test" },
+  "Live Analysis": { fr: "Analyse en direct", es: "Análisis en vivo", ht: "Analiz an Dirèk", ja: "ライブ分析", zh: "实时分析", de: "Live-Analyse" },
   "Watch Live": { fr: "Regarder en direct", es: "Ver en vivo", ht: "Gade an Dirèk", ja: "ライブを見る", zh: "观看直播", de: "Live ansehen" },
   "Join MMM Trading": { fr: "Rejoindre MMM Trading", es: "Únete a MMM Trading", ht: "Antre nan MMM Trading", ja: "MMM Tradingに参加", zh: "加入MMM Trading", de: "MMM Trading beitreten" },
   "Max Maserati Model": { fr: "Modèle Max Maserati", es: "Modelo Max Maserati", ht: "Modèl Max Maserati", ja: "マックス・マセラティ・モデル", zh: "Max Maserati 模型", de: "Max-Maserati-Modell" },
