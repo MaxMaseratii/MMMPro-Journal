@@ -98,6 +98,7 @@ table.g tbody tr:hover td{background:var(--sel)}
 .doc table th,.doc table td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:right;font-family:var(--f-num);white-space:nowrap;font-variant-numeric:tabular-nums}
 .doc table td.l,.doc table th.l{text-align:left;font-family:var(--f-ui);white-space:normal}
 .doc table th{font-family:var(--f-ui);background:var(--head);text-align:center;font-weight:600}
+.doc table th small{display:block;font-weight:400;color:var(--muted);font-size:10px;line-height:1.2}
 .doc table td:first-child,.doc table th:first-child{text-align:left;font-family:var(--f-ui)}
 .doc table tr.me td{background:var(--sel)}
 .verdict{border-left:4px solid var(--mag);padding:6px 10px;background:var(--mag-soft);border-radius:0 4px 4px 0}
@@ -705,7 +706,7 @@ G.tested=sc=>{
 // verdicts
 const VS={s:'all',i:'all',q:''};
 G.verdicts=sc=>{
- sc.innerHTML=`<div class="doc"><section class="wide flat"><div class="ctl"><input class="srch" id="vq" type="search" placeholder="Search (e.g. GMC, MMPD, 1h)…" value="${esc(VS.q)}" aria-label="Search verdicts"><div class="chips" id="vs"></div></div><div class="ctl" style="margin-top:8px"><span class="lab">Indicator</span><div class="chips" id="vi"></div><span class="cnt" id="vn"></span></div></section><section class="wide flat"><div class="vb" id="vb"></div></section></div>`;
+ sc.innerHTML=`<div class="doc"><section class="wide flat"><div class="ctl"><input class="srch" id="vq" type="search" placeholder="Search (e.g. GMC, MMPD, 1h)…" value="${esc(VS.q)}" aria-label="Search verdicts"><div class="chips" id="vs"></div></div><div class="ctl" style="margin-top:8px"><span class="lab">Indicator</span><div class="chips" id="vi"></div><span class="cnt" id="vn"></span></div></section><section class="wide flat"><p class="note" style="margin:0">Numbers on each card: <b>WR</b> = win rate · <b>avg RR</b> = average result per trade in R (R = one full stop) · <b>PF</b> = profit factor (money won ÷ lost) · <b>t</b> = t-score (2+ = not luck) · <b>A → B</b> = 2022–25 → 2026.</p></section><section class="wide flat"><div class="vb" id="vb"></div></section></div>`;
  const sopts=[['all','All'],['trade','TRADE'],['filter','USE AS FILTER'],['watch','WATCH'],['no','DON’T TRADE']];
  const mk=(id,opts,key)=>{const w=$('#'+id);w.innerHTML=opts.map(o=>`<button type="button" class="chip${VS[key]===o[0]?' on':''}" data-v="${o[0]}">${o[1]}${key==='s'&&o[0]!=='all'?` <span class="cnt">${VERD.filter(v=>v[0]===o[0]).length}</span>`:''}</button>`).join('');
   w.querySelectorAll('button').forEach(b=>b.onclick=()=>{VS[key]=b.dataset.v;w.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));paint()})};
@@ -729,10 +730,10 @@ G.edge=async sc=>{
 <div class="ctl"><span><span class="lab">Gate</span><span class="seg" id="eg"></span></span></div>
 <div class="ctl" style="margin-top:8px"><span><span class="lab">Stop</span><span class="seg" id="est"></span></span><span><span class="lab">Exit</span><span class="seg" id="eex"></span></span><span><span class="lab">Max open</span><span class="seg" id="emo"></span></span></div>
 <p class="note" id="enote"></p>
-<div class="tw" id="etab"></div></section>
-<section><h2>avg RR per setup</h2>${KEY}<div class="ch" id="ech"></div></section>
+<div class="tw" id="etab"></div><p class="note"><b>How to read it:</b> every cell shows 2022–25 first, then 2026. <b>R</b> = one full stop. Example: “71% → 76%” = 71% of trades were winners in 2022–25 and 76% in 2026. “+0.16” = on average each trade made 16% of what it risked: risking $100 a trade, about +$16 a trade.</p></section>
+<section><h2>Average result per trade (R), by setup</h2>${KEY}<div class="ch" id="ech"></div></section>
 <section><h2>Same settings, every gate <span class="note">· ALL 5</span></h2><div class="tw" id="egt"></div><div id="eps"></div></section>
-<section class="wide"><h2>When it works · time of day and weekday</h2><div class="ctl"><span><span class="lab">Setup</span><span class="seg" id="tk"></span></span><span><span class="lab">View</span><span class="seg" id="tm"></span></span></div>${KEY}<div class="ch" id="tch"></div><p class="note">½ out, no gate. Small windows hold only 10–100 trades, so read them as a guide. The one rule that holds everywhere: 00:00–02:00 is the weakest window for every setup (now skipped, except C).</p></section>
+<section class="wide"><h2>Win rate by time of day and weekday</h2><div class="ctl"><span><span class="lab">Setup</span><span class="seg" id="tk"></span></span><span><span class="lab">View</span><span class="seg" id="tm"></span></span></div>${KEY}<div class="ch" id="tch"></div><p class="note"><b>How to read it:</b> each bar = the win rate of the trades that started in that window (New York time). The small numbers under each window = how many trades: 2022–25 / 2026. The dotted line = 60% win rate. ½ out, no gate. One rule holds everywhere: 00:00–02:00 is the weakest window for every setup, so the indicator skips it (except C).</p></section>
 <section class="wide"><h2>Entry offset · what if you don’t enter at the close?</h2><div class="ctl"><span><span class="lab">Trade</span><span class="seg" id="om"></span></span><span><span class="lab">Gate</span><span class="seg" id="og"></span></span><label class="lab" style="display:flex;align-items:center;gap:6px">Offset <input type="range" id="ov" min="-10" max="10" step="1" value="${EL.ov}" style="width:180px" aria-label="Entry offset in points"></label></div>${KEY}<div class="ch" id="och"></div><div class="tw" id="otab"></div><p class="note">+ = a limit that many points better than the close (long close − X, short close + X). − = a stop entry that many points worse. Stop price unchanged, targets rebuilt from the real fill, orders expire after 1 hour. C keeps its own limit.</p></section>
 <section><h2>Where MMPD sits at the signal</h2><div class="ctl"><span><span class="lab">Setup</span><span class="seg" id="mk"></span></span></div><div class="ctl" style="margin-top:6px"><span><span class="lab">Trade</span><span class="seg" id="mm"></span></span></div><div class="tw" id="mtab"></div><p class="note">MMPD 27 on 15m. CHASE = long at 80+ / short at 20 or lower. FADE = the opposite. The whole edge lives in CHASE.</p></section>
 <section><h2>Trading FROM the extreme <span class="note">· the fade ideas</span></h2><div class="ctl"><select id="fe" aria-label="Fade entry idea" style="font-family:var(--f-ui);font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 6px;max-width:100%"></select><span class="seg" id="fs"></span></div><div class="tw" id="ftab"></div><p class="note">None of these passed. They are here so you can see it for yourself.</p></section>
@@ -744,7 +745,7 @@ G.edge=async sc=>{
   const full=EL.ex==='full',mo=EL.mo!=='0';
   $('#enote').innerHTML=(full?'Full exit = no ½ out: the whole trade runs to the setup target (tested ATR stops). ':'½ out at +0.5R (G +0.75R), stop to entry, runner to the setup target. ')+(mo?(full?'Max open is tested with ½ out only. ':`Max ${EL.mo} open is tested on ALL 5 together (trades are skipped while ${EL.mo} are running). `):'')+(EL.st==='F50'&&!full?'Fixed 50 = every stop is 50 pts ($100 per MNQ).':'');
   const ks=['Z','G','B','C','M','A'];
-  let h=`<table><tr><th class="l">Setup</th><th>Trades</th><th>WR</th><th>avg RR</th><th>PF</th><th>t-score</th><th>Worst run (R)</th></tr>`;
+  let h=`<table><tr><th class="l">Setup</th><th>Trades<small>2022–25 / 2026</small></th><th>Win rate<small>2022–25 → 2026</small></th><th>Avg result per trade<small>in R · 2022–25 → 2026</small></th><th>Profit factor<small>money won ÷ lost</small></th><th>t-score<small>2+ = not luck</small></th><th>Worst losing streak<small>in R · 2022–25 / 2026</small></th></tr>`;
   ks.forEach(k=>{const o=row(k,'old'),f=row(k,'fresh');
    if(!o||!f){h+=`<tr><td class="l">${SN[k]}</td><td colspan="6" class="l note">${mo?'tested on ALL 5 only':'—'}</td></tr>`;return}
    h+=`<tr${k==='A'?' class="me"':''}><td class="l"><b>${SN[k]}</b></td><td>${N0(o.n)} / ${N0(f.n)}</td><td>${AR(o.wr,f.wr,P0)}</td><td><span class="${PC(o.av)}">${R2(o.av)}</span> → <span class="${PC(f.av)}">${R2(f.av)}</span></td><td>${AR(o.pf,f.pf,F2)}</td><td>${T1(o.t)} / ${T1(f.t)}</td><td>${T1(o.dd)} / ${T1(f.dd)}</td></tr>`});
@@ -752,7 +753,7 @@ G.edge=async sc=>{
   const grp=ks.map(k=>({l:k==='A'?'ALL':k,a:row(k,'old')?.av,b:row(k,'fresh')?.av}));
   $('#ech').innerHTML=barChart(grp,{label:'avg RR per setup',minW:420,gw:78});
   // gates
-  let g=`<table><tr><th class="l">Gate</th><th>WR</th><th>avg RR</th><th>t-score</th>${!full?'<th>Pass at 2 MNQ</th>':''}</tr>`;
+  let g=`<table><tr><th class="l">Gate</th><th>Win rate<small>2022–25 → 2026</small></th><th>Avg result per trade<small>in R · 2022–25 → 2026</small></th><th>t-score<small>2+ = not luck</small></th>${!full?'<th>Pass chance, 50k eval<small>2 MNQ · 2022–25 / 2026</small></th>':''}</tr>`;
   GATES.forEach(([gg,nm])=>{const o=D.gates[`${stopKey()}|${gg}|A|old`],f=D.gates[`${stopKey()}|${gg}|A|fresh`];if(!o)return;
    const oo=mo&&!full?o['o'+EL.mo]:o,ff=mo&&!full?f['o'+EL.mo]:f;
    const so=mo?o['o'+EL.mo+'sim']:o.sim?.['2'],sf=mo?f['o'+EL.mo+'sim']:f.sim?.['2'];
@@ -761,7 +762,8 @@ G.edge=async sc=>{
   const o=D.gates[`${stopKey()}|${EL.g}|A|old`],f=D.gates[`${stopKey()}|${EL.g}|A|fresh`];
   if(full||!o.sim){$('#eps').innerHTML='<p class="note">Prop sim was run with ½ out only.</p>'}
   else{const rows=mo?[['2 MNQ · max '+EL.mo+' open',o['o'+EL.mo+'sim'],f['o'+EL.mo+'sim']]]:[['1 MNQ',o.sim['1'],f.sim['1']],['2 MNQ',o.sim['2'],f.sim['2']],['4 MNQ',o.sim['4'],f.sim['4']]];
-   $('#eps').innerHTML=`<h3>50k eval sim · ALL 5 · this gate</h3><table><tr><th class="l">Size</th><th>2022–25 pass · ✔/✖ · sessions</th><th>2026 pass · ✔/✖ · sessions</th></tr>${rows.map(r=>`<tr><td class="l">${r[0]}</td><td>${P0(r[1].pr)} · ${r[1].p}/${r[1].f} · ${N0(r[1].d)}</td><td>${P0(r[2].pr)} · ${r[2].p}/${r[2].f} · ${N0(r[2].d)}</td></tr>`).join('')}</table><p class="note">$3,000 target, $2,000 EOD trailing drawdown, $1,000 daily loss limit. Evals run back to back. Sessions = median trading sessions to pass.</p>`}
+   const cellP=x=>x&&x.p+x.f?`${P0(x.pr)} <small>(${x.p} of ${x.p+x.f} passed · ${N0(x.d)} days)</small>`:'—';
+   $('#eps').innerHTML=`<h3>50k prop evaluation · ALL 5 · this gate</h3><table><tr><th class="l">Size</th><th>2022–25<small>pass chance (tries) · trading days</small></th><th>2026<small>pass chance (tries) · trading days</small></th></tr>${rows.map(r=>`<tr><td class="l">${r[0]}</td><td>${cellP(r[1])}</td><td>${cellP(r[2])}</td></tr>`).join('')}</table><p class="note">A try = one evaluation account until it passes or fails. Trading days = days from day 1 until the $3,000 target was reached. For days AND trades to pass at every size, open <b>PROP &amp; SIZE</b>.</p>`}
  }
  seg('eg',GATES.map(g=>[g[0],g[1]]),EL.g,v=>{EL.g=v;paintMain()});
  seg('est',[['ATR','Tested ATR'],['F50','Fixed 50']],EL.st,v=>{EL.st=v;if(v==='F50'&&EL.ex==='full'){EL.ex='half';seg('eex',EXO,EL.ex,exCb)}paintMain()});
@@ -783,18 +785,18 @@ G.edge=async sc=>{
  function paintO(){const k=(w,x)=>D.offsets[`${w}|${EL.om}|${x}|${EL.og}|A`];
   $('#och').innerHTML=lineChart(OX,[{n:'2022–25',v:OX.map(x=>k('old',x)?.av)},{n:'2026',v:OX.map(x=>k('fresh',x)?.av)}],{label:'avg RR by entry offset',mark:EL.ov,xl:x=>x>0?'+'+x:String(x),xlab:['← stop entry, worse price','limit, better price →'],w:620});
   const o=k('old',EL.ov),f=k('fresh',EL.ov),c0=k('old',0),c1=k('fresh',0);const nm=EL.ov===0?'At the close':EL.ov>0?`Limit ${EL.ov} pts better`:`Stop entry ${-EL.ov} pts worse`;
-  $('#otab').innerHTML=`<table><tr><th class="l">Entry</th><th>Trades</th><th>WR</th><th>avg RR</th><th>Sum (R)</th><th>Worst run (R)</th></tr>${[['At the close',c0,c1],[nm,o,f]].filter((r,i)=>i===0||EL.ov!==0).map(r=>`<tr${r[0]===nm?' class="me"':''}><td class="l">${r[0]}</td><td>${N0(r[1].n)} / ${N0(r[2].n)}</td><td>${AR(r[1].wr,r[2].wr,P0)}</td><td><span class="${PC(r[1].av)}">${R2(r[1].av)}</span> → <span class="${PC(r[2].av)}">${R2(r[2].av)}</span></td><td>${N0(r[1].sum)} / ${N0(r[2].sum)}</td><td>${T1(r[1].dd)} / ${T1(r[2].dd)}</td></tr>`).join('')}</table>`}
+  $('#otab').innerHTML=`<table><tr><th class="l">Entry</th><th>Trades<small>2022–25 / 2026</small></th><th>Win rate<small>2022–25 → 2026</small></th><th>Avg result per trade<small>in R · 2022–25 → 2026</small></th><th>Total result<small>in R · 2022–25 / 2026</small></th><th>Worst losing streak<small>in R · 2022–25 / 2026</small></th></tr>${[['At the close',c0,c1],[nm,o,f]].filter((r,i)=>i===0||EL.ov!==0).map(r=>`<tr${r[0]===nm?' class="me"':''}><td class="l">${r[0]}</td><td>${N0(r[1].n)} / ${N0(r[2].n)}</td><td>${AR(r[1].wr,r[2].wr,P0)}</td><td><span class="${PC(r[1].av)}">${R2(r[1].av)}</span> → <span class="${PC(r[2].av)}">${R2(r[2].av)}</span></td><td>${N0(r[1].sum)} / ${N0(r[2].sum)}</td><td>${T1(r[1].dd)} / ${T1(r[2].dd)}</td></tr>`).join('')}</table>`}
  seg('om',[['prop','½ out'],['f50','Fixed 50 · 1:2']],EL.om,v=>{EL.om=v;paintO()});
  seg('og',[['NONE','No gate'],['MOM','27 Momentum'],['MOM2','27 Mom · max 2 open']],EL.og,v=>{EL.og=v;paintO()});
  $('#ov').oninput=e=>{EL.ov=+e.target.value;paintO()};paintO();
  // mmpd split
- function paintM(){let h=`<table><tr><th class="l">MMPD side</th><th>Trades</th><th>WR</th><th>avg RR</th><th>PF</th><th>t-score</th></tr>`;
+ function paintM(){let h=`<table><tr><th class="l">MMPD side</th><th>Trades<small>2022–25 / 2026</small></th><th>Win rate<small>2022–25 → 2026</small></th><th>Avg result per trade<small>in R · 2022–25 → 2026</small></th><th>Profit factor<small>money won ÷ lost</small></th><th>t-score<small>2+ = not luck</small></th></tr>`;
   ['CHASE','MID','FADE','ALL'].forEach(s=>{const v=D.mmpdA[`${EL.mm}|${EL.mk}|${s}`];if(!v)return;const o=v.old,f=v.fresh;h+=`<tr${s==='CHASE'?' class="me"':''}><td class="l">${s}</td><td>${N0(o.n)} / ${N0(f.n)}</td><td>${AR(o.wr,f.wr,P0)}</td><td><span class="${PC(o.av)}">${R2(o.av)}</span> → <span class="${PC(f.av)}">${R2(f.av)}</span></td><td>${AR(o.pf,f.pf,F2)}</td><td>${T1(o.t)} / ${T1(f.t)}</td></tr>`});$('#mtab').innerHTML=h+'</table>'}
  seg('mk',['Z','G','B','C','M','ALL'].map(k=>[k,k]),EL.mk,v=>{EL.mk=v;paintM()});
  seg('mm',[['prop','½ out'],['f50','Fixed 50 · ½ out'],['full','Full exit']],EL.mm,v=>{EL.mm=v;paintM()});paintM();
  // fade
  const FE=[...new Set(Object.keys(D.mmpdB).map(k=>k.split('|')[0]))];const fsel=$('#fe');fsel.innerHTML=FE.map(x=>`<option${x===EL.fe?' selected':''}>${esc(x)}</option>`).join('');
- function paintF(){const ST4=[...new Set(Object.keys(D.mmpdB).map(k=>k.split('|')[2]))];let h=`<table><tr><th class="l">Stop · target</th><th>Side</th><th>Trades</th><th>WR</th><th>avg RR</th><th>t-score</th></tr>`;
+ function paintF(){const ST4=[...new Set(Object.keys(D.mmpdB).map(k=>k.split('|')[2]))];let h=`<table><tr><th class="l">Stop · target</th><th>Side</th><th>Trades<small>2022–25 / 2026</small></th><th>Win rate<small>2022–25 → 2026</small></th><th>Avg result per trade<small>in R · 2022–25 → 2026</small></th><th>t-score<small>2+ = not luck</small></th></tr>`;
   ST4.forEach(st=>['LONG','SHORT'].forEach(sd=>{const v=D.mmpdB[`${EL.fe}|${EL.fs}|${st}|${sd}`];if(!v)return;const o=v.old,f=v.fresh;h+=`<tr><td class="l">${esc(st)}</td><td>${sd}</td><td>${N0(o.n)} / ${N0(f.n)}</td><td>${AR(o.wr,f.wr,P0)}</td><td><span class="${PC(o.av)}">${R2(o.av)}</span> → <span class="${PC(f.av)}">${R2(f.av)}</span></td><td>${T1(o.t)} / ${T1(f.t)}</td></tr>`}));$('#ftab').innerHTML=h+'</table>'}
  fsel.onchange=()=>{EL.fe=fsel.value;paintF()};
  seg('fs',[['ALL','All sessions'],['ASIA+AM','Asia + NY AM']],EL.fs,v=>{EL.fs=v;paintF()});paintF();
@@ -805,25 +807,77 @@ const PS={dd:2000,ins:'MNQ',gate:1,mo:2,st:'ATR',k:'ALL',ex:'prop'};
 const WORST={ATR:{0:[50.6,38.2,36.9,62.0,38.1],1:[19.4,12.0,15.5,21.7,16.6],2:[20.6,18.2,22.6,33.2,24.0]},F50:{0:[83.7,38.3,33.1,74.3,49.1],1:[25.0,11.1,12.7,24.8,15.9],2:[22.5,17.1,19.5,33.0,23.0]}};
 const STOPPTS={0:[52.2,53.3,52.9,50.5,49.4],1:[56.3,59.3,58.3,53.3,51.3],2:[55.2,56.8,57.3,52.7,51.1]};
 const INS={MNQ:{pv:2,es:false,mini:false},NQ:{pv:20,es:false,mini:true},MES:{pv:5,es:true,mini:false},ES:{pv:50,es:true,mini:true}};
+const PQ={k:'ALL',ex:'prop',g:'MOM2',w:'both',u:2};
+const PGN={NONE:'No filter',MOM:'MMPD 27 Momentum',MOM2:'MMPD 27 Momentum + max 2 open trades'};
+const PWN={both:'2022–26 (3 years + 10 months)',old:'2022–25 (3 years)',fresh:'Dec 2025 – Oct 2026 (10 months)'};
+const SIZES=[1,2,3,4,5,6,8,10,15,20,30,40];
 G.prop=async sc=>{
  sc.innerHTML='<div class="loading">Loading test data…</div>';let D;try{D=await getD()}catch(e){sc.innerHTML='<div class="loading">The data could not load. Reload the page to try again.</div>';return}
  if(cur.id!=='prop')return;
  sc.innerHTML=`<div class="doc">
+<section class="wide"><h2>How long does it take to pass a 50k prop evaluation?</h2>
+<p class="note" style="margin:0 0 10px">Pick what you trade. The answer below comes from replaying a real evaluation, again and again, on every trade of the tests.</p>
+<div class="ctl"><span><span class="lab">Setup</span><span class="seg" id="qk"></span></span><span><span class="lab">Exit</span><span class="seg" id="qx"></span></span></div>
+<div class="ctl" style="margin-top:8px"><span><span class="lab">Filter</span><span class="seg" id="qg"></span></span></div>
+<div class="ctl" style="margin-top:8px"><span><span class="lab">Size</span><span class="seg" id="qu"></span></span><span><span class="lab">Data</span><span class="seg" id="qw"></span></span></div>
+<div class="out" id="qans" style="margin-top:14px"></div>
+<p class="note" id="qline" style="margin-top:10px"></p></section>
+<section class="wide"><h2>Every size, side by side</h2><div class="tw" id="qtab"></div>
+<p class="note">Your size is highlighted. Read across: bigger size = faster when it works, but more tries fail. Trades with a fixed 50 pt stop risk $100 per MNQ (setups Z, G and B use an ATR stop, about 50–80 pts).</p></section>
+<section><h2>What the words mean</h2><div class="tw"><table>
+<tr><th class="l">Word</th><th class="l">Meaning</th></tr>
+<tr><td class="l"><b>Try</b></td><td class="l">One evaluation account, from day 1 until it passes or fails. The next try starts the day after.</td></tr>
+<tr><td class="l"><b>Pass chance</b></td><td class="l">Tries that passed ÷ all finished tries. 9 passed and 4 failed = 69%.</td></tr>
+<tr><td class="l"><b>Trading days to pass</b></td><td class="l">Futures days (18:00 → 17:00 New York, Monday to Friday) from day 1 until the target is reached, counting days with no trade. It is the middle value: half of the passes were faster, half slower.</td></tr>
+<tr><td class="l"><b>Trades to pass</b></td><td class="l">How many trades that took (middle value).</td></tr>
+<tr><td class="l"><b>A failed try lasts</b></td><td class="l">Days until the drawdown was hit, for the tries that failed.</td></tr>
+<tr><td class="l"><b>Few tries</b></td><td class="l">Under 10 finished tries = a rough guide only.</td></tr></table></div></section>
+<section><h2>The evaluation rules used</h2><ul>
+<li>$50,000 account · <b>$3,000 profit target</b></li>
+<li><b>$2,000 drawdown</b>, trailing at the end of each day, stops trailing at the starting balance</li>
+<li><b>$1,000 daily loss limit</b>: stop for the day (the account stays alive)</li>
+<li>At least <b>2 trading days</b> · best day no more than <b>50%</b> of the profit</li>
+<li>1 pt cost on every trade · trades only in Asia and NY AM, as the indicator trades them</li></ul>
+<p class="note">The MMM EDGE PRO Prop Helper runs the same test on your chart with your own firm's rules.</p></section>
+<section class="wide"><h2>What the tests say, in short</h2><ul>
+<li><b>Fastest:</b> ALL 5 setups with no filter, 2 MNQ, ½ out: about <b>17 trading days</b>, but only about <b>half</b> of the tries pass.</li>
+<li><b>Safest:</b> ALL 5 with MMPD 27 Momentum + max 2 open, 2 MNQ, ½ out: about <b>9 in 10</b> tries pass, but it takes about <b>3 months</b> (about 60 trading days, 100 trades).</li>
+<li><b>Bigger size passes faster when it works, but more tries fail:</b> at 10 MNQ (1 NQ) about 1 try in 2 fails, and every failed try is a new evaluation fee.</li>
+<li><b>½ out passes more often than full exits</b> for Z, G and M.</li></ul></section>
 <section class="wide"><h2>Size your account</h2><div class="calc">
 <label>Max loss / drawdown ($)<input type="number" id="pdd" min="100" step="100" value="${PS.dd}"></label>
 <label>Instrument<select id="pins">${Object.keys(INS).map(k=>`<option${k===PS.ins?' selected':''}>${k}</option>`).join('')}</select></label>
 <label>Gate<select id="pg">${GATES.map((g,i)=>`<option value="${i}"${i===PS.gate?' selected':''}>${g[1]}</option>`).join('')}</select></label>
 <label>Max open trades<select id="pmo"><option value="0"${PS.mo===0?' selected':''}>No limit</option><option value="2"${PS.mo===2?' selected':''}>2</option><option value="1"${PS.mo===1?' selected':''}>1</option></select></label>
 <label>Stop style<select id="pst"><option value="ATR"${PS.st==='ATR'?' selected':''}>Tested ATR</option><option value="F50"${PS.st==='F50'?' selected':''}>Fixed 50 (ES 20)</option></select></label>
-</div><div class="out" id="pout"></div><p class="note">Survival = drawdown ÷ (1.5 × worst tested losing run × $ per R). It plans for a losing run 1.5× worse than anything seen in 2022–26. MMM buffer rule = 1 micro per $1,000 of drawdown ($10,000+: 1 mini per $10,000), about 10% risk per trade. Survive first, then grow.</p></section>
-<section class="wide"><h2>50k eval sim · every size</h2><div class="ctl"><span><span class="lab">Setup</span><span class="seg" id="pk"></span></span><span><span class="lab">Exit</span><span class="seg" id="pex"></span></span></div><div class="tw" id="ptab"></div><p class="note">No gate, ATR stops (C and M fixed 50), skip 00–02. $3,000 target, $2,000 EOD trailing drawdown (locks at start), $1,000 soft daily loss, 2 minimum days, best day ≤ 50%. Evals run back to back. ✔ = passed, ✖ = failed, sessions = median sessions to pass. Few evals per cell: read it as a guide. Your MNQ size from above is highlighted.</p></section>
-<section><h2>What the sim taught</h2><ul>
-<li><b>½ out passes more often than full</b> for Z, G and M. At 2 MNQ, full gives Z 50% → 43%, G 45% → 45%, M 55% → 33%.</li>
-<li><b>Small size passes more, but slowly.</b> B and C alone take 100+ sessions.</li>
-<li><b>Doubling to 4 MNQ</b> cuts the time only a little and lowers the pass rate (ALL 5: 51% → 36%).</li>
-<li><b>ALL 5 at 2 MNQ</b> passes 56% / 57% in about 25 / 17 sessions. With 27 Momentum and max 2 open: 92% / 100%.</li></ul></section>
-<section><h2>Fixed 50 at 1:2 · the reference</h2><div class="tw"><table><tr><th class="l">MNQ size</th><th>Risk per trade</th><th>Win at 1:2</th><th>Loss in a row to fail $2,000</th></tr>
-<tr><td class="l">1 MNQ</td><td>$100</td><td>$200</td><td>20</td></tr><tr><td class="l">2 MNQ</td><td>$200</td><td>$400</td><td>10</td></tr><tr><td class="l">4 MNQ</td><td>$400</td><td>$800</td><td>5</td></tr><tr><td class="l">1 NQ (= 10 MNQ)</td><td>$1,000</td><td>$2,000</td><td>2</td></tr></table></div><p class="note">ES uses a 20 pt stop: 1 MES = $100 risk, 1 ES = $1,000. The worst tested runs were 12–38R, so 10 losses in a row is not rare.</p></section></div>`;
+</div><div class="out" id="pout"></div><p class="note"><b>Survival size</b> plans for a losing streak 1.5 times worse than the worst one in the tests. <b>MMM buffer rule</b> = 1 micro per $1,000 of drawdown (1 mini per $10,000 from $10,000), about 10% of the drawdown per trade. Survive first, then grow.</p></section>
+<section><h2>Fixed 50 pt stop at 1:2 · the reference</h2><div class="tw"><table><tr><th class="l">Size</th><th>Risk per trade</th><th>Win at 1:2</th><th>Losses in a row to lose $2,000</th></tr>
+<tr><td class="l">1 MNQ</td><td>$100</td><td>$200</td><td>20</td></tr><tr><td class="l">2 MNQ</td><td>$200</td><td>$400</td><td>10</td></tr><tr><td class="l">4 MNQ</td><td>$400</td><td>$800</td><td>5</td></tr><tr><td class="l">1 NQ (= 10 MNQ)</td><td>$1,000</td><td>$2,000</td><td>2</td></tr></table></div><p class="note">ES uses a 20 pt stop: 1 MES = $100 risk, 1 ES = $1,000. The worst losing streaks in the tests were 12–38 stops in a row (in R), so 10 losses in a row is not rare.</p></section></div>`;
+ const Q=()=>D.prop2[`${PQ.w}|${PQ.ex}|${PQ.g}|${PQ.k}`];
+ const nm=k=>k==='ALL'?'ALL 5 setups':({Z:'Z · T3+ Break',G:'G · GMC Long',B:'B · GMC AFs',C:'C · Contraction',M:'M · BC+ Long'})[k];
+ const d0=v=>v==null?'—':Math.round(v).toLocaleString('en-US');
+ function paintQ(){
+  const r=Q();const v=r&&r[String(PQ.u)];
+  const exN=PQ.ex==='prop'?'½ out':'full exit';
+  if(!v||v.p+v.f===0){$('#qans').innerHTML='<p class="note">No finished tries for this choice.</p>';$('#qtab').innerHTML='';return}
+  const n=v.p+v.f, few=n<10;
+  const cls=v.pr>=75?'t':v.pr<50?'m':'';
+  $('#qans').innerHTML=
+   `<div class="fact"><div class="d">Pass chance</div><div class="n ${cls}">${P0(v.pr)}</div><div class="d">${v.p} of ${n} tries passed${few?' · few tries, rough guide':''}</div></div>`+
+   `<div class="fact"><div class="d">Trading days to pass</div><div class="n">${d0(v.d)}</div><div class="d">about ${v.d==null?'—':Math.max(1,Math.round(v.d/21))} month${v.d!=null&&Math.round(v.d/21)>1?'s':''} of trading</div></div>`+
+   `<div class="fact"><div class="d">Trades to pass</div><div class="n">${d0(v.t)}</div><div class="d">about ${v.t&&v.d?(v.t/v.d).toFixed(1):'—'} trades a day</div></div>`+
+   `<div class="fact"><div class="d">A failed try lasts</div><div class="n">${v.fd==null?'—':d0(v.fd)}</div><div class="d">${v.fd==null?'no try failed':'trading days'}</div></div>`;
+  $('#qline').innerHTML=`<b>In one sentence:</b> trading <b>${nm(PQ.k)}</b> with <b>${PQ.u} MNQ</b>, ${exN}, ${PQ.g==='NONE'?'no filter':PGN[PQ.g]}, about <b>${P0(v.pr)}</b> of tries passed the 50k evaluation, in about <b>${d0(v.d)} trading days</b> and <b>${d0(v.t)} trades</b>. Data: ${PWN[PQ.w]}.`;
+  let h=`<table><tr><th class="l">Size</th><th>Pass chance</th><th>Tries<small>passed · failed</small></th><th>Trading days to pass</th><th>Trades to pass</th><th>A failed try lasts<small>trading days</small></th></tr>`;
+  SIZES.forEach(u=>{const x=r[String(u)];if(!x)return;const nn=x.p+x.f;const me=u===PQ.u;const c=x.pr==null?'':x.pr>=75?'pos':x.pr<50?'neg':'';
+   h+=`<tr${me?' class="me"':''}><td class="l">${u} MNQ${u===10?' (= 1 NQ)':''}${me?' ← you':''}</td><td class="${c}">${nn?P0(x.pr):'—'}${nn&&nn<10?' <small>few</small>':''}</td><td>${x.p} · ${x.f}</td><td>${d0(x.d)}</td><td>${d0(x.t)}</td><td>${d0(x.fd)}</td></tr>`});
+  $('#qtab').innerHTML=h+'</table>';
+ }
+ seg('qk',['ALL','Z','G','B','C','M'].map(k=>[k,k==='ALL'?'ALL 5':k]),PQ.k,v=>{PQ.k=v;paintQ()});
+ seg('qx',[['prop','½ out'],['full','Full exit']],PQ.ex,v=>{PQ.ex=v;paintQ()});
+ seg('qg',[['NONE','No filter'],['MOM','MMPD 27 Momentum'],['MOM2','MMPD 27 Momentum + max 2 open']],PQ.g,v=>{PQ.g=v;paintQ()});
+ seg('qu',[1,2,3,4,6,10].map(u=>[u,u===10?'1 NQ':u+' MNQ']),PQ.u,v=>{PQ.u=+v;paintQ()});
+ seg('qw',[['both','All data'],['old','2022–25'],['fresh','2026']],PQ.w,v=>{PQ.w=v;paintQ()});
  function calc(){
   PS.dd=Math.max(100,+$('#pdd').value||0);PS.ins=$('#pins').value;PS.gate=+$('#pg').value;PS.mo=+$('#pmo').value;PS.st=$('#pst').value;
   const I=INS[PS.ins],worst=WORST[PS.st][PS.mo][PS.gate];
@@ -833,17 +887,11 @@ G.prop=async sc=>{
   const mmm=PS.dd>=10000?Math.floor(PS.dd/10000)*10:Math.max(1,Math.floor(PS.dd/1000));
   const fmtU=u=>u>=10&&u%10===0?`${u/10} ${I.es?'ES':'NQ'}`:`${u} ${I.es?'MES':'MNQ'}`;
   const risk=u=>u*stop*microPV;
-  const card=(nm,u,cls)=>{const r=risk(u),pct=r/PS.dd*100,run=PS.dd/r;return `<div class="fact"><div class="d">${nm}</div><div class="n ${cls}">${fmtU(u)}</div><div class="d">Risk ≈ $${N0(r)} a trade (${pct.toFixed(1)}% of drawdown)${pct>10?' ⚠':''} · survives ${run.toFixed(1)}R in a row</div></div>`};
-  $('#pout').innerHTML=card('Survival size (stats)',surv,'t')+card('MMM buffer rule',mmm,'m')+`<div class="fact"><div class="d">Worst tested losing run</div><div class="n">${T1(worst)}R</div><div class="d">${GATES[PS.gate][1]} · ${PS.mo?'max '+PS.mo+' open':'no open limit'} · ${PS.st==='F50'?'fixed '+(I.es?20:50):'avg ATR stop ≈ '+Math.round(stop)+' pts'}</div></div>`;
-  PS.myMNQ=PS.ins==='MNQ'?surv:null;paintP();
+  const card=(nm,u,cls)=>{const r=risk(u),pct=r/PS.dd*100,run=PS.dd/r;return `<div class="fact"><div class="d">${nm}</div><div class="n ${cls}">${fmtU(u)}</div><div class="d">Risk about $${N0(r)} a trade (${pct.toFixed(1)}% of your drawdown)${pct>10?' ⚠':''} · you can lose ${Math.floor(run)} trades in a row before the account fails</div></div>`};
+  $('#pout').innerHTML=card('Survival size',surv,'t')+card('MMM buffer rule',mmm,'m')+`<div class="fact"><div class="d">Worst losing streak in the tests</div><div class="n">${T1(worst)}R</div><div class="d">R = one full stop · ${GATES[PS.gate][1]} · ${PS.mo?'max '+PS.mo+' open':'no open limit'} · ${PS.st==='F50'?'fixed '+(I.es?20:50)+' pt stop':'average ATR stop about '+Math.round(stop)+' pts'}</div></div>`;
  }
  ['pdd','pins','pg','pmo','pst'].forEach(id=>{const e=$('#'+id);e.oninput=calc;e.onchange=calc});
- function paintP(){const o=D.prop[`old|${PS.ex}|${PS.k}`],f=D.prop[`fresh|${PS.ex}|${PS.k}`];if(!o){$('#ptab').innerHTML='';return}
-  const sizes=Object.keys(o).map(Number).sort((a,b)=>a-b);
-  $('#ptab').innerHTML=`<table><tr><th class="l">Size</th><th>2022–25 pass</th><th>✔ / ✖</th><th>Sessions</th><th>2026 pass</th><th>✔ / ✖</th><th>Sessions</th></tr>${sizes.map(s=>{const a=o[s],b=f[s];const me=PS.myMNQ===s;const c=v=>v>=75?'pos':v<50?'neg':'';return `<tr${me?' class="me"':''}><td class="l">${s} MNQ${me?' ← you':''}</td><td class="${c(a.pr)}">${P0(a.pr)}</td><td>${a.p} / ${a.f}</td><td>${N0(a.d)}</td><td class="${b?c(b.pr):''}">${b?P0(b.pr):'—'}</td><td>${b?b.p+' / '+b.f:'—'}</td><td>${b?N0(b.d):'—'}</td></tr>`}).join('')}</table>`}
- seg('pk',['ALL','Z','G','B','C','M'].map(k=>[k,k]),PS.k,v=>{PS.k=v;paintP()});
- seg('pex',[['prop','½ out'],['full','Full']],PS.ex,v=>{PS.ex=v;paintP()});
- calc();
+ calc();paintQ();
 };
 
 // LEVELS & ODDS
