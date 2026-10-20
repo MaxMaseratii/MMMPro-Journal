@@ -2658,7 +2658,7 @@ ${tbl([`On the chart`,`What it shows`],[
  [`Control text`,`For example "BUYERS 72% up · 8c · Δ+": the tested odds, the candles inside, delta as a tie-breaker. Hover for the NQ and MNQ odds of that exact cell.`],
  [`vPOC`,`Solid line at the price with the most volume in the box. Width 1–6 = its volume vs the average of the last 20 boxes. Green = above the green line (buyers), red = below the red line (sellers), yellow = middle.`],
  [`Pullback zone`,`P–MP after a plus candle, BAL–MD after a minus candle, with its tested fill and target odds.`],
- [`GMC lines`,`A solid line at the GMC open, ONE per type (side + c3 type), newest only, with its tested stats. ★ gold = held in both periods.`],
+ [`GMC lines`,`A solid line at the GMC open, ONE per type (side + c3 type), newest only, with the odds price comes back to it or closes through it.`],
  [`SL s / SH s`,`Swing protected levels: where the stop belongs.`],
  [`Candle tags`,`The MMCB type of recent candles. The newest is bright, older ones fade. Hover = the odds and the result.`]])}
 ${ib('gold','⭐',`<strong>Everything cleans itself up.</strong> PO4s, breaks and blocks die on a close through them. A box dies with its POC. Swing levels die when broken. A GMC dies when a close goes back through its open. Pullback zones end on the target, the protected end, or after 3 candles.`)}</div>`;},
@@ -2669,37 +2669,33 @@ ${tbl([`Sur le graphique`,`Ce que ça montre`],[
  [`Texte de contrôle`,`Par exemple « BUYERS 72% up · 8c · Δ+ » : les chances testées, les bougies à l'intérieur, le delta comme départage. Survolez pour les chances NQ et MNQ de cette case exacte.`],
  [`vPOC`,`Ligne pleine au prix avec le plus de volume dans la boîte. Épaisseur 1–6 = son volume vs la moyenne des 20 dernières boîtes. Vert = au-dessus de la ligne verte (acheteurs), rouge = sous la ligne rouge (vendeurs), jaune = milieu.`],
  [`Zone de pullback`,`P–MP après une bougie plus, BAL–MD après une bougie moins, avec ses chances testées de remplissage et d'objectif.`],
- [`Lignes GMC`,`Une ligne pleine à l'ouverture GMC, UNE par type (côté + type de c3), la plus récente seulement, avec ses statistiques testées. ★ or = a tenu dans les deux périodes.`],
+ [`Lignes GMC`,`Une ligne pleine à l'ouverture GMC, UNE par type (côté + type de c3), la plus récente seulement, avec les chances que le prix y revienne ou clôture à travers.`],
  [`SL s / SH s`,`Niveaux protégés de swing : là où va le stop.`],
  [`Étiquettes de bougies`,`Le type MMCB des bougies récentes. La plus récente est vive, les plus anciennes s'estompent. Survol = les chances et le résultat.`]])}
 ${ib('gold','⭐',`<strong>Tout se nettoie tout seul.</strong> Les PO4, cassures et blocs meurent sur une clôture à travers eux. Une boîte meurt avec son POC. Les niveaux de swing meurent quand ils cassent. Un GMC meurt quand une clôture repasse à travers son ouverture. Les zones de pullback finissent sur l'objectif, la fin protégée, ou après 3 bougies.`)}</div>`;}},
 {type:'concept',
- en(){return `<div class="card-inner">${eyebrow('Phase 9',`The MAP Panel`)}${h1(`The Whole Map in One Read`)}${lead(`The panel starts with the test data, then the live read, then the research facts.`)}
+ en(){return `<div class="card-inner">${eyebrow('Phase 9',`The WHAT NEXT Table`)}${h1(`What Usually Happens Next`)}${lead(`XCS One has no strategy and no signals. Its table shows, for what is on your chart right now, what usually happened next in the tests (NQ 2022–25 + MNQ 2026, blended).`)}
 ${tbl([`Row`,`What it tells you`],[
- [`DATA`,`The periods the numbers come from: NQ Dec 2022 – Dec 2025, re-check MNQ Jul – Oct 2026.`],
- [`TESTED`,`How many candles of your timeframe were tested, and how many boxes. "A → B" = NQ → MNQ.`],
- [`STRUCTURE`,`Trend side and T#, with P# / R#.`],
- [`BALANCE`,`Who controls the live box, where the close sits, the NQ → MNQ odds and the sample size.`],
- [`CANDLE`,`The last candle type and how often it takes its target.`],
- [`PULLBACK`,`The live zone and its fill → target odds.`],
- [`GMC`,`The newest live GMC, its open and its stats, or how many were violated.`],
- [`PROTECTED / HTF / SESSION / NEWS`,`Swing levels, higher-timeframe bias, whether you are in the tested window (Asia + NY AM), news warnings.`],
- [`FACTS`,`2-NBC exit, stall exit, POC entry, LTF entry, the 60% at 1:2 goal.`]])}
-${ib('blue','🎛',`<strong>Your screen, your sizes:</strong> one "ALL Labels & Panels" switch sets every label and table size at once, or set each item yourself. Any table you switch off disappears completely.`)}
-${ib('green','🎯',`<strong>How to use it:</strong> read STRUCTURE and BALANCE first. Trade with the side in control, at a plus-candle pullback zone or a gold GMC, with your stop at the SL s / SH s. Use the 2-NBC exit when your account needs win rate.`)}</div>`;},
- fr(){return `<div class="card-inner">${eyebrow('Phase 9',`Le Panneau MAP`)}${h1(`Toute la Carte en Une Lecture`)}${lead(`Le panneau commence par les données de test, puis la lecture en direct, puis les faits de la recherche.`)}
+ [`Candle`,`The last closed candle type: how often the next candle takes its high, its low, or closes past it.`],
+ [`Trend`,`The current T#: how often the next break goes on or flips, and how often price comes back to the break line first.`],
+ [`Box · vPOC`,`Where the last close and the POC sit in the live box, and how often the box breaks up or down first.`],
+ [`Pullback`,`The live zone: how often it fills, then how often price takes the candle's target.`],
+ [`GMC`,`The closest live GMC: how often price comes back to its open, or closes through it, in the next 20 candles.`],
+ [`eBlock / iBlock`,`The block of the current trend: how often the first touch holds, next to any random box.`],
+ [`SL s / SH s · Void`,`How often the swing level gets swept or broken, and how often the void fills.`]])}
+${ib('blue','🎛',`<strong>Your screen, your sizes:</strong> one "ALL Labels & Panels" switch sets every label and table size at once, or set each item yourself. Hover any line, tag or label to see its odds.`)}
+${ib('green','🎯',`<strong>How to use it:</strong> these are odds, not signals. Read Trend and Box first, then check where your stop sits (SL s / SH s). The tested trade edges are in MMM EDGE PRO.`)}</div>`;},
+ fr(){return `<div class="card-inner">${eyebrow('Phase 9',`Le Tableau WHAT NEXT`)}${h1(`Ce Qui Arrive Le Plus Souvent Ensuite`)}${lead(`XCS One n'a ni stratégie ni signal. Son tableau montre, pour ce qui est sur votre graphique maintenant, ce qui est arrivé le plus souvent ensuite dans les tests (NQ 2022–25 + MNQ 2026, ensemble).`)}
 ${tbl([`Ligne`,`Ce qu'elle vous dit`],[
- [`DATA`,`Les périodes d'où viennent les chiffres : NQ déc. 2022 – déc. 2025, revérifié sur MNQ juil. – oct. 2026.`],
- [`TESTED`,`Combien de bougies de votre unité de temps ont été testées, et combien de boîtes. « A → B » = NQ → MNQ.`],
- [`STRUCTURE`,`Côté de la tendance et T#, avec P# / R#.`],
- [`BALANCE`,`Qui contrôle la boîte active, où est la clôture, les chances NQ → MNQ et la taille de l'échantillon.`],
- [`CANDLE`,`Le type de la dernière bougie et combien de fois il prend son objectif.`],
- [`PULLBACK`,`La zone active et ses chances remplissage → objectif.`],
- [`GMC`,`Le GMC actif le plus récent, son ouverture et ses statistiques, ou combien ont été violés.`],
- [`PROTECTED / HTF / SESSION / NEWS`,`Niveaux de swing, biais de l'unité supérieure, si vous êtes dans la fenêtre testée (Asie + NY matin), alertes de nouvelles.`],
- [`FACTS`,`Sortie 2-NBC, sortie « stall », entrée au POC, entrée LTF, l'objectif de 60 % à 1:2.`]])}
-${ib('blue','🎛',`<strong>Votre écran, vos tailles :</strong> un seul réglage « ALL Labels & Panels » règle la taille de toutes les étiquettes et tableaux d'un coup, ou réglez chaque élément vous-même. Tout tableau désactivé disparaît complètement.`)}
-${ib('green','🎯',`<strong>Comment l'utiliser :</strong> lisez d'abord STRUCTURE et BALANCE. Tradez avec le camp qui contrôle, sur une zone de pullback de bougie plus ou un GMC or, avec votre stop au SL s / SH s. Utilisez la sortie 2-NBC quand votre compte a besoin de taux de réussite.`)}</div>`;}},
+ [`Candle`,`Le type de la dernière bougie fermée : combien de fois la bougie suivante prend son haut, son bas, ou clôture au-delà.`],
+ [`Trend`,`Le T# actuel : combien de fois la prochaine cassure continue ou se retourne, et combien de fois le prix revient d'abord à la ligne de cassure.`],
+ [`Box · vPOC`,`Où sont la dernière clôture et le POC dans la boîte active, et combien de fois la boîte casse d'abord vers le haut ou vers le bas.`],
+ [`Pullback`,`La zone active : combien de fois elle se remplit, puis combien de fois le prix prend l'objectif de la bougie.`],
+ [`GMC`,`Le GMC actif le plus proche : combien de fois le prix revient à son ouverture, ou clôture à travers, dans les 20 bougies suivantes.`],
+ [`eBlock / iBlock`,`Le bloc de la tendance actuelle : combien de fois le premier contact tient, à côté de n'importe quelle boîte au hasard.`],
+ [`SL s / SH s · Void`,`Combien de fois le niveau de swing est balayé ou cassé, et combien de fois le vide se remplit.`]])}
+${ib('blue','🎛',`<strong>Votre écran, vos tailles :</strong> un seul réglage « ALL Labels & Panels » règle la taille de toutes les étiquettes et tableaux d'un coup, ou réglez chaque élément vous-même. Survolez une ligne, une étiquette ou un tag pour voir ses chances.`)}
+${ib('green','🎯',`<strong>Comment l'utiliser :</strong> ce sont des chances, pas des signaux. Lisez d'abord Trend et Box, puis regardez où est votre stop (SL s / SH s). Les avantages de trading testés sont dans MMM EDGE PRO.`)}</div>`;}},
 {type:'quiz',id:'q-xcs-1',
  en:{q:'On XCS One, the green line inside the live box is thick and the text reads "BUYERS 70% up · 5c". What does it mean?',opts:['A — Buy now at market','B — The last close sits in the top third after 5 candles: the box has tested odds of about 70% to break UP first','C — Delta is 70% positive','D — The box is about to be deleted'],correct:1,fb:'The control text shows the tested odds for where the last close sits (top third) and how long price has been inside (4–6 candles). It is odds, not a signal: wait for the body close out of the box.'},
  fr:{q:"Sur XCS One, la ligne verte dans la boîte active est épaisse et le texte dit « BUYERS 70% up · 5c ». Qu'est-ce que ça veut dire ?",opts:["A — Acheter maintenant au marché","B — La dernière clôture est dans le tiers haut après 5 bougies : la boîte a des chances testées d'environ 70 % de casser vers le HAUT d'abord","C — Le delta est positif à 70 %","D — La boîte va être supprimée"],correct:1,fb:"Le texte de contrôle montre les chances testées selon l'endroit de la dernière clôture (tiers haut) et le temps passé dedans (4–6 bougies). Ce sont des chances, pas un signal : attendez la clôture qui sort de la boîte."}},
@@ -2710,8 +2706,8 @@ ${ib('green','🎯',`<strong>Comment l'utiliser :</strong> lisez d'abord STRUCTU
  en:{q:'The vPOC line is RED. What does it tell you?',opts:['A — Price must go down','B — Sell at the POC','C — The most-traded price in the box sits below the red line (the bottom third): sellers control the volume. It is a read, not a tested edge','D — The POC is broken'],correct:2,fb:'The vPOC color shows where the volume sits in the box: green above the green line, red below the red line, yellow in the middle. The POC color itself was not tested as an edge, and the POC was not a better entry.'},
  fr:{q:"La ligne vPOC est ROUGE. Qu'est-ce qu'elle vous dit ?",opts:["A — Le prix doit baisser","B — Vendre au POC","C — Le prix le plus échangé dans la boîte est sous la ligne rouge (le tiers bas) : les vendeurs contrôlent le volume. C'est une lecture, pas un avantage testé","D — Le POC est cassé"],correct:2,fb:"La couleur du vPOC montre où est le volume dans la boîte : vert au-dessus de la ligne verte, rouge sous la ligne rouge, jaune au milieu. La couleur du POC n'a pas été testée comme un avantage, et le POC n'était pas une meilleure entrée."}},
 {type:'hw',hwKey:'hw-XCS',items:[
- {id:'hw-XCS-1',chart:true,en:'Load MMM Pro XCS One on a 15M MNQ chart with the structure timeframe left empty. Screenshot a live box with its control lines, vPOC and the MAP panel. Upload it:',fr:"Chargez MMM Pro XCS One sur un graphique MNQ 15M avec l'unité de temps de structure laissée vide. Faites une capture d'une boîte active avec ses lignes de contrôle, son vPOC et le panneau MAP. Chargez-la :"},
- {id:'hw-XCS-2',chart:false,en:'Over one session, write each time the BALANCE row changed side, and whether the box then broke that way. How did it compare with the tested odds?',fr:"Pendant une session, notez chaque fois que la ligne BALANCE a changé de camp, et si la boîte a ensuite cassé dans ce sens. Comment ça se compare aux chances testées ?"}
+ {id:'hw-XCS-1',chart:true,en:'Load MMM Pro XCS One on a 15M MNQ chart with the structure timeframe left empty. Screenshot a live box with its control lines, vPOC and the WHAT NEXT table. Upload it:',fr:"Chargez MMM Pro XCS One sur un graphique MNQ 15M avec l'unité de temps de structure laissée vide. Faites une capture d'une boîte active avec ses lignes de contrôle, son vPOC et le tableau WHAT NEXT. Chargez-la :"},
+ {id:'hw-XCS-2',chart:false,en:'Over one session, write each time the Box row of the WHAT NEXT table changed side, and whether the box then broke that way. How did it compare with the tested odds?',fr:"Pendant une session, notez chaque fois que la ligne Box du tableau WHAT NEXT a changé de camp, et si la boîte a ensuite cassé dans ce sens. Comment ça se compare aux chances testées ?"}
 ]}
 ]};
 
@@ -2735,7 +2731,7 @@ ${ib('green','🎯',`<strong>Comment l'utiliser :</strong> lisez d'abord STRUCTU
   if(pID&&pID.outline) pID.outline.desc=pID.outline.desc.replace('Phase 9 establishes','This final phase establishes');
   // XCS One closes the indicators phase
   pMMP.lessons.push(LESSON_XCS);
-  if(pMMP.outline){pMMP.outline={desc:pMMP.outline.desc+' <strong>MMM Pro XCS One</strong> blends the x, c and s engines into one map: green / red balance-control lines with tested odds, a vPOC colored by who controls it, GMC lines that delete themselves when violated, and a MAP panel that shows the test data and the research facts.',lessons:pMMP.outline.lessons.concat(['MMM Pro XCS One — the one map: control lines, vPOC, GMC lines, the MAP panel, clean-up rules'])};}
+  if(pMMP.outline){pMMP.outline={desc:pMMP.outline.desc+' <strong>MMM Pro XCS One</strong> blends the x, c and s engines into one map: green / red balance-control lines with tested odds, a vPOC colored by who controls it, GMC lines that delete themselves when violated, and a WHAT NEXT table that shows what usually happens next.',lessons:pMMP.outline.lessons.concat(['MMM Pro XCS One — the scenario guide: control lines, vPOC, GMC lines, the WHAT NEXT table, clean-up rules'])};}
   COURSE.splice(COURSE.indexOf(pMMP),0,PHASE_OFC);
 })();
 
