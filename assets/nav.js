@@ -4,6 +4,7 @@
  */
 window.MMM_NAV = [
   ['Indicators', '/indicators/'],
+  ['Strategies', '/strategies/'],
   ['Backtests', '/backtests/'],
   ['Course', '/journal/?course=1'],
   ['Journal', '/journal/'],

@@ -19,7 +19,7 @@
 <meta name="theme-color" content="#0b0f10">
 <style>*,*::before,*::after{box-sizing:border-box}html,body{margin:0}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
 <style>
 /* Layout: one-screen app — header + control bar on top, content scrolls in the middle, guide + data tabs pinned at the bottom (like a spreadsheet). */
 :root{
@@ -113,6 +113,33 @@ table.g tbody tr:hover td{background:var(--sel)}
 .fact .n{font-family:var(--f-num);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
 .fact .n.t{color:var(--teal)} .fact .n.m{color:var(--mag)}
 .fact .d{color:var(--muted);font-size:12px;line-height:1.35;margin-top:2px}
+.desk .serif{font-family:"IBM Plex Serif",Georgia,serif;font-weight:600;letter-spacing:-.005em}
+.desk section h2.serif{font-size:19px;margin:0 0 10px}
+.desk .dh{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:22px;align-items:start;padding:20px 22px}
+.desk .dh h2.serif{font-size:30px;line-height:1.1;margin:0 0 12px;text-wrap:balance}
+.desk .dh .lede{font-size:15.5px}
+.desk .dh-f{color:var(--muted);font-size:13px;line-height:1.5;margin:10px 0 0;max-width:75ch}
+.desk .doors{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.desk .doors a,.desk .doors button{display:block;text-align:left;text-decoration:none;color:var(--fg);background:var(--bg);border:0;border-top:1px solid var(--line);padding:12px 14px;font-family:var(--f-ui);cursor:pointer}
+.desk .doors>:first-child{border-top:0}
+.desk .doors a:hover,.desk .doors button:hover{background:var(--sel)}
+.desk .doors b{display:block;font-size:17px;color:var(--fg);margin-bottom:3px}
+.desk .doors span{display:block;color:var(--muted);font-size:13px;line-height:1.4}
+.desk .sh{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.desk .lk{color:var(--teal);font-weight:600;font-size:13px;text-underline-offset:3px}
+.bk-at td.code{font-family:var(--f-num);font-weight:600}
+.bk-at td.wh{white-space:normal;min-width:220px;max-width:340px;font-family:var(--f-ui);font-size:12px;line-height:1.3;color:var(--muted)}
+.bk-at tr[data-href]{cursor:pointer}
+.bk-at tr.v-green td{background:var(--good-bg2)} .bk-at tr.v-yellow td{background:var(--sel)} .bk-at tr.v-red td{background:var(--bad-bg2)}
+.bk-at tr[data-href]:hover td{filter:brightness(.97)}
+.bk-at td.code{box-shadow:inset 3px 0 0 var(--line)} .bk-at tr.v-green td.code{box-shadow:inset 3px 0 0 var(--good)} .bk-at tr.v-yellow td.code{box-shadow:inset 3px 0 0 var(--warn)} .bk-at tr.v-red td.code{box-shadow:inset 3px 0 0 var(--bad)}
+.ts{font-family:var(--f-ui);font-size:12px;font-weight:600} .ts.pass{color:var(--good)} .ts.fail{color:var(--bad)} .ts.unsure{color:var(--muted)}
+.desk ul.log{list-style:none;margin:0;padding:0}
+.desk ul.log li{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid var(--line);font-size:13px;line-height:1.45}
+.desk ul.log li:first-child{border-top:0}
+.desk ul.log time{font-family:var(--f-num);font-size:11px;color:var(--muted);padding-top:2px}
+.desk ul.std{margin:0;padding-left:18px;line-height:1.5} .desk ul.std li{margin:0 0 6px}
+@media (max-width:820px){.desk .dh{grid-template-columns:1fr}.desk ul.log li{grid-template-columns:1fr;gap:2px}}
 .go{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
 .go button{text-align:left;font-family:var(--f-ui);font-size:13px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:3px}
 .go button:hover{border-color:var(--teal)}
@@ -525,11 +552,12 @@ const VERD=[
 ['filter','gen','Level Retest: skip it when a GMC gap sits between the PO4 T1 and the CDL','A GMC (3-candle gap with the move) formed in the leg from the PO4 T1 to the CDS / CDL break, with its level inside that range. About 1 in 4 trades.','With a gap the retest does not work (PF 1.00). Without one it is the best version found: a fast leg that leaves a gap usually retests deeper or fails.','1m long NY AM · PO4 retest · 15m trend · 40 pts · 1:5: no gap WR 37%, PF 1.66, t-score 3.21, net +$8,792 in 39 months, max drawdown −$1,125 · with a gap PF 1.00 (84 trades)'],
 ['no','gen','Level Retest: don’t enter the gap trades at the CDS / CDL close','When a GMC gap sits between the PO4 T1 and the CDL, the retest fills only 36% of the time (72% without a gap). Tested: enter those gap trades at the CDL close instead, and mix gap → CDL close with no gap → PO4 retest.','The gap trades stay weak even at the CDL close (PF 1.15). The mix makes less than the no-gap retest alone. Skip the gap trades.','Long NY AM · 15m trend · 40 pts · 1:5: gap at the CDL close PF 1.15, net +$1,898 · mix PF 1.34, +$7,552 · no-gap PO4 retest alone PF 1.67, +$8,874'],
 ['no','gen','Level Retest: don’t exit at the first close back past the PO4 T1','After the fill, get out at the close of the first 1m candle that closes back past the PO4 T1 (the fill candle included), instead of waiting for the stop. Also tested with a 5 / 10 / 20 pt buffer.','The losses get smaller (−$13 instead of −$79), but about 80% of the trades that later win also close back past the T1 first. The win rate falls from 36% to 7% and the losing runs grow to 42. A 20 pt buffer is about the same as no exit; keep the fixed stop.','PO4 retest · 15m trend · 40 pts · 1:5: net +$8,692 → +$1,876 with this exit · 20 pt buffer +$6,420 · Max’s 2-candle rule (out when a later close breaks the violation candle low), no gap: PF 1.73, avg loss −$35, net +$6,336, but 17 losses in a row'],
-['trade','gen','09:30 15m BuBC above the pre-open high: long at the 09:45 close (Setup C)','The first NY 15m candle (09:30–09:45) closes above the previous 15m high AND above the pre-open high (08:00–09:30). Buy at the 09:45 close, stop 50 pts, target 1:3. Get out early on a 15m close below the candle low, else out at 16:59. One trade a day.','Buyers broke the pre-open range on the opening drive; when that holds, the day keeps going up. A candle that closes inside the pre-open range has no edge. Also tested and worse: 1m / 5m CDL entries, a limit at 50% of the candle or at its open, a 35 pt or candle-low stop, the opposite-BC exit, shorts. The pre-open filter was picked from 14 filters, so expect a bit less live.','2022–25 → 2026: 219 → 57 trades · avg RR +0.42 → +0.31 · Blended: WR 41% · avg RR +0.40 · PF 1.69 · t-score +3.75 · every year positive (2023 +0.34 · 2024 +0.51 · 2025 +0.37 · 2026 +0.41) · max 7 losses in a row · net +$10,926 at 1 MNQ in 46 months · max drawdown −$906. At 1:2: WR 45%, avg RR +0.28. No filter, 1:3: avg RR +0.26, t-score 2.97'],
+['trade','gen','OC.M1 · 09:30 15m BuBC above the pre-open high: long at the 09:45 close (Setup C)','The first NY 15m candle (09:30–09:45) closes above the previous 15m high AND above the pre-open high (08:00–09:30). Buy at the 09:45 close, stop 50 pts, target 1:3. Get out early on a 15m close below the candle low, else out at 16:59. One trade a day.','Buyers broke the pre-open range on the opening drive; when that holds, the day keeps going up. A candle that closes inside the pre-open range has no edge. Also tested and worse: 1m / 5m CDL entries, a limit at 50% of the candle or at its open, a 35 pt or candle-low stop, the opposite-BC exit, shorts. The pre-open filter was picked from 14 filters, so expect a bit less live.','2022–25 → 2026: 219 → 57 trades · avg RR +0.42 → +0.31 · Blended: WR 41% · avg RR +0.40 · PF 1.69 · t-score +3.75 · every year positive (2023 +0.34 · 2024 +0.51 · 2025 +0.37 · 2026 +0.41) · max 7 losses in a row · net +$10,926 at 1 MNQ in 46 months · max drawdown −$906. At 1:2: WR 45%, avg RR +0.28. No filter, 1:3: avg RR +0.26, t-score 2.97'],
 ['no','gen','Don’t trade the London 02:00–05:00 or the 1H 09:00 opening candles','The 15m 02:00, 03:00, 04:00, 05:00 candles and the 1H 09:00 candle: their body close traded at the close (stops 50 pts / far end / middle, targets 1:1–1:5, early exits), and their high / low traded on 1m and 5m: touch → reverse, close past → continue, plain or with a CDL / CDS (limit at the PO4 T1 or at the close, 15m trend, 2-candle exit).','The first touch of a candle high / low is a coin flip: about 50% reverse, 50% close through, at every candle. London moves are short (median 14–31 pts before the far end is touched again). After a 1H 09:00 BC, only 1.5–2 more BCs follow before an opposite one.','Body close at the close: every London candle avg RR −0.12 to +0.04, all FAIL · 1H 09:00 BuBC 2026 −0.11, BeBC +0.11 (t-score 1.3) · touch / close entries: 0 of 2,550 combos profitable with t-score 2+ and a PASS · with CDL / CDS: 77 of 39,222 (luck level). One lead only: 1m 04:00 high touch → CDS short, 25 pts, 1:2, 15m trend: WR 50%, avg RR +0.24, t-score 2.44, but 10 trades in 2026'],
-['no','gen','Touch + reaction vs close through at a level: no edge either way','The first 5m touch of the day at 24 levels (opening range, pre-open, London, NY AM, NY PM, settlement, daily open, PDH / PDL, overnight, Asia, H1 / H4 GMC). Reaction = closes back → trade away. Close through → trade the break.','It is about 50 / 50 at every level, and the follow-through before a close back across the level is short (median 10–45 pts).','9 of 7,805 combos held in both periods (luck level)'],
+['no','gen','Touch + reaction vs close through at a level: no edge either way','The first touch of the day at 24 levels on 5m, and at the high / low of the 02:00–05:00, 09:30 and 09:45 15m candles and the 1H 09:00 candle on 1m and 5m. Reaction = it closes back → trade away. Close through → trade the break. Also tested with a 1m / 5m CDL / CDS at the level (limit at the PO4 T1 or at the close, 15m trend, Max’s 2-candle exit).','It is a coin flip: about 50% reverse and 50% close through, at every level and every candle. The follow-through before a close back across the level is short (median 10–45 pts).','Levels on 5m: 9 of 7,805 combos passed both periods · opening candles, plain entries: 0 of 2,550 profitable with t-score 2+ and a PASS · with CDL / CDS: 77 of 39,222 (luck level)'],
 ['no','gen','Level Retest outside NY AM, on shorts, or at the NY AM / PM / settlement levels','Max’s Level Retest (PO4 T1 retest after a CDL / CDS at a level) run in every session, both sides, with 13 new levels added.','Only NY AM longs work. The 15m trend filter helps in 2 of 3 places, the no-gap filter only half the time, and letting the trade run beats the 2-candle exit in 3 of 4 places.','Long, all sessions, 40 pts, 1:5: 09:30 open PF 1.60 · pre-open low 1.30 · NY AM high 0.92 · settlement 0.92 · London low 0.90 · shorts PF 0.87'],
-['watch','gen','MMM Level Retest (Max’s method, corrected): 1m retest at an HTF level, NY AM, longs','Price reaches an HTF level (daily open, PDH / PDL, overnight or Asia high / low, 09:30 open, prior close, H1 / H4 GMC). On 1m the structure flips (CDL) with its PO4 T1 within 15 pts of the level. A buy limit on the retest. 1 MNQ, one trade at a time. Corrected Oct 24 2026: a limit that fills on a candle closing back past the PO4 now counts (the first test skipped those fills).','The level is real: the same 1m long with no level near loses in both periods. But the edge is thin. The best versions need the 15m MMM trend with you and a big target (1:5 or hold to the next open). The early exit did not help after the correction. Leads, not proven: paper-trade first.','PO4 retest + 15m trend · 40 pts · 1:5: WR 36%, PF 1.54, t-score 2.97, net +$8,692 in 39 months, max drawdown −$920 · break-line retest + VWAP + 15m trend + AFs · 40 pts · hold: PF 1.59, net +$9,008 · no level near: −0.04 to −0.20 avg RR'],
+['watch','gen','LR.M1 · Level Retest A (Max Profit): 1m PO4 retest at an HTF level, NY AM, longs','Price reaches an HTF level (daily open, PDH / PDL, overnight or Asia high / low, 09:30 open, prior close, H1 / H4 GMC). The 1m structure flips up (CDL) with its PO4 T1 within 15 pts of the level, the 15m MMM trend is up, and no GMC gap sits between the PO4 T1 and the CDL. Buy limit at the PO4 T1, stop 40 pts, target 1:5, stop or target only, out at 16:59. 1 MNQ, one trade at a time.','The level is real: the same long with no level near loses in both periods. Corrected Oct 24 2026: a limit that fills on a candle closing back past the T1 now counts as filled (the first test skipped those fills, so it looked far better than it is). Getting out at the first close back past the T1 cuts 8 in 10 winners. A lead, not proven: paper-trade it first.','265 trades in 39 months · WR 37% · avg win $225 / avg loss −$79 · avg RR +0.42 · PF 1.67 · t-score 3.25 · net +$8,874 at 1 MNQ · max 9 losses in a row · max drawdown −$1,125 · 2026: 12 trades, +$456 · with no level near: PF 0.92'],
+['watch','gen','LR.M2 · Level Retest B (Small Loss): same setup, 35 pts, Max’s 2-candle exit','Same setup as LR.M1. Stop 35 pts, target 1:5. Max’s 2-candle exit: after a 1m close below the PO4 T1 (candle V), get out when a later candle closes below V’s low. A close back above the T1 resets it.','A close below the T1 happens in 82% of winners and 99% of losers, so the first close tells you nothing. Waiting for the second candle keeps more winners and cuts the average loss to about −$34. You pay with a 19% WR and longer losing runs.','299 trades in 39 months · WR 19% · avg win $261 / avg loss −$34 · avg RR +0.30 · PF 1.78 · t-score 2.96 · net +$6,379 at 1 MNQ · max 17 losses in a row · max drawdown −$742 · 2026: 13 trades, +$251'],
 ['watch','edge','Old MMM Pro Edge (S1–S5): fewer losses on screen, not more money','The earlier MMM Pro Edge, Auto mode on NQ: S1 RevBreak with Daily bias + 1h / 4h alignment on 5m / 1h / 4h, S2 RevBreak Scalp 1R on 1h, S3 ContBreak BC+ 1R on 1h. Its own stops and targets, max 100 candles, 1 pt cost.','It trades 1–19 times a month, so users see far fewer losses. But S1 on 5m (its main setup) lost in both periods, 1h was about break-even and 4h made little. Only S2 on MNQ 1h held up, at about 2 trades a month. EDGE PRO with the daily stop and Asia + NY AM makes far more, while losing 6 of 10 trades.','S1 5m −0.19 → −0.10 avg RR · S2 1h +0.33 → +0.17 (WR 68% → 59%) · S3 1h −0.00 → −0.08 · at $100 risk: 5m chart −$272 → −$193 a month · EDGE PRO now +$950 → +$1,760 a month'],
 ['no','gen','Don’t buy the 2nd break after the pullback closed back inside the box','Bull block break, then a pullback that closes back inside the box but not below the box low, then a close above the break candle high (or back above the box top). 5m / 15m / 1H, stops 50 pts / box low / pullback low / break candle, targets 1:1–1:3, hold, or out at a close below the box low or the first opposite BC.','After a close back inside, 54–56% go on to the 2nd break and 41–43% close below the box low first: close to a coin flip. Trading it is flat, and weaker than when the pullback never closes inside. Keep the strict rule: a close back inside = out.','50 pts · 1:2, all sessions: 5m −0.02 · 15m −0.00 · 1H +0.00 avg RR · never closed inside: 15m +0.02 · 1H +0.05 · 12,564 combos, 9 with t-score 2+ in both periods (luck)'],
 ['no','gen','Don’t short the failed GMC (c3 BuBC → NBCs → close below the block, then below the GMC)','Bull GMC with c3 a BuBC, NBC candles after it make the block, the block breaks down, then the first close below the GMC level → short with the stop above the block high (mirror for long). Also at the block break itself, and by 1 / 2–3 / 4+ NBCs. 5m / 15m / 1H.','After the entry, about 1.5 BCs follow the trade before an opposite BC, the same as a random entry. 1 in 5 breaks never closes below the GMC. No NBC count works in both periods.','Stop above the block high · 1:2: 1m −0.09 · 5m −0.02 · 15m +0.02 → −0.01 (2026) · 1H +0.03 → −0.10 avg RR · 50 pts · 1:2 on 1m: −0.03'],
@@ -580,42 +608,54 @@ LD3:['LD3 — still Z','Every later continuation (T4, T5…) also fires Z.']
 // ───────────────── guide tabs ─────────────────
 const G={};
 G.start=sc=>{
- sc.innerHTML=`<div class="doc">
-<section class="wide"><p class="lede">MMM reads <b>who is in control</b> from how candles <b>close</b>, not from their wicks. This page shows every test run on the MMM indicators: <b>what was tested, what works, what doesn’t, and why</b>. Every number is after costs and was checked on two separate periods.</p>
-<div class="facts">
-<div class="fact"><div class="n t">3 years</div><div class="d">NQ 1-minute, Dec 2022 – Dec 2025. The build period: ideas were found here.</div></div>
-<div class="fact"><div class="n m">10 months</div><div class="d">Fresh MNQ, Dec 2025 – Oct 2026. Never used to build. The check.</div></div>
-<div class="fact"><div class="n">3.1 M</div><div class="d">Test combos run: 363,348 grid rows, 652,872 pullback-lab combos, 2,075,598 retest combos.</div></div>
-<div class="fact"><div class="n">47</div><div class="d">Single combos that survived old t ≥ 2.5 and fresh t ≥ 2, out of 517,446. About the luck level, so we trust themes.</div></div>
-<div class="fact"><div class="n t">5</div><div class="d">Setups in MMM EDGE PRO that make money in both periods.</div></div>
-<div class="fact"><div class="n">1 pt</div><div class="d">Cost paid on every trade (slippage + commission).</div></div>
-</div></section>
-<section><h2>The 6 big lessons</h2><ol>
-<li><b>No candle or break wins alone.</b> Context does: the trend step (T3+), the time of day, the daily candle.</li>
-<li><b>Trade 15m in Asia + NY AM.</b> 1m–5m lose to costs. 1h edges faded in 2026.</li>
+ sc.innerHTML=`<div class="doc desk">
+<section class="wide dh"><div class="dh-l"><h2 class="serif">The MMM research desk</h2>
+<p class="lede">MMM reads <b>who is in control</b> from how candles <b>close</b>, not from their wicks. Here is every test run on the MMM indicators and on Max’s own method: what works, what doesn’t, and the exact rules to trade the winners. Every number is after a 1 point cost and was checked on two separate periods.</p>
+<p class="dh-f">Period 1: NQ 1-minute, Dec 2022 – Dec 2025, where the ideas were found. Period 2: fresh MNQ, Dec 2025 – Oct 2026, never used to build anything. About 3.1 million test combos so far.</p></div>
+<nav class="doors" aria-label="Start here">
+<a href="/strategies/"><b class="serif">Strategy book</b><span>Every strategy that passed, as steps you can follow on a chart: when, entry, stop, target, exit. Start here if you want to trade.</span></a>
+<a href="/backtests/sheet/"><b class="serif">Results sheet</b><span>Every strategy, session, hour, stop and exit we tested, colored green / yellow / red, with how to trade each row.</span></a>
+<button type="button" data-go="verdicts"><b class="serif">Verdicts</b><span>The decision board: trade, use as a filter, watch, or don’t trade, with the reason for each.</span></button>
+</nav></section>
+<section class="wide"><div class="sh"><h2 class="serif">The book at a glance</h2><a class="lk" href="/strategies/">Open the full strategy book</a></div>
+<div class="tw"><table class="bk-at" id="bk-at"><thead><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Status</th><th class="l">Chart</th><th class="l">When</th><th>WR</th><th>avg RR</th><th>PF</th><th>t-score</th><th>Trades a month</th><th class="l">2-period test</th></tr></thead>
+<tbody><tr><td class="l" colspan="11">Loading…</td></tr></tbody></table></div>
+<p class="note">Row color: green = profitable and probably not luck (avg RR above 0, t-score 2+, did not fail a period), yellow = maybe, red = not profitable. Click a row to open its rules.</p></section>
+<section><h2 class="serif">Latest findings</h2><ul class="log">
+<li><time>Oct 25 2026</time><div><b>A touch is a coin flip.</b> At every level and every opening candle, about half of first touches reverse and half close through. Neither pays: 0 of 2,550 plain combos and 77 of 39,222 CDL / CDS combos passed (luck level).</div></li>
+<li><time>Oct 25 2026</time><div><b>OC.M1 · Setup C passes.</b> The 09:30 15m BuBC that closes above the pre-open high: buy the 09:45 close, 50 pts, 1:3, out on a close below the candle low. avg RR +0.40, t-score 3.75, every year positive. London opening candles: no edge.</div></li>
+<li><time>Oct 24 2026</time><div><b>Honest fills, corrected.</b> The first Level Retest test skipped limit fills on candles that closed back past the PO4 T1. Those trades mostly lose, so it looked far better than it is. Every number now counts them, and the old figures are withdrawn.</div></li>
+<li><time>Oct 24 2026</time><div><b>Don’t get out at the first close back past the T1.</b> 8 in 10 winners close below it first. Max’s 2-candle exit (out when a later close breaks the violation candle’s low) keeps more winners: PF 1.78, avg loss −$34, but a 19% WR (LR.M2).</div></li>
+<li><time>Oct 24 2026</time><div><b>Skip the gap trades.</b> When a GMC gap sits between the PO4 T1 and the CDL, the retest fills half as often and makes nothing (PF 1.00).</div></li></ul></section>
+<section><h2 class="serif">How we test</h2><ul class="std">
+<li><b>Two periods.</b> Rules are found on 2022–25 NQ, then checked on fresh 2026 MNQ. PASS = avg RR above +0.05 in both (30+ and 10+ trades). It is a test, not a profit score.</li>
+<li><b>Not luck.</b> A t-score of 2 or more, and we compare the count of winners with what pure luck would give.</li>
+<li><b>Every pairing.</b> Each entry is tested with every stop and every exit, including Max’s violation exits, plus a fixed 50 pt stop at 1:2 (ES 20).</li>
+<li><b>Honest fills.</b> 1 pt cost a trade. A limit fills when price trades 1 tick through it. Stop and target in the same minute = a loss.</li>
+<li><b>Controls.</b> Random entries and “no level near” versions run beside each idea. An edge must beat them.</li></ul></section>
+<section><h2 class="serif">The 7 big lessons</h2><ol>
+<li><b>No candle or break wins alone.</b> Context does: the trend step (T3+), the time of day, the daily candle, a real level.</li>
+<li><b>Trade 15m in Asia + NY AM.</b> Plain 1m–5m signals lose to costs. 1m works only as a precise entry at a level (LR.M1).</li>
 <li><b>Enter at the close.</b> Deep limits are the worst entries. A deep fill often means the break failed.</li>
-<li><b>Use wide, volatility-based stops.</b> Tight structure stops get hit by noise.</li>
+<li><b>Use wide stops.</b> Volatility (ATR) or 35–50 pt stops. Tight structure stops get hit by noise.</li>
 <li><b>½ out at +0.5R lifts WR above 60%.</b> A fixed 1:2 target never reached 50% WR in both periods.</li>
-<li><b>MMPD is a momentum gate.</b> Go with XP / XD. Fading the extremes lost.</li></ol></section>
-<section><h2>Status words used on this page</h2>
+<li><b>MMPD is a momentum gate.</b> Go with XP / XD. Fading the extremes lost.</li>
+<li><b>A touch is not a signal.</b> Wait for a close and a structure flip, at a level, with the 15m trend.</li></ol></section>
+<section><h2 class="serif">Status words</h2>
 <div class="tw"><table>
 <tr><th class="l">Status</th><th class="l">Meaning</th></tr>
 <tr><td><span class="st trade">TRADE</span></td><td class="l">Positive in both periods, t-score near 2.5+ in both, enough trades.</td></tr>
 <tr><td><span class="st filter">USE AS FILTER</span></td><td class="l">Not a trade by itself. It lifts the setups it is added to, in both periods.</td></tr>
 <tr><td><span class="st watch">WATCH</span></td><td class="l">Positive in both periods, but too few trades or t-score under 2. Forward-test it.</td></tr>
-<tr><td><span class="st no">DON’T TRADE</span></td><td class="l">Lost, faded to zero, or only worked in one period.</td></tr></table></div></section>
-<section><h2>Read every number like this</h2><ul>
-<li><b>old → fresh</b> = 2022–25 result → 2026 result.</li>
-<li><b>WR</b> = win rate. <b>PF</b> = profit factor (won ÷ lost). <b>avg RR</b> = average result per trade in R after costs. <b>t-score</b> = how sure it is not luck.</li>
-<li>Every setup also shows the <b>fixed 50 pt stop at 1:2</b> (NQ / MNQ) where it was tested. ES uses 20 pts.</li>
-<li>Live trading: expect about <b>¼ of a backtest avg RR</b> unless a setup passed the fresh test.</li></ul></section>
-<section><h2>Where to go</h2><div class="go">
+<tr><td><span class="st no">DON’T TRADE</span></td><td class="l">Lost, faded to zero, or only worked in one period.</td></tr></table></div>
+<ul><li><b>WR</b> = win rate. <b>PF</b> = profit factor (won ÷ lost). <b>avg RR</b> = average result per trade in stops, after costs. <b>t-score</b> = how sure it is not luck.</li>
+<li>Live trading: expect less than the backtest. Start small.</li></ul></section>
+<section class="wide"><h2 class="serif">The research lab</h2><div class="go">
+<button type="button" data-go="book"><b>STRATEGY BOOK (DETAIL)</b><span>Each strategy with every target, year by year, long vs short, months and the equity curve.</span></button>
 <button type="button" data-go="words"><b>MMM WORDS</b><span>Every MMM, indicator and test word in plain English. Search it.</span></button>
 <button type="button" data-go="ind"><b>INDICATORS</b><span>MMM Pro XCS One, MMM PRO c, x, s, EDGE PRO and MMPD: what you see on the chart.</span></button>
 <button type="button" data-go="tested"><b>HOW WE TESTED</b><span>Entries, stops, exits, the candle ladder and the 7 proof checks.</span></button>
-<button type="button" data-go="book"><b>STRATEGY BOOK</b><span>Every strategy that works, with its code (EP.M1, X.M1, XCS.M1…): rules, WR, avg RR, PF, t-score, money, streaks, drawdown.</span></button>
-<button type="button" data-go="blocks"><b>BLOCKS %</b><span>When eBlocks, iBlocks and balanced blocks hold and react, by time, depth, volume, delta and POC. The one block strategy that held: XCS.M5.</span></button>
-<button type="button" data-go="verdicts"><b>VERDICTS</b><span>The decision board: trade, filter, watch or don’t trade.</span></button>
+<button type="button" data-go="blocks"><b>BLOCKS %</b><span>When eBlocks, iBlocks and balanced blocks hold and react. The one block strategy that held: XCS.M5.</span></button>
 <button type="button" data-go="edge"><b>EDGE PRO LAB</b><span>Switch gate, stop, exit and max open. Time of day. Entry offsets.</span></button>
 <button type="button" data-go="prop"><b>PROP &amp; SIZE</b><span>Size your account and see the 50k eval pass rates.</span></button>
 <button type="button" data-go="levels"><b>LEVELS &amp; ODDS</b><span>Previous high / low odds, box control, pullback depth.</span></button>
@@ -623,6 +663,10 @@ G.start=sc=>{
 <button type="button" data-go="answers"><b>2022–25 GRID</b><span>The original full grids, sortable, with the first answers.</span></button>
 </div></section></div>`;
  sc.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+ const pc=v=>Math.round(v*100)+'%',sg=v=>(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(2),TS={pass:'✔ PASS',fail:'✖ FAIL',unsure:'~ NOT SURE'};
+ const paintAt=L=>{const tb=sc.querySelector('#bk-at tbody');if(!tb)return;tb.innerHTML=L.map(s=>{const a=s.all;return `<tr class="v-${s.color}" data-href="/strategies/#s-${s.code.replace(/\./g,'-')}" tabindex="0"><td class="l code">${esc(s.code)}</td><td class="l">${esc(s.name)}</td><td class="l"><span class="st ${s.status}">${s.status==='trade'?'TRADE':'WATCH'}</span></td><td class="l">${esc(s.tf)}</td><td class="l wh">${esc(s.when)}</td><td>${pc(a.wr)}</td><td class="${a.av>0?'pos':'neg'}">${sg(a.av)}</td><td>${a.pf.toFixed(2)}</td><td>${a.t.toFixed(2)}</td><td>${a.tpm}</td><td class="l"><span class="ts ${s.test}">${TS[s.test]}</span></td></tr>`}).join('');
+  tb.querySelectorAll('tr[data-href]').forEach(r=>{const o=()=>{location.href=r.dataset.href};r.onclick=o;r.onkeydown=e=>{if(e.key==='Enter')o()}})};
+ if(window.__SB)paintAt(window.__SB);else fetch('/strategies/strategies.json').then(r=>r.json()).then(j=>{window.__SB=j.strategies;if(cur&&cur.id==='start')paintAt(j.strategies)}).catch(()=>{const tb=sc.querySelector('#bk-at tbody');if(tb)tb.innerHTML='<tr><td class="l" colspan="11">The book could not load. <a href="/strategies/">Open the strategy book</a>.</td></tr>'});
 };
 
 // words
@@ -1007,8 +1051,8 @@ function bkSv(s){const a=bkA();if(!a)return s;const x=a.sheets[s.code];if(!x)ret
   return Object.assign({},s,{per,ok:x.ok,why:x.why,status:s.status==='trade'&&xb&&xb.t>=2?'trade':'watch',years:[['2026 '+a.name,x.per[s.labels.length>1?s.best:0]]],
     sides:(x.sides||[]).map(([d,b])=>[d,{fresh:b,all:((s.sides.find(z=>z[0]===d)||[0,{}])[1]||{}).all}]),
     months:x.months||{n:0,up:0,best:['—',0],worst:['—',0]},curve:x.curve||[],asset:true})}
-const BK_IND={EP:'MMM EDGE PRO',x:'MMM PRO x',c:'MMM PRO c',s:'MMM PRO s',XCS:'MMM EDGE PRO · XCS',MPD:'MMPD'};
-const BK_NAMES=[['X','MMM PRO x','The zone engine: balanced zones, zone breaks, eBlocks and iBlocks.'],['C','MMM PRO c','The candle engine: PO4, GMC, candle breaks.'],['S','MMM PRO s','The swing engine: swing breaks.'],['XCS','MMM EDGE PRO · XCS','x, c and s together. Trade these in MMM EDGE PRO. MMM Pro XCS One gives no signals: it shows the odds of what usually happens next.'],['EP','MMM EDGE PRO','The 5 EDGE PRO setups (Z, B, C, G, M) with ½ out. EDGE PRO also runs X.M1, X.M2, C.M1, C.M2, XCS.M1, XCS.M2 and XCS.M5.'],['MPD','MMPD','Premium / discount oscillator. No stand-alone strategy yet: it is used as a gate (filter).']];
+const BK_IND={EP:'MMM EDGE PRO',x:'MMM PRO x',c:'MMM PRO c',s:'MMM PRO s',XCS:'MMM EDGE PRO · XCS',MPD:'MMPD',MM:'Max’s method (by hand)'};
+const BK_NAMES=[['X','MMM PRO x','The zone engine: balanced zones, zone breaks, eBlocks and iBlocks.'],['C','MMM PRO c','The candle engine: PO4, GMC, candle breaks.'],['S','MMM PRO s','The swing engine: swing breaks.'],['XCS','MMM EDGE PRO · XCS','x, c and s together. Trade these in MMM EDGE PRO. MMM Pro XCS One gives no signals: it shows the odds of what usually happens next.'],['EP','MMM EDGE PRO','The 5 EDGE PRO setups (Z, B, C, G, M) with ½ out. EDGE PRO also runs X.M1, X.M2, C.M1, C.M2, XCS.M1, XCS.M2 and XCS.M5.'],['MPD','MMPD','Premium / discount oscillator. No stand-alone strategy yet: it is used as a gate (filter).'],['LR','Max’s method (by hand)','Level Retest: a 1m PO4 retest at a higher-timeframe level in NY AM, longs. No indicator yet.'],['OC','Max’s method (by hand)','Opening candle: the 09:30 15m BuBC that closes above the pre-open high. No indicator yet.']];
 const BK_PER=[['old','2022–25','NQ · 3 years · where the idea was found'],['fresh','2026','MNQ · 10 months · fresh check'],['all','Blended','both together · the total']];
 function bkUsd(p){if(p==null||isNaN(p))return'—';const v=p*BK_PTV[BK.c]*BK.n;return(v<0?'−$':'$')+Math.abs(Math.round(v)).toLocaleString('en-US')}
 function bkBe(b,j,s){if(!b||s.labels.length<2)return null;return 100*(1+1/b.risk)/(j+2)}

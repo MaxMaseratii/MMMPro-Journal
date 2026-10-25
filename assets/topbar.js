@@ -12,7 +12,7 @@
   window.__mmmTopbar = true;
 
   var NAV = window.MMM_NAV || [
-    ['Indicators', '/indicators/'], ['Backtests', '/backtests/'], ['Course', '/journal/?course=1'],
+    ['Indicators', '/indicators/'], ['Strategies', '/strategies/'], ['Backtests', '/backtests/'], ['Course', '/journal/?course=1'],
     ['Journal', '/journal/'], ['Gamma', '/gamma/'], ['News', '/news/'], ['Free Test', '/diagnostic/'], ['Pricing', '/whop/']
   ];
 
