@@ -64,11 +64,21 @@
       <a href="#register" data-mmm="register" class="w-full sm:w-auto text-center font-bold px-8 py-4 rounded-xl text-lg border-2 border-[color:var(--mmm-tiffany)] text-[color:var(--mmm-tiffany-light)] hover:bg-[color:var(--mmm-tiffany)] hover:text-black transition">Create a Free Account</a>
     </div>
     <div class="mt-5">
-      <a href="./diagnostic/" class="text-sm font-semibold text-gray-400 hover:text-[color:var(--mmm-gold-light)] transition inline-flex items-center gap-1.5">
+      <a href="#discipline" class="text-sm font-semibold text-gray-400 hover:text-[color:var(--mmm-gold-light)] transition inline-flex items-center gap-1.5">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.472V16h8v-2.528A6 6 0 0 0 12 3Z"/></svg>
-        Not sure what's holding your trading back? Take the free 2-minute Trading Discipline Test
+        Not sure why you keep failing prop accounts? Take the 3-minute Discipline Test right here
       </a>
     </div>
+  </div>
+</section>
+
+<section id="discipline" class="border-b border-white/10" style="background:linear-gradient(180deg,#0a0a0a,hsl(180,30%,6%));scroll-margin-top:72px">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20">
+    <div class="max-w-3xl mb-8">
+      <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">Why do prop traders fail? <span class="gold-text">Find your leak.</span></h2>
+      <p class="mt-4 text-gray-400 text-lg leading-relaxed">The Discipline Test checks the two things that end funded accounts: the math of your strategy and the habits that break your rules. Three short steps, your result right here. Free, no sign-up.</p>
+    </div>
+    <div id="dt-root"><noscript><p class="text-gray-400">Turn on JavaScript to take the test here, or take the <a href="/diagnostic/" class="underline">full Trading Test</a>.</p></noscript></div>
   </div>
 </section>
 
@@ -213,15 +223,6 @@
   </div>
 </section>
 
-<section id="diagnostic" class="border-y border-white/10" style="background:linear-gradient(180deg, hsla(45,100%,55%,0.06), transparent);">
-  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-16 sm:py-20 text-center">
-    <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-4" style="background:hsla(180,70%,55%,0.12); color:var(--mmm-tiffany-light); border:1px solid hsla(180,70%,55%,0.3);">Free &middot; 2 Minutes &middot; No Signup</div>
-    <h2 class="text-2xl sm:text-3xl font-extrabold mb-4">What's Actually Costing You Money?</h2>
-    <p class="text-gray-400 leading-relaxed mb-8 max-w-xl mx-auto">Most losing trades aren't a bad setup - they're a moved stop, a revenge entry, or a plan you skipped under pressure. Answer honestly and get a scored breakdown of exactly where your discipline is leaking, built on the MMM method's own standards.</p>
-    <a href="./diagnostic/" class="inline-block font-bold text-black px-8 py-3.5 rounded-xl transition" style="background:linear-gradient(90deg, var(--mmm-tiffany), var(--mmm-tiffany-light));">Take the Trading Discipline Test</a>
-  </div>
-</section>
-
 <section id="tools" class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20">
   <div class="text-center mb-12">
     <div class="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full mb-4" style="background:hsla(45,100%,55%,0.12); color:var(--mmm-gold-light); border:1px solid hsla(45,100%,55%,0.3);">Free &middot; No account needed</div>
@@ -265,6 +266,7 @@
 
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
+<script src="/assets/discipline-test.js"></script>
 <script src="./i18n.js"></script>
 <script>
 (function () {

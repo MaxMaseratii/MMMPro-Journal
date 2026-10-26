@@ -7,9 +7,8 @@ window.MMM_NAV = [
   ['Strategies', '/strategies/'],
   ['Backtests', '/backtests/'],
   ['Course', '/journal/?course=1'],
-  ['Journal', '/journal/'],
   ['Gamma', '/gamma/'],
   ['News', '/news/'],
-  ['Free Test', '/diagnostic/'],
+  ['Trading Test', '/diagnostic/'],
   ['Pricing', '/whop/']
 ];

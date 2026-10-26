@@ -12,8 +12,7 @@
   window.__mmmTopbar = true;
 
   var NAV = window.MMM_NAV || [
-    ['Indicators', '/indicators/'], ['Strategies', '/strategies/'], ['Backtests', '/backtests/'], ['Course', '/journal/?course=1'],
-    ['Journal', '/journal/'], ['Gamma', '/gamma/'], ['News', '/news/'], ['Free Test', '/diagnostic/'], ['Pricing', '/whop/']
+    ['Indicators', '/indicators/'], ['Strategies', '/strategies/'], ['Backtests', '/backtests/'], ['Course', '/journal/?course=1'], ['Gamma', '/gamma/'], ['News', '/news/'], ['Trading Test', '/diagnostic/'], ['Pricing', '/whop/']
   ];
 
   function active(href) {
@@ -39,8 +38,11 @@
     '#mmm-tb .home{display:flex;align-items:center;gap:9px;font-weight:800;font-size:16px;color:#000;margin-right:6px}',
     '#mmm-tb .crown{height:32px;width:32px;border-radius:8px;background:#0a0a0a;border:2px solid hsl(180,70%,55%);display:flex;align-items:center;justify-content:center}',
     '#mmm-tb nav{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:8px 0}',
-    '#mmm-tb .lang{margin-left:auto;background:rgba(0,0,0,.1);border:1px solid rgba(0,0,0,.25);border-radius:8px;height:32px;padding:0 6px;font:600 12px/1 Inter,system-ui,sans-serif;color:#000;cursor:pointer}',
-    '#mmm-tb .lang+.x{margin-left:0}',
+    '#mmm-tb .oj{margin-left:auto;font-weight:800;color:#000;background:#000;color:hsl(45,100%,60%);border:2px solid hsl(180,70%,55%);border-radius:8px;padding:6px 12px}',
+    '#mmm-tb .oj:hover{text-decoration:none;filter:brightness(1.15)}',
+    '#mmm-tb .lang{appearance:none;-webkit-appearance:none;background:transparent;border:0;border-left:1px solid rgba(0,0,0,.2);height:28px;padding:0 6px 0 10px;font:700 12px/1 Inter,system-ui,sans-serif;letter-spacing:.04em;color:#000;cursor:pointer}',
+    '#mmm-tb .lang+.x,#mmm-tb .oj+.x{margin-left:0}',
+    '#mmm-tb nav+.lang{margin-left:auto}',
     '#mmm-tb .x{margin-left:auto;background:rgba(0,0,0,.1);border:1px solid rgba(0,0,0,.25);border-radius:8px;height:32px;min-width:32px;cursor:pointer;font:700 16px/1 system-ui;color:#000}',
     '#mmm-tb-tab{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:2147483000;display:none;border:0;cursor:pointer;',
     ' background:linear-gradient(90deg,hsl(45,100%,55%),hsl(45,100%,65%));color:#000;font:800 11px/1 Inter,system-ui,sans-serif;letter-spacing:.06em;',
@@ -60,7 +62,7 @@
     bar.innerHTML = '<div class="in"><a class="home" href="/" aria-label="MMM Trading home"><span class="crown">' + CROWN + '</span>MMM Trading</a>' +
       '<nav aria-label="Site menu">' + NAV.map(function (n) {
         return '<a href="' + n[1] + '"' + (active(n[1]) ? ' class="on" aria-current="page"' : '') + '>' + n[0] + '</a>';
-      }).join('') + '</nav>' + (typeof window.mmmSetLang === 'function' ? '<select class="mmm-lang lang" aria-label="Language"></select>' : '') +
+      }).join('') + '</nav>' + (/^\/journal\//.test(location.pathname) && !/course=1/.test(location.search) ? '' : '<a class="oj" href="/journal/">Open Journal</a>') + (typeof window.mmmSetLang === 'function' ? '<select class="mmm-lang lang" aria-label="Language"><option value="en">EN</option><option value="fr">FR</option><option value="es">ES</option><option value="ht">HT</option><option value="ja">JA</option><option value="zh">ZH</option><option value="de">DE</option></select>' : '') +
       '<button type="button" class="x" aria-label="Close menu">&times;</button></div>';
     var tab = document.createElement('button'); tab.id = 'mmm-tb-tab'; tab.type = 'button';
     tab.setAttribute('aria-label', 'Open the site menu'); tab.setAttribute('aria-expanded', 'false'); tab.textContent = 'MMM ▾';

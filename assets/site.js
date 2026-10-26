@@ -23,10 +23,9 @@
     ['Strategies', '/strategies/'],
     ['Backtests', '/backtests/'],
     ['Course', '/journal/?course=1'],
-    ['Journal', '/journal/'],
     ['Gamma', '/gamma/'],
     ['News', '/news/'],
-    ['Free Test', '/diagnostic/'],
+    ['Trading Test', '/diagnostic/'],
     ['Pricing', '/whop/']
   ];
   // Max's channels (handle @MaxMaserati)
@@ -51,7 +50,13 @@
     '#mmm-auth input:focus{border-color:var(--mmm-tiffany)}',
     '#mmm-auth .tab[aria-selected=true]{background:linear-gradient(90deg,var(--mmm-gold),var(--mmm-gold-light));color:#000}',
     'body.mmm-lock{overflow:hidden}',
-    '.grid>*{min-width:0}'
+    '.grid>*{min-width:0}',
+    '.mmm-lang-wrap{align-items:center;gap:4px;color:rgba(0,0,0,.72);padding:6px 4px 6px 8px;border-left:1px solid rgba(0,0,0,.18);margin-left:4px;cursor:pointer}',
+    '.mmm-lang-wrap:hover{color:#000}',
+    '.mmm-lang-wrap select{appearance:none;-webkit-appearance:none;background:transparent;border:0;font:700 12px/1 Inter,system-ui,sans-serif;letter-spacing:.04em;color:inherit;padding:2px 2px;cursor:pointer;outline:none}',
+    '.mmm-lang-wrap select:focus-visible{outline:2px solid #000;outline-offset:2px;border-radius:4px}',
+    '.mmm-lang-wrap select option,.mmm-lang-m select option{color:#000;background:#fff}',
+    '.mmm-lang-m select{background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font:600 13px/1 Inter,system-ui,sans-serif;padding:8px 10px}'
   ].join('\n');
   document.head.appendChild(css);
 
@@ -79,14 +84,15 @@
       '<span class="text-[11px] font-semibold text-black/70">Max Maserati Model</span></div></a>' +
       '<nav class="mmm-nav hidden xl:flex items-center gap-6 text-sm font-semibold text-black/80">' + links + '</nav>' +
       '<div class="flex items-center gap-2">' +
-      '<select id="lang-switch" aria-label="Language" class="hidden sm:block bg-black/10 border border-black/25 text-black text-xs font-semibold rounded-lg px-2 py-2 outline-none cursor-pointer hover:bg-black/15 transition"></select>' +
       '<div id="mmm-acct" class="flex items-center gap-2">' + acctHTML(null) + '</div>' +
+      '<label class="mmm-lang-wrap hidden sm:flex" title="Language"><svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg><select id="lang-switch" aria-label="Language"><option value="en">EN</option><option value="fr">FR</option><option value="es">ES</option><option value="ht">HT</option><option value="ja">JA</option><option value="zh">ZH</option><option value="de">DE</option></select></label>' +
       '<button id="mmm-burger" class="xl:hidden h-10 w-10 rounded-lg bg-black/10 border border-black/25 flex items-center justify-center" aria-label="Menu" aria-expanded="false">' +
       '<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="#000" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>' +
       '</div></div></div>' +
       '<div id="mmm-mobile" class="xl:hidden hidden border-t border-black/20 bg-black text-white">' +
       '<div class="max-w-7xl mx-auto px-4 py-3 text-[15px] font-semibold">' + mlinks +
-      '<div id="mmm-acct-m" class="flex gap-2 pt-3 mt-2 border-t border-white/10"></div></div></div>' +
+      '<div id="mmm-acct-m" class="flex gap-2 pt-3 mt-2 border-t border-white/10"></div>' +
+      '<label class="mmm-lang-m flex items-center justify-between gap-3 pt-3 mt-3 border-t border-white/10 text-sm text-gray-400"><span>Language</span><select class="mmm-lang" aria-label="Language"><option value="en">EN</option><option value="fr">FR</option><option value="es">ES</option><option value="ht">HT</option><option value="ja">JA</option><option value="zh">ZH</option><option value="de">DE</option></select></label></div></div>' +
       '</header>';
   }
 
