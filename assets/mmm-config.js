@@ -13,4 +13,4 @@ window.MMM_CERT_MAIL_URL = '';
  * in a Google Sheet. Empty = results are still saved in each trader's journal,
  * but nothing is emailed and the "email me my result" box stays hidden.
  */
-window.MMM_TEST_MAIL_URL = '';
+window.MMM_TEST_MAIL_URL = 'https://script.google.com/macros/s/AKfycbxCEhB8tVKIFFIckhz8PyEdd5uOEtCkmtbJAg7wlNJuHOOF6Az4SyqlWDjxqe2qPjeNHQ/exec';
