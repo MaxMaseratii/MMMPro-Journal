@@ -16,6 +16,7 @@
   };
   var FB_APP = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js';
   var FB_AUTH = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js';
+  var FB_FS = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js';
 
   // The menu lives in /assets/nav.js (shared with the app pages). Fallback copy below.
   var NAV = window.MMM_NAV || [
@@ -296,8 +297,56 @@
   window.addEventListener('hashchange', hashOpen);
   hashOpen();
 
-  window.MMM = { openAuth: openAuth };
+  /* ---------- shared helpers for other page scripts (Discipline Test) ---------- */
+  var curUser = null, fsPromise = null;
+  function dbReady() {
+    if (fsPromise) return fsPromise;
+    fsPromise = fbReady().then(function () { return window.firebase.firestore ? null : loadScript(FB_FS); }).then(function () { return firebase.firestore(); });
+    fsPromise.catch(function () { fsPromise = null; });
+    return fsPromise;
+  }
+  window.MMM = { openAuth: openAuth, user: function () { return curUser; }, db: dbReady, auth: fbReady };
+
+  /* ---------- floating Discipline Test banner: logged-in traders who never took it ---------- */
+  var BANNER_X = 'mmm-dtb-closed';
+  function bannerClosed() { try { return sessionStorage.getItem(BANNER_X) === '1'; } catch (e) { return false; } }
+  function hideBanner() { var b = document.getElementById('mmm-dtb'); if (b) b.remove(); }
+  window.MMM.hideTestBanner = hideBanner;
+  function showBanner() {
+    if (document.getElementById('mmm-dtb') || bannerClosed()) return;
+    var onHome = !!document.getElementById('dt-root');
+    var el = document.createElement('aside');
+    el.id = 'mmm-dtb'; el.setAttribute('aria-label', 'Discipline Test');
+    el.setAttribute('style', 'position:fixed;z-index:60;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));width:min(360px,calc(100vw - 32px));background:#0f1416;color:#eef2f3;border:1px solid hsla(45,100%,55%,.45);border-radius:16px;box-shadow:0 18px 50px rgba(0,0,0,.55);padding:18px 18px 16px;font-family:Inter,system-ui,sans-serif');
+    el.innerHTML = '<button type="button" data-dtb="x" aria-label="Close" style="position:absolute;top:8px;right:8px;width:32px;height:32px;border:0;border-radius:8px;background:transparent;color:#9aa6ab;font:700 20px/1 system-ui;cursor:pointer">&times;</button>' +
+      '<p style="margin:0 34px 6px 0;font-weight:800;font-size:16px;line-height:1.3">Why do prop traders fail? <span style="color:hsl(45,100%,60%)">Find your leak.</span></p>' +
+      '<p style="margin:0 0 14px;color:#9aa6ab;font-size:13.5px;line-height:1.5">Take the 3-minute Discipline Test. Your result is saved in your journal next to your Trading Test.</p>' +
+      '<a data-dtb="go" href="' + (onHome ? '#discipline' : '/#discipline') + '" style="display:inline-block;font-weight:800;font-size:14px;color:#000;background:linear-gradient(90deg,hsl(45,100%,55%),hsl(45,100%,65%));padding:11px 16px;border-radius:10px;text-decoration:none">Take the test</a>';
+    document.body.appendChild(el);
+    el.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-dtb]'); if (!t) return;
+      if (t.dataset.dtb === 'x') { try { sessionStorage.setItem(BANNER_X, '1'); } catch (er) {} hideBanner(); }
+      else if (onHome) hideBanner();
+    });
+  }
+  function checkBanner(user) {
+    if (!user) { hideBanner(); return; }
+    var doneKey = 'mmm-dtest-done-' + user.uid;
+    try { if (localStorage.getItem(doneKey) === '1') return; } catch (e) {}
+    if (bannerClosed()) return;
+    dbReady().then(function (db) { return db.collection('users').doc(user.uid).collection('profile').doc('dtest').get(); })
+      .then(function (snap) {
+        if (snap && snap.exists) { try { localStorage.setItem(doneKey, '1'); } catch (e) {} return; }
+        if (curUser && curUser.uid === user.uid) showBanner();
+      }).catch(function () { });
+  }
 
   // show the right buttons as soon as Firebase knows who is here
-  fbReady().then(function (auth) { auth.onAuthStateChanged(renderAcct); }).catch(function () { });
+  fbReady().then(function (auth) {
+    auth.onAuthStateChanged(function (user) {
+      curUser = user || null; renderAcct(user);
+      try { document.dispatchEvent(new CustomEvent('mmm:auth', { detail: user || null })); } catch (e) { }
+      checkBanner(user);
+    });
+  }).catch(function () { });
 })();

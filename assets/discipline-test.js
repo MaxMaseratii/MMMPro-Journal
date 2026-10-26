@@ -87,6 +87,14 @@
     '.dt ol.fix li b{color:#fff}',
     '.dt ol.fix li span{color:#c8d1d5}',
     '.dt .note{color:var(--fa);font-size:12.5px;line-height:1.5;margin:16px 0 0}',
+    '.dt .mailbox{margin-top:24px;padding:16px 18px;border:1px solid hsla(180,70%,55%,.35);background:hsla(180,70%,55%,.06);border-radius:12px;font-size:14.5px;line-height:1.5}',
+    '.dt .mailbox span{color:#c8d1d5}',
+    '.dt .mailbox label{display:block;margin-bottom:10px}',
+    '.dt .mailbox .mrow{display:flex;gap:8px;flex-wrap:wrap}',
+    '.dt .mailbox input[type=email]{flex:1 1 220px;min-width:0;background:#0a0d0e;border:1px solid var(--ln2);border-radius:10px;padding:12px 14px;color:var(--ink);font:500 15px/1 Inter,system-ui,sans-serif;outline:none}',
+    '.dt .mailbox input[type=email]:focus{border-color:var(--t)}',
+    '.dt .mailbox .acct{margin:12px 0 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}',
+    '.dt .mailbox .acct .ghost{padding:9px 12px;font-size:13px}',
     '@media (max-width:860px){.dt .grid2,.dt .opts,.dt .leaks{grid-template-columns:1fr}.dt .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.dt .steps button span{display:none}.dt .steps button{justify-content:center}.dt .hero{grid-template-columns:1fr;justify-items:start}}',
     '@media (max-width:520px){.dt .body{padding:20px 16px}.dt .lk{grid-template-columns:110px minmax(0,1fr) 40px}}'
   ].join('\n');
@@ -255,6 +263,7 @@
     var score = Math.round(100 * (1 - Math.min(1, avgLeak * 1.6)));
     var emo = (sc.revenge + sc.fomo + sc.cut + sc.risk) / Math.max(1, mx.revenge + mx.fomo + mx.cut + mx.risk);
     var cha = (sc.plan + sc.news + sc.over + sc.cons) / Math.max(1, mx.plan + mx.news + mx.over + mx.cons);
+    var archKey = score >= 75 ? 'operator' : emo >= cha ? 'emotional' : 'chaotic';
     var arch = score >= 75 ? ['Systematic Operator', 'Your habits are solid. Your work now is the edge itself and the size of your risk.']
       : emo >= cha ? ['Emotional Trader', 'You have a plan, but losses, missed moves and open profit push you off it. Hard rules beat willpower here.']
       : ['Chaotic Trader', 'There is no fixed routine: no plan, no trade limit, no news check. Build the process first; the setups come second.'];
@@ -264,16 +273,16 @@
     if (M) {
       var p = S.wr / 100, expRun = Math.ceil(Math.log(100) / Math.log(1 / Math.max(0.01, 1 - p)));
       var odds = streakOdds(Math.max(1, Math.floor(lt / S.al)), 100, p);
-      if (M.e <= 0) { flags.push(['bad', 'No edge']); fixes.push(['Fix the strategy before the discipline.', 'Your numbers lose ' + sg(M.e) + ' R a trade even if you follow every rule. Your ' + S.wr + '% win rate needs to be above ' + Math.round(M.be * 100) + '% at these win and loss sizes. Test it, or trade a tested one from the <a class="link" href="/strategies/">Strategy Book</a>.']); }
-      else flags.push(['ok', 'Positive edge']);
-      if (S.wr >= 60 && S.aw < 0.8 * S.al) { flags.push(['bad', 'Time bomb']); fixes.push(['Your wins are too small for your losses.', 'You win ' + S.wr + '% of the time but bank only ' + S.aw.toFixed(2) + ' R against ' + S.al.toFixed(2) + ' R losses. One bad day erases a week. Hold winners to your target.']); }
-      if (S.al > 1.15) { flags.push(['bad', 'Losses bigger than the stop']); fixes.push(['Your losses are bigger than your stop.', 'An average loss of ' + S.al.toFixed(2) + ' R means you move stops or slip. Use a hard stop order placed with the entry.']); }
-      if (M.gap < 0.75 && S.rr > S.aw) { flags.push(['wa', 'Execution gap']); fixes.push(['You plan 1:' + S.rr + ' but bank 1:' + S.aw.toFixed(2) + '.', 'You keep only ' + Math.round(M.gap * 100) + '% of your planned reward. Let the target or a written exit rule close the trade, not fear.']); }
-      if (M.t < 2) { flags.push(['wa', 'Could be luck']); fixes.push(['Not enough proof yet.', 'A t-score of ' + M.t.toFixed(1) + ' (from ' + S.n + ' trades) can be luck. Keep the same rules for at least 30 to 100 trades before changing anything.']); }
-      if (lt < Math.max(10, expRun * 1.5)) { flags.push(['bad', 'Risk too big']); fixes.push(['Your risk per trade is too big for your drawdown.', 'With a ' + S.wr + '% win rate, a run of ' + expRun + ' losses in 100 trades is normal, and ' + Math.round(odds * 100) + '% of 100-trade runs hold a streak that ends your account. Risk about ' + usd(S.dd / Math.max(15, expRun * 2)) + ' a trade (' + Math.max(15, expRun * 2) + ' losses to zero).']); }
-      if (S.dtype === 'trailing' && S.rr >= 3) { flags.push(['wa', 'Trailing trap']); fixes.push(['Trailing drawdown and a big target fight each other.', 'Your floor climbs with your best equity. A 1:' + S.rr + ' trade that gives back its open profit can breach you without a real loss. Take a partial at +1R or move the stop to break-even by rule.']); }
+      if (M.e <= 0) { flags.push(['bad', 'No edge', 'noedge']); fixes.push(['Fix the strategy before the discipline.', 'Your numbers lose ' + sg(M.e) + ' R a trade even if you follow every rule. Your ' + S.wr + '% win rate needs to be above ' + Math.round(M.be * 100) + '% at these win and loss sizes. Test it, or trade a tested one from the <a class="link" href="/strategies/">Strategy Book</a>.', 'noedge']); }
+      else flags.push(['ok', 'Positive edge', 'edge']);
+      if (S.wr >= 60 && S.aw < 0.8 * S.al) { flags.push(['bad', 'Time bomb', 'timebomb']); fixes.push(['Your wins are too small for your losses.', 'You win ' + S.wr + '% of the time but bank only ' + S.aw.toFixed(2) + ' R against ' + S.al.toFixed(2) + ' R losses. One bad day erases a week. Hold winners to your target.', 'timebomb']); }
+      if (S.al > 1.15) { flags.push(['bad', 'Losses bigger than the stop', 'bigloss']); fixes.push(['Your losses are bigger than your stop.', 'An average loss of ' + S.al.toFixed(2) + ' R means you move stops or slip. Use a hard stop order placed with the entry.', 'bigloss']); }
+      if (M.gap < 0.75 && S.rr > S.aw) { flags.push(['wa', 'Execution gap', 'gap']); fixes.push(['You plan 1:' + S.rr + ' but bank 1:' + S.aw.toFixed(2) + '.', 'You keep only ' + Math.round(M.gap * 100) + '% of your planned reward. Let the target or a written exit rule close the trade, not fear.', 'gap']); }
+      if (M.t < 2) { flags.push(['wa', 'Could be luck', 'luck']); fixes.push(['Not enough proof yet.', 'A t-score of ' + M.t.toFixed(1) + ' (from ' + S.n + ' trades) can be luck. Keep the same rules for at least 30 to 100 trades before changing anything.', 'luck']); }
+      if (lt < Math.max(10, expRun * 1.5)) { flags.push(['bad', 'Risk too big', 'risk']); fixes.push(['Your risk per trade is too big for your drawdown.', 'With a ' + S.wr + '% win rate, a run of ' + expRun + ' losses in 100 trades is normal, and ' + Math.round(odds * 100) + '% of 100-trade runs hold a streak that ends your account. Risk about ' + usd(S.dd / Math.max(15, expRun * 2)) + ' a trade (' + Math.max(15, expRun * 2) + ' losses to zero).', 'risk']); }
+      if (S.dtype === 'trailing' && S.rr >= 3) { flags.push(['wa', 'Trailing trap', 'trailing']); fixes.push(['Trailing drawdown and a big target fight each other.', 'Your floor climbs with your best equity. A 1:' + S.rr + ' trade that gives back its open profit can breach you without a real loss. Take a partial at +1R or move the stop to break-even by rule.', 'trailing']); }
     }
-    leaks.filter(function (l) { return l.v >= 0.34; }).slice(0, 4).forEach(function (l) { fixes.push([CAT[l.c][0] + ' is leaking.', CAT[l.c][1]]); });
+    leaks.filter(function (l) { return l.v >= 0.34; }).slice(0, 4).forEach(function (l) { fixes.push([CAT[l.c][0] + ' is leaking.', CAT[l.c][1], 'c:' + l.c]); });
     if (!fixes.length) fixes.push(['Keep doing what you do.', 'No big leak found. Journal every trade so you see a leak the day it starts.']);
 
     var col = score >= 75 ? 'var(--ok)' : score >= 50 ? 'var(--wa)' : 'var(--bad)', C = 2 * Math.PI * 56;
@@ -297,10 +306,77 @@
       return '<div class="lk"><span>' + CAT[l.c][0] + '</span><span class="bar"><i style="width:' + Math.max(3, pc) + '%;background:' + c + '"></i></span><em>' + pc + '%</em></div>';
     }).join('') + '</div>';
     h += '<h4>Fix these first</h4><ol class="fix">' + fixes.slice(0, 6).map(function (f) { return '<li><div><b>' + f[0] + '</b> <span>' + f[1] + '</span></div></li>'; }).join('') + '</ol>';
+    LAST = { v: 1, ts: Date.now(), score: score, arch: archKey, archLabel: arch[0], archNote: arch[1],
+      leaks: leaks.reduce(function (o, l) { o[l.c] = Math.round(l.v * 100) / 100; return o; }, {}),
+      flags: flags.map(function (f) { return f[2]; }), fixes: fixes.slice(0, 6).map(function (f) { return { k: f[2] || '', h: f[0], b: String(f[1]).replace(/<[^>]+>/g, '') }; }),
+      known: S.known, acct: { dtype: S.dtype, dd: S.dd, target: S.target$, risk: Math.round(r), lt: Math.round(lt * 10) / 10, tpd: S.tpd } };
+    if (M) { LAST.math = { rr: S.rr, wr: S.wr, aw: S.aw, al: S.al, n: S.n, e: Math.round(M.e * 1000) / 1000, pf: Math.round(Math.min(99, M.pf) * 100) / 100, be: Math.round(M.be * 1000) / 1000, t: Math.round(M.t * 100) / 100, gap: Math.round(M.gap * 100) / 100 };
+      LAST.sim = { pass: Math.round(sim.pass * 1000) / 1000, ruin: Math.round(sim.ruin * 1000) / 1000, med: sim.med }; }
+    h += saveBox();
     h += '<div class="row"><button type="button" class="ghost" data-go="0">Change my answers</button><span style="display:flex;gap:10px;flex-wrap:wrap"><a class="ghost" href="/diagnostic/">Take the full Trading Test</a><a class="btn" href="/journal/">Track it in MMM Pro Journal</a></span></div>' +
       '<p class="note">Education only, not financial advice. The simulation assumes every trade is independent and uses your numbers as they are; real results vary.</p>';
     return h;
   }
+
+  /* ---------------- save to the journal + email ---------------- */
+  var LAST = null, MAILST = '';
+  function mailUrl() { return window.MMM_TEST_MAIL_URL || ''; }
+  function user() { return window.MMM && window.MMM.user ? window.MMM.user() : null; }
+  function saveBox() {
+    var u = user(), url = mailUrl();
+    if (u) {
+      return '<div class="mailbox" id="dt-mail"><div style="font-weight:700;color:#fff">Saved to your journal.</div><div style="color:#c8d1d5;margin:2px 0 8px">' + (MAILST === 'sent' ? 'We also emailed it to your account email.' : MAILST === 'err' ? 'Your result is saved. The email could not be sent right now.' : 'You will find it on the Discipline page, next to your Trading Test.') + '</div><a class="link" href="/journal/">Open my journal</a></div>';
+    }
+    return '<div class="mailbox" id="dt-mail">' +
+      (url ? (MAILST === 'sent' ? '<b>Sent.</b> <span>Check your inbox for your result.</span>' :
+        '<form data-mail novalidate><label for="dt-email"><b>Email me my result</b> <span>We send it once and keep your result with your email so Max can follow up. No spam.</span></label>' +
+        '<div class="mrow"><input id="dt-email" type="email" autocomplete="email" required placeholder="you@email.com"><button type="submit" class="btn">Email it to me</button></div>' +
+        (MAILST === 'bad' ? '<p class="need">Enter a valid email address.</p>' : MAILST === 'err' ? '<p class="need">It could not be sent right now. Try again in a minute.</p>' : MAILST === 'busy' ? '<p class="need">Sending…</p>' : '') + '</form>') : '') +
+      '<p class="acct"><span>Keep it in your MMM Pro Journal, next to the Trading Test:</span> <button type="button" class="ghost" data-mmm="register">Create a free account</button> <button type="button" class="ghost" data-mmm="login">Log in</button></p></div>';
+  }
+  function esc(x) { return String(x).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function post(body) {
+    var url = mailUrl(); if (!url) return Promise.reject(new Error('off'));
+    // text/plain keeps it a "simple" request (no CORS preflight), which Apps Script needs
+    return fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
+      .then(function (r) { return r.json(); }).then(function (j) { if (!j || !j.ok) throw new Error((j && j.code) || 'fail'); return j; });
+  }
+  function lang() { try { return localStorage.getItem('mmm-language') || 'en'; } catch (e) { return 'en'; } }
+  function persist(rec) {
+    if (!rec) return;
+    var u = user();
+    rec = JSON.parse(JSON.stringify(rec));
+    try { localStorage.setItem('mmm-dtest-pending', JSON.stringify(Object.assign({}, rec, { mailed: false }))); } catch (e) {}
+    if (!u || !window.MMM.db) return;
+    window.MMM.db().then(function (db) {
+      var ref = db.collection('users').doc(u.uid).collection('profile').doc('dtest');
+      return ref.get().then(function (snap) {
+        var old = snap.exists ? snap.data() : null;
+        var hist = ((old && old.history) || []).concat([{ ts: rec.ts, score: rec.score }]).slice(-12);
+        return ref.set(Object.assign({}, rec, { history: hist, email: u.email || '' }));
+      });
+    }).then(function () {
+      try { localStorage.removeItem('mmm-dtest-pending'); localStorage.setItem('mmm-dtest-done-' + u.uid, '1'); } catch (e) {}
+      if (window.MMM.hideTestBanner) window.MMM.hideTestBanner();
+      if (!mailUrl()) return;
+      return u.getIdToken().then(function (tok) { return post({ action: 'result', type: 'dtest', idToken: tok, lang: lang(), result: rec }); })
+        .then(function () { MAILST = 'sent'; }, function () { MAILST = 'err'; }).then(refreshBox);
+    }).catch(function () { });
+  }
+  function refreshBox() { var b = root.querySelector('#dt-mail'); if (b && S.step === 3) b.outerHTML = saveBox(); }
+  root.addEventListener('submit', function (e) {
+    var f = e.target.closest('form[data-mail]'); if (!f) return;
+    e.preventDefault();
+    var em = (f.querySelector('input[type=email]').value || '').trim();
+    if (!/^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,24}$/.test(em)) { MAILST = 'bad'; refreshBox(); return; }
+    MAILST = 'busy'; refreshBox();
+    post({ action: 'result', type: 'dtest', email: em, lang: lang(), result: LAST })
+      .then(function () { MAILST = 'sent'; try { var p = JSON.parse(localStorage.getItem('mmm-dtest-pending') || 'null'); if (p) { p.mailed = true; p.email = em; localStorage.setItem('mmm-dtest-pending', JSON.stringify(p)); } } catch (er) {} },
+            function () { MAILST = 'err'; })
+      .then(refreshBox);
+  });
+  document.addEventListener('mmm:auth', function () { if (S.step === 3) { refreshBox(); if (user() && LAST && !SAVED) { SAVED = true; persist(LAST); } } });
+  var SAVED = false;
 
   function render(focus) {
     var body = [step0, step1, step2, result][S.step]();
@@ -311,6 +387,7 @@
     var allAns = questions().every(function (q) { return S.ans[Q.indexOf(q)] !== undefined; });
     if (i === 3 && !allAns) return;
     S.step = i; save(); render(true);
+    if (i === 3) { MAILST = ''; SAVED = !!user(); persist(LAST); refreshBox(); }
     var top = root.getBoundingClientRect().top + window.scrollY - 90;
     if (window.scrollY > top) window.scrollTo({ top: top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }

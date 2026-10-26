@@ -423,6 +423,117 @@ Object.assign(TRANSLATIONS, {
   "Replay": { fr: "Replay", es: "Repetición", ht: "Repriz", pt: "Replay", de: "Wiederholung", ja: "リプレイ", zh: "回放" },
 });
 
+// Discipline Test card, Trader Report (both tests), banner, "Trading Test" names (Oct 26 2026)
+Object.assign(TRANSLATIONS, {
+  "A high win rate with small wins means one bad day erases a week. Hold winners to your target.": {"fr": "Un taux de réussite élevé avec de petits gains veut dire qu’une mauvaise journée efface une semaine. Garde tes gagnants jusqu’à ton objectif.", "es": "Una tasa de acierto alta con ganancias pequeñas significa que un mal día borra una semana. Mantén los ganadores hasta tu objetivo.", "ht": "Yon to genyen ki wo ak ti genyen piti vle di yon move jou efase yon semèn. Kenbe trade ki ap genyen yo jiska objektif ou.", "pt": "Uma taxa de acerto alta com ganhos pequenos significa que um dia ruim apaga uma semana. Segure os ganhadores até o seu alvo.", "de": "Eine hohe Trefferquote mit kleinen Gewinnen heißt: Ein schlechter Tag löscht eine Woche. Halte Gewinner bis zu deinem Ziel.", "ja": "勝率が高くても利益が小さいと、悪い1日で1週間分が消えます。利益は目標まで持ちましょう。", "zh": "胜率高但盈利小，一个糟糕的日子就能抹掉一周的成果。把盈利单拿到你的目标。"},
+  "A normal losing streak can end your account. Size each trade so at least 15 full losses fit in your drawdown.": {"fr": "Une série de pertes normale peut faire sauter ton compte. Choisis la taille de chaque trade pour qu’au moins 15 pertes complètes tiennent dans ton drawdown.", "es": "Una racha de pérdidas normal puede acabar con tu cuenta. Elige el tamaño de cada trade para que al menos 15 pérdidas completas quepan en tu drawdown.", "ht": "Yon seri pèt nòmal ka fini ak kont ou. Chwazi gwosè chak trade pou omwen 15 pèt konplè ka antre nan drawdown ou.", "pt": "Uma sequência normal de perdas pode acabar com sua conta. Defina o tamanho de cada trade para que pelo menos 15 perdas completas caibam no seu drawdown.", "de": "Eine normale Verlustserie kann dein Konto beenden. Wähle die Größe jedes Trades so, dass mindestens 15 volle Verluste in deinen Drawdown passen.", "ja": "普通の連敗でも口座が終わることがあります。少なくとも15回のフル損失がドローダウンに収まるように、各トレードのサイズを決めましょう。", "zh": "一段正常的连亏就可能让你爆掉账户。设定每笔交易的仓位，让回撤额度至少能承受 15 次全额亏损。"},
+  "Accountability & Review": {"fr": "Responsabilité & bilan", "es": "Responsabilidad & revisión", "ht": "Responsablite & revizyon", "pt": "Responsabilidade & revisão", "de": "Verantwortung & Review", "ja": "責任と振り返り", "zh": "问责与复盘"},
+  "After 2 losses, the day is over. After any loss, wait for the next full setup: no faster entry, no bigger size.": {"fr": "Après 2 pertes, la journée est finie. Après chaque perte, attends le prochain setup complet : pas d’entrée plus rapide, pas de taille plus grosse.", "es": "Después de 2 pérdidas, el día se acabó. Después de cualquier pérdida, espera el próximo setup completo: sin entrar más rápido, sin más tamaño.", "ht": "Apre 2 pèt, jounen an fini. Apre nenpòt pèt, tann pwochen setup konplè a: pa antre pi vit, pa ogmante gwosè.", "pt": "Depois de 2 perdas, o dia acabou. Depois de qualquer perda, espere o próximo setup completo: sem entrada mais rápida, sem tamanho maior.", "de": "Nach 2 Verlusten ist der Tag vorbei. Nach jedem Verlust wartest du auf das nächste volle Setup: kein schnellerer Einstieg, keine größere Größe.", "ja": "2回負けたらその日は終わり。負けた後は次の完全なセットアップを待つこと。早く入らない、サイズを上げない。", "zh": "亏损 2 次后，今天就结束。任何亏损之后，都要等下一个完整的 setup：不抢先入场，不加大仓位。"},
+  "Average of both tests": {"fr": "Moyenne des deux tests", "es": "Promedio de los dos tests", "ht": "Mwayèn de tès yo", "pt": "Média dos dois testes", "de": "Durchschnitt beider Tests", "ja": "2つのテストの平均", "zh": "两项测试的平均分"},
+  "Be flat 5 minutes before red-folder news (CPI, NFP, FOMC). Read your firm’s rules once a week.": {"fr": "Sois sans position 5 minutes avant les news rouges (CPI, NFP, FOMC). Lis les règles de ta firme une fois par semaine.", "es": "Quédate sin posiciones 5 minutos antes de las noticias rojas (CPI, NFP, FOMC). Lee las reglas de tu firma una vez por semana.", "ht": "Pa gen okenn pozisyon 5 minit anvan nouvèl wouj yo (CPI, NFP, FOMC). Li règ firm ou yon fwa pa semèn.", "pt": "Fique sem posição 5 minutos antes das notícias de pasta vermelha (CPI, NFP, FOMC). Leia as regras da sua mesa uma vez por semana.", "de": "Sei 5 Minuten vor roten News (CPI, NFP, FOMC) flat. Lies die Regeln deiner Firma einmal pro Woche.", "ja": "重要ニュース（CPI、NFP、FOMC）の5分前にはポジションをなくしましょう。ファームのルールは週に1回読みましょう。", "zh": "红色重大新闻（CPI、NFP、FOMC）前 5 分钟要空仓。每周读一次你公司的规则。"},
+  "Both tests together": {"fr": "Les deux tests ensemble", "es": "Los dos tests juntos", "ht": "De tès yo ansanm", "pt": "Os dois testes juntos", "de": "Beide Tests zusammen", "ja": "2つのテストを合わせて", "zh": "两项测试合并"},
+  "Cap the daily profit so one day never carries the account.": {"fr": "Limite le profit par jour pour qu’un seul jour ne porte jamais le compte.", "es": "Limita la ganancia diaria para que un solo día nunca sostenga la cuenta.", "ht": "Mete yon limit sou pwofi chak jou pou yon sèl jou pa janm pote kont lan.", "pt": "Limite o lucro diário para que um único dia nunca carregue a conta.", "de": "Begrenze den Tagesgewinn, damit nie ein einzelner Tag das Konto trägt.", "ja": "1日の利益に上限をつけ、1日だけで口座を支えないようにしましょう。", "zh": "给每日盈利设上限，别让一天的盈利撑起整个账户。"},
+  "Cap your daily profit so no single day is more than 30% of your total. Spread the target over many days.": {"fr": "Limite ton profit par jour pour qu’aucun jour ne dépasse 30% de ton total. Répartis l’objectif sur plusieurs jours.", "es": "Limita tu ganancia diaria para que ningún día sea más del 30% de tu total. Reparte el objetivo en muchos días.", "ht": "Mete yon limit sou pwofi chak jou pou okenn jou pa depase 30% total ou. Separe objektif la sou plizyè jou.", "pt": "Limite seu lucro diário para que nenhum dia passe de 30% do seu total. Distribua a meta por muitos dias.", "de": "Begrenze deinen Tagesgewinn, damit kein Tag mehr als 30% deines Gesamtgewinns ist. Verteile das Ziel auf viele Tage.", "ja": "1日の利益に上限をつけ、どの日も合計の30%を超えないようにしましょう。目標は何日にも分けて達成します。", "zh": "给每日盈利设上限，让任何一天都不超过总额的 30%。把目标分摊到很多天。"},
+  "Chance to reach the payout": {"fr": "Chance d’atteindre le payout", "es": "Probabilidad de llegar al pago", "ht": "Chans pou rive nan peman an", "pt": "Chance de chegar ao saque", "de": "Chance auf die Auszahlung", "ja": "ペイアウトに届く確率", "zh": "达到出金的概率"},
+  "Chaotic Trader": {"fr": "Trader chaotique", "es": "Trader caótico", "ht": "Trader dezòdone", "pt": "Trader caótico", "de": "Chaotischer Trader", "ja": "混乱型トレーダー", "zh": "混乱型交易者"},
+  "Chasing (FOMO)": {"fr": "Courir après le prix (FOMO)", "es": "Perseguir el precio (FOMO)", "ht": "Kouri dèyè pri (FOMO)", "pt": "Perseguir o preço (FOMO)", "de": "Hinterherjagen (FOMO)", "ja": "追いかけ(FOMO)", "zh": "追单(FOMO)"},
+  "Chasing (FOMO) is leaking.": {"fr": "Fuite : courir après le prix (FOMO).", "es": "Fuga: perseguir el precio (FOMO).", "ht": "Fwit: kouri dèyè pri (FOMO).", "pt": "Vazamento: perseguir o preço (FOMO).", "de": "Leck: Hinterherjagen (FOMO).", "ja": "追いかけ(FOMO)でもれています。", "zh": "漏洞：追单(FOMO)。"},
+  "Chasing and ego": {"fr": "Courir après le prix et ego", "es": "Perseguir el precio y ego", "ht": "Kouri dèyè pri ak ego", "pt": "Perseguir o preço e ego", "de": "Hinterherjagen und Ego", "ja": "追いかけとエゴ", "zh": "追单与自负"},
+  "Combined score": {"fr": "Score combiné", "es": "Puntuación combinada", "ht": "Nòt konbine", "pt": "Pontuação combinada", "de": "Gesamt-Score", "ja": "総合スコア", "zh": "综合分数"},
+  "Consistency rule": {"fr": "Règle de régularité", "es": "Regla de consistencia", "ht": "Règ konsistans", "pt": "Regra de consistência", "de": "Konsistenzregel", "ja": "一貫性ルール", "zh": "一致性规则"},
+  "Could be luck": {"fr": "Peut-être de la chance", "es": "Podría ser suerte", "ht": "Ka se chans", "pt": "Pode ser sorte", "de": "Könnte Glück sein", "ja": "運かもしれない", "zh": "可能是运气"},
+  "Cutting winners": {"fr": "Couper les gagnants", "es": "Cortar ganadores", "ht": "Koupe trade ki ap genyen", "pt": "Cortar ganhadores", "de": "Gewinner zu früh schließen", "ja": "利益を早く切る", "zh": "过早砍掉盈利单"},
+  "Cutting winners is leaking.": {"fr": "Fuite : couper les gagnants.", "es": "Fuga: cortar ganadores.", "ht": "Fwit: koupe trade ki ap genyen.", "pt": "Vazamento: cortar ganhadores.", "de": "Leck: Gewinner zu früh schließen.", "ja": "利益を早く切ることでもれています。", "zh": "漏洞：过早砍掉盈利单。"},
+  "Discipline Test": {"fr": "Test de discipline", "es": "Test de Disciplina", "ht": "Tès Disiplin", "pt": "Teste de Disciplina", "de": "Disziplintest", "ja": "規律テスト", "zh": "纪律测试"},
+  "Discipline score": {"fr": "Score de discipline", "es": "Puntuación de disciplina", "ht": "Nòt disiplin", "pt": "Pontuação de disciplina", "de": "Disziplin-Score", "ja": "規律スコア", "zh": "纪律分数"},
+  "Ego & Overconfidence": {"fr": "Ego & excès de confiance", "es": "Ego & exceso de confianza", "ht": "Ego & twòp konfyans", "pt": "Ego & excesso de confiança", "de": "Ego & Selbstüberschätzung", "ja": "エゴと過信", "zh": "自负与过度自信"},
+  "Emotional Trader": {"fr": "Trader émotif", "es": "Trader emocional", "ht": "Trader emosyonèl", "pt": "Trader emocional", "de": "Emotionaler Trader", "ja": "感情型トレーダー", "zh": "情绪型交易者"},
+  "Emotions and revenge": {"fr": "Émotions et revanche", "es": "Emociones y venganza", "ht": "Emosyon ak revanj", "pt": "Emoções e vingança", "de": "Emotionen und Revenge", "ja": "感情とリベンジ", "zh": "情绪与报复"},
+  "Execution": {"fr": "Exécution", "es": "Ejecución", "ht": "Egzekisyon", "pt": "Execução", "de": "Ausführung", "ja": "実行", "zh": "执行"},
+  "Execution & Discipline": {"fr": "Exécution & discipline", "es": "Ejecución & disciplina", "ht": "Egzekisyon & disiplin", "pt": "Execução & disciplina", "de": "Ausführung & Disziplin", "ja": "実行と規律", "zh": "执行与纪律"},
+  "Execution gap": {"fr": "Écart d’exécution", "es": "Brecha de ejecución", "ht": "Twou nan egzekisyon", "pt": "Lacuna de execução", "de": "Ausführungslücke", "ja": "実行のズレ", "zh": "执行差距"},
+  "Find your leak.": {"fr": "Trouve ta fuite.", "es": "Encuentra tu fuga.", "ht": "Jwenn kote ou ap koule.", "pt": "Encontre seu vazamento.", "de": "Finde dein Leck.", "ja": "もれている所を見つけよう。", "zh": "找到你的漏洞。"},
+  "Fix the strategy before the discipline.": {"fr": "Corrige la stratégie avant la discipline.", "es": "Arregla la estrategia antes que la disciplina.", "ht": "Ranje estrateji a anvan disiplin nan.", "pt": "Corrija a estratégia antes da disciplina.", "de": "Repariere die Strategie vor der Disziplin.", "ja": "規律より先に戦略を直しましょう。", "zh": "先修好策略，再谈纪律。"},
+  "Fix these first": {"fr": "Corrige ça d’abord", "es": "Arregla esto primero", "ht": "Ranje sa yo anvan", "pt": "Corrija isto primeiro", "de": "Zuerst das beheben", "ja": "まずここを直す", "zh": "先改这些"},
+  "Hard stop on every trade, size from the drawdown, never move the stop away.": {"fr": "Stop fixe sur chaque trade, taille selon le drawdown, n’éloigne jamais le stop.", "es": "Stop fijo en cada trade, tamaño según el drawdown, nunca alejes el stop.", "ht": "Stop fiks sou chak trade, gwosè dapre drawdown la, pa janm deplase stop la pi lwen.", "pt": "Stop fixo em cada trade, tamanho pelo drawdown, nunca afaste o stop.", "de": "Fester Stop bei jedem Trade, Größe nach dem Drawdown, Stop nie weiter wegschieben.", "ja": "すべてのトレードに固定ストップ、サイズはドローダウンから決め、ストップは絶対に遠ざけない。", "zh": "每笔交易都设硬止损，按回撤额度定仓位，永远不把止损挪远。"},
+  "If price left without you, the trade is gone. Write the entry before the move; no market orders after a big candle.": {"fr": "Si le prix est parti sans toi, le trade est fini. Écris l’entrée avant le mouvement ; pas d’ordre au marché après une grosse bougie.", "es": "Si el precio se fue sin ti, el trade ya pasó. Escribe la entrada antes del movimiento; nada de órdenes a mercado después de una vela grande.", "ht": "Si pri a ale san ou, trade la fini. Ekri antre a anvan mouvman an; pa gen market order apre yon gwo chandèl.", "pt": "Se o preço foi embora sem você, o trade acabou. Escreva a entrada antes do movimento; nada de ordem a mercado depois de um candle grande.", "de": "Wenn der Preis ohne dich gelaufen ist, ist der Trade weg. Schreib den Einstieg vor der Bewegung auf; keine Market-Orders nach einer großen Kerze.", "ja": "価格があなたを置いて動いたら、そのトレードは終わりです。動く前にエントリーを書きましょう。大きなローソク足の後に成行注文はしない。", "zh": "如果价格已经走了，这笔交易就没了。在行情启动前写好入场点；大K线之后不要下市价单。"},
+  "Let exits work by rule and cap your trades a day.": {"fr": "Laisse les sorties suivre la règle et limite tes trades par jour.", "es": "Deja que las salidas sigan la regla y limita tus trades al día.", "ht": "Kite sòti yo swiv règ la epi mete yon limit sou trade ou pa jou.", "pt": "Deixe as saídas seguirem a regra e limite seus trades por dia.", "de": "Lass Ausstiege nach Regel laufen und begrenze deine Trades pro Tag.", "ja": "決済はルールに任せ、1日のトレード数に上限をつけましょう。", "zh": "按规则离场，并限制每天的交易次数。"},
+  "Let the target or a written exit rule close the trade, not fear.": {"fr": "Laisse l’objectif ou une règle de sortie écrite fermer le trade, pas la peur.", "es": "Deja que el objetivo o una regla de salida escrita cierre el trade, no el miedo.", "ht": "Kite objektif la oswa yon règ sòti ki ekri fèmen trade la, pa laperèz.", "pt": "Deixe o alvo ou uma regra de saída escrita fechar o trade, não o medo.", "de": "Lass das Ziel oder eine schriftliche Ausstiegsregel den Trade schließen, nicht die Angst.", "ja": "トレードを閉じるのは目標か書いた決済ルールに任せ、恐怖に任せないでください。", "zh": "让目标或写好的离场规则来平仓，而不是恐惧。"},
+  "Let the target or your exit rule close the trade. Take partials only by a written rule.": {"fr": "Laisse l’objectif ou ta règle de sortie fermer le trade. Prends des partiels seulement selon une règle écrite.", "es": "Deja que el objetivo o tu regla de salida cierre el trade. Toma parciales solo con una regla escrita.", "ht": "Kite objektif la oswa règ sòti ou fèmen trade la. Pran pasyèl sèlman dapre yon règ ki ekri.", "pt": "Deixe o alvo ou sua regra de saída fechar o trade. Faça parciais só por uma regra escrita.", "de": "Lass das Ziel oder deine Ausstiegsregel den Trade schließen. Nimm Teilgewinne nur nach einer schriftlichen Regel.", "ja": "トレードを閉じるのは目標か決済ルールに任せましょう。部分決済は書いたルールの通りだけにします。", "zh": "让目标或你的离场规则来平仓。只按写好的规则部分止盈。"},
+  "Losses bigger than the stop": {"fr": "Pertes plus grosses que le stop", "es": "Pérdidas mayores que el stop", "ht": "Pèt pi gwo pase stop la", "pt": "Perdas maiores que o stop", "de": "Verluste größer als der Stop", "ja": "ストップより大きい損失", "zh": "亏损大于止损"},
+  "Mindset & Emotions": {"fr": "Mental & émotions", "es": "Mentalidad & emociones", "ht": "Mantalite & emosyon", "pt": "Mentalidade & emoções", "de": "Mindset & Emotionen", "ja": "マインドと感情", "zh": "心态与情绪"},
+  "Missed moves stay missed. Write the entry before the move.": {"fr": "Un mouvement raté reste raté. Écris l’entrée avant le mouvement.", "es": "Un movimiento perdido se queda perdido. Escribe la entrada antes del movimiento.", "ht": "Mouvman ou rate rete rate. Ekri antre a anvan mouvman an.", "pt": "Movimento perdido continua perdido. Escreva a entrada antes do movimento.", "de": "Verpasste Bewegungen bleiben verpasst. Schreib den Einstieg vor der Bewegung auf.", "ja": "逃した値動きは逃したまま。値動きの前にエントリーを書きましょう。", "zh": "错过的行情就让它过去。在行情启动前写好入场点。"},
+  "News and firm rules": {"fr": "News et règles de la firme", "es": "Noticias y reglas de la firma", "ht": "Nouvèl ak règ firm nan", "pt": "Notícias e regras da mesa", "de": "News und Firmenregeln", "ja": "ニュースとファームのルール", "zh": "新闻和公司规则"},
+  "News and firm rules are leaking.": {"fr": "Fuite : news et règles de la firme.", "es": "Fuga: noticias y reglas de la firma.", "ht": "Fwit: nouvèl ak règ firm nan.", "pt": "Vazamento: notícias e regras da mesa.", "de": "Leck: News und Firmenregeln.", "ja": "ニュースとファームのルールでもれています。", "zh": "漏洞：新闻和公司规则。"},
+  "No edge": {"fr": "Pas d’edge", "es": "Sin ventaja", "ht": "Pa gen edge", "pt": "Sem edge", "de": "Kein Edge", "ja": "エッジなし", "zh": "没有优势"},
+  "Not enough proof yet.": {"fr": "Pas encore assez de preuves.", "es": "Aún no hay pruebas suficientes.", "ht": "Poko gen ase prèv.", "pt": "Ainda não há provas suficientes.", "de": "Noch nicht genug Beweise.", "ja": "まだ証拠が足りません。", "zh": "证据还不够。"},
+  "Not taken yet": {"fr": "Pas encore fait", "es": "Aún no hecho", "ht": "Poko fè l", "pt": "Ainda não feito", "de": "Noch nicht gemacht", "ja": "未受験", "zh": "尚未参加"},
+  "Overtrading": {"fr": "Overtrading", "es": "Sobreoperar", "ht": "Twòp trade", "pt": "Overtrading", "de": "Overtrading", "ja": "オーバートレード", "zh": "过度交易"},
+  "Overtrading is leaking.": {"fr": "Fuite : overtrading.", "es": "Fuga: sobreoperar.", "ht": "Fwit: twòp trade.", "pt": "Vazamento: overtrading.", "de": "Leck: Overtrading.", "ja": "オーバートレードでもれています。", "zh": "漏洞：过度交易。"},
+  "PF": {"fr": "PF", "es": "PF", "ht": "PF", "pt": "PF", "de": "PF", "ja": "PF", "zh": "PF"},
+  "Plan and journal": {"fr": "Plan et journal", "es": "Plan y diario", "ht": "Plan ak jounal", "pt": "Plano e diário", "de": "Plan und Journal", "ja": "計画とジャーナル", "zh": "计划和日志"},
+  "Plan and journal are leaking.": {"fr": "Fuite : plan et journal.", "es": "Fuga: plan y diario.", "ht": "Fwit: plan ak jounal.", "pt": "Vazamento: plano e diário.", "de": "Leck: Plan und Journal.", "ja": "計画とジャーナルでもれています。", "zh": "漏洞：计划和日志。"},
+  "Plan before the open, check the news calendar, journal every trade.": {"fr": "Fais ton plan avant l’ouverture, vérifie le calendrier des news, note chaque trade dans ton journal.", "es": "Planea antes de la apertura, revisa el calendario de noticias, anota cada trade en tu diario.", "ht": "Fè plan ou anvan ouvèti a, tcheke kalandriye nouvèl yo, ekri chak trade nan jounal ou.", "pt": "Planeje antes da abertura, confira o calendário de notícias, registre cada trade no diário.", "de": "Plane vor der Eröffnung, prüfe den News-Kalender, führe Journal über jeden Trade.", "ja": "寄り付き前に計画し、ニュースカレンダーを確認し、すべてのトレードを記録しましょう。", "zh": "开盘前做计划，查看新闻日历，每笔交易都写日志。"},
+  "Plan, rules and review": {"fr": "Plan, règles et bilan", "es": "Plan, reglas y revisión", "ht": "Plan, règ ak revizyon", "pt": "Plano, regras e revisão", "de": "Plan, Regeln und Review", "ja": "計画、ルール、振り返り", "zh": "计划、规则与复盘"},
+  "Planning & Process": {"fr": "Planification & processus", "es": "Planificación & proceso", "ht": "Planifikasyon & pwosesis", "pt": "Planejamento & processo", "de": "Planung & Prozess", "ja": "計画とプロセス", "zh": "计划与流程"},
+  "Positive edge": {"fr": "Edge positif", "es": "Ventaja positiva", "ht": "Edge pozitif", "pt": "Edge positivo", "de": "Positiver Edge", "ja": "プラスのエッジ", "zh": "正优势"},
+  "Readiness": {"fr": "Préparation", "es": "Preparación", "ht": "Preparasyon", "pt": "Preparo", "de": "Bereitschaft", "ja": "準備", "zh": "准备状态"},
+  "Readiness & Lifestyle": {"fr": "Préparation & mode de vie", "es": "Preparación & estilo de vida", "ht": "Preparasyon & mòd lavi", "pt": "Preparo & estilo de vida", "de": "Bereitschaft & Lebensstil", "ja": "準備と生活習慣", "zh": "准备与生活方式"},
+  "Revenge Trading": {"fr": "Trading de revanche", "es": "Trading de venganza", "ht": "Trade pou revanj", "pt": "Trading de vingança", "de": "Revenge-Trading", "ja": "リベンジトレード", "zh": "报复性交易"},
+  "Revenge trading": {"fr": "Trading de revanche", "es": "Trading de venganza", "ht": "Trade pou revanj", "pt": "Trading de vingança", "de": "Revenge-Trading", "ja": "リベンジトレード", "zh": "报复性交易"},
+  "Revenge trading is leaking.": {"fr": "Fuite : trading de revanche.", "es": "Fuga: trading de venganza.", "ht": "Fwit: trade pou revanj.", "pt": "Vazamento: trading de vingança.", "de": "Leck: Revenge-Trading.", "ja": "リベンジトレードでもれています。", "zh": "漏洞：报复性交易。"},
+  "Risk Management": {"fr": "Gestion du risque", "es": "Gestión del riesgo", "ht": "Jesyon risk", "pt": "Gestão de risco", "de": "Risikomanagement", "ja": "リスク管理", "zh": "风险管理"},
+  "Risk a trade": {"fr": "Risque par trade", "es": "Riesgo por trade", "ht": "Risk pa trade", "pt": "Risco por trade", "de": "Risiko pro Trade", "ja": "1トレードのリスク", "zh": "每笔风险"},
+  "Risk and stops": {"fr": "Risque et stops", "es": "Riesgo y stops", "ht": "Risk ak stop", "pt": "Risco e stops", "de": "Risiko und Stops", "ja": "リスクとストップ", "zh": "风险与止损"},
+  "Risk too big": {"fr": "Risque trop gros", "es": "Riesgo muy grande", "ht": "Risk twò gwo", "pt": "Risco grande demais", "de": "Risiko zu groß", "ja": "リスクが大きすぎる", "zh": "风险太大"},
+  "Sleep, focus and a calm start before you trade.": {"fr": "Sommeil, concentration et un départ calme avant de trader.", "es": "Sueño, enfoque y un inicio tranquilo antes de operar.", "ht": "Dòmi, konsantrasyon ak yon kòmansman kal anvan ou trade.", "pt": "Sono, foco e um começo calmo antes de operar.", "de": "Schlaf, Fokus und ein ruhiger Start, bevor du tradest.", "ja": "トレード前の睡眠、集中、落ち着いたスタート。", "zh": "交易前要睡好、专注、平静开局。"},
+  "Stop-Loss Discipline": {"fr": "Discipline du stop-loss", "es": "Disciplina del stop-loss", "ht": "Disiplin stop-loss", "pt": "Disciplina de stop-loss", "de": "Stop-Loss-Disziplin", "ja": "ストップロスの規律", "zh": "止损纪律"},
+  "Stops and size": {"fr": "Stops et taille", "es": "Stops y tamaño", "ht": "Stop ak gwosè", "pt": "Stops e tamanho", "de": "Stops und Größe", "ja": "ストップとサイズ", "zh": "止损和仓位"},
+  "Stops and size are leaking.": {"fr": "Fuite : stops et taille.", "es": "Fuga: stops y tamaño.", "ht": "Fwit: stop ak gwosè.", "pt": "Vazamento: stops e tamanho.", "de": "Leck: Stops und Größe.", "ja": "ストップとサイズでもれています。", "zh": "漏洞：止损和仓位。"},
+  "Systematic Operator": {"fr": "Opérateur systématique", "es": "Operador sistemático", "ht": "Operatè sistematik", "pt": "Operador sistemático", "de": "Systematischer Operator", "ja": "システマチック型オペレーター", "zh": "系统化操作者"},
+  "Take a partial at +1R or move the stop to break-even by rule, so open profit cannot breach you.": {"fr": "Prends un partiel à +1R ou mets le stop au break-even selon une règle, pour que le profit ouvert ne te fasse jamais toucher le plancher.", "es": "Toma un parcial en +1R o mueve el stop a break-even por regla, para que la ganancia abierta no te haga romper el piso.", "ht": "Pran yon pasyèl a +1R oswa mete stop la nan break-even dapre règ, pou pwofi ki ouvè a pa ka fè ou kraze planche a.", "pt": "Faça uma parcial em +1R ou mova o stop para o break-even por regra, para que o lucro aberto não faça você romper o piso.", "de": "Nimm bei +1R einen Teilgewinn oder zieh den Stop nach Regel auf Break-even, damit offener Gewinn dich nicht unter die Grenze bringt.", "ja": "+1Rで部分決済するか、ルール通りにストップを建値に動かして、含み益を失っても下限を割らないようにしましょう。", "zh": "在 +1R 部分止盈，或按规则把止损移到保本，这样浮盈回吐也不会让你跌破底线。"},
+  "Take both tests for the full picture": {"fr": "Passe les deux tests pour avoir l’image complète", "es": "Haz los dos tests para ver el panorama completo", "ht": "Fè de tès yo pou wè tout tablo a", "pt": "Faça os dois testes para ver o quadro completo", "de": "Mach beide Tests für das ganze Bild", "ja": "全体像を見るには2つのテストを受けましょう", "zh": "完成两项测试，看到完整画面"},
+  "Take the 3-minute Discipline Test. Your result is saved here, next to your Trading Test.": {"fr": "Passe le test de discipline de 3 minutes. Ton résultat est enregistré ici, à côté de ton test de trading.", "es": "Haz el Test de Disciplina de 3 minutos. Tu resultado se guarda aquí, junto a tu Test de Trading.", "ht": "Fè Tès Disiplin 3 minit lan. Rezilta ou ap sove isit la, bò kote Tès Trading ou.", "pt": "Faça o Teste de Disciplina de 3 minutos. Seu resultado fica salvo aqui, ao lado do seu Teste de Trading.", "de": "Mach den 3-Minuten-Disziplintest. Dein Ergebnis wird hier gespeichert, neben deinem Trading-Test.", "ja": "3分の規律テストを受けましょう。結果はここに、トレーディングテストの隣に保存されます。", "zh": "做一下 3 分钟纪律测试。你的结果会保存在这里，就在你的交易测试旁边。"},
+  "Take the Trading Test": {"fr": "Passer le test de trading", "es": "Hacer el Test de Trading", "ht": "Fè Tès Trading lan", "pt": "Fazer o Teste de Trading", "de": "Trading-Test machen", "ja": "トレーディングテストを受ける", "zh": "参加交易测试"},
+  "Take the test": {"fr": "Passer le test", "es": "Hacer el test", "ht": "Fè tès la", "pt": "Fazer o teste", "de": "Test machen", "ja": "テストを受ける", "zh": "参加测试"},
+  "Target kept": {"fr": "Objectif tenu", "es": "Objetivo cumplido", "ht": "Objektif kenbe", "pt": "Alvo mantido", "de": "Ziel gehalten", "ja": "目標の達成度", "zh": "目标保留率"},
+  "The consistency rule is leaking.": {"fr": "Fuite : règle de régularité.", "es": "Fuga: regla de consistencia.", "ht": "Fwit: règ konsistans.", "pt": "Vazamento: regra de consistência.", "de": "Leck: Konsistenzregel.", "ja": "一貫性ルールでもれています。", "zh": "漏洞：一致性规则。"},
+  "The two tests disagree": {"fr": "Les deux tests ne sont pas d’accord", "es": "Los dos tests no coinciden", "ht": "De tès yo pa dakò", "pt": "Os dois testes não batem", "de": "Die beiden Tests widersprechen sich", "ja": "2つのテストの結果が合いません", "zh": "两项测试结果不一致"},
+  "Time bomb": {"fr": "Bombe à retardement", "es": "Bomba de tiempo", "ht": "Bonm a retadman", "pt": "Bomba-relógio", "de": "Zeitbombe", "ja": "時限爆弾", "zh": "定时炸弹"},
+  "Trading Test": {"fr": "Test de trading", "es": "Test de Trading", "ht": "Tès Trading", "pt": "Teste de Trading", "de": "Trading-Test", "ja": "トレーディングテスト", "zh": "交易测试"},
+  "Trading days to payout": {"fr": "Jours de trading jusqu’au payout", "es": "Días de trading hasta el pago", "ht": "Jou trading jiska peman", "pt": "Dias de trading até o saque", "de": "Handelstage bis zur Auszahlung", "ja": "ペイアウトまでの取引日数", "zh": "到出金的交易天数"},
+  "Trailing drawdown and a big target fight each other.": {"fr": "Le drawdown trailing et un gros objectif se battent l’un contre l’autre.", "es": "El drawdown trailing y un objetivo grande chocan entre sí.", "ht": "Drawdown trailing ak yon gwo objektif ap goumen youn ak lòt.", "pt": "Drawdown trailing e uma meta grande brigam entre si.", "de": "Trailing-Drawdown und ein großes Ziel arbeiten gegeneinander.", "ja": "トレーリング・ドローダウンと大きな目標はぶつかり合います。", "zh": "跟踪回撤和大目标会互相冲突。"},
+  "Trailing trap": {"fr": "Piège du trailing", "es": "Trampa del trailing", "ht": "Pyèj trailing", "pt": "Armadilha do trailing", "de": "Trailing-Falle", "ja": "トレーリングの罠", "zh": "跟踪回撤陷阱"},
+  "Two losses end the day. After a loss, only the next full setup.": {"fr": "Deux pertes finissent la journée. Après une perte, seulement le prochain setup complet.", "es": "Dos pérdidas terminan el día. Después de una pérdida, solo el próximo setup completo.", "ht": "De pèt fini jounen an. Apre yon pèt, sèlman pwochen setup konplè a.", "pt": "Duas perdas encerram o dia. Depois de uma perda, só o próximo setup completo.", "de": "Zwei Verluste beenden den Tag. Nach einem Verlust nur das nächste volle Setup.", "ja": "2敗でその日は終わり。負けた後は、次の完全なセットアップだけ。", "zh": "亏两笔就收工。亏损后，只做下一个完整的 setup。"},
+  "Use a hard stop on every trade and never move it further away. Size from your drawdown, never from how sure you feel.": {"fr": "Mets un stop fixe sur chaque trade et ne l’éloigne jamais. Choisis ta taille selon ton drawdown, jamais selon ta confiance.", "es": "Usa un stop fijo en cada trade y nunca lo alejes. Elige el tamaño según tu drawdown, nunca según lo seguro que te sientas.", "ht": "Mete yon stop fiks sou chak trade epi pa janm deplase l pi lwen. Chwazi gwosè a dapre drawdown ou, pa janm dapre jan ou santi ou sèten.", "pt": "Use um stop fixo em cada trade e nunca o afaste. Defina o tamanho pelo seu drawdown, nunca por quão seguro você se sente.", "de": "Setz bei jedem Trade einen festen Stop und schieb ihn nie weiter weg. Bestimme die Größe nach deinem Drawdown, nie danach, wie sicher du dich fühlst.", "ja": "すべてのトレードに固定ストップを置き、遠くへ動かさないこと。サイズはドローダウンで決め、自信の大きさで決めないこと。", "zh": "每笔交易都设硬止损，绝不往远处挪。按回撤额度定仓位，绝不按你有多确定来定。"},
+  "WR vs break-even WR": {"fr": "WR vs WR d’équilibre", "es": "WR vs WR de equilibrio", "ht": "WR kont WR pou pa pèdi", "pt": "WR vs WR de break-even", "de": "WR vs. Break-even-WR", "ja": "WR と損益分岐 WR", "zh": "WR 对比 保本 WR"},
+  "When one test says strong and the other says weak, one of the answers was not fully honest. Look at these again.": {"fr": "Quand un test dit fort et l’autre dit faible, une des réponses n’était pas tout à fait honnête. Regarde-les encore.", "es": "Cuando un test dice fuerte y el otro dice débil, una de las respuestas no fue del todo honesta. Míralas otra vez.", "ht": "Lè yon tès di fò epi lòt la di fèb, youn nan repons yo pa t onèt nèt. Gade yo ankò.", "pt": "Quando um teste diz forte e o outro diz fraco, uma das respostas não foi totalmente honesta. Olhe estas de novo.", "de": "Wenn ein Test stark sagt und der andere schwach, war eine der Antworten nicht ganz ehrlich. Schau sie dir noch mal an.", "ja": "一方のテストが「強い」、もう一方が「弱い」と言うなら、どちらかの回答が完全には正直ではありませんでした。もう一度見直しましょう。", "zh": "如果一项测试说强、另一项说弱，说明有些回答不完全诚实。再看一遍这些。"},
+  "Where your discipline leaks": {"fr": "Où ta discipline fuit", "es": "Dónde se escapa tu disciplina", "ht": "Kote disiplin ou ap koule", "pt": "Onde sua disciplina vaza", "de": "Wo deine Disziplin leckt", "ja": "規律がもれている所", "zh": "你的纪律漏洞在哪里"},
+  "Why do prop traders fail?": {"fr": "Pourquoi les traders prop échouent-ils ?", "es": "¿Por qué fallan los traders de prop?", "ht": "Poukisa trader prop yo echwe?", "pt": "Por que os traders de mesa prop falham?", "de": "Warum scheitern Prop-Trader?", "ja": "なぜプロップトレーダーは失敗するのか？", "zh": "为什么 prop 交易者会失败？"},
+  "Work on these first": {"fr": "Travaille ça d’abord", "es": "Trabaja esto primero", "ht": "Travay sou sa yo anvan", "pt": "Trabalhe nisto primeiro", "de": "Daran zuerst arbeiten", "ja": "まずここに取り組む", "zh": "先改进这些"},
+  "Write the plan before the open and journal every trade, even the no-trade days.": {"fr": "Écris le plan avant l’ouverture et note chaque trade dans ton journal, même les jours sans trade.", "es": "Escribe el plan antes de la apertura y anota cada trade en tu diario, incluso los días sin trades.", "ht": "Ekri plan an anvan ouvèti a epi ekri chak trade nan jounal ou, menm jou ou pa trade yo.", "pt": "Escreva o plano antes da abertura e registre cada trade no diário, mesmo nos dias sem trade.", "de": "Schreib den Plan vor der Eröffnung und führe Journal über jeden Trade, auch an Tagen ohne Trade.", "ja": "寄り付き前に計画を書き、すべてのトレードを記録しましょう。トレードしない日も記録します。", "zh": "开盘前写好计划，每笔交易都写日志，没交易的日子也要写。"},
+  "You have a plan, but losses, missed moves and open profit push you off it. Hard rules beat willpower here.": {"fr": "Tu as un plan, mais les pertes, les mouvements ratés et le profit ouvert te font le lâcher. Ici, des règles fixes battent la volonté.", "es": "Tienes un plan, pero las pérdidas, los movimientos perdidos y la ganancia abierta te sacan de él. Aquí las reglas firmes ganan a la fuerza de voluntad.", "ht": "Ou gen yon plan, men pèt, mouvman ou rate ak pwofi ki ouvè fè ou kite l. Isit la, règ fèm pi bon pase volonte.", "pt": "Você tem um plano, mas perdas, movimentos perdidos e lucro aberto tiram você dele. Aqui, regras firmes vencem a força de vontade.", "de": "Du hast einen Plan, aber Verluste, verpasste Bewegungen und offener Gewinn bringen dich davon ab. Hier schlagen feste Regeln die Willenskraft.", "ja": "計画はありますが、損失、逃した値動き、含み益があなたを計画から外します。ここでは意志の力より固いルールが勝ちます。", "zh": "你有计划，但亏损、错过的行情和浮盈会让你偏离计划。在这里，硬规则胜过意志力。"},
+  "You keep only part of your planned reward.": {"fr": "Tu ne gardes qu’une partie du gain prévu.", "es": "Solo te quedas con parte de la ganancia planeada.", "ht": "Ou kenbe sèlman yon pati nan pwofi ou te planifye a.", "pt": "Você fica só com parte do ganho planejado.", "de": "Du behältst nur einen Teil deines geplanten Gewinns.", "ja": "計画した利益の一部しか取れていません。", "zh": "你只拿到了计划收益的一部分。"},
+  "You move stops or slip. Use a hard stop order placed with the entry.": {"fr": "Tu bouges tes stops ou tu as du slippage. Utilise un ordre stop fixe placé avec l’entrée.", "es": "Mueves los stops o tienes slippage. Usa una orden stop fija puesta junto con la entrada.", "ht": "Ou deplase stop yo oswa ou gen slippage. Sèvi ak yon stop order fiks ou mete ansanm ak antre a.", "pt": "Você move os stops ou sofre slippage. Use uma ordem stop fixa colocada junto com a entrada.", "de": "Du verschiebst Stops oder hast Slippage. Nutze eine feste Stop-Order, die du mit dem Einstieg platzierst.", "ja": "ストップを動かしているか、スリッページが出ています。エントリーと同時に固定のストップ注文を置きましょう。", "zh": "你在挪止损或出现滑点。入场时就同时挂好硬止损单。"},
+  "Your Trader Report": {"fr": "Ton rapport de trader", "es": "Tu informe de trader", "ht": "Rapò trader ou", "pt": "Seu relatório de trader", "de": "Dein Trader-Bericht", "ja": "あなたのトレーダーレポート", "zh": "你的交易者报告"},
+  "Your areas, both tests": {"fr": "Tes domaines, les deux tests", "es": "Tus áreas, los dos tests", "ht": "Domèn ou yo, de tès yo", "pt": "Suas áreas, os dois testes", "de": "Deine Bereiche, beide Tests", "ja": "あなたの分野（2つのテスト）", "zh": "你的各项领域（两项测试）"},
+  "Your edge": {"fr": "Ton edge", "es": "Tu ventaja", "ht": "Edge ou", "pt": "Seu edge", "de": "Dein Edge", "ja": "あなたのエッジ", "zh": "你的优势"},
+  "Your edge is positive and probably not luck. Discipline is now the main lever.": {"fr": "Ton edge est positif et sûrement pas de la chance. Maintenant, la discipline est le levier principal.", "es": "Tu ventaja es positiva y probablemente no es suerte. Ahora la disciplina es la palanca principal.", "ht": "Edge ou pozitif epi pwobableman se pa chans. Kounye a, disiplin se pi gwo levye a.", "pt": "Seu edge é positivo e provavelmente não é sorte. Agora a disciplina é a principal alavanca.", "de": "Dein Edge ist positiv und wahrscheinlich kein Glück. Jetzt ist Disziplin der wichtigste Hebel.", "ja": "あなたのエッジはプラスで、たぶん運ではありません。今は規律がいちばん大事なカギです。", "zh": "你的优势是正的，而且可能不是运气。现在纪律是最关键的杠杆。"},
+  "Your edge is positive but could still be luck. Keep the same rules for more trades.": {"fr": "Ton edge est positif mais peut encore être de la chance. Garde les mêmes règles sur plus de trades.", "es": "Tu ventaja es positiva pero aún podría ser suerte. Mantén las mismas reglas por más trades.", "ht": "Edge ou pozitif men li ka toujou se chans. Kenbe menm règ yo pou plis trade.", "pt": "Seu edge é positivo, mas ainda pode ser sorte. Mantenha as mesmas regras por mais trades.", "de": "Dein Edge ist positiv, könnte aber noch Glück sein. Behalte dieselben Regeln für mehr Trades.", "ja": "あなたのエッジはプラスですが、まだ運かもしれません。同じルールでもっとトレードを続けましょう。", "zh": "你的优势是正的，但仍可能是运气。用同样的规则再多做些交易。"},
+  "Your full trader profile": {"fr": "Ton profil complet de trader", "es": "Tu perfil completo de trader", "ht": "Pwofil trader konplè ou", "pt": "Seu perfil completo de trader", "de": "Dein komplettes Trader-Profil", "ja": "あなたのトレーダープロフィール全体", "zh": "你的完整交易者画像"},
+  "Your habits are solid. Your work now is the edge itself and the size of your risk.": {"fr": "Tes habitudes sont solides. Ton travail maintenant, c’est l’edge lui-même et la taille de ton risque.", "es": "Tus hábitos son sólidos. Tu trabajo ahora es la ventaja en sí y el tamaño de tu riesgo.", "ht": "Abitid ou yo solid. Travay ou kounye a se edge la li menm ak gwosè risk ou.", "pt": "Seus hábitos são sólidos. Seu trabalho agora é o próprio edge e o tamanho do seu risco.", "de": "Deine Gewohnheiten sind solide. Deine Arbeit ist jetzt der Edge selbst und die Größe deines Risikos.", "ja": "習慣はしっかりしています。これからの課題はエッジそのものとリスクの大きさです。", "zh": "你的习惯很扎实。现在要做的是优势本身和风险大小。"},
+  "Your losses are bigger than your stop.": {"fr": "Tes pertes sont plus grosses que ton stop.", "es": "Tus pérdidas son más grandes que tu stop.", "ht": "Pèt ou yo pi gwo pase stop ou.", "pt": "Suas perdas são maiores que o seu stop.", "de": "Deine Verluste sind größer als dein Stop.", "ja": "損失がストップより大きくなっています。", "zh": "你的亏损比止损还大。"},
+  "Your risk per trade is too big for your drawdown.": {"fr": "Ton risque par trade est trop gros pour ton drawdown.", "es": "Tu riesgo por trade es demasiado grande para tu drawdown.", "ht": "Risk ou pa trade twò gwo pou drawdown ou.", "pt": "Seu risco por trade é grande demais para o seu drawdown.", "de": "Dein Risiko pro Trade ist zu groß für deinen Drawdown.", "ja": "1トレードのリスクがドローダウンに対して大きすぎます。", "zh": "你每笔交易的风险相对你的回撤额度太大了。"},
+  "Your strategy loses money even with perfect discipline. Fix the edge first.": {"fr": "Ta stratégie perd de l’argent même avec une discipline parfaite. Corrige d’abord l’edge.", "es": "Tu estrategia pierde dinero incluso con disciplina perfecta. Arregla primero la ventaja.", "ht": "Estrateji ou pèdi lajan menm ak yon disiplin pafè. Ranje edge la anvan.", "pt": "Sua estratégia perde dinheiro mesmo com disciplina perfeita. Corrija o edge primeiro.", "de": "Deine Strategie verliert Geld, selbst mit perfekter Disziplin. Repariere zuerst den Edge.", "ja": "完璧な規律でも、あなたの戦略はお金を失います。まずエッジを直しましょう。", "zh": "即使纪律完美，你的策略也在亏钱。先修好优势。"},
+  "Your wins are too small for your losses.": {"fr": "Tes gains sont trop petits par rapport à tes pertes.", "es": "Tus ganancias son muy pequeñas para tus pérdidas.", "ht": "Sa ou genyen twò piti pou sa ou pèdi.", "pt": "Seus ganhos são pequenos demais para as suas perdas.", "de": "Deine Gewinne sind zu klein für deine Verluste.", "ja": "負けに対して勝ちが小さすぎます。", "zh": "你的盈利相对亏损太小了。"},
+  "avg RR per trade": {"fr": "avg RR par trade", "es": "avg RR por trade", "ht": "avg RR pa trade", "pt": "avg RR por trade", "de": "avg RR pro Trade", "ja": "1トレードあたりのavg RR", "zh": "每笔交易 avg RR"},
+  "t-score": {"fr": "t-score", "es": "t-score", "ht": "t-score", "pt": "t-score", "de": "t-score", "ja": "t-score", "zh": "t-score"},
+  "Take the Trading Test to unlock this": {"fr": "Passe le test de trading pour débloquer ceci", "es": "Haz el Test de Trading para desbloquear esto", "ht": "Fè Tès Trading lan pou debloke sa", "pt": "Faça o Teste de Trading para desbloquear isto", "de": "Mach den Trading-Test, um das freizuschalten", "ja": "トレーディングテストを受けるとロック解除されます", "zh": "参加交易测试即可解锁"},
+  "Take the Trading Test to unlock Mental Check, Flow State, Psychology and Discipline": {"fr": "Passe le test de trading pour débloquer Bilan mental, État de flow, Psychologie et Discipline", "es": "Haz el Test de Trading para desbloquear Chequeo mental, Estado de flow, Psicología y Disciplina", "ht": "Fè Tès Trading lan pou debloke Tès mantal, Eta flow, Sikoloji ak Disiplin", "pt": "Faça o Teste de Trading para desbloquear Check mental, Estado de flow, Psicologia e Disciplina", "de": "Mach den Trading-Test, um Mental-Check, Flow-Zustand, Psychologie und Disziplin freizuschalten", "ja": "トレーディングテストを受けると、メンタルチェック、フロー状態、心理、規律がロック解除されます", "zh": "参加交易测试，解锁心态自检、心流状态、心理和纪律"},
+  "The Trading Test is your starting line. It takes about 10 minutes and sets the baseline that every later score, check-in and psychology report is compared with. Until you take it, Mental Check, Flow State, Psychology and the Discipline page stay locked.": {"fr": "Le test de trading est ton point de départ. Il prend environ 10 minutes et fixe la base à laquelle chaque score, check-in et rapport de psychologie futur sera comparé. Tant que tu ne l’as pas fait, Bilan mental, État de flow, Psychologie et la page Discipline restent bloqués.", "es": "El Test de Trading es tu punto de partida. Toma unos 10 minutos y fija la base con la que se compara cada puntuación, check-in e informe de psicología posterior. Hasta que lo hagas, Chequeo mental, Estado de flow, Psicología y la página de Disciplina quedan bloqueados.", "ht": "Tès Trading lan se liy depa ou. Li pran anviwon 10 minit epi li fikse baz ke chak nòt, check-in ak rapò sikoloji ki vin apre ap konpare avè l. Toutan ou pa fè l, Tès mantal, Eta flow, Sikoloji ak paj Disiplin nan ap rete bloke.", "pt": "O Teste de Trading é o seu ponto de partida. Leva cerca de 10 minutos e define a base com que cada pontuação, check-in e relatório de psicologia futuro é comparado. Até você fazer, Check mental, Estado de flow, Psicologia e a página de Disciplina ficam bloqueados.", "de": "Der Trading-Test ist deine Startlinie. Er dauert etwa 10 Minuten und legt die Basis fest, mit der jeder spätere Score, jeder Check-in und jeder Psychologie-Bericht verglichen wird. Bis du ihn machst, bleiben Mental-Check, Flow-Zustand, Psychologie und die Disziplin-Seite gesperrt.", "ja": "トレーディングテストはあなたのスタートラインです。約10分で終わり、今後のすべてのスコア、チェックイン、心理レポートを比べる基準を決めます。受けるまでは、メンタルチェック、フロー状態、心理、規律ページはロックされたままです。", "zh": "交易测试是你的起跑线。它大约需要 10 分钟，会设定一个基准，之后的每个分数、每次签到和每份心理报告都会和它比较。在你完成之前，心态自检、心流状态、心理和纪律页面都保持锁定。"},
+  "unlock your Trading Test result - your score and advice are waiting and will be saved in your journal.": {"fr": "débloque ton résultat du test de trading - ton score et tes conseils t’attendent et seront enregistrés dans ton journal.", "es": "desbloquea tu resultado del Test de Trading - tu puntuación y tus consejos te esperan y se guardarán en tu diario.", "ht": "debloke rezilta Tès Trading ou - nòt ou ak konsèy ou ap tann ou epi y ap sove nan jounal ou.", "pt": "desbloqueie o resultado do seu Teste de Trading - sua pontuação e seus conselhos estão esperando e serão salvos no seu diário.", "de": "schalte dein Trading-Test-Ergebnis frei - dein Score und deine Tipps warten und werden in deinem Journal gespeichert.", "ja": "トレーディングテストの結果をロック解除 - スコアとアドバイスが待っていて、ジャーナルに保存されます。", "zh": "解锁你的交易测试结果 - 你的分数和建议正在等你，并会保存在你的日志中。"}
+});
+
 function applyTranslation(lang) {
   if (typeof document === 'undefined') return;
   const root = document.getElementById('root');
@@ -1049,7 +1160,7 @@ function AuthScreen(props) {
         {fromDiagnostic && (
           <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg px-3 py-2.5 mb-4 flex items-start gap-2">
             <Icon name="ClipboardCheck" className="h-4 w-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-yellow-200/90">{mode === 'login' ? 'Sign in to' : 'Create a free account to'} unlock your Trading Discipline Test result - your score and advice are waiting and will be saved in your journal.</p>
+            <p className="text-xs text-yellow-200/90">{mode === 'login' ? 'Sign in to' : 'Create a free account to'} unlock your Trading Test result - your score and advice are waiting and will be saved in your journal.</p>
           </div>
         )}
         {wantsCourse && (
@@ -2898,7 +3009,7 @@ function DiagnosticResultCard(props) {
   if (!r) {
     return (
       <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-6">
-        <div className="flex items-center gap-2 mb-2"><Icon name="ClipboardCheck" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Trading Discipline Test</h2></div>
+        <div className="flex items-center gap-2 mb-2"><Icon name="ClipboardCheck" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Trading Test</h2></div>
         <p className="text-sm text-gray-400 mb-4">A full trader assessment: 72 questions that map your psychology, risk, stops, process and consistency, then build your personal fix plan. Your complete profile is saved here.</p>
         <a href="../diagnostic/" className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-semibold"><Icon name="Play" className="h-4 w-4" /><span>Take the Free Test</span></a>
       </div>
@@ -2912,7 +3023,7 @@ function DiagnosticResultCard(props) {
   return (
     <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-6 space-y-5">
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <div className="flex items-center gap-2"><Icon name="ClipboardCheck" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Trading Discipline Test</h2></div>
+        <div className="flex items-center gap-2"><Icon name="ClipboardCheck" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Trading Test</h2></div>
         <a href="../diagnostic/" className="text-xs text-gray-300 hover:text-yellow-400 border border-gray-700 rounded-lg px-3 py-1.5 inline-flex items-center gap-1.5"><Icon name="RotateCcw" className="h-3.5 w-3.5" /><span>Retake the test</span></a>
       </div>
       <div className="grid md:grid-cols-3 gap-4">
@@ -3093,6 +3204,246 @@ function DiagnosticResultCard(props) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ===================== Discipline Test (home page) + both tests blended =====================
+// The Discipline Test runs on the home page (maxmaserati.com/#discipline). Its result is saved in
+// users/{uid}/profile/dtest. The Trading Test (/diagnostic/) lives in users/{uid}/profile/diagnostic.
+const DT_ARCH = {
+  operator: ['Systematic Operator', 'Your habits are solid. Your work now is the edge itself and the size of your risk.'],
+  emotional: ['Emotional Trader', 'You have a plan, but losses, missed moves and open profit push you off it. Hard rules beat willpower here.'],
+  chaotic: ['Chaotic Trader', 'There is no fixed routine: no plan, no trade limit, no news check. Build the process first; the setups come second.']
+};
+const DT_CATS = [['risk', 'Stops and size'], ['revenge', 'Revenge trading'], ['fomo', 'Chasing (FOMO)'], ['cut', 'Cutting winners'], ['news', 'News and firm rules'], ['over', 'Overtrading'], ['cons', 'Consistency rule'], ['plan', 'Plan and journal']];
+const DT_FLAGS = { edge: ['Positive edge', 'ok'], noedge: ['No edge', 'bad'], timebomb: ['Time bomb', 'bad'], bigloss: ['Losses bigger than the stop', 'bad'], gap: ['Execution gap', 'wa'], luck: ['Could be luck', 'wa'], risk: ['Risk too big', 'bad'], trailing: ['Trailing trap', 'wa'] };
+const DT_FIX = {
+  noedge: ['Fix the strategy before the discipline.', 'Your numbers lose money even if you follow every rule. Test it, or trade a tested one from the MMM Strategy Book.'],
+  timebomb: ['Your wins are too small for your losses.', 'A high win rate with small wins means one bad day erases a week. Hold winners to your target.'],
+  bigloss: ['Your losses are bigger than your stop.', 'You move stops or slip. Use a hard stop order placed with the entry.'],
+  gap: ['You keep only part of your planned reward.', 'Let the target or a written exit rule close the trade, not fear.'],
+  luck: ['Not enough proof yet.', 'Your numbers can still be luck. Keep the same rules for at least 30 to 100 trades before changing anything.'],
+  risk: ['Your risk per trade is too big for your drawdown.', 'A normal losing streak can end your account. Size each trade so at least 15 full losses fit in your drawdown.'],
+  trailing: ['Trailing drawdown and a big target fight each other.', 'Take a partial at +1R or move the stop to break-even by rule, so open profit cannot breach you.'],
+  'c:risk': ['Stops and size are leaking.', 'Use a hard stop on every trade and never move it further away. Size from your drawdown, never from how sure you feel.'],
+  'c:revenge': ['Revenge trading is leaking.', 'After 2 losses, the day is over. After any loss, wait for the next full setup: no faster entry, no bigger size.'],
+  'c:fomo': ['Chasing (FOMO) is leaking.', 'If price left without you, the trade is gone. Write the entry before the move; no market orders after a big candle.'],
+  'c:cut': ['Cutting winners is leaking.', 'Let the target or your exit rule close the trade. Take partials only by a written rule.'],
+  'c:news': ['News and firm rules are leaking.', 'Be flat 5 minutes before red-folder news (CPI, NFP, FOMC). Read your firm’s rules once a week.'],
+  'c:over': ['Overtrading is leaking.', 'Set a max number of trades a day (for example 3) and only trade your session. Zero trades is a good day too.'],
+  'c:cons': ['The consistency rule is leaking.', 'Cap your daily profit so no single day is more than 30% of your total. Spread the target over many days.'],
+  'c:plan': ['Plan and journal are leaking.', 'Write the plan before the open and journal every trade, even the no-trade days.']
+};
+// Both tests mapped onto the same 7 areas (Trading Test category names -> Discipline Test leak keys)
+const BLEND_AREAS = [
+  { name: 'Risk and stops', tt: ['Risk Management', 'Stop-Loss Discipline'], dt: ['risk'], tip: 'Hard stop on every trade, size from the drawdown, never move the stop away.' },
+  { name: 'Emotions and revenge', tt: ['Mindset & Emotions', 'Revenge Trading'], dt: ['revenge'], tip: 'Two losses end the day. After a loss, only the next full setup.' },
+  { name: 'Chasing and ego', tt: ['Ego & Overconfidence'], dt: ['fomo'], tip: 'Missed moves stay missed. Write the entry before the move.' },
+  { name: 'Execution', tt: ['Execution & Discipline'], dt: ['cut', 'over'], tip: 'Let exits work by rule and cap your trades a day.' },
+  { name: 'Plan, rules and review', tt: ['Planning & Process', 'Accountability & Review'], dt: ['plan', 'news'], tip: 'Plan before the open, check the news calendar, journal every trade.' },
+  { name: 'Readiness', tt: ['Readiness & Lifestyle'], dt: [], tip: 'Sleep, focus and a calm start before you trade.' },
+  { name: 'Consistency rule', tt: [], dt: ['cons'], tip: 'Cap the daily profit so one day never carries the account.' }
+];
+const scoreCol = function(p) { return p >= 70 ? '#4ade80' : p >= 45 ? '#fbbf24' : '#f87171'; };
+const flagCls = { ok: 'bg-green-500/15 text-green-400', wa: 'bg-yellow-500/15 text-yellow-300', bad: 'bg-red-500/15 text-red-400' };
+
+function postTestMailer(body) {
+  const url = (typeof window !== 'undefined' && window.MMM_TEST_MAIL_URL) || '';
+  if (!url) return Promise.resolve(null);
+  return fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
+    .then(function(r) { return r.json(); }).catch(function() { return null; });
+}
+
+function blendTests(tt, dt) {
+  const ttCat = {};
+  ((tt && tt.cats) || []).forEach(function(c) { ttCat[c.name] = c.pct; });
+  const rows = BLEND_AREAS.map(function(a) {
+    const tv = a.tt.map(function(n) { return ttCat[n]; }).filter(function(v) { return typeof v === 'number'; });
+    const dv = dt && dt.leaks ? a.dt.map(function(k) { return dt.leaks[k]; }).filter(function(v) { return typeof v === 'number'; }).map(function(v) { return Math.round(100 - v * 100); }) : [];
+    const ttv = tv.length ? Math.round(tv.reduce(function(s, v) { return s + v; }, 0) / tv.length) : null;
+    const dtv = dv.length ? Math.round(dv.reduce(function(s, v) { return s + v; }, 0) / dv.length) : null;
+    const both = [ttv, dtv].filter(function(v) { return v !== null; });
+    return { name: a.name, tip: a.tip, tt: ttv, dt: dtv, pct: both.length ? Math.round(both.reduce(function(s, v) { return s + v; }, 0) / both.length) : null };
+  }).filter(function(r) { return r.pct !== null; });
+  const scores = [tt ? tt.score : null, dt ? dt.score : null].filter(function(v) { return typeof v === 'number'; });
+  const overall = scores.length ? Math.round(scores.reduce(function(s, v) { return s + v; }, 0) / scores.length) : null;
+  const disagree = rows.filter(function(r) { return r.tt !== null && r.dt !== null && Math.abs(r.tt - r.dt) >= 30; });
+  const worst = rows.slice().sort(function(a, b) { return a.pct - b.pct; }).filter(function(r) { return r.pct < 70; }).slice(0, 3);
+  return { rows: rows, overall: overall, disagree: disagree, worst: worst };
+}
+
+function TestsOverviewCard(props) {
+  const tt = props.tt, dt = props.dt;
+  const b = blendTests(tt, dt);
+  const m = dt && dt.math;
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/30 rounded-2xl p-6 space-y-5">
+      <div className="flex items-center gap-2"><Icon name="Layers" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Your Trader Report</h2><span className="text-xs text-gray-500">Both tests together</span></div>
+      <div className="grid md:grid-cols-3 gap-3">
+        <div className="bg-black/30 border border-gray-800 rounded-xl p-4 text-center">
+          <div className="text-xs text-gray-500 mb-1">Combined score</div>
+          <div className="num text-4xl font-extrabold" style={{ color: b.overall === null ? '#6b7280' : scoreCol(b.overall) }}>{b.overall === null ? '-' : b.overall}</div>
+          <div className="text-[11px] text-gray-500 mt-1">{tt && dt ? 'Average of both tests' : 'Take both tests for the full picture'}</div>
+        </div>
+        <div className="bg-black/30 border border-gray-800 rounded-xl p-4">
+          <div className="flex items-center justify-between"><span className="text-xs text-gray-500">Discipline Test</span>{dt ? <span className="num text-xl font-extrabold" style={{ color: scoreCol(dt.score) }}>{dt.score}</span> : <span className="text-xs text-gray-600">Not taken yet</span>}</div>
+          <div className="text-sm font-semibold text-white mt-1">{dt ? (DT_ARCH[dt.arch] || DT_ARCH.chaotic)[0] : 'Your numbers and your prop-firm habits'}</div>
+          {dt ? <div className="text-[11px] text-gray-500 mt-1">{new Date(dt.ts).toLocaleDateString()}</div> : <a href="/#discipline" className="inline-block mt-2 text-xs font-semibold text-black bg-yellow-400 rounded-lg px-3 py-1.5">Take the Discipline Test</a>}
+        </div>
+        <div className="bg-black/30 border border-gray-800 rounded-xl p-4">
+          <div className="flex items-center justify-between"><span className="text-xs text-gray-500">Trading Test</span>{tt ? <span className="num text-xl font-extrabold" style={{ color: scoreCol(tt.score) }}>{tt.score}</span> : <span className="text-xs text-gray-600">Not taken yet</span>}</div>
+          <div className="text-sm font-semibold text-white mt-1">{tt ? (tt.archetypeLabel || tt.archetype) : 'Your full trader profile'}</div>
+          {tt ? <div className="text-[11px] text-gray-500 mt-1">{new Date(tt.ts).toLocaleDateString()}</div> : <a href="../diagnostic/" className="inline-block mt-2 text-xs font-semibold text-black bg-yellow-400 rounded-lg px-3 py-1.5">Take the Trading Test</a>}
+        </div>
+      </div>
+      {b.rows.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-white mb-3">Your areas, both tests</h3>
+          <div className="grid md:grid-cols-2 gap-x-6 gap-y-3">
+            {b.rows.map(function(r) {
+              return (
+                <div key={r.name}>
+                  <div className="flex justify-between text-xs mb-1 gap-2"><span className="text-gray-300">{r.name}</span><span className="num font-semibold" style={{ color: scoreCol(r.pct) }}>{r.pct}%</span></div>
+                  <div className="h-2 bg-gray-800 rounded-full overflow-hidden"><div className="h-full rounded-full" style={{ width: Math.max(3, r.pct) + '%', background: scoreCol(r.pct) }}></div></div>
+                  <div className="flex gap-3 text-[10px] text-gray-500 mt-1 num">
+                    {r.tt !== null && <span><span>Trading Test</span> {r.tt}%</span>}
+                    {r.dt !== null && <span><span>Discipline Test</span> {r.dt}%</span>}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {m && (
+        <div className="bg-black/30 border border-gray-800 rounded-xl p-4">
+          <h3 className="text-sm font-semibold text-white mb-2">Your edge</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-center">
+            <div><div className="text-[11px] text-gray-500">avg RR per trade</div><div className={"num text-lg font-bold " + (m.e > 0 ? 'text-green-400' : 'text-red-400')}>{(m.e > 0 ? '+' : '') + m.e.toFixed(2)}</div></div>
+            <div><div className="text-[11px] text-gray-500">PF</div><div className="num text-lg font-bold text-white">{m.pf.toFixed(2)}</div></div>
+            <div><div className="text-[11px] text-gray-500">t-score</div><div className={"num text-lg font-bold " + (m.t >= 2 ? 'text-green-400' : 'text-yellow-300')}>{m.t.toFixed(2)}</div></div>
+            <div><div className="text-[11px] text-gray-500">Chance to reach the payout</div><div className="num text-lg font-bold text-white">{dt.sim ? Math.round(dt.sim.pass * 100) + '%' : '-'}</div></div>
+          </div>
+          <p className="text-xs text-gray-400 mt-3">{m.e <= 0 ? 'Your strategy loses money even with perfect discipline. Fix the edge first.' : m.t < 2 ? 'Your edge is positive but could still be luck. Keep the same rules for more trades.' : 'Your edge is positive and probably not luck. Discipline is now the main lever.'}</p>
+        </div>
+      )}
+      {b.worst.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-white mb-3">Work on these first</h3>
+          <div className="space-y-2">
+            {b.worst.map(function(r, i) {
+              return (
+                <div key={r.name} className="bg-black/30 border border-gray-800 rounded-lg p-3 flex items-start gap-3">
+                  <span className="text-[11px] font-bold text-black bg-yellow-400 rounded px-1.5 py-0.5 flex-shrink-0">{i + 1}</span>
+                  <div><p className="text-sm font-semibold text-white">{r.name}</p><p className="text-xs text-gray-400 mt-0.5">{r.tip}</p></div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {b.disagree.length > 0 && (
+        <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-xl p-4">
+          <h3 className="text-sm font-semibold text-yellow-200 mb-1">The two tests disagree</h3>
+          <p className="text-xs text-gray-400 mb-2">When one test says strong and the other says weak, one of the answers was not fully honest. Look at these again.</p>
+          <div className="flex flex-wrap gap-2">{b.disagree.map(function(r) { return <span key={r.name} className="text-[11px] px-2 py-1 rounded-full bg-gray-800 text-gray-200"><span>{r.name}</span><span className="num">{' ' + r.tt + '% / ' + r.dt + '%'}</span></span>; })}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DisciplineTestCard(props) {
+  const r = props.result;
+  if (!r) return null;
+  const arch = DT_ARCH[r.arch] || DT_ARCH.chaotic;
+  const m = r.math, a = r.acct || {}, sim = r.sim;
+  const hist = r.history || [];
+  const leaks = DT_CATS.map(function(c) { return { k: c[0], name: c[1], v: Math.round(((r.leaks || {})[c[0]] || 0) * 100) }; }).sort(function(x, y) { return y.v - x.v; });
+  const fixes = (r.fixes || []).map(function(f) { return DT_FIX[f.k]; }).filter(function(f) { return f; });
+  return (
+    <div className="bg-gradient-to-br from-gray-900 to-black border border-yellow-500/20 rounded-2xl p-6 space-y-5">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="flex items-center gap-2"><Icon name="Target" className="h-5 w-5 text-yellow-400" /><h2 className="text-lg font-semibold text-white">Discipline Test</h2></div>
+        <a href="/#discipline" className="text-xs text-gray-300 hover:text-yellow-400 border border-gray-700 rounded-lg px-3 py-1.5 inline-flex items-center gap-1.5"><Icon name="RotateCcw" className="h-3.5 w-3.5" /><span>Retake the test</span></a>
+      </div>
+      <div className="grid md:grid-cols-3 gap-4">
+        <div className="bg-black/30 border border-gray-800 rounded-xl p-5 text-center">
+          <div className="text-xs text-gray-500 mb-1">Discipline score</div>
+          <div className="num text-5xl font-extrabold" style={{ color: scoreCol(r.score) }}>{r.score}</div>
+          <div className="text-[11px] text-gray-600 mt-2">{new Date(r.ts).toLocaleDateString()}</div>
+        </div>
+        <div className="md:col-span-2 bg-black/30 border border-gray-800 rounded-xl p-5">
+          <div className="flex flex-wrap gap-1.5 mb-2">{(r.flags || []).map(function(f) { const d = DT_FLAGS[f]; return d ? <span key={f} className={"text-[11px] font-semibold px-2 py-0.5 rounded-full " + flagCls[d[1]]}>{d[0]}</span> : null; })}</div>
+          <div className="text-xl font-bold text-white mb-1">{arch[0]}</div>
+          <p className="text-sm text-gray-400 leading-relaxed">{arch[1]}</p>
+        </div>
+      </div>
+      {m && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            ['avg RR per trade', (m.e > 0 ? '+' : '') + m.e.toFixed(2), m.e > 0.1 ? 'text-green-400' : m.e > 0 ? 'text-yellow-300' : 'text-red-400'],
+            ['PF', m.pf >= 99 ? '∞' : m.pf.toFixed(2), m.pf >= 1.5 ? 'text-green-400' : m.pf >= 1 ? 'text-yellow-300' : 'text-red-400'],
+            ['WR vs break-even WR', m.wr + '% / ' + Math.round(m.be * 100) + '%', m.wr / 100 > m.be + 0.05 ? 'text-green-400' : m.wr / 100 > m.be ? 'text-yellow-300' : 'text-red-400'],
+            ['t-score', m.t.toFixed(2), m.t >= 2 ? 'text-green-400' : m.t >= 1 ? 'text-yellow-300' : 'text-red-400'],
+            ['Target kept', Math.round(Math.min(1, m.gap) * 100) + '%', m.gap >= 0.85 ? 'text-green-400' : m.gap >= 0.6 ? 'text-yellow-300' : 'text-red-400'],
+            ['Risk a trade', '$' + (a.risk || 0).toLocaleString('en-US'), a.lt >= 15 ? 'text-green-400' : a.lt >= 8 ? 'text-yellow-300' : 'text-red-400'],
+            ['Chance to reach the payout', sim ? Math.round(sim.pass * 100) + '%' : '-', sim && sim.pass >= 0.6 ? 'text-green-400' : sim && sim.pass >= 0.35 ? 'text-yellow-300' : 'text-red-400'],
+            ['Trading days to payout', sim && sim.med ? String(Math.ceil(sim.med / (a.tpd || 1))) : '-', 'text-white']
+          ].map(function(k) {
+            return <div key={k[0]} className="bg-black/30 border border-gray-800 rounded-xl p-3"><div className="text-[11px] text-gray-500">{k[0]}</div><div className={"num text-lg font-bold " + k[2]}>{k[1]}</div></div>;
+          })}
+        </div>
+      )}
+      <div>
+        <h3 className="text-sm font-semibold text-white mb-3">Where your discipline leaks</h3>
+        <div className="grid md:grid-cols-2 gap-x-6 gap-y-3">
+          {leaks.map(function(l) {
+            const c = l.v >= 60 ? '#f87171' : l.v >= 34 ? '#fbbf24' : '#4ade80';
+            return (
+              <div key={l.k}>
+                <div className="flex justify-between text-xs mb-1"><span className="text-gray-300">{l.name}</span><span className="num font-semibold" style={{ color: c }}>{l.v}%</span></div>
+                <div className="h-2 bg-gray-800 rounded-full overflow-hidden"><div className="h-full rounded-full" style={{ width: Math.max(3, l.v) + '%', background: c }}></div></div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      {fixes.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-white mb-3">Fix these first</h3>
+          <div className="space-y-2">
+            {fixes.map(function(f, i) {
+              return (
+                <div key={i} className="bg-black/30 border border-gray-800 rounded-lg p-3 flex items-start gap-3">
+                  <span className="text-[11px] font-bold text-black bg-yellow-400 rounded px-1.5 py-0.5 flex-shrink-0">{i + 1}</span>
+                  <div><p className="text-sm font-semibold text-white">{f[0]}</p><p className="text-xs text-gray-400 mt-0.5 leading-relaxed">{f[1]}</p></div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {hist.length > 1 && (
+        <div>
+          <h3 className="text-sm font-semibold text-white mb-2">Test History</h3>
+          <div className="flex items-end gap-1.5 h-16">
+            {hist.map(function(h, i) { return <div key={i} title={new Date(h.ts).toLocaleDateString() + ': ' + h.score} className="flex-1 rounded-t" style={{ height: Math.max(6, h.score) + '%', background: scoreCol(h.score) }}></div>; })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DisciplineTestBanner(props) {
+  return (
+    <div role="complementary" aria-label="Discipline Test" className="fixed z-50 right-4 bottom-4 w-[min(360px,calc(100vw-32px))] bg-[#0f1416] border border-yellow-500/40 rounded-2xl shadow-2xl p-5 pr-10">
+      <button type="button" onClick={props.onClose} aria-label="Close" className="absolute top-2 right-2 h-8 w-8 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 text-xl leading-none">×</button>
+      <p className="font-extrabold text-white leading-snug mb-1.5"><span>Why do prop traders fail?</span> <span className="text-yellow-400">Find your leak.</span></p>
+      <p className="text-sm text-gray-400 leading-relaxed mb-4">Take the 3-minute Discipline Test. Your result is saved here, next to your Trading Test.</p>
+      <a href="/#discipline" className="inline-block font-bold text-sm text-black bg-gradient-to-r from-yellow-400 to-yellow-500 px-4 py-2.5 rounded-xl">Take the test</a>
     </div>
   );
 }
@@ -3821,9 +4172,9 @@ function DisciplineTestGate(props) {
   return (
     <div className="bg-gradient-to-br from-yellow-950/30 to-black border border-yellow-500/30 rounded-2xl p-8 text-center max-w-2xl mx-auto">
       <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-yellow-500/10 border border-yellow-500/30 mb-4"><Icon name="Lock" className="h-8 w-8 text-yellow-400" /></div>
-      <h2 className="text-xl font-bold text-white mb-2">Take the Discipline Test to unlock this</h2>
-      <p className="text-sm text-gray-400 leading-relaxed mb-5">The Trading Discipline Test is your starting line. It takes about 10 minutes and sets the baseline that every later score, check-in and psychology report is compared with. Until you take it, Mental Check, Flow State, Psychology and the Discipline page stay locked.</p>
-      <a href="../diagnostic/" className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-6 py-3 rounded-xl font-bold"><Icon name="Play" className="h-4 w-4" /><span>Take the Discipline Test</span></a>
+      <h2 className="text-xl font-bold text-white mb-2">Take the Trading Test to unlock this</h2>
+      <p className="text-sm text-gray-400 leading-relaxed mb-5">The Trading Test is your starting line. It takes about 10 minutes and sets the baseline that every later score, check-in and psychology report is compared with. Until you take it, Mental Check, Flow State, Psychology and the Discipline page stay locked.</p>
+      <a href="../diagnostic/" className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-6 py-3 rounded-xl font-bold"><Icon name="Play" className="h-4 w-4" /><span>Take the Trading Test</span></a>
       <p className="text-xs text-gray-600 mt-4">Already took it? Come back through "Sign In to See Results" at the end of the test and it will appear here.</p>
     </div>
   );
@@ -5535,6 +5886,9 @@ function MMMJournal(props) {
   const [activePage, setActivePage] = useState(props.wantsDiagnostic ? 'discipline' : 'overview');
   const [diagnostic, setDiagnostic] = useState(null);
   const [diagnosticReady, setDiagnosticReady] = useState(false);
+  const [dtest, setDtest] = useState(null);
+  const [dtestReady, setDtestReady] = useState(false);
+  const [dtBannerClosed, setDtBannerClosed] = useState(function() { try { return sessionStorage.getItem('mmm-dtb-closed') === '1'; } catch (e) { return false; } });
   const [accountWidgetOpen, setAccountWidgetOpen] = useState(function() {
     try { return localStorage.getItem('mmm-account-widget') !== 'closed'; } catch (e) { return true; }
   });
@@ -5603,11 +5957,49 @@ function MMMJournal(props) {
         try { await docRef.set(merged); } catch (e) {}
         try { localStorage.removeItem('mmm-diagnostic-pending'); } catch (e) {}
         existing = merged;
+        try { const tok = await user.getIdToken(); postTestMailer({ action: 'result', type: 'ttest', idToken: tok, lang: localStorage.getItem('mmm-language') || 'en', result: merged }); } catch (e) {}
       }
       if (!cancelled) { setDiagnostic(existing); setDiagnosticReady(true); }
     })();
     return function() { cancelled = true; };
   }, [user.uid]);
+
+  // The Discipline Test (home page) leaves its result in localStorage when the trader was not logged in;
+  // here it is attached to the account. users/{uid}/profile/dtest
+  useEffect(function() {
+    const docRef = db.collection('users').doc(user.uid).collection('profile').doc('dtest');
+    let pending = null;
+    try { pending = JSON.parse(localStorage.getItem('mmm-dtest-pending') || 'null'); } catch (e) {}
+    let cancelled = false;
+    (async function() {
+      let existing = null;
+      try { const snap = await docRef.get(); if (snap.exists) existing = snap.data(); } catch (e) {}
+      if (pending && typeof pending.score === 'number' && (!existing || pending.ts > existing.ts)) {
+        const mailed = !!pending.mailed;
+        const rec = Object.assign({}, pending); delete rec.mailed; delete rec.email;
+        const history = ((existing && existing.history) || []).concat([{ ts: rec.ts, score: rec.score }]).slice(-12);
+        const merged = Object.assign({}, rec, { history: history, email: user.email || '' });
+        try { await docRef.set(merged); existing = merged; } catch (e) {}
+        try { localStorage.removeItem('mmm-dtest-pending'); } catch (e) {}
+        if (!mailed) { try { const tok = await user.getIdToken(); postTestMailer({ action: 'result', type: 'dtest', idToken: tok, lang: localStorage.getItem('mmm-language') || 'en', result: rec }); } catch (e) {} }
+      }
+      if (existing) { try { localStorage.setItem('mmm-dtest-done-' + user.uid, '1'); } catch (e) {} }
+      if (!cancelled) { setDtest(existing); setDtestReady(true); }
+    })();
+    return function() { cancelled = true; };
+  }, [user.uid]);
+
+  // Once a day: tell the Test Mailer this trader was here and which tests they took (the "Traders" list).
+  useEffect(function() {
+    if (!diagnosticReady || !dtestReady || !(typeof window !== 'undefined' && window.MMM_TEST_MAIL_URL)) return;
+    const key = 'mmm-seen-' + user.uid, today = new Date().toISOString().slice(0, 10);
+    try { if (localStorage.getItem(key) === today) return; } catch (e) {}
+    user.getIdToken().then(function(tok) {
+      return postTestMailer({ action: 'seen', idToken: tok, lang: localStorage.getItem('mmm-language') || 'en', flags: {
+        dt: dtest ? { ts: dtest.ts, score: dtest.score, profile: (DT_ARCH[dtest.arch] || DT_ARCH.chaotic)[0] } : null,
+        tt: diagnostic ? { ts: diagnostic.ts, score: diagnostic.score, profile: diagnostic.archetypeLabel || diagnostic.archetype || '' } : null } });
+    }).then(function(r) { if (r && r.ok) { try { localStorage.setItem(key, today); } catch (e) {} } }).catch(function() {});
+  }, [diagnosticReady, dtestReady]);
 
   useEffect(function() {
     if (!entrySavedToast) return;
@@ -6288,6 +6680,7 @@ function MMMJournal(props) {
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
       {!(user.displayName || savedName) && <NamePromptModal uid={user.uid} onSaved={setSavedName} />}
+      {dtestReady && !dtest && !dtBannerClosed && <DisciplineTestBanner onClose={function() { try { sessionStorage.setItem('mmm-dtb-closed', '1'); } catch (e) {} setDtBannerClosed(true); }} />}
       {entrySavedToast && (
         <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-xs">
           <Icon name="CheckCircle2" className="h-4 w-4 flex-shrink-0" /><span>{entrySavedToast}</span>
@@ -6528,7 +6921,7 @@ function MMMJournal(props) {
                 <React.Fragment>
                 {diagnosticReady && !diagnostic && (
                   <div className="border border-yellow-500/40 bg-yellow-500/10 rounded-xl p-4 flex items-center justify-between gap-3 flex-wrap">
-                    <div className="flex items-start gap-3"><Icon name="ClipboardCheck" className="h-5 w-5 text-yellow-400 mt-0.5" /><div><p className="text-sm font-semibold text-yellow-200">Take the Discipline Test to unlock Mental Check, Flow State, Psychology and Discipline</p><p className="text-xs text-yellow-200/70">About 10 minutes. It is your baseline for measuring progress.</p></div></div>
+                    <div className="flex items-start gap-3"><Icon name="ClipboardCheck" className="h-5 w-5 text-yellow-400 mt-0.5" /><div><p className="text-sm font-semibold text-yellow-200">Take the Trading Test to unlock Mental Check, Flow State, Psychology and Discipline</p><p className="text-xs text-yellow-200/70">About 10 minutes. It is your baseline for measuring progress.</p></div></div>
                     <a href="../diagnostic/" className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-semibold">Take the Test</a>
                   </div>
                 )}
@@ -6883,6 +7276,8 @@ function MMMJournal(props) {
                 </React.Fragment>
                 )}
 
+                {activePage === 'discipline' && diagnosticReady && dtestReady && <TestsOverviewCard tt={diagnostic} dt={dtest} />}
+                {activePage === 'discipline' && dtest && <DisciplineTestCard result={dtest} />}
                 {activePage === 'discipline' && diagnosticReady && !diagnostic && <DisciplineTestGate />}
 
                 {activePage === 'discipline' && diagnostic && (
