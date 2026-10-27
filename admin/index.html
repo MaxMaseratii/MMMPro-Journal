@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Members · Admin | MMM Trading</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<meta name="theme-color" content="#0b0f12">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<style>
+/* Private member desk. Same palette as the Strategy Book. */
+:root{
+  --paper:#0b0f12; --sheet:#10161a; --sheet2:#131b20; --rule:#22303a; --rule2:#2c3c47;
+  --ink:#e8eef1; --mute:#8d9ba3; --faint:#5f6e77;
+  --gold:hsl(45,100%,55%); --teal:hsl(180,70%,55%); --win:#4fd39a; --amber:#f0b341; --loss:#f2736a;
+  --serif:"Source Serif 4",Georgia,serif; --sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;margin:0}
+.desk{max-width:1500px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+a{color:var(--teal)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:16px;padding-block:40px 20px;border-bottom:1px solid var(--rule)}
+.head h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4vw,44px);line-height:1.05;margin:0 0 6px}
+.head p{margin:0;color:var(--mute);font-size:14px}
+.lock{display:inline-flex;align-items:center;gap:6px;font:600 11px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--gold);border:1px solid hsla(45,100%,55%,.4);padding:5px 8px;border-radius:3px;margin-bottom:12px}
+.btn{font:600 13px/1 var(--sans);color:var(--ink);background:transparent;border:1px solid var(--rule2);border-radius:4px;padding:9px 12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--mute)}
+.btn.gold{background:var(--gold);color:#111;border-color:var(--gold)}
+.btn[disabled]{opacity:.5;cursor:wait}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.gate{max-width:560px;margin:56px auto;border:1px solid var(--rule2);background:var(--sheet);padding:26px 26px 22px}
+.gate h2{font-family:var(--serif);font-size:22px;margin:0 0 8px}
+.gate p{color:#c9d3d8;line-height:1.6;margin:0 0 14px;font-size:15px}
+.gate code{font-family:var(--mono);font-size:13px;background:var(--sheet2);padding:2px 5px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:24px}
+.kpi{background:var(--sheet);padding:14px 16px}
+.kpi b{display:block;font:600 28px/1.1 var(--mono);font-variant-numeric:tabular-nums}
+.kpi span{display:block;font-size:12.5px;color:var(--mute);margin-top:5px;line-height:1.35}
+.kpi small{color:var(--faint);font-size:11.5px}
+.panels{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.3fr);gap:16px;margin-top:16px}
+.panel{border:1px solid var(--rule);background:var(--sheet);padding:16px 18px;min-width:0}
+.panel h2{font-family:var(--serif);font-size:18px;font-weight:600;margin:0 0 12px}
+.panel h3{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin:14px 0 6px}
+.bars{display:flex;flex-direction:column;gap:5px}
+.bar{display:grid;grid-template-columns:minmax(0,1fr) 44px 40px;gap:8px;align-items:center;font-size:13px}
+.bar .lbl{position:relative;padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .lbl i{position:absolute;inset:0 auto 0 0;background:hsla(180,70%,55%,.14);z-index:0}
+.bar .lbl em{position:relative;font-style:normal}
+.bar .n{text-align:right;font-family:var(--mono)}
+.bar .p{text-align:right;font-family:var(--mono);color:var(--mute);font-size:12px}
+.more{font-size:12px;color:var(--mute);margin-top:8px}
+.chart svg{display:block;width:100%;height:auto}
+.chart .ax{fill:var(--faint);font:11px var(--mono)}
+.tools{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:12px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-top:28px}
+.tools input[type=search],.tools select{font:13px var(--sans);color:var(--ink);background:var(--sheet);border:1px solid var(--rule2);border-radius:4px;padding:8px 10px}
+.tools input[type=search]{min-width:240px;flex:1;max-width:360px}
+.tools label.chk{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mute)}
+.tools .count{margin-left:auto;font-size:13px;color:var(--mute)}
+.tablewrap{overflow-x:auto;border-bottom:1px solid var(--rule)}
+table.m{width:100%;border-collapse:collapse;font-size:13px;min-width:1300px}
+table.m th{position:sticky;top:0;background:var(--sheet2);color:var(--mute);font-weight:600;font-size:12px;text-align:left;padding:9px 10px;border-bottom:1px solid var(--rule2);cursor:pointer;white-space:nowrap;user-select:none}
+table.m th.on{color:var(--gold)}
+table.m td{padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+table.m tr:hover td{background:#0f1519}
+td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
+.em{font-family:var(--mono);font-size:12.5px}
+.tag{display:inline-block;font:600 11px/1 var(--sans);padding:4px 6px;border-radius:3px}
+.tag.y{color:var(--win);background:rgba(79,211,154,.12)}
+.tag.n{color:var(--faint);background:#151c21}
+.guess{color:var(--faint);font-size:11px}
+.test{font-family:var(--mono)}
+.res{margin-top:28px}
+.res h2{font-family:var(--serif);font-size:22px;font-weight:600;margin:0 0 10px}
+.note{color:var(--faint);font-size:12.5px;line-height:1.6;margin:18px 0 40px;max-width:90ch}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--gold);color:#111;font-weight:700;font-size:14px;padding:10px 16px;border-radius:6px;z-index:70}
+@media (max-width:1000px){.panels{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<div id="mmm-header"></div>
+<main class="desk" translate="no" id="app">
+  <div class="head">
+    <div>
+      <span class="lock"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Private · admin only</span>
+      <h1>Members</h1>
+      <p id="sub">Everyone registered on the website and the journal.</p>
+    </div>
+    <div class="acts" id="acts" hidden>
+      <button class="btn" id="b-sync" type="button">Refresh from Firebase</button>
+      <a class="btn" id="b-sheet" href="#" target="_blank" rel="noopener">Open the Google Sheet</a>
+    </div>
+  </div>
+  <div id="gate"></div>
+  <div id="board" hidden>
+    <div class="kpis" id="kpis"></div>
+    <div class="panels">
+      <section class="panel"><h2>Countries</h2><div class="bars" id="p-cty"></div><div class="more" id="p-cty-m"></div></section>
+      <section class="panel"><h2>Devices</h2><div class="bars" id="p-dev"></div><h3>System</h3><div class="bars" id="p-os"></div><h3>Browser</h3><div class="bars" id="p-br"></div></section>
+      <section class="panel chart"><h2>Sign-ups, last 60 days</h2><div id="p-sign"></div><h3>Logins, last 60 days</h3><div id="p-login"></div></section>
+    </div>
+    <div class="tools">
+      <input type="search" id="q" placeholder="Search name, email, country…" aria-label="Search">
+      <select id="f-cty" aria-label="Country"><option value="">All countries</option></select>
+      <select id="f-dev" aria-label="Device"><option value="">All devices</option><option value="mobile">Mobile</option><option value="tablet">Tablet</option><option value="desktop">Desktop</option><option value="?">Not seen yet</option></select>
+      <select id="f-test" aria-label="Tests"><option value="">All tests</option><option value="dt1">Took the Discipline Test</option><option value="dt0">Never took the Discipline Test</option><option value="tt1">Took the Trading Test</option><option value="tt0">Never took the Trading Test</option><option value="none">Took no test</option></select>
+      <label class="chk"><input type="checkbox" id="f-fake"> Show test accounts</label>
+      <button class="btn" id="b-copy" type="button">Copy emails</button>
+      <button class="btn" id="b-csv" type="button">Download CSV</button>
+      <span class="count num" id="count"></span>
+    </div>
+    <div class="tablewrap"><table class="m" id="tbl"><thead><tr id="th"></tr></thead><tbody id="tb"></tbody></table></div>
+    <section class="res"><h2>Latest test results</h2>
+      <div class="tablewrap"><table class="m" style="min-width:900px"><thead><tr><th>Date</th><th>Test</th><th>Email</th><th>Name</th><th>Score</th><th>Profile</th><th>Top fixes</th></tr></thead><tbody id="rb"></tbody></table></div>
+    </section>
+    <p class="note">Country: the one the trader picked at sign-up (or in the journal). A grey <span class="guess">~ time zone</span> means it was read from the device time zone because they have not picked one yet. Device, system and browser come from their last visit while logged in (the site and the journal report once a day). No IP address or exact location is stored. The list refreshes from Firebase every morning; press “Refresh from Firebase” for a fresh copy now.</p>
+  </div>
+</main>
+<div id="mmm-footer"></div>
+<script src="/assets/mmm-config.js"></script>
+<script src="/assets/mmm-geo.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s === undefined || s === null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var G = window.MMM_GEO, DAY = 864e5;
+  var DATA = null, ROWS = [], SORT = { k: 'reg', d: -1 }, USER = null;
+
+  function post(body) {
+    return fetch(window.MMM_TEST_MAIL_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }).then(function (r) { return r.json(); });
+  }
+  function toast(t) { var el = document.createElement('div'); el.className = 'toast'; el.textContent = t; document.body.appendChild(el); setTimeout(function () { el.remove(); }, 2200); }
+  function gate(html) { $('gate').innerHTML = html ? '<div class="gate">' + html + '</div>' : ''; $('board').hidden = !!html; $('acts').hidden = !!html; }
+  function ts(v) { if (v === '' || v === null || v === undefined) return 0; var n = typeof v === 'number' ? v : Date.parse(v); return isFinite(n) ? n : 0; }
+  function fmtD(t) { if (!t) return ''; var d = new Date(t); return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }); }
+  function ago(t) { if (!t) return ''; var d = Math.floor((Date.now() - t) / DAY); return d <= 0 ? 'today' : d === 1 ? 'yesterday' : d + ' days ago'; }
+  function flag(cc) { return /^[A-Z]{2}$/.test(cc || '') ? String.fromCodePoint.apply(null, cc.split('').map(function (c) { return 127397 + c.charCodeAt(0); })) : ''; }
+  function cname(cc) { return cc ? (G ? G.name(cc, 'en') : cc) : ''; }
+  function isFake(r) { return /@example\.com$/.test(r.email) || /^claude-/.test(r.email); }
+
+  /* ---------- load ---------- */
+  function load(sync) {
+    if (!USER) return;
+    var b = $('b-sync'); b.disabled = true; b.textContent = sync ? 'Refreshing… (about 30 s)' : 'Loading…';
+    if (!DATA) gate('<h2>Loading the member list…</h2><p>Checking your admin access.</p>');
+    USER.getIdToken(true).then(function (tok) { return post({ action: sync ? 'adminSync' : 'admin', idToken: tok }); }).then(function (j) {
+      b.disabled = false; b.textContent = 'Refresh from Firebase';
+      if (!j || !j.ok) return denied(j || {});
+      DATA = j; build(); gate(''); render();
+      if (sync) toast('Fresh copy loaded');
+    }).catch(function () {
+      b.disabled = false; b.textContent = 'Refresh from Firebase';
+      gate('<h2>Could not reach the member list</h2><p>The Google Apps Script did not answer. Check your connection and try again.</p><button class="btn gold" type="button" onclick="location.reload()">Try again</button>');
+    });
+  }
+  function denied(j) {
+    if (j.code === 'notadmin') return gate('<h2>Not an admin account</h2><p>You are logged in as <code>' + esc(j.email) + '</code>. This page only opens for the admin email.</p><p>To allow this email: open the <b>MMM Test Mailer</b> script → <b>Project Settings</b> (gear) → <b>Script properties</b> → add <code>ADMIN_EMAILS</code> = <code>' + esc(j.email) + '</code>. Then reload this page.</p><button class="btn" type="button" data-out>Log out</button>');
+    if (j.code === 'unverified') return gate('<h2>Confirm your email first</h2><p><code>' + esc(j.email) + '</code> is the admin email, but it is not confirmed yet. Confirming proves the account is really yours, so nobody else can open this page.</p><p id="vmsg"></p><div class="acts"><button class="btn gold" type="button" id="b-ver">Send the confirmation email</button><button class="btn" type="button" onclick="location.reload()">I clicked the link · Reload</button></div>');
+    if (j.code === 'auth') return gate('<h2>Log in again</h2><p>Your login could not be checked. Log out and log in again.</p><button class="btn" type="button" data-out>Log out</button>');
+    gate('<h2>Something went wrong</h2><p>Code: <code>' + esc(j.code || 'unknown') + '</code>. If you just changed the script, make sure you deployed a <b>new version</b>.</p><button class="btn gold" type="button" onclick="location.reload()">Try again</button>');
+  }
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-out]')) window.MMM.auth().then(function (a) { return a.signOut(); });
+    if (e.target.id === 'b-ver' && USER) {
+      e.target.disabled = true;
+      USER.sendEmailVerification().then(function () { $('vmsg').innerHTML = 'Sent. Open the email, click the link, then press <b>Reload</b>.'; })
+        .catch(function (er) { e.target.disabled = false; $('vmsg').textContent = (er && er.message || 'Could not send.').replace('Firebase: ', ''); });
+    }
+  });
+
+  /* ---------- shape the rows ---------- */
+  function build() {
+    var H = DATA.head, ix = {}; H.forEach(function (h, i) { ix[h] = i; });
+    var g = function (r, h) { var i = ix[h]; return i === undefined ? '' : r[i]; };
+    ROWS = DATA.traders.filter(function (r) { return r[0]; }).map(function (r) {
+      var cc = String(g(r, 'Country') || '');
+      return {
+        email: String(g(r, 'Email')).toLowerCase(), name: String(g(r, 'Name') || ''), uid: g(r, 'UID'),
+        reg: ts(g(r, 'Registered')) || ts(g(r, 'First seen')), login: Math.max(ts(g(r, 'Last login')), ts(g(r, 'Last seen'))),
+        cc: cc, csrc: String(g(r, 'Country from') || ''), tz: String(g(r, 'Time zone') || ''),
+        dev: String(g(r, 'Device') || ''), os: String(g(r, 'OS') || ''), br: String(g(r, 'Browser') || ''), screen: String(g(r, 'Screen') || ''), devs: String(g(r, 'Devices used') || ''),
+        dt: g(r, 'Discipline Test') === 'taken', dts: g(r, 'DT score'), dtp: g(r, 'DT profile'), dtd: ts(g(r, 'DT date')),
+        tt: g(r, 'Trading Test') === 'taken', tts: g(r, 'TT score'), ttp: g(r, 'TT profile'), ttd: ts(g(r, 'TT date')),
+        lang: String(g(r, 'Language') || ''), acct: String(g(r, 'Account') || ''), signin: String(g(r, 'Sign-in') || '')
+      };
+    });
+    ROWS.forEach(function (r) { r.fake = isFake(r); r.devType = (r.dev.split(' ')[0] || '?'); });
+    var ccs = {}; ROWS.forEach(function (r) { if (r.cc) ccs[r.cc] = 1; });
+    var sel = $('f-cty'), cur = sel.value;
+    sel.innerHTML = '<option value="">All countries</option>' + Object.keys(ccs).map(function (c) { return [c, cname(c)]; }).sort(function (a, b) { return a[1] < b[1] ? -1 : 1; })
+      .map(function (x) { return '<option value="' + x[0] + '">' + esc(x[1]) + '</option>'; }).join('') + '<option value="?">Unknown</option>';
+    sel.value = cur;
+    $('b-sheet').href = DATA.sheet || '#';
+    $('sub').textContent = 'Everyone registered on the website and the journal. Updated ' + new Date(DATA.at).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' }) + '.';
+  }
+
+  /* ---------- filters ---------- */
+  function filtered() {
+    var q = $('q').value.trim().toLowerCase(), fc = $('f-cty').value, fd = $('f-dev').value, ft = $('f-test').value, fake = $('f-fake').checked;
+    return ROWS.filter(function (r) {
+      if (!fake && r.fake) return false;
+      if (fc && (fc === '?' ? r.cc : r.cc !== fc)) return false;
+      if (fd && (fd === '?' ? r.dev : r.devType !== fd)) return false;
+      if (ft === 'dt1' && !r.dt) return false; if (ft === 'dt0' && r.dt) return false;
+      if (ft === 'tt1' && !r.tt) return false; if (ft === 'tt0' && r.tt) return false;
+      if (ft === 'none' && (r.dt || r.tt)) return false;
+      if (q && (r.name + ' ' + r.email + ' ' + cname(r.cc) + ' ' + r.cc + ' ' + r.os + ' ' + r.br + ' ' + r.tz).toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+  }
+
+  /* ---------- KPIs + panels (real accounts only) ---------- */
+  function kpis(L) {
+    var now = Date.now(), n = L.length || 1;
+    var c = function (f) { return L.filter(f).length; };
+    var seenDev = L.filter(function (r) { return r.dev; });
+    var mob = seenDev.filter(function (r) { return r.devType !== 'desktop'; }).length;
+    var K = [
+      [L.length, 'Accounts', 'test accounts not counted'],
+      [c(function (r) { return now - r.reg < 7 * DAY; }), 'New in 7 days', c(function (r) { return now - r.reg < 30 * DAY; }) + ' in 30 days'],
+      [c(function (r) { return r.login && now - r.login < 7 * DAY; }), 'Active in 7 days', c(function (r) { return r.login && now - r.login < 30 * DAY; }) + ' in 30 days'],
+      [Object.keys(L.reduce(function (o, r) { if (r.cc) o[r.cc] = 1; return o; }, {})).length, 'Countries', c(function (r) { return r.csrc === 'chosen'; }) + ' picked it themselves'],
+      [seenDev.length ? Math.round(mob / seenDev.length * 100) + '%' : '–', 'On phone or tablet', seenDev.length + ' devices seen so far'],
+      [c(function (r) { return r.dt; }), 'Took the Discipline Test', Math.round(c(function (r) { return r.dt; }) / n * 100) + '% of accounts'],
+      [c(function (r) { return r.tt; }), 'Took the Trading Test', Math.round(c(function (r) { return r.tt; }) / n * 100) + '% of accounts'],
+      [c(function (r) { return !r.dt && !r.tt; }), 'Took no test yet', 'people to nudge']
+    ];
+    $('kpis').innerHTML = K.map(function (k) { return '<div class="kpi"><b>' + k[0] + '</b><span>' + esc(k[1]) + '<br><small>' + esc(k[2]) + '</small></span></div>'; }).join('');
+  }
+  function bars(el, pairs, total, max) {
+    pairs.sort(function (a, b) { return b[1] - a[1]; });
+    var top = pairs.slice(0, max || 8), big = top.length ? top[0][1] : 1;
+    $(el).innerHTML = top.length ? top.map(function (p) {
+      return '<div class="bar"><span class="lbl"><i style="width:' + (p[1] / big * 100).toFixed(1) + '%"></i><em>' + p[0] + '</em></span><span class="n">' + p[1] + '</span><span class="p">' + Math.round(p[1] / (total || 1) * 100) + '%</span></div>';
+    }).join('') : '<p class="more">Nothing yet. Shows up as traders visit while logged in.</p>';
+    return pairs.length - top.length;
+  }
+  function count(L, f) { var o = {}; L.forEach(function (r) { var k = f(r); if (k) o[k] = (o[k] || 0) + 1; }); return Object.keys(o).map(function (k) { return [k, o[k]]; }); }
+  function panels(L) {
+    var withC = L.filter(function (r) { return r.cc; });
+    var rest = bars('p-cty', count(withC, function (r) { return r.cc; }).map(function (p) { return [flag(p[0]) + ' ' + esc(cname(p[0])), p[1]]; }), L.length, 10);
+    var unk = L.length - withC.length;
+    $('p-cty-m').textContent = (rest > 0 ? rest + ' more countries · ' : '') + (unk ? unk + ' not known yet' : 'all known');
+    var D = L.filter(function (r) { return r.dev; });
+    bars('p-dev', count(D, function (r) { return r.devType.charAt(0).toUpperCase() + r.devType.slice(1); }), D.length, 3);
+    bars('p-os', count(D, function (r) { return esc(r.os); }), D.length, 6);
+    bars('p-br', count(D, function (r) { return esc(r.br); }), D.length, 6);
+    $('p-sign').innerHTML = daily(L.map(function (r) { return r.reg; }), 'var(--gold)');
+    $('p-login').innerHTML = daily(L.map(function (r) { return r.login; }), 'var(--teal)');
+  }
+  function daily(times, color) {
+    var days = 60, start = new Date(); start.setHours(0, 0, 0, 0); var t0 = start.getTime() - (days - 1) * DAY;
+    var b = new Array(days).fill(0);
+    times.forEach(function (t) { if (t >= t0) { var i = Math.floor((t - t0) / DAY); if (i >= 0 && i < days) b[i]++; } });
+    var max = Math.max(1, Math.max.apply(null, b)), W = 600, H = 120, bw = W / days;
+    var s = '<svg viewBox="0 0 ' + W + ' ' + (H + 18) + '" role="img" aria-label="Per day, last 60 days">';
+    s += '<line x1="0" y1="' + H + '" x2="' + W + '" y2="' + H + '" stroke="var(--rule2)"/>';
+    b.forEach(function (v, i) {
+      var h = v / max * (H - 14); var d = new Date(t0 + i * DAY);
+      s += '<rect x="' + (i * bw + 1).toFixed(1) + '" y="' + (H - h).toFixed(1) + '" width="' + (bw - 2).toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + color + '" opacity=".85"><title>' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ': ' + v + '</title></rect>';
+    });
+    s += '<text class="ax" x="0" y="' + (H + 14) + '">' + new Date(t0).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + '</text>';
+    s += '<text class="ax" x="' + W + '" y="' + (H + 14) + '" text-anchor="end">today</text>';
+    s += '<text class="ax" x="2" y="10">max ' + max + ' a day</text></svg>';
+    return s;
+  }
+
+  /* ---------- table ---------- */
+  var COLS = [
+    ['name', 'Trader', function (r) { return r.name.toLowerCase() || r.email; }],
+    ['cc', 'Country', function (r) { return cname(r.cc) || 'zzz'; }],
+    ['dev', 'Device', function (r) { return r.dev || 'zzz'; }],
+    ['devs', 'Devices used', function (r) { return r.devs || 'zzz'; }],
+    ['reg', 'Registered', function (r) { return r.reg; }],
+    ['login', 'Last seen', function (r) { return r.login; }],
+    ['dt', 'Discipline Test', function (r) { return r.dt ? 1000 + (+r.dts || 0) : 0; }],
+    ['tt', 'Trading Test', function (r) { return r.tt ? 1000 + (+r.tts || 0) : 0; }],
+    ['lang', 'Lang', function (r) { return r.lang || 'zzz'; }],
+    ['signin', 'Sign-in', function (r) { return r.signin; }]
+  ];
+  function head() {
+    $('th').innerHTML = COLS.map(function (c) { return '<th data-k="' + c[0] + '" class="' + (SORT.k === c[0] ? 'on' : '') + '" aria-sort="' + (SORT.k === c[0] ? (SORT.d > 0 ? 'ascending' : 'descending') : 'none') + '">' + c[1] + (SORT.k === c[0] ? (SORT.d > 0 ? ' ↑' : ' ↓') : '') + '</th>'; }).join('');
+  }
+  $('th').addEventListener('click', function (e) {
+    var th = e.target.closest('th'); if (!th) return;
+    var k = th.dataset.k; SORT = { k: k, d: SORT.k === k ? -SORT.d : (k === 'reg' || k === 'login' || k === 'dt' || k === 'tt' ? -1 : 1) }; render();
+  });
+  function testCell(on, score, prof, d) {
+    return on ? '<span class="tag y">' + esc(score) + '</span> ' + esc(prof) + '<span class="sub">' + fmtD(d) + '</span>' : '<span class="tag n">not yet</span>';
+  }
+  function render() {
+    var L = filtered(), real = ROWS.filter(function (r) { return $('f-fake').checked || !r.fake; });
+    kpis(real); panels(real); head();
+    var key = (COLS.find(function (c) { return c[0] === SORT.k; }) || COLS[4])[2];
+    L.sort(function (a, b) { var x = key(a), y = key(b); return (x < y ? -1 : x > y ? 1 : 0) * SORT.d || b.reg - a.reg; });
+    $('count').textContent = L.length + ' of ' + real.length;
+    $('tb').innerHTML = L.map(function (r) {
+      return '<tr>' +
+        '<td><b>' + esc(r.name || '—') + '</b><span class="sub em">' + esc(r.email) + '</span></td>' +
+        '<td>' + (r.cc ? flag(r.cc) + ' ' + esc(cname(r.cc)) + (r.csrc === 'time zone' ? ' <span class="guess">~ time zone</span>' : '') : '<span class="guess">not known yet</span>') + (r.tz ? '<span class="sub">' + esc(r.tz.replace(/_/g, ' ')) + '</span>' : '') + '</td>' +
+        '<td>' + (r.dev ? esc(r.dev) + '<span class="sub">' + esc(r.os) + ' · ' + esc(r.br) + (r.screen ? ' · ' + esc(r.screen) : '') + '</span>' : '<span class="guess">not seen yet</span>') + '</td>' +
+        '<td>' + esc(r.devs) + '</td>' +
+        '<td class="num">' + fmtD(r.reg) + '<span class="sub">' + ago(r.reg) + '</span></td>' +
+        '<td class="num">' + fmtD(r.login) + '<span class="sub">' + ago(r.login) + '</span></td>' +
+        '<td class="test">' + testCell(r.dt, r.dts, r.dtp, r.dtd) + '</td>' +
+        '<td class="test">' + testCell(r.tt, r.tts, r.ttp, r.ttd) + '</td>' +
+        '<td>' + esc(r.lang.toUpperCase()) + '</td>' +
+        '<td>' + esc(r.signin || (r.acct === 'test only' ? 'no account' : '')) + '</td></tr>';
+    }).join('') || '<tr><td colspan="10" style="color:var(--mute);padding:20px">Nobody matches these filters.</td></tr>';
+    results();
+  }
+  function results() {
+    var H = DATA.resultHead || [], ix = {}; H.forEach(function (h, i) { ix[h] = i; });
+    var R = (DATA.results || []).slice().reverse().slice(0, 25);
+    $('rb').innerHTML = R.length ? R.map(function (r) {
+      return '<tr><td class="num">' + fmtD(ts(r[ix['Date']])) + '</td><td>' + esc(r[ix['Test']]) + '</td><td class="em">' + esc(r[ix['Email']]) + (r[ix['Verified']] === 'no' ? ' <span class="guess">typed, not verified</span>' : '') + '</td><td>' + esc(r[ix['Name']]) + '</td><td class="num">' + esc(r[ix['Score']]) + '</td><td>' + esc(r[ix['Profile']]) + '</td><td style="max-width:420px">' + esc(r[ix['Top fixes']]) + '</td></tr>';
+    }).join('') : '<tr><td colspan="7" style="color:var(--mute);padding:16px">No test taken yet.</td></tr>';
+  }
+
+  /* ---------- copy + CSV ---------- */
+  $('b-copy').addEventListener('click', function () {
+    var list = filtered().map(function (r) { return r.email; }).join(', ');
+    (navigator.clipboard ? navigator.clipboard.writeText(list) : Promise.reject()).then(function () { toast(filtered().length + ' emails copied'); })
+      .catch(function () { window.prompt('Copy the emails:', list); });
+  });
+  $('b-csv').addEventListener('click', function () {
+    var q = function (v) { v = String(v === undefined || v === null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+    var head = ['Name', 'Email', 'Country code', 'Country', 'Country from', 'Time zone', 'Device', 'OS', 'Browser', 'Screen', 'Devices used', 'Registered', 'Last seen', 'Discipline Test', 'DT score', 'DT profile', 'Trading Test', 'TT score', 'TT profile', 'Language', 'Sign-in'];
+    var lines = [head.join(',')].concat(filtered().map(function (r) {
+      return [r.name, r.email, r.cc, cname(r.cc), r.csrc, r.tz, r.dev, r.os, r.br, r.screen, r.devs, r.reg ? new Date(r.reg).toISOString().slice(0, 10) : '', r.login ? new Date(r.login).toISOString().slice(0, 10) : '',
+        r.dt ? 'taken' : 'not yet', r.dts, r.dtp, r.tt ? 'taken' : 'not yet', r.tts, r.ttp, r.lang, r.signin].map(q).join(',');
+    }));
+    var blob = new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'mmm-members-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  });
+  ['q', 'f-cty', 'f-dev', 'f-test', 'f-fake'].forEach(function (id) { $(id).addEventListener(id === 'q' ? 'input' : 'change', render); });
+  $('b-sync').addEventListener('click', function () { load(true); });
+
+  /* ---------- who is here ---------- */
+  function onUser(u) {
+    USER = u || null; DATA = null;
+    if (!USER) return gate('<h2>Log in to open the member list</h2><p>This page is private. Log in with your admin email. Nobody else can see the list: the server checks your login before it sends anything.</p><button class="btn gold" type="button" id="b-login">Log in</button>');
+    load(false);
+  }
+  document.addEventListener('click', function (e) { if (e.target.id === 'b-login') window.MMM.openAuth('login'); });
+  document.addEventListener('mmm:auth', function (e) { onUser(e.detail); });
+  gate('<h2>Loading…</h2><p>Checking who is logged in.</p>');
+})();
+</script>
+<script src="/assets/nav.js"></script>
+<script src="/assets/site.js"></script>
+</body>
+</html>

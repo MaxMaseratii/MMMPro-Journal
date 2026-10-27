@@ -49,6 +49,8 @@
     '.mmm-nav a.active{color:#000;text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}',
     '#mmm-auth input{background:#0b0b0b;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:11px 12px;width:100%;color:#fff;outline:none}',
     '#mmm-auth input:focus{border-color:var(--mmm-tiffany)}',
+    '#mmm-auth select{background:#0b0b0b;border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:11px 12px;width:100%;color:#fff;outline:none;color-scheme:dark}',
+    '#mmm-auth select:focus{border-color:var(--mmm-tiffany)}',
     '#mmm-auth .tab[aria-selected=true]{background:linear-gradient(90deg,var(--mmm-gold),var(--mmm-gold-light));color:#000}',
     'body.mmm-lock{overflow:hidden}',
     '.grid>*{min-width:0}',
@@ -158,6 +160,7 @@
       '<button class="tab rounded-lg py-2 text-sm font-bold" role="tab" data-tab="register" aria-selected="false">Register</button></div>' +
       '<form id="mmm-auth-form" class="space-y-3" novalidate>' +
       '<div data-only="register"><label class="block text-xs font-semibold text-gray-400 mb-1" for="mmm-name">Name</label><input id="mmm-name" autocomplete="name" placeholder="Your name"></div>' +
+      '<div data-only="register"><label class="block text-xs font-semibold text-gray-400 mb-1" for="mmm-country">Country</label><select id="mmm-country" autocomplete="country"><option value="">Choose your country</option></select></div>' +
       '<div><label class="block text-xs font-semibold text-gray-400 mb-1" for="mmm-email">Email</label><input id="mmm-email" type="email" autocomplete="email" placeholder="you@email.com" required></div>' +
       '<div data-hide="reset"><label class="block text-xs font-semibold text-gray-400 mb-1" for="mmm-pass">Password</label><input id="mmm-pass" type="password" autocomplete="current-password" placeholder="At least 6 characters" required></div>' +
       '<label data-only="register" class="flex items-start gap-2 text-xs text-gray-400"><input id="mmm-terms" type="checkbox" style="width:auto;margin-top:2px"> <span>I accept the <a href="/legal/#terms" class="underline hover:text-white" target="_blank">Terms</a>, the <a href="/legal/#risk" class="underline hover:text-white" target="_blank">Risk Disclosure</a> and the <a href="/legal/#privacy" class="underline hover:text-white" target="_blank">Privacy Policy</a>.</span></label>' +
@@ -178,6 +181,26 @@
     document.getElementById('mmm-pass').setAttribute('autocomplete', m === 'register' ? 'new-password' : 'current-password');
     document.getElementById('mmm-auth-go').textContent = m === 'register' ? 'Create my free account' : m === 'reset' ? 'Send reset link' : 'Log in';
     msg('');
+    if (m === 'register') fillCountries();
+  }
+  /* ---------- country list (names in the page language, best guess from the time zone) ---------- */
+  var geoPromise = null;
+  function geoReady() {
+    if (window.MMM_GEO) return Promise.resolve(window.MMM_GEO);
+    if (!geoPromise) { geoPromise = loadScript('/assets/mmm-geo.js').then(function () { return window.MMM_GEO; }); geoPromise.catch(function () { geoPromise = null; }); }
+    return geoPromise;
+  }
+  function pageLang() { try { return localStorage.getItem('mmm-language') || 'en'; } catch (e) { return 'en'; } }
+  function fillCountries() {
+    var sel = document.getElementById('mmm-country');
+    if (!sel || sel.dataset.lang === pageLang()) return;
+    geoReady().then(function (G) {
+      var cur = sel.value || G.guess(), first = sel.options[0];
+      sel.innerHTML = G.options(pageLang(), cur);
+      sel.insertBefore(first, sel.firstChild);
+      sel.value = cur || '';
+      sel.dataset.lang = pageLang();
+    }).catch(function () { });
   }
   function msg(t, ok) {
     var el = document.getElementById('mmm-auth-msg');
@@ -242,6 +265,8 @@
     var btn = document.getElementById('mmm-auth-go');
     if (!email) { msg('Enter your email.'); return; }
     if (mode !== 'reset' && !pass) { msg('Enter your password.'); return; }
+    var country = (document.getElementById('mmm-country') || {}).value || '';
+    if (mode === 'register' && !country) { msg('Please choose your country.'); return; }
     if (mode === 'register' && !document.getElementById('mmm-terms').checked) { msg('Please accept the Terms to create an account.'); return; }
     btn.disabled = true; btn.style.opacity = '.6';
     fbReady().then(function (auth) {
@@ -251,6 +276,8 @@
       if (mode === 'register') {
         return auth.createUserWithEmailAndPassword(email, pass).then(function (cred) {
           return (name ? cred.user.updateProfile({ displayName: name }) : Promise.resolve()).then(function () {
+            return saveCountry(cred.user, country, 'signup');
+          }).then(function () {
             msg('Account created. Opening your journal...', true);
             setTimeout(function () { location.href = '/journal/'; }, 700);
           });
@@ -307,6 +334,32 @@
   }
   window.MMM = { openAuth: openAuth, user: function () { return curUser; }, db: dbReady, auth: fbReady };
 
+  /* ---------- country + device (for the private member list) ---------- */
+  function saveCountry(user, cc, src) {
+    if (!user || !/^[A-Z]{2}$/.test(cc || '')) return Promise.resolve();
+    try { localStorage.setItem('mmm-country-' + user.uid, cc); } catch (e) {}
+    return dbReady().then(function (db) {
+      return db.collection('users').doc(user.uid).collection('profile').doc('meta').set({ country: cc, countrySrc: src || 'signup', countryTs: Date.now() }, { merge: true });
+    }).catch(function () { });
+  }
+  window.MMM.saveCountry = saveCountry;
+  function mailUrlReady() {
+    if (window.MMM_TEST_MAIL_URL) return Promise.resolve(window.MMM_TEST_MAIL_URL);
+    return loadScript('/assets/mmm-config.js').then(function () { return window.MMM_TEST_MAIL_URL || ''; }).catch(function () { return ''; });
+  }
+  // once a day per account: tell the member list which device and country this visit came from
+  function seenPing(user) {
+    if (!user) return;
+    var key = 'mmm-seen-site-' + user.uid, today = new Date().toISOString().slice(0, 10);
+    try { if (localStorage.getItem(key) === today) return; } catch (e) {}
+    var cc = ''; try { cc = localStorage.getItem('mmm-country-' + user.uid) || ''; } catch (e) {}
+    Promise.all([mailUrlReady(), geoReady(), user.getIdToken()]).then(function (r) {
+      if (!r[0]) return null;
+      return fetch(r[0], { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'seen', idToken: r[2], lang: pageLang(), country: cc, dev: r[1].device(), where: 'site' }) }).then(function (x) { return x.json(); });
+    }).then(function (j) { if (j && j.ok) { try { localStorage.setItem(key, today); } catch (e) {} } }).catch(function () { });
+  }
+
   /* ---------- floating Discipline Test banner: logged-in traders who never took it ---------- */
   var BANNER_X = 'mmm-dtb-closed';
   function bannerClosed() { try { return sessionStorage.getItem(BANNER_X) === '1'; } catch (e) { return false; } }
@@ -347,6 +400,7 @@
       curUser = user || null; renderAcct(user);
       try { document.dispatchEvent(new CustomEvent('mmm:auth', { detail: user || null })); } catch (e) { }
       checkBanner(user);
+      if (user) setTimeout(function () { seenPing(user); }, 4000);
     });
   }).catch(function () { });
 })();

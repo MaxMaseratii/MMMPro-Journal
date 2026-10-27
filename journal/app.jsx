@@ -534,6 +534,14 @@ Object.assign(TRANSLATIONS, {
   "unlock your Trading Test result - your score and advice are waiting and will be saved in your journal.": {"fr": "débloque ton résultat du test de trading - ton score et tes conseils t’attendent et seront enregistrés dans ton journal.", "es": "desbloquea tu resultado del Test de Trading - tu puntuación y tus consejos te esperan y se guardarán en tu diario.", "ht": "debloke rezilta Tès Trading ou - nòt ou ak konsèy ou ap tann ou epi y ap sove nan jounal ou.", "pt": "desbloqueie o resultado do seu Teste de Trading - sua pontuação e seus conselhos estão esperando e serão salvos no seu diário.", "de": "schalte dein Trading-Test-Ergebnis frei - dein Score und deine Tipps warten und werden in deinem Journal gespeichert.", "ja": "トレーディングテストの結果をロック解除 - スコアとアドバイスが待っていて、ジャーナルに保存されます。", "zh": "解锁你的交易测试结果 - 你的分数和建议正在等你，并会保存在你的日志中。"}
 });
 
+Object.assign(TRANSLATIONS, {
+  "Country": {"fr": "Pays", "es": "País", "ht": "Peyi", "pt": "País", "de": "Land", "ja": "国", "zh": "国家/地区"},
+  "Choose your country": {"fr": "Choisis ton pays", "es": "Elige tu país", "ht": "Chwazi peyi ou", "pt": "Escolha seu país", "de": "Wähle dein Land", "ja": "国を選んでください", "zh": "选择你的国家/地区"},
+  "Please choose your country.": {"fr": "Choisis ton pays, s’il te plaît.", "es": "Elige tu país, por favor.", "ht": "Tanpri chwazi peyi ou.", "pt": "Por favor, escolha seu país.", "de": "Bitte wähle dein Land.", "ja": "国を選んでください。", "zh": "请选择你的国家/地区。"},
+  "Where do you trade from?": {"fr": "D’où trades-tu ?", "es": "¿Desde dónde haces trading?", "ht": "Ki kote ou trade?", "pt": "De onde você faz trading?", "de": "Von wo tradest du?", "ja": "どこからトレードしていますか？", "zh": "你在哪里交易？"},
+  "It helps us plan live sessions and support in your time zone.": {"fr": "Ça nous aide à prévoir les lives et le support dans ton fuseau horaire.", "es": "Nos ayuda a planear los directos y el soporte en tu zona horaria.", "ht": "Sa ede nou planifye sesyon live ak sipò nan zòn lè ou.", "pt": "Isso nos ajuda a planejar as lives e o suporte no seu fuso horário.", "de": "Das hilft uns, Live-Sessions und Support in deiner Zeitzone zu planen.", "ja": "あなたのタイムゾーンに合わせてライブやサポートを計画するのに役立ちます。", "zh": "这能帮助我们按你的时区安排直播和支持。"}
+});
+
 function applyTranslation(lang) {
   if (typeof document === 'undefined') return;
   const root = document.getElementById('root');
@@ -1097,6 +1105,53 @@ const getApplicableRules = function(trade, entry, account) {
   return rules.filter(function(r) { return r && r.trim(); });
 };
 
+// Country list for the sign-up form and the "Where do you trade from?" card (names come from the browser, in the page language).
+function CountrySelect(props) {
+  const G = typeof window !== 'undefined' ? window.MMM_GEO : null;
+  const lang = props.language || 'en';
+  const list = React.useMemo(function() {
+    if (!G) return [];
+    let coll = null; try { coll = new Intl.Collator(lang === 'ht' ? 'fr' : lang); } catch (e) {}
+    return G.codes.map(function(c) { return [c, G.name(c, lang)]; }).sort(function(a, b) { return coll ? coll.compare(a[1], b[1]) : (a[1] < b[1] ? -1 : 1); });
+  }, [lang, !!G]);
+  return (
+    <select value={props.value} onChange={function(e) { props.onChange(e.target.value); }} autoComplete="country" aria-label="Country"
+      className={props.className || 'w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 focus:border-yellow-400/50 outline-none'}>
+      <option value="">Choose your country</option>
+      {list.map(function(x) { return <option key={x[0]} value={x[0]}>{x[1]}</option>; })}
+    </select>
+  );
+}
+const saveUserCountry = function(uid, cc, src) {
+  if (!uid || !/^[A-Z]{2}$/.test(cc || '')) return Promise.resolve();
+  try { localStorage.setItem('mmm-country-' + uid, cc); } catch (e) {}
+  return db.collection('users').doc(uid).collection('profile').doc('meta').set({ country: cc, countrySrc: src || 'signup', countryTs: Date.now() }, { merge: true }).catch(function() {});
+};
+const guessCountry = function() { try { return (window.MMM_GEO && window.MMM_GEO.guess()) || ''; } catch (e) { return ''; } };
+
+// Small card for traders who registered before the country question existed.
+function CountryPrompt(props) {
+  const [cc, setCc] = useState(guessCountry());
+  const [saving, setSaving] = useState(false);
+  const save = function() {
+    if (!cc) return;
+    setSaving(true);
+    saveUserCountry(props.uid, cc, 'asked').then(function() { setSaving(false); props.onSaved(cc); });
+  };
+  return (
+    <div className="max-w-6xl mx-auto mb-4 bg-gray-900/70 border border-yellow-500/25 rounded-xl px-4 py-3 flex flex-wrap items-center gap-3">
+      <Icon name="Globe" className="h-4 w-4 text-yellow-400 flex-shrink-0" />
+      <div className="flex-1 min-w-[200px]">
+        <p className="text-sm font-semibold text-white">Where do you trade from?</p>
+        <p className="text-xs text-gray-400">It helps us plan live sessions and support in your time zone.</p>
+      </div>
+      <CountrySelect language={props.language} value={cc} onChange={setCc} className="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-yellow-400/50 outline-none max-w-[220px]" />
+      <button onClick={save} disabled={!cc || saving} className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-lg text-sm font-semibold disabled:opacity-50">Save</button>
+      <button onClick={props.onClose} aria-label="Close" className="h-8 w-8 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 text-xl leading-none">×</button>
+    </div>
+  );
+}
+
 function AuthScreen(props) {
   const language = props.language;
   const setLanguage = props.setLanguage;
@@ -1106,6 +1161,7 @@ function AuthScreen(props) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [country, setCountry] = useState(guessCountry());
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [showInstall, setShowInstall] = useState(false);
@@ -1115,11 +1171,13 @@ function AuthScreen(props) {
     setError('');
     setInfo('');
     if (!email || !password) { setError('Enter email and password.'); return; }
+    if (mode === 'signup' && !country) { setError('Please choose your country.'); return; }
     setLoading(true);
     try {
       if (mode === 'signup') {
         const cred = await auth.createUserWithEmailAndPassword(email, password);
         if (displayName) await cred.user.updateProfile({ displayName: displayName });
+        await saveUserCountry(cred.user.uid, country, 'signup');
       } else {
         await auth.signInWithEmailAndPassword(email, password);
       }
@@ -1173,6 +1231,7 @@ function AuthScreen(props) {
           <input value={displayName} onChange={function(e) { setDisplayName(e.target.value); }} placeholder="Your name"
             className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 focus:border-yellow-400/50 outline-none" />
         )}
+        {mode === 'signup' && <CountrySelect language={language} value={country} onChange={setCountry} />}
         <input value={email} onChange={function(e) { setEmail(e.target.value); }} placeholder="Email" type="email"
           className="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 mb-3 focus:border-yellow-400/50 outline-none" />
         <input value={password} onChange={function(e) { setPassword(e.target.value); }} placeholder="Password" type="password"
@@ -5889,6 +5948,19 @@ function MMMJournal(props) {
   const [dtest, setDtest] = useState(null);
   const [dtestReady, setDtestReady] = useState(false);
   const [dtBannerClosed, setDtBannerClosed] = useState(function() { try { return sessionStorage.getItem('mmm-dtb-closed') === '1'; } catch (e) { return false; } });
+  const [myCountry, setMyCountry] = useState(function() { try { return localStorage.getItem('mmm-country-' + user.uid) || ''; } catch (e) { return ''; } });
+  const [countryAsk, setCountryAsk] = useState(false);
+  useEffect(function() {
+    if (myCountry) return;
+    let cancelled = false;
+    db.collection('users').doc(user.uid).collection('profile').doc('meta').get().then(function(snap) {
+      if (cancelled) return;
+      const c = snap.exists ? (snap.data() || {}).country : '';
+      if (c) { setMyCountry(c); try { localStorage.setItem('mmm-country-' + user.uid, c); } catch (e) {} }
+      else { let closed = false; try { closed = sessionStorage.getItem('mmm-country-closed') === '1'; } catch (e) {} setCountryAsk(!closed); }
+    }).catch(function() {});
+    return function() { cancelled = true; };
+  }, [user.uid]);
   const [accountWidgetOpen, setAccountWidgetOpen] = useState(function() {
     try { return localStorage.getItem('mmm-account-widget') !== 'closed'; } catch (e) { return true; }
   });
@@ -5995,7 +6067,8 @@ function MMMJournal(props) {
     const key = 'mmm-seen-' + user.uid, today = new Date().toISOString().slice(0, 10);
     try { if (localStorage.getItem(key) === today) return; } catch (e) {}
     user.getIdToken().then(function(tok) {
-      return postTestMailer({ action: 'seen', idToken: tok, lang: localStorage.getItem('mmm-language') || 'en', flags: {
+      return postTestMailer({ action: 'seen', idToken: tok, lang: localStorage.getItem('mmm-language') || 'en', where: 'journal',
+        country: myCountry || '', dev: (window.MMM_GEO ? window.MMM_GEO.device() : null), flags: {
         dt: dtest ? { ts: dtest.ts, score: dtest.score, profile: (DT_ARCH[dtest.arch] || DT_ARCH.chaotic)[0] } : null,
         tt: diagnostic ? { ts: diagnostic.ts, score: diagnostic.score, profile: diagnostic.archetypeLabel || diagnostic.archetype || '' } : null } });
     }).then(function(r) { if (r && r.ok) { try { localStorage.setItem(key, today); } catch (e) {} } }).catch(function() {});
@@ -6680,6 +6753,7 @@ function MMMJournal(props) {
   return (
     <div className="min-h-screen bg-black text-white p-4 md:p-8">
       {!(user.displayName || savedName) && <NamePromptModal uid={user.uid} onSaved={setSavedName} />}
+      {countryAsk && !myCountry && <CountryPrompt uid={user.uid} language={language} onSaved={function(c) { setMyCountry(c); setCountryAsk(false); }} onClose={function() { try { sessionStorage.setItem('mmm-country-closed', '1'); } catch (e) {} setCountryAsk(false); }} />}
       {dtestReady && !dtest && !dtBannerClosed && <DisciplineTestBanner onClose={function() { try { sessionStorage.setItem('mmm-dtb-closed', '1'); } catch (e) {} setDtBannerClosed(true); }} />}
       {entrySavedToast && (
         <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-green-600 to-emerald-600 text-white text-sm font-medium px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 max-w-xs">

@@ -16,29 +16,21 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
-<meta name="theme-color" content="#0b0f10">
+<meta name="theme-color" content="#0b0f12">
 <style>*,*::before,*::after{box-sizing:border-box}html,body{margin:0}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
 <style>
 /* Layout: one-screen app — header + control bar on top, content scrolls in the middle, guide + data tabs pinned at the bottom (like a spreadsheet). */
 :root{
-  --bg:#f6f8f8; --panel:#ffffff; --fg:#14201f; --muted:#5d6b6a; --line:#dde4e3; --head:#eaf0ef;
-  --teal:#0a8a7f; --teal-soft:#d7f0ec; --mag:#b8246e; --mag-soft:#f8dceb; --sel:#fff6cc; --neutral:#f1f4f4;
-  --good:#0f7a4e; --good-bg:#cdeedd; --good-bg2:#e6f6ee; --bad:#b3261e; --bad-bg:#f6d5d2; --bad-bg2:#fbeae8;
-  --warn:#8a5a00; --warn-bg:#fbecc8;
+  /* same palette as the Strategy Book (/strategies/): dark paper, gold + teal, green / amber / red */
+  --bg:#0b0f12; --panel:#10161a; --fg:#e8eef1; --muted:#8d9ba3; --line:#22303a; --head:#131b20;
+  --teal:hsl(180,70%,55%); --teal-soft:#152e31; --mag:hsl(45,100%,55%); --mag-soft:#2d2b1a; --sel:#34301a; --neutral:#131b20;
+  --good:#4fd39a; --good-bg:#1a342e; --good-bg2:#152524; --bad:#f2736a; --bad-bg:#342527; --bad-bg2:#221d20;
+  --warn:#f0b341; --warn-bg:#2d2a1f;
   --f-ui:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif; --f-num:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0b0f10; --panel:#11171a; --fg:#e3ecea; --muted:#8fa09e; --line:#223034; --head:#162024;
-  --teal:#2fd1c1; --teal-soft:#123a37; --mag:#ff5fa8; --mag-soft:#3a1528; --sel:#2c2a12; --neutral:#151d20;
-  --good:#5be3a4; --good-bg:#0f3d2a; --good-bg2:#0d2a1e; --bad:#ff8a80; --bad-bg:#45181a; --bad-bg2:#2c1213;
-  --warn:#ffc857; --warn-bg:#3a2c0b; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#0b0f10; --panel:#11171a; --fg:#e3ecea; --muted:#8fa09e; --line:#223034; --head:#162024;
-  --teal:#2fd1c1; --teal-soft:#123a37; --mag:#ff5fa8; --mag-soft:#3a1528; --sel:#2c2a12; --neutral:#151d20;
-  --good:#5be3a4; --good-bg:#0f3d2a; --good-bg2:#0d2a1e; --bad:#ff8a80; --bad-bg:#45181a; --bad-bg2:#2c1213;
-  --warn:#ffc857; --warn-bg:#3a2c0b; color-scheme:dark}
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-ui);font-size:13px;display:flex;flex-direction:column;overflow:hidden;
   -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
