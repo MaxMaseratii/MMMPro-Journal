@@ -199,6 +199,17 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
 .loading{padding:36px 0;color:var(--mute)}
 
 
+/* NY morning profile */
+.prof{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
+@media (max-width:900px){.prof{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.prof{grid-template-columns:minmax(0,1fr)}}
+.prof div{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--gold);padding:12px 14px;min-width:0}
+.prof div.no{border-top-color:var(--dn)}
+.prof b{display:block;font:700 30px/1 var(--mono);color:var(--gold2);letter-spacing:-.01em}
+.prof div.no b{color:var(--dn)}
+.prof span{display:block;font:700 14px/1.2 var(--display);letter-spacing:.07em;text-transform:uppercase;color:var(--fg);margin:8px 0 4px}
+.prof p{margin:0;font-size:14px;line-height:1.45;color:#c3cbd1}
+.prof-note{margin:12px 0 0;font-size:13.5px;color:var(--mute);line-height:1.5;max-width:100ch}
 /* try-it + glossary buttons */
 .acts{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .btn-try{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#0b0b0b;font:700 17px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:12px 16px;text-decoration:none;transition:transform .15s,box-shadow .2s}
@@ -246,7 +257,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       <p class="lede">Every day-trading strategy that passed our tests, written as steps you can follow on a chart: which chart, what time, where to enter, where the stop goes and when to get out.</p>
       <p class="facts">Built on NQ 1-minute data from Dec 2022 to Dec 2025, then checked on fresh MNQ data from Dec 2025 to Oct 2026 that was never used to build the rules. Every trade pays 1 point in costs. Money is shown for 1 MNQ ($2 a point).</p>
       <p class="adv"><b>Pick ONE strategy.</b> Study it, understand it, check that it fits your trading style and backtest it yourself. Then decide. We never advise trading several strategies at once.</p>
-      <div class="acts" style="margin-top:18px"><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="hero">Try the indicators for free →</a><a class="btn-ghost" href="/backtests/#words">MMM words · glossary</a></div>
+      <div class="acts" style="margin-top:18px"><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="hero">Try the indicators for free →</a><a class="btn-ghost" href="/backtests/#words">MMM words · glossary</a><a class="btn-ghost" href="/backtests/ny-open/study/">9:30–11:30 AM study</a></div>
     </div>
     <aside class="entry" aria-labelledby="gate">
       <h2 id="gate">How a strategy gets into the book</h2>
@@ -269,7 +280,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
         <h2 id="h-book">The book</h2>
         <p>Click a strategy to open its rules and its example picture. The badge tells you its status: ✔ PASS = it made money in both periods, Trade = proven, Watch = paper-trade it first.</p>
       </div>
-      <div class="acts"><a class="btn-ghost" href="/backtests/#words">MMM words · glossary</a><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="book">Try it for free</a></div>
+      <div class="acts"><a class="btn-ghost" href="/backtests/#words">MMM words · glossary</a><a class="btn-ghost" href="/backtests/ny-open/study/">9:30–11:30 AM study</a><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="book">Try it for free</a></div>
     </div>
     <div class="bar" role="group" aria-label="Your size">
       <span class="lab">Your size</span>
@@ -299,6 +310,27 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     </div>
     <div class="runs"><p><b>Every strategy in this book is read straight off the MMM indicators.</b> The fastest way to see if one fits you: put the indicator on your own chart and watch the setup form live.</p><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="runs">Try it for free →</a></div>
     <div class="tickets prot" id="tickets"></div>
+  </div>
+</section>
+
+<section class="sec" id="ny-morning" aria-labelledby="h-nyam">
+  <div class="desk">
+    <div class="sh-h">
+      <div>
+        <h2 id="h-nyam">The NY morning profile · 9:30 to 11:30 AM</h2>
+        <p>Most strategies in this book are traded in the New York morning. This is what that window looks like before you place a trade: when the high and low are made, what the 09:30 and 10:00 candles tell you, and how far a run goes. Every number = 2022–25 / 2026.</p>
+      </div>
+      <div class="acts"><a class="btn-try" href="/backtests/ny-open/study/">Open the 9:30–11:30 AM study</a><a class="btn-ghost" href="/backtests/ny-open/">Interactive NY open lab</a></div>
+    </div>
+    <div class="prof">
+      <div><b>83 / 85%</b><span>Made early</span><p>Days where the 09:30–11:30 high or low is already in by 10:00.</p></div>
+      <div><b>155 / 235</b><span>Morning range, pts</span><p>Median high-to-low from 09:30 to 11:30 on NQ.</p></div>
+      <div><b>86–92%</b><span>BC+ points the way</span><p>A BC+ at 10:00: the next candle takes its target first, on 5m to 4H.</p></div>
+      <div><b>94 / 92%</b><span>Opening range breaks</span><p>Days that close out of the 09:30–10:00 range. Both sides only 14 / 11%.</p></div>
+      <div><b>68 / 79%</b><span>Gaps with the 4H side</span><p>09:30–10:00 UPG gaps that point with the 4H candle react. Against it: 47 / 29%.</p></div>
+      <div class="no"><b>2 BCs</b><span>Runs are short</span><p>Median run after 10:00 before the other side closes. Take points, the opposite candle gives them back.</p></div>
+    </div>
+    <p class="prof-note">These are counts of what price does, not trading signals. Use them to read the morning around the strategy you picked. 2026 = 61 days, a small sample.</p>
   </div>
 </section>
 
