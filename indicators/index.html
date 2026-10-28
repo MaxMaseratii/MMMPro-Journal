@@ -130,7 +130,28 @@ ol.how li b{color:var(--fg)}
 .dia .bx{fill:rgba(79,209,197,.09);stroke:rgba(79,209,197,.55)} .dia .lv{stroke:var(--teal);stroke-width:1.2;stroke-dasharray:4 3} .dia .lvm{stroke:var(--line2);stroke-width:1;stroke-dasharray:3 4}
 .dia .ln{fill:none;stroke:var(--fg);stroke-width:2;stroke-linejoin:round}
 .dia text{font:500 12px var(--mono)} .dia .mg{fill:var(--ec)} .dia .tl{fill:var(--teal)} .dia .mut{fill:var(--mute)}
-.dinfo{border-left:3px solid var(--ec);padding:6px 0 6px 12px;min-height:58px}
+.dinfo{border:2px solid var(--ec);background:color-mix(in srgb,var(--ec) 9%,transparent);padding:10px 14px;min-height:58px;box-shadow:0 0 22px -8px var(--ec)}
+.dinfo.flash,.explain.flash{animation:mmmflash .7s ease-out}
+@keyframes mmmflash{0%{box-shadow:0 0 0 3px var(--ec,#e1b31a),0 0 30px -4px var(--ec,#e1b31a)}100%{box-shadow:0 0 22px -8px var(--ec,#e1b31a)}}
+.cb .explain{border:2px solid var(--gold);--ec:var(--gold);background:rgba(225,179,26,.04);margin:10px}
+.dside{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.pm{border:1px solid var(--line2);background:var(--panel2);padding:10px 12px;display:grid;gap:8px}
+.pm h4{margin:0;font:700 15px/1.2 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--gold2)}
+.pm ul{margin:0;padding-left:18px;display:grid;gap:5px;color:#d4dae0;line-height:1.5;font-size:15px}
+.wk{display:grid;gap:5px}
+.wk .bar{display:flex;height:16px;border:1px solid var(--line2)}
+.wk .bar i{display:block;height:100%}
+.wk .lg{display:flex;flex-wrap:wrap;gap:4px 12px;font:600 12.5px/1.3 var(--mono);color:#c9d0d6}
+.wk .lg b{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px}
+.oddsbtn{font:700 15px/1.2 var(--display);letter-spacing:.07em;text-transform:uppercase;background:var(--gold);color:#0b0b0b;border:0;padding:11px 14px;cursor:pointer;justify-self:start;text-align:left}
+.oddsbtn[aria-expanded="true"]{background:transparent;color:var(--gold);outline:1px solid var(--gold)}
+.odds{border:1px solid var(--line2);background:#0b0d10;padding:12px;display:grid;gap:9px}
+.odds .tfs{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.orow{display:grid;grid-template-columns:minmax(0,1fr) minmax(60px,130px) 46px;gap:10px;align-items:center;font-size:14.5px;color:#d4dae0}
+.orow .tr{height:10px;background:#1b1f25;position:relative}
+.orow .tr i{position:absolute;left:0;top:0;bottom:0;display:block}
+.orow b{font:700 15px/1 var(--mono);text-align:right}
+.odds .nt{margin:0;color:var(--mute);font-size:13px;line-height:1.45}
 .dinfo b{font:700 17px/1.2 var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--fg)}
 .dinfo p{margin:4px 0 0;color:#cfd5da;line-height:1.5}
 .lab{font:600 13px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
@@ -204,7 +225,7 @@ table.cmp{width:100%;border-collapse:collapse;min-width:900px;font-size:14.5px}
       <svg viewBox="0 0 520 330" role="img">
         <rect x="0" y="0" width="520" height="330" fill="#0b0d10"/>
         <rect x="150" y="170" width="250" height="44" fill="rgba(215,255,178,.10)" stroke="rgba(215,255,178,.45)"/>
-        <text x="340" y="208" fill="#d7ffb2" font-family="IBM Plex Mono,monospace" font-size="11">MMCB box</text>
+        <text x="340" y="208" fill="#d7ffb2" font-family="IBM Plex Mono,monospace" font-size="11">H4 MMCB box</text>
         <line x1="150" x2="470" y1="72" y2="72" stroke="#3ddc97" stroke-width="1.5" stroke-dasharray="6 4"/><text x="404" y="66" fill="#3ddc97" font-family="IBM Plex Mono,monospace" font-size="11">BuBC+ H1H TGT</text>
         <line x1="150" x2="470" y1="214" y2="214" stroke="#ff5c6c" stroke-width="1.5"/><text x="420" y="230" fill="#ff5c6c" font-family="IBM Plex Mono,monospace" font-size="11">H1L protected</text>
         <rect x="24" y="230" width="100" height="36" fill="rgba(79,209,197,.10)" stroke="rgba(79,209,197,.6)"/><text x="28" y="282" fill="#4fd1c5" font-family="IBM Plex Mono,monospace" font-size="11">T1 · eBlock</text>
@@ -257,7 +278,7 @@ table.cmp{width:100%;border-collapse:collapse;min-width:900px;font-size:14.5px}
     <p class="lede">Before any structure, MMM reads the candle. Each closed candle is compared with the candle before it: did it close above its high, below its low, or back inside after a sweep? That gives 16 candle types, each with a side it leans to, a <b>target</b> (TGT) and a <b>protected</b> end. Every other MMM indicator is built on this reading. Pick a candle below.</p>
     <div class="cb">
       <div class="panel">
-        <div class="hd"><span class="seg" role="group" aria-label="Side"><button type="button" data-side="bu" aria-pressed="true">Bull types (Bu)</button><button type="button" data-side="be" aria-pressed="false">Bear types (Be)</button></span><span class="lab">Grey = the previous candle</span></div>
+        <div class="hd"><span class="seg" role="group" aria-label="Side"><button type="button" data-side="bu" aria-pressed="true">Bull types (Bu)</button><button type="button" data-side="be" aria-pressed="false">Bear types (Be)</button></span><span class="seg" id="cb-view" role="group" aria-label="View"></span><span class="lab">Grey = the previous candle</span></div>
         <div class="chips" id="cb-chips" role="group" aria-label="Candle type"></div>
         <div id="cb-pic"></div>
       </div>
@@ -269,7 +290,7 @@ table.cmp{width:100%;border-collapse:collapse;min-width:900px;font-size:14.5px}
       <div class="hd"><h3 style="margin:0">What you see on the chart</h3></div>
       <div style="padding:4px 16px 10px">
         <table class="see"><tbody>
-          <tr><td>MMCB box</td><td>The higher-timeframe candle drawn on your chart as a box: pale green after a bull type, purple after a bear type. Two sets run at once (H1 and H4 by default), so you see the hour and the 4-hour candle while you trade the 1m or 5m.</td></tr>
+          <tr><td>MMCB box</td><td>Only used to see a higher-timeframe candle on a lower chart. Pick H4 while you trade the 15m: the box is the 4-hour candle’s range with your 15m candles inside it, pale green after a bull type, purple after a bear type. Tap “HTF box on your chart” above to see it.</td></tr>
           <tr><td>H / L lines + TGT</td><td>The high and low of the last closed HTF candle, starting at the exact candle that made them. The lean side is the <b>target</b> (green dashed, labelled TGT). The other side is <b>protected</b> (red solid): the end the candle's owners must defend. Neutral candles keep grey lines.</td></tr>
           <tr><td>BuBC+ H1H TGT</td><td>Every label tells you three things: the candle type, the timeframe and the level. Read it as: "the last H1 candle was a strong bull body close, its high is the target".</td></tr>
           <tr><td>O Live</td><td>The open of the HTF candle that is forming now. Price above it = the live candle is bullish so far, below it = bearish.</td></tr>
@@ -300,7 +321,7 @@ table.cmp{width:100%;border-collapse:collapse;min-width:900px;font-size:14.5px}
     <div class="tw"><table class="cmp">
       <thead><tr><th></th><th>Candle Bias Pro<small>the foundation</small></th><th>MMM Pro C<small>Candle OrderFlow</small></th><th>MMM Pro S<small>Swing OrderFlow</small></th><th>MMM Pro X<small>Expander Block OrderFlow</small></th><th>MMM Pro FVA<small>Fair Value Area OrderFlow</small></th><th>XCS One<small>all in one</small></th></tr></thead>
       <tbody>
-        <tr><td>Reads</td><td>The last closed candle of any timeframe</td><td>Every candle close and 3-candle gaps</td><td>Turning points (swings)</td><td>Balance zones and expander blocks</td><td>Fair value areas and their breaks</td><td>Boxes + candles + swings</td></tr>
+        <tr><td>Reads</td><td>The last closed candle of any timeframe</td><td>Every candle close: body closes (urgency), 3-candle gaps (extreme urgency), NBCs (negotiation)</td><td>Turning points (swings)</td><td>Balance zones and expander blocks</td><td>Fair value areas and their breaks</td><td>Boxes + candles + swings</td></tr>
         <tr><td>Order-flow idea</td><td>Which side won the candle, its target and its protected end</td><td>Which side forced the last close, and how urgently</td><td>Which defenders got absorbed, with volume and delta behind it</td><td>Which side won the argument about value</td><td>Where the winners last loaded up, and whether price respects it on the way back</td><td>All of them, with the odds of what usually comes next</td></tr>
         <tr><td>Speed</td><td>One candle</td><td>Fastest</td><td>Medium</td><td>Slowest, most selective</td><td>Medium, built for retests</td><td>Zone speed, candle detail</td></tr>
         <tr><td>Fits</td><td>Everyone: read this first</td><td>Scalpers, precise entries</td><td>Structure traders</td><td>Range and value traders</td><td>Level traders who wait for a retest</td><td>One-chart traders</td></tr>
@@ -349,79 +370,148 @@ table.cmp{width:100%;border-collapse:collapse;min-width:900px;font-size:14.5px}
   /* ---------------- MMM Candle Bias Pro ---------------- */
   // bull shapes (price 0–110, previous candle = 40..70); bear = mirror (110 - p)
   var CB = {
-    'BC+': { o: 52, h: 82, l: 46, c: 80, rule: 'Closes above the previous high, does not take the previous low, and closes in the top 25% of its range.', mean: 'Strong control. Buyers won clean.', lean: 1, read: 'Do not fight it. The next body close usually goes the same way.' },
-    'BC−': { o: 55, h: 86, l: 48, c: 72, rule: 'Closes above the previous high, but the close is NOT in the top 25%.', mean: 'A break with a weak close: buyers won, sellers answered at the end.', lean: 1, read: 'Still bullish, but expect price to come back toward the open first.' },
-    'C2+': { o: 60, h: 80, l: 34, c: 78, rule: 'Takes the previous low AND closes above the previous high, close in the top 25%.', mean: 'Engulfs both sides and closes strong: sellers were trapped, then buyers took over.', lean: 1, read: 'The strongest bull candle. A pullback to its middle is often bought.' },
-    'C2−': { o: 66, h: 84, l: 33, c: 71, rule: 'Takes the previous low AND closes above the previous high, close NOT in the top 25%.', mean: 'An engulf with a weak close. Acts like a BC− with a sweep.', lean: 1, read: 'Bullish, with less conviction. Wait for the next body close.' },
-    'AFs+': { o: 50, h: 66, l: 34, c: 62, rule: 'Takes the previous low, closes back inside the previous candle, close in the top half.', mean: 'A sweep of the other side that failed: the sellers who broke the low got trapped.', lean: 1, read: 'Mild bull. Price often retests the open before it goes.' },
-    'AFs−': { o: 52, h: 60, l: 32, c: 40, rule: 'Takes the previous low, closes back inside, close in the bottom half.', mean: 'Sweep and fail of the sweep: nobody won. A warning against the Bu side.', lean: 0, read: 'Neutral on the chart (grey lines). It leans the other way.' },
-    'CI': { o: 48, h: 66, l: 44, c: 62, rule: 'Inside candle: no sweep of the previous high or low. CI•BuAF = close in the top half.', mean: 'A pause. Price agreed for now. Coiling.', lean: 0, read: 'Neutral. Wait for the break of its high or low.' },
-    'S&D': { o: 50, h: 76, l: 34, c: 64, rule: 'Takes BOTH the previous high and low, closes back inside the old range. S&D•BuAF = close in the top half.', mean: 'An outside candle that hunted both sides. Weak bias to the close side.', lean: 1, read: 'Both sides got hit. The close half decides the lean.' }
+    'BC+': { o: 52, h: 82, l: 46, c: 80, fam: 'bc', rule: 'Closes above the previous high, does not take the previous low, and closes in the top 25% of its range.', mean: 'Strong control. Buyers won clean.', lean: 1, read: 'Do not fight it. The next body close usually goes the same way.', wick: 'Tiny top wick: sellers never pushed back at the high. That small wick is what makes it a “+”.' },
+    'BC−': { o: 55, h: 86, l: 48, c: 72, fam: 'bc', rule: 'Closes above the previous high, but the close is NOT in the top 25%.', mean: 'A break with a weak close: buyers won, sellers answered at the end.', lean: 1, read: 'Still bullish, but expect price to come back toward the open first.', wick: 'Long top wick: sellers pushed back after the break. That wick is why it is a “−”.' },
+    'C2+': { o: 60, h: 80, l: 34, c: 78, fam: 'bc', rule: 'Takes the previous low AND closes above the previous high, close in the top 25%.', mean: 'Engulfs both sides and closes strong: sellers were trapped, then buyers took over.', lean: 1, read: 'The strongest bull candle. A pullback to its middle is often bought.', wick: 'Long bottom wick (the sweep of the previous low) and a tiny top wick: sellers got trapped below, buyers closed at the top.' },
+    'C2−': { o: 66, h: 84, l: 33, c: 71, fam: 'bc', rule: 'Takes the previous low AND closes above the previous high, close NOT in the top 25%.', mean: 'An engulf with a weak close. Acts like a BC− with a sweep.', lean: 1, read: 'Bullish, with less conviction. Wait for the next body close.', wick: 'Wicks on both ends: the sweep below, and sellers answering at the top.' },
+    'AFs+': { o: 50, h: 66, l: 34, c: 62, fam: 'half', rule: 'Takes the previous low, closes back inside the previous candle, close in the top half.', mean: 'A sweep of the other side that failed: the sellers who broke the low got trapped.', lean: 1, read: 'Mild bull. Price often retests the open before it goes.', wick: 'Long bottom wick: the sweep. Buyers threw price back up. The longer this wick, the stronger the trap.' },
+    'AFs−': { o: 50, h: 62, l: 33, c: 38, fam: 'half', rule: 'Takes the previous low, closes back inside, close in the bottom half.', mean: 'Sweep and fail of the sweep: nobody won. A warning against the Bu side.', lean: 0, read: 'Neutral on the chart (grey lines). It leans the other way.', wick: 'The top wick is the longer one: buyers tried to bounce after the sweep and sellers pushed them back.' },
+    'CI': { o: 48, h: 66, l: 44, c: 62, fam: 'half', rule: 'Inside candle: no sweep of the previous high or low. CI•BuAF = close in the top half.', mean: 'A pause. Price agreed for now. Coiling.', lean: 0, read: 'Neutral. Wait for the break of its high or low.', wick: 'Small wicks and no sweep: nobody was hunted. The longer wick shows who pushed back.' },
+    'S&D': { o: 50, h: 76, l: 34, c: 64, fam: 'half', rule: 'Takes BOTH the previous high and low, closes back inside the old range. S&D•BuAF = close in the top half.', mean: 'An outside candle that hunted both sides. Weak bias to the close side.', lean: 1, read: 'Both sides got hit. The close half decides the lean.', wick: 'Long wicks on both ends: both sides got hunted. The bottom wick is longer: buyers pushed back harder.' }
   };
+  var ODDS = {"5m":{"BuC2+":[4564,81,80,10,39,5,56,19,385,81,80],"BuC2-":[666,48,47,17,22,8,70,61,68,29,29],"BeC2+":[4355,81,80,9,38,4,58,21,381,83,82],"BeC2-":[787,46,46,17,21,8,71,62,67,37,37],"BuBC+":[29120,82,81,16,39,7,54,23,2139,83,82],"BuBC-":[16051,51,48,35,24,16,60,68,1329,51,48],"BeBC+":[24401,81,80,16,37,7,56,24,2010,83,81],"BeBC-":[16262,49,46,34,22,16,62,70,1342,50,47],"S&D.BuAF":[4533,59,57,26,28,12,60,55,376,59,57],"S&D.BeAF":[4188,61,59,23,28,10,62,54,372,54,52],"BuAFs+":[24521,72,69,30,35,13,52,43,2002,72,69],"BuAFs-":[10594,64,59,37,30,18,52,58,895,63,58],"BeAFs+":[24257,71,68,32,33,15,52,45,2006,70,66],"BeAFs-":[11755,64,60,37,31,17,52,57,951,62,57],"CI.BuAF":[17243,74,68,37,36,17,47,44,1309,73,68],"CI.BeAF":[15682,74,68,38,34,18,48,44,1270,75,69]},"15m":{"BuC2+":[1756,82,82,10,39,5,56,16,125,86,85],"BuC2-":[271,44,42,18,20,5,75,59,30,47,47],"BeC2+":[1573,77,77,10,36,6,58,22,139,83,82],"BeC2-":[395,41,40,16,18,6,76,68,41,32,32],"BuBC+":[10023,82,81,16,40,7,53,22,722,81,80],"BuBC-":[5248,50,46,35,25,16,59,74,471,45,41],"BeBC+":[7724,81,80,15,37,8,55,24,663,83,82],"BeBC-":[5347,49,47,31,22,15,63,75,454,49,47],"S&D.BuAF":[1603,58,56,24,30,12,58,59,152,60,59],"S&D.BeAF":[1555,60,58,23,25,11,64,58,109,58,58],"BuAFs+":[7947,72,69,29,37,14,50,48,606,74,71],"BuAFs-":[3386,63,59,37,29,19,52,64,286,63,58],"BeAFs+":[7735,72,69,32,34,15,51,50,636,70,69],"BeAFs-":[3808,64,60,37,31,16,52,63,303,60,56],"CI.BuAF":[5749,73,68,36,37,17,46,50,433,74,70],"CI.BeAF":[5031,72,68,37,34,19,48,51,436,70,66]},"1h":{"BuC2+":[512,84,83,14,41,8,51,20,35,80,80],"BuC2-":[95,60,60,26,23,10,67,70,8,62,62],"BeC2+":[442,82,81,12,34,7,59,20,32,91,91],"BeC2-":[125,46,46,22,24,13,63,62,7,29,29],"BuBC+":[2572,83,82,17,43,8,50,20,206,82,81],"BuBC-":[1369,51,47,35,26,16,58,75,114,51,47],"BeBC+":[1741,80,80,14,38,7,55,25,153,86,86],"BeBC-":[1306,48,44,33,24,16,60,76,113,53,50],"S&D.BuAF":[430,60,58,24,30,13,57,61,30,30,30],"S&D.BeAF":[383,62,60,28,29,16,56,60,34,71,68],"BuAFs+":[1854,74,71,27,40,13,47,44,150,74,71],"BuAFs-":[777,61,56,38,28,21,51,69,73,55,51],"BeAFs+":[1808,72,69,33,32,17,52,49,147,63,58],"BeAFs-":[915,64,58,36,35,17,48,67,65,57,49],"CI.BuAF":[1283,72,68,34,38,16,46,53,95,75,72],"CI.BeAF":[1107,72,68,35,33,19,48,55,93,71,66]},"4h":{"BuC2+":[182,87,86,20,52,10,38,14,11,100,100],"BuC2-":[27,48,41,44,15,18,67,74,2,50,50],"BeC2+":[150,89,89,17,38,7,55,18,11,73,73],"BeC2-":[57,58,53,39,19,14,67,63,1,0,0],"BuBC+":[707,82,81,19,45,9,46,20,54,80,78],"BuBC-":[363,56,47,40,35,16,50,75,44,64,64],"BeBC+":[391,80,79,18,38,10,52,20,43,86,86],"BeBC-":[364,46,41,34,27,20,52,76,24,54,50],"S&D.BuAF":[128,66,61,32,37,17,46,63,6,33,33],"S&D.BeAF":[137,69,64,34,32,18,50,59,7,43,43],"BuAFs+":[417,72,68,30,37,15,48,47,41,61,54],"BuAFs-":[154,58,51,35,23,18,59,70,10,70,70],"BeAFs+":[373,72,69,30,36,18,46,48,32,66,66],"BeAFs-":[192,52,45,32,28,16,56,66,19,74,74],"CI.BuAF":[420,71,67,30,39,13,48,49,28,82,82],"CI.BeAF":[318,66,62,36,32,18,50,52,23,70,70]}};
   var ORDER = ['BC+', 'BC−', 'C2+', 'C2−', 'AFs+', 'AFs−', 'CI', 'S&D'];
-  var cbSide = 'bu', cbKey = 'BC+';
+  var cbSide = 'bu', cbKey = 'BC+', cbView = 'candle', oddsOpen = false, oddsTF = '15m';
+  var PAIRS = [['above', 'below'], ['high', 'low'], ['top', 'bottom'], ['Buyers', 'Sellers'], ['buyers', 'sellers'], ['Bullish', 'Bearish'], ['bullish', 'bearish'], ['bull', 'bear'], ['BuAF', 'BeAF'], ['Bu', 'Be'], ['bought', 'sold'], ['up', 'down'], ['green', 'red']];
+  var SWM = {}; PAIRS.forEach(function (p) { SWM[p[0]] = p[1]; SWM[p[1]] = p[0]; });
+  function swapSide(x) { return x.replace(/\b(above|below|high|low|top|bottom|Buyers|Sellers|buyers|sellers|Bullish|Bearish|bullish|bearish|bull|bear|BuAF|BeAF|Bu|Be|bought|sold|up|down|green|red)\b/g, function (w) { return SWM[w]; }); }
   function cbName(k, side) { var B = side === 'bu' ? 'Bu' : 'Be'; if (k === 'CI') return 'CI•' + B + 'AF'; if (k === 'S&D') return 'S&D•' + B + 'AF'; return B + k; }
+  function oddsKey(k, side) { return cbName(k, side).replace('•', '.').replace('−', '-'); }
+  function shape() {
+    var t = CB[cbKey], bear = cbSide === 'be';
+    return { o: bear ? 110 - t.o : t.o, c: bear ? 110 - t.c : t.c, hi: bear ? 110 - t.l : t.h, lo: bear ? 110 - t.h : t.l };
+  }
+  // small LTF candles inside an HTF box: o -> first extreme -> second extreme -> c
+  function ltf(o, h, l, c, n, x, w, Yp, colUp, colDn) {
+    var firstLow = c >= o, pts = [o, firstLow ? l : h, firstLow ? h : l, c], seg = [2, Math.max(2, n - 5), 3];
+    var path = [o];
+    for (var k = 0; k < 3; k++) for (var j = 1; j <= seg[k]; j++) path.push(pts[k] + (pts[k + 1] - pts[k]) * j / seg[k]);
+    var m = path.length - 1, step = w / m, s = '';
+    for (var i = 0; i < m; i++) {
+      var a = path[i], z = path[i + 1], wig = (h - l) * 0.035, top = Math.min(h, Math.max(a, z) + wig), bot = Math.max(l, Math.min(a, z) - wig);
+      var cx = x + step * (i + 0.5), col = z >= a ? colUp : colDn;
+      s += '<line x1="' + cx + '" x2="' + cx + '" y1="' + Yp(top) + '" y2="' + Yp(bot) + '" stroke="' + col + '" stroke-width="1"/><rect x="' + (cx - step * 0.3) + '" y="' + Math.min(Yp(a), Yp(z)) + '" width="' + (step * 0.6) + '" height="' + Math.max(1.5, Math.abs(Yp(a) - Yp(z))) + '" fill="' + col + '"/>';
+    }
+    return s;
+  }
   function cbSVG() {
-    var t = CB[cbKey], bear = cbSide === 'be', W = 560, H = 300, top = 22, ph = 240;
-    var Y = function (p) { if (bear) p = 110 - p; return top + (1 - (p - 22) / 74) * ph; };
-    var o = bear ? 110 - t.o : t.o, c = bear ? 110 - t.c : t.c, hi = bear ? 110 - t.l : t.h, lo = bear ? 110 - t.h : t.l;
-    var x0 = 150, x1 = 270, bw = 34, up = c >= o;
+    var t = CB[cbKey], W = 560, H = 300, top = 22, ph = 240, box = cbView === 'box';
+    var sh = shape(), o = sh.o, c = sh.c, hi = sh.hi, lo = sh.lo;
+    var x0 = 150, x1 = box ? 262 : 270, bw = 34, up = c >= o;
     var Yp = function (p) { return top + (1 - (p - 22) / 74) * ph; };
-    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(cbName(cbKey, cbSide)) + ' drawn after the previous candle">';
+    var M = 'font-family="IBM Plex Mono,monospace"';
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(cbName(cbKey, cbSide)) + (box ? ' as an HTF box on a lower chart' : ' drawn after the previous candle') + '">';
     s += '<rect width="' + W + '" height="' + H + '" fill="#0b0d10"/>';
-    // previous candle range
-    s += '<line x1="14" x2="' + (x1 - 44) + '" y1="' + Yp(70) + '" y2="' + Yp(70) + '" stroke="#5f6873" stroke-dasharray="3 4"/><line x1="14" x2="' + (x1 - 44) + '" y1="' + Yp(40) + '" y2="' + Yp(40) + '" stroke="#5f6873" stroke-dasharray="3 4"/>';
-    s += '<text x="14" y="' + (Yp(70) - 5) + '" fill="#8f97a1" font-family="IBM Plex Mono,monospace" font-size="11">prev high</text><text x="14" y="' + (Yp(40) + 15) + '" fill="#8f97a1" font-family="IBM Plex Mono,monospace" font-size="11">prev low</text>';
-    s += '<line x1="' + x0 + '" x2="' + x0 + '" y1="' + Yp(73) + '" y2="' + Yp(37) + '" stroke="#6b7480" stroke-width="1.5"/><rect x="' + (x0 - bw / 2) + '" y="' + Yp(66) + '" width="' + bw + '" height="' + (Yp(46) - Yp(66)) + '" fill="#3a414b"/>';
-    // MMCB box behind the current candle
-    var lean = t.lean, tg = lean ? (cbSide === 'bu' ? 1 : -1) : 0;
-    if (cbKey === 'AFs−') tg = 0;
-    var boxC = cbSide === 'bu' ? 'rgba(215,255,178,.10)' : 'rgba(200,107,214,.14)', boxS = cbSide === 'bu' ? 'rgba(215,255,178,.4)' : 'rgba(200,107,214,.5)';
-    s += '<rect x="' + (x1 - 40) + '" y="' + Yp(hi) + '" width="80" height="' + (Yp(lo) - Yp(hi)) + '" fill="' + boxC + '" stroke="' + boxS + '"/><text x="' + (x1 - 40) + '" y="' + (Yp(hi) - 6) + '" fill="' + (cbSide === 'bu' ? '#d7ffb2' : '#c86bd6') + '" font-family="IBM Plex Mono,monospace" font-size="10">MMCB box</text>';
+    var lineEnd = box ? 196 : x1 - 44;
+    s += '<line x1="14" x2="' + lineEnd + '" y1="' + Yp(70) + '" y2="' + Yp(70) + '" stroke="#5f6873" stroke-dasharray="3 4"/><line x1="14" x2="' + lineEnd + '" y1="' + Yp(40) + '" y2="' + Yp(40) + '" stroke="#5f6873" stroke-dasharray="3 4"/>';
+    s += '<text x="14" y="' + (Yp(70) - 5) + '" fill="#8f97a1" ' + M + ' font-size="11">prev high</text><text x="14" y="' + (Yp(40) + 15) + '" fill="#8f97a1" ' + M + ' font-size="11">prev low</text>';
+    var tg = t.lean ? (cbSide === 'bu' ? 1 : -1) : 0;
+    if (box) {
+      // previous HTF candle as a grey box with its LTF candles, current one as the MMCB box
+      s += '<rect x="86" y="' + Yp(73) + '" width="104" height="' + (Yp(37) - Yp(73)) + '" fill="rgba(143,151,161,.07)" stroke="rgba(143,151,161,.35)"/>';
+      s += ltf(46, 73, 37, 66, 10, 88, 100, Yp, '#55606b', '#3a414b');
+      var bull = cbSide === 'bu';
+      s += '<rect x="200" y="' + Yp(hi) + '" width="124" height="' + (Yp(lo) - Yp(hi)) + '" fill="' + (bull ? 'rgba(215,255,178,.10)' : 'rgba(200,107,214,.14)') + '" stroke="' + (bull ? 'rgba(215,255,178,.45)' : 'rgba(200,107,214,.55)') + '"/>';
+      s += ltf(o, hi, lo, c, 16, 202, 120, Yp, '#3ddc97', '#ff5c6c');
+      s += '<text x="200" y="' + (Yp(hi) - 6) + '" fill="' + (bull ? '#d7ffb2' : '#c86bd6') + '" ' + M + ' font-size="10">H4 MMCB box · 16 × 15m inside</text>';
+    } else {
+      s += '<line x1="' + x0 + '" x2="' + x0 + '" y1="' + Yp(73) + '" y2="' + Yp(37) + '" stroke="#6b7480" stroke-width="1.5"/><rect x="' + (x0 - bw / 2) + '" y="' + Yp(66) + '" width="' + bw + '" height="' + (Yp(46) - Yp(66)) + '" fill="#3a414b"/>';
+    }
     // TGT / protected lines
     var hiCol = tg === 1 ? '#3ddc97' : tg === -1 ? '#ff5c6c' : '#8f97a1', loCol = tg === -1 ? '#3ddc97' : tg === 1 ? '#ff5c6c' : '#8f97a1';
     var hiDash = tg === 1 ? '6 4' : '0', loDash = tg === -1 ? '6 4' : '0';
-    var nm = cbName(cbKey, cbSide);
-    s += '<line x1="' + x1 + '" x2="' + (W - 150) + '" y1="' + Yp(hi) + '" y2="' + Yp(hi) + '" stroke="' + hiCol + '" stroke-width="1.6" stroke-dasharray="' + hiDash + '"/>';
-    s += '<line x1="' + x1 + '" x2="' + (W - 150) + '" y1="' + Yp(lo) + '" y2="' + Yp(lo) + '" stroke="' + loCol + '" stroke-width="1.6" stroke-dasharray="' + loDash + '"/>';
-    s += '<text x="' + (W - 144) + '" y="' + (Yp(hi) + 4) + '" fill="' + hiCol + '" font-family="IBM Plex Mono,monospace" font-size="11.5" font-weight="600">' + esc(nm) + ' H1H' + (tg === 1 ? ' TGT' : '') + '</text>';
-    s += '<text x="' + (W - 144) + '" y="' + (Yp(lo) + 4) + '" fill="' + loCol + '" font-family="IBM Plex Mono,monospace" font-size="11.5" font-weight="600">' + esc(nm) + ' H1L' + (tg === -1 ? ' TGT' : '') + '</text>';
-    // current candle
+    var nm = cbName(cbKey, cbSide), tfl = box ? 'H4' : 'H1', lx0 = box ? 324 : x1;
+    s += '<line x1="' + lx0 + '" x2="' + (W - 150) + '" y1="' + Yp(hi) + '" y2="' + Yp(hi) + '" stroke="' + hiCol + '" stroke-width="1.6" stroke-dasharray="' + hiDash + '"/>';
+    s += '<line x1="' + lx0 + '" x2="' + (W - 150) + '" y1="' + Yp(lo) + '" y2="' + Yp(lo) + '" stroke="' + loCol + '" stroke-width="1.6" stroke-dasharray="' + loDash + '"/>';
+    s += '<text x="' + (W - 144) + '" y="' + (Yp(hi) + 4) + '" fill="' + hiCol + '" ' + M + ' font-size="11.5" font-weight="600">' + esc(nm) + ' ' + tfl + 'H' + (tg === 1 ? ' TGT' : '') + '</text>';
+    s += '<text x="' + (W - 144) + '" y="' + (Yp(lo) + 4) + '" fill="' + loCol + '" ' + M + ' font-size="11.5" font-weight="600">' + esc(nm) + ' ' + tfl + 'L' + (tg === -1 ? ' TGT' : '') + '</text>';
     var col = up ? '#3ddc97' : '#ff5c6c';
-    s += '<line x1="' + x1 + '" x2="' + x1 + '" y1="' + Yp(hi) + '" y2="' + Yp(lo) + '" stroke="' + col + '" stroke-width="1.8"/><rect x="' + (x1 - bw / 2) + '" y="' + Math.min(Yp(o), Yp(c)) + '" width="' + bw + '" height="' + Math.max(2, Math.abs(Yp(o) - Yp(c))) + '" fill="' + col + '"/>';
-    // close % ladder on the right of the candle
-    var pct = Math.round((c - lo) / (hi - lo) * 100);
-    [[0, 'XD 0'], [25, 'MD 25'], [50, 'BAL 50'], [75, 'MP 75'], [100, 'XP 100']].forEach(function (q) { var py = Yp(lo + (hi - lo) * q[0] / 100); s += '<line x1="' + (x1 + 56) + '" x2="' + (x1 + 68) + '" y1="' + py + '" y2="' + py + '" stroke="#4fd1c5"/><text x="' + (x1 + 72) + '" y="' + (py + 4) + '" fill="#4fd1c5" font-family="IBM Plex Mono,monospace" font-size="10" paint-order="stroke" stroke="#0b0d10" stroke-width="3">' + q[1] + '</text>'; });
-    s += '<line x1="' + (x1 + 62) + '" x2="' + (x1 + 62) + '" y1="' + Yp(hi) + '" y2="' + Yp(lo) + '" stroke="#4fd1c5" opacity=".5"/><circle cx="' + (x1 + 62) + '" cy="' + Yp(c) + '" r="4.5" fill="#e1b31a"/>';
-    s += '<text x="' + (x1 - 26) + '" y="' + (Yp(c) + (up ? -8 : 16)) + '" text-anchor="end" fill="#e1b31a" font-family="IBM Plex Mono,monospace" font-size="11">close ' + pct + '%</text>';
-    s += '<text x="' + x0 + '" y="' + (H - 10) + '" text-anchor="middle" fill="#8f97a1" font-family="Barlow,sans-serif" font-size="12">previous</text><text x="' + x1 + '" y="' + (H - 10) + '" text-anchor="middle" fill="#d9dde3" font-family="Barlow,sans-serif" font-size="12">this candle</text>';
+    if (!box) s += '<line x1="' + x1 + '" x2="' + x1 + '" y1="' + Yp(hi) + '" y2="' + Yp(lo) + '" stroke="' + col + '" stroke-width="1.8"/><rect x="' + (x1 - bw / 2) + '" y="' + Math.min(Yp(o), Yp(c)) + '" width="' + bw + '" height="' + Math.max(2, Math.abs(Yp(o) - Yp(c))) + '" fill="' + col + '"/>';
+    // close % ladder + the "+" zone
+    var lx = box ? 342 : x1 + 56, pct = Math.round((c - lo) / (hi - lo) * 100);
+    var half = t.fam === 'half', bearS = cbSide === 'be';
+    var zA = bearS ? 0 : (half ? 50 : 75), zB = bearS ? (half ? 50 : 25) : 100;
+    s += '<rect x="' + (lx + 2) + '" y="' + Yp(lo + (hi - lo) * zB / 100) + '" width="20" height="' + (Yp(lo + (hi - lo) * zA / 100) - Yp(lo + (hi - lo) * zB / 100)) + '" fill="rgba(225,179,26,.22)" stroke="rgba(225,179,26,.6)"/>';
+    s += '<text x="' + (lx + 12) + '" y="' + (Yp(lo + (hi - lo) * (zA + zB) / 200) + 4) + '" text-anchor="middle" fill="#e1b31a" ' + M + ' font-size="11" font-weight="700">+</text>';
+    [[0, 'XD 0'], [25, 'MD 25'], [50, 'BAL 50'], [75, 'MP 75'], [100, 'XP 100']].forEach(function (q) { var py = Yp(lo + (hi - lo) * q[0] / 100); s += '<line x1="' + lx + '" x2="' + (lx + 24) + '" y1="' + py + '" y2="' + py + '" stroke="#4fd1c5"/><text x="' + (lx + 28) + '" y="' + (py + 4) + '" fill="#4fd1c5" ' + M + ' font-size="10" paint-order="stroke" stroke="#0b0d10" stroke-width="3">' + q[1] + '</text>'; });
+    s += '<circle cx="' + (lx + 12) + '" cy="' + Yp(c) + '" r="4.5" fill="#fff" stroke="#e1b31a" stroke-width="2"/>';
+    if (!box) s += '<text x="' + (x1 - 26) + '" y="' + (Yp(c) + (up ? -8 : 16)) + '" text-anchor="end" fill="#e1b31a" ' + M + ' font-size="11">close ' + pct + '%</text>';
+    else s += '<text x="262" y="' + (up ? Yp(hi) - 20 : Yp(lo) + 16) + '" text-anchor="middle" fill="#e1b31a" ' + M + ' font-size="11" paint-order="stroke" stroke="#0b0d10" stroke-width="3">close ' + pct + '%</text>';
+    s += '<text x="' + (box ? 138 : x0) + '" y="' + (H - 10) + '" text-anchor="middle" fill="#8f97a1" font-family="Barlow,sans-serif" font-size="12">previous</text><text x="' + x1 + '" y="' + (H - 10) + '" text-anchor="middle" fill="#d9dde3" font-family="Barlow,sans-serif" font-size="12">' + (box ? 'the H4 candle on your 15m chart' : 'this candle') + '</text>';
     return s + '</svg>';
   }
-  function cbPaint() {
+  function oddsHTML() {
+    var r = (ODDS[oddsTF] || {})[oddsKey(cbKey, cbSide)];
+    var tfs = '<span class="seg" role="group" aria-label="Timeframe">' + ['5m', '15m', '1h', '4h'].map(function (k) { return '<button type="button" data-otf="' + k + '" aria-pressed="' + (k === oddsTF) + '">' + k + '</button>'; }).join('') + '</span>';
+    if (!r) return '<div class="odds"><div class="tfs">' + tfs + '</div><p class="nt">No data.</p></div>';
+    var row = function (lab, v, col) { return '<div class="orow"><span>' + lab + '</span><span class="tr"><i style="width:' + v + '%;background:' + col + '"></i></span><b style="color:' + col + '">' + v + '%</b></div>'; };
+    return '<div class="odds"><div class="tfs"><span class="lab">Timeframe</span>' + tfs + '</div>' +
+      '<div class="lab">The next candle…</div>' +
+      row('takes the TGT', r[1], '#3ddc97') +
+      row('takes the TGT before the protected end', r[2], '#3ddc97') +
+      row('takes the protected end', r[3], '#ff5c6c') +
+      row('comes back to the 50% before the TGT', r[7], '#4fd1c5') +
+      '<div class="lab" style="margin-top:4px">It closes as…</div>' +
+      row('a BC on the lean side', r[4], '#3ddc97') +
+      row('a BC on the other side', r[5], '#ff5c6c') +
+      row('an NBC (inside)', r[6], '#8f97a1') +
+      '<p class="nt">NQ 1-minute data, Dec 2022 – Dec 2025, all sessions: ' + r[0].toLocaleString('en-US') + ' candles. Check on MNQ 2026 (' + r[8] + ' candles): takes the TGT ' + r[9] + '%, TGT first ' + r[10] + '%. “+” candles close next to their TGT, so part of the high % is just distance. Odds, not signals.</p></div>';
+  }
+  function wickHTML() {
+    var sh = shape(), rg = sh.hi - sh.lo, tw = Math.round((sh.hi - Math.max(sh.o, sh.c)) / rg * 100), bwk = Math.round((Math.min(sh.o, sh.c) - sh.lo) / rg * 100), bd = 100 - tw - bwk;
+    var w = CB[cbKey].wick; if (cbSide === 'be') w = swapSide(w);
+    return '<div class="wk"><div class="lab">Wick strength (share of the range)</div><div class="bar" aria-hidden="true"><i style="width:' + tw + '%;background:#ff9e57"></i><i style="width:' + bd + '%;background:' + (sh.c >= sh.o ? '#3ddc97' : '#ff5c6c') + '"></i><i style="width:' + bwk + '%;background:#4fd1c5"></i></div>' +
+      '<div class="lg"><span><b style="background:#ff9e57"></b>top wick ' + tw + '%</span><span><b style="background:' + (sh.c >= sh.o ? '#3ddc97' : '#ff5c6c') + '"></b>body ' + bd + '%</span><span><b style="background:#4fd1c5"></b>bottom wick ' + bwk + '%</span></div>' +
+      '<p style="margin:0;color:#d4dae0;line-height:1.5">' + esc(w) + '</p></div>';
+  }
+  function cbPaint(flash) {
     var t = CB[cbKey], nm = cbName(cbKey, cbSide), bear = cbSide === 'be';
     $('#cb-chips').innerHTML = ORDER.map(function (k) { return '<button type="button" data-cb="' + esc(k) + '" aria-pressed="' + (k === cbKey) + '" translate="no">' + esc(cbName(k, cbSide)) + '</button>'; }).join('');
+    $('#cb-view').innerHTML = '<button type="button" data-cbv="candle" aria-pressed="' + (cbView === 'candle') + '">The candle</button><button type="button" data-cbv="box" aria-pressed="' + (cbView === 'box') + '">HTF box on your chart</button>';
     $('#cb-pic').innerHTML = cbSVG();
     var rule = t.rule, mean = t.mean, read = t.read;
-    if (bear) { var PAIRS = [['above', 'below'], ['high', 'low'], ['top', 'bottom'], ['Buyers', 'Sellers'], ['buyers', 'sellers'], ['Bullish', 'Bearish'], ['bullish', 'bearish'], ['bull', 'bear'], ['BuAF', 'BeAF'], ['Bu', 'Be'], ['bought', 'sold']]; var sw = function (x) { var m = {}; PAIRS.forEach(function (p) { m[p[0]] = p[1]; m[p[1]] = p[0]; }); return x.replace(/\b(above|below|high|low|top|bottom|Buyers|Sellers|buyers|sellers|Bullish|Bearish|bullish|bearish|bull|bear|BuAF|BeAF|Bu|Be|bought|sold)\b/g, function (w) { return m[w]; }); }; rule = sw(rule); mean = sw(mean); read = sw(read); }
+    if (bear) { rule = swapSide(rule); mean = swapSide(mean); read = swapSide(read); }
     var leanTxt = cbKey === 'AFs−' ? (bear ? 'leans bull' : 'leans bear') : (t.lean ? (bear ? 'bear' : 'bull') : 'neutral');
     var leanCls = cbKey === 'AFs−' ? (bear ? 'bu' : 'be') : (t.lean ? (bear ? 'be' : 'bu') : 'nu');
-    $('#cb-explain').innerHTML = '<div class="ttl" translate="no">' + esc(nm) + '</div>' +
+    var pmList = bear
+      ? ['<b>BC and C2:</b> “+” = the close is in the bottom 25% of the candle (0% to 25%). The bottom wick is small: buyers never pushed back. “−” = the close is anywhere above 25%: a bigger bottom wick, buyers answered.', '<b>AFs, S&amp;D and CI:</b> the line is the middle, 50%. Close in the bottom half = BeAF / AFs+. Close in the top half = BuAF / AFs−.', '<b>Read the wicks too:</b> the longer wick is where the other side pushed back. In the indicator, a wick bigger than 50% of the range with a small body (under 35%) and a volume spike, at an MMCB high or low, prints <b>Buyers Absorbed</b>.']
+      : ['<b>BC and C2:</b> “+” = the close is in the top 25% of the candle (75% to 100%). The top wick is small: sellers never pushed back. “−” = the close is anywhere below 75%: a bigger top wick, sellers answered.', '<b>AFs, S&amp;D and CI:</b> the line is the middle, 50%. Close in the top half = BuAF / AFs+. Close in the bottom half = BeAF / AFs−.', '<b>Read the wicks too:</b> the longer wick is where the other side pushed back. In the indicator, a wick bigger than 50% of the range with a small body (under 35%) and a volume spike, at an MMCB high or low, prints <b>Trapped Sellers</b>.'];
+    var ex = $('#cb-explain');
+    ex.innerHTML = '<div class="ttl" translate="no">' + esc(nm) + '</div>' +
       '<dl class="kv"><dt>Rule</dt><dd>' + esc(rule) + '</dd><dt>Means</dt><dd>' + esc(mean) + '</dd><dt>Lean</dt><dd><span class="lean ' + leanCls + '">' + esc(leanTxt) + '</span></dd><dt>Read it as</dt><dd>' + esc(read) + '</dd></dl>' +
+      wickHTML() +
+      '<button type="button" class="oddsbtn" id="cb-odds" aria-expanded="' + oddsOpen + '">' + (oddsOpen ? 'Hide the odds' : 'Show the odds: TGT, protected, next close') + '</button>' +
+      (oddsOpen ? oddsHTML() : '') +
+      '<div class="pm"><h4>How “+” and “−” work</h4><p style="margin:0;color:var(--mute);font-size:14.5px">It is where the close sits inside the candle’s own range: the low is 0%, the high is 100%. The gold box on the ladder is the “+” zone.</p><ul>' + pmList.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div>' +
       '<div><div class="lab" style="margin:6px 0 6px">The candle ladder (close % of its own range)</div><div class="ladder"><span><b>XD</b> 0</span><span><b>D</b> 12.5</span><span><b>MD</b> 25</span><span><b>BAL</b> 50</span><span><b>MP</b> 75</span><span><b>P</b> 87.5</span><span><b>XP</b> 100</span></div></div>' +
-      '<p style="margin:0;color:var(--mute);font-size:14.5px;line-height:1.5">"+" candles close in the strong quarter (or half for AFs), "−" candles do not. TGT = the end the candle leans to. Protected = the end its owners must defend: a close past it cancels the read.</p>';
+      '<p style="margin:0;color:var(--mute);font-size:14.5px;line-height:1.5">TGT = the end the candle leans to. Protected = the end its owners must defend: a close past it cancels the read.</p>';
+    if (flash) { ex.classList.remove('flash'); void ex.offsetWidth; ex.classList.add('flash'); }
   }
   document.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-cb]'); if (b) { cbKey = b.dataset.cb; cbPaint(); if (e.detail === 0) { var n = document.querySelector('[data-cb="' + cbKey.replace(/"/g, '') + '"]'); if (n) n.focus(); } return; }
-    var sd = e.target.closest('[data-side]'); if (sd) { cbSide = sd.dataset.side; document.querySelectorAll('[data-side]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === sd)); }); cbPaint(); }
+    var b = e.target.closest('[data-cb]'); if (b) { cbKey = b.dataset.cb; cbPaint(true); if (e.detail === 0) { var n = document.querySelector('[data-cb="' + cbKey.replace(/"/g, '') + '"]'); if (n) n.focus(); } return; }
+    var sd = e.target.closest('[data-side]'); if (sd) { cbSide = sd.dataset.side; document.querySelectorAll('[data-side]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === sd)); }); cbPaint(true); return; }
+    var v = e.target.closest('[data-cbv]'); if (v) { cbView = v.dataset.cbv; cbPaint(false); var f = document.querySelector('[data-cbv="' + cbView + '"]'); if (f && e.detail === 0) f.focus(); return; }
+    if (e.target.closest('#cb-odds')) { oddsOpen = !oddsOpen; cbPaint(false); var ob = document.getElementById('cb-odds'); if (ob) ob.focus(); return; }
+    var ot = e.target.closest('[data-otf]'); if (ot) { oddsTF = ot.dataset.otf; cbPaint(false); var q = document.querySelector('[data-otf="' + oddsTF + '"]'); if (q) q.focus(); }
   });
-  cbPaint();
+  cbPaint(false);
 
   /* ---------------- engines ---------------- */
   var ENG = {
     c: { name: 'MMM Pro', letter: 'C', full: 'Candle OrderFlow', color: '#e1b31a', L: 'c',
-      idea: 'Reads control one candle at a time. Every candle that closes beyond the one before it is a vote. MMM Pro C keeps score of those votes: the last time buyers forced a close, the last time sellers did, and which of those closes the other side failed to take back.',
-      how: ['A body close in the trend direction is momentum control (MC). When the next candle leaves a gap behind it, the close upgrades to a <b>GMC</b>: one side was in such a hurry it left price the other side never traded.', 'A counter-trend close is a pullback (MP#). The close that restarts the trend is a resumption (MCR#), and it becomes the next origin <b>T#</b>.', 'A close through the last T# is the <b>flip</b> (CDLc / CDSc). A close past the numbered pullback is the <b>continuation</b> (LDc / SDc).', 'Each flip leaves an <b>eBlock</b>, each continuation an <b>iBlock</b>: the zones where the winners started their push.'],
-      see: [['MC / GMC', 'The raw trend body close, and the gap-confirmed one: c1 → c2 body close → c3 leaves a void.'], ['MP# / GMP#', 'Pullbacks: a counter-trend body close (raw / gap-confirmed).'], ['MCR# / GMCR#', 'Resumptions after the pullback. They become the next T#.'], ['BuPO4 / BePO4 T#', 'The origin of each leg. T1 from a flip, T2+ from a continuation.'], ['CDLc / CDSc', 'Flips: a close through the last T#.'], ['LDc / SDc', 'Continuations: a close past the numbered pullback.'], ['eBlock / iBlock', 'Zones behind flips (T1) and continuations (T2+).'], ['Urgency lines', 'The edge a gap must clear. Crossed out when price trades back through.']],
+      idea: 'Reads urgency, one candle close at a time. MMM Pro C checks every close: a body close (BC) beyond the candle before it is expansion, an imbalance where one side is in a hurry. A 3-candle gap is extreme urgency. The NBCs in between are the negotiation areas, where price waits for the other side to fill that urgent demand or offer.',
+      how: ['Every closed candle is checked. A <b>body close</b> (BC) past the previous high or low = <b>urgency</b>: one side took everything on offer and price expanded. In the trend direction it is momentum control (MC).', 'When the next candle leaves a gap behind it (a 3-candle gap), the close upgrades to a <b>GMC</b> = <b>extreme urgency</b>: one side was in such a hurry it left price the other side never traded.', 'A candle that closes back inside (an <b>NBC</b>) is <b>negotiation</b>: the market rests and lets the other side fill the urgent orders. Those NBC areas are where price comes back to reload.', 'A counter-trend close is a pullback (MP#). The close that restarts the trend is a resumption (MCR#), and it becomes the next origin <b>T#</b>.', 'A close through the last T# is the <b>flip</b> (CDLc / CDSc). A close past the numbered pullback is the <b>continuation</b> (LDc / SDc).', 'Each flip leaves an <b>eBlock</b>, each continuation an <b>iBlock</b>: the zones where the winners started their push.'],
+      see: [['BC / NBC', 'Body close = urgency, price expands. NBC = negotiation, price rests inside while the other side fills the orders.'], ['MC / GMC', 'The raw trend body close, and the gap-confirmed one: c1 → c2 body close → c3 leaves a void.'], ['MP# / GMP#', 'Pullbacks: a counter-trend body close (raw / gap-confirmed).'], ['MCR# / GMCR#', 'Resumptions after the pullback. They become the next T#.'], ['BuPO4 / BePO4 T#', 'The origin of each leg. T1 from a flip, T2+ from a continuation.'], ['CDLc / CDSc', 'Flips: a close through the last T#.'], ['LDc / SDc', 'Continuations: a close past the numbered pullback.'], ['eBlock / iBlock', 'Zones behind flips (T1) and continuations (T2+).'], ['Urgency lines', 'The edge a gap must clear. Crossed out when price trades back through.']],
       best: 'precise, early entries on lower timeframes, and traders who want to see every change in control.' },
     s: { name: 'MMM Pro', letter: 'S', full: 'Swing OrderFlow', color: '#4fd1c5', L: 's',
       idea: 'Reads control at the turning points. A swing forms where one side’s push ran dry and the other side answered with a close of its own. That turning point is where the losing side last defended: real orders sat there. MMM Pro S watches every swing and waits for a body close through one.',
@@ -456,38 +546,50 @@ table.cmp{width:100%;border-collapse:collapse;min-width:900px;font-size:14.5px}
     R2: ['R2 → T3', 'The base of the third step: the newest origin of the trend.'],
     LD3: ['LD3 · and on', 'Every later continuation adds one more step: T4, T5…']
   };
+  var DSIDE = 'bu';
   function stairSVG(L) {
+    var bear = DSIDE === 'be', my = function (y) { return bear ? 258 - y : y; };
     var path = 'M20,232 L45,210 L60,224 L80,190 L100,200 L118,160 L132,176 L146,164 L160,180 L174,168 L190,128 L214,112 L232,128 L246,118 L262,132 L276,120 L292,84 L316,70 L332,86 L346,76 L362,90 L376,78 L392,46 L430,26';
+    if (bear) path = path.replace(/(\d+),(\d+)/g, function (m, x, y) { return x + ',' + (258 - y); });
     var boxes = [[124, 158, 58, 26], [226, 110, 58, 26], [326, 68, 58, 26]];
-    var nodes = [['flip', 62, 226, 'CDL' + L, 1], ['T1', 45, 210, 'T1', 0], ['P1', 182, 158, 'P1', 2], ['LD1', 190, 128, 'LD' + L + '1', 1], ['R1', 124, 184, 'R1 → T2', 3], ['P2', 284, 110, 'P2', 2], ['LD2', 292, 84, 'LD' + L + '2', 1], ['R2', 226, 136, 'R2 → T3', 3], ['LD3', 392, 46, 'LD' + L + '3', 1]];
-    var s = '<svg viewBox="0 0 470 250" role="img" aria-label="MMM trend staircase: flip, pullbacks, continuations. Tap a point.">';
-    boxes.forEach(function (b) { s += '<rect class="bx" x="' + b[0] + '" y="' + b[1] + '" width="' + b[2] + '" height="' + b[3] + '"/>'; });
-    s += '<line class="lvm" x1="45" x2="460" y1="210" y2="210"/><line class="lv" x1="124" x2="200" y1="158" y2="158"/><line class="lvm" x1="124" x2="460" y1="184" y2="184"/><line class="lv" x1="226" x2="300" y1="110" y2="110"/><line class="lvm" x1="226" x2="460" y1="136" y2="136"/><line class="lv" x1="326" x2="400" y1="68" y2="68"/>';
+    var F = bear ? 'CDS' : 'CDL', D = bear ? 'SD' : 'LD';
+    var nodes = [['flip', 62, 226, F + L, 1], ['T1', 45, 210, 'T1', 0], ['P1', 182, 158, 'P1', 2], ['LD1', 190, 128, D + L + '1', 1], ['R1', 124, 184, 'R1 → T2', 3], ['P2', 284, 110, 'P2', 2], ['LD2', 292, 84, D + L + '2', 1], ['R2', 226, 136, 'R2 → T3', 3], ['LD3', 392, 46, D + L + '3', 1]];
+    var s = '<svg viewBox="0 0 470 250" role="img" aria-label="MMM trend staircase (' + (bear ? 'bear' : 'bull') + ' example): flip, pullbacks, continuations. Tap a point.">';
+    boxes.forEach(function (b) { var y = bear ? 258 - b[1] - b[3] : b[1]; s += '<rect class="bx" x="' + b[0] + '" y="' + y + '" width="' + b[2] + '" height="' + b[3] + '"/>'; });
+    [['lvm', 45, 460, 210], ['lv', 124, 200, 158], ['lvm', 124, 460, 184], ['lv', 226, 300, 110], ['lvm', 226, 460, 136], ['lv', 326, 400, 68]].forEach(function (l) { s += '<line class="' + l[0] + '" x1="' + l[1] + '" x2="' + l[2] + '" y1="' + my(l[3]) + '" y2="' + my(l[3]) + '"/>'; });
     s += '<path class="ln" d="' + path + '"/>';
     nodes.forEach(function (n) {
       var on = n[0] === DIAK, cls = n[4] === 1 ? 'mg' : n[4] === 2 ? 'tl' : n[4] === 3 ? 'mut' : 'mg';
       var isLD = n[0].indexOf('LD') === 0, tx = n[0] === 'flip' ? n[1] + 8 : n[0] === 'T1' ? n[1] - 30 : (n[0] === 'R1' || n[0] === 'R2') ? n[1] + 2 : isLD ? n[1] - 8 : n[1] + 6;
       var ty = n[0] === 'flip' ? n[2] + 12 : n[0] === 'T1' ? n[2] + 18 : (n[0] === 'R1' || n[0] === 'R2') ? n[2] + 14 : isLD ? n[2] - 6 : n[2] - 8;
-      s += '<g data-k="' + n[0] + '" style="cursor:pointer" tabindex="0" role="button" aria-label="' + esc(n[3]) + '"><circle cx="' + n[1] + '" cy="' + n[2] + '" r="' + (on ? 7 : 4.5) + '" style="fill:' + (on ? 'var(--ec)' : '#0f1114') + ';stroke:var(--fg);stroke-width:1.5"/><rect x="' + (isLD ? tx - n[3].length * 7.4 - 3 : tx - 3) + '" y="' + (ty - 12) + '" width="' + (n[3].length * 7.4 + 6) + '" height="16" fill="transparent"/><text class="' + cls + '" x="' + tx + '" y="' + ty + '" text-anchor="' + (isLD ? 'end' : 'start') + '" style="font-weight:' + (on ? 700 : 500) + '" translate="no">' + esc(n[3]) + '</text></g>';
+      var cy = my(n[2]); if (bear) ty = n[0] === 'T1' ? cy + 20 : cy - (ty - n[2]) + 9;
+      s += '<g data-k="' + n[0] + '" style="cursor:pointer" tabindex="0" role="button" aria-label="' + esc(n[3]) + '"><circle cx="' + n[1] + '" cy="' + cy + '" r="' + (on ? 7 : 4.5) + '" style="fill:' + (on ? 'var(--ec)' : '#0f1114') + ';stroke:var(--fg);stroke-width:1.5"/><rect x="' + (isLD ? tx - n[3].length * 7.4 - 3 : tx - 3) + '" y="' + (ty - 12) + '" width="' + (n[3].length * 7.4 + 6) + '" height="16" fill="transparent"/><text class="' + cls + '" x="' + tx + '" y="' + ty + '" text-anchor="' + (isLD ? 'end' : 'start') + '" style="font-weight:' + (on ? 700 : 500) + '" translate="no">' + esc(n[3]) + '</text></g>';
     });
-    return s + '<text class="mut" x="20" y="246">start</text><text class="mut" x="465" y="246" text-anchor="end">each step = the trend won again</text></svg>';
+    return s + '<text class="mut" x="20" y="' + (bear ? 14 : 246) + '">start</text><text class="mut" x="465" y="' + (bear ? 14 : 246) + '" text-anchor="end">each step = the trend won again</text></svg>';
+  }
+  function diaText(k) {
+    var d = DIA[k]; if (DSIDE !== 'be') return d;
+    var f = function (x) { return swapSide(x).replace(/\bLD(\d)/g, 'SD$1'); };
+    return [f(d[0]), f(d[1])];
   }
   function engPaint() {
     var e = ENG[ESEL];
     $('#eng-tabs').innerHTML = EORDER.map(function (k) { var x = ENG[k]; return '<button type="button" data-eng="' + k + '" aria-pressed="' + (k === ESEL) + '" style="--ec:' + x.color + '"><b translate="no">' + esc(x.name + ' ' + x.letter) + '</b><span>' + esc(x.full) + '</span></button>'; }).join('');
-    var d = DIA[DIAK];
+    var d = diaText(DIAK);
     $('#eng-panel').innerHTML = '<article class="engine" style="--ec:' + e.color + '">' +
       '<div class="e-head"><h3 translate="no">' + esc(e.name) + ' <i>' + esc(e.letter) + '</i></h3><span class="full">' + esc(e.full) + '</span></div>' +
       '<div class="e-body"><div class="e-l"><p class="idea-t">' + esc(e.idea) + '</p><div><div class="lab" style="margin-bottom:4px">How the order flow works</div><ol class="how">' + e.how.map(function (h) { return '<li><span>' + h + '</span></li>'; }).join('') + '</ol></div>' +
       '<p class="best"><b>Best for:</b> ' + esc(e.best) + '</p></div>' +
-      '<div class="e-r"><div class="lab">The trend staircase · tap a point</div><div class="dia" id="dia">' + stairSVG(e.L) + '</div><div class="dinfo" id="dinfo"><b>' + esc(d[0]) + '</b><p>' + esc(d[1]) + '</p></div>' +
+      '<div class="e-r"><div class="dside"><div class="lab">The trend staircase · tap a point</div><span class="seg" role="group" aria-label="Example side"><button type="button" data-dside="bu" aria-pressed="' + (DSIDE === 'bu') + '">Bull example</button><button type="button" data-dside="be" aria-pressed="' + (DSIDE === 'be') + '">Bear example</button></span></div><div class="dia" id="dia">' + stairSVG(e.L) + '</div><div class="dinfo" id="dinfo"><b>' + esc(d[0]) + '</b><p>' + esc(d[1]) + '</p></div>' +
       '<div><div class="lab" style="margin-bottom:2px">What you see on the chart</div><table class="see"><tbody>' + e.see.map(function (r) { return '<tr><td translate="no">' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table></div></div></div>' +
       '<div class="e-cta"><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="' + ESEL + '">Try ' + esc(e.name + ' ' + e.letter) + ' for free</a><span>On your own chart, your market, your hours.</span></div></article>';
   }
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-eng]'); if (b) { ESEL = b.dataset.eng; engPaint(); if (e.detail === 0) { var n = document.querySelector('[data-eng="' + ESEL + '"]'); if (n) n.focus(); } try { history.replaceState(null, '', '#' + ESEL); } catch (x) {} return; }
-    var g = e.target.closest('#dia g[data-k]'); if (g) { DIAK = g.dataset.k; engPaint(); if (e.detail === 0) { var m = document.querySelector('#dia g[data-k="' + DIAK + '"]'); if (m) m.focus(); } }
+    var g = e.target.closest('#dia g[data-k]'); if (g) { DIAK = g.dataset.k; engPaint(); flashInfo(); if (e.detail === 0) { var m = document.querySelector('#dia g[data-k="' + DIAK + '"]'); if (m) m.focus(); } return; }
+    var ds = e.target.closest('[data-dside]'); if (ds) { DSIDE = ds.dataset.dside; engPaint(); flashInfo(); var q = document.querySelector('[data-dside="' + DSIDE + '"]'); if (q && e.detail === 0) q.focus(); }
   });
+  function flashInfo() { var x = document.getElementById('dinfo'); if (!x) return; x.classList.remove('flash'); void x.offsetWidth; x.classList.add('flash'); }
   document.addEventListener('keydown', function (e) { var g = e.target.closest && e.target.closest('#dia g[data-k]'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); g.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
   var h = (location.hash || '').slice(1); if (ENG[h]) ESEL = h; if (h === 'pro-f' || h === 'fva') ESEL = 'fva'; if (h === 'xcs-one') ESEL = 'xcs';
   engPaint();
