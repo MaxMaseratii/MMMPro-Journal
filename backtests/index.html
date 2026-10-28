@@ -390,11 +390,11 @@ const KEY=`<div class="key"><span><i class="o"></i>2022–25 (NQ, build)</span><
 const CATS=[['all','All'],['candle','Candles'],['gap','Momentum & gaps'],['struct','Structure'],['zone','Zones & levels'],['engine','Engines & indicators'],['mmpd','MMPD'],['codes','Test codes'],['stats','Trade & stats']];
 const GLOSS=[
 // candles
-['BC','Body Close','candle','The candle closes past the previous candle’s high (bull) or low (bear). One side won the fight and moved price into new ground.','A wick is a try. A close is a result.'],
+['BC','Body Close','candle','The candle closes past the previous candle’s high (bull) or low (bear). This is urgency: one side was in a hurry, took every order on offer and price expanded into new ground (imbalance).','A wick is a try. A close is a result.'],
 ['BuBC / BeBC','Bullish / Bearish Body Close','candle','BC up / BC down.','BuBC = close above the previous high. BeBC = close below the previous low.'],
-['NBC','No Body Close','candle','The candle closes inside the previous candle’s range. Nobody won: a pause, balance.','After a BuBC, the next candle takes the previous high 73–82% of the time (1H to weekly). After an NBC it is about 50/50.'],
-['BC+','Strong Body Close','candle','A BC that closes in its strong half (bull: upper half) and did not take the other side first. Buyers won and held the ground.','Bull BC+ takes the next high 73% (15m) to 86% (weekly).'],
-['BC−','Weak Body Close','candle','A BC that closed through, but weak (in its weak half). Less follow-through than BC+.','4H BuBC− with a limit at BAL 50 was one of the few pockets that held (+0.13 → +0.07).'],
+['NBC','No Body Close','candle','The candle closes inside the previous candle’s range. This is negotiation: price rests while the other side fills the urgent orders. NBCs build the balance zone.','After a BuBC, the next candle takes the previous high 73–82% of the time (1H to weekly). After an NBC it is about 50/50.'],
+['BC+','Strong Body Close','candle','A BC that closes in its strong quarter (bull: top 25% of its range, so a small top wick) and did not take the other side first. Buyers won and held the ground.','Bull BC+ takes the next high 73% (15m) to 86% (weekly).'],
+['BC−','Weak Body Close','candle','A BC that closed through, but NOT in its strong quarter (a big wick on the target side: the other side pushed back). Less follow-through than BC+.','4H BuBC− with a limit at BAL 50 was one of the few pockets that held (+0.13 → +0.07).'],
 ['C2+ / C2−','Sweep then close through','candle','The candle first sweeps the other side (takes the previous low for a bull), then closes through the previous high. + = strong close, − = weak close.','C2+ took its own extreme 76–83% of the time (15m to daily).'],
 ['AFs+ / AFs−','Fail-sweep (affinity) candle','candle','The candle pokes past the previous high or low but closes back inside. It tried and failed: a small trap. + = strong rejection (close past its own 50%), − = weak rejection.','“AFs against” inside a GMC (c3) is the heart of C.M4.'],
 ['CI','Candle Inside','candle','An inside candle: its whole range stays inside the previous candle.','Takes its extreme about 70% of the time.'],
@@ -402,7 +402,7 @@ const GLOSS=[
 ['MMCB','MMM Candle Bias','candle','The candle-type reader: BC+, BC−, C2, AFs, CI, S&D, NBC. It tells you which side the next candle likely attacks.','On 5m and 15m the types alone are about 0 after costs. They need context.'],
 // gaps
 ['MC','Momentum Control','gap','The last body close in the trend direction: the newest proof of who is in charge.','Before a gap confirms it, it is “raw”.'],
-['GMC','Gap-confirmed Momentum Control','gap','Three candles. c1 is the base, c2 closes past c1’s high (bull), c3 never comes back to c1’s high. The space between c1’s high and c3’s low is a void.','15m GMC long is C.M3. Don’t trade 1H GMC on its own (see VERDICTS).'],
+['GMC','Gap-confirmed Momentum Control','gap','Three candles. c1 is the base, c2 closes past c1’s high (bull), c3 never comes back to c1’s high. The space between c1’s high and c3’s low is a void. This is extreme urgency.','15m GMC long is C.M3. Don’t trade 1H GMC on its own (see VERDICTS).'],
 ['c1 / c2 / c3','Candles of a GMC','gap','c1 = the base, c2 = the push (BC), c3 = the confirmation candle that leaves the gap open.','Entry at the c3 close beat every other GMC entry.'],
 ['Void','Unfilled gap','gap','Price moved through it one way only. The other side never got a chance to trade there.','If the next candles fill the void, the sellers (or buyers) were real.'],
 ['XU','Extreme Urgency (gap-candle open)','gap','The urgency naming for a gap-confirmed candle. In the tests, “XU” as an entry = a limit at the gap candle’s open.','XU was the worst GMC entry on 1h (−0.07 to −0.09).'],
@@ -423,7 +423,11 @@ const GLOSS=[
 ['HTF bias','Higher timeframe bias','struct','The direction of the last closed HTF candle event: Last BC, last flip (CDL/CDS) or last continuation (LD/SD). B0 = off, B1 = last BC, B2 = last zone break.','4H bias added about +0.02. Daily bias did not help break trades. EDGE PRO uses yesterday’s daily candle.'],
 ['HTF in LTF','Structure timeframe','struct','The structure (boxes, swings, PO4s, gate) is built on a higher timeframe and drawn on your chart.','EDGE PRO builds most strategies on 15m, so trades are the same on 1m to 15m charts. X.M3 uses 5m candles, C.M6 and C.M7 the 1m chart.'],
 // zones
-['Box / BZ','Balanced Zone','zone','An expander BC plus the candles that close back inside it. A parking lot where price rests.','Live box control: a close in the top third → breaks up 66–72%.'],
+['Box / BZ','Balance Zone','zone','From the highest open / close to the lowest open / close of the NBCs after an expander BC: bodies only. The price both sides agreed on, like a parking lot where price rests.','Live box control: a close in the top third → breaks up 66–72%.'],
+['Expander block','The BC + its NBCs, high to low','zone','From the high to the low made by the NBCs, including the BC candle that started them, wicks included. The whole area the push and the negotiation used. The balance zone sits inside it.','MMM PRO x draws it.'],
+['FVA','Fair Value Area','zone','The best reaction zone inside the balance zone: where the negotiation started. MMM PRO FVA draws it from the first NBC’s body top (bull) down to the low of the negotiation.','UPG gaps as the HTF level was the best FVA level in every test round.'],
+['Urgency / Negotiation','The two halves of the MMM auction','candle','Urgency = a body close (one side is in a hurry). Extreme urgency = a 3-candle gap. Negotiation = the NBCs after it, where the other side fills the urgent orders.','The engines read these: C (candles), X (blocks), FVA (fair value areas).'],
+['Swing (MMM)','Turning point from a BC flip','struct','A swing is made when a body close flips the urgency: after BeBCs, a BuBC closes above the candle before it. The low before that flip is the swing low (mirror for a swing high).','MMM PRO s reads these.'],
 ['Expander / Contraction','Box size rule','zone','Expander = the box is the big BC’s range. Contraction = the box is only the range of the quiet candles inside it (tighter).','Contraction boxes power X.M5.'],
 ['G1 / G0','Grow mode','zone','G1: a wick that pokes out of the box and closes back inside makes the box bigger (fewer fake breaks). G0: the box never grows.','G1 was best on 15m.'],
 ['eBlock','Flip zone','zone','The zone of every T1 PO4: the origin of a flip (CDL / CDS). It lives as long as its PO4.','Touch entries here lost.'],

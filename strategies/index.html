@@ -64,7 +64,8 @@ a{color:inherit}
 .bar label,.filters label{display:flex;flex-direction:column;gap:3px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
 .bar select,.filters select,.bar input[type=number]{background:var(--bg);color:var(--fg);border:1px solid var(--line2);padding:6px 8px;font-family:var(--body);font-size:13.5px;max-width:100%;border-radius:0}
 .bar input[type=number]{font-family:var(--mono);width:84px}
-.bar .eg{font-family:var(--mono);font-size:12px;color:var(--mute);align-self:center}
+.bar .eg{font-family:var(--mono);font-size:12px;color:var(--mute);align-self:center;max-width:62ch;line-height:1.4}
+.bar label[hidden]{display:none}
 .sec{padding-block:34px 6px}
 .sec .sh-h{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:12px}
 .sec h2{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--gold);font-size:clamp(24px,2.6vw,30px);line-height:1.1;margin:0;text-wrap:balance}
@@ -272,7 +273,8 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     </div>
     <div class="bar" role="group" aria-label="Your size">
       <span class="lab">Your size</span>
-      <label for="m-asset">Asset<select id="m-asset"><option value="2">MNQ · $2 a point</option><option value="20">NQ · $20 a point</option></select></label>
+      <label for="m-asset">Asset<select id="m-asset"><optgroup label="Nasdaq-100"><option value="NQ">NQ · E-mini Nasdaq · $20 a point</option><option value="MNQ" selected>MNQ · Micro Nasdaq · $2 a point</option><option value="NNQ">NNQ · E-nano Nasdaq · $0.2 a point</option></optgroup><optgroup label="S&P 500"><option value="ES">ES · E-mini S&P · $50 a point</option><option value="MES">MES · Micro S&P · $5 a point</option><option value="NES">NES · E-nano S&P · $0.5 a point</option></optgroup><optgroup label="Dow"><option value="YM">YM · E-mini Dow · $5 a point</option><option value="MYM">MYM · Micro Dow · $0.5 a point</option><option value="NDOW">NDOW · E-nano Dow · $0.05 a point</option></optgroup><optgroup label="Russell 2000"><option value="RTY">RTY · E-mini Russell · $50 a point</option><option value="M2K">M2K · Micro Russell · $5 a point</option><option value="N2K">N2K · E-nano Russell · $0.5 a point</option></optgroup><optgroup label="Gold"><option value="GC">GC · Gold · $100 a point</option><option value="MGC">MGC · Micro Gold · $10 a point</option><option value="1OZ">1OZ · 1-Ounce Gold · $1 a point</option></optgroup><optgroup label="Silver"><option value="SI">SI · Silver · $5,000 a point</option><option value="SIL">SIL · Micro Silver · $1,000 a point</option></optgroup><optgroup label="Crude oil"><option value="CL">CL · Crude Oil · $1,000 a point</option><option value="MCL">MCL · Micro Crude Oil · $100 a point</option></optgroup><optgroup label="Natural gas"><option value="NG">NG · Natural Gas · $10,000 a point</option></optgroup><optgroup label="Bitcoin"><option value="BTC">BTC · Bitcoin · $5 a point</option><option value="MBT">MBT · Micro Bitcoin · $0.1 a point</option></optgroup><optgroup label="Ether"><option value="ETH">ETH · Ether · $50 a point</option><option value="MET">MET · Micro Ether · $0.1 a point</option></optgroup><optgroup label="Euro"><option value="6E">6E · Euro FX · $125,000 a point</option><option value="M6E">M6E · Micro Euro · $12,500 a point</option></optgroup><optgroup label="10-Year Note"><option value="ZN">ZN · 10-Year Note · $1,000 a point</option></optgroup></select></label>
+      <label for="m-eq" id="m-eql">Same stop here (pts)<input type="number" id="m-eq" min="0" step="any" value="50"></label>
       <label for="m-qty">Contracts<input type="number" id="m-qty" min="1" max="100" step="1" value="1"></label>
       <span class="eg" id="m-eg"></span>
     </div>
@@ -356,7 +358,13 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function sg(v, d) { return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(d == null ? 2 : d); }
   function pc(v) { return Math.round(v * 100) + '%'; }
-  function K() { var a = +$('#m-asset').value || 2, q = Math.max(1, Math.min(100, +$('#m-qty').value || 1)); return a / 2 * q; }
+  var ASSET = {'NQ':[20,50],'MNQ':[2,50],'NNQ':[0.2,50],'ES':[50,20],'MES':[5,20],'NES':[0.5,20],'YM':[5,150],'MYM':[0.5,150],'NDOW':[0.05,150],'RTY':[50,8],'M2K':[5,8],'N2K':[0.5,8],'GC':[100,12],'MGC':[10,12],'1OZ':[1,12],'SI':[5000,0.3],'SIL':[1000,0.3],'CL':[1000,0.4],'MCL':[100,0.4],'NG':[10000,0.05],'BTC':[5,1000],'MBT':[0.1,1000],'ETH':[50,50],'MET':[0.1,50],'6E':[125000,0.003],'M6E':[12500,0.003],'ZN':[1000,0.35]};
+  function AS() { return ASSET[$('#m-asset').value] || ASSET.MNQ; }
+  function isNQ() { return ['NQ', 'MNQ', 'NNQ'].indexOf($('#m-asset').value) >= 0; }
+  function EQ() { if (isNQ()) return 50; var v = +$('#m-eq').value; return v > 0 ? v : AS()[1]; }
+  function QTY() { return Math.max(1, Math.min(100, +$('#m-qty').value || 1)); }
+  // money in the tests is for 1 MNQ ($2 a point). Other markets: same avg RR, with the 50-pt NQ stop scaled to that market (EQ points).
+  function K() { return AS()[0] * EQ() / 50 * QTY() / 2; }
   function usd(v) { v = v * K(); return (v < 0 ? '−' : '+') + '$' + Math.abs(Math.round(v)).toLocaleString('en-US'); }
   function id(c) { return 's-' + c.replace(/\./g, '-'); }
   var TEST = { pass: '✔ PASS', fail: '✖ FAIL', unsure: '~ NOT SURE' };
@@ -465,7 +473,13 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     key = key || perMonth;
     return L.slice().sort(function (a, b) { return (key(b) - key(a)) || (perMonth(b) - perMonth(a)); });
   }
-  function paintBar() { var k = K(); $('#m-eg').textContent = '1 point = $' + (2 * k).toLocaleString('en-US') + ' · money below is for this size'; }
+  function fm(v) { return '$' + (v < 1 ? (+v.toFixed(2)).toString() : Math.round(v).toLocaleString('en-US')); }
+  function paintBar() {
+    var a = AS(), q = QTY(), nq = isNQ();
+    $('#m-eql').hidden = nq;
+    if (nq) { $('#m-eg').textContent = '1 point = ' + fm(a[0] * q) + ' · money below is for this size'; return; }
+    $('#m-eg').textContent = 'Estimate: tested on NQ / MNQ only. A 50-pt NQ stop ≈ ' + EQ() + ' pts here = ' + fm(a[0] * EQ() * q) + ' risk. Money below = the same avg RR at that risk.';
+  }
   function paint() {
     var L = list(); paintBar();
     $('#count').textContent = L.length + ' of ' + D.strategies.length + ' strategies';
@@ -492,7 +506,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     $('#more').textContent = open ? 'Show fewer' : 'Show all ' + R.length;
   }
   function go(target) { var el = document.getElementById(target); if (el) el.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }
-  function save() { try { localStorage.setItem('mmm-book', JSON.stringify({ F: F, a: $('#m-asset').value, q: $('#m-qty').value })); } catch (e) {} }
+  function save() { try { localStorage.setItem('mmm-book', JSON.stringify({ F: F, a: $('#m-asset').value, q: $('#m-qty').value, e: $('#m-eq').value })); } catch (e) {} }
   document.addEventListener('click', function (e) {
     var pb = e.target.closest('.picbox button'); if (pb && !pb.disabled) {
       var code = pb.closest('.picbox').dataset.pic, st = PIC[code] || (PIC[code] = { dir: 'long', filt: true });
@@ -507,7 +521,8 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     var el = e.target;
     if (el.dataset && el.dataset.f) { F[el.dataset.f] = el.value; paint(); save(); }
   });
-  document.addEventListener('input', function (e) { if (e.target.id === 'm-asset' || e.target.id === 'm-qty') { paint(); save(); } });
+  document.addEventListener('input', function (e) { if (e.target.id === 'm-asset') { $('#m-eq').value = AS()[1]; } if (e.target.id === 'm-asset' || e.target.id === 'm-qty' || e.target.id === 'm-eq') { paint(); save(); } });
+  document.addEventListener('change', function (e) { if (e.target.id === 'm-asset') { $('#m-eq').value = AS()[1]; paint(); save(); } });
   document.addEventListener('keydown', function (e) {
     var tr = e.target.closest && e.target.closest('tr[data-go]'); if (tr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); go(tr.dataset.go); }
     var k = (e.key || '').toLowerCase(); if ((e.ctrlKey || e.metaKey) && ['c', 'x', 's', 'p', 'a'].indexOf(k) >= 0 && !/INPUT|TEXTAREA|SELECT/.test((e.target.tagName || ''))) e.preventDefault();
@@ -519,7 +534,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     var inds = [], tfs = []; D.strategies.forEach(function (s) { if (inds.indexOf(s.ind) < 0) inds.push(s.ind); if (tfs.indexOf(s.tf) < 0) tfs.push(s.tf); });
     $('#f-ind').insertAdjacentHTML('beforeend', inds.map(function (x) { return '<option value="' + esc(x) + '">' + esc(x) + '</option>'; }).join(''));
     $('#f-tf').insertAdjacentHTML('beforeend', tfs.sort().map(function (x) { return '<option value="' + esc(x) + '">' + esc(x) + '</option>'; }).join(''));
-    try { var sv = JSON.parse(localStorage.getItem('mmm-book') || 'null'); if (sv) { Object.keys(F).forEach(function (k) { if (sv.F && sv.F[k] != null) F[k] = sv.F[k]; }); $('#m-asset').value = sv.a || '2'; $('#m-qty').value = sv.q || '1'; } } catch (e) {}
+    try { var sv = JSON.parse(localStorage.getItem('mmm-book') || 'null'); if (sv) { Object.keys(F).forEach(function (k) { if (sv.F && sv.F[k] != null) F[k] = sv.F[k]; }); var av = sv.a === '20' ? 'NQ' : (ASSET[sv.a] ? sv.a : 'MNQ'); $('#m-asset').value = av; $('#m-qty').value = sv.q || '1'; $('#m-eq').value = sv.e || ASSET[av][1]; } } catch (e) {}
     ['status', 'ind', 'side', 'tf', 'sort'].forEach(function (k) { var el = $('#f-' + k); if (el) el.value = F[k]; if (el && el.value !== F[k]) F[k] = el.value; });
     if (location.hash) F.status = F.ind = F.side = F.tf = '';
     ['status', 'ind', 'side', 'tf'].forEach(function (k) { $('#f-' + k).value = F[k]; });
