@@ -7,7 +7,7 @@
   var K = function (o, h, l, c, tag) { return { o: o, h: h, l: l, c: c, tag: tag || '' }; };
   var SWAP = [['BuBC', 'BeBC'], ['Bu LEZ', 'Be LEZ'], ['CDL', 'CDS'], ['LD', 'SD'], ['buy', 'sell'], ['Buy', 'Sell'], ['buyers', 'sellers'], ['Buyers', 'Sellers'],
     ['high', 'low'], ['High', 'Low'], ['highs', 'lows'], ['above', 'below'], ['Above', 'Below'], ['top', 'bottom'], ['Top', 'Bottom'], ['green', 'red'], ['up', 'down'], ['Up', 'Down'],
-    ['↑', '↓'], ['long', 'short'], ['Long', 'Short'], ['bull', 'bear'], ['Bull', 'Bear'], ['bullish', 'bearish'], ['Bullish', 'Bearish'], ['MP', 'MD'], ['XP', 'XD']];
+    ['↑', '↓'], ['long', 'short'], ['Long', 'Short'], ['bull', 'bear'], ['Bull', 'Bear'], ['bullish', 'bearish'], ['Bullish', 'Bearish'], ['upper', 'lower'], ['MP', 'MD'], ['XP', 'XD']];
   function swapWords(s) {
     var map = {}; SWAP.forEach(function (p) { map[p[0]] = p[1]; map[p[1]] = p[0]; });
     var keys = Object.keys(map).sort(function (a, b) { return b.length - a.length; }).map(function (k) { return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); });
@@ -248,7 +248,7 @@
   };
 
   /* ---------- renderer ---------- */
-  var W = 600, RM = 138, LM = 12;
+  var W = 600, RM = 152, LM = 12;
   function render(spec, dir, filt) {
     var sc = (B[spec.t] || B.edge)(spec), bear = dir === 'short';
     var T = function (s) { return bear ? swapWords(s) : s; };
@@ -312,7 +312,7 @@
     });
     o = o.concat(tx);
     notes.forEach(function (t, i) {
-      var y = 8 + i * 21, txt = T(t.text), w = Math.min(W - 24, 14 + txt.length * 6.25);
+      var y = 8 + i * 21, txt = T(t.text), w = Math.min(W - 24, 18 + txt.length * 6.25 * 1.3);
       o.push('<rect x="' + LM + '" y="' + y + '" width="' + w.toFixed(1) + '" height="17" rx="2" class="' + (t.f ? 'pz-chip' : 'pz-chip2') + '"/><text x="' + (LM + 7) + '" y="' + (y + 12.5) + '" class="pt-note' + (t.f ? ' f' : '') + '">' + esc(txt) + '</text>');
     });
     var lx = LM, ly = TM + PH + 22;
