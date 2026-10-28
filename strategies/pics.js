@@ -55,8 +55,8 @@
     sc.marks.push({ x: 8, y: 43, t: 'fill', label: 'limit at the box top fills', side: -1 });
     addRisk(sc, 43, 8, spec, 36);
     if (spec.held) sc.notes.push({ x: 0.2, y: 29, text: '✓ level held: no close below it', f: 1 });
-    if (spec.code === 'F.M5') sc.notes.push({ x: 0.2, y: 93, text: 'H1 trend ↑', f: 1, box: 1 });
-    if (spec.filt && spec.code !== 'F.M5') timeBand(sc, { 'F.M2': 'fills 12:00–16:00 only', 'F.M3': 'fills 09:30–12:00 only', 'F.M6': 'fills 09:30–12:00 only', 'F.M7': 'fills 02:00–08:00 only' }[spec.code] || 'time filter', 5.5);
+    if (spec.code === 'FVA.M5') sc.notes.push({ x: 0.2, y: 93, text: 'H1 trend ↑', f: 1, box: 1 });
+    if (spec.filt && spec.code !== 'FVA.M5') timeBand(sc, { 'FVA.M2': 'fills 12:00–16:00 only', 'FVA.M3': 'fills 09:30–12:00 only', 'FVA.M6': 'fills 09:30–12:00 only', 'FVA.M7': 'fills 02:00–08:00 only' }[spec.code] || 'time filter', 5.5);
     return sc;
   };
   B.retest = function (spec) {
@@ -96,7 +96,7 @@
     if (spec.be) sc.marks.push({ x: entryX + 1, y: entryY + 2, t: 'half', label: 'stop → BE + fees', side: 1 });
     if (spec.re) sc.notes.push({ x: ei + 1.2, y: 30, text: 'stopped and the box holds? touch → BC out → re-enter' });
     if (spec.held) sc.notes.push({ x: 0.2, y: 29, text: '✓ level held: no close below it', f: 1 });
-    if (spec.code === 'F.M9') sc.notes.push({ x: 0.2, y: 93, text: 'H1 trend ↑', f: 1, box: 1 });
+    if (spec.code === 'FVA.M9') sc.notes.push({ x: 0.2, y: 93, text: 'H1 trend ↑', f: 1, box: 1 });
     sessBand(sc, spec, bi);
     return sc;
   };

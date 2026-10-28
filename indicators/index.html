@@ -1,383 +1,505 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MMM Pro c · s · x - The MMM Order-Flow Indicators | MMM Trading</title>
-<meta name="description" content="MMM Pro c, MMM Pro s and MMM Pro x: three TradingView indicators that read the same auction between buyers and sellers three ways - by candle, by swing and by balance zone. The foundation of MMM order flow.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The MMM Order-Flow Indicators · Candle Bias, Candle, Swing, Expander Block, Fair Value Area | MMM Trading</title>
+<meta name="description" content="The MMM order-flow indicators for TradingView: MMM Candle Bias Pro (how to read every candle), MMM Pro C Candle OrderFlow, MMM Pro S Swing OrderFlow, MMM Pro X Expander Block OrderFlow, MMM Pro FVA Fair Value Area OrderFlow and XCS One. Closed candles only, no repaint.">
 <link rel="canonical" href="https://www.maxmaserati.com/indicators/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MMM Trading">
-<meta property="og:title" content="MMM Pro c · s · x - The MMM Order-Flow Indicators">
-<meta property="og:description" content="Three engines, one order-flow language: candle, swing and balance-zone breaks for ES and NQ futures.">
+<meta property="og:title" content="The MMM Order-Flow Indicators">
+<meta property="og:description" content="Read who is in control, one closed candle at a time. Candle Bias, Candle, Swing, Expander Block and Fair Value Area order flow for ES and NQ.">
 <meta property="og:url" content="https://www.maxmaserati.com/indicators/">
 <meta property="og:image" content="https://www.maxmaserati.com/mmm-logo-lockup.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="theme-color" content="#07080a">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  body { background: hsl(0,0%,4%); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-  .num { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-  .glow { background-image: radial-gradient(circle at 15% 15%, hsla(45,100%,55%,0.16), transparent 40%), radial-gradient(circle at 85% 20%, hsla(180,70%,55%,0.14), transparent 45%); }
-  .eng { border-color: rgba(255,255,255,.1); }
-  .eng-c { --c: hsl(45,100%,58%); } .eng-s { --c: hsl(180,70%,55%); } .eng-x { --c: hsl(142,70%,48%); } .eng-u { --c: hsl(45,100%,60%); }
-  .eng .tag { color: var(--c); border-color: color-mix(in srgb, var(--c) 45%, transparent); background: color-mix(in srgb, var(--c) 10%, transparent); }
-  .eng .bar { background: var(--c); }
-  .eng h3 span { color: var(--c); }
-  .pill { border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03); }
-  details summary::-webkit-details-marker { display:none; }
+/* The MMM indicators · one page, top to bottom: the idea (how price moves) → the foundation (MMM Candle Bias Pro, interactive)
+   → the five order-flow engines (switcher, interactive staircase, what you see on the chart) → which one fits you → try it. */
+:root{
+  --bg:#07080a; --panel:#0f1114; --panel2:#0b0d10; --row:#14171b; --row2:#101317; --line:#252a31; --line2:#323942;
+  --fg:#d9dde3; --mute:#8f97a1; --faint:#5f6873; --gold:#e1b31a; --gold2:#f2cf5b; --teal:#4fd1c5; --up:#3ddc97; --dn:#ff5c6c;
+  --bu:#d7ffb2; --be:#c86bd6;
+  --display:'Barlow Condensed','Arial Narrow',sans-serif; --body:'Barlow',system-ui,-apple-system,'Segoe UI',sans-serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:16px;-webkit-font-smoothing:antialiased;margin:0}
+.desk{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.eyebrow{font:600 13px/1 var(--display);letter-spacing:.12em;text-transform:uppercase;color:var(--teal)}
+.sec{padding-block:64px 8px}
+.sec h2{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--gold);font-size:clamp(28px,3.4vw,42px);line-height:1.05;margin:8px 0 10px;text-wrap:balance}
+.sec .lede{color:#c9d0d6;font-size:17px;line-height:1.6;max-width:68ch;margin:0}
+.sec h3{font-family:var(--display);font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:20px;color:var(--fg);margin:0 0 6px}
+
+/* hero */
+.hero{border-bottom:1px solid var(--line);background:radial-gradient(1200px 400px at 85% -10%,rgba(79,209,197,.10),transparent 60%),radial-gradient(900px 400px at 0% 0%,rgba(225,179,26,.08),transparent 60%)}
+.hero .desk{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:40px;padding-block:56px 48px;align-items:center}
+.hero h1{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.02em;color:var(--fg);font-size:clamp(40px,5.6vw,70px);line-height:.98;margin:12px 0 16px;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero p.lede{font-size:18px;line-height:1.6;color:#c9d0d6;max-width:56ch;margin:0}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;align-items:center}
+.btn-try{display:inline-flex;align-items:center;gap:10px;background:var(--gold);color:#0b0b0b;font:700 19px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:15px 22px;text-decoration:none;border:0;box-shadow:0 0 0 0 rgba(225,179,26,.5);transition:transform .15s, box-shadow .2s}
+.btn-try:hover{transform:translateY(-1px);box-shadow:0 8px 30px -8px rgba(225,179,26,.6)}
+.btn-try svg{width:18px;height:18px}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);color:var(--fg);font:600 17px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:14px 18px;text-decoration:none}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
+.micro{font-size:13px;color:var(--mute);margin:12px 0 0}
+.micro b{color:var(--fg);font-weight:600}
+.facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.facts span{font:600 12.5px/1 var(--display);letter-spacing:.07em;text-transform:uppercase;color:var(--mute);border:1px solid var(--line2);padding:6px 9px}
+.hero-pic{background:var(--panel2);border:1px solid var(--line);padding:10px}
+.hero-pic svg{display:block;width:100%;height:auto}
+
+/* idea cards */
+.ideas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:26px}
+.idea{background:var(--panel);border:1px solid var(--line);padding:18px 18px 16px;min-width:0}
+.idea .n{font:600 13px/1 var(--mono);color:var(--gold)}
+.idea h3{margin-top:8px}
+.idea p{margin:0;color:#c3cbd1;line-height:1.55;font-size:15.5px}
+.idea p b{color:var(--fg)}
+.rope{margin-top:14px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border:1px solid var(--line)}
+.rope div{padding:14px 16px;border-left:1px solid var(--line)} .rope div:first-child{border-left:0}
+.rope b{display:block;font:700 15px/1.2 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-bottom:4px}
+.rope span{color:#c3cbd1;font-size:15px;line-height:1.5}
+
+/* candle bias */
+.cb{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;margin-top:22px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);min-width:0}
+.panel .hd{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line2)}
+.seg button{font:600 14px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;background:transparent;color:var(--mute);border:0;border-left:1px solid var(--line2);padding:8px 12px;cursor:pointer}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--gold);color:#0b0b0b}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.chips button{font:600 13px/1 var(--mono);background:var(--panel2);color:#c9d0d6;border:1px solid var(--line2);padding:7px 9px;cursor:pointer}
+.chips button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold2);background:#17140a}
+.panel svg{display:block;width:100%;height:auto}
+#cb-pic{overflow-x:auto} #cb-pic svg{min-width:480px}
+.explain{padding:14px 16px 16px;display:grid;gap:10px}
+.explain .ttl{font:700 26px/1 var(--display);letter-spacing:.03em;color:var(--gold)}
+.explain .ttl small{font:600 14px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-left:8px}
+.kv{display:grid;grid-template-columns:110px minmax(0,1fr);gap:6px 12px;margin:0}
+.kv dt{font:600 13px/1.4 var(--display);letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+.kv dd{margin:0;line-height:1.5;color:#d4dae0}
+.lean{display:inline-block;font:700 13px/1 var(--display);letter-spacing:.07em;text-transform:uppercase;padding:4px 8px;border:1px solid currentColor}
+.lean.bu{color:var(--up)} .lean.be{color:var(--dn)} .lean.nu{color:var(--mute)}
+.see{width:100%;border-collapse:collapse;font-size:15px}
+.see td{padding:10px 10px;border-top:1px solid var(--line);vertical-align:top;line-height:1.5}
+.see td:first-child{width:34%;font:600 13.5px/1.4 var(--mono);color:var(--gold2)}
+.see td:last-child{color:#cfd5da}
+.see tr:first-child td{border-top:0}
+.ladder{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.ladder span{font:600 12.5px/1 var(--mono);border:1px solid var(--line2);padding:5px 7px;color:#c9d0d6}
+.ladder span b{color:var(--teal);font-weight:600}
+
+/* engines */
+.eng-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.eng-tabs button{display:flex;flex-direction:column;align-items:flex-start;gap:3px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--line2);padding:10px 14px 11px;cursor:pointer;color:var(--fg);text-align:left;min-width:170px}
+.eng-tabs button b{font:700 20px/1 var(--display);letter-spacing:.03em}
+.eng-tabs button span{font:600 12.5px/1.2 var(--display);letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+.eng-tabs button[aria-pressed="true"]{border-top-color:var(--ec);background:#111418}
+.eng-tabs button[aria-pressed="true"] b{color:var(--ec)}
+.engine{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--ec);min-width:0}
+.e-head{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:baseline;padding:20px 22px 14px;border-bottom:1px solid var(--line)}
+.e-head h3{font:700 clamp(30px,3.6vw,44px)/1 var(--display);letter-spacing:.02em;color:var(--fg);margin:0;text-transform:none}
+.e-head h3 i{font-style:normal;color:var(--ec)}
+.e-head .full{font:600 16px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--ec)}
+.e-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}
+.e-l{padding:18px 22px 22px;border-right:1px solid var(--line);display:grid;gap:16px;align-content:start;grid-template-columns:minmax(0,1fr)}
+.e-r{padding:18px 22px 22px;display:grid;gap:14px;align-content:start;grid-template-columns:minmax(0,1fr)}
+.e-l p.idea-t{margin:0;font-size:17px;line-height:1.6;color:#d4dae0}
+ol.how{list-style:none;counter-reset:h;margin:0;padding:0;display:grid;gap:0}
+ol.how li{counter-increment:h;display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px;padding:10px 0;border-top:1px solid var(--line);line-height:1.55;color:#cfd5da}
+ol.how li::before{content:counter(h);font:600 14px/1.6 var(--mono);color:var(--ec)}
+ol.how li b{color:var(--fg)}
+.best{margin:0;font-size:15px;color:var(--mute);line-height:1.5} .best b{color:var(--fg)}
+.dia{background:var(--panel2);border:1px solid var(--line);overflow-x:auto}
+.dia svg{display:block;width:100%;min-width:440px;height:auto}
+.dia .bx{fill:rgba(79,209,197,.09);stroke:rgba(79,209,197,.55)} .dia .lv{stroke:var(--teal);stroke-width:1.2;stroke-dasharray:4 3} .dia .lvm{stroke:var(--line2);stroke-width:1;stroke-dasharray:3 4}
+.dia .ln{fill:none;stroke:var(--fg);stroke-width:2;stroke-linejoin:round}
+.dia text{font:500 12px var(--mono)} .dia .mg{fill:var(--ec)} .dia .tl{fill:var(--teal)} .dia .mut{fill:var(--mute)}
+.dinfo{border-left:3px solid var(--ec);padding:6px 0 6px 12px;min-height:58px}
+.dinfo b{font:700 17px/1.2 var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--fg)}
+.dinfo p{margin:4px 0 0;color:#cfd5da;line-height:1.5}
+.lab{font:600 13px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.e-cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 22px;border-top:1px solid var(--line);background:var(--panel2)}
+.e-cta .btn-try{font-size:16px;padding:12px 16px}
+.e-cta span{color:var(--mute);font-size:14px}
+
+/* compare */
+.tw{overflow-x:auto;border:1px solid var(--line);margin-top:20px}
+table.cmp{width:100%;border-collapse:collapse;min-width:900px;font-size:14.5px}
+.cmp th{background:#000;font:700 15px/1.2 var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--gold);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+.cmp th small{display:block;font:600 11.5px/1.2 var(--display);letter-spacing:.07em;color:var(--mute)}
+.cmp td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top;color:#cfd5da;line-height:1.45}
+.cmp td:first-child{font:600 13px/1.4 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);white-space:nowrap}
+.cmp tr:nth-child(odd) td{background:var(--row2)}
+
+.under{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:22px}
+.under div{background:var(--panel);border:1px solid var(--line);padding:16px}
+.under b{display:block;font:700 17px/1.2 var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--fg);margin-bottom:6px}
+.under p{margin:0;color:#c3cbd1;font-size:15px;line-height:1.5}
+
+.final{margin-top:64px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:radial-gradient(800px 300px at 50% 0%,rgba(225,179,26,.12),transparent 70%)}
+.final .desk{padding-block:60px;text-align:center}
+.final h2{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.03em;font-size:clamp(32px,4.4vw,56px);line-height:1;margin:0 0 12px;color:var(--fg);text-wrap:balance}
+.final h2 em{font-style:normal;color:var(--gold)}
+.final p{color:#c9d0d6;font-size:17px;line-height:1.6;max-width:60ch;margin:0 auto}
+.final .cta-row{justify-content:center}
+.links{display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;margin-top:18px}
+.links a{color:var(--teal);font-weight:600;text-underline-offset:3px}
+.legal{color:var(--faint);font-size:12.5px;line-height:1.6;padding-block:28px 90px;max-width:95ch}
+
+/* sticky try bar */
+.trybar{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:30;display:flex;align-items:center;gap:6px;background:#000;border:1px solid var(--gold);box-shadow:0 10px 40px -10px rgba(0,0,0,.8);padding:6px 6px 6px 14px;transform:translateY(140%);transition:transform .25s}
+.trybar.on{transform:none}
+.trybar span{font:600 14px/1.2 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--fg)}
+.trybar a{background:var(--gold);color:#0b0b0b;font:700 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;text-decoration:none}
+.trybar button{background:none;border:0;color:var(--mute);font-size:18px;line-height:1;padding:6px 8px;cursor:pointer}
+
+@media (max-width:1000px){
+  .hero .desk,.cb,.e-body{grid-template-columns:minmax(0,1fr)}
+  .e-l{border-right:0;border-bottom:1px solid var(--line)}
+  .ideas,.under{grid-template-columns:minmax(0,1fr)}
+  .rope{grid-template-columns:minmax(0,1fr)} .rope div{border-left:0;border-top:1px solid var(--line)} .rope div:first-child{border-top:0}
+}
+@media (max-width:600px){
+  .eng-tabs button{min-width:0;flex:1 1 44%}
+  .e-head,.e-l,.e-r,.e-cta{padding-left:14px;padding-right:14px}
+  .kv{grid-template-columns:minmax(0,1fr)}
+  .trybar span{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
-<body class="text-white">
+<body>
 <div id="mmm-header"></div>
 
-<!-- HERO -->
-<section class="glow border-b border-white/10" style="background:linear-gradient(135deg,#050505,#0a0a0a 50%,hsl(180,45%,9%));">
-  <div class="max-w-5xl mx-auto px-5 sm:px-8 pt-16 pb-20 sm:pt-24 sm:pb-24 text-center">
-    <div class="inline-flex items-center gap-2 text-xs font-bold px-4 py-1.5 rounded-full mb-6" style="background:linear-gradient(90deg,var(--mmm-tiffany),var(--mmm-tiffany-light));color:#04211f;">The foundation of MMM order flow</div>
-    <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.06]"><span class="gold-text">MMM Pro</span> <span class="num text-[color:var(--mmm-gold-light)]">c</span><span class="text-gray-600"> · </span><span class="num text-[color:var(--mmm-tiffany-light)]">s</span><span class="text-gray-600"> · </span><span class="num text-green-400">x</span></h1>
-    <p class="mt-6 text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">Three indicators. One question: <b class="text-white">who is in control of price right now, buyers or sellers, and where did control change hands?</b></p>
-    <p class="mt-4 text-gray-400 max-w-2xl mx-auto leading-relaxed">MMM Pro <b class="text-[color:var(--mmm-gold-light)]">c</b> answers it candle by candle. MMM Pro <b class="text-[color:var(--mmm-tiffany-light)]">s</b> answers it swing by swing. MMM Pro <b class="text-green-400">x</b> answers it zone by zone. Same market, same language, three points of view.</p>
-    <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
-      <a href="#engines" class="w-full sm:w-auto font-bold text-black px-7 py-3.5 rounded-xl transition hover:brightness-110" style="background:linear-gradient(90deg,var(--mmm-gold),var(--mmm-gold-light));">Meet the three engines</a>
-      <a href="#auction" class="w-full sm:w-auto font-bold px-7 py-3.5 rounded-xl border-2 border-[color:var(--mmm-tiffany)] text-[color:var(--mmm-tiffany-light)] hover:bg-[color:var(--mmm-tiffany)] hover:text-black transition">How price really moves</a>
+<section class="hero">
+  <div class="desk">
+    <div>
+      <span class="eyebrow">MMM order-flow indicators · TradingView · ES / NQ</span>
+      <h1>See who is <em>in control</em>. One closed candle at a time.</h1>
+      <p class="lede">Every candle is a vote between buyers and sellers. The MMM indicators count those votes for you: where control changed hands, where the winners defend, and where the next fight will be. No guessing from wicks. Only closed candles, so what you see in the past is what you would have seen live.</p>
+      <div class="cta-row">
+        <a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="hero">Try it for free <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 10h11m-4-5 5 5-5 5"/></svg></a>
+        <a class="btn-ghost" href="#candle-bias">Start with the candle</a>
+      </div>
+      <p class="micro">Put them on <b>your own chart</b> and judge for yourself. Free on Whop, then you decide.</p>
+      <div class="facts"><span>Closed candles only</span><span>No repaint</span><span>1m to Daily</span><span>Higher timeframe inside your chart</span></div>
     </div>
-    <p class="mt-6 text-sm text-gray-300">New: <a href="#xcs-one" class="font-bold text-[color:var(--mmm-gold-light)] hover:underline">MMM Pro XCS One</a> puts all three engines in one chart &middot; <a href="/backtests/" class="font-bold text-[color:var(--mmm-tiffany-light)] hover:underline">see every backtest</a></p>
-    <p class="mt-6 text-xs text-gray-500">TradingView indicators for ES / MES and NQ / MNQ futures &middot; closed candles only, no repaint &middot; launching on TradingView by invitation</p>
-  </div>
-</section>
-
-<!-- THE AUCTION -->
-<section id="auction" class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
-  <div class="max-w-3xl">
-    <p class="text-xs font-bold uppercase tracking-widest text-[color:var(--mmm-gold-light)] mb-3">Step 1 &middot; the auction</p>
-    <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">Price only moves when one side runs out of the other side's orders</h2>
-    <p class="mt-5 text-gray-400 leading-relaxed text-lg">Every trade needs a buyer and a seller. What matters is <b class="text-white">who is in a hurry</b>. One side sends market orders and takes what is on offer. The other side waits with limit orders and lets the price come to them.</p>
-  </div>
-
-  <div class="mt-12 grid md:grid-cols-2 gap-5">
-    <div class="rounded-2xl border border-green-500/25 bg-green-500/[0.04] p-6">
-      <div class="flex items-center gap-3 mb-3"><span class="h-9 w-9 rounded-lg bg-green-500/15 text-green-400 flex items-center justify-center font-extrabold">&uarr;</span><h3 class="font-bold text-lg">Buy demand meets sell offers</h3></div>
-      <p class="text-gray-400 leading-relaxed">Buyers in a hurry lift the sell offers sitting above price. While the offers at a price are bigger than the demand, price holds. When demand eats the last offer at that price, the next offer is <b class="text-white">higher</b> &mdash; so price ticks up. Keep doing that and the candle closes up, above the area where sellers used to wait.</p>
-    </div>
-    <div class="rounded-2xl border border-red-500/25 bg-red-500/[0.04] p-6">
-      <div class="flex items-center gap-3 mb-3"><span class="h-9 w-9 rounded-lg bg-red-500/15 text-red-400 flex items-center justify-center font-extrabold">&darr;</span><h3 class="font-bold text-lg">Sell demand meets buy offers</h3></div>
-      <p class="text-gray-400 leading-relaxed">Sellers in a hurry hit the buy orders resting below price. When sell demand eats the last buy order at a price, the next buyer is <b class="text-white">lower</b> &mdash; so price ticks down. Keep doing that and the candle closes down, below the area where buyers used to defend.</p>
-    </div>
-  </div>
-
-  <div class="mt-5 grid md:grid-cols-3 gap-5">
-    <div class="pill rounded-2xl p-6">
-      <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">A wick</p>
-      <p class="text-gray-300 leading-relaxed">Price visited a level, but the other side answered and pushed it back. The orders there were <b class="text-white">tested</b>, not beaten.</p>
-    </div>
-    <div class="pill rounded-2xl p-6">
-      <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">A body close</p>
-      <p class="text-gray-300 leading-relaxed">The candle ended beyond the level. The market <b class="text-white">accepted</b> the new price. The defenders there were absorbed or gave up.</p>
-    </div>
-    <div class="pill rounded-2xl p-6">
-      <p class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-2">A break that matters</p>
-      <p class="text-gray-300 leading-relaxed">Most closes are noise. A few happen at the exact place where control was being defended. Finding <b class="text-white">those</b> closes is what the three engines do.</p>
-    </div>
-  </div>
-
-  <div class="mt-12 rounded-2xl border border-white/10 bg-black/50 p-6 sm:p-8">
-    <h3 class="font-bold text-xl mb-5">Think of it like a tug of war</h3>
-    <div class="grid sm:grid-cols-3 gap-6 text-gray-400 leading-relaxed">
-      <div><p class="font-semibold text-white mb-1">The rope = price</p><p>It only moves when one team pulls harder than the other team can hold.</p></div>
-      <div><p class="font-semibold text-white mb-1">The marker on the ground = the level</p><p>Where the losing team made its last stand. That is where the MMM engines draw the origin of the move.</p></div>
-      <div><p class="font-semibold text-white mb-1">Crossing the marker = the break</p><p>The rope crossed the line and stayed there at the end of the candle. Control changed hands &mdash; or the winning team pulled further.</p></div>
+    <div class="hero-pic" aria-hidden="true">
+      <svg viewBox="0 0 520 330" role="img">
+        <rect x="0" y="0" width="520" height="330" fill="#0b0d10"/>
+        <rect x="150" y="170" width="250" height="44" fill="rgba(215,255,178,.10)" stroke="rgba(215,255,178,.45)"/>
+        <text x="340" y="208" fill="#d7ffb2" font-family="IBM Plex Mono,monospace" font-size="11">MMCB box</text>
+        <line x1="150" x2="470" y1="72" y2="72" stroke="#3ddc97" stroke-width="1.5" stroke-dasharray="6 4"/><text x="404" y="66" fill="#3ddc97" font-family="IBM Plex Mono,monospace" font-size="11">BuBC+ H1H TGT</text>
+        <line x1="150" x2="470" y1="214" y2="214" stroke="#ff5c6c" stroke-width="1.5"/><text x="420" y="230" fill="#ff5c6c" font-family="IBM Plex Mono,monospace" font-size="11">H1L protected</text>
+        <rect x="24" y="230" width="100" height="36" fill="rgba(79,209,197,.10)" stroke="rgba(79,209,197,.6)"/><text x="28" y="282" fill="#4fd1c5" font-family="IBM Plex Mono,monospace" font-size="11">T1 · eBlock</text>
+        <g stroke-width="1.6">
+          <line x1="40" x2="40" y1="150" y2="200" stroke="#ff5c6c"/><rect x="33" y="156" width="14" height="36" fill="#ff5c6c"/>
+          <line x1="64" x2="64" y1="186" y2="240" stroke="#ff5c6c"/><rect x="57" y="192" width="14" height="38" fill="#ff5c6c"/>
+          <line x1="88" x2="88" y1="222" y2="262" stroke="#ff5c6c"/><rect x="81" y="228" width="14" height="26" fill="#ff5c6c"/>
+          <line x1="112" x2="112" y1="200" y2="258" stroke="#3ddc97"/><rect x="105" y="206" width="14" height="44" fill="#3ddc97"/>
+          <line x1="136" x2="136" y1="190" y2="218" stroke="#3ddc97"/><rect x="129" y="194" width="14" height="18" fill="#3ddc97"/>
+          <line x1="160" x2="160" y1="168" y2="214" stroke="#3ddc97"/><rect x="153" y="176" width="14" height="30" fill="#3ddc97"/>
+          <line x1="184" x2="184" y1="170" y2="196" stroke="#ff5c6c"/><rect x="177" y="176" width="14" height="14" fill="#ff5c6c"/>
+          <line x1="208" x2="208" y1="132" y2="190" stroke="#3ddc97"/><rect x="201" y="138" width="14" height="44" fill="#3ddc97"/>
+          <line x1="232" x2="232" y1="120" y2="146" stroke="#3ddc97"/><rect x="225" y="124" width="14" height="16" fill="#3ddc97"/>
+          <line x1="256" x2="256" y1="118" y2="152" stroke="#ff5c6c"/><rect x="249" y="124" width="14" height="20" fill="#ff5c6c"/>
+          <line x1="280" x2="280" y1="96" y2="148" stroke="#3ddc97"/><rect x="273" y="102" width="14" height="40" fill="#3ddc97"/>
+          <line x1="304" x2="304" y1="84" y2="110" stroke="#3ddc97"/><rect x="297" y="88" width="14" height="16" fill="#3ddc97"/>
+          <line x1="328" x2="328" y1="76" y2="104" stroke="#3ddc97"/><rect x="321" y="80" width="14" height="18" fill="#3ddc97"/>
+        </g>
+        <text x="200" y="124" fill="#e1b31a" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600">CDL</text>
+        <text x="268" y="92" fill="#e1b31a" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600">LD1</text>
+        <rect x="246" y="140" width="40" height="18" fill="rgba(79,209,197,.08)" stroke="rgba(79,209,197,.45)" stroke-dasharray="3 3"/><text x="290" y="160" fill="#4fd1c5" font-family="IBM Plex Mono,monospace" font-size="10">P1 → T2</text>
+        <text x="24" y="316" fill="#8f97a1" font-family="Barlow,sans-serif" font-size="12">Drawing: candle bias, flip (CDL), continuation (LD), origin zones.</text>
+      </svg>
     </div>
   </div>
 </section>
 
-<!-- SHARED LANGUAGE -->
-<section class="border-y border-white/10" style="background:linear-gradient(180deg,hsla(180,70%,10%,.35),transparent);">
-  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20">
-    <div class="max-w-3xl">
-      <p class="text-xs font-bold uppercase tracking-widest text-[color:var(--mmm-tiffany-light)] mb-3">Step 2 &middot; one language for all three</p>
-      <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">Two events tell the whole story</h2>
-      <p class="mt-5 text-gray-400 leading-relaxed text-lg">Every MMM indicator speaks the same words, so you can move between them without learning anything new. The letter at the end tells you which engine made the call: <span class="num text-[color:var(--mmm-gold-light)]">c</span> candle, <span class="num text-[color:var(--mmm-tiffany-light)]">s</span> swing, <span class="num text-green-400">x</span> zone.</p>
+<section class="sec" id="idea" aria-labelledby="h-idea">
+  <div class="desk">
+    <span class="eyebrow">The philosophy</span>
+    <h2 id="h-idea">Price only moves when one side runs out of the other side's orders</h2>
+    <p class="lede">Every trade needs a buyer and a seller. What matters is who is in a hurry. The urgent side sends market orders and takes what is on offer. The patient side waits with limit orders. MMM reads that fight from one simple thing: where each candle closes.</p>
+    <div class="ideas">
+      <div class="idea"><span class="n">01</span><h3>Demand meets offer</h3><p>Buyers in a hurry lift the sell offers above price. When the last offer at a price is eaten, the next one is higher, so price ticks up. When both sides are equally in a hurry, price swings in a range: <b>balance</b>. When one side gives up, price leaves the range: <b>imbalance</b>.</p></div>
+      <div class="idea"><span class="n">02</span><h3>A wick is a test, a close is a vote</h3><p>A wick means price visited a level and the other side pushed it back: the orders there were tested, not beaten. A <b>body close</b> beyond the last candle means the market accepted the new price. The defenders were absorbed or gave up.</p></div>
+      <div class="idea"><span class="n">03</span><h3>Most closes are noise</h3><p>A few closes happen exactly where control was being defended: the origin of the last push, the edge of a balance zone, a swing, a fair value area. Finding those closes, and the zone each one leaves behind, is what the MMM engines do.</p></div>
     </div>
-
-    <div class="mt-10 grid md:grid-cols-2 gap-5">
-      <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <div class="flex items-baseline justify-between mb-3"><h3 class="font-extrabold text-xl">The Flip</h3><span class="num text-sm text-gray-400">CDL &middot; CDS</span></div>
-        <p class="text-gray-400 leading-relaxed">Control changes hands. The side that was defending the trend gets broken at the level it had to hold. <b class="text-white">CDL</b> = buyers take over. <b class="text-white">CDS</b> = sellers take over. It starts a new leg: <b class="text-white">T1</b>.</p>
-      </div>
-      <div class="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <div class="flex items-baseline justify-between mb-3"><h3 class="font-extrabold text-xl">The Continuation</h3><span class="num text-sm text-gray-400">LD &middot; SD</span></div>
-        <p class="text-gray-400 leading-relaxed">The side in control proves it again. After a pullback, it breaks through the counter-attack and resumes. <b class="text-white">LD</b> = long delivery, <b class="text-white">SD</b> = short delivery. Each one adds a step to the leg: <b class="text-white">T2, T3&hellip;</b></p>
-      </div>
-    </div>
-
-    <div class="mt-5 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      <div class="pill rounded-2xl p-5"><p class="num text-sm text-[color:var(--mmm-gold-light)] mb-1">BuPO4 / BePO4 &middot; T#</p><p class="text-sm text-gray-400 leading-relaxed">The <b class="text-white">origin</b> of a move &mdash; where the winning side started its push. It stays on the chart until price closes back through it.</p></div>
-      <div class="pill rounded-2xl p-5"><p class="num text-sm text-[color:var(--mmm-gold-light)] mb-1">P# &middot; R#</p><p class="text-sm text-gray-400 leading-relaxed">The live range: the <b class="text-white">pullback</b> the trend must break to continue, and the <b class="text-white">resumption</b> base that becomes the next origin.</p></div>
-      <div class="pill rounded-2xl p-5"><p class="num text-sm text-[color:var(--mmm-gold-light)] mb-1">eBlock &middot; iBlock</p><p class="text-sm text-gray-400 leading-relaxed">The zones born from a flip (<b class="text-white">eBlock</b>) and from a continuation (<b class="text-white">iBlock</b>). Each lives exactly as long as its origin.</p></div>
-      <div class="pill rounded-2xl p-5"><p class="num text-sm text-[color:var(--mmm-gold-light)] mb-1">🟢🟩 &middot; 🔴🟥</p><p class="text-sm text-gray-400 leading-relaxed">Trend markers: where the current leg <b class="text-white">started</b> and its <b class="text-white">newest</b> step. Everything between them is always drawn.</p></div>
+    <div class="rope" role="list">
+      <div role="listitem"><b>The rope = price</b><span>It only moves when one team pulls harder than the other team can hold.</span></div>
+      <div role="listitem"><b>The marker = the level</b><span>Where the losing team made its last stand. MMM draws the origin of the move there.</span></div>
+      <div role="listitem"><b>Crossing it = the break</b><span>The rope crossed the line and stayed there at the close. Control changed hands, or the winners pulled further.</span></div>
     </div>
   </div>
 </section>
 
-<!-- ENGINES -->
-<section id="engines" class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
-  <div class="max-w-3xl mb-12">
-    <p class="text-xs font-bold uppercase tracking-widest text-[color:var(--mmm-gold-light)] mb-3">Step 3 &middot; three engines</p>
-    <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">Same auction. Three ways to read who is winning it.</h2>
-  </div>
-
-  <!-- c -->
-  <article class="eng eng-c border rounded-3xl overflow-hidden bg-white/[0.02] mb-8">
-    <div class="bar h-1"></div>
-    <div class="grid lg:grid-cols-5 gap-8 p-6 sm:p-10">
-      <div class="lg:col-span-3">
-        <span class="tag inline-block text-xs font-bold px-3 py-1 rounded-full border mb-4">Candle break engine</span>
-        <h3 class="text-3xl font-extrabold">MMM Pro <span class="num">c</span></h3>
-        <p class="mt-2 text-gray-300 text-lg">Reads control <b class="text-white">one candle at a time</b>.</p>
-        <p class="mt-5 text-gray-400 leading-relaxed">Every candle that closes beyond the one before it is a vote. MMM Pro c keeps score of those votes: the last time buyers forced a close, the last time sellers did, and which of those closes the other side failed to take back. It also separates <b class="text-white">urgent</b> moves &mdash; when one side was in such a hurry that it left price the other side never got to trade &mdash; from normal ones.</p>
-        <p class="mt-4 text-gray-400 leading-relaxed">When a candle closes through the level the trend had to defend, you get the flip. When the trend pushes through its own pullback, you get the continuation &mdash; each one numbered, each one with its origin and its zone.</p>
-        <ul class="mt-6 grid sm:grid-cols-2 gap-2 text-sm text-gray-300">
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>The earliest of the three to react</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>Pullback and resumption levels, numbered by tier</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>Urgency levels and structural voids</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>Candle conviction colouring</li>
-        </ul>
-        <p class="mt-6 text-sm text-gray-500"><b class="text-gray-300">Best for:</b> precise, early entries on lower timeframes and traders who want to see every change in control.</p>
+<section class="sec" id="candle-bias" aria-labelledby="h-cb">
+  <div class="desk">
+    <span class="eyebrow">The foundation · how to read every candle</span>
+    <h2 id="h-cb">MMM Candle Bias Pro</h2>
+    <p class="lede">Before any structure, MMM reads the candle. Each closed candle is compared with the candle before it: did it close above its high, below its low, or back inside after a sweep? That gives 16 candle types, each with a side it leans to, a <b>target</b> (TGT) and a <b>protected</b> end. Every other MMM indicator is built on this reading. Pick a candle below.</p>
+    <div class="cb">
+      <div class="panel">
+        <div class="hd"><span class="seg" role="group" aria-label="Side"><button type="button" data-side="bu" aria-pressed="true">Bull types (Bu)</button><button type="button" data-side="be" aria-pressed="false">Bear types (Be)</button></span><span class="lab">Grey = the previous candle</span></div>
+        <div class="chips" id="cb-chips" role="group" aria-label="Candle type"></div>
+        <div id="cb-pic"></div>
       </div>
-      <div class="lg:col-span-2 flex items-center">
-        <svg viewBox="0 0 320 220" class="w-full rounded-2xl border border-white/10 bg-black/60" role="img" aria-label="Candle break illustration">
-          <line x1="20" y1="120" x2="300" y2="120" stroke="hsl(45,100%,58%)" stroke-dasharray="5 5" stroke-width="1.5"/>
-          <text x="22" y="112" fill="hsl(45,100%,65%)" font-size="10" font-family="JetBrains Mono">level to defend</text>
-          <g stroke-width="2">
-            <line x1="45" y1="70" x2="45" y2="150" stroke="#ef4444"/><rect x="38" y="85" width="14" height="45" fill="#ef4444"/>
-            <line x1="80" y1="95" x2="80" y2="170" stroke="#ef4444"/><rect x="73" y="110" width="14" height="45" fill="#ef4444"/>
-            <line x1="115" y1="125" x2="115" y2="190" stroke="#ef4444"/><rect x="108" y="140" width="14" height="38" fill="#ef4444"/>
-            <line x1="150" y1="130" x2="150" y2="195" stroke="#9ca3af"/><rect x="143" y="150" width="14" height="25" fill="#9ca3af"/>
-            <line x1="185" y1="98" x2="185" y2="175" stroke="#22c55e"/><rect x="178" y="105" width="14" height="60" fill="#22c55e"/>
-            <line x1="220" y1="72" x2="220" y2="128" stroke="#22c55e"/><rect x="213" y="80" width="14" height="38" fill="#22c55e"/>
-            <line x1="255" y1="48" x2="255" y2="100" stroke="#22c55e"/><rect x="248" y="55" width="14" height="35" fill="#22c55e"/>
-          </g>
-          <circle cx="185" cy="105" r="13" fill="none" stroke="hsl(45,100%,58%)" stroke-width="2"/>
-          <text x="200" y="210" fill="#d1d5db" font-size="11" font-family="JetBrains Mono">close beyond = vote</text>
-        </svg>
+      <div class="panel">
+        <div class="explain" id="cb-explain"></div>
       </div>
     </div>
-  </article>
-
-  <!-- s -->
-  <article class="eng eng-s border rounded-3xl overflow-hidden bg-white/[0.02] mb-8">
-    <div class="bar h-1"></div>
-    <div class="grid lg:grid-cols-5 gap-8 p-6 sm:p-10">
-      <div class="lg:col-span-3">
-        <span class="tag inline-block text-xs font-bold px-3 py-1 rounded-full border mb-4">Swing break engine</span>
-        <h3 class="text-3xl font-extrabold">MMM Pro <span class="num">s</span></h3>
-        <p class="mt-2 text-gray-300 text-lg">Reads control <b class="text-white">at the turning points</b>.</p>
-        <p class="mt-5 text-gray-400 leading-relaxed">A swing forms where one side's push ran dry and the other side answered with a close of its own. That turning point is where the losing side last defended &mdash; real orders sat there. MMM Pro s watches every swing, without filters, and waits for a <b class="text-white">body close</b> through one.</p>
-        <p class="mt-4 text-gray-400 leading-relaxed">A wick through a swing is a <b class="text-white">sweep</b>: the orders there were taken, but the market refused the new price. A close through it is a <b class="text-white">break</b>: the defenders were absorbed. Every break is graded by the order flow behind it &mdash; how much volume came in and whether delta (aggressive buying minus aggressive selling) agreed with the move.</p>
-        <ul class="mt-6 grid sm:grid-cols-2 gap-2 text-sm text-gray-300">
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Break grade from volume and delta</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Strong sweeps marked separately</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Accelerator candles and un-auctioned prices</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Footprint delta on supported plans</li>
-        </ul>
-        <p class="mt-6 text-sm text-gray-500"><b class="text-gray-300">Best for:</b> traders who want clean, classic market structure with the order flow that proves each break.</p>
+    <div class="panel" style="margin-top:18px">
+      <div class="hd"><h3 style="margin:0">What you see on the chart</h3></div>
+      <div style="padding:4px 16px 10px">
+        <table class="see"><tbody>
+          <tr><td>MMCB box</td><td>The higher-timeframe candle drawn on your chart as a box: pale green after a bull type, purple after a bear type. Two sets run at once (H1 and H4 by default), so you see the hour and the 4-hour candle while you trade the 1m or 5m.</td></tr>
+          <tr><td>H / L lines + TGT</td><td>The high and low of the last closed HTF candle, starting at the exact candle that made them. The lean side is the <b>target</b> (green dashed, labelled TGT). The other side is <b>protected</b> (red solid): the end the candle's owners must defend. Neutral candles keep grey lines.</td></tr>
+          <tr><td>BuBC+ H1H TGT</td><td>Every label tells you three things: the candle type, the timeframe and the level. Read it as: "the last H1 candle was a strong bull body close, its high is the target".</td></tr>
+          <tr><td>O Live</td><td>The open of the HTF candle that is forming now. Price above it = the live candle is bullish so far, below it = bearish.</td></tr>
+          <tr><td>Bias Engine</td><td>Optional fill between price and the HTF open (or last close, or pivot). Green fill = price is above it, purple = below. The table shows "Trend Bias: Bullish / Bearish" and can alert you when it changes.</td></tr>
+          <tr><td>Trapped Sellers · Buyers Absorbed</td><td>Sweep and absorption: a candle with a volume spike and a big wick takes an MMCB high or low and closes back. The box marks where the trapped side got stuck. It is deleted when price closes past the sweep's extreme.</td></tr>
+          <tr><td>Timer table</td><td>Your local time and New York time, a countdown to the close of each timeframe (1m to 4H), each row coloured by the bias of its last closed candle, a highlight for your main timeframe and a red warning in the last 30 seconds.</td></tr>
+          <tr><td>Alerts</td><td>When an HTF candle bias forms, when a sweep traps one side, and when the trend bias changes. Only on closed candles.</td></tr>
+        </tbody></table>
       </div>
-      <div class="lg:col-span-2 flex items-center">
-        <svg viewBox="0 0 320 220" class="w-full rounded-2xl border border-white/10 bg-black/60" role="img" aria-label="Swing break illustration">
-          <polyline points="20,170 70,90 110,140 165,60 205,120 245,95 300,30" fill="none" stroke="hsl(180,70%,60%)" stroke-width="2.5" stroke-linejoin="round"/>
-          <line x1="165" y1="60" x2="300" y2="60" stroke="#9ca3af" stroke-dasharray="4 4"/>
-          <text x="168" y="52" fill="#9ca3af" font-size="10" font-family="JetBrains Mono">swing high</text>
-          <line x1="110" y1="140" x2="300" y2="140" stroke="#9ca3af" stroke-dasharray="4 4"/>
-          <text x="113" y="155" fill="#9ca3af" font-size="10" font-family="JetBrains Mono">swing low = origin</text>
-          <circle cx="272" cy="60" r="12" fill="none" stroke="hsl(180,70%,60%)" stroke-width="2"/>
-          <text x="214" y="205" fill="#d1d5db" font-size="11" font-family="JetBrains Mono">close through = break</text>
-        </svg>
-      </div>
-    </div>
-  </article>
-
-  <!-- x -->
-  <article class="eng eng-x border rounded-3xl overflow-hidden bg-white/[0.02]">
-    <div class="bar h-1"></div>
-    <div class="grid lg:grid-cols-5 gap-8 p-6 sm:p-10">
-      <div class="lg:col-span-3">
-        <span class="tag inline-block text-xs font-bold px-3 py-1 rounded-full border mb-4">Balance-zone break engine</span>
-        <h3 class="text-3xl font-extrabold">MMM Pro <span class="num">x</span></h3>
-        <p class="mt-2 text-gray-300 text-lg">Reads control <b class="text-white">between balance and imbalance</b>.</p>
-        <p class="mt-5 text-gray-400 leading-relaxed">Markets breathe. After a strong push, buyers and sellers usually agree on a fair price for a while and rotate inside a range &mdash; that is <b class="text-white">balance</b>, or contraction. Then one side wins the argument and price leaves &mdash; that is <b class="text-white">imbalance</b>, or expansion.</p>
-        <p class="mt-4 text-gray-400 leading-relaxed">MMM Pro x maps those balance zones as boxes and colours them by who absorbed the most inside: accumulation, distribution or neutral. Only the boxes that hold a role in the trend &mdash; the pullback and the resumption &mdash; can make a break count. A body close out of the right box is a vote on <b class="text-white">value</b>, not just on price.</p>
-        <ul class="mt-6 grid sm:grid-cols-2 gap-2 text-sm text-gray-300">
-          <li class="flex gap-2"><span class="text-green-400">&#9656;</span>Balance boxes coloured by absorption</li>
-          <li class="flex gap-2"><span class="text-green-400">&#9656;</span>Two box styles to test: growing or fixed</li>
-          <li class="flex gap-2"><span class="text-green-400">&#9656;</span>Failed boxes cleaned up automatically</li>
-          <li class="flex gap-2"><span class="text-green-400">&#9656;</span>The calmest, most selective of the three</li>
-        </ul>
-        <p class="mt-6 text-sm text-gray-500"><b class="text-gray-300">Best for:</b> patient traders who think in ranges and value areas and want fewer, bigger decisions.</p>
-      </div>
-      <div class="lg:col-span-2 flex items-center">
-        <svg viewBox="0 0 320 220" class="w-full rounded-2xl border border-white/10 bg-black/60" role="img" aria-label="Balance zone break illustration">
-          <rect x="70" y="95" width="150" height="60" fill="hsla(142,70%,45%,.14)" stroke="hsl(142,70%,48%)" stroke-dasharray="5 4"/>
-          <text x="76" y="88" fill="hsl(142,70%,60%)" font-size="10" font-family="JetBrains Mono">balance (contraction)</text>
-          <polyline points="20,190 70,150 95,105 120,148 145,100 170,150 195,104 220,140 250,70 300,40" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linejoin="round"/>
-          <circle cx="236" cy="92" r="12" fill="none" stroke="hsl(142,70%,48%)" stroke-width="2"/>
-          <text x="180" y="205" fill="#d1d5db" font-size="11" font-family="JetBrains Mono">close out = imbalance</text>
-        </svg>
-      </div>
-    </div>
-  </article>
-
-  <!-- XCS One -->
-  <article id="xcs-one" class="eng eng-u border rounded-3xl overflow-hidden bg-white/[0.02] mt-8" style="border-color:hsla(45,100%,55%,.35)">
-    <div class="h-1" style="background:linear-gradient(90deg,hsl(45,100%,58%),hsl(180,70%,55%),hsl(142,70%,48%))"></div>
-    <div class="grid lg:grid-cols-5 gap-8 p-6 sm:p-10">
-      <div class="lg:col-span-3">
-        <span class="tag inline-block text-xs font-bold px-3 py-1 rounded-full border mb-4">New &middot; the scenario guide &middot; v5.0</span>
-        <h3 class="text-3xl font-extrabold">MMM Pro <span class="num">XCS</span> One</h3>
-        <p class="mt-2 text-gray-300 text-lg">All three engines <b class="text-white">in one picture</b>, with the odds of what usually happens next written next to what it draws.</p>
-        <p class="mt-5 text-gray-400 leading-relaxed">XCS One runs the zone engine <b class="text-green-400 num">x</b>, the candle engine <b class="text-[color:var(--mmm-gold-light)] num">c</b> and the swing engine <b class="text-[color:var(--mmm-tiffany-light)] num">s</b> together. The boxes show where price is parked and who is winning inside them. The candle layer shows what the last candles mean and the tested odds of the next one. The swing layer shows where your stop belongs.</p>
-        <p class="mt-4 text-gray-400 leading-relaxed">It gives <b class="text-white">no arrows and no signals</b>. It shows the map and what three years of NQ and ten fresh months of MNQ say about it, and you decide. Everything is deleted when it is used up, and only closed candles count: no repaint.</p>
-        <ul class="mt-6 grid sm:grid-cols-2 gap-2 text-sm text-gray-300">
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>Balance Control lines: green = buyers, red = sellers</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>Candle compass: 16 candle types with tested odds</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>GMC lines with the odds price comes back to them or closes through them, &#9733; gold = the strongest types</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>Pullback zones: P&ndash;MP after strong candles, BAL&ndash;MD after weak ones</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>Swing protected levels for your stop</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>WHAT NEXT table: what usually happens after the last candle, break, box and block</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-gold-light)]">&#9656;</span>&#9733; highlights only what has real power in the tests: gold GMC, tall blocks, power candles</li>
-        </ul>
-        <p class="mt-6 text-sm text-gray-500"><b class="text-gray-300">Best for:</b> traders who want one clean chart instead of three indicators, and want to see the odds before they decide.</p>
-        <a href="/backtests/#ind" class="inline-block mt-6 font-bold text-sm text-[color:var(--mmm-gold-light)] hover:underline">See what was tested behind every number &rarr;</a>
-      </div>
-      <div class="lg:col-span-2 flex items-center">
-        <svg viewBox="0 0 320 220" class="w-full rounded-2xl border border-white/10 bg-black/60" role="img" aria-label="XCS One: a balance box with buyer and seller control lines, a GMC line and a swing protected level">
-          <rect x="70" y="80" width="150" height="72" fill="hsla(142,70%,45%,.12)"/>
-          <line x1="70" x2="232" y1="104" y2="104" stroke="#00E676" stroke-width="3"/><text x="236" y="107" fill="#00E676" font-size="9" font-family="JetBrains Mono">buyers 68%</text>
-          <line x1="70" x2="232" y1="128" y2="128" stroke="#FF5252" stroke-width="1" opacity=".5"/><text x="236" y="131" fill="#FF5252" font-size="9" font-family="JetBrains Mono" opacity=".7">sellers</text>
-          <line x1="20" x2="300" y1="176" y2="176" stroke="hsl(180,70%,55%)" stroke-dasharray="4 3"/><text x="22" y="190" fill="hsl(180,70%,65%)" font-size="9" font-family="JetBrains Mono">SL s &middot; stop lives here</text>
-          <line x1="250" x2="310" y1="58" y2="58" stroke="hsl(45,100%,58%)"/><text x="244" y="50" fill="hsl(45,100%,65%)" font-size="9" font-family="JetBrains Mono">&#9733; GMC</text>
-          <polyline points="20,170 60,150 80,96 105,140 130,92 155,118 180,98 205,110 232,70 300,30" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linejoin="round"/>
-          <text x="76" y="74" fill="hsl(142,70%,60%)" font-size="9" font-family="JetBrains Mono">live box (x)</text>
-        </svg>
-      </div>
-    </div>
-  </article>
-
-  <!-- PRO f -->
-  <article id="pro-f" class="eng eng-f border rounded-3xl overflow-hidden bg-white/[0.02] mt-8" style="border-color:hsla(180,70%,55%,.35)">
-    <div class="h-1" style="background:linear-gradient(90deg,hsl(180,70%,55%),hsl(45,100%,58%))"></div>
-    <div class="grid lg:grid-cols-5 gap-8 p-6 sm:p-10">
-      <div class="lg:col-span-3">
-        <span class="tag inline-block text-xs font-bold px-3 py-1 rounded-full border mb-4">New &middot; fair value area boxes &middot; 22 tested strategies</span>
-        <h3 class="text-3xl font-extrabold">MMM PRO <span class="num">f</span></h3>
-        <p class="mt-2 text-gray-300 text-lg">The <b class="text-white">higher-timeframe level</b> and the <b class="text-white">lower-timeframe turn</b> on one chart.</p>
-        <p class="mt-5 text-gray-400 leading-relaxed">MMM PRO f draws the fair value boxes of the trend: the T# tiers, the pullback and retest boxes, the break boxes (CDL, CDS, LD, SD) and the <b class="text-white">Bu / Be LEZ</b>, the last box before each break. Turn on the HTF view and the H1 or M15 boxes sit on your 1m or 5m chart, tagged with their timeframe.</p>
-        <p class="mt-4 text-gray-400 leading-relaxed">Every break box keeps its health: a close back through it turns it pale with a &#9888;, an opposite break marks &#10006;, a full failure F&#10006;. Arrows print only after price has left a box and comes back to touch it: a real retest, not the break candle.</p>
-        <ul class="mt-6 grid sm:grid-cols-2 gap-2 text-sm text-gray-300">
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>HTF boxes on your chart with [H1] / [M15] tags</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Bu / Be LEZ: the last box before a break</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Break-box health: &#9888; caution, &#10006; exit, F&#10006; failed</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Retest arrows only after a real retest</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>Used marks delete themselves: a clean chart</li>
-          <li class="flex gap-2"><span class="text-[color:var(--mmm-tiffany-light)]">&#9656;</span>22 strategies tested: retest + 1st BC, box-edge limits, breaks that stay outside</li>
-        </ul>
-        <p class="mt-6 text-sm text-gray-500"><b class="text-gray-300">Best for:</b> traders who mark a higher-timeframe level first, then wait for the lower-timeframe box to turn and get retested.</p>
-        <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2">
-          <a href="/strategies/#s-F-M17" class="inline-block font-bold text-sm text-[color:var(--mmm-tiffany-light)] hover:underline">See its strategies &rarr;</a>
-          <a href="/backtests/pro-f/" class="inline-block font-bold text-sm text-[color:var(--mmm-gold-light)] hover:underline">Open the MMM PRO f lab &rarr;</a>
-        </div>
-      </div>
-      <div class="lg:col-span-2 flex items-center">
-        <svg viewBox="0 0 320 220" class="w-full rounded-2xl border border-white/10 bg-black/60" role="img" aria-label="MMM PRO f: an HTF gap, a 1m reversal box inside it, a wick retest and the first body close out of the box">
-          <rect x="10" y="150" width="300" height="28" fill="hsla(45,100%,55%,.12)" stroke="hsla(45,100%,55%,.55)" stroke-dasharray="5 4"/>
-          <text x="14" y="194" fill="hsl(45,100%,65%)" font-size="9" font-family="JetBrains Mono">H1 UPG gap [H1]</text>
-          <rect x="96" y="140" width="214" height="22" fill="hsla(180,70%,55%,.14)" stroke="hsl(180,70%,55%)"/>
-          <text x="210" y="134" fill="hsl(180,70%,65%)" font-size="9" font-family="JetBrains Mono">LTF reversal box</text>
-          <g stroke-width="1.4">
-            <line x1="30" x2="30" y1="40" y2="66" stroke="#FF5252"/><rect x="25" y="44" width="10" height="18" fill="#FF5252"/>
-            <line x1="52" x2="52" y1="60" y2="96" stroke="#FF5252"/><rect x="47" y="64" width="10" height="26" fill="#FF5252"/>
-            <line x1="74" x2="74" y1="88" y2="128" stroke="#FF5252"/><rect x="69" y="92" width="10" height="30" fill="#FF5252"/>
-            <line x1="96" x2="96" y1="116" y2="164" stroke="#FF5252"/><rect x="91" y="120" width="10" height="20" fill="#FF5252"/>
-            <line x1="118" x2="118" y1="96" y2="146" stroke="#00E676"/><rect x="113" y="100" width="10" height="40" fill="#00E676"/>
-            <line x1="140" x2="140" y1="94" y2="116" stroke="#00E676"/><rect x="135" y="98" width="10" height="12" fill="#00E676"/>
-            <line x1="162" x2="162" y1="98" y2="142" stroke="#FF5252"/><rect x="157" y="100" width="10" height="20" fill="#FF5252"/>
-            <line x1="184" x2="184" y1="80" y2="124" stroke="#00E676"/><rect x="179" y="84" width="10" height="36" fill="#00E676"/>
-            <line x1="206" x2="206" y1="66" y2="88" stroke="#00E676"/><rect x="201" y="70" width="10" height="14" fill="#00E676"/>
-            <line x1="228" x2="228" y1="46" y2="72" stroke="#00E676"/><rect x="223" y="50" width="10" height="18" fill="#00E676"/>
-          </g>
-          <circle cx="162" cy="142" r="4" fill="none" stroke="#e5e7eb" stroke-width="1.5"/>
-          <text x="128" y="210" fill="#d1d5db" font-size="9" font-family="JetBrains Mono">wick retest</text>
-          <circle cx="206" cy="84" r="5" fill="hsl(45,100%,58%)"/>
-          <text x="214" y="98" fill="hsl(45,100%,65%)" font-size="9" font-family="JetBrains Mono">1st BC out = entry</text>
-        </svg>
-      </div>
-    </div>
-  </article>
-</section>
-
-<!-- COMPARE -->
-<section class="border-y border-white/10 bg-black/40">
-  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-20">
-    <h2 class="text-2xl sm:text-3xl font-extrabold mb-8">Which one fits the way you trade?</h2>
-    <div class="overflow-x-auto rounded-2xl border border-white/10">
-      <table class="w-full text-left text-sm min-w-[780px]">
-        <thead class="bg-white/[0.04] text-gray-400">
-          <tr><th class="p-4 font-semibold"></th><th class="p-4 font-bold text-[color:var(--mmm-gold-light)]">MMM Pro c</th><th class="p-4 font-bold text-[color:var(--mmm-tiffany-light)]">MMM Pro s</th><th class="p-4 font-bold text-green-400">MMM Pro x</th><th class="p-4 font-bold text-[color:var(--mmm-gold)]">XCS One</th></tr>
-        </thead>
-        <tbody class="divide-y divide-white/10 text-gray-300">
-          <tr><td class="p-4 text-gray-500">Reads</td><td class="p-4">Every candle close</td><td class="p-4">Turning points (swings)</td><td class="p-4">Balance zones (boxes)</td><td class="p-4">Boxes + candles + swings</td></tr>
-          <tr><td class="p-4 text-gray-500">Order-flow idea</td><td class="p-4">Which side forced the last close, and how urgently</td><td class="p-4">Which defenders got absorbed, with volume and delta behind it</td><td class="p-4">Which side won the argument about value</td><td class="p-4">All three, plus the tested odds on the chart</td></tr>
-          <tr><td class="p-4 text-gray-500">Speed</td><td class="p-4">Fastest</td><td class="p-4">Medium</td><td class="p-4">Slowest, most selective</td><td class="p-4">Zone speed, candle detail</td></tr>
-          <tr><td class="p-4 text-gray-500">Signals</td><td class="p-4">Most</td><td class="p-4">Fewer, graded</td><td class="p-4">Fewest</td><td class="p-4">None: a map, you decide</td></tr>
-          <tr><td class="p-4 text-gray-500">Fits</td><td class="p-4">Scalpers, precise entries</td><td class="p-4">Structure traders</td><td class="p-4">Range and value traders</td><td class="p-4">One-chart traders</td></tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </section>
 
-<!-- WHAT ALL THREE SHARE -->
-<section class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24">
-  <h2 class="text-2xl sm:text-3xl font-extrabold mb-3">Built the same way underneath</h2>
-  <p class="text-gray-400 mb-10 max-w-2xl">Whichever engine you pick, you get the same professional toolkit around it.</p>
-  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">Higher timeframe inside your chart</h3><p class="text-sm text-gray-400 leading-relaxed">Build the structure on a higher timeframe and trade it on your execution chart, without switching charts.</p></div>
-    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">No repaint</h3><p class="text-sm text-gray-400 leading-relaxed">Only closed candles count. What you see in the past is exactly what you would have seen live.</p></div>
-    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">Premium &amp; discount gate</h3><p class="text-sm text-gray-400 leading-relaxed">An optional filter that only confirms a pullback once the market has truly stretched both ways &mdash; or switch it off for raw structure.</p></div>
-    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">Higher-timeframe bias</h3><p class="text-sm text-gray-400 leading-relaxed">See when a break goes with or against the bigger picture, read by any of the three engines.</p></div>
-    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">News on the chart</h3><p class="text-sm text-gray-400 leading-relaxed">A warning dot before red-folder news, filled from the free <a href="/news/" class="text-[color:var(--mmm-tiffany-light)] hover:underline">MMM News Calendar</a>.</p></div>
-    <div class="pill rounded-2xl p-6"><h3 class="font-bold mb-2">Clean chart, your rules</h3><p class="text-sm text-gray-400 leading-relaxed">Everything inside the current trend range is drawn; outside it, you decide how much history to keep. A level and its break always leave together.</p></div>
+<section class="sec" id="engines" aria-labelledby="h-eng">
+  <div class="desk">
+    <span class="eyebrow">The order-flow engines</span>
+    <h2 id="h-eng">Same auction. Five ways to read who is winning it.</h2>
+    <p class="lede">Every MMM engine speaks the same language, so you can switch without learning anything new. A <b>flip</b> (CDL / CDS) is when control changes hands. A <b>continuation</b> (LD / SD) is when the side in control proves it again. Each step of a trend gets a number (T1, T2, T3…) and a zone you can trade from. The letter at the end tells you which engine made the call.</p>
+    <div class="eng-tabs" id="eng-tabs" role="group" aria-label="Pick an engine"></div>
+    <div id="eng-panel"></div>
   </div>
 </section>
 
-<!-- TESTED -->
-<section class="border-y border-white/10" style="background:linear-gradient(180deg,hsla(45,100%,55%,.06),transparent);">
-  <div class="max-w-4xl mx-auto px-5 sm:px-8 py-16 sm:py-20 text-center">
-    <h2 class="text-2xl sm:text-3xl font-extrabold mb-4">Tested before they are sold</h2>
-    <p class="text-gray-400 leading-relaxed max-w-2xl mx-auto">The indicators read structure; they do not promise trades. Before launch, every signal type is tested against every entry, every stop and every exit, one by one, with out-of-sample checks. Only the combinations that survive go into the entry tools. No arrows that look good only in hindsight.</p>
-    <a href="/backtests/" class="inline-block mt-8 font-bold text-black px-7 py-3.5 rounded-xl transition hover:brightness-110" style="background:linear-gradient(90deg,var(--mmm-gold),var(--mmm-gold-light));">Open the backtests</a>
-    <p class="mt-3 text-xs text-gray-500">What was tested, what works, what doesn&rsquo;t &middot; NQ 2022&ndash;25 + fresh MNQ 2026 &middot; after costs</p>
+<section class="sec" id="fit" aria-labelledby="h-fit">
+  <div class="desk">
+    <span class="eyebrow">Pick yours</span>
+    <h2 id="h-fit">Which one fits the way you trade?</h2>
+    <div class="tw"><table class="cmp">
+      <thead><tr><th></th><th>Candle Bias Pro<small>the foundation</small></th><th>MMM Pro C<small>Candle OrderFlow</small></th><th>MMM Pro S<small>Swing OrderFlow</small></th><th>MMM Pro X<small>Expander Block OrderFlow</small></th><th>MMM Pro FVA<small>Fair Value Area OrderFlow</small></th><th>XCS One<small>all in one</small></th></tr></thead>
+      <tbody>
+        <tr><td>Reads</td><td>The last closed candle of any timeframe</td><td>Every candle close and 3-candle gaps</td><td>Turning points (swings)</td><td>Balance zones and expander blocks</td><td>Fair value areas and their breaks</td><td>Boxes + candles + swings</td></tr>
+        <tr><td>Order-flow idea</td><td>Which side won the candle, its target and its protected end</td><td>Which side forced the last close, and how urgently</td><td>Which defenders got absorbed, with volume and delta behind it</td><td>Which side won the argument about value</td><td>Where the winners last loaded up, and whether price respects it on the way back</td><td>All of them, with the odds of what usually comes next</td></tr>
+        <tr><td>Speed</td><td>One candle</td><td>Fastest</td><td>Medium</td><td>Slowest, most selective</td><td>Medium, built for retests</td><td>Zone speed, candle detail</td></tr>
+        <tr><td>Fits</td><td>Everyone: read this first</td><td>Scalpers, precise entries</td><td>Structure traders</td><td>Range and value traders</td><td>Level traders who wait for a retest</td><td>One-chart traders</td></tr>
+      </tbody>
+    </table></div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="max-w-4xl mx-auto px-5 sm:px-8 py-16 sm:py-24 text-center">
-  <h2 class="text-3xl sm:text-4xl font-extrabold"><span class="gold-text">Learn the language first.</span></h2>
-  <p class="mt-4 text-gray-400 max-w-xl mx-auto">The free MMM Mastery Course teaches the order-flow ideas behind all three engines. Access to the indicators opens on TradingView by invitation through Whop.</p>
-  <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-    <a href="/journal/?course=1" class="w-full sm:w-auto font-bold text-black px-7 py-3.5 rounded-xl transition hover:brightness-110" style="background:linear-gradient(90deg,var(--mmm-gold),var(--mmm-gold-light));">Start the free course</a>
-    <a href="/whop/" class="w-full sm:w-auto font-bold px-7 py-3.5 rounded-xl border-2 border-[color:var(--mmm-tiffany)] text-[color:var(--mmm-tiffany-light)] hover:bg-[color:var(--mmm-tiffany)] hover:text-black transition">Get access on Whop</a>
+<section class="sec" aria-labelledby="h-under">
+  <div class="desk">
+    <span class="eyebrow">Every engine</span>
+    <h2 id="h-under">Built the same way underneath</h2>
+    <div class="under">
+      <div><b>Higher timeframe inside your chart</b><p>Build the structure on a higher timeframe and trade it on your execution chart, without switching charts. Each line is tagged with its timeframe.</p></div>
+      <div><b>No repaint</b><p>Only closed candles count. What you see in the past is exactly what you would have seen live.</p></div>
+      <div><b>Premium &amp; discount gate</b><p>An optional filter that only confirms a move once the market has truly stretched, or switch it off for raw structure.</p></div>
+      <div><b>Higher-timeframe bias</b><p>See when a break goes with or against the bigger picture, read by any engine.</p></div>
+      <div><b>News on the chart</b><p>A warning dot before red-folder news, filled from the free <a href="/news/" style="color:var(--teal)">MMM News Calendar</a>.</p></div>
+      <div><b>Clean chart, your rules</b><p>Used levels delete themselves. A level and its break always leave together. You choose how much history to keep.</p></div>
+    </div>
   </div>
-  <p class="mt-8 text-xs text-gray-500 max-w-2xl mx-auto">Educational tools only, not financial advice. Indicators describe past and current price behaviour; they do not predict the future. Futures trading carries a high risk of loss.</p>
 </section>
+
+<section class="final" aria-labelledby="h-final">
+  <div class="desk">
+    <h2 id="h-final">Stop guessing. <em>Read the close.</em></h2>
+    <p>The fastest way to know if MMM fits you is to put it on your own chart, on the market you trade, at the hours you trade. Try it for free. Keep it only if it changes how you see price.</p>
+    <div class="cta-row">
+      <a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="final">Try it for free <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 10h11m-4-5 5 5-5 5"/></svg></a>
+      <a class="btn-ghost" href="/journal/?course=1">Free MMM Mastery Course</a>
+    </div>
+    <div class="links"><a href="/strategies/">The strategies these engines run</a><a href="/backtests/">Every backtest</a><a href="/backtests/#words">MMM words</a></div>
+  </div>
+</section>
+<div class="desk"><p class="legal">Education only, not financial advice. The indicators read structure; they do not promise trades. Futures trading carries a high risk of loss. TradingView indicators for ES / MES and NQ / MNQ futures, access by invitation.</p></div>
+
+<div class="trybar" id="trybar" role="complementary" aria-label="Try the indicators"><span>See it on your chart</span><a href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="bar">Try it for free</a><button type="button" id="trybar-x" aria-label="Close">×</button></div>
 
 <div id="mmm-footer"></div>
+<script>
+(function () {
+  'use strict';
+  var $ = function (s) { return document.querySelector(s); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  /* ---------------- MMM Candle Bias Pro ---------------- */
+  // bull shapes (price 0–110, previous candle = 40..70); bear = mirror (110 - p)
+  var CB = {
+    'BC+': { o: 52, h: 82, l: 46, c: 80, rule: 'Closes above the previous high, does not take the previous low, and closes in the top 25% of its range.', mean: 'Strong control. Buyers won clean.', lean: 1, read: 'Do not fight it. The next body close usually goes the same way.' },
+    'BC−': { o: 55, h: 86, l: 48, c: 72, rule: 'Closes above the previous high, but the close is NOT in the top 25%.', mean: 'A break with a weak close: buyers won, sellers answered at the end.', lean: 1, read: 'Still bullish, but expect price to come back toward the open first.' },
+    'C2+': { o: 60, h: 80, l: 34, c: 78, rule: 'Takes the previous low AND closes above the previous high, close in the top 25%.', mean: 'Engulfs both sides and closes strong: sellers were trapped, then buyers took over.', lean: 1, read: 'The strongest bull candle. A pullback to its middle is often bought.' },
+    'C2−': { o: 66, h: 84, l: 33, c: 71, rule: 'Takes the previous low AND closes above the previous high, close NOT in the top 25%.', mean: 'An engulf with a weak close. Acts like a BC− with a sweep.', lean: 1, read: 'Bullish, with less conviction. Wait for the next body close.' },
+    'AFs+': { o: 50, h: 66, l: 34, c: 62, rule: 'Takes the previous low, closes back inside the previous candle, close in the top half.', mean: 'A sweep of the other side that failed: the sellers who broke the low got trapped.', lean: 1, read: 'Mild bull. Price often retests the open before it goes.' },
+    'AFs−': { o: 52, h: 60, l: 32, c: 40, rule: 'Takes the previous low, closes back inside, close in the bottom half.', mean: 'Sweep and fail of the sweep: nobody won. A warning against the Bu side.', lean: 0, read: 'Neutral on the chart (grey lines). It leans the other way.' },
+    'CI': { o: 48, h: 66, l: 44, c: 62, rule: 'Inside candle: no sweep of the previous high or low. CI•BuAF = close in the top half.', mean: 'A pause. Price agreed for now. Coiling.', lean: 0, read: 'Neutral. Wait for the break of its high or low.' },
+    'S&D': { o: 50, h: 76, l: 34, c: 64, rule: 'Takes BOTH the previous high and low, closes back inside the old range. S&D•BuAF = close in the top half.', mean: 'An outside candle that hunted both sides. Weak bias to the close side.', lean: 1, read: 'Both sides got hit. The close half decides the lean.' }
+  };
+  var ORDER = ['BC+', 'BC−', 'C2+', 'C2−', 'AFs+', 'AFs−', 'CI', 'S&D'];
+  var cbSide = 'bu', cbKey = 'BC+';
+  function cbName(k, side) { var B = side === 'bu' ? 'Bu' : 'Be'; if (k === 'CI') return 'CI•' + B + 'AF'; if (k === 'S&D') return 'S&D•' + B + 'AF'; return B + k; }
+  function cbSVG() {
+    var t = CB[cbKey], bear = cbSide === 'be', W = 560, H = 300, top = 22, ph = 240;
+    var Y = function (p) { if (bear) p = 110 - p; return top + (1 - (p - 22) / 74) * ph; };
+    var o = bear ? 110 - t.o : t.o, c = bear ? 110 - t.c : t.c, hi = bear ? 110 - t.l : t.h, lo = bear ? 110 - t.h : t.l;
+    var x0 = 150, x1 = 270, bw = 34, up = c >= o;
+    var Yp = function (p) { return top + (1 - (p - 22) / 74) * ph; };
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(cbName(cbKey, cbSide)) + ' drawn after the previous candle">';
+    s += '<rect width="' + W + '" height="' + H + '" fill="#0b0d10"/>';
+    // previous candle range
+    s += '<line x1="14" x2="' + (x1 - 44) + '" y1="' + Yp(70) + '" y2="' + Yp(70) + '" stroke="#5f6873" stroke-dasharray="3 4"/><line x1="14" x2="' + (x1 - 44) + '" y1="' + Yp(40) + '" y2="' + Yp(40) + '" stroke="#5f6873" stroke-dasharray="3 4"/>';
+    s += '<text x="14" y="' + (Yp(70) - 5) + '" fill="#8f97a1" font-family="IBM Plex Mono,monospace" font-size="11">prev high</text><text x="14" y="' + (Yp(40) + 15) + '" fill="#8f97a1" font-family="IBM Plex Mono,monospace" font-size="11">prev low</text>';
+    s += '<line x1="' + x0 + '" x2="' + x0 + '" y1="' + Yp(73) + '" y2="' + Yp(37) + '" stroke="#6b7480" stroke-width="1.5"/><rect x="' + (x0 - bw / 2) + '" y="' + Yp(66) + '" width="' + bw + '" height="' + (Yp(46) - Yp(66)) + '" fill="#3a414b"/>';
+    // MMCB box behind the current candle
+    var lean = t.lean, tg = lean ? (cbSide === 'bu' ? 1 : -1) : 0;
+    if (cbKey === 'AFs−') tg = 0;
+    var boxC = cbSide === 'bu' ? 'rgba(215,255,178,.10)' : 'rgba(200,107,214,.14)', boxS = cbSide === 'bu' ? 'rgba(215,255,178,.4)' : 'rgba(200,107,214,.5)';
+    s += '<rect x="' + (x1 - 40) + '" y="' + Yp(hi) + '" width="80" height="' + (Yp(lo) - Yp(hi)) + '" fill="' + boxC + '" stroke="' + boxS + '"/><text x="' + (x1 - 40) + '" y="' + (Yp(hi) - 6) + '" fill="' + (cbSide === 'bu' ? '#d7ffb2' : '#c86bd6') + '" font-family="IBM Plex Mono,monospace" font-size="10">MMCB box</text>';
+    // TGT / protected lines
+    var hiCol = tg === 1 ? '#3ddc97' : tg === -1 ? '#ff5c6c' : '#8f97a1', loCol = tg === -1 ? '#3ddc97' : tg === 1 ? '#ff5c6c' : '#8f97a1';
+    var hiDash = tg === 1 ? '6 4' : '0', loDash = tg === -1 ? '6 4' : '0';
+    var nm = cbName(cbKey, cbSide);
+    s += '<line x1="' + x1 + '" x2="' + (W - 150) + '" y1="' + Yp(hi) + '" y2="' + Yp(hi) + '" stroke="' + hiCol + '" stroke-width="1.6" stroke-dasharray="' + hiDash + '"/>';
+    s += '<line x1="' + x1 + '" x2="' + (W - 150) + '" y1="' + Yp(lo) + '" y2="' + Yp(lo) + '" stroke="' + loCol + '" stroke-width="1.6" stroke-dasharray="' + loDash + '"/>';
+    s += '<text x="' + (W - 144) + '" y="' + (Yp(hi) + 4) + '" fill="' + hiCol + '" font-family="IBM Plex Mono,monospace" font-size="11.5" font-weight="600">' + esc(nm) + ' H1H' + (tg === 1 ? ' TGT' : '') + '</text>';
+    s += '<text x="' + (W - 144) + '" y="' + (Yp(lo) + 4) + '" fill="' + loCol + '" font-family="IBM Plex Mono,monospace" font-size="11.5" font-weight="600">' + esc(nm) + ' H1L' + (tg === -1 ? ' TGT' : '') + '</text>';
+    // current candle
+    var col = up ? '#3ddc97' : '#ff5c6c';
+    s += '<line x1="' + x1 + '" x2="' + x1 + '" y1="' + Yp(hi) + '" y2="' + Yp(lo) + '" stroke="' + col + '" stroke-width="1.8"/><rect x="' + (x1 - bw / 2) + '" y="' + Math.min(Yp(o), Yp(c)) + '" width="' + bw + '" height="' + Math.max(2, Math.abs(Yp(o) - Yp(c))) + '" fill="' + col + '"/>';
+    // close % ladder on the right of the candle
+    var pct = Math.round((c - lo) / (hi - lo) * 100);
+    [[0, 'XD 0'], [25, 'MD 25'], [50, 'BAL 50'], [75, 'MP 75'], [100, 'XP 100']].forEach(function (q) { var py = Yp(lo + (hi - lo) * q[0] / 100); s += '<line x1="' + (x1 + 56) + '" x2="' + (x1 + 68) + '" y1="' + py + '" y2="' + py + '" stroke="#4fd1c5"/><text x="' + (x1 + 72) + '" y="' + (py + 4) + '" fill="#4fd1c5" font-family="IBM Plex Mono,monospace" font-size="10" paint-order="stroke" stroke="#0b0d10" stroke-width="3">' + q[1] + '</text>'; });
+    s += '<line x1="' + (x1 + 62) + '" x2="' + (x1 + 62) + '" y1="' + Yp(hi) + '" y2="' + Yp(lo) + '" stroke="#4fd1c5" opacity=".5"/><circle cx="' + (x1 + 62) + '" cy="' + Yp(c) + '" r="4.5" fill="#e1b31a"/>';
+    s += '<text x="' + (x1 - 26) + '" y="' + (Yp(c) + (up ? -8 : 16)) + '" text-anchor="end" fill="#e1b31a" font-family="IBM Plex Mono,monospace" font-size="11">close ' + pct + '%</text>';
+    s += '<text x="' + x0 + '" y="' + (H - 10) + '" text-anchor="middle" fill="#8f97a1" font-family="Barlow,sans-serif" font-size="12">previous</text><text x="' + x1 + '" y="' + (H - 10) + '" text-anchor="middle" fill="#d9dde3" font-family="Barlow,sans-serif" font-size="12">this candle</text>';
+    return s + '</svg>';
+  }
+  function cbPaint() {
+    var t = CB[cbKey], nm = cbName(cbKey, cbSide), bear = cbSide === 'be';
+    $('#cb-chips').innerHTML = ORDER.map(function (k) { return '<button type="button" data-cb="' + esc(k) + '" aria-pressed="' + (k === cbKey) + '" translate="no">' + esc(cbName(k, cbSide)) + '</button>'; }).join('');
+    $('#cb-pic').innerHTML = cbSVG();
+    var rule = t.rule, mean = t.mean, read = t.read;
+    if (bear) { var PAIRS = [['above', 'below'], ['high', 'low'], ['top', 'bottom'], ['Buyers', 'Sellers'], ['buyers', 'sellers'], ['Bullish', 'Bearish'], ['bullish', 'bearish'], ['bull', 'bear'], ['BuAF', 'BeAF'], ['Bu', 'Be'], ['bought', 'sold']]; var sw = function (x) { var m = {}; PAIRS.forEach(function (p) { m[p[0]] = p[1]; m[p[1]] = p[0]; }); return x.replace(/\b(above|below|high|low|top|bottom|Buyers|Sellers|buyers|sellers|Bullish|Bearish|bullish|bearish|bull|bear|BuAF|BeAF|Bu|Be|bought|sold)\b/g, function (w) { return m[w]; }); }; rule = sw(rule); mean = sw(mean); read = sw(read); }
+    var leanTxt = cbKey === 'AFs−' ? (bear ? 'leans bull' : 'leans bear') : (t.lean ? (bear ? 'bear' : 'bull') : 'neutral');
+    var leanCls = cbKey === 'AFs−' ? (bear ? 'bu' : 'be') : (t.lean ? (bear ? 'be' : 'bu') : 'nu');
+    $('#cb-explain').innerHTML = '<div class="ttl" translate="no">' + esc(nm) + '</div>' +
+      '<dl class="kv"><dt>Rule</dt><dd>' + esc(rule) + '</dd><dt>Means</dt><dd>' + esc(mean) + '</dd><dt>Lean</dt><dd><span class="lean ' + leanCls + '">' + esc(leanTxt) + '</span></dd><dt>Read it as</dt><dd>' + esc(read) + '</dd></dl>' +
+      '<div><div class="lab" style="margin:6px 0 6px">The candle ladder (close % of its own range)</div><div class="ladder"><span><b>XD</b> 0</span><span><b>D</b> 12.5</span><span><b>MD</b> 25</span><span><b>BAL</b> 50</span><span><b>MP</b> 75</span><span><b>P</b> 87.5</span><span><b>XP</b> 100</span></div></div>' +
+      '<p style="margin:0;color:var(--mute);font-size:14.5px;line-height:1.5">"+" candles close in the strong quarter (or half for AFs), "−" candles do not. TGT = the end the candle leans to. Protected = the end its owners must defend: a close past it cancels the read.</p>';
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-cb]'); if (b) { cbKey = b.dataset.cb; cbPaint(); if (e.detail === 0) { var n = document.querySelector('[data-cb="' + cbKey.replace(/"/g, '') + '"]'); if (n) n.focus(); } return; }
+    var sd = e.target.closest('[data-side]'); if (sd) { cbSide = sd.dataset.side; document.querySelectorAll('[data-side]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === sd)); }); cbPaint(); }
+  });
+  cbPaint();
+
+  /* ---------------- engines ---------------- */
+  var ENG = {
+    c: { name: 'MMM Pro', letter: 'C', full: 'Candle OrderFlow', color: '#e1b31a', L: 'c',
+      idea: 'Reads control one candle at a time. Every candle that closes beyond the one before it is a vote. MMM Pro C keeps score of those votes: the last time buyers forced a close, the last time sellers did, and which of those closes the other side failed to take back.',
+      how: ['A body close in the trend direction is momentum control (MC). When the next candle leaves a gap behind it, the close upgrades to a <b>GMC</b>: one side was in such a hurry it left price the other side never traded.', 'A counter-trend close is a pullback (MP#). The close that restarts the trend is a resumption (MCR#), and it becomes the next origin <b>T#</b>.', 'A close through the last T# is the <b>flip</b> (CDLc / CDSc). A close past the numbered pullback is the <b>continuation</b> (LDc / SDc).', 'Each flip leaves an <b>eBlock</b>, each continuation an <b>iBlock</b>: the zones where the winners started their push.'],
+      see: [['MC / GMC', 'The raw trend body close, and the gap-confirmed one: c1 → c2 body close → c3 leaves a void.'], ['MP# / GMP#', 'Pullbacks: a counter-trend body close (raw / gap-confirmed).'], ['MCR# / GMCR#', 'Resumptions after the pullback. They become the next T#.'], ['BuPO4 / BePO4 T#', 'The origin of each leg. T1 from a flip, T2+ from a continuation.'], ['CDLc / CDSc', 'Flips: a close through the last T#.'], ['LDc / SDc', 'Continuations: a close past the numbered pullback.'], ['eBlock / iBlock', 'Zones behind flips (T1) and continuations (T2+).'], ['Urgency lines', 'The edge a gap must clear. Crossed out when price trades back through.']],
+      best: 'precise, early entries on lower timeframes, and traders who want to see every change in control.' },
+    s: { name: 'MMM Pro', letter: 'S', full: 'Swing OrderFlow', color: '#4fd1c5', L: 's',
+      idea: 'Reads control at the turning points. A swing forms where one side’s push ran dry and the other side answered with a close of its own. That turning point is where the losing side last defended: real orders sat there. MMM Pro S watches every swing and waits for a body close through one.',
+      how: ['Every swing high and low is marked (sh / sl). The ones that start a leg become the <b>PO4</b> origins.', 'A wick through a swing is a <b>sweep</b>: the orders were taken, but the market refused the new price. A close through it is a <b>break</b>: the defenders were absorbed.', 'Every break is graded by the order flow behind it: how much volume came in and whether delta (aggressive buying minus selling) agreed.', 'Flips (CDLs / CDSs) and continuations (LDs / SDs) build the swing staircase.'],
+      see: [['sh / sl → PO4', 'Swing highs and lows. The ones that start a leg become PO4s.'], ['CDLs / CDSs · LDs / SDs', 'Flips and continuations of the swing structure.'], ['Stars ★', 'Break quality 1–4 from volume, delta and an accelerator candle.'], ['SWP+', 'Strong sweep: a wick takes a swing and closes back, with strong volume pushing back.'], ['BuAx / BeAx', 'Accelerator candles: big range + delta + strong volume.'], ['UOG / UDG / ULG', 'Unfair opening, distribution and liquidity gaps.'], ['News dots', 'High / medium / low impact news, 15 or 30 minutes before.']],
+      best: 'traders who want clean, classic market structure with the order flow that proves each break.' },
+    x: { name: 'MMM Pro', letter: 'X', full: 'Expander Block OrderFlow', color: '#3ddc97', L: 'x',
+      idea: 'Reads control between balance and imbalance. After a strong push, buyers and sellers agree on a fair price for a while and rotate inside a range: balance. Then one side wins the argument and price leaves: imbalance. MMM Pro X maps those zones as expander blocks and colours them by who absorbed the most inside.',
+      how: ['An <b>expander</b> body close opens a box. The candles that close back inside it are the balance (G1 lets the box grow when a wick pokes out and closes back in).', 'Only the boxes that hold a role in the trend can make a break count: the pullback box (<b>P#</b>) and the resumption base (<b>R#</b>), which becomes the next T#.', 'A body close out of the right box is a vote on <b>value</b>, not just on price: CDLx / CDSx flip it, LDx / SDx continue it.', 'Failed boxes clean up by themselves, so the chart only shows the boxes that still matter.'],
+      see: [['Box / BZ', 'Expander body close + the candles that close back inside it. Contraction = only the quiet candles.'], ['G1 / G0', 'G1 grows the box when a wick pokes out and closes back in. G0 keeps it fixed.'], ['P# / R#', 'P# = the pullback box edge (break it = LDx / SDx). R# = the resumption base (the next T#).'], ['T# + 🟢🟩', 'Trend tiers. 🟢 = T1 of the newest leg, 🟩 = its newest T#.'], ['CDLx / CDSx', 'Flips of the box structure.'], ['LDx / SDx', 'Continuations. LDx2 = the trend reached T3.'], ['XP / XD labels', 'When the premium / discount gate is on, boxed labels mark the extremes.'], ['HTF bias', 'Last body close / flip / continuation of a higher timeframe.']],
+      best: 'patient traders who think in ranges and value areas and want fewer, bigger decisions.' },
+    fva: { name: 'MMM Pro', letter: 'FVA', full: 'Fair Value Area OrderFlow', color: '#c86bd6', L: '',
+      idea: 'Reads control at the fair value areas the trend leaves behind. Each push starts from an area where one side loaded up. MMM Pro FVA draws those areas as boxes, tracks whether they stay healthy, and shows when price comes back to retest one, on your chart or from a higher timeframe.',
+      how: ['A turn prints a <b>box</b>: from the first NBC top (or the turn candle open) to the extreme of the move. In a trend those boxes become the tiers T#, the pullbacks P# and the resumptions R#.', 'A close past the last T# is the <b>flip</b> (CDL / CDS). A close past the pullback is the <b>continuation</b> (LD / SD). The box that was broken keeps its health: ⚠ caution after a close back through it, ✖ after an opposite break, F✖ when it fails.', 'The last box before every break is the <b>Bu / Be LEZ</b>: the last place the winners loaded up before they broke out.', 'An arrow ▲▼ prints only after price has left a box and comes back to touch it: a real <b>retest</b>, not the break candle.'],
+      see: [['T# · P# · R#', 'The fair value boxes of the trend: tiers, pullbacks and resumptions.'], ['CDL / CDS · LD / SD', 'Flips and continuations, each with its break box.'], ['Bu LEZ / Be LEZ', 'The last box before each break. One per break by default.'], ['⚠ · ✖ · F✖', 'Break-box health: caution, exit, failed. Each mark is deleted when price closes back past it.'], ['▲ / ▼', 'Retest arrows: price left the box and came back to touch it.'], ['[H1] · [M15]', 'Higher-timeframe boxes on your chart, tagged with their timeframe.'], ['Clean marks', 'A close past a marked candle deletes its triangle; used exits and cautions leave too.']],
+      best: 'level traders who mark a higher-timeframe area first, then wait for the lower-timeframe box to turn and get retested.' },
+    xcs: { name: 'MMM Pro', letter: 'XCS', full: 'One · all engines in one map', color: '#f2cf5b', L: 'x',
+      idea: 'One master map of order flow with no strategy and no signals. It runs the zone engine x, the candle engine c and the swing engine s together, and writes next to each closed candle, break, box, GMC and swing what usually happened next in the tests. You decide.',
+      how: ['The <b>zone engine x</b> draws the trend staircase: boxes, T# / P# / R#, flips and continuations.', 'The <b>candle engine c</b> adds a tiny MMM candle tag on the last closed candles, GMC lines and the pullback zones after strong and weak candles.', 'The <b>swing engine s</b> adds the protected swing levels: where your stop belongs.', 'The WHAT NEXT table sums it up: the last candle, the trend, the live box, the closest GMC and the swing levels, each with what usually comes next.'],
+      see: [['Balance Control', 'Green line at 2/3 of the live box (buyers), red line at 1/3 (sellers). The side in control gets the thick line.'], ['Box vPOC', 'The volume point of control of the live box, as a line.'], ['Candle compass (c)', 'A tiny MMM candle tag (BC+, BC−, C2+, AFs+, CI…) on the last closed candles.'], ['Pullback zones', 'After a strong candle the P–MP band, after a weak one the BAL–MD band.'], ['GMC lines (c)', 'A line at the GMC open with its candle 3 type. Deleted on a close through it.'], ['Swing protected levels (s)', 'The newest swing low (longs) and swing high (shorts).'], ['★ Highlights', 'Only what has real power: ★ gold GMC, ★ tall blocks, ★ power candles.'], ['WHAT NEXT table', 'One table with the whole picture.']],
+      best: 'traders who want one clean chart instead of several indicators.' }
+  };
+  var EORDER = ['c', 's', 'x', 'fva', 'xcs'], ESEL = 'c', DIAK = 'LD1';
+  var DIA = {
+    flip: ['The flip', 'A close through the last bear T# turns the trend up. Control changed hands. T1 is born where the new move started.'],
+    T1: ['T1 · the trend origin', 'The PO4 where the new leg started. Its zone is the eBlock.'],
+    P1: ['P1 · the first pullback', 'The first counter-move after T1. Its edge is the level the trend must beat.'],
+    LD1: ['LD1 · the 1st continuation', 'A close above P1: the side in control proved it again. The trend is now on T2.'],
+    R1: ['R1 → T2', 'Where price restarted after the pullback. It becomes T2. Its zone is an iBlock.'],
+    P2: ['P2 · the second pullback', 'Another counter-attack. Sellers try again and buyers absorb them.'],
+    LD2: ['LD2 · the trend reaches T3', 'A close above P2: the trend has now beaten the other side three times.'],
+    R2: ['R2 → T3', 'The base of the third step: the newest origin of the trend.'],
+    LD3: ['LD3 · and on', 'Every later continuation adds one more step: T4, T5…']
+  };
+  function stairSVG(L) {
+    var path = 'M20,232 L45,210 L60,224 L80,190 L100,200 L118,160 L132,176 L146,164 L160,180 L174,168 L190,128 L214,112 L232,128 L246,118 L262,132 L276,120 L292,84 L316,70 L332,86 L346,76 L362,90 L376,78 L392,46 L430,26';
+    var boxes = [[124, 158, 58, 26], [226, 110, 58, 26], [326, 68, 58, 26]];
+    var nodes = [['flip', 62, 226, 'CDL' + L, 1], ['T1', 45, 210, 'T1', 0], ['P1', 182, 158, 'P1', 2], ['LD1', 190, 128, 'LD' + L + '1', 1], ['R1', 124, 184, 'R1 → T2', 3], ['P2', 284, 110, 'P2', 2], ['LD2', 292, 84, 'LD' + L + '2', 1], ['R2', 226, 136, 'R2 → T3', 3], ['LD3', 392, 46, 'LD' + L + '3', 1]];
+    var s = '<svg viewBox="0 0 470 250" role="img" aria-label="MMM trend staircase: flip, pullbacks, continuations. Tap a point.">';
+    boxes.forEach(function (b) { s += '<rect class="bx" x="' + b[0] + '" y="' + b[1] + '" width="' + b[2] + '" height="' + b[3] + '"/>'; });
+    s += '<line class="lvm" x1="45" x2="460" y1="210" y2="210"/><line class="lv" x1="124" x2="200" y1="158" y2="158"/><line class="lvm" x1="124" x2="460" y1="184" y2="184"/><line class="lv" x1="226" x2="300" y1="110" y2="110"/><line class="lvm" x1="226" x2="460" y1="136" y2="136"/><line class="lv" x1="326" x2="400" y1="68" y2="68"/>';
+    s += '<path class="ln" d="' + path + '"/>';
+    nodes.forEach(function (n) {
+      var on = n[0] === DIAK, cls = n[4] === 1 ? 'mg' : n[4] === 2 ? 'tl' : n[4] === 3 ? 'mut' : 'mg';
+      var isLD = n[0].indexOf('LD') === 0, tx = n[0] === 'flip' ? n[1] + 8 : n[0] === 'T1' ? n[1] - 30 : (n[0] === 'R1' || n[0] === 'R2') ? n[1] + 2 : isLD ? n[1] - 8 : n[1] + 6;
+      var ty = n[0] === 'flip' ? n[2] + 12 : n[0] === 'T1' ? n[2] + 18 : (n[0] === 'R1' || n[0] === 'R2') ? n[2] + 14 : isLD ? n[2] - 6 : n[2] - 8;
+      s += '<g data-k="' + n[0] + '" style="cursor:pointer" tabindex="0" role="button" aria-label="' + esc(n[3]) + '"><circle cx="' + n[1] + '" cy="' + n[2] + '" r="' + (on ? 7 : 4.5) + '" style="fill:' + (on ? 'var(--ec)' : '#0f1114') + ';stroke:var(--fg);stroke-width:1.5"/><rect x="' + (isLD ? tx - n[3].length * 7.4 - 3 : tx - 3) + '" y="' + (ty - 12) + '" width="' + (n[3].length * 7.4 + 6) + '" height="16" fill="transparent"/><text class="' + cls + '" x="' + tx + '" y="' + ty + '" text-anchor="' + (isLD ? 'end' : 'start') + '" style="font-weight:' + (on ? 700 : 500) + '" translate="no">' + esc(n[3]) + '</text></g>';
+    });
+    return s + '<text class="mut" x="20" y="246">start</text><text class="mut" x="465" y="246" text-anchor="end">each step = the trend won again</text></svg>';
+  }
+  function engPaint() {
+    var e = ENG[ESEL];
+    $('#eng-tabs').innerHTML = EORDER.map(function (k) { var x = ENG[k]; return '<button type="button" data-eng="' + k + '" aria-pressed="' + (k === ESEL) + '" style="--ec:' + x.color + '"><b translate="no">' + esc(x.name + ' ' + x.letter) + '</b><span>' + esc(x.full) + '</span></button>'; }).join('');
+    var d = DIA[DIAK];
+    $('#eng-panel').innerHTML = '<article class="engine" style="--ec:' + e.color + '">' +
+      '<div class="e-head"><h3 translate="no">' + esc(e.name) + ' <i>' + esc(e.letter) + '</i></h3><span class="full">' + esc(e.full) + '</span></div>' +
+      '<div class="e-body"><div class="e-l"><p class="idea-t">' + esc(e.idea) + '</p><div><div class="lab" style="margin-bottom:4px">How the order flow works</div><ol class="how">' + e.how.map(function (h) { return '<li><span>' + h + '</span></li>'; }).join('') + '</ol></div>' +
+      '<p class="best"><b>Best for:</b> ' + esc(e.best) + '</p></div>' +
+      '<div class="e-r"><div class="lab">The trend staircase · tap a point</div><div class="dia" id="dia">' + stairSVG(e.L) + '</div><div class="dinfo" id="dinfo"><b>' + esc(d[0]) + '</b><p>' + esc(d[1]) + '</p></div>' +
+      '<div><div class="lab" style="margin-bottom:2px">What you see on the chart</div><table class="see"><tbody>' + e.see.map(function (r) { return '<tr><td translate="no">' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table></div></div></div>' +
+      '<div class="e-cta"><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="' + ESEL + '">Try ' + esc(e.name + ' ' + e.letter) + ' for free</a><span>On your own chart, your market, your hours.</span></div></article>';
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-eng]'); if (b) { ESEL = b.dataset.eng; engPaint(); if (e.detail === 0) { var n = document.querySelector('[data-eng="' + ESEL + '"]'); if (n) n.focus(); } try { history.replaceState(null, '', '#' + ESEL); } catch (x) {} return; }
+    var g = e.target.closest('#dia g[data-k]'); if (g) { DIAK = g.dataset.k; engPaint(); if (e.detail === 0) { var m = document.querySelector('#dia g[data-k="' + DIAK + '"]'); if (m) m.focus(); } }
+  });
+  document.addEventListener('keydown', function (e) { var g = e.target.closest && e.target.closest('#dia g[data-k]'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); g.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
+  var h = (location.hash || '').slice(1); if (ENG[h]) ESEL = h; if (h === 'pro-f' || h === 'fva') ESEL = 'fva'; if (h === 'xcs-one') ESEL = 'xcs';
+  engPaint();
+  if (h && (ENG[h] || h === 'pro-f' || h === 'xcs-one')) setTimeout(function () { var el = document.getElementById('engines'); if (el) el.scrollIntoView(); }, 50);
+
+  /* ---------------- try bar ---------------- */
+  var bar = $('#trybar'), closed = false;
+  try { closed = sessionStorage.getItem('mmm-trybar') === '0'; } catch (x) {}
+  window.addEventListener('scroll', function () { if (!closed) bar.classList.toggle('on', window.scrollY > 700); }, { passive: true });
+  $('#trybar-x').addEventListener('click', function () { closed = true; bar.classList.remove('on'); try { sessionStorage.setItem('mmm-trybar', '0'); } catch (x) {} });
+})();
+</script>
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 <script src="/i18n.js"></script>

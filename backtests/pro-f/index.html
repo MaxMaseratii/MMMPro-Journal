@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>MMM PRO f lab · Retest odds, before and after the touch | MMM Trading</title>
-<meta name="description" content="MMM PRO f backtests: HTF level → LTF reversal box → retest → BC entry. Retest odds, what happens before and after the touch, box types, entry areas, BE management. NQ 2022–25 + MNQ 2026.">
+<title>MMM PRO FVA lab · Retest odds, before and after the touch | MMM Trading</title>
+<meta name="description" content="MMM PRO FVA backtests: HTF level → LTF reversal box → retest → BC entry. Retest odds, what happens before and after the touch, box types, entry areas, BE management. NQ 2022–25 + MNQ 2026.">
 <link rel="canonical" href="https://www.maxmaserati.com/backtests/pro-f/">
 <meta name="mmm-page" content="backtests">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -86,8 +86,8 @@ ul{margin:4px 0;padding-left:20px;line-height:1.55;max-width:110ch}
 
 <div class="wrap"><main>
 <header>
-<h1>MMM PRO f lab</h1>
-<p class="sub">HTF level → LTF reversal box → retest → BC entry, plus the PRO f order flow on its own chart. NQ 1m Dec 2022 – Dec 2025 (2022–25) checked on MNQ 1m 2026 (Mar–May + Sep–Oct, about 3 months). 1 pt cost per trade. Closed candles only. New York time. WR = win rate · PF = profit factor · RR = reward ÷ risk · t = t-score (2+ = strong).</p>
+<h1>MMM PRO FVA lab</h1>
+<p class="sub">HTF level → LTF reversal box → retest → BC entry, plus the PRO FVA order flow on its own chart. NQ 1m Dec 2022 – Dec 2025 (2022–25) checked on MNQ 1m 2026 (Mar–May + Sep–Oct, about 3 months). 1 pt cost per trade. Closed candles only. New York time. WR = win rate · PF = profit factor · RR = reward ÷ risk · t = t-score (2+ = strong).</p>
 </header>
 <section class="sum" id="learn"></section>
 <div class="money" role="group" aria-label="Your size">
@@ -126,9 +126,9 @@ const LEARN=[
  ['After the retest',`The next candle after the touch is most often an <b class="up">NBC</b> (40–63%). About 4–7 retests in 10 end with a BC back out (your entry); 2–5 in 10 close through the box first. After an opposite BC the box breaks about half the time. At all levels the entry wins 35–42% at 1:2 with a 50 pt stop: about break-even. Best at UPG gaps: <b class="up">5m break → opposite BC → retest → NBC → BC</b> (WR 46% / 54%).`],
  ['Box type',`A box <b class="up">with an NBC</b> inside gets retested 71–83% of the time. A <b class="dn">BC on BC</b> box (no NBC) only 49–67%. With NBC is also a little better to trade on 5m and 15m. BC on BC has small samples.`],
  ['Before the touch',`Best on 15m: the <b class="up">retest comes straight after the break</b> (nothing in between, P0). On 1m / 5m: 2nd BC + opposite BC before the touch (P5), small sample. Worst: lots of back and forth before the touch (P6 / P7) and 2nd BC → touch (P1).`],
- ['Retest + 1st BC',`Works at <b class="up">UPG gaps on 15m</b>: retest only wicks the box → 1st BC out → next open. F.M17: WR 37%, +0.15 RR a trade, t 3.2, 71% of settings pass. Best result of round 3.`],
+ ['Retest + 1st BC',`Works at <b class="up">UPG gaps on 15m</b>: retest only wicks the box → 1st BC out → next open. FVA.M17: WR 37%, +0.15 RR a trade, t 3.2, 71% of settings pass. Best result of round 3.`],
  ['Touch vs close inside',`Again a wick touch (no close inside the box) is better than a close inside on 5m and 15m. On 1m both lose.`],
- ['1m and prop firms',`1m still has no edge on most levels. BE after the 2nd BC makes the shape prop-friendly (F.M22: only 6% full stop-outs, max DD 6.5 RR), but it rests on a small 2026 sample.`]];
+ ['1m and prop firms',`1m still has no edge on most levels. BE after the 2nd BC makes the shape prop-friendly (FVA.M22: only 6% full stop-outs, max DD 6.5 RR), but it rests on a small 2026 sample.`]];
 $('learn').innerHTML=LEARN.map(([h,p])=>`<div class="card"><h3>${h}</h3><p>${p}</p></div>`).join('');
 
 /* ── strategies ── */
@@ -257,7 +257,7 @@ function psTab(){
 /* close back inside + order flow */
 function biTab(){
   const F=state.f.bi||(state.f.bi={tf:''});
-  let h=`<h2 class="ttl">Close back inside the broken box?</h2><p class="note">Every PRO f break (LD / SD / CDL / CDS) on its own chart. We look at the first 3 candles after the break, then at what happens until the next break. Green = next break goes the same way 65%+ of the time.</p><div class="filters"><label for="bi-tf">TF<select id="bi-tf"><option value="">Any</option>${['1m','5m','15m','1h'].map(v=>`<option ${F.tf===v?'selected':''}>${v}</option>`).join('')}</select></label></div>`;
+  let h=`<h2 class="ttl">Close back inside the broken box?</h2><p class="note">Every PRO FVA break (LD / SD / CDL / CDS) on its own chart. We look at the first 3 candles after the break, then at what happens until the next break. Green = next break goes the same way 65%+ of the time.</p><div class="filters"><label for="bi-tf">TF<select id="bi-tf"><option value="">Any</option>${['1m','5m','15m','1h'].map(v=>`<option ${F.tf===v?'selected':''}>${v}</option>`).join('')}</select></label></div>`;
   const L=D.BI.filter(r=>!F.tf||r.tf===F.tf);
   h+=`<div class="tw"><table><thead><tr><th>TF</th><th>Break</th><th>Period</th><th>After the break</th><th>Breaks</th><th>Next break same way</th><th>Closes through far edge</th><th>Median move with (pts)</th><th>Median move against (pts)</th></tr></thead><tbody>`;
   for(const r of L){const p=r['P(next break = same way)'];h+=`<tr class="${p>=0.65?'g':p<0.58?'r':'y'}"><td>${r.tf}</td><td>${esc(r.grp)}</td><td>${r.per==='old'?'2022–25':'2026'}</td><td>${esc(r['after the break'])}</td><td>${r.n}</td><td>${pc(p)}</td><td>${pc(r['P(close through far edge)'])}</td><td>${nf(r['median MFE pts'],0)}</td><td>${nf(r['median MAE pts'],0)}</td></tr>`;}
@@ -265,15 +265,15 @@ function biTab(){
 }
 function ofTab(){
   const F=state.f.of||(state.f.of={tf:''});
-  let h=`<h2 class="ttl">PRO f order flow entries on its own chart</h2><p class="note">O1 break close · O2 retest of the broken box · O3 retest of the new T# · O4 retest of the LEZ · "v" = only after a 2nd BC · O5 enter after K candles with no close back inside · O6 it closed back inside, enter on the next BC out.</p><div class="filters"><label for="of-tf">TF<select id="of-tf"><option value="">Any</option>${['1m','5m','15m','1h'].map(v=>`<option ${F.tf===v?'selected':''}>${v}</option>`).join('')}</select></label></div>`;
+  let h=`<h2 class="ttl">PRO FVA order flow entries on its own chart</h2><p class="note">O1 break close · O2 retest of the broken box · O3 retest of the new T# · O4 retest of the LEZ · "v" = only after a 2nd BC · O5 enter after K candles with no close back inside · O6 it closed back inside, enter on the next BC out.</p><div class="filters"><label for="of-tf">TF<select id="of-tf"><option value="">Any</option>${['1m','5m','15m','1h'].map(v=>`<option ${F.tf===v?'selected':''}>${v}</option>`).join('')}</select></label></div>`;
   const L=D.OF.filter(r=>!F.tf||r.tf===F.tf).sort((a,b)=>b.both-a.both);
   h+=`<div class="tw"><table><thead><tr><th>TF</th><th>Break</th><th>Entry</th><th>Trades 22–25</th><th>Trades 2026</th><th>Settings pass</th><th>Median RR 22–25</th><th>Median RR 2026</th></tr></thead><tbody>`;
   for(const r of L)h+=`<tr class="${rowCls[verdict(r.both)]}"><td>${r.tf}</td><td>${esc(r.break)}</td><td>${esc(r.entry)}</td><td>${r.n_o}</td><td>${r.n_f}</td><td>${pc(r.both)}</td><td>${sg(r.o_med,3)}</td><td>${sg(r.f_med,3)}</td></tr>`;
   return h+'</tbody></table></div>';
 }
 function howTab(){return `<h2 class="ttl">How it was tested</h2><ul>
-<li><b>HTF levels, first touch only:</b> PRO f boxes on M15 / H1 / H4 (T1, T#, P#, R#, internal, CDL, CDS, LD, SD, Bu / Be LEZ), UPG gaps M15 / H1 / H4 / D / W, daily, RTH and weekly opening gaps, PDH / PDL / PD close, PWH / PWL, prior H4 high / low, session and opening ranges (Asia, London, pre-open, Globex, NY AM, NY PM) and the main opens.</li>
-<li><b>LTF reversal box (1m, 5m, 15m):</b> the first PRO f turn box of the trade direction after the touch. BC on BC = no NBC inside it, box with NBC = an NBC inside.</li>
+<li><b>HTF levels, first touch only:</b> PRO FVA boxes on M15 / H1 / H4 (T1, T#, P#, R#, internal, CDL, CDS, LD, SD, Bu / Be LEZ), UPG gaps M15 / H1 / H4 / D / W, daily, RTH and weekly opening gaps, PDH / PDL / PD close, PWH / PWL, prior H4 high / low, session and opening ranges (Asia, London, pre-open, Globex, NY AM, NY PM) and the main opens.</li>
+<li><b>LTF reversal box (1m, 5m, 15m):</b> the first PRO FVA turn box of the trade direction after the touch. BC on BC = no NBC inside it, box with NBC = an NBC inside.</li>
 <li><b>Before the touch:</b> every candle between the break candle and the first touch is checked for a 2nd BC, an NBC and an opposite BC (P0–P7).</li>
 <li><b>Retest + 1st BC:</b> after the first touch, the first BC that closes back out of the box is the entry candle. Wick touch only = no candle closed inside the box during the retest.</li>
 <li><b>Entry areas:</b> A1 next open · A2 limit at 50% of the entry BC · A3 limit at its open · A4 limit at the high / low it broke · A5 limit at the box edge · A6 limit at a GMC gap.</li>

@@ -81,7 +81,6 @@ table.ledger{width:100%;border-collapse:collapse;min-width:1120px;font-size:13px
 .ledger td{padding:7px 8px;border-bottom:1px solid #1a1e23;text-align:right;vertical-align:middle;white-space:nowrap}
 .ledger tbody tr{cursor:pointer}
 .ledger tbody tr:nth-child(odd){background:var(--row)} .ledger tbody tr:nth-child(even){background:var(--row2)}
-.ledger tbody tr.c-green{background:var(--g)} .ledger tbody tr.c-yellow{background:var(--y)} .ledger tbody tr.c-red{background:var(--r)}
 .ledger tbody tr:hover{box-shadow:inset 3px 0 0 var(--gold)}
 .ledger td.code{font-weight:600;color:var(--gold)}
 .ledger td.nm{white-space:normal;min-width:220px;max-width:300px;line-height:1.3;font-family:var(--body);font-size:14px}
@@ -198,6 +197,22 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
 .legal{color:var(--faint);font-size:12.5px;line-height:1.6;padding-block:30px 56px;max-width:95ch}
 .loading{padding:36px 0;color:var(--mute)}
 
+
+/* try-it + glossary buttons */
+.acts{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn-try{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:#0b0b0b;font:700 17px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:12px 16px;text-decoration:none;transition:transform .15s,box-shadow .2s}
+.btn-try:hover{transform:translateY(-1px);box-shadow:0 8px 30px -8px rgba(225,179,26,.6)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line2);color:var(--fg);font:600 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:11px 14px;text-decoration:none}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal)}
+.runs{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;background:var(--panel);border:1px solid var(--gold);padding:14px 16px;margin-top:16px}
+.runs p{margin:0;font-size:15.5px;line-height:1.5;color:var(--fg);max-width:70ch}
+.runs p b{color:var(--gold2)}
+.trybar{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:max(16px,env(safe-area-inset-bottom,0px));z-index:30;display:flex;align-items:center;gap:6px;background:#000;border:1px solid var(--gold);box-shadow:0 10px 40px -10px rgba(0,0,0,.8);padding:6px 6px 6px 14px;transform:translateY(140%);transition:transform .25s}
+.trybar.on{transform:none}
+.trybar span{font:600 14px/1.2 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--fg)}
+.trybar a{background:var(--gold);color:#0b0b0b;font:700 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;text-decoration:none}
+.trybar button{background:none;border:0;color:var(--mute);font-size:18px;line-height:1;padding:6px 8px;cursor:pointer}
+@media (max-width:600px){.trybar span{display:none}}
 @media (max-width:1020px){
   .hero .desk{grid-template-columns:minmax(0,1fr);gap:22px;padding-block:30px 24px}
   .t-body{grid-template-columns:minmax(0,1fr)}
@@ -230,6 +245,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       <p class="lede">Every day-trading strategy that passed our tests, written as steps you can follow on a chart: which chart, what time, where to enter, where the stop goes and when to get out.</p>
       <p class="facts">Built on NQ 1-minute data from Dec 2022 to Dec 2025, then checked on fresh MNQ data from Dec 2025 to Oct 2026 that was never used to build the rules. Every trade pays 1 point in costs. Money is shown for 1 MNQ ($2 a point).</p>
       <p class="adv"><b>Pick ONE strategy.</b> Study it, understand it, check that it fits your trading style and backtest it yourself. Then decide. We never advise trading several strategies at once.</p>
+      <div class="acts" style="margin-top:18px"><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="hero">Try the indicators for free →</a><a class="btn-ghost" href="/backtests/#words">MMM words · glossary</a></div>
     </div>
     <aside class="entry" aria-labelledby="gate">
       <h2 id="gate">How a strategy gets into the book</h2>
@@ -250,8 +266,9 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     <div class="sh-h">
       <div>
         <h2 id="h-book">The book</h2>
-        <p>Click a strategy to open its rules and its example picture. Row color: green = profitable and probably not luck, yellow = maybe, red = not profitable.</p>
+        <p>Click a strategy to open its rules and its example picture. The badge tells you its status: ✔ PASS = it made money in both periods, Trade = proven, Watch = paper-trade it first.</p>
       </div>
+      <div class="acts"><a class="btn-ghost" href="/backtests/#words">MMM words · glossary</a><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="book">Try it for free</a></div>
     </div>
     <div class="bar" role="group" aria-label="Your size">
       <span class="lab">Your size</span>
@@ -278,6 +295,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
         <tbody><tr><td colspan="11" class="l loading">Loading the book…</td></tr></tbody>
       </table>
     </div>
+    <div class="runs"><p><b>Every strategy in this book is read straight off the MMM indicators.</b> The fastest way to see if one fits you: put the indicator on your own chart and watch the setup form live.</p><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="runs">Try it for free →</a></div>
     <div class="tickets prot" id="tickets"></div>
   </div>
 </section>
@@ -307,14 +325,14 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       <div><dt>t-score</dt><dd>How sure we are it is not luck. 2 or more is the bar. More trades and steadier results push it up.</dd></div>
       <div><dt>2-period test</dt><dd>Period 1 = Dec 2022 – Dec 2025 (NQ, where the rules were found). Period 2 = Dec 2025 – Oct 2026 (fresh MNQ). PASS = avg RR above +0.05 in both. It is a test, not a profit score.</dd></div>
       <div><dt>Trade and Watch</dt><dd>Trade = proven in both periods. Watch = it passed, but period 2 has few trades or a weak result. Paper-trade a Watch strategy before using money.</dd></div>
-      <div><dt><span class="sw" style="background:var(--up)"></span>Green, <span class="sw" style="background:var(--mix)"></span>yellow, <span class="sw" style="background:var(--dn)"></span>red</dt><dd>Green = made money and t-score 2+. Yellow = made money but could be luck, or lost in one period. Red = lost money.</dd></div>
+      <div><dt><span class="sw" style="background:var(--up)"></span>Green, <span class="sw" style="background:var(--mix)"></span>yellow edge</dt><dd>The colour on the left of each strategy card. Green = made money and t-score 2+. Yellow = made money but the t-score is under 2: it could be luck.</dd></div>
       <div><dt>Equity curve</dt><dd>The running total of every trade, in stops. The shaded part on the right is period 2, the fresh data.</dd></div>
       <div><dt>Example pictures</dt><dd>Drawings of the setup, not real trades. Long shows the buy side, short the same setup upside down. Filter on draws the extra check the strategy needs.</dd></div>
       <div><dt>Live trading</dt><dd>Expect less than the test. Slippage, missed fills and nerves cost money. Start small.</dd></div>
     </dl>
     <nav class="doors" aria-label="More research">
       <a href="/backtests/sheet/"><b>Full results sheet</b><span>Every strategy, session, hour, stop and exit we tested, with how to trade each row.</span></a>
-      <a href="/backtests/pro-f/"><b>MMM PRO f lab</b><span>Retest odds, what happens before and after the touch, box types and entry areas.</span></a>
+      <a href="/backtests/pro-f/"><b>MMM PRO FVA lab</b><span>Retest odds, what happens before and after the touch, box types and entry areas.</span></a>
       <a href="/backtests/#verdicts"><b>Verdicts</b><span>The decision board: trade, filter, watch or don’t trade, with the reason for each.</span></a>
       <a href="/backtests/"><b>Research lab</b><span>How we tested, the full grids, the EDGE PRO lab and the 2026 retest.</span></a>
     </nav>
@@ -322,7 +340,13 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
   </div>
 </section>
 
+<div class="trybar" id="trybar" role="complementary" aria-label="Try the indicators"><span>See these setups on your chart</span><a href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="bar">Try it for free</a><button type="button" id="trybar-x" aria-label="Close">×</button></div>
 <div id="mmm-footer"></div>
+<script>
+(function () { var bar = document.getElementById('trybar'), closed = false; try { closed = sessionStorage.getItem('mmm-trybar') === '0'; } catch (x) {}
+  window.addEventListener('scroll', function () { if (!closed) bar.classList.toggle('on', window.scrollY > 900); }, { passive: true });
+  document.getElementById('trybar-x').addEventListener('click', function () { closed = true; bar.classList.remove('on'); try { sessionStorage.setItem('mmm-trybar', '0'); } catch (x) {} }); })();
+</script>
 <script src="pics.js"></script>
 <script>
 (function () {
@@ -336,6 +360,8 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
   function usd(v) { v = v * K(); return (v < 0 ? '−' : '+') + '$' + Math.abs(Math.round(v)).toLocaleString('en-US'); }
   function id(c) { return 's-' + c.replace(/\./g, '-'); }
   var TEST = { pass: '✔ PASS', fail: '✖ FAIL', unsure: '~ NOT SURE' };
+  var FULL = { 'MMM PRO c': 'Candle OrderFlow', 'MMM PRO x': 'Expander Block OrderFlow', 'MMM PRO s': 'Swing OrderFlow', 'MMM PRO FVA': 'Fair Value Area OrderFlow', 'MMM PRO XCS (x + c + s)': 'all engines in one' };
+  function indName(x) { return FULL[x] ? x + ' · ' + FULL[x] : x; }
   var WORDS = {
     'BC': 'Body close: a candle closes past the previous candle’s high (BuBC) or low (BeBC).', 'BuBC': 'Bullish body close: a candle closes above the previous candle’s high.',
     'BeBC': 'Bearish body close: a candle closes below the previous candle’s low.', 'NBC': 'No body close: the candle closes inside the previous candle’s range. A pause.',
@@ -410,7 +436,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     return '<article class="ticket c-' + s.color + '" id="' + id(s.code) + '" aria-labelledby="' + id(s.code) + '-h">' +
       '<div class="t-head"><span class="code">' + esc(s.code) + '</span><h3 id="' + id(s.code) + '-h">' + esc(s.name) + '</h3>' +
       '<span class="pbadge' + cls + '" title="2-period test, win rate, average result per trade, profit factor and target"><span>' + TEST[s.test] + '</span><span>WR ' + pc(a.wr) + '</span><span>avg ' + sg(a.av) + ' RR</span><span>PF ' + a.pf.toFixed(2) + '</span><span>' + esc(s.tgt || '') + '</span></span>' +
-      '<div class="tags"><span class="st ' + s.status + '">' + (s.status === 'trade' ? 'Trade' : 'Watch') + '</span><span class="tag">' + esc(s.ind) + '</span><span class="tag">' + esc(s.tf) + '</span><span class="tag">' + esc(s.side) + '</span></div></div>' +
+      '<div class="tags"><span class="st ' + s.status + '">' + (s.status === 'trade' ? 'Trade' : 'Watch') + '</span><span class="tag">' + esc(indName(s.ind)) + '</span><span class="tag">' + esc(s.tf) + '</span><span class="tag">' + esc(s.side) + '</span></div></div>' +
       '<div class="t-body"><div class="t-left">' + picBlock(s) +
       (s.plain ? '<p class="plain"><b>In plain words</b>' + esc(s.plain) + '</p>' : '') +
       '<p class="t-when"><b>When</b><span>' + esc(s.when) + '</span></p>' +
@@ -447,7 +473,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     $('#ledger tbody').innerHTML = L.map(function (s) {
       var a = s.all;
       return '<tr class="c-' + s.color + '" data-go="' + id(s.code) + '" tabindex="0"><td class="l code">' + esc(s.code) + '</td>' +
-        '<td class="l nm"><b>' + esc(s.name) + '</b><small>' + esc(s.ind) + ', ' + esc(s.side.toLowerCase()) + '</small></td>' +
+        '<td class="l nm"><b>' + esc(s.name) + '</b><small>' + esc(indName(s.ind)) + ', ' + esc(s.side.toLowerCase()) + '</small></td>' +
         '<td class="l"><span class="st ' + s.status + '">' + (s.status === 'trade' ? 'Trade' : 'Watch') + '</span></td><td class="l">' + esc(s.tf) + '</td>' +
         '<td class="l">' + badge(s) + '</td><td>' + a.pf.toFixed(2) + '</td><td>' + a.t.toFixed(2) + '</td>' +
         '<td class="' + (a.net > 0 ? 'pos' : 'neg') + '">' + usd(perMonth(s)) + '</td><td class="' + (a.net > 0 ? 'pos' : 'neg') + '">' + usd(a.net) + '</td>' +

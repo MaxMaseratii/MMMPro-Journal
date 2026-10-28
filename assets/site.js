@@ -23,11 +23,9 @@
     ['Indicators', '/indicators/'],
     ['Strategies', '/strategies/'],
     ['Backtests', '/backtests/'],
-    ['Course', '/journal/?course=1'],
-    ['Gamma', '/gamma/'],
-    ['News', '/news/'],
-    ['Trading Test', '/diagnostic/'],
-    ['Pricing', '/whop/']
+    ['Free MMM Mastery Course', '/journal/?course=1'],
+    ['Gamma & News', '/gamma/'],
+    ['Trading Test', '/diagnostic/']
   ];
   // Max's channels (handle @MaxMaserati)
   var SOCIAL = [
@@ -67,6 +65,7 @@
   function here(href) {
     var p = location.pathname.replace(/index\.html$/, '');
     var h = href.split('?')[0];
+    if (h === '/gamma/' && p.indexOf('/news/') === 0) return true;
     return h !== '/' && h !== '/journal/' && p.indexOf(h) === 0;
   }
 
