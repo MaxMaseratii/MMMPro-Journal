@@ -38,6 +38,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--sans);-webkit-fo
 a{color:inherit}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.tgt{display:block;font:500 11px/1.3 var(--sans);color:var(--amber);white-space:nowrap}
 
 /* hero */
 .hero{border-bottom:1px solid var(--rule);background:linear-gradient(180deg,#0e1418 0%,var(--paper) 100%)}
@@ -331,11 +332,11 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.55}
       '<div class="why"><p><b>Why it works.</b> ' + esc(s.why) + '</p><p class="w"><b>Watch out.</b> ' + esc(s.watch) + '</p></div></div>' +
       '<div class="t-stats"><div class="curve">' + curveSVG(s) + '<div class="cap"><span>Running total of every trade, in stops</span><span><i>Shaded</i> = period 2, fresh data</span></div></div>' +
       '<dl class="kpi">' +
-        '<div><dt>Trades</dt><dd>' + a.n.toLocaleString('en-US') + '</dd></div><div><dt>A month</dt><dd>' + a.tpm + '</dd></div><div><dt>WR</dt><dd>' + pc(a.wr) + '</dd></div>' +
+        '<div><dt>Trades</dt><dd>' + a.n.toLocaleString('en-US') + '</dd></div><div><dt>A month</dt><dd>' + a.tpm + '</dd></div><div><dt>WR</dt><dd>' + pc(a.wr) + ' <small class="tgt">' + esc(s.tgt || '') + '</small></dd></div>' +
         '<div><dt>avg RR</dt><dd class="' + (a.av > 0 ? 'pos' : 'neg') + '">' + sg(a.av) + '</dd></div><div><dt>PF</dt><dd>' + a.pf.toFixed(2) + '</dd></div><div><dt>t-score</dt><dd>' + a.t.toFixed(2) + '</dd></div>' +
         '<div><dt>Net, 1 MNQ</dt><dd class="' + (a.net > 0 ? 'pos' : 'neg') + '">' + usd(a.net) + '</dd></div><div><dt>Max drawdown</dt><dd>' + usd(-a.dd) + '</dd></div><div><dt>Max losses in a row</dt><dd>' + a.ml + '</dd></div>' +
       '</dl>' +
-      '<table class="periods"><thead><tr><th class="l" scope="col">2-period test</th><th scope="col">Trades</th><th scope="col">WR</th><th scope="col">avg RR</th><th scope="col">t-score</th></tr></thead><tbody>' +
+      '<table class="periods"><thead><tr><th class="l" scope="col">2-period test</th><th scope="col">Trades</th><th scope="col">WR · ' + esc(s.tgt || '') + '</th><th scope="col">avg RR</th><th scope="col">t-score</th></tr></thead><tbody>' +
         '<tr><td class="l">Period 1, 2022–25</td><td>' + s.p1.n + '</td><td>' + pc(s.p1.wr) + '</td><td class="' + (s.p1.av > 0 ? 'pos' : 'neg') + '">' + sg(s.p1.av) + '</td><td>' + s.p1.t.toFixed(1) + '</td></tr>' +
         '<tr><td class="l">Period 2, 2026</td><td>' + s.p2.n + '</td><td>' + pc(s.p2.wr) + '</td><td class="' + (s.p2.av > 0 ? 'pos' : 'neg') + '">' + sg(s.p2.av) + '</td><td>' + s.p2.t.toFixed(1) + '</td></tr>' +
       '</tbody></table>' +
@@ -357,7 +358,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.55}
       return '<tr class="c-' + s.color + '" data-go="' + id(s.code) + '" tabindex="0"><td class="l code">' + esc(s.code) + '</td>' +
         '<td class="l nm"><b>' + esc(s.name) + '</b><small>' + esc(s.ind) + ', ' + esc(s.side.toLowerCase()) + '</small></td>' +
         '<td class="l"><span class="st ' + s.status + '">' + (s.status === 'trade' ? 'Trade' : 'Watch') + '</span></td><td class="l">' + esc(s.tf) + '</td>' +
-        '<td class="num">' + pc(a.wr) + '</td><td class="num ' + (a.av > 0 ? 'pos' : 'neg') + '">' + sg(a.av) + '</td><td class="num">' + a.pf.toFixed(2) + '</td><td class="num">' + a.t.toFixed(2) + '</td>' +
+        '<td class="num">' + pc(a.wr) + '<small class="tgt">' + esc(s.tgt || '') + '</small></td><td class="num ' + (a.av > 0 ? 'pos' : 'neg') + '">' + sg(a.av) + '</td><td class="num">' + a.pf.toFixed(2) + '</td><td class="num">' + a.t.toFixed(2) + '</td>' +
         '<td class="num ' + (a.net > 0 ? 'pos' : 'neg') + '">' + usd(perMonth(s)) + '</td><td class="num ' + (a.net > 0 ? 'pos' : 'neg') + '">' + usd(a.net) + '</td>' +
         '<td class="num">' + a.tpm + '</td><td><span class="tst ' + s.test + '">' + TEST[s.test] + '</span></td><td>' + sparkSVG(s) + '</td></tr>';
     }).join('') || '<tr><td colspan="13" class="l loading">No strategy matches these filters. Clear one to see more.</td></tr>';

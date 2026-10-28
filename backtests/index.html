@@ -38,6 +38,16 @@ input,select,textarea{-webkit-user-select:text;user-select:text}
 @media print{body{display:none!important}}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
 .top{background:var(--panel);border-bottom:1px solid var(--line);padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:6px}
+.ph{padding:14px 16px 4px;max-width:1100px}
+.ph h1{font-size:22px;margin:0 0 4px;font-weight:700;text-wrap:balance}
+.ph .phs{margin:0 0 8px;color:var(--fg);font-size:14px;line-height:1.5;max-width:90ch}
+.ph details{border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:6px 12px;max-width:110ch}
+.ph summary{cursor:pointer;font-weight:600;font-size:13px;color:var(--teal)}
+.ph ul{margin:6px 0 6px;padding-left:18px;font-size:13px;line-height:1.55}
+.ph li{margin:2px 0}
+.ph .phu{margin:8px 0 0;font-size:13px}
+.tg{color:var(--teal);font-size:11px;white-space:nowrap}
+#scroll{position:relative}
 .adv{margin:0;font-size:12px;line-height:1.45;color:var(--fg);border-left:3px solid var(--warn);background:var(--warn-bg);padding:5px 10px;border-radius:3px;max-width:120ch}
 .title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .title h1{font-size:17px;margin:0;font-weight:700;letter-spacing:.01em;text-wrap:balance}
@@ -279,7 +289,7 @@ table.g tbody tr:hover td{background:var(--sel)}
 <li><b>Only 1 combo passed all 7 checks out of 363,348 test rows</b> (below). An edge needs <b>context</b>: time of day, first break, zone size, HTF bias.</li></ul></section>
 
 <section class="wide"><h2><span class="k">PASSED ALL 7</span>1h AFs+ candle, limit at P (12.5% pullback), stop below the candle low, X4 BC trail, 1:3</h2>
-<div class="tw"><table><tr><th>Trades</th><th>Fill %</th><th>WR</th><th>PF</th><th>avg RR</th><th>t-score</th><th>First 70%</th><th>Last 30%</th><th>2023</th><th>2024</th><th>2025</th><th>Minus 5 best</th><th>RANDOM</th><th>Neighbours &gt; 0</th><th>Avg risk</th><th>Losses in a row</th><th>Max DD</th></tr>
+<div class="tw"><table><tr><th>Trades</th><th>Limit filled</th><th>WR · 1:3 RR</th><th>PF</th><th>avg RR</th><th>t-score</th><th>First 70%</th><th>Last 30%</th><th>2023</th><th>2024</th><th>2025</th><th>Minus 5 best</th><th>RANDOM</th><th>Neighbours &gt; 0</th><th>Avg risk</th><th>Losses in a row</th><th>Max DD</th></tr>
 <tr><td>771</td><td>81%</td><td>40%</td><td>1.32</td><td class="pos">+0.16</td><td>3.02</td><td class="pos">+0.12</td><td class="pos">+0.23</td><td class="pos">+0.18</td><td class="pos">+0.09</td><td class="pos">+0.21</td><td class="pos">+0.14</td><td>−0.02</td><td>71%</td><td>50 pts</td><td>13</td><td>28.9 RR</td></tr></table></div>
 <ul><li>AFs+ = new Low, closes back inside the previous candle, close above its own 50% (short = AFs+ mirror).</li>
 <li>Through fill: +0.15, t 2.79. It's close to the bar, but the 29 RR drawdown is too big for a prop account at full size.</li></ul></section>
@@ -386,13 +396,13 @@ const GLOSS=[
 ['BC+','Strong Body Close','candle','A BC that closes in its strong half (bull: upper half) and did not take the other side first. Buyers won and held the ground.','Bull BC+ takes the next high 73% (15m) to 86% (weekly).'],
 ['BC−','Weak Body Close','candle','A BC that closed through, but weak (in its weak half). Less follow-through than BC+.','4H BuBC− with a limit at BAL 50 was one of the few pockets that held (+0.13 → +0.07).'],
 ['C2+ / C2−','Sweep then close through','candle','The candle first sweeps the other side (takes the previous low for a bull), then closes through the previous high. + = strong close, − = weak close.','C2+ took its own extreme 76–83% of the time (15m to daily).'],
-['AFs+ / AFs−','Fail-sweep (affinity) candle','candle','The candle pokes past the previous high or low but closes back inside. It tried and failed: a small trap. + = strong rejection (close past its own 50%), − = weak rejection.','“AFs against” inside a GMC (c3) is the heart of EP.M3.'],
+['AFs+ / AFs−','Fail-sweep (affinity) candle','candle','The candle pokes past the previous high or low but closes back inside. It tried and failed: a small trap. + = strong rejection (close past its own 50%), − = weak rejection.','“AFs against” inside a GMC (c3) is the heart of C.M4.'],
 ['CI','Candle Inside','candle','An inside candle: its whole range stays inside the previous candle.','Takes its extreme about 70% of the time.'],
 ['S&D','Outside candle','candle','The candle takes both the previous high and the previous low.','Graded by where it closes in its range.'],
 ['MMCB','MMM Candle Bias','candle','The candle-type reader: BC+, BC−, C2, AFs, CI, S&D, NBC. It tells you which side the next candle likely attacks.','On 5m and 15m the types alone are about 0 after costs. They need context.'],
 // gaps
 ['MC','Momentum Control','gap','The last body close in the trend direction: the newest proof of who is in charge.','Before a gap confirms it, it is “raw”.'],
-['GMC','Gap-confirmed Momentum Control','gap','Three candles. c1 is the base, c2 closes past c1’s high (bull), c3 never comes back to c1’s high. The space between c1’s high and c3’s low is a void.','15m GMC long is EP.M2. Don’t trade 1H GMC on its own (see VERDICTS).'],
+['GMC','Gap-confirmed Momentum Control','gap','Three candles. c1 is the base, c2 closes past c1’s high (bull), c3 never comes back to c1’s high. The space between c1’s high and c3’s low is a void.','15m GMC long is C.M3. Don’t trade 1H GMC on its own (see VERDICTS).'],
 ['c1 / c2 / c3','Candles of a GMC','gap','c1 = the base, c2 = the push (BC), c3 = the confirmation candle that leaves the gap open.','Entry at the c3 close beat every other GMC entry.'],
 ['Void','Unfilled gap','gap','Price moved through it one way only. The other side never got a chance to trade there.','If the next candles fill the void, the sellers (or buyers) were real.'],
 ['XU','Extreme Urgency (gap-candle open)','gap','The urgency naming for a gap-confirmed candle. In the tests, “XU” as an entry = a limit at the gap candle’s open.','XU was the worst GMC entry on 1h (−0.07 to −0.09).'],
@@ -406,7 +416,7 @@ const GLOSS=[
 ['R#','Resumption base','struct','Where price restarted after the pullback. It becomes the next T#.','In MMM PRO c the resumptions are MCR# / GMCR#.'],
 ['CDL / CDS','Change of Delivery Long / Short','struct','The flip. A close through the last T# turns the trend. Capital letters = a real flip.','Flip entries (eBlock touch) lost in both periods.'],
 ['cdl / cds','Internal flip (small letters)','struct','A small break inside the T#–P# range. Not a trend flip.','Can be purged when the range closes.'],
-['LD / SD','Long / Short Delivery','struct','The continuation. A close past P# in the trend direction. LD1 makes T2, LD2 makes T3, and so on. LD1+ = the broken pullback was gap-confirmed.','LDx2+ (T3+) = EP.M1.'],
+['LD / SD','Long / Short Delivery','struct','The continuation. A close past P# in the trend direction. LD1 makes T2, LD2 makes T3, and so on. LD1+ = the broken pullback was gap-confirmed.','LDx2+ (T3+) = X.M4.'],
 ['🟢🟩 / 🔴🟥','Trend markers','struct','🟢 / 🔴 = T1 of the newest leg (where it started). 🟩 / 🟥 = the newest T# of that leg.','Everything between the markers is always drawn.'],
 ['MP / GMP','Raw / Gap-confirmed Pullback','struct','MMM PRO c: a counter-trend body close (MP). It upgrades to GMP when a gap confirms it. The first of each range gets a number (GMP1, GMP2…).','This is the c-engine P#.'],
 ['MCR / GMCR','(Gap-confirmed) Momentum Control Resumption','struct','MMM PRO c: the resumption after a pullback. It becomes the next T#.','This is the c-engine R#.'],
@@ -414,7 +424,7 @@ const GLOSS=[
 ['HTF in LTF','Structure timeframe','struct','The structure (boxes, swings, PO4s, gate) is built on a higher timeframe and drawn on your chart.','EDGE PRO always builds on 15m, so trades are the same on 1m to 15m charts.'],
 // zones
 ['Box / BZ','Balanced Zone','zone','An expander BC plus the candles that close back inside it. A parking lot where price rests.','Live box control: a close in the top third → breaks up 66–72%.'],
-['Expander / Contraction','Box size rule','zone','Expander = the box is the big BC’s range. Contraction = the box is only the range of the quiet candles inside it (tighter).','Contraction boxes power EP.M4.'],
+['Expander / Contraction','Box size rule','zone','Expander = the box is the big BC’s range. Contraction = the box is only the range of the quiet candles inside it (tighter).','Contraction boxes power X.M5.'],
 ['G1 / G0','Grow mode','zone','G1: a wick that pokes out of the box and closes back inside makes the box bigger (fewer fake breaks). G0: the box never grows.','G1 was best on 15m.'],
 ['eBlock','Flip zone','zone','The zone of every T1 PO4: the origin of a flip (CDL / CDS). It lives as long as its PO4.','Touch entries here lost.'],
 ['iBlock','Continuation zone','zone','The zone of every T2, T3… PO4: the origin of a continuation (LD / SD).','On 1h, CONT (iBlock) did a bit better than FLIP.'],
@@ -426,8 +436,8 @@ const GLOSS=[
 ['c','Candle engine','engine','MMM PRO c (was MMM Pro). Reads single candles and 3-candle gaps: MC, GMC, MP, GMP, MCR, GMCR, PO4s.','Labels end in c: CDLc, LDc2.'],
 ['x','Zone (box) engine','engine','MMM PRO x (was Concepts Pro+). Reads boxes: BZ, P#, R#, T#.','Labels end in x: CDSx, LDx2. The best engine in the tests.'],
 ['s','Swing engine','engine','MMM PRO s (was Order Flow Suite). Reads swing highs and lows, plus volume stars, SWP+ and AX.','Labels end in s. Structure and context only: no tested edge.'],
-['MMM EDGE PRO','The strategy indicator','engine','Holds all 18 working strategies (EP.M1–EP.M5, X.M1–X.M3, C.M1, C.M2, XCS.M1–XCS.M5, LR.M1, LR.M2, OC.M1). Only EP.M1 and the LIVE table are on when you load it. Turn on ONE strategy at a time.','See EDGE PRO LAB.'],
-['EP.M1–EP.M5','EDGE PRO setup numbers','engine','EP.M1 = T3+ break · EP.M2 = GMC long · EP.M3 = GMC AFs long · EP.M4 = contraction limit · EP.M5 = BC+ long.','Labels like EP.M1 T1 = setup 1, trade 1.'],
+['MMM EDGE PRO','The strategy indicator','engine','Holds all 18 working strategies (X.M4, X.M5, C.M3, C.M4, C.M5, X.M1–X.M3, C.M1, C.M2, XCS.M1–XCS.M5, C.M6, C.M7, C.M8). Only X.M4 and the LIVE table are on when you load it. Turn on ONE strategy at a time.','See EDGE PRO LAB.'],
+['X.M# · C.M# · XCS.M#','Strategy codes','engine','The letters say which indicator the strategy comes from: X = MMM PRO x (zones), C = MMM PRO c (candle order flow), XCS = x + c + s together. M# = the model number. Every one runs in MMM EDGE PRO.','On the chart, X.M4 T1 = strategy X.M4, trade 1 of the day.'],
 ['Stars ★','Break quality (MMM PRO s)','engine','1–4 stars. +1 above-average volume, +2 strong volume, +1 delta agrees, +1 the break candle is an accelerator.','Stars added nothing in the tests.'],
 ['SWP+','Strong sweep','engine','A wick takes a swing, the close comes back inside, with strong volume and delta pushing back.','SWP+ long: +0.21 → −0.09. Failed the fresh test.'],
 ['AX (BuAx / BeAx)','Accelerator candle','engine','A candle with a big range, delta with it and strong volume.','No edge as a filter.'],
@@ -462,7 +472,7 @@ const GLOSS=[
 ['WR','Win rate','stats','% of trades that end in profit.','Break-even WR: 33.3% at 1:2, 25% at 1:3, 12.5% at 1:7.'],
 ['PF','Profit factor','stats','Money won ÷ money lost. Above 1.3 is good. Below 1 loses.',''],
 ['t-score','Proof score','stats','Is the edge real or luck? 2+ for one test. 3+ for anything picked from a big grid.','With millions of combos, many t ≥ 2 results are luck. Trust themes.'],
-['½ out','The prop exit','stats','Half off at +0.5R (EP.M2: +0.75R), stop to entry (BE), runner to the target.','This is what lifts WR above 60%.'],
+['½ out','The prop exit','stats','Half off at +0.5R (C.M3: +0.75R), stop to entry (BE), runner to the target.','This is what lifts WR above 60%.'],
 ['BE','Breakeven','stats','Stop moved to the entry price. The rest of the trade can no longer lose (except costs).',''],
 ['Worst run','Worst losing run in R','stats','The deepest drop from a high in the test, in R units.','Survival sizing plans for 1.5× the worst run.'],
 ['OOS','Out of sample','stats','Data never used to pick the setup. Here: the last 30% of 2022–25, then the fresh 2026 months.',''],
@@ -476,13 +486,13 @@ const GLOSS=[
 const ST={trade:'TRADE',filter:'USE AS FILTER',watch:'WATCH',no:'DON’T TRADE'};
 const IND=[['all','All'],['edge','EDGE PRO'],['x','MMM PRO x'],['c','MMM PRO c'],['s','MMM PRO s'],['xcs','MMM Pro XCS One'],['mmpd','MMPD'],['gen','General']];
 const VERD=[
-['trade','edge','EP.M1 · T3+ Break (15m, long + short)','LDx2+ / SDx2+ of the box engine (expander, G1). Entry at the break close, 1.5 ATR stop, ½ out at +0.5R, runner to the opposite break or 1:6. Yesterday’s daily candle must agree.','A trend that beat the other side three times keeps trapping faders. The strongest of the 5.','½ out, skip 00–02. 2022–25 → 2026: 567 → 189 trades · WR 70% → 77% · avg RR +0.15 → +0.26 · PF 1.56 → 2.25 · t-score +3.9 → +4.0 · Blended: WR 72% · avg RR +0.18 · PF 1.71 · t-score +5.4 · max 4 losses / 15 wins in a row · max drawdown 16.4R'],
-['trade','edge','EP.M2 · GMC Long (15m)','Every bullish GMC. Entry c3 close, 1 ATR stop, ½ out at +0.75R, runner 1:3. Daily candle green.','Urgency: buyers wanted in so badly that price never came back to c1.','½ out. 2022–25 → 2026: 1,891 → 540 trades · WR 59% → 64% · avg RR +0.06 → +0.14 · PF 1.15 → 1.40 · t-score +2.7 → +3.4 · Blended: WR 60% · avg RR +0.08 · PF 1.21 · t-score +4.0 · max 10 losses / 16 wins in a row · max drawdown 39.2R'],
-['trade','edge','EP.M3 · GMC AFs Long (15m)','A bullish GMC where c3 makes a new high and closes back inside c2 (AFs against). Entry c3 close, 1 ATR stop, ½ out +0.5R, runner 1:6. Daily green + 1h box trend up.','The “rejection” cannot reach the void, so it is only a shakeout of weak longs.','½ out. 2022–25 → 2026: 391 → 129 trades · WR 70% → 74% · avg RR +0.13 → +0.31 · PF 1.45 → 2.28 · t-score +2.6 → +3.3 · Blended: WR 71% · avg RR +0.17 · PF 1.63 · t-score +3.9 · max 5 losses / 11 wins in a row · max drawdown 7.8R'],
-['watch','edge','EP.M4 · Contraction Limit Long (15m, Asia fill)','After a bullish LDx of a contraction box, a buy limit at 75% (MP) of the break candle, 1 tick through, filled in Asia. Fixed 50 stop, ½ out +0.5R, runner 1:2.','A tight box stores energy. The first small dip is the people who missed the break. Moved to WATCH: on 15-min bars a limit fill looked better than it was. On fine bars 2026 is only +0.06.','½ out. 2026 = 1-min / 5-min months only. 2022–25 → 2026: 309 → 54 trades · WR 61% → 69% · avg RR +0.08 → +0.06 · PF 1.38 → 1.22 · t-score +2.3 → +0.6 · Blended: WR 63% · avg RR +0.08 · PF 1.35 · t-score +2.3 · max 5 losses / 11 wins in a row · max drawdown 12.0R'],
-['trade','edge','EP.M5 · BC+ Long (15m)','A BC+ bull candle (close above the previous high, no lower low, close in the upper half). Fixed 50 stop, ½ out +0.5R, runner 1:2. Daily green + 1h trend up.','A clean winning candle inside a trend that is already working.','½ out. 2022–25 → 2026: 2,312 → 717 trades · WR 61% → 68% · avg RR +0.06 → +0.07 · PF 1.26 → 1.23 · t-score +4.5 → +2.4 · Blended: WR 63% · avg RR +0.07 · PF 1.25 · t-score +5.1 · max 10 losses / 30 wins in a row · max drawdown 31.9R'],
-['trade','x','X.M1 · 15m G1 zone T3+ · close · 1.5 ATR · X5 OPP · 1:6 (Asia + NY AM)','The X.M1: the same signal as EP.M1, but a full trade (no ½ out).','The only setup that held in both fresh windows (Mar–May and Aug–Oct 2026).','2022–25 → 2026: 937 → 353 trades · WR 42% → 42% · avg RR +0.20 → +0.29 · PF 1.43 → 1.66 · t-score +3.9 → +3.5 · Blended: WR 42% · avg RR +0.23 · PF 1.49 · t-score +5.2 · max 16 losses / 12 wins in a row · max drawdown 25.4R'],
-['watch','x','X.M2 · 15m CONTRACTION T3+ · L4 MP limit · fixed 50 · 1:2','X.M2: a limit at 75% of the T3+ break candle in a contraction box.','Same stored-energy idea as EP.M4. Moved to WATCH: on 15-min bars a limit fill looked better than it was. On fine bars 2026 is only +0.05.','2026 = 1-min / 5-min months only. 2022–25 → 2026: 699 → 128 trades · WR 44% → 39% · avg RR +0.14 → +0.05 · PF 1.31 → 1.07 · t-score +3.1 → +0.4 · Blended: WR 43% · avg RR +0.12 · PF 1.26 · t-score +2.9 · max 9 losses / 8 wins in a row · max drawdown 16.3R'],
+['trade','edge','X.M4 · T3+ Break (15m, long + short)','LDx2+ / SDx2+ of the box engine (expander, G1). Entry at the break close, 1.5 ATR stop, ½ out at +0.5R, runner to the opposite break or 1:6. Yesterday’s daily candle must agree.','A trend that beat the other side three times keeps trapping faders. The strongest of the 5.','½ out, skip 00–02. 2022–25 → 2026: 567 → 189 trades · WR 70% → 77% · avg RR +0.15 → +0.26 · PF 1.56 → 2.25 · t-score +3.9 → +4.0 · Blended: WR 72% · avg RR +0.18 · PF 1.71 · t-score +5.4 · max 4 losses / 15 wins in a row · max drawdown 16.4R'],
+['trade','edge','C.M3 · GMC Long (15m)','Every bullish GMC. Entry c3 close, 1 ATR stop, ½ out at +0.75R, runner 1:3. Daily candle green.','Urgency: buyers wanted in so badly that price never came back to c1.','½ out. 2022–25 → 2026: 1,891 → 540 trades · WR 59% → 64% · avg RR +0.06 → +0.14 · PF 1.15 → 1.40 · t-score +2.7 → +3.4 · Blended: WR 60% · avg RR +0.08 · PF 1.21 · t-score +4.0 · max 10 losses / 16 wins in a row · max drawdown 39.2R'],
+['trade','edge','C.M4 · GMC AFs Long (15m)','A bullish GMC where c3 makes a new high and closes back inside c2 (AFs against). Entry c3 close, 1 ATR stop, ½ out +0.5R, runner 1:6. Daily green + 1h box trend up.','The “rejection” cannot reach the void, so it is only a shakeout of weak longs.','½ out. 2022–25 → 2026: 391 → 129 trades · WR 70% → 74% · avg RR +0.13 → +0.31 · PF 1.45 → 2.28 · t-score +2.6 → +3.3 · Blended: WR 71% · avg RR +0.17 · PF 1.63 · t-score +3.9 · max 5 losses / 11 wins in a row · max drawdown 7.8R'],
+['watch','edge','X.M5 · Contraction Limit Long (15m, Asia fill)','After a bullish LDx of a contraction box, a buy limit at 75% (MP) of the break candle, 1 tick through, filled in Asia. Fixed 50 stop, ½ out +0.5R, runner 1:2.','A tight box stores energy. The first small dip is the people who missed the break. Moved to WATCH: on 15-min bars a limit fill looked better than it was. On fine bars 2026 is only +0.06.','½ out. 2026 = 1-min / 5-min months only. 2022–25 → 2026: 309 → 54 trades · WR 61% → 69% · avg RR +0.08 → +0.06 · PF 1.38 → 1.22 · t-score +2.3 → +0.6 · Blended: WR 63% · avg RR +0.08 · PF 1.35 · t-score +2.3 · max 5 losses / 11 wins in a row · max drawdown 12.0R'],
+['trade','edge','C.M5 · BC+ Long (15m)','A BC+ bull candle (close above the previous high, no lower low, close in the upper half). Fixed 50 stop, ½ out +0.5R, runner 1:2. Daily green + 1h trend up.','A clean winning candle inside a trend that is already working.','½ out. 2022–25 → 2026: 2,312 → 717 trades · WR 61% → 68% · avg RR +0.06 → +0.07 · PF 1.26 → 1.23 · t-score +4.5 → +2.4 · Blended: WR 63% · avg RR +0.07 · PF 1.25 · t-score +5.1 · max 10 losses / 30 wins in a row · max drawdown 31.9R'],
+['trade','x','X.M1 · 15m G1 zone T3+ · close · 1.5 ATR · X5 OPP · 1:6 (Asia + NY AM)','The X.M1: the same signal as X.M4, but a full trade (no ½ out).','The only setup that held in both fresh windows (Mar–May and Aug–Oct 2026).','2022–25 → 2026: 937 → 353 trades · WR 42% → 42% · avg RR +0.20 → +0.29 · PF 1.43 → 1.66 · t-score +3.9 → +3.5 · Blended: WR 42% · avg RR +0.23 · PF 1.49 · t-score +5.2 · max 16 losses / 12 wins in a row · max drawdown 25.4R'],
+['watch','x','X.M2 · 15m CONTRACTION T3+ · L4 MP limit · fixed 50 · 1:2','X.M2: a limit at 75% of the T3+ break candle in a contraction box.','Same stored-energy idea as X.M5. Moved to WATCH: on 15-min bars a limit fill looked better than it was. On fine bars 2026 is only +0.05.','2026 = 1-min / 5-min months only. 2022–25 → 2026: 699 → 128 trades · WR 44% → 39% · avg RR +0.14 → +0.05 · PF 1.31 → 1.07 · t-score +3.1 → +0.4 · Blended: WR 43% · avg RR +0.12 · PF 1.26 · t-score +2.9 · max 9 losses / 8 wins in a row · max drawdown 16.3R'],
 ['trade','c','C.M1 · 15m GMC c3 AFs against · c3 close · 1 ATR · X1 · 1:6','C.M1, long and short.','A GMC that survives a fake rejection.','2022–25 → 2026: 2,324 → 688 trades · WR 32% → 35% · avg RR +0.13 → +0.26 · PF 1.21 → 1.44 · t-score +3.3 → +3.5 · Blended: WR 33% · avg RR +0.16 · PF 1.26 · t-score +4.6 · max 17 losses / 8 wins in a row · max drawdown 66.2R'],
 ['trade','c','C.M2 · 15m GMC LONG · c3 close · fixed 50 · X3-O · 1:2','MMM PRO c “Edge A2”, long only. Exit early on a confirmed close below the gap-candle open.','Small edge per trade, many trades.','2022–25 → 2026: 3,999 → 1,187 trades · WR 42% → 41% · avg RR +0.06 → +0.11 · PF 1.15 → 1.22 · t-score +3.5 → +3.1 · Blended: WR 42% · avg RR +0.07 · PF 1.17 · t-score +4.6 · max 22 losses / 15 wins in a row · max drawdown 61.6R'],
 ['trade','xcs','XCS.M1 · Late continuation break (P5+ → T6+) · 15m · close · 50 pt · 1:2','A 15m candle of engine x, c or s CLOSES past P5 or later (the 5th continuation break of the trend, new PO4 T6+). Enter at its close. Long and short. 50 pt stop, 1:2 (or 1:7 for max profit), exit after 60 candles.','After 5 pullbacks the trend has proven itself, and late breaks still run. Plus in every year 2023–2026.','2022–25 → 2026: 876 → 296 trades · WR 40% → 39% · avg RR +0.12 → +0.15 · PF 1.20 → 1.24 · t-score +2.5 → +1.8 · Blended: WR 40% · avg RR +0.13 · PF 1.21 · t-score +3.1 · max 19 losses / 12 wins in a row · max drawdown 28.6R'],
@@ -497,26 +507,24 @@ const VERD=[
 ['watch','xcs','XCS.M5 · 15m iBlock touched 08:00–09:15 NY → AFs+ → enter at the close','A 15m iBlock (T2+ origin, engine x, c or s) is touched for the first time in pre-market (08:00–09:15 NY). Within 10 candles an AFs+ in the block direction prints, with no close through the PO4 line. Enter at its close, stop 1 tick past the AFs+ candle, target 1:2 (or 1:3).','A sweep into a continuation iBlock right before the 9:30 open traps the late side. Plus every year (+0.27, +0.22, +0.20, +0.36). Random boxes with the same rule: about −0.10. Found by a search, small sample: paper-trade first.','2022–25 → 2026: 157 → 48 trades · WR 43% → 46% · avg RR +0.22 → +0.36 · PF 1.36 → 1.67 · t-score +1.8 → +1.7 · Blended: WR 43% · avg RR +0.25 · PF 1.42 · t-score +2.4 · max 8 losses / 4 wins in a row · max drawdown 8.4R'],
 ['no','gen','Don’t pick blocks by hold %, volume, delta or POC','The block profile test: 350,000 first touches of eBlocks, iBlocks, balanced blocks and random boxes on 5m to daily, with 20 factors (time, depth, volume, delta proxy, POC, trend…).','Hold % moves with WHEN and HOW price touches (07:00–10:00 NY breaks boxes, deep and high-volume touches break boxes) and random boxes move the same way. No factor made a block give 1:2 more often than a random box. A model trained on 2022–25 could not pick the 2026 winners.','Gave 1:2 about 31–36% in every tenth of the model’s 2026 ranking. Buckets passing both periods: blocks 7 of 18,391 (luck ≈ 9), random boxes 40 of 10,670'],
 ['filter','gen','Trade only Asia (18:00–02:00) and NY AM (09:30–13:30)','Use the session of the signal candle, New York time.','NY AM has the big money’s fuel. Asia is thin, so clean breaks carry on. The other sessions mix news, lunch chop and squaring.','Lifted every proven setup in both periods (14 of 14). Zone T3+: +0.20 / +0.27 inside vs +0.03 / −0.09 outside'],
-['filter','edge','Skip 00:00–02:00 (except EP.M4)','No new EP.M1, EP.M2, EP.M3 or EP.M5 trades in late Asia.','The dead zone before London: no fuel, random pokes. EP.M4 needs Asia fills, so it keeps the window.','EP.M1–M5 combined: WR 60% → 66% becomes 62% → 68%. EP.M5 moves above 60% in both periods'],
-['filter','mmpd','MMPD 27 · Momentum (the default gate)','Long only in XP (higher line ≥ 80), short only in XD (lower line ≤ 20), MMPD 27 on 15m.','It keeps the CHASE trades, which carry the edge.','EP.M1–M5 combined, ½ out: WR 65% → 70% · avg RR +0.15 → +0.16 · t-score 10.0 / 5.7 · 50k pass at 2 MNQ 71% / 67%'],
+['filter','edge','Skip 00:00–02:00 (except X.M5)','No new X.M4, C.M3, C.M4 or C.M5 trades in late Asia.','The dead zone before London: no fuel, random pokes. X.M5 needs Asia fills, so it keeps the window.','The weakest window for each of these strategies in both periods. C.M5 moves above 60% WR (½ out, 1:2 RR) in both periods'],
+['filter','mmpd','MMPD 27 · Momentum (the default gate)','Long only in XP (higher line ≥ 80), short only in XD (lower line ≤ 20), MMPD 27 on 15m.','It keeps the CHASE trades, which carry the edge.','Checked on each strategy one by one: open EDGE PRO LAB, pick a strategy and compare the gates'],
 ['filter','mmpd','MMPD 9 · Momentum','The same rule with the fast MMPD.','Similar to 27, a little better in 2026, a little worse in 2022–25.','avg RR +0.13 → +0.18 · t-score 8.4 / 6.4 · pass at 2 MNQ 77% / 62%'],
 ['filter','mmpd','MMPD Delta · Touch first / Touch + 50','Delta MMPD with the “last extreme touched” rule (and the 50 line).','The only Delta rules with t ≥ 3 in both periods.','Touch: t 4.2 / 3.6. Touch + 50: +0.09 → +0.19, t 4.0 / 3.8, but only 1,320 / 333 trades'],
-['filter','edge','Max 2 open trades','Do not open a 3rd trade while 2 are running.','Stacked trades lose together on the same move.','27 Momentum: worst losing run 38R → 18R (max 2) → 12R (max 1). Pass at 2 MNQ 92% / 100% (max 2)'],
-['filter','edge','Yesterday’s daily candle in the trade direction','Long only after a green daily candle (18:00 → 17:00 NY), short after a red one.','The HTF buyers are already in control. Small waves go further with the tide.','Built into EP.M1, EP.M2, EP.M3, EP.M5'],
-['filter','edge','1h box trend up (EP.M3 and EP.M5)','The 1h x-engine trend must be up.','Removes most choppy days for EP.M3 and EP.M5.','Part of the tested EP.M3 and EP.M5 rules'],
-['filter','edge','2+ setups on the same 15m candle','Confluence: two or more EDGE PRO setups fire together.','More than one reading of control agrees.','WR 62% → 68% and avg RR about double (+0.09 → +0.19). Three together: 66% → 73% WR'],
+['filter','edge','Yesterday’s daily candle in the trade direction','Long only after a green daily candle (18:00 → 17:00 NY), short after a red one.','The HTF buyers are already in control. Small waves go further with the tide.','Built into X.M4, C.M3, C.M4, C.M5'],
+['filter','edge','1h box trend up (C.M4 and C.M5)','The 1h x-engine trend must be up.','Removes most choppy days for C.M4 and C.M5.','Part of the tested C.M4 and C.M5 rules'],
 ['filter','gen','Volatility stops (ATR) instead of fixed points in fast markets','Size the stop with ATR, then size contracts by dollars.','Daily ATR went from 274 to about 481–496 pts in 2026. Fixed stops got hit by noise.','Fixed 50 1h GMC: +0.11 → −0.11. ATR ×2: +0.09 → +0.02. Scaling with volatility beat fixed 50 in both periods'],
 ['filter','x','Live box control: where the last close sits in the box','Top third → expect a break up. Bottom third → expect a break down.','Closing location shows who is winning the tug-of-war.','Top third breaks up 68–71% (NQ) / 66–72% (MNQ). After 7+ inside candles: 72% / 79%'],
 ['filter','gen','Skip CPI, NFP and FOMC days','The whole day, not just the 20 minutes around the news.','News spikes make gaps from one big order, not real buying.','News days: −0.041 avg RR (2022–25 break grid)'],
 ['watch','c','4H GMC LONG · c3 BC− with the gap · c3 close · ATR ×1.5 · 1:2','Exit after 2 NBCs.','The best single setup in the pullback lab, re-verified. Too few trades to call it proven.','130 trades · WR 55% · +0.19 → 41 · 56% · +0.22 · with candle stop + 2-NBC rejection exit: WR 55% → 61%'],
 ['watch','c','1h GMC SHORT c3 BC− · Asia + NY AM','A narrow 1h variant that stayed positive.','A theme (median over many stop × exit combos), not one tested setup.','+0.17 → +0.13'],
-['watch','c','1h GMC LONG c3 AFs against','The 1h cousin of EP.M3.','Same idea, smaller edge.','+0.08 → +0.09'],
+['watch','c','1h GMC LONG c3 AFs against','The 1h cousin of C.M4.','Same idea, smaller edge.','+0.08 → +0.09'],
 ['watch','c','1h GMC LONG · Asia + NY AM · daily ATR × 0.15','The session-filtered 1h GMC.','Promising but t below 2 in 2026.','+0.12 (771, t 2.93) → +0.13 (253, t 1.79), all 4 fresh parts green'],
 ['watch','s','15m swing LDs / SDs at the close · hold to the opposite T1','Every swing continuation, daily ATR × 0.15 stop.','The only swing idea that held. Low WR.','+0.10 → +0.18 · t 2.44 / 2.50 · WR 29% → 32%'],
 ['watch','edge','Limit 5–8 pts better (fixed 50 at 1:2, max 2 open)','Instead of the close, a limit a few points better.','It helped only with max 2 open trades. With no limit it did not help, so it is not robust.','+0.175 → +0.21 (2022–25) · +0.135 → +0.20 to +0.24 (2026)'],
 ['watch','x','Strong delta (> 20% of the candle’s volume) on the zone T3+ break','A footprint filter on X.M1.','Only 3 months of real footprint.','+0.34 on 97 trades vs +0.31 on all 120'],
 ['watch','gen','Daily BuBC+ · close entry','A theme from the pullback lab.','Few trades per year.','+0.07 → +0.18'],
-['no','c','Don’t trade 1H GMC','The plain 1H GMC long (c3 close, ATR ×2, X3-C, 1:2) passed all 7 checks in 2022–25.','Don’t trade 1H GMC because its edge faded to about zero in 10 fresh months while volatility doubled (daily ATR 274 → 481 pts). The gap-open (XU) entry lost on 1h. The 50 pt stop version turned negative. Use the 15m GMC setups (EP.M2 and EP.M3) or the 4H GMC long instead.','2022–25: 1,496 trades · +0.09 · t 4.47 → 2026: 432 trades · +0.02 · PF 1.09 · XU entry −0.07 to −0.09 · fixed 50: −0.11'],
+['no','c','Don’t trade 1H GMC','The plain 1H GMC long (c3 close, ATR ×2, X3-C, 1:2) passed all 7 checks in 2022–25.','Don’t trade 1H GMC because its edge faded to about zero in 10 fresh months while volatility doubled (daily ATR 274 → 481 pts). The gap-open (XU) entry lost on 1h. The 50 pt stop version turned negative. Use the 15m GMC setups (C.M3 and C.M4) or the 4H GMC long instead.','2022–25: 1,496 trades · +0.09 · t 4.47 → 2026: 432 trades · +0.02 · PF 1.09 · XU entry −0.07 to −0.09 · fixed 50: −0.11'],
 ['no','gen','Don’t trade 1m, 2m or 5m breaks','Any break or candle type on small charts.','Costs eat the edge: 1 pt is 0.2R on a 5 pt stop.','1m median avg RR −0.19 to −0.23. 0–0.3% of combos above 0'],
 ['no','mmpd','Don’t fade MMPD extremes','Selling when MMPD leaves XP, buying when it leaves XD, BC violations near XP/XD, x flips near XP/XD.','Extremes mean momentum, not exhaustion, on 15m NQ.','All 5 entry ideas × 4 stops ≈ 0 or negative in both periods (e.g. −0.05 / −0.09)'],
 ['no','mmpd','Don’t use the removed gates','MMPD 27 / 9 Touch, 27 / 9 Touch + 50, Delta Momentum.','t-score below 2 in at least one period.','27 Touch: −0.02 → +0.10 (t −0.8 / 1.9). 27 Touch + 50: −0.05 → +0.09'],
@@ -541,16 +549,15 @@ const VERD=[
 ['filter','gen','Liquidity clusters: expect the wick, don’t trade it','A liquidity cluster = 3 or more candles (inside 10 candles) whose wicks made a fake rejection at one flat or gently sloped line, and nothing closed through it. ▲ = upper wicks (buy stops above) · ▼ = lower wicks (sell stops below). Now drawn in MMM Pro XCS One and MMM EDGE PRO.','Price goes back for them about 8 of 10 times when they are close, the same as one swing at that distance. After the take, back or further is 50 / 50.','Taken in 10 candles, clusters vs single swings: under ½ ATR 81% → 84% vs 81% → 84% · ½–1 ATR 67% → 69% vs 66% → 67%. After the take: 1 ATR back first 36%, 1 ATR further first 36%. 0 of 486 trade combos passed both periods'],
 ['no','gen','Don’t sell into a liquidity cluster (or buy into a low one)','A limit 1 tick past the cluster TOP, against it: “it goes up into the cluster, then down”. Fixed 50 pt stop, 1:2.','The stops get taken, but price keeps going as often as it turns.','Sell into a high cluster, Asia + NY AM: 1,418 → 478 trades · WR 33% → 30% · avg RR −0.07 → −0.12 · PF 0.89 → 0.83 · t-score −2.0 → −1.9'],
 ['watch','gen','Shorts with a high cluster inside the 50 pt stop (2026)','A strategy short while a cluster of highs (last 20 candles, not taken) sits between the entry and the stop.','Worse in 2026, but not in 2022–25, and few trades. Not a filter yet.','All strategies, fixed 50 · 1:2, avg RR vs other trades: +0.04 (t-score +0.7) → −0.21 (t-score −1.3, 87 trades)'],
-['watch','edge','1–2 hours a day: the first EDGE PRO signal of 18:30–20:30 New York','Research only: it needs every EDGE PRO setup on, so it is not one strategy. Only the FIRST signal between 18:30 and 20:30 New York (23:30–01:30 London), one trade a day, EDGE PRO default exits. Learn ONE strategy first.','The Asia open is the only session where every strategy made money in both periods. The window was picked on 2022–25 and held in 2026.','2022–25 → 2026: 664 → 206 trades (9 days of 10) · WR 48% → 48% · avg RR +0.14 → +0.24 · PF 1.34 → 1.48 · t-score 2.9 / 2.3 · max drawdown 15 → 13 R · every year positive (2023 +0.08 · 2024 +0.14 · 2025 +0.20 · 2026 +0.24)'],
 ['filter','gen','Level Retest: skip it when a GMC gap sits between the PO4 T1 and the CDL','A GMC (3-candle gap with the move) formed in the leg from the PO4 T1 to the CDS / CDL break, with its level inside that range. About 1 in 4 trades.','With a gap the retest does not work (PF 1.00). Without one it is the best version found: a fast leg that leaves a gap usually retests deeper or fails.','1m long NY AM · PO4 retest · 15m trend · 40 pts · 1:5: no gap WR 37%, PF 1.66, t-score 3.21, net +$8,792 in 39 months, max drawdown −$1,125 · with a gap PF 1.00 (84 trades)'],
 ['no','gen','Level Retest: don’t enter the gap trades at the CDS / CDL close','When a GMC gap sits between the PO4 T1 and the CDL, the retest fills only 36% of the time (72% without a gap). Tested: enter those gap trades at the CDL close instead, and mix gap → CDL close with no gap → PO4 retest.','The gap trades stay weak even at the CDL close (PF 1.15). The mix makes less than the no-gap retest alone. Skip the gap trades.','Long NY AM · 15m trend · 40 pts · 1:5: gap at the CDL close PF 1.15, net +$1,898 · mix PF 1.34, +$7,552 · no-gap PO4 retest alone PF 1.67, +$8,874'],
 ['no','gen','Level Retest: don’t exit at the first close back past the PO4 T1','After the fill, get out at the close of the first 1m candle that closes back past the PO4 T1 (the fill candle included), instead of waiting for the stop. Also tested with a 5 / 10 / 20 pt buffer.','The losses get smaller (−$13 instead of −$79), but about 80% of the trades that later win also close back past the T1 first. The win rate falls from 36% to 7% and the losing runs grow to 42. A 20 pt buffer is about the same as no exit; keep the fixed stop.','PO4 retest · 15m trend · 40 pts · 1:5: net +$8,692 → +$1,876 with this exit · 20 pt buffer +$6,420 · Max’s 2-candle rule (out when a later close breaks the violation candle low), no gap: PF 1.73, avg loss −$35, net +$6,336, but 17 losses in a row'],
-['trade','gen','OC.M1 · 09:30 15m BuBC above the pre-open high: long at the 09:45 close','The first NY 15m candle (09:30–09:45) closes above the previous 15m high AND above the pre-open high (08:00–09:30). Buy at the 09:45 close, stop 50 pts, target 1:3. Get out early on a 15m close below the candle low, else out at 16:59. One trade a day.','Buyers broke the pre-open range on the opening drive; when that holds, the day keeps going up. A candle that closes inside the pre-open range has no edge. Also tested and worse: 1m / 5m CDL entries, a limit at 50% of the candle or at its open, a 35 pt or candle-low stop, the opposite-BC exit, shorts. The pre-open filter was picked from 14 filters, so expect a bit less live.','2022–25 → 2026: 219 → 57 trades · avg RR +0.42 → +0.31 · Blended: WR 41% · avg RR +0.40 · PF 1.69 · t-score +3.75 · every year positive (2023 +0.34 · 2024 +0.51 · 2025 +0.37 · 2026 +0.41) · max 7 losses in a row · net +$10,926 at 1 MNQ in 46 months · max drawdown −$906. At 1:2: WR 45%, avg RR +0.28. No filter, 1:3: avg RR +0.26, t-score 2.97'],
+['trade','gen','C.M8 · 09:30 15m BuBC above the pre-open high: long at the 09:45 close','The first NY 15m candle (09:30–09:45) closes above the previous 15m high AND above the pre-open high (08:00–09:30). Buy at the 09:45 close, stop 50 pts, target 1:3. Get out early on a 15m close below the candle low, else out at 16:59. One trade a day.','Buyers broke the pre-open range on the opening drive; when that holds, the day keeps going up. A candle that closes inside the pre-open range has no edge. Also tested and worse: 1m / 5m CDL entries, a limit at 50% of the candle or at its open, a 35 pt or candle-low stop, the opposite-BC exit, shorts. The pre-open filter was picked from 14 filters, so expect a bit less live.','2022–25 → 2026: 219 → 57 trades · avg RR +0.42 → +0.31 · Blended: WR 41% · avg RR +0.40 · PF 1.69 · t-score +3.75 · every year positive (2023 +0.34 · 2024 +0.51 · 2025 +0.37 · 2026 +0.41) · max 7 losses in a row · net +$10,926 at 1 MNQ in 46 months · max drawdown −$906. At 1:2: WR 45%, avg RR +0.28. No filter, 1:3: avg RR +0.26, t-score 2.97'],
 ['no','gen','Don’t trade the London 02:00–05:00 or the 1H 09:00 opening candles','The 15m 02:00, 03:00, 04:00, 05:00 candles and the 1H 09:00 candle: their body close traded at the close (stops 50 pts / far end / middle, targets 1:1–1:5, early exits), and their high / low traded on 1m and 5m: touch → reverse, close past → continue, plain or with a CDL / CDS (limit at the PO4 T1 or at the close, 15m trend, 2-candle exit).','The first touch of a candle high / low is a coin flip: about 50% reverse, 50% close through, at every candle. London moves are short (median 14–31 pts before the far end is touched again). After a 1H 09:00 BC, only 1.5–2 more BCs follow before an opposite one.','Body close at the close: every London candle avg RR −0.12 to +0.04, all FAIL · 1H 09:00 BuBC 2026 −0.11, BeBC +0.11 (t-score 1.3) · touch / close entries: 0 of 2,550 combos profitable with t-score 2+ and a PASS · with CDL / CDS: 77 of 39,222 (luck level). One lead only: 1m 04:00 high touch → CDS short, 25 pts, 1:2, 15m trend: WR 50%, avg RR +0.24, t-score 2.44, but 10 trades in 2026'],
 ['no','gen','Touch + reaction vs close through at a level: no edge either way','The first touch of the day at 24 levels on 5m, and at the high / low of the 02:00–05:00, 09:30 and 09:45 15m candles and the 1H 09:00 candle on 1m and 5m. Reaction = it closes back → trade away. Close through → trade the break. Also tested with a 1m / 5m CDL / CDS at the level (limit at the PO4 T1 or at the close, 15m trend, Max’s 2-candle exit).','It is a coin flip: about 50% reverse and 50% close through, at every level and every candle. The follow-through before a close back across the level is short (median 10–45 pts).','Levels on 5m: 9 of 7,805 combos passed both periods · opening candles, plain entries: 0 of 2,550 profitable with t-score 2+ and a PASS · with CDL / CDS: 77 of 39,222 (luck level)'],
 ['no','gen','Level Retest outside NY AM, on shorts, or at the NY AM / PM / settlement levels','Max’s Level Retest (PO4 T1 retest after a CDL / CDS at a level) run in every session, both sides, with 13 new levels added.','Only NY AM longs work. The 15m trend filter helps in 2 of 3 places, the no-gap filter only half the time, and letting the trade run beats the 2-candle exit in 3 of 4 places.','Long, all sessions, 40 pts, 1:5: 09:30 open PF 1.60 · pre-open low 1.30 · NY AM high 0.92 · settlement 0.92 · London low 0.90 · shorts PF 0.87'],
-['watch','gen','LR.M1 · Level Retest A (Max Profit): 1m PO4 retest at an HTF level, NY AM, longs','Price reaches an HTF level (daily open, PDH / PDL, overnight or Asia high / low, 09:30 open, prior close, H1 / H4 GMC). The 1m structure flips up (CDL) with its PO4 T1 within 15 pts of the level, the 15m MMM trend is up, and no GMC gap sits between the PO4 T1 and the CDL. Buy limit at the PO4 T1, stop 40 pts, target 1:5, stop or target only, out at 16:59. 1 MNQ, one trade at a time.','The level is real: the same long with no level near loses in both periods. Corrected Oct 24 2026: a limit that fills on a candle closing back past the T1 now counts as filled (the first test skipped those fills, so it looked far better than it is). Getting out at the first close back past the T1 cuts 8 in 10 winners. A lead, not proven: paper-trade it first.','265 trades in 39 months · WR 37% · avg win $225 / avg loss −$79 · avg RR +0.42 · PF 1.67 · t-score 3.25 · net +$8,874 at 1 MNQ · max 9 losses in a row · max drawdown −$1,125 · 2026: 12 trades, +$456 · with no level near: PF 0.92'],
-['watch','gen','LR.M2 · Level Retest B (Small Loss): same setup, 35 pts, Max’s 2-candle exit','Same setup as LR.M1. Stop 35 pts, target 1:5. Max’s 2-candle exit: after a 1m close below the PO4 T1 (candle V), get out when a later candle closes below V’s low. A close back above the T1 resets it.','A close below the T1 happens in 82% of winners and 99% of losers, so the first close tells you nothing. Waiting for the second candle keeps more winners and cuts the average loss to about −$34. You pay with a 19% WR and longer losing runs.','299 trades in 39 months · WR 19% · avg win $261 / avg loss −$34 · avg RR +0.30 · PF 1.78 · t-score 2.96 · net +$6,379 at 1 MNQ · max 17 losses in a row · max drawdown −$742 · 2026: 13 trades, +$251'],
+['watch','gen','C.M6 · Level Retest A (Max Profit): 1m PO4 retest at an HTF level, NY AM, longs','Price reaches an HTF level (daily open, PDH / PDL, overnight or Asia high / low, 09:30 open, prior close, H1 / H4 GMC). The 1m structure flips up (CDL) with its PO4 T1 within 15 pts of the level, the 15m MMM trend is up, and no GMC gap sits between the PO4 T1 and the CDL. Buy limit at the PO4 T1, stop 40 pts, target 1:5, stop or target only, out at 16:59. 1 MNQ, one trade at a time.','The level is real: the same long with no level near loses in both periods. Corrected Oct 24 2026: a limit that fills on a candle closing back past the T1 now counts as filled (the first test skipped those fills, so it looked far better than it is). Getting out at the first close back past the T1 cuts 8 in 10 winners. A lead, not proven: paper-trade it first.','265 trades in 39 months · WR 37% · avg win $225 / avg loss −$79 · avg RR +0.42 · PF 1.67 · t-score 3.25 · net +$8,874 at 1 MNQ · max 9 losses in a row · max drawdown −$1,125 · 2026: 12 trades, +$456 · with no level near: PF 0.92'],
+['watch','gen','C.M7 · Level Retest B (Small Loss): same setup, 35 pts, Max’s 2-candle exit','Same setup as C.M6. Stop 35 pts, target 1:5. Max’s 2-candle exit: after a 1m close below the PO4 T1 (candle V), get out when a later candle closes below V’s low. A close back above the T1 resets it.','A close below the T1 happens in 82% of winners and 99% of losers, so the first close tells you nothing. Waiting for the second candle keeps more winners and cuts the average loss to about −$34. You pay with a 19% WR and longer losing runs.','299 trades in 39 months · WR 19% · avg win $261 / avg loss −$34 · avg RR +0.30 · PF 1.78 · t-score 2.96 · net +$6,379 at 1 MNQ · max 17 losses in a row · max drawdown −$742 · 2026: 13 trades, +$251'],
 ['watch','edge','Old MMM Pro Edge (S1–S5): fewer losses on screen, not more money','The earlier MMM Pro Edge, Auto mode on NQ: S1 RevBreak with Daily bias + 1h / 4h alignment on 5m / 1h / 4h, S2 RevBreak Scalp 1R on 1h, S3 ContBreak BC+ 1R on 1h. Its own stops and targets, max 100 candles, 1 pt cost.','It trades 1–19 times a month, so users see far fewer losses. But S1 on 5m (its main setup) lost in both periods, 1h was about break-even and 4h made little. Only S2 on MNQ 1h held up, at about 2 trades a month. EDGE PRO with the daily stop and Asia + NY AM makes far more, while losing 6 of 10 trades.','S1 5m −0.19 → −0.10 avg RR · S2 1h +0.33 → +0.17 (WR 68% → 59%) · S3 1h −0.00 → −0.08 · at $100 risk: 5m chart −$272 → −$193 a month · EDGE PRO now +$950 → +$1,760 a month'],
 ['no','gen','Don’t buy the 2nd break after the pullback closed back inside the box','Bull block break, then a pullback that closes back inside the box but not below the box low, then a close above the break candle high (or back above the box top). 5m / 15m / 1H, stops 50 pts / box low / pullback low / break candle, targets 1:1–1:3, hold, or out at a close below the box low or the first opposite BC.','After a close back inside, 54–56% go on to the 2nd break and 41–43% close below the box low first: close to a coin flip. Trading it is flat, and weaker than when the pullback never closes inside. Keep the strict rule: a close back inside = out.','50 pts · 1:2, all sessions: 5m −0.02 · 15m −0.00 · 1H +0.00 avg RR · never closed inside: 15m +0.02 · 1H +0.05 · 12,564 combos, 9 with t-score 2+ in both periods (luck)'],
 ['no','gen','Don’t short the failed GMC (c3 BuBC → NBCs → close below the block, then below the GMC)','Bull GMC with c3 a BuBC, NBC candles after it make the block, the block breaks down, then the first close below the GMC level → short with the stop above the block high (mirror for long). Also at the block break itself, and by 1 / 2–3 / 4+ NBCs. 5m / 15m / 1H.','After the entry, about 1.5 BCs follow the trade before an opposite BC, the same as a random entry. 1 in 5 breaks never closes below the GMC. No NBC count works in both periods.','Stop above the block high · 1:2: 1m −0.09 · 5m −0.02 · 15m +0.02 → −0.01 (2026) · 1H +0.03 → −0.10 avg RR · 50 pts · 1:2 on 1m: −0.03'],
@@ -561,7 +568,6 @@ const VERD=[
 ['no','gen','Don’t trade the flip (first opposite BC) or its confirmation BC on 5m–4H','Flip = the first opposite body close after a run of BCs the other way. Confirmation = the next BC in the flip direction, on the next candle or after NBC candles, beyond the flip candle low / high or not. 50 pts / entry candle / flip candle stops, targets 1:1–1:3, violation exit, every session.','After a flip, about 1.5 more BCs follow its way before the old side comes back: a coin flip. The flip loses a little; waiting for the confirmation only brings it to about 0.','10,995 combos · 3 with t-score 2+ in both periods (luck gives about 6). 50 pts · 1:2: flip 5m −0.02 → −0.02 (t −5.3) · 15m −0.02 → −0.04 · confirmation 15m +0.00 → +0.04 · 1H +0.01 → −0.05'],
 ['no','gen','Don’t trade a plain 1H or 4H body close (BuBC / BeBC / AFs) on its own','Every 1H and 4H close of every hour: the candle type traded at its close, stop 50 pts / candle extreme / ½ candle, target 1:1–1:3 or out at the next candle close / next session open.','No hour and no candle type held in both periods. The edge is in the MMM setups (T3+ break, GMC, P5+ break), not the plain close.','2,088 combos · 0 with t-score 2+ in both periods. 1H BuBC at 05:00 NY, 50 · 1:2: −0.01 → −0.12. 4H BuBC at 06:00 NY, 50 · 1:1: +0.10 → +0.15 (t-score 1.8 / 1.4, a lean only)'],
 ['no','gen','Don’t trade London (02:00–08:00) or pre-market (08:00–09:30) New York','Every EDGE PRO strategy, every hour, no session filter.','Almost every strategy lost there in both periods. XCS.M1 and XCS.M2 now follow the Only Asia + NY AM switch in MMM EDGE PRO.','XCS.M2: all hours +0.06 → +0.04 · Asia + NY AM +0.08 → +0.08 · London / pre / NY PM +0.03 → −0.02. XCS.M1: all hours +0.12 → +0.15 · Asia + NY AM +0.15 → +0.31'],
-['filter','edge','EDGE PRO daily stop: no new trade after 2 losing trades in a day','All setups together, trading day 18:00 → 18:00 New York. Open trades keep running. Now ON by default in MMM EDGE PRO (Daily Stop: After N Losses = 2).','Bad days keep going bad: after the first losses of the day, the next trades are weaker. A day with 0 wins and 10+ losses came 7 times in 767 days (2022–25).','Max 2 open trades, own stops: worst day −12 → −14 R becomes −3 R · max drawdown 74 → 43 R becomes 37 → 25 R · avg RR +0.09 → +0.07 becomes +0.13 → +0.24 · profit per day +0.65 → +0.74 R becomes +0.44 → +0.82 R'],
 ['no','edge','Don’t move the EDGE PRO entry past a liquidity cluster','Instead of entering at the signal close, a limit 1 tick past the cluster TOP (above the highest high for a short). The cluster closest to the VWAP / ATR line, else the nearest one. Tested on every EDGE PRO market setup, limit waits 10 or 20 candles, many stops and targets.','The limit fills only when the signal is wrong (price runs through the cluster). When the signal is right, price never comes back, so the best trades are missed.','Fixed 50 · 1:2 · 20 candles: filled 41% → 37% · filled avg RR +0.07 → −0.20 vs close entry +0.09 → +0.12 · points per signal −2.8 → −9.9 (t-score −3.2 / −5.5). Every version lost in both periods'],
 ];
 
@@ -577,8 +583,8 @@ s:{name:'MMM PRO s',was:'Order Flow Suite · the swing engine',idea:'Reads contr
  see:[['sh / sl → PO4','Swing highs and lows. The ones that start a leg become PO4s.'],['CDLs / CDSs · LDs / SDs','Flips and continuations of the swing structure.'],['Stars ★','Break quality 1–4 from volume, delta and an accelerator candle.'],['SWP+','Strong sweep: a wick takes a swing and closes back, with strong volume pushing back.'],['BuAx / BeAx','Accelerator candles: big range + delta + strong volume.'],['UOG / UDG / ULG','Unfair opening, distribution and liquidity gaps.'],['News dots','High / medium / low impact news, 15 or 30 minutes before.']],
  edges:[['WATCH','15m LDs / SDs at the close · hold to the opposite T1','+0.10 → +0.18'],['DON’T TRADE','SWP+ strong LONG','+0.21 → −0.09'],['DON’T TRADE','Swing flip → eBlock touch + ladder','negative'],['—','Stars, AX, OFS filters','added nothing']]},
 edge:{name:'MMM EDGE PRO',was:'Every strategy-book edge in one indicator',idea:'Waits for the market to prove who is in control on closed 15m candles, trades only Asia and NY AM, banks half quickly and moves the stop to entry.',
- see:[['EP.M1 · T3+ Break','LDx2+ / SDx2+ · 1.5 ATR · runner to the opposite break / 1:6 · daily filter'],['EP.M2 · GMC Long','c3 close · 1 ATR · ½ at +0.75R · runner 1:3 · daily filter'],['EP.M3 · GMC AFs Long','c3 close · 1 ATR · runner 1:6 · daily + 1h'],['EP.M4 · Contraction limit','limit 75% · Asia fill · fixed 50 · runner 1:2'],['EP.M5 · BC+ Long','close · fixed 50 · runner 1:2 · daily + 1h'],['Trade lines','Entry, SL (one moving line), ½ TP and TP, with labels like EP.M1 T1 (setup 1, trade 1).'],['Gate + Max Open','One gate dropdown (5 tested gates). Default: MMPD 27 Momentum, max 2 open.'],['Prop Survival Risk Management','Your account rules → pass rate, sessions to pass, best size, survival size.'],['More strategies','X.M1–X.M3, C.M1, C.M2, XCS.M1–XCS.M5, LR.M1, LR.M2 (1m chart) and OC.M1: full trades with their own tested stop and target, no MMPD.'],['Default','Only EP.M1 and the LIVE table are on. Pick ONE strategy, study it, backtest it, then decide.']],
- edges:[['—','EP.M1–M5 combined · ½ out · no gate','WR 62% → 68% · +0.08 → +0.14'],['—','EP.M1–M5 combined · ½ out · 27 Momentum','WR 65% → 70% · +0.15 → +0.16'],['—','EP.M1–M5 combined · 27 Mom · max 2 open','worst run 18R · pass 92% / 100%'],['DON’T TRADE','Entry offsets with ½ out','close beats every offset']]},
+ see:[['X.M4 · T3+ Break','LDx2+ / SDx2+ · 1.5 ATR · runner to the opposite break / 1:6 · daily filter'],['C.M3 · GMC Long','c3 close · 1 ATR · ½ at +0.75R · runner 1:3 · daily filter'],['C.M4 · GMC AFs Long','c3 close · 1 ATR · runner 1:6 · daily + 1h'],['X.M5 · Contraction limit','limit 75% · Asia fill · fixed 50 · runner 1:2'],['C.M5 · BC+ Long','close · fixed 50 · runner 1:2 · daily + 1h'],['Trade lines','Entry, SL (one moving line), ½ TP and TP, with labels like X.M4 T1 (setup 1, trade 1).'],['Gate + Max Open','One gate dropdown (5 tested gates). Default: MMPD 27 Momentum, max 2 open.'],['Prop Survival Risk Management','Your account rules → pass rate, sessions to pass, best size, survival size.'],['More strategies','X.M1–X.M3, C.M1, C.M2, XCS.M1–XCS.M5, C.M6, C.M7 (1m chart) and C.M8: full trades with their own tested stop and target, no MMPD.'],['Default','Only X.M4 and the LIVE table are on. Pick ONE strategy, study it, backtest it, then decide.']],
+ edges:[['TRADE','X.M4 · T3+ Break · ½ out','WR 72% · ½ at +0.5R, rest 1:6 RR · avg RR +0.18'],['TRADE','C.M4 · GMC AFs Long · ½ out','WR 71% · ½ at +0.5R, rest 1:6 RR · avg RR +0.17'],['TRADE','C.M3 · GMC Long · ½ out','WR 60% · ½ at +0.75R, rest 1:3 RR · avg RR +0.08'],['DON’T TRADE','Entry offsets with ½ out','close beats every offset']]},
 xcs:{name:'MMM Pro XCS One',was:'The scenario guide · what usually happens next (v5.0)',idea:'One master map of order flow with NO strategy and NO signals. It runs the zone engine x, the candle engine c and the swing engine s together, and writes next to each closed candle, break, box, block, vPOC, GMC, swing and void what usually happened next in the tests (NQ 2022–25 + MNQ 2026, blended). You decide. The XCS trade edges (XCS.M1, XCS.M2, XCS.M5) run in MMM EDGE PRO. Everything is deleted when it is used up. Only closed candles count: no repaint.',
  see:[['Zone engine x','Boxes (Contraction by default, G1 grow), T# / P# / R#, CDLx / CDSx flips, LDx / SDx continuations, eBlocks / iBlocks.'],['Trend odds (x)','At the current T# and P#: how often the next break goes on or flips, and how often price comes back to the break line first.'],['Balance Control','Green line at 2/3 of the live box (buyers), red line at 1/3 (sellers). The side in control gets the thick line. Δ+ / Δ− = delta tie-breaker.'],['Box vPOC','Solid line, width 1–6 by its volume, with the odds the box breaks up or down from where the POC sits.'],['Candle compass (c)','A tiny MMCB tag on the last closed candles (BC+, BC−, C2+, AFs+, CI…). Hover = how often the next candle took its high, its low, or closed past it.'],['Pullback zones','After a PLUS candle: the P–MP band (87.5–75%). After a MINUS candle: the BAL–MD band (50–25%). With how often it fills and then takes the target.'],['GMC lines (c)','A line at the GMC open with the c3 type and the odds price comes back to it or closes through it in the next 20 candles. Deleted on a close through the GMC open.'],['Swing protected levels (s)','The newest SL s (longs) and SH s (shorts), with how often they get swept or broken in the next 20 candles.'],['★ Highlights','Only what has real power in the tests: ★ gold GMC (the 4 GMC types that held in both periods), ★ tall blocks (2+ ATR: the first touch holds about 75–88%), ★ power candles, ★ vPOC in the top / bottom third. No entries, stops or targets.'],['WHAT NEXT table','The last candle, the trend, the live box and its vPOC, the pullback zone, the closest GMC, the trend block, the swing levels and the newest void, each with the odds of what usually happens next.'],['Same toolkit','Structure TF (HTF in LTF), MMPD gate with XP / XD labels, HTF bias filter, news dots, structural voids.']],
  edges:[['USE AS FILTER','Balance control: close in the top / bottom third of the live box','breaks that way 62–72% · 7+ candles 72–79%'],['USE AS FILTER','vPOC in the top / bottom third of the box','breaks that way 62–71% / 56–64%'],['—','BC+ / C2+ candle: the next candle takes its high (bull) / its low (bear)','78–86% · any candle about 50%'],['—','After a trend break: the next break goes on','60–71% · price comes back to the break line first about 80%'],['—','eBlock / iBlock: the first touch holds 10 candles','48–55% · any random box about 60%'],['USE AS FILTER','★ Tall block: 2+ ATR high','holds 10 candles about 75–80% · 3+ ATR about 88% · under 0.9 ATR about 40–48%']]},
@@ -593,9 +599,9 @@ P1:['P1 — the first pullback','The first box after T1. Its top is the level to
 LD1:['LD1 — the 1st continuation','A close above P1. The trend is now on T2. One continuation is not proof yet.'],
 R1:['R1 → T2','Where price restarted after the pullback. It becomes T2. Its zone is an iBlock.'],
 P2:['P2 — the second pullback','Another box, another fight. Sellers try again and buyers absorb them.'],
-LD2:['LD2 — EP.M1 fires here','A close above P2: the trend has beaten the other side three times (T3). EP.M1 and X.M1 enter at this close.'],
+LD2:['LD2 — X.M4 fires here','A close above P2: the trend has beaten the other side three times (T3). X.M4 and X.M1 enter at this close.'],
 R2:['R2 → T3','The base of the third step. The ½-out stop goes to entry once +0.5R prints.'],
-LD3:['LD3 — still EP.M1','Every later continuation (T4, T5…) also fires EP.M1.']
+LD3:['LD3 — still X.M4','Every later continuation (T4, T5…) also fires X.M4.']
 };
 
 // ───────────────── guide tabs ─────────────────
@@ -611,14 +617,14 @@ G.start=sc=>{
 <button type="button" data-go="verdicts"><b class="serif">Verdicts</b><span>The decision board: trade, use as a filter, watch, or don’t trade, with the reason for each.</span></button>
 </nav></section>
 <section class="wide"><div class="sh"><h2 class="serif">The book at a glance</h2><a class="lk" href="/strategies/">Open the full strategy book</a></div>
-<div class="tw"><table class="bk-at" id="bk-at"><thead><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Status</th><th class="l">Chart</th><th class="l">When</th><th>WR</th><th>avg RR</th><th>PF</th><th>t-score</th><th>Trades a month</th><th class="l">2-period test</th></tr></thead>
+<div class="tw"><table class="bk-at" id="bk-at"><thead><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Status</th><th class="l">Chart</th><th class="l">When</th><th class="l">Target</th><th>WR</th><th>avg RR</th><th>PF</th><th>t-score</th><th>Trades a month</th><th class="l">2-period test</th></tr></thead>
 <tbody><tr><td class="l" colspan="11">Loading…</td></tr></tbody></table></div>
 <p class="note">Row color: green = profitable and probably not luck (avg RR above 0, t-score 2+, did not fail a period), yellow = maybe, red = not profitable. Click a row to open its rules.</p></section>
 <section><h2 class="serif">Latest findings</h2><ul class="log">
 <li><time>Oct 25 2026</time><div><b>A touch is a coin flip.</b> At every level and every opening candle, about half of first touches reverse and half close through. Neither pays: 0 of 2,550 plain combos and 77 of 39,222 CDL / CDS combos passed (luck level).</div></li>
-<li><time>Oct 25 2026</time><div><b>OC.M1 passes.</b> The 09:30 15m BuBC that closes above the pre-open high: buy the 09:45 close, 50 pts, 1:3, out on a close below the candle low. avg RR +0.40, t-score 3.75, every year positive. London opening candles: no edge.</div></li>
+<li><time>Oct 25 2026</time><div><b>C.M8 passes.</b> The 09:30 15m BuBC that closes above the pre-open high: buy the 09:45 close, 50 pts, 1:3, out on a close below the candle low. avg RR +0.40, t-score 3.75, every year positive. London opening candles: no edge.</div></li>
 <li><time>Oct 24 2026</time><div><b>Honest fills, corrected.</b> The first Level Retest test skipped limit fills on candles that closed back past the PO4 T1. Those trades mostly lose, so it looked far better than it is. Every number now counts them, and the old figures are withdrawn.</div></li>
-<li><time>Oct 24 2026</time><div><b>Don’t get out at the first close back past the T1.</b> 8 in 10 winners close below it first. Max’s 2-candle exit (out when a later close breaks the violation candle’s low) keeps more winners: PF 1.78, avg loss −$34, but a 19% WR (LR.M2).</div></li>
+<li><time>Oct 24 2026</time><div><b>Don’t get out at the first close back past the T1.</b> 8 in 10 winners close below it first. Max’s 2-candle exit (out when a later close breaks the violation candle’s low) keeps more winners: PF 1.78, avg loss −$34, but a 19% WR (C.M7).</div></li>
 <li><time>Oct 24 2026</time><div><b>Skip the gap trades.</b> When a GMC gap sits between the PO4 T1 and the CDL, the retest fills half as often and makes nothing (PF 1.00).</div></li></ul></section>
 <section><h2 class="serif">How we test</h2><ul class="std">
 <li><b>Two periods.</b> Rules are found on 2022–25 NQ, then checked on fresh 2026 MNQ. PASS = avg RR above +0.05 in both (30+ and 10+ trades). It is a test, not a profit score.</li>
@@ -628,7 +634,7 @@ G.start=sc=>{
 <li><b>Controls.</b> Random entries and “no level near” versions run beside each idea. An edge must beat them.</li></ul></section>
 <section><h2 class="serif">The 7 big lessons</h2><ol>
 <li><b>No candle or break wins alone.</b> Context does: the trend step (T3+), the time of day, the daily candle, a real level.</li>
-<li><b>Trade 15m in Asia + NY AM.</b> Plain 1m–5m signals lose to costs. 1m works only as a precise entry at a level (LR.M1).</li>
+<li><b>Trade 15m in Asia + NY AM.</b> Plain 1m–5m signals lose to costs. 1m works only as a precise entry at a level (C.M6).</li>
 <li><b>Enter at the close.</b> Deep limits are the worst entries. A deep fill often means the break failed.</li>
 <li><b>Use wide stops.</b> Volatility (ATR) or 35–50 pt stops. Tight structure stops get hit by noise.</li>
 <li><b>½ out at +0.5R lifts WR above 60%.</b> A fixed 1:2 target never reached 50% WR in both periods.</li>
@@ -657,7 +663,7 @@ G.start=sc=>{
 </div></section></div>`;
  sc.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
  const pc=v=>Math.round(v*100)+'%',sg=v=>(v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(2),TS={pass:'✔ PASS',fail:'✖ FAIL',unsure:'~ NOT SURE'};
- const paintAt=L=>{const tb=sc.querySelector('#bk-at tbody');if(!tb)return;const pm=s=>s.all.tpm>0?s.all.net*s.all.tpm/s.all.n:0;L=L.slice().sort((a,b)=>(b.all.wr-a.all.wr)||(pm(b)-pm(a)));tb.innerHTML=L.map(s=>{const a=s.all;return `<tr class="v-${s.color}" data-href="/strategies/#s-${s.code.replace(/\./g,'-')}" tabindex="0"><td class="l code">${esc(s.code)}</td><td class="l">${esc(s.name)}</td><td class="l"><span class="st ${s.status}">${s.status==='trade'?'TRADE':'WATCH'}</span></td><td class="l">${esc(s.tf)}</td><td class="l wh">${esc(s.when)}</td><td>${pc(a.wr)}</td><td class="${a.av>0?'pos':'neg'}">${sg(a.av)}</td><td>${a.pf.toFixed(2)}</td><td>${a.t.toFixed(2)}</td><td>${a.tpm}</td><td class="l"><span class="ts ${s.test}">${TS[s.test]}</span></td></tr>`}).join('');
+ const paintAt=L=>{const tb=sc.querySelector('#bk-at tbody');if(!tb)return;const pm=s=>s.all.tpm>0?s.all.net*s.all.tpm/s.all.n:0;L=L.slice().sort((a,b)=>(b.all.wr-a.all.wr)||(pm(b)-pm(a)));tb.innerHTML=L.map(s=>{const a=s.all;return `<tr class="v-${s.color}" data-href="/strategies/#s-${s.code.replace(/\./g,'-')}" tabindex="0"><td class="l code">${esc(s.code)}</td><td class="l">${esc(s.name)}</td><td class="l"><span class="st ${s.status}">${s.status==='trade'?'TRADE':'WATCH'}</span></td><td class="l">${esc(s.tf)}</td><td class="l wh">${esc(s.when)}</td><td class="l"><span class="tg">${esc(s.tgt||'')}</span></td><td>${pc(a.wr)}</td><td class="${a.av>0?'pos':'neg'}">${sg(a.av)}</td><td>${a.pf.toFixed(2)}</td><td>${a.t.toFixed(2)}</td><td>${a.tpm}</td><td class="l"><span class="ts ${s.test}">${TS[s.test]}</span></td></tr>`}).join('');
   tb.querySelectorAll('tr[data-href]').forEach(r=>{const o=()=>{location.href=r.dataset.href};r.onclick=o;r.onkeydown=e=>{if(e.key==='Enter')o()}})};
  if(window.__SB)paintAt(window.__SB);else fetch('/strategies/strategies.json').then(r=>r.json()).then(j=>{window.__SB=j.strategies;if(cur&&cur.id==='start')paintAt(j.strategies)}).catch(()=>{const tb=sc.querySelector('#bk-at tbody');if(tb)tb.innerHTML='<tr><td class="l" colspan="11">The book could not load. <a href="/strategies/">Open the strategy book</a>.</td></tr>'});
 };
@@ -690,7 +696,7 @@ function stairSVG(e){
  nodes.forEach(n=>{const on=n[0]===DIAK;const cls=n[4]===1?'mg':n[4]===2?'tl':n[4]===3?'mut':'mg';
   const isLD=n[0].startsWith('LD');const tx=n[0]==='flip'?n[1]+8:n[0]==='T1'?n[1]-30:n[0]==='R1'||n[0]==='R2'?n[1]+2:isLD?n[1]-8:n[1]+6,ty=n[0]==='flip'?n[2]+12:n[0]==='T1'?n[2]+18:n[0]==='R1'||n[0]==='R2'?n[2]+14:isLD?n[2]-6:n[2]-8;const anc=isLD?'end':'start';
   s+=`<g data-k="${n[0]}" style="cursor:pointer" tabindex="0" role="button" aria-label="${esc(n[3])}"><circle cx="${n[1]}" cy="${n[2]}" r="${on?6:4}" style="fill:${on?'var(--mag)':'var(--panel)'};stroke:var(--fg);stroke-width:1.5"/><rect x="${isLD?tx-n[3].length*7-3:tx-3}" y="${ty-11}" width="${n[3].length*7+6}" height="15" fill="transparent"/><text class="${cls}" x="${tx}" y="${ty}" text-anchor="${anc}" style="font-weight:${on?700:500}">${esc(n[3])}</text></g>`});
- s+=`<text class="mut" x="20" y="246">start</text><text class="mut" x="465" y="246" text-anchor="end">T3+ = EP.M1 zone</text></svg>`;
+ s+=`<text class="mut" x="20" y="246">start</text><text class="mut" x="465" y="246" text-anchor="end">T3+ = X.M4 zone</text></svg>`;
  return s;
 }
 function mmpdSVG(){
@@ -724,7 +730,7 @@ G.ind=sc=>{
 // how we tested
 const LAD=[['XP','100%','The candle high (long view). A limit here is a chase.','Not a pullback entry. Used as the target side: plus candles take their extreme 73–86% of the time.'],
 ['P','87.5%','A 12.5% pullback.','Daily BuBC+: P fills 89%, and 79% of those still take the high. 1h AFs+ at P was the only candle-type edge in 2022–25 (+0.21, t 3.08), but it faded in 2026 (0.00).'],
-['MP','75%','A quarter pullback.','Fills about 76–80%, target after ~50–62%. EP.M4 uses MP (75%) of the break candle.'],
+['MP','75%','A quarter pullback.','Fills about 76–80%, target after ~50–62%. X.M5 uses MP (75%) of the break candle.'],
 ['BAL','50%','The candle’s middle. Balance.','Fills 43%, high after 37% (daily BuBC+). Best for minus candles: 4H BuBC− at BAL +0.13 → +0.07.'],
 ['MD','25%','A deep pullback.','Deep limits were among the worst entries: the break often failed first.'],
 ['D','12.5%','Very deep.','L-D was one of the worst entries in every grid.'],
@@ -758,7 +764,7 @@ G.tested=sc=>{
 <tr><td>X1</td><td class="l">Stop / target only</td><td class="l">As good as any</td></tr>
 <tr><td>X2 · X3</td><td class="l">Close through / confirmed violation (O or C)</td><td class="l">X3-C trims a little</td></tr>
 <tr><td>X4</td><td class="l">BC trail</td><td class="l">Worst at 1:7 in 2026</td></tr>
-<tr><td>X5</td><td class="l">Out on the first opposite break</td><td class="l">Used by EP.M1</td></tr>
+<tr><td>X5</td><td class="l">Out on the first opposite break</td><td class="l">Used by X.M4</td></tr>
 <tr><td>1:2 → 1:7</td><td class="l">Targets read from the best price reached</td><td class="l">Barely matters (±0.02)</td></tr></table></div></section>
 <section><h2>The 7 proof checks <span class="note">· all must pass</span></h2><ol id="pc" style="padding-left:0;list-style:none;display:grid;gap:6px;margin:0"></ol></section>
 <section><h2>The funnel</h2><div id="fun"></div><p class="note">With this many combos, a few thousand will look good by luck alone. That is why the page trusts themes that repeat across engines and periods, not single lucky rows.</p></section>
@@ -784,6 +790,9 @@ G.tested=sc=>{
 
 // verdicts
 const VS={s:'all',i:'all',q:''};
+// the target of a verdict card: a strategy code → its tested target, else the first 1:N in its title or rule
+const VTG={'X.M1':'1:6 RR or the opposite break','X.M2':'1:2 RR','X.M3':'1:2 RR','X.M4':'½ at +0.5R, rest 1:6 RR','X.M5':'½ at +0.5R, rest 1:2 RR','C.M1':'1:6 RR','C.M2':'1:2 RR','C.M3':'½ at +0.75R, rest 1:3 RR','C.M4':'½ at +0.5R, rest 1:6 RR','C.M5':'½ at +0.5R, rest 1:2 RR','C.M6':'1:5 RR','C.M7':'1:5 RR','C.M8':'1:3 RR','XCS.M1':'1:2 RR','XCS.M2':'1:2 RR','XCS.M3':'1:2 RR','XCS.M4':'1:2 RR','XCS.M5':'1:2 RR'};
+function vTg(v){const c=String(v[2]).match(/^(XCS|X|C)\.M\d+/);if(c&&VTG[c[0]])return VTG[c[0]];const m=(v[2]+' '+v[3]).match(/1:(\d+)/);return m?'1:'+m[1]+' RR':''}
 G.verdicts=sc=>{
  sc.innerHTML=`<div class="doc"><section class="wide flat"><div class="ctl"><input class="srch" id="vq" type="search" placeholder="Search (e.g. GMC, MMPD, 1h)…" value="${esc(VS.q)}" aria-label="Search verdicts"><div class="chips" id="vs"></div></div><div class="ctl" style="margin-top:8px"><span class="lab">Indicator</span><div class="chips" id="vi"></div><span class="cnt" id="vn"></span></div></section><section class="wide flat"><p class="note" style="margin:0">Numbers on each card: <b>WR</b> = win rate · <b>avg RR</b> = average result per trade in R (R = one full stop) · <b>PF</b> = profit factor (money won ÷ lost) · <b>t</b> = t-score (2+ = not luck) · <b>A → B</b> = 2022–25 → 2026.</p></section><section class="wide flat"><div class="vb" id="vb"></div></section></div>`;
  const sopts=[['all','All'],['trade','TRADE'],['filter','USE AS FILTER'],['watch','WATCH'],['no','DON’T TRADE']];
@@ -793,99 +802,81 @@ G.verdicts=sc=>{
  function paint(){const q=VS.q.trim().toLowerCase();
   const L=VERD.filter(v=>(VS.s==='all'||v[0]===VS.s)&&(VS.i==='all'||v[1]===VS.i)&&(!q||v.join(' ').toLowerCase().includes(q)));
   $('#vn').textContent=L.length+' of '+VERD.length+' decisions';
-  $('#vb').innerHTML=L.map(v=>`<div class="vc ${v[0]}"><div class="h"><span class="st ${v[0]}">${ST[v[0]]}</span><span class="tag">${iname[v[1]]}</span></div><h4>${esc(v[2])}</h4><p>${esc(v[3])}</p><p class="why"><b>Why:</b> ${esc(v[4])}</p><div class="nums">${esc(v[5])}</div></div>`).join('')||'<p class="note">Nothing matches.</p>'}
+  $('#vb').innerHTML=L.map(v=>{const tg=vTg(v);return `<div class="vc ${v[0]}"><div class="h"><span class="st ${v[0]}">${ST[v[0]]}</span><span class="tag">${iname[v[1]]}</span>${tg?`<span class="tag tg">target ${esc(tg)}</span>`:''}</div><h4>${esc(v[2])}</h4><p>${esc(v[3])}</p><p class="why"><b>Why:</b> ${esc(v[4])}</p><div class="nums">${esc(v[5])}</div></div>`}).join('')||'<p class="note">Nothing matches.</p>'}
  mk('vs',sopts,'s');mk('vi',IND,'i');$('#vq').oninput=e=>{VS.q=e.target.value;paint()};paint();
 };
 
-// EDGE PRO LAB
-const EPN={Z:'EP.M1',G:'EP.M2',B:'EP.M3',C:'EP.M4',M:'EP.M5'};
-const SN={Z:'EP.M1 · T3+ Break',G:'EP.M2 · GMC Long',B:'EP.M3 · GMC AFs',C:'EP.M4 · Contraction',M:'EP.M5 · BC+ Long',A:'EP.M1–M5 combined'};
+// EDGE PRO LAB · one strategy at a time (the 5 strategies that started in MMM EDGE PRO)
+const EPN={Z:'X.M4',G:'C.M3',B:'C.M4',C:'X.M5',M:'C.M5'};
+const SN={Z:'X.M4 · T3+ Break',G:'C.M3 · GMC Long',B:'C.M4 · GMC AFs',C:'X.M5 · Contraction',M:'C.M5 · BC+ Long'};
+const EKS=['Z','G','B','C','M'];
+// the target of each strategy, by exit style (½ out = half off early, the rest runs to the target)
+const ETG={half:{Z:'½ at +0.5R, rest 1:6 RR',G:'½ at +0.75R, rest 1:3 RR',B:'½ at +0.5R, rest 1:6 RR',C:'½ at +0.5R, rest 1:2 RR',M:'½ at +0.5R, rest 1:2 RR'},full:{Z:'1:6 RR',G:'1:6 RR',B:'1:6 RR',C:'1:2 RR',M:'1:2 RR'}};
 const GATES=[['NONE','No gate'],['27|MOMENTUM','MMPD 27 · Momentum'],['9|MOMENTUM','MMPD 9 · Momentum'],['DMA|TOUCH','Delta · Touch first'],['DMA|TOUCH+50','Delta · Touch + 50']];
-const EL={g:'27|MOMENTUM',st:'ATR',ex:'half',mo:'0',tk:'Z',tm:'w',om:'prop',og:'MOM',ov:0,mk:'Z',mm:'prop',fe:'X1 · MMPD leaves the extreme',fs:'ALL'};
+const EL={g:'27|MOMENTUM',st:'ATR',ex:'half',gk:'Z',tk:'Z',tm:'w',mk:'Z',mm:'prop',fe:'X1 · MMPD leaves the extreme',fs:'ALL'};
 G.edge=async sc=>{
  sc.innerHTML='<div class="loading">Loading test data…</div>';let D;try{D=await getD()}catch(e){sc.innerHTML='<div class="loading">The data could not load. Reload the page to try again.</div>';return}
  if(cur.id!=='edge')return;
  sc.innerHTML=`<div class="doc">
-<section class="wide"><h2>MMM EDGE PRO · switch the settings</h2>
+<section class="wide"><h2>Each strategy · switch the settings</h2>
 <div class="ctl"><span><span class="lab">Gate</span><span class="seg" id="eg"></span></span></div>
-<div class="ctl" style="margin-top:8px"><span><span class="lab">Stop</span><span class="seg" id="est"></span></span><span><span class="lab">Exit</span><span class="seg" id="eex"></span></span><span><span class="lab">Max open</span><span class="seg" id="emo"></span></span></div>
+<div class="ctl" style="margin-top:8px"><span><span class="lab">Stop</span><span class="seg" id="est"></span></span><span><span class="lab">Exit</span><span class="seg" id="eex"></span></span></div>
 <p class="note" id="enote"></p>
-<div class="tw" id="etab"></div><p class="note"><b>EP.M4 in 2026:</b> these numbers include months with only 15-min bars, which flatter limit fills. On the 1-min / 5-min months EP.M4 is +0.06 (WATCH). It changes EP.M1–M5 combined very little (2026: +0.142 → +0.136).</p><p class="note"><b>How to read it:</b> every cell shows 2022–25 first, then 2026. <b>R</b> = one full stop. Example: “71% → 76%” = 71% of trades were winners in 2022–25 and 76% in 2026. “+0.16” = on average each trade made 16% of what it risked: risking $100 a trade, about +$16 a trade.</p></section>
-<section><h2>Average result per trade (R), by setup</h2>${KEY}<div class="ch" id="ech"></div></section>
-<section><h2>Same settings, every gate <span class="note">· EP.M1–M5 combined</span></h2><div class="tw" id="egt"></div><div id="eps"></div></section>
-<section class="wide"><h2>Win rate by time of day and weekday</h2><div class="ctl"><span><span class="lab">Setup</span><span class="seg" id="tk"></span></span><span><span class="lab">View</span><span class="seg" id="tm"></span></span></div>${KEY}<div class="ch" id="tch"></div><p class="note"><b>How to read it:</b> each bar = the win rate of the trades that started in that window (New York time). The small numbers under each window = how many trades: 2022–25 / 2026. The dotted line = 60% win rate. ½ out, no gate. One rule holds everywhere: 00:00–02:00 is the weakest window for every setup, so the indicator skips it (except EP.M4).</p></section>
-<section class="wide"><h2>Entry offset · what if you don’t enter at the close?</h2><div class="ctl"><span><span class="lab">Trade</span><span class="seg" id="om"></span></span><span><span class="lab">Gate</span><span class="seg" id="og"></span></span><label class="lab" style="display:flex;align-items:center;gap:6px">Offset <input type="range" id="ov" min="-10" max="10" step="1" value="${EL.ov}" style="width:180px" aria-label="Entry offset in points"></label></div>${KEY}<div class="ch" id="och"></div><div class="tw" id="otab"></div><p class="note">+ = a limit that many points better than the close (long close − X, short close + X). − = a stop entry that many points worse. Stop price unchanged, targets rebuilt from the real fill, orders expire after 1 hour. EP.M4 keeps its own limit.</p></section>
-<section><h2>Where MMPD sits at the signal</h2><div class="ctl"><span><span class="lab">Setup</span><span class="seg" id="mk"></span></span></div><div class="ctl" style="margin-top:6px"><span><span class="lab">Trade</span><span class="seg" id="mm"></span></span></div><div class="tw" id="mtab"></div><p class="note">MMPD 27 on 15m. CHASE = long at 80+ / short at 20 or lower. FADE = the opposite. The whole edge lives in CHASE.</p></section>
+<div class="tw" id="etab"></div><p class="note"><b>X.M5 in 2026:</b> these numbers include months with only 15-min bars, which make limit fills look better. On the 1-min / 5-min months X.M5 makes +0.06 avg RR (WATCH).</p></section>
+<section><h2>Avg RR per trade, by strategy</h2>${KEY}<div class="ch" id="ech"></div></section>
+<section><h2>Every gate for one strategy</h2><div class="ctl"><span><span class="lab">Strategy</span><span class="seg" id="egk"></span></span></div><div class="tw" id="egt"></div><p class="note">Same stop and exit as above. For the 50k prop evaluation of each strategy, open <b>PROP &amp; SIZE</b>.</p></section>
+<section class="wide"><h2>Win rate by time of day and weekday</h2><div class="ctl"><span><span class="lab">Strategy</span><span class="seg" id="tk"></span></span><span><span class="lab">View</span><span class="seg" id="tm"></span></span></div>${KEY}<div class="ch" id="tch"></div><p class="note" id="tnote"></p></section>
+<section><h2>Where MMPD sits at the signal</h2><div class="ctl"><span><span class="lab">Strategy</span><span class="seg" id="mk"></span></span></div><div class="ctl" style="margin-top:6px"><span><span class="lab">Trade</span><span class="seg" id="mm"></span></span></div><div class="tw" id="mtab"></div><p class="note">MMPD 27 on 15m. CHASE = long at 80+ / short at 20 or lower. FADE = the opposite. MIDDLE = in between. The whole edge lives in CHASE.</p></section>
 <section><h2>Trading FROM the extreme <span class="note">· the fade ideas</span></h2><div class="ctl"><select id="fe" aria-label="Fade entry idea" style="font-family:var(--f-ui);font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 6px;max-width:100%"></select><span class="seg" id="fs"></span></div><div class="tw" id="ftab"></div><p class="note">None of these passed. They are here so you can see it for yourself.</p></section>
 </div>`;
  const gk=(st,g,k,w)=>D.gates[`${st}|${g}|${k}|${w}`];
- function stopKey(){return EL.ex==='full'?'FULL':EL.st}
- function row(k,w){const v=gk(stopKey(),EL.g,k,w);if(!v)return null;if(EL.mo!=='0'&&EL.ex==='half'){return k==='A'?v['o'+EL.mo]:null}return v}
+ const stopKey=()=>EL.ex==='full'?'FULL':EL.st;
+ const exK=()=>EL.ex==='full'?'full':'half';
+ const wrT=(o,f,k)=>`${AR(o.wr,f.wr,P0)} <small class="tg">${ETG[exK()][k]}</small>`;
+ const HEAD=`<tr><th class="l">Strategy</th><th>Trades<small>2022–25 / 2026</small></th><th>WR · target<small>win rate 2022–25 → 2026</small></th><th>avg RR<small>per trade · 2022–25 → 2026</small></th><th>PF<small>profit factor</small></th><th>t-score<small>2+ = probably not luck</small></th><th>Max drawdown<small>in R · 2022–25 / 2026</small></th></tr>`;
+ const ROW=(lab,o,f,k,me)=>`<tr${me?' class="me"':''}><td class="l"><b>${lab}</b></td><td>${N0(o.n)} / ${N0(f.n)}</td><td>${wrT(o,f,k)}</td><td><span class="${PC(o.av)}">${R2(o.av)}</span> → <span class="${PC(f.av)}">${R2(f.av)}</span></td><td>${AR(o.pf,f.pf,F2)}</td><td>${T1(o.t)} / ${T1(f.t)}</td><td>${T1(o.dd)} / ${T1(f.dd)}</td></tr>`;
  function paintMain(){
-  const full=EL.ex==='full',mo=EL.mo!=='0';
-  $('#enote').innerHTML=(full?'Full exit = no ½ out: the whole trade runs to the setup target (tested ATR stops). ':'½ out at +0.5R (EP.M2 +0.75R), stop to entry, runner to the setup target. ')+(mo?(full?'Max open is tested with ½ out only. ':`Max ${EL.mo} open is tested on EP.M1–M5 together (trades are skipped while ${EL.mo} are running). `):'')+(EL.st==='F50'&&!full?'Fixed 50 = every stop is 50 pts ($100 per MNQ).':'');
-  const ks=['Z','G','B','C','M','A'];
-  let h=`<table><tr><th class="l">Setup</th><th>Trades<small>2022–25 / 2026</small></th><th>Win rate<small>2022–25 → 2026</small></th><th>Avg result per trade<small>in R · 2022–25 → 2026</small></th><th>Profit factor<small>money won ÷ lost</small></th><th>t-score<small>2+ = not luck</small></th><th>Worst losing streak<small>in R · 2022–25 / 2026</small></th></tr>`;
-  ks.forEach(k=>{const o=row(k,'old'),f=row(k,'fresh');
-   if(!o||!f){h+=`<tr><td class="l">${SN[k]}</td><td colspan="6" class="l note">${mo?'tested on EP.M1–M5 combined only':'—'}</td></tr>`;return}
-   h+=`<tr><td class="l"><b>${SN[k]}</b></td><td>${N0(o.n)} / ${N0(f.n)}</td><td>${AR(o.wr,f.wr,P0)}</td><td><span class="${PC(o.av)}">${R2(o.av)}</span> → <span class="${PC(f.av)}">${R2(f.av)}</span></td><td>${AR(o.pf,f.pf,F2)}</td><td>${T1(o.t)} / ${T1(f.t)}</td><td>${T1(o.dd)} / ${T1(f.dd)}</td></tr>`});
+  const full=EL.ex==='full';
+  $('#enote').innerHTML=(full?'Full exit = no ½ out: the whole trade runs to the target (tested ATR stops). ':'½ out = half the trade comes off early (+0.5R, C.M3 +0.75R), the stop moves to entry, the rest runs to the target. ')+(EL.st==='F50'&&!full?'Fixed 50 = every stop is 50 pts ($100 per MNQ).':'');
+  let h='<table>'+HEAD;EKS.forEach(k=>{const o=gk(stopKey(),EL.g,k,'old'),f=gk(stopKey(),EL.g,k,'fresh');if(o&&f)h+=ROW(SN[k],o,f,k)});
   $('#etab').innerHTML=h+'</table>';
-  const grp=ks.map(k=>({l:k==='A'?'Combined':EPN[k],a:row(k,'old')?.av,b:row(k,'fresh')?.av}));
-  $('#ech').innerHTML=barChart(grp,{label:'avg RR per setup',minW:420,gw:78});
-  // gates
-  let g=`<table><tr><th class="l">Gate</th><th>Win rate<small>2022–25 → 2026</small></th><th>Avg result per trade<small>in R · 2022–25 → 2026</small></th><th>t-score<small>2+ = not luck</small></th>${!full?'<th>Pass chance, 50k eval<small>2 MNQ · 2022–25 / 2026</small></th>':''}</tr>`;
-  GATES.forEach(([gg,nm])=>{const o=D.gates[`${stopKey()}|${gg}|A|old`],f=D.gates[`${stopKey()}|${gg}|A|fresh`];if(!o)return;
-   const oo=mo&&!full?o['o'+EL.mo]:o,ff=mo&&!full?f['o'+EL.mo]:f;
-   const so=mo?o['o'+EL.mo+'sim']:o.sim?.['2'],sf=mo?f['o'+EL.mo+'sim']:f.sim?.['2'];
-   g+=`<tr${gg===EL.g?' class="me"':''}><td class="l">${nm}</td><td>${AR(oo.wr,ff.wr,P0)}</td><td><span class="${PC(oo.av)}">${R2(oo.av)}</span> → <span class="${PC(ff.av)}">${R2(ff.av)}</span></td><td>${T1(oo.t)} / ${T1(ff.t)}</td>${!full?`<td>${so?P0(so.pr):'—'} / ${sf?P0(sf.pr):'—'}</td>`:''}</tr>`});
-  $('#egt').innerHTML=g+'</table>';
-  const o=D.gates[`${stopKey()}|${EL.g}|A|old`],f=D.gates[`${stopKey()}|${EL.g}|A|fresh`];
-  if(full||!o.sim){$('#eps').innerHTML='<p class="note">Prop sim was run with ½ out only.</p>'}
-  else{const rows=mo?[['2 MNQ · max '+EL.mo+' open',o['o'+EL.mo+'sim'],f['o'+EL.mo+'sim']]]:[['1 MNQ',o.sim['1'],f.sim['1']],['2 MNQ',o.sim['2'],f.sim['2']],['4 MNQ',o.sim['4'],f.sim['4']]];
-   const cellP=x=>x&&x.p+x.f?`${P0(x.pr)} <small>(${x.p} of ${x.p+x.f} passed · ${N0(x.d)} days)</small>`:'—';
-   $('#eps').innerHTML=`<h3>50k prop evaluation · EP.M1–M5 combined · this gate</h3><table><tr><th class="l">Size</th><th>2022–25<small>pass chance (tries) · trading days</small></th><th>2026<small>pass chance (tries) · trading days</small></th></tr>${rows.map(r=>`<tr><td class="l">${r[0]}</td><td>${cellP(r[1])}</td><td>${cellP(r[2])}</td></tr>`).join('')}</table><p class="note">A try = one evaluation account until it passes or fails. Trading days = days from day 1 until the $3,000 target was reached. For days AND trades to pass at every size, open <b>PROP &amp; SIZE</b>.</p>`}
+  $('#ech').innerHTML=barChart(EKS.map(k=>({l:EPN[k],a:gk(stopKey(),EL.g,k,'old')?.av,b:gk(stopKey(),EL.g,k,'fresh')?.av})),{label:'avg RR per strategy',minW:420,gw:78});
+  paintG();
  }
+ function paintG(){let g='<table>'+HEAD.replace('<th class="l">Strategy</th>','<th class="l">Gate</th>');
+  GATES.forEach(([gg,nm])=>{const o=gk(stopKey(),gg,EL.gk,'old'),f=gk(stopKey(),gg,EL.gk,'fresh');if(o&&f)g+=ROW(nm,o,f,EL.gk,gg===EL.g)});
+  $('#egt').innerHTML=g+'</table>'}
  seg('eg',GATES.map(g=>[g[0],g[1]]),EL.g,v=>{EL.g=v;paintMain()});
- seg('est',[['ATR','Tested ATR'],['F50','Fixed 50']],EL.st,v=>{EL.st=v;if(v==='F50'&&EL.ex==='full'){EL.ex='half';seg('eex',EXO,EL.ex,exCb)}paintMain()});
  const EXO=[['half','½ out'],['full','Full (no ½ out)']];
- const exCb=v=>{EL.ex=v;if(v==='full'){EL.st='ATR';EL.mo='0';seg('est',[['ATR','Tested ATR'],['F50','Fixed 50']],EL.st,x=>{EL.st=x;if(x==='F50'){EL.ex='half';seg('eex',EXO,EL.ex,exCb)}paintMain()});seg('emo',MOO,EL.mo,moCb)}paintMain()};
+ const stCb=v=>{EL.st=v;if(v==='F50'&&EL.ex==='full'){EL.ex='half';seg('eex',EXO,EL.ex,exCb)}paintMain()};
+ const exCb=v=>{EL.ex=v;if(v==='full'){EL.st='ATR';seg('est',[['ATR','Tested ATR'],['F50','Fixed 50']],EL.st,stCb)}paintMain()};
+ seg('est',[['ATR','Tested ATR'],['F50','Fixed 50']],EL.st,stCb);
  seg('eex',EXO,EL.ex,exCb);
- const MOO=[['0','No limit'],['2','2'],['1','1']];
- const moCb=v=>{EL.mo=v;if(v!=='0'&&EL.ex==='full'){EL.ex='half';seg('eex',EXO,EL.ex,exCb)}paintMain()};
- seg('emo',MOO,EL.mo,moCb);
+ seg('egk',EKS.map(k=>[k,EPN[k]]),EL.gk,v=>{EL.gk=v;paintG()});
  paintMain();
  // time
  const WIN=['18–20','20–22','22–00','00–02','09:30–10:30','10:30–11:30','11:30–12:30','12:30–13:30'],DAY=['Mon','Tue','Wed','Thu','Fri'];
  function paintT(){const L=EL.tm==='w'?WIN:DAY;const grp=L.map(x=>{const o=D.time[`old|${EL.tk}|${EL.tm}|${x}`],f=D.time[`fresh|${EL.tk}|${EL.tm}|${x}`];return{l:x.replace('09:30–','9:30–'),a:o?.wr,b:f?.wr,sub:o&&f?`${o.n}/${f.n}`:''}});
-  $('#tch').innerHTML=barChart(grp,{label:'win rate by window',fmt:v=>Math.round(v)+'%',tick:v=>Math.round(v)+'%',fixMin:30,gw:L.length>5?96:80,minW:420,ref:60,refL:'60% WR'})}
- seg('tk',['Z','G','B','C','M','A'].map(k=>[k,k==='A'?'Combined':EPN[k]]),EL.tk,v=>{EL.tk=v;paintT()});
+  $('#tch').innerHTML=barChart(grp,{label:'win rate by window',fmt:v=>Math.round(v)+'%',tick:v=>Math.round(v)+'%',fixMin:30,gw:L.length>5?96:80,minW:420,ref:60,refL:'60% WR'});
+  $('#tnote').innerHTML=`<b>How to read it:</b> each bar = the win rate (WR) of ${EPN[EL.tk]} trades that started in that window, New York time. Target: ${ETG.half[EL.tk]}, no gate. The small numbers under each window = how many trades: 2022–25 / 2026. The dotted line = 60% WR. 00:00–02:00 is the weakest window for these strategies, so the indicator skips it (except X.M5).`}
+ seg('tk',EKS.map(k=>[k,EPN[k]]),EL.tk,v=>{EL.tk=v;paintT()});
  seg('tm',[['w','Time window (NY)'],['d','Weekday']],EL.tm,v=>{EL.tm=v;paintT()});paintT();
- // offsets
- const OX=[...Array(21)].map((_,i)=>i-10);
- function paintO(){const k=(w,x)=>D.offsets[`${w}|${EL.om}|${x}|${EL.og}|A`];
-  $('#och').innerHTML=lineChart(OX,[{n:'2022–25',v:OX.map(x=>k('old',x)?.av)},{n:'2026',v:OX.map(x=>k('fresh',x)?.av)}],{label:'avg RR by entry offset',mark:EL.ov,xl:x=>x>0?'+'+x:String(x),xlab:['← stop entry, worse price','limit, better price →'],w:620});
-  const o=k('old',EL.ov),f=k('fresh',EL.ov),c0=k('old',0),c1=k('fresh',0);const nm=EL.ov===0?'At the close':EL.ov>0?`Limit ${EL.ov} pts better`:`Stop entry ${-EL.ov} pts worse`;
-  $('#otab').innerHTML=`<table><tr><th class="l">Entry</th><th>Trades<small>2022–25 / 2026</small></th><th>Win rate<small>2022–25 → 2026</small></th><th>Avg result per trade<small>in R · 2022–25 → 2026</small></th><th>Total result<small>in R · 2022–25 / 2026</small></th><th>Worst losing streak<small>in R · 2022–25 / 2026</small></th></tr>${[['At the close',c0,c1],[nm,o,f]].filter((r,i)=>i===0||EL.ov!==0).map(r=>`<tr${r[0]===nm?' class="me"':''}><td class="l">${r[0]}</td><td>${N0(r[1].n)} / ${N0(r[2].n)}</td><td>${AR(r[1].wr,r[2].wr,P0)}</td><td><span class="${PC(r[1].av)}">${R2(r[1].av)}</span> → <span class="${PC(r[2].av)}">${R2(r[2].av)}</span></td><td>${N0(r[1].sum)} / ${N0(r[2].sum)}</td><td>${T1(r[1].dd)} / ${T1(r[2].dd)}</td></tr>`).join('')}</table>`}
- seg('om',[['prop','½ out'],['f50','Fixed 50 · 1:2']],EL.om,v=>{EL.om=v;paintO()});
- seg('og',[['NONE','No gate'],['MOM','27 Momentum'],['MOM2','27 Mom · max 2 open']],EL.og,v=>{EL.og=v;paintO()});
- $('#ov').oninput=e=>{EL.ov=+e.target.value;paintO()};paintO();
  // mmpd split
- function paintM(){let h=`<table><tr><th class="l">MMPD side</th><th>Trades<small>2022–25 / 2026</small></th><th>Win rate<small>2022–25 → 2026</small></th><th>Avg result per trade<small>in R · 2022–25 → 2026</small></th><th>Profit factor<small>money won ÷ lost</small></th><th>t-score<small>2+ = not luck</small></th></tr>`;
-  ['CHASE','MID','FADE','ALL'].forEach(s=>{const v=D.mmpdA[`${EL.mm}|${EL.mk}|${s}`];if(!v)return;const o=v.old,f=v.fresh;h+=`<tr${s==='CHASE'?' class="me"':''}><td class="l">${s}</td><td>${N0(o.n)} / ${N0(f.n)}</td><td>${AR(o.wr,f.wr,P0)}</td><td><span class="${PC(o.av)}">${R2(o.av)}</span> → <span class="${PC(f.av)}">${R2(f.av)}</span></td><td>${AR(o.pf,f.pf,F2)}</td><td>${T1(o.t)} / ${T1(f.t)}</td></tr>`});$('#mtab').innerHTML=h+'</table>'}
- seg('mk',['Z','G','B','C','M','ALL'].map(k=>[k,k==='ALL'?'Combined':EPN[k]]),EL.mk,v=>{EL.mk=v;paintM()});
+ const MMN={CHASE:'CHASE',MID:'MIDDLE',FADE:'FADE',ALL:'Any MMPD'};
+ function paintM(){const ex=EL.mm==='full'?'full':'half';let h=`<table><tr><th class="l">MMPD side</th><th>Trades<small>2022–25 / 2026</small></th><th>WR · target<small>win rate 2022–25 → 2026</small></th><th>avg RR<small>per trade · 2022–25 → 2026</small></th><th>PF<small>profit factor</small></th><th>t-score<small>2+ = probably not luck</small></th></tr>`;
+  ['CHASE','MID','FADE','ALL'].forEach(s=>{const v=D.mmpdA[`${EL.mm}|${EL.mk}|${s}`];if(!v)return;const o=v.old,f=v.fresh;h+=`<tr${s==='CHASE'?' class="me"':''}><td class="l">${MMN[s]}</td><td>${N0(o.n)} / ${N0(f.n)}</td><td>${AR(o.wr,f.wr,P0)} <small class="tg">${EL.mm==='f50'?ETG.half[EL.mk]+' · stop 50':ETG[ex][EL.mk]}</small></td><td><span class="${PC(o.av)}">${R2(o.av)}</span> → <span class="${PC(f.av)}">${R2(f.av)}</span></td><td>${AR(o.pf,f.pf,F2)}</td><td>${T1(o.t)} / ${T1(f.t)}</td></tr>`});$('#mtab').innerHTML=h+'</table>'}
+ seg('mk',EKS.map(k=>[k,EPN[k]]),EL.mk,v=>{EL.mk=v;paintM()});
  seg('mm',[['prop','½ out'],['f50','Fixed 50 · ½ out'],['full','Full exit']],EL.mm,v=>{EL.mm=v;paintM()});paintM();
  // fade
- const FE=[...new Set(Object.keys(D.mmpdB).map(k=>k.split('|')[0]))];const fsel=$('#fe');fsel.innerHTML=FE.map(x=>`<option value="${esc(x)}"${x===EL.fe?' selected':''}>${esc(x.replace('Z-type','EP.M1-type'))}</option>`).join('');
- function paintF(){const ST4=[...new Set(Object.keys(D.mmpdB).map(k=>k.split('|')[2]))];let h=`<table><tr><th class="l">Stop · target</th><th>Side</th><th>Trades<small>2022–25 / 2026</small></th><th>Win rate<small>2022–25 → 2026</small></th><th>Avg result per trade<small>in R · 2022–25 → 2026</small></th><th>t-score<small>2+ = not luck</small></th></tr>`;
-  ST4.forEach(st=>['LONG','SHORT'].forEach(sd=>{const v=D.mmpdB[`${EL.fe}|${EL.fs}|${st}|${sd}`];if(!v)return;const o=v.old,f=v.fresh;h+=`<tr><td class="l">${esc(st)}</td><td>${sd}</td><td>${N0(o.n)} / ${N0(f.n)}</td><td>${AR(o.wr,f.wr,P0)}</td><td><span class="${PC(o.av)}">${R2(o.av)}</span> → <span class="${PC(f.av)}">${R2(f.av)}</span></td><td>${T1(o.t)} / ${T1(f.t)}</td></tr>`}));$('#ftab').innerHTML=h+'</table>'}
+ const FE=[...new Set(Object.keys(D.mmpdB).map(k=>k.split('|')[0]))];const fsel=$('#fe');fsel.innerHTML=FE.map(x=>`<option value="${esc(x)}"${x===EL.fe?' selected':''}>${esc(x.replace('Z-type','X.M4-type'))}</option>`).join('');
+ function paintF(){const ST4=[...new Set(Object.keys(D.mmpdB).map(k=>k.split('|')[2]))];let h=`<table><tr><th class="l">Stop · target</th><th>Side</th><th>Trades<small>2022–25 / 2026</small></th><th>WR<small>win rate 2022–25 → 2026</small></th><th>avg RR<small>per trade · 2022–25 → 2026</small></th><th>t-score<small>2+ = probably not luck</small></th></tr>`;
+  ST4.forEach(st=>['LONG','SHORT'].forEach(sd=>{const v=D.mmpdB[`${EL.fe}|${EL.fs}|${st}|${sd}`];if(!v)return;const o=v.old,f=v.fresh;h+=`<tr><td class="l">${esc(st)}</td><td>${sd}</td><td>${N0(o.n)} / ${N0(f.n)}</td><td>${AR(o.wr,f.wr,P0)} <small class="tg">${esc(st.split(' · ').pop())}</small></td><td><span class="${PC(o.av)}">${R2(o.av)}</span> → <span class="${PC(f.av)}">${R2(f.av)}</span></td><td>${T1(o.t)} / ${T1(f.t)}</td></tr>`}));$('#ftab').innerHTML=h+'</table>'}
  fsel.onchange=()=>{EL.fe=fsel.value;paintF()};
  seg('fs',[['ALL','All sessions'],['ASIA+AM','Asia + NY AM']],EL.fs,v=>{EL.fs=v;paintF()});paintF();
 };
 
 // PROP & SIZE
-const PS={dd:2000,ins:'MNQ',gate:1,mo:2,st:'ATR',k:'ALL',ex:'prop'};
-const WORST={ATR:{0:[50.6,38.2,36.9,62.0,38.1],1:[19.4,12.0,15.5,21.7,16.6],2:[20.6,18.2,22.6,33.2,24.0]},F50:{0:[83.7,38.3,33.1,74.3,49.1],1:[25.0,11.1,12.7,24.8,15.9],2:[22.5,17.1,19.5,33.0,23.0]}};
-const STOPPTS={0:[52.2,53.3,52.9,50.5,49.4],1:[56.3,59.3,58.3,53.3,51.3],2:[55.2,56.8,57.3,52.7,51.1]};
+const PS={dd:2000,ins:'MNQ',code:'X.M4'};
 const INS={MNQ:{pv:2,es:false,mini:false},NQ:{pv:20,es:false,mini:true},MES:{pv:5,es:true,mini:false},ES:{pv:50,es:true,mini:true}};
 const PQ={k:'Z',ex:'prop',g:'MOM2',w:'both',u:2};
 const PGN={NONE:'No filter',MOM:'MMPD 27 Momentum',MOM2:'MMPD 27 Momentum + max 2 open trades'};
@@ -893,17 +884,18 @@ const PWN={both:'2022–26 (3 years + 10 months)',old:'2022–25 (3 years)',fres
 const SIZES=[1,2,3,4,5,6,8,10,15,20,30,40];
 G.prop=async sc=>{
  sc.innerHTML='<div class="loading">Loading test data…</div>';let D;try{D=await getD()}catch(e){sc.innerHTML='<div class="loading">The data could not load. Reload the page to try again.</div>';return}
+ if(!BOOK){try{BOOK=await (await fetch('d_book.json')).json()}catch(e){}}
  if(cur.id!=='prop')return;
  sc.innerHTML=`<div class="doc">
 <section class="wide"><h2>How long does it take to pass a 50k prop evaluation?</h2>
 <p class="note" style="margin:0 0 10px">Pick what you trade. The answer below comes from replaying a real evaluation, again and again, on every trade of the tests.</p>
-<div class="ctl"><span><span class="lab">Setup</span><span class="seg" id="qk"></span></span><span><span class="lab">Exit</span><span class="seg" id="qx"></span></span></div>
+<div class="ctl"><span><span class="lab">Strategy</span><span class="seg" id="qk"></span></span><span><span class="lab">Exit</span><span class="seg" id="qx"></span></span></div>
 <div class="ctl" style="margin-top:8px"><span><span class="lab">Filter</span><span class="seg" id="qg"></span></span></div>
 <div class="ctl" style="margin-top:8px"><span><span class="lab">Size</span><span class="seg" id="qu"></span></span><span><span class="lab">Data</span><span class="seg" id="qw"></span></span></div>
 <div class="out" id="qans" style="margin-top:14px"></div>
 <p class="note" id="qline" style="margin-top:10px"></p></section>
 <section class="wide"><h2>Every size, side by side</h2><div class="tw" id="qtab"></div>
-<p class="note">Your size is highlighted. Read across: bigger size = faster when it works, but more tries fail. Trades with a fixed 50 pt stop risk $100 per MNQ (EP.M1, EP.M2 and EP.M3 use an ATR stop, about 50–80 pts).</p></section>
+<p class="note">Your size is highlighted. Read across: bigger size = faster when it works, but more tries fail. Trades with a fixed 50 pt stop risk $100 per MNQ (X.M4, C.M3 and C.M4 use an ATR stop, about 50–80 pts).</p></section>
 <section><h2>What the words mean</h2><div class="tw"><table>
 <tr><th class="l">Word</th><th class="l">Meaning</th></tr>
 <tr><td class="l"><b>Try</b></td><td class="l">One evaluation account, from day 1 until it passes or fails. The next try starts the day after.</td></tr>
@@ -920,20 +912,18 @@ G.prop=async sc=>{
 <li>1 pt cost on every trade · trades only in Asia and NY AM, as the indicator trades them</li></ul>
 <p class="note">The MMM EDGE PRO Prop Helper runs the same test on your chart with your own firm's rules.</p></section>
 <section class="wide"><h2>What the tests say, in short</h2><ul>
-<li><b>Research only, not advice:</b> EP.M1–M5 combined, no filter, 2 MNQ, ½ out passed about <b>half</b> of the tries in about <b>17 trading days</b>. With MMPD 27 Momentum + max 2 open, about <b>9 in 10</b> passed in about <b>3 months</b>. Don’t trade them together: pick ONE strategy, study it and backtest it first.</li>
+<li><b>Pick ONE strategy</b> above and read its own pass chance at your size. Study it and backtest it before you trade it.</li>
 <li><b>Bigger size passes faster when it works, but more tries fail:</b> at 10 MNQ (1 NQ) about 1 try in 2 fails, and every failed try is a new evaluation fee.</li>
-<li><b>½ out passes more often than full exits</b> for EP.M1, EP.M2 and EP.M5.</li></ul></section>
+<li><b>½ out passes more often than full exits</b> for X.M4, C.M3 and C.M5.</li></ul></section>
 <section class="wide"><h2>Size your account</h2><div class="calc">
 <label>Max loss / drawdown ($)<input type="number" id="pdd" min="100" step="100" value="${PS.dd}"></label>
 <label>Instrument<select id="pins">${Object.keys(INS).map(k=>`<option${k===PS.ins?' selected':''}>${k}</option>`).join('')}</select></label>
-<label>Gate<select id="pg">${GATES.map((g,i)=>`<option value="${i}"${i===PS.gate?' selected':''}>${g[1]}</option>`).join('')}</select></label>
-<label>Max open trades<select id="pmo"><option value="0"${PS.mo===0?' selected':''}>No limit</option><option value="2"${PS.mo===2?' selected':''}>2</option><option value="1"${PS.mo===1?' selected':''}>1</option></select></label>
-<label>Stop style<select id="pst"><option value="ATR"${PS.st==='ATR'?' selected':''}>Tested ATR</option><option value="F50"${PS.st==='F50'?' selected':''}>Fixed 50 (ES 20)</option></select></label>
-</div><div class="out" id="pout"></div><p class="note"><b>Survival size</b> plans for a losing streak 1.5 times worse than the worst one in the tests. <b>MMM buffer rule</b> = 1 micro per $1,000 of drawdown (1 mini per $10,000 from $10,000), about 10% of the drawdown per trade. Survive first, then grow.</p></section>
+<label>Strategy<select id="pcode">${(BOOK||[]).map(b=>`<option${b.code===PS.code?' selected':''}>${esc(b.code)}</option>`).join('')}</select></label>
+</div><div class="out" id="pout"></div><p class="note"><b>Survival size</b> plans for a drawdown 1.5 times worse than the worst one this strategy had in the tests. <b>MMM buffer rule</b> = 1 micro per $1,000 of drawdown (1 mini per $10,000 from $10,000), about 10% of the drawdown per trade. Survive first, then grow.</p></section>
 <section><h2>Fixed 50 pt stop at 1:2 · the reference</h2><div class="tw"><table><tr><th class="l">Size</th><th>Risk per trade</th><th>Win at 1:2</th><th>Losses in a row to lose $2,000</th></tr>
 <tr><td class="l">1 MNQ</td><td>$100</td><td>$200</td><td>20</td></tr><tr><td class="l">2 MNQ</td><td>$200</td><td>$400</td><td>10</td></tr><tr><td class="l">4 MNQ</td><td>$400</td><td>$800</td><td>5</td></tr><tr><td class="l">1 NQ (= 10 MNQ)</td><td>$1,000</td><td>$2,000</td><td>2</td></tr></table></div><p class="note">ES uses a 20 pt stop: 1 MES = $100 risk, 1 ES = $1,000. The worst losing streaks in the tests were 12–38 stops in a row (in R), so 10 losses in a row is not rare.</p></section></div>`;
  const Q=()=>D.prop2[`${PQ.w}|${PQ.ex}|${PQ.g}|${PQ.k}`];
- const nm=k=>k==='ALL'?'EP.M1–M5 combined':SN[k];
+ const nm=k=>SN[k];
  const d0=v=>v==null?'—':Math.round(v).toLocaleString('en-US');
  function paintQ(){
   const r=Q();const v=r&&r[String(PQ.u)];
@@ -952,24 +942,24 @@ G.prop=async sc=>{
    h+=`<tr${me?' class="me"':''}><td class="l">${u} MNQ${u===10?' (= 1 NQ)':''}${me?' ← you':''}</td><td class="${c}">${nn?P0(x.pr):'—'}${nn&&nn<10?' <small>few</small>':''}</td><td>${x.p} · ${x.f}</td><td>${d0(x.d)}</td><td>${d0(x.t)}</td><td>${d0(x.fd)}</td></tr>`});
   $('#qtab').innerHTML=h+'</table>';
  }
- seg('qk',['Z','G','B','C','M','ALL'].map(k=>[k,k==='ALL'?'Combined':EPN[k]]),PQ.k,v=>{PQ.k=v;paintQ()});
+ seg('qk',EKS.map(k=>[k,EPN[k]]),PQ.k,v=>{PQ.k=v;paintQ()});
  seg('qx',[['prop','½ out'],['full','Full exit']],PQ.ex,v=>{PQ.ex=v;paintQ()});
  seg('qg',[['NONE','No filter'],['MOM','MMPD 27 Momentum'],['MOM2','MMPD 27 Momentum + max 2 open']],PQ.g,v=>{PQ.g=v;paintQ()});
  seg('qu',[1,2,3,4,6,10].map(u=>[u,u===10?'1 NQ':u+' MNQ']),PQ.u,v=>{PQ.u=+v;paintQ()});
  seg('qw',[['both','All data'],['old','2022–25'],['fresh','2026']],PQ.w,v=>{PQ.w=v;paintQ()});
  function calc(){
-  PS.dd=Math.max(100,+$('#pdd').value||0);PS.ins=$('#pins').value;PS.gate=+$('#pg').value;PS.mo=+$('#pmo').value;PS.st=$('#pst').value;
-  const I=INS[PS.ins],worst=WORST[PS.st][PS.mo][PS.gate];
-  let stop=PS.st==='F50'?(I.es?20:50):STOPPTS[PS.mo][PS.gate]*(I.es?0.4:1);
+  PS.dd=Math.max(100,+$('#pdd').value||0);PS.ins=$('#pins').value;PS.code=$('#pcode').value;
+  const I=INS[PS.ins],b=(BOOK||[]).find(x=>x.code===PS.code);if(!b){$('#pout').innerHTML='';return}
+  const a=b.per.all[b.best],worst=a.ddR,stop=(a.risk||50)*(I.es?0.4:1);
   const microPV=I.es?5:2;
   let surv=Math.max(1,Math.floor(PS.dd/(1.5*worst*stop*microPV)));if(surv>=20)surv=Math.floor(surv/10)*10;
   const mmm=PS.dd>=10000?Math.floor(PS.dd/10000)*10:Math.max(1,Math.floor(PS.dd/1000));
   const fmtU=u=>u>=10&&u%10===0?`${u/10} ${I.es?'ES':'NQ'}`:`${u} ${I.es?'MES':'MNQ'}`;
   const risk=u=>u*stop*microPV;
   const card=(nm,u,cls)=>{const r=risk(u),pct=r/PS.dd*100,run=PS.dd/r;return `<div class="fact"><div class="d">${nm}</div><div class="n ${cls}">${fmtU(u)}</div><div class="d">Risk about $${N0(r)} a trade (${pct.toFixed(1)}% of your drawdown)${pct>10?' ⚠':''} · you can lose ${Math.floor(run)} trades in a row before the account fails</div></div>`};
-  $('#pout').innerHTML=card('Survival size',surv,'t')+card('MMM buffer rule',mmm,'m')+`<div class="fact"><div class="d">Worst losing streak in the tests</div><div class="n">${T1(worst)}R</div><div class="d">R = one full stop · ${GATES[PS.gate][1]} · ${PS.mo?'max '+PS.mo+' open':'no open limit'} · ${PS.st==='F50'?'fixed '+(I.es?20:50)+' pt stop':'average ATR stop about '+Math.round(stop)+' pts'}</div></div>`;
+  $('#pout').innerHTML=card('Survival size',surv,'t')+card('MMM buffer rule',mmm,'m')+`<div class="fact"><div class="d">${esc(b.code)} · worst drawdown in the tests</div><div class="n">${T1(worst)}R</div><div class="d">R = one full stop · average stop about ${Math.round(stop)} pts · target ${esc(b.labels[b.best]||'')} · WR ${P0(a.wr*100)}</div></div>`;
  }
- ['pdd','pins','pg','pmo','pst'].forEach(id=>{const e=$('#'+id);e.oninput=calc;e.onchange=calc});
+ ['pdd','pins','pcode'].forEach(id=>{const e=$('#'+id);e.oninput=calc;e.onchange=calc});
  calc();paintQ();
 };
 
@@ -1011,7 +1001,7 @@ G.retest=sc=>{
 <li><b>15m GMC c3 AFs against</b> (C.M1): +0.13 → +0.28.</li>
 <li><b>15m CONTRACTION T3+ at MP</b> (X.M2): +0.14 → +0.05 on the 1-min / 5-min months. The first +0.30 came from 15-min bars, which flatter limit fills. Now WATCH.</li>
 <li><b>15m GMC LONG</b>: +0.06 → +0.12.</li>
-<li><b>The 5 EDGE PRO setups</b>: EP.M1–M5 combined +0.08 → +0.14 with ½ out.</li>
+<li><b>Each of the 5 EDGE PRO strategies</b> (X.M4, X.M5, C.M3, C.M4, C.M5) made money in both periods with ½ out.</li>
 <li><b>4H GMC LONG</b> (c3 close, ATR stop): +0.36 → +0.49 on 179 trades.</li>
 <li><b>Session filter</b> Asia + NY AM: lifted every survivor theme in both periods.</li></ul></section>
 <section><h2>What did not</h2><ul>
@@ -1028,6 +1018,17 @@ G.retest=sc=>{
 // ───────────────── content: strategy book ─────────────────
 // one sheet per strategy that held: 2022–25 → 2026 · Blended
 let BOOK=null,BKA=null;const BK={c:'MNQ',n:1,per:{},pick:{}};
+// the target of a strategy at target j (multi-target strategies show the picked target)
+const tgL=(s,j)=>s.labels.length>1?s.labels[j]+' RR':(s.tgt||s.labels[j]);
+// ── combine strategies yourself: nothing is combined unless the trader picks it ──
+let TRD=null;const CB={on:[],w:'all'};
+function cbRun(codes,w){const T=[];codes.forEach(c=>{const d=TRD&&TRD[c];if(!d)return;for(let i=0;i<d.m.length;i++){if(w==='old'&&d.f[i])continue;if(w==='fresh'&&!d.f[i])continue;T.push([d.m[i],d.r[i]/1000,d.k[i]])}});
+  T.sort((a,b)=>a[0]-b[0]);let n=0,w2=0,sR=0,s2=0,gw=0,gl=0,eq=0,pk=0,dd=0,eqP=0,pkP=0,ddP=0,cl=0,ml=0,cw=0,mw=0,pts=0;
+  for(const [m,r,k] of T){n++;sR+=r;s2+=r*r;if(r>0){w2++;gw+=r;cl=0;cw++;mw=Math.max(mw,cw)}else{gl-=r;cw=0;cl++;ml=Math.max(ml,cl)}
+    eq+=r;pk=Math.max(pk,eq);dd=Math.max(dd,pk-eq);const p=r*k;pts+=p;eqP+=p;pkP=Math.max(pkP,eqP);ddP=Math.max(ddP,pkP-eqP)}
+  if(!n)return null;const av=sR/n,sd=Math.sqrt(Math.max(1e-9,s2/n-av*av)*n/(n-1||1));
+  return {n,wr:w2/n,av,pf:gl>0?gw/gl:null,t:av/sd*Math.sqrt(n),net:sR,dd,ml,mw,pts,ddP}}
+
 // contract · family · name · $ per point · tick
 const BK_CT=[['NQ','NQ','Nasdaq-100 E-mini',20,'0.25'],['MNQ','NQ','Nasdaq-100 Micro',2,'0.25'],['NNQ','NQ','Nasdaq-100 E-nano',0.2,'0.25'],
  ['ES','ES','S&P 500 E-mini',50,'0.25'],['MES','ES','S&P 500 Micro',5,'0.25'],['NES','ES','S&P 500 E-nano',0.5,'0.25'],
@@ -1044,8 +1045,9 @@ function bkSv(s){const a=bkA();if(!a)return s;const x=a.sheets[s.code];if(!x)ret
   return Object.assign({},s,{per,ok:x.ok,why:x.why,status:s.status==='trade'&&xb&&xb.t>=2?'trade':'watch',years:[['2026 '+a.name,x.per[s.labels.length>1?s.best:0]]],
     sides:(x.sides||[]).map(([d,b])=>[d,{fresh:b,all:((s.sides.find(z=>z[0]===d)||[0,{}])[1]||{}).all}]),
     months:x.months||{n:0,up:0,best:['—',0],worst:['—',0]},curve:x.curve||[],asset:true})}
-const BK_IND={EP:'MMM EDGE PRO',x:'MMM PRO x',c:'MMM PRO c',s:'MMM PRO s',XCS:'MMM EDGE PRO · XCS',MPD:'MMPD',MM:'Max’s method (by hand)'};
-const BK_NAMES=[['X','MMM PRO x','The zone engine: balanced zones, zone breaks, eBlocks and iBlocks.'],['C','MMM PRO c','The candle engine: PO4, GMC, candle breaks.'],['S','MMM PRO s','The swing engine: swing breaks.'],['XCS','MMM EDGE PRO · XCS','x, c and s together. Trade these in MMM EDGE PRO. MMM Pro XCS One gives no signals: it shows the odds of what usually happens next.'],['EP','MMM EDGE PRO','The 5 EDGE PRO strategies EP.M1–EP.M5 with ½ out. MMM EDGE PRO also holds X.M1–X.M3, C.M1, C.M2, XCS.M1–XCS.M5, LR.M1, LR.M2 and OC.M1. Turn on one at a time.'],['MPD','MMPD','Premium / discount oscillator. No stand-alone strategy yet: it is used as a gate (filter).'],['LR','Max’s method (by hand)','Level Retest: a 1m PO4 retest at a higher-timeframe level in NY AM, longs. No indicator yet.'],['OC','Max’s method (by hand)','Opening candle: the 09:30 15m BuBC that closes above the pre-open high. No indicator yet.']];
+const BK_IND={x:'MMM PRO x',c:'MMM PRO c',s:'MMM PRO s',XCS:'MMM PRO XCS (x + c + s)',MPD:'MMPD'};
+const BK_NAMES=[['X','MMM PRO x','The zone engine: balanced zones, zone breaks, eBlocks and iBlocks. X.M1–X.M5.'],['C','MMM PRO c','The candle order-flow engine: PO4, GMC, candle breaks, candle types, the 09:30 candle and the level retest. C.M1–C.M8.'],['S','MMM PRO s','The swing engine: swing breaks.'],['XCS','MMM PRO XCS (x + c + s)','x, c and s together. XCS.M1–XCS.M5. MMM Pro XCS One gives no signals: it shows the odds of what usually happens next.'],['MPD','MMPD','Premium / discount oscillator. No stand-alone strategy yet: it is used as a gate (filter).']];
+// every strategy runs in MMM EDGE PRO: turn on ONE at a time
 const BK_PER=[['old','2022–25','NQ · 3 years · where the idea was found'],['fresh','2026','MNQ · 10 months · fresh check'],['all','Blended','both together · the total']];
 function bkUsd(p){if(p==null||isNaN(p))return'—';const v=p*BK_PTV[BK.c]*BK.n;return(v<0?'−$':'$')+Math.abs(Math.round(v)).toLocaleString('en-US')}
 function bkBe(b,j,s){if(!b||s.labels.length<2)return null;return 100*(1+1/b.risk)/(j+2)}
@@ -1083,26 +1085,26 @@ G.book=async sc=>{
   function sheet(s){const j=BK.pick[s.code]??s.best;const multi=s.labels.length>1;const PR=bkPer(),PK=PR.map(p=>p[0]);let pv=BK.per[s.code]||(s.asset?'fresh':'all');if(!PK.includes(pv))pv=PK[0];const a=bkA();
     const noM=w=>s.asset&&w==='all';
     const st=s.status==='trade'?'trade':'watch';
-    const rows=BK_ROWS.filter(r=>multi||!r[2]).map(([lab,f,_,c])=>`<tr><td class="l">${lab}</td>${PK.map(w=>{const b=s.per[w][j];if(!b||(noM(w)&&BK_MONEY.has(lab)))return '<td>—</td>';const bold=s.asset?w==='fresh':w==='all';return `<td class="${c?c(b):''}">${bold?'<b>'+f(b,j,s)+'</b>':f(b,j,s)}</td>`}).join('')}</tr>`).join('');
+    const rows=BK_ROWS.filter(r=>multi||!r[2]).map(([lab,f,_,c])=>`<tr><td class="l">${lab==='Win rate (WR)'?'Win rate (WR) <span class="tg">'+esc(tgL(s,j))+'</span>':lab}</td>${PK.map(w=>{const b=s.per[w][j];if(!b||(noM(w)&&BK_MONEY.has(lab)))return '<td>—</td>';const bold=s.asset?w==='fresh':w==='all';return `<td class="${c?c(b):''}">${bold?'<b>'+f(b,j,s)+'</b>':f(b,j,s)}</td>`}).join('')}</tr>`).join('');
     let h=`<section class="wide" id="bk-${s.code}"><div class="h" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="tag" style="font-size:13px;color:var(--teal)">${s.code}</span><h2 style="margin:0">${esc(s.name)}</h2><span class="st ${st}">${ST[st]}</span><span class="tag">${BK_IND[s.ind]}</span></div>
     <p class="note">${esc(s.note)}</p><h3>Exact rules</h3><ol>${s.rules.map(r=>`<li>${esc(r)}</li>`).join('')}</ol>${s.asset?`<p class="note">On ${a.name}: the fixed 50 pt stop is <b>${a.fx} pts</b>, cost <b>${a.cost} pt</b> per trade. ATR stops and candle stops size themselves.</p>`:''}`;
     if(multi&&s.best2!==s.best)h+=`<div class="ctl" style="margin:6px 0"><span class="lab">Target</span><div class="chips"><button type="button" class="chip${j===s.best?' on':''}" data-pk="${s.code}" data-v="${s.best}">★ Steady ${s.labels[s.best]}</button><button type="button" class="chip${j===s.best2?' on':''}" data-pk="${s.code}" data-v="${s.best2}">◆ Max profit ${s.labels[s.best2]}</button></div></div>`;
-    h+=`<h3>At a glance · ${esc(s.labels[j])}</h3><div class="tw"><table><tr><th class="l"></th>${PR.map(p=>`<th>${p[1]}<small>${p[2]}</small></th>`).join('')}</tr>${rows}</table></div>`;
-    if(multi){const T=s.per[pv].map((b,k)=>!b?'':`<tr class="${k===j?'me':''}"><td class="l">${s.labels[k]}${k===s.best?' ★':''}${k===s.best2&&s.best2!==s.best?' ◆':''}</td><td>${N0(b.n)}</td><td>${P0(100*b.wr)}</td><td>${P0(bkBe(b,k,s))}</td><td class="${PC(b.av)}">${R2(b.av)}</td><td>${F2(b.pf)}</td><td>${R2(b.t,1)}</td><td class="${PC(b.netPts)}">${noM(pv)?'—':bkUsd(b.netPts)}</td><td>${noM(pv)?'—':bkUsd(-b.ddPts)}</td><td>${N0(b.maxWin)}</td><td>${N0(b.maxLoss)}</td></tr>`).join('');
+    h+=`<h3>At a glance · ${esc(tgL(s,j))}</h3><div class="tw"><table><tr><th class="l"></th>${PR.map(p=>`<th>${p[1]}<small>${p[2]}</small></th>`).join('')}</tr>${rows}</table></div>`;
+    if(multi){const T=s.per[pv].map((b,k)=>!b?'':`<tr class="${k===j?'me':''}"><td class="l">${s.labels[k]} RR${k===s.best?' ★':''}${k===s.best2&&s.best2!==s.best?' ◆':''}</td><td>${P0(100*b.wr)}</td><td>${P0(bkBe(b,k,s))}</td><td>${N0(b.n)}</td><td class="${PC(b.av)}">${R2(b.av)}</td><td>${F2(b.pf)}</td><td>${R2(b.t,1)}</td><td class="${PC(b.netPts)}">${noM(pv)?'—':bkUsd(b.netPts)}</td><td>${noM(pv)?'—':bkUsd(-b.ddPts)}</td><td>${N0(b.maxWin)}</td><td>${N0(b.maxLoss)}</td></tr>`).join('');
       h+=`<h3>Every target</h3><div class="ctl"><div class="chips">${PR.map(p=>`<button type="button" class="chip${pv===p[0]?' on':''}" data-pv="${s.code}" data-v="${p[0]}">${p[1]}</button>`).join('')}</div></div>
-      <div class="tw"><table><tr><th class="l">Target</th><th>Trades</th><th>WR</th><th>Break-even WR</th><th>Avg RR</th><th>PF</th><th>t-score</th><th>Net</th><th>Max drawdown</th><th>Max wins in a row</th><th>Max losses in a row</th></tr>${T}</table></div>
+      <div class="tw"><table><tr><th class="l">Target</th><th>WR</th><th>Break-even WR</th><th>Trades</th><th>Avg RR</th><th>PF</th><th>t-score</th><th>Net</th><th>Max drawdown</th><th>Max wins in a row</th><th>Max losses in a row</th></tr>${T}</table></div>
       <p class="note">★ = steady pick. ◆ = max-profit pick: the biggest blended avg RR among targets with t ≥ 2 in 2022–25 and t ≥ 1 in 2026. At big targets, WR also counts trades closed on time with a small profit.</p>`}
     const yr=s.years.map(([y,x])=>x?`<tr><td class="l">${y}</td><td>${N0(x.n)}</td><td>${P0(100*x.wr)}</td><td class="${PC(x.av)}">${R2(x.av)}</td><td>${F2(x.pf)}</td><td>${R2(x.t,1)}</td><td class="${PC(x.netPts)}">${bkUsd(x.netPts)}</td><td>${bkUsd(-x.ddPts)}</td><td>${N0(x.maxWin)}</td><td>${N0(x.maxLoss)}</td></tr>`:'').join('');
     const sd=s.sides.map(([d,o])=>`<tr><td class="l">${d==='LONG'?'Long':'Short'}</td>${PK.map(w=>{const x=o[w];return x?`<td>${N0(x.n)}</td><td>${P0(100*x.wr)}</td><td class="${PC(x.av)}">${R2(x.av)}</td>`:'<td>—</td><td>—</td><td>—</td>'}).join('')}</tr>`).join('');
-    const m=s.months;const bl=s.labels[s.best];
-    h+=`<div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))"><div style="min-width:0"><h3>Year by year · ${bl}</h3><div class="tw"><table><tr><th class="l">Year</th><th>Trades</th><th>WR</th><th>Avg RR</th><th>PF</th><th>t-score</th><th>Net</th><th>Max drawdown</th><th>Max wins in a row</th><th>Max losses in a row</th></tr>${yr}</table></div></div>
-    <div style="min-width:0"><h3>Long vs short · ${bl}</h3><div class="tw"><table><tr><th class="l"></th>${PR.map(p=>`<th colspan="3">${p[1]}</th>`).join('')}</tr><tr><th class="l">Side</th>${'<th>Trades</th><th>WR</th><th>Avg RR</th>'.repeat(PK.length)}</tr>${sd}</table></div>
+    const m=s.months;const bl=tgL(s,s.best);
+    h+=`<div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))"><div style="min-width:0"><h3>Year by year · ${bl}</h3><div class="tw"><table><tr><th class="l">Year</th><th>Trades</th><th>WR · ${esc(bl)}</th><th>Avg RR</th><th>PF</th><th>t-score</th><th>Net</th><th>Max drawdown</th><th>Max wins in a row</th><th>Max losses in a row</th></tr>${yr}</table></div></div>
+    <div style="min-width:0"><h3>Long vs short · ${bl}</h3><div class="tw"><table><tr><th class="l"></th>${PR.map(p=>`<th colspan="3">${p[1]}</th>`).join('')}</tr><tr><th class="l">Side</th>${('<th>Trades</th><th>WR · '+esc(bl)+'</th><th>Avg RR</th>').repeat(PK.length)}</tr>${sd}</table></div>
     <p class="note">Months: ${m.up} of ${m.n} in profit. Best month ${m.best[0]} (${R2(m.best[1],1)}R). Worst month ${m.worst[0]} (${R2(m.worst[1],1)}R).</p></div></div>
     <h3>Equity curve · ${bl} · in R</h3><div class="ch">${bkCurve(s.curve)}</div>${KEY}</section>`;return h}
   function paint(){const y=sc.scrollTop;const A=bkA(),fam=bkFam();if(fam!=='NQ'&&!BKA){sc.innerHTML='<div class="loading">The ES and gold tests could not load. Reload the page to try again.</div>';return}const V=BOOK.map(bkSv);const B=V.filter(s=>s&&s.ok!==false);
     const hid=A?BOOK.filter((s,i)=>!V[i]||!V[i].ok):[];
-    const idx=B.map(s=>{const j=s.best,a=(A?s.per.fresh:s.per.all)[j];const st=s.status==='trade'?'trade':'watch';return `<tr><td class="l"><a href="#bk-${s.code}" data-j="${s.code}"><b>${s.code}</b></a></td><td class="l">${esc(s.name)}</td><td class="l"><span class="st ${st}">${ST[st]}</span></td><td class="l">${s.labels[j]}</td>
-      <td>${bkTrio(s,j,b=>b?N0(b.n):'—')}</td><td>${bkTrio(s,j,b=>b?P0(100*b.wr):'—')}</td><td>${bkTrio(s,j,b=>b?R2(b.av):'—')}</td><td>${bkTrio(s,j,b=>b?F2(b.pf):'—')}</td><td>${bkTrio(s,j,b=>b?R2(b.t,1):'—')}</td>
+    const idx=B.map(s=>{const j=s.best,a=(A?s.per.fresh:s.per.all)[j];const st=s.status==='trade'?'trade':'watch';return `<tr><td class="l"><a href="#bk-${s.code}" data-j="${s.code}"><b>${s.code}</b></a></td><td class="l">${esc(s.name)}</td><td class="l"><span class="st ${st}">${ST[st]}</span></td>
+      <td>${bkTrio(s,j,b=>b?N0(b.n):'—')}</td><td class="l"><span class="tg">${esc(tgL(s,j))}</span></td><td>${bkTrio(s,j,b=>b?P0(100*b.wr):'—')}</td><td>${bkTrio(s,j,b=>b?R2(b.av):'—')}</td><td>${bkTrio(s,j,b=>b?F2(b.pf):'—')}</td><td>${bkTrio(s,j,b=>b?R2(b.t,1):'—')}</td>
       <td class="${PC(a.netPts)}">${bkUsd(a.netPts)}</td><td>${bkUsd(-a.ddPts)}</td><td>${N0(a.maxLoss)}</td><td>${N0(a.maxWin)}</td></tr>`}).join('');
     const ct=BK_CT.find(c=>c[0]===BK.c)||BK_CT[1];
     const sub=A?`<b>${A.name} 2026</b> · <span>NQ both</span>`:`<span>2022–25</span> → <span>2026</span> · <b>Both</b>`;
@@ -1115,14 +1117,29 @@ G.book=async sc=>{
       :`<p class="lede">Every strategy that held in <b>both</b> test periods, in one format. Each number is shown as <b>2022–25 → 2026 · Blended</b>: the NQ result 2022–25, then the fresh MNQ result 2026, then both periods together as one run. Money = ${BK.n} ${ct[0]} contract${BK.n>1?'s':''} (${bkPv(ct[3])} a point, change it at the top), after a 1 pt cost on every trade.</p>`;
     let h=`<div class="doc"><section class="wide">${lede}</section>
     <section><h2>Strategy names</h2><p>Every strategy has a code: the indicator letters, then M1, M2, M3… (M = model).</p><div class="tw"><table><tr><th class="l">Code</th><th class="l">Indicator</th><th class="l">What it focuses on</th></tr>${BK_NAMES.map(n=>`<tr><td class="l"><b>${n[0]}.M1, ${n[0]}.M2…</b></td><td class="l">${n[1]}</td><td class="l">${n[2]}</td></tr>`).join('')}</table></div></section>
-    <section><h2>How to read</h2><ul><li><b>WR</b> = win rate: the share of trades that end in profit. <b>Break-even WR</b> = the WR you need just to not lose at that target.</li><li><b>Avg RR</b> = the average result per trade in R (1R = your stop), after costs. <b>PF</b> = money won ÷ money lost.</li><li><b>t-score</b> = 2 or more means probably real. Under 2 can still be luck.</li><li><b>Max drawdown</b> = the biggest drop from the account’s high point. <b>Max losses / wins in a row</b> = the longest streaks seen.</li><li><b>TRADE</b> = held in both periods with enough trades. <b>WATCH</b> = held, but a small sample or a caveat: paper-trade it first.</li><li><b>Limit entries</b> (EP.M4, X.M2, X.M3): 2026 uses only the months with 1-min or 5-min data. 15-min bars made limit fills look better than they were.</li><li><b>Contract</b>: NQ, MNQ and NNQ use the NQ tests. ES, MES and NES use the ES tests. GC, MGC and 1OZ use the gold tests. Only the money changes inside a group.</li></ul></section>
-    <section class="wide"><h2>All strategies${A?' · '+A.name:''}</h2>${key}<div class="tw"><table><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Status</th><th class="l">Target</th><th>Trades</th><th>WR</th><th>Avg RR</th><th>PF</th><th>t-score</th><th>Net</th><th>Max drawdown</th><th>Max losses in a row</th><th>Max wins in a row</th></tr>
-    <tr><th class="l"></th><th class="l"></th><th class="l"></th><th class="l"></th>${('<th style="font-size:10px;font-weight:400;color:var(--muted);padding-top:0">'+sub+'</th>').repeat(5)}${('<th style="font-size:10px;font-weight:400;color:var(--muted);padding-top:0">'+subR+'</th>').repeat(4)}</tr>${idx||`<tr><td class="l" colspan="13">No strategy passed on ${A?A.name:'NQ'} yet.</td></tr>`}</table></div></section>`;
-    for(const ind of ['EP','x','c','XCS']){const L=B.filter(s=>s.ind===ind);if(!L.length)continue;h+=`<section class="wide flat"><h2 style="font-size:17px;margin:8px 0 0">${BK_IND[ind]}</h2></section>`+L.map(sheet).join('')}
+    <section><h2>How to read</h2><ul><li><b>WR</b> = win rate: the share of trades that end in profit. <b>Break-even WR</b> = the WR you need just to not lose at that target.</li><li><b>Avg RR</b> = the average result per trade in R (1R = your stop), after costs. <b>PF</b> = money won ÷ money lost.</li><li><b>t-score</b> = 2 or more means probably real. Under 2 can still be luck.</li><li><b>Max drawdown</b> = the biggest drop from the account’s high point. <b>Max losses / wins in a row</b> = the longest streaks seen.</li><li><b>TRADE</b> = held in both periods with enough trades. <b>WATCH</b> = held, but a small sample or a caveat: paper-trade it first.</li><li><b>Limit entries</b> (X.M5, X.M2, X.M3): 2026 uses only the months with 1-min or 5-min data. 15-min bars made limit fills look better than they were.</li><li><b>Contract</b>: NQ, MNQ and NNQ use the NQ tests. ES, MES and NES use the ES tests. GC, MGC and 1OZ use the gold tests. Only the money changes inside a group.</li></ul></section>
+    <section class="wide"><h2>All strategies${A?' · '+A.name:''}</h2>${key}<div class="tw"><table><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Status</th><th>Trades</th><th class="l">Target</th><th>WR</th><th>Avg RR</th><th>PF</th><th>t-score</th><th>Net</th><th>Max drawdown</th><th>Max losses in a row</th><th>Max wins in a row</th></tr>
+    <tr><th class="l"></th><th class="l"></th><th class="l"></th><th style="font-size:10px;font-weight:400;color:var(--muted);padding-top:0">${sub}</th><th class="l"></th>${('<th style="font-size:10px;font-weight:400;color:var(--muted);padding-top:0">'+sub+'</th>').repeat(4)}${('<th style="font-size:10px;font-weight:400;color:var(--muted);padding-top:0">'+subR+'</th>').repeat(4)}</tr>${idx||`<tr><td class="l" colspan="13">No strategy passed on ${A?A.name:'NQ'} yet.</td></tr>`}</table></div></section>
+    <section class="wide" id="cbx"><h2>Combine strategies · your choice</h2><p class="note">Nothing is combined unless you pick it. Tick 2 or more strategies to see them run together on one account: every trade of each one, at its own tested exit, NQ / MNQ tests. This is research for your own decision, not a tip: we never advise trading several strategies at once.</p>
+    <div class="chips" id="cbp">${B.map(s=>`<button type="button" class="chip${CB.on.includes(s.code)?' on':''}" data-cb="${s.code}">${s.code}</button>`).join('')}</div>
+    <div class="ctl" style="margin-top:8px"><div class="chips">${BK_PER.map(p=>`<button type="button" class="chip${CB.w===p[0]?' on':''}" data-cbw="${p[0]}">${p[1]}</button>`).join('')}<button type="button" class="chip" data-cbc="1">Clear</button></div></div><div id="cbo" class="tw" style="margin-top:8px"></div></section>`;
+    for(const ind of ['x','c','XCS']){const L=B.filter(s=>s.ind===ind);if(!L.length)continue;h+=`<section class="wide flat"><h2 style="font-size:17px;margin:8px 0 0">${BK_IND[ind]}</h2></section>`+L.map(sheet).join('')}
     sc.innerHTML=h+'</div>';sc.scrollTop=y;
     sc.querySelectorAll('[data-j]').forEach(a=>a.onclick=e=>{e.preventDefault();const t=document.getElementById('bk-'+a.dataset.j);if(t)t.scrollIntoView({block:'start'})});
     sc.querySelectorAll('button[data-pk]').forEach(b=>b.onclick=()=>{BK.pick[b.dataset.pk]=+b.dataset.v;paint()});
-    sc.querySelectorAll('button[data-pv]').forEach(b=>b.onclick=()=>{BK.per[b.dataset.pv]=b.dataset.v;paint()})}
+    sc.querySelectorAll('button[data-pv]').forEach(b=>b.onclick=()=>{BK.per[b.dataset.pv]=b.dataset.v;paint()});
+    sc.querySelectorAll('button[data-cb]').forEach(b=>b.onclick=()=>{const c=b.dataset.cb;CB.on=CB.on.includes(c)?CB.on.filter(x=>x!==c):CB.on.concat([c]);b.classList.toggle('on');cbPaint()});
+    sc.querySelectorAll('button[data-cbw]').forEach(b=>b.onclick=()=>{CB.w=b.dataset.cbw;sc.querySelectorAll('button[data-cbw]').forEach(x=>x.classList.toggle('on',x===b));cbPaint()});
+    sc.querySelectorAll('button[data-cbc]').forEach(b=>b.onclick=()=>{CB.on=[];sc.querySelectorAll('button[data-cb]').forEach(x=>x.classList.remove('on'));cbPaint()});
+    cbPaint()}
+  async function cbPaint(){const o=$('#cbo');if(!o)return;if(CB.on.length<2){o.innerHTML=`<p class="note">${CB.on.length?'Pick at least one more strategy.':'Pick 2 or more strategies above.'}</p>`;return}
+    if(!TRD){o.innerHTML='<p class="note">Loading the trades…</p>';try{TRD=await (await fetch('d_trades.json')).json()}catch(e){o.innerHTML='<p class="note">The trades could not load. Reload the page to try again.</p>';return}}
+    const usd=p=>{const v=p*BK_PTV[BK.c]*BK.n;return(v<0?'−$':'$')+Math.abs(Math.round(v)).toLocaleString('en-US')};
+    const row=(lab,x,tg,me)=>x?`<tr${me?' class="me"':''}><td class="l">${lab}</td><td>${N0(x.n)}</td><td class="l"><span class="tg">${esc(tg)}</span></td><td>${P0(100*x.wr)}</td><td class="${PC(x.av)}">${R2(x.av)}</td><td>${x.pf==null?'∞':F2(x.pf)}</td><td>${R2(x.t,1)}</td><td class="${PC(x.net)}">${R2(x.net,0)}R</td><td class="${PC(x.pts)}">${usd(x.pts)}</td><td>${T1(x.dd)}R · ${usd(-x.ddP)}</td><td>${N0(x.ml)}</td></tr>`:'';
+    let h=`<table><tr><th class="l">Strategy</th><th>Trades</th><th class="l">Target</th><th>WR</th><th>avg RR</th><th>PF</th><th>t-score</th><th>Net</th><th>Net $<small>${BK.n} ${BK.c}</small></th><th>Max drawdown</th><th>Max losses in a row</th></tr>`;
+    CB.on.forEach(c=>{const s=BOOK.find(b=>b.code===c);h+=row(`<b>${c}</b> ${s?esc(s.name):''}`,cbRun([c],CB.w),s?tgL(s,s.best):'')});
+    h+=row('<b>Together</b> (your pick)',cbRun(CB.on,CB.w),'each at its own target',true);
+    o.innerHTML=h+`</table><p class="note">Together = all their trades on one account, in time order. Watch the max drawdown and the losing streak: they grow when strategies lose on the same days. $ = points × ${BK.n} ${BK.c}.</p>`}
   jump();paint();
 };
 
@@ -1193,6 +1210,90 @@ G.blocks=async sc=>{
   paint();
 };
 
+// ───────────────── page heads: a title and "how to read / how to use" on top of every tab ─────────────────
+const PAGES={
+ start:{t:'Start here',s:'The front desk of the MMM research: what was tested, how, and where to go next.',
+  r:['Every number is after a 1 point cost on every trade.','<b>2022–25</b> = NQ, 3 years: where each idea was found. <b>2026</b> = fresh MNQ, 10 months: data the idea never saw. A strategy must work in both.','<b>WR</b> = win rate, always shown with its target (for example <b>1:2 RR</b> = the target is 2 times the stop). <b>avg RR</b> = the average result per trade, in stops. <b>PF</b> = money won ÷ money lost. <b>t-score</b> 2+ = probably not luck.'],
+  u:['Want to trade? Open <b>STRATEGY BOOK</b> and pick ONE strategy.','Want the reasons? Open <b>VERDICTS</b>.']},
+ words:{t:'MMM words',s:'The dictionary: every MMM word used on these pages, in plain English.',
+  r:['Each card = one word, what it means, and where you see it.','Use the chips to show one group of words, or type in the search box.'],
+  u:['Stuck on a word in another tab? Come here and search it.']},
+ ind:{t:'Indicators',s:'Each MMM indicator: what it draws on the chart, the idea behind it, and what the tests said about it.',
+  r:['Pick an indicator at the top.','<b>What you see on the chart</b> = each drawing and what it means.','<b>The trend staircase</b> = tap a point to see how the trend steps up (T1, P1, R1…).','<b>What was tested · verdict</b> = each setup of this indicator with its result: <b>TRADE</b>, <b>WATCH</b>, <b>USE AS FILTER</b> or <b>DON’T TRADE</b>. Numbers read 2022–25 → 2026.'],
+  u:['Learn the indicator here first, then open its strategies in <b>STRATEGY BOOK</b>.']},
+ tested:{t:'How we tested',s:'The rules of the test, so you know every number is honest.',
+  r:['<b>Honest rules</b> = what we did to avoid fake results (stop wins a tie, limits must trade 1 tick past, a cost on every trade).','<b>The candle ladder</b> = the price levels inside a candle: XP (100%) → P (87.5%) → MP (75%) → BAL (50%) → MD (25%) → D (12.5%) → XD (0%). For a short it is mirrored.','<b>The 7 proof checks</b> = what a combo must pass before we call it an edge.'],
+  u:['Read this once. Then every other page makes sense.']},
+ book:{t:'Strategy book',s:'Every strategy that held in both test periods, with its exact rules and every number.',
+  r:['Each number reads <b>2022–25 → 2026 · Blended</b> (bold = both periods together).','<b>Target</b> sits next to WR on every row: WR only means something with its target.','<b>Break-even WR</b> = the WR you need just to not lose at that target.','<b>TRADE</b> = held in both periods with enough trades. <b>WATCH</b> = held, but small sample or a caveat: paper-trade it first.','Change the contract and the number of contracts at the top: all $ numbers follow.'],
+  u:['Pick ONE strategy. Read its rules, its worst losing streak and its drawdown. Backtest it yourself. Then decide.','Want to see two or more strategies together? Use <b>Combine strategies</b> at the bottom: it is your choice, not a tip.']},
+ blocks:{t:'Blocks %',s:'Do MMM blocks (eBlocks, iBlocks, balance boxes) hold when price comes back? The block tests, in plain numbers.',
+  r:['<b>Hold %</b> = how often price touched the block and did NOT close through it.','<b>1:2 %</b> = how often a trade from the block reached 2 times its stop first.','Every block result is compared with <b>random boxes</b> of the same size: if a random box does the same, the block is not special.'],
+  u:['Use the timeframe and period chips. Look for rows where the block beats the random box in both periods.']},
+ verdicts:{t:'Verdicts',s:'The decision board: one card per idea, with what to do and why.',
+  r:['<b>TRADE</b> = tested edge. <b>USE AS FILTER</b> = makes a strategy better, not a strategy alone. <b>WATCH</b> = promising, not proven. <b>DON’T TRADE</b> = lost or only worked once.','Each card: the rule, <b>Why</b> (the market reason), then the numbers. A → B = 2022–25 → 2026.','WR on a card is read with the target written on the same card.'],
+  u:['Filter by status or indicator, or search a word. Start with the TRADE cards.']},
+ edge:{t:'EDGE PRO lab',s:'The 5 strategies that started in MMM EDGE PRO (X.M4, X.M5, C.M3, C.M4, C.M5), one at a time.',
+  r:['Switch the <b>gate</b> (MMPD filter), the <b>stop</b> and the <b>exit</b>: every table follows.','<b>½ out</b> = half the trade comes off early, the stop goes to entry, the rest runs. <b>Full</b> = the whole trade runs to the target.','Each WR cell shows its target. Cells read 2022–25 → 2026.','<b>Every gate for one strategy</b> = pick a strategy and compare the filters.'],
+  u:['Pick the strategy you study, then the gate that kept it strong in both periods.']},
+ prop:{t:'Prop & size',s:'How long a 50k prop evaluation takes with one strategy, and what size your account can survive.',
+  r:['<b>Pass chance</b> = evaluations that passed ÷ all that finished. <b>Trading days to pass</b> = the middle value.','Bigger size = faster when it works, but more tries fail (every fail is a new fee).','<b>Survival size</b> = the size that survives a drawdown 1.5 times worse than the worst one this strategy had.'],
+  u:['Pick ONE strategy and your size. If the pass chance is low at your size, go smaller.']},
+ levels:{t:'Levels & odds',s:'What the next candle usually does: take the previous high or low, break a box, fill a pullback.',
+  r:['<b>PH</b> = the next candle trades above the previous candle’s high. <b>PL</b> = below its low. Both can happen in one candle.','Rows are split by the type of the previous candle (BuBC = closed above the high before it · BeBC = closed below the low · NBC = neither).','Percentages are how often it happened. Two numbers = NQ / MNQ.'],
+  u:['Use these odds for targets: aim for the level that gets taken most often.']},
+ retest:{t:'2026 retest',s:'Every old test, run again on 10 fresh months of MNQ: what held and what did not.',
+  r:['<b>Rank correlation</b> = does a great old result stay great? 1 = same order, 0 = no link.','<b>Old t-score → fresh result</b> = how much of the old avg RR survived.','<b>What held / what did not</b> = the survivors and the casualties.'],
+  u:['Rule of thumb: expect about ¼ of a backtest’s avg RR live, unless it passed a fresh test like this.']},
+ readme:{t:'How to read · every page',s:'All the page guides in one place, plus the full test rules of the 2022–25 grid.',
+  r:['Each page also has its own guide on top, so you can read it where you are.'],u:[]},
+ answers:{t:'Answers',s:'The first answers from the 2022–25 grid: what the big test said about entries, stops, exits and targets.',
+  r:['These are the first answers, from NQ 2022–25 only. The final calls are in <b>VERDICTS</b>.','Each block: the question, then the answer in bold, then the numbers.'],
+  u:['Use it to understand WHY the strategy rules look the way they do.']},
+ run:{t:'Break run',s:'After a break (a body close past a level), how far and how long does the move usually go?',
+  r:['<b>BC</b> = body close: a candle closes past the previous candle’s high (bull) or low (bear). <b>NBC</b> = a candle that closes inside the previous one.','<b>With-trend BCs in a row</b> = how many body closes the same way come right after the break.','<b>Candles / points to the 1st opposite BC</b> = how long and how far the move runs before the first body close the other way.','<b>Deepest pullback</b> = how far price came back against the break before that.','Each group shows the average, the middle value (median) and how often it was 1, 2, 3, 4 or 5+.'],
+  u:['Set your target inside the usual run: if the middle run is 10 pts, a 40 pt target is a long shot.']},
+ cmap:{t:'Candle map',s:'After each candle type, does price hit the candle’s target (its far end) or its other side first, and where does it pull back on the way?',
+  r:['<b>Target (TGT)</b> = price passes the candle’s far end (the high of a bull candle, the low of a bear candle).','<b>Hit target</b> / <b>Hit other side</b> (a close past the candle’s other end) / <b>Neither</b> (nothing within 20 candles). The three add up to 100%.','<b>Candles to target</b> = how many candles it took, on average.','<b>Next candle closes</b> = where the very next candle closes: past the target end, inside the target half, inside the other half, or past the other end.','<b>TGT hit after a pullback to</b> = of the trades that hit the target, how deep price pulled back first (XP = no pullback … XD = the other end).','<b>Pullback to P, MP, BAL, MD, D, XD, the open, the close</b>: <i>price got there</i> = how often a limit there would fill · <i>then TGT hit</i> = how often the target came after that fill.'],
+  u:['Pick a candle type and side. Look for a ladder level with a high <i>then TGT hit</i>: that is where a limit entry works best.','Ladder: XP 100% · P 87.5% · MP 75% · BAL 50% · MD 25% · D 12.5% · XD 0% of the candle, measured from the other end.']},
+ bmap:{t:'Break zone map',s:'After a break and its first pullback, where does price come back to, and does the run continue to a new high?',
+  r:['<b>Target (TGT)</b> = a new high of the run (a new low for shorts). <b>Hit other side</b> = a close back through the broken level.','The ladder runs from the broken level (XD 0%) to the top of the run (XP 100%).','<b>Pullback to X</b>: <i>price got there</i> = how often price came back to X · <i>then TGT hit</i> = how often the run then made a new high.'],
+  u:['Use it to place a re-entry limit after a break: the level with the best <i>then TGT hit</i>.']},
+ marg:{t:'Best entry · stop · exit',s:'One choice at a time: which entry, which stop, which exit is best when everything else changes?',
+  r:['<b>Compare</b> = the choice being tested (entry, stop, exit or target). Each row = one option.','<b>Combos</b> = how many full setups used this option (30+ trades each).','<b>avg RR</b> and <b>WR</b> = the middle value of all those combos (mixed targets). <b>% combos making money</b> = how many were above 0.','<b>Best combo</b> = the single best setup with this option, with its target.'],
+  u:['Read down one Compare group: the option with the best middle value is the safest choice, not the best single row.']},
+ es:{t:'Entry × stop',s:'Every entry paired with every stop: which pairs make money?',
+  r:['Each row = one entry + one stop. <b>avg RR (middle value)</b> = over all 36 exit + target pairs. <b>avg RR (best)</b> = the best exit + target, written next to it.','<b>WR</b> = win rate at that best exit + target (shown in the cell).','<b>Avg risk</b> = the average stop in points.'],
+  u:['Look for pairs that are good on the middle value too: they do not depend on one lucky exit.']},
+ top:{t:'Top 10 by PF',s:'The 10 best combos by profit factor in each chart, family and view.',
+  r:['<b>Code</b> = entry · stop · exit (see HOW TO READ for the codes). <b>Target</b> = 1:N RR.','<b>WR</b> shows its target next to it. <b>WR needed</b> = the WR to break even at that target.','<b>first 70% / last 30%</b> = the same combo on the first and last part of the dates. Both should be above 0.','<b>Random entry</b> = the same stop on a random candle: the combo must beat it.','<b>Checks</b> = how many of the 6 proof checks it passed. <b>PASS</b> = all 6 + 30 trades.'],
+  u:['Tick <b>PASS only</b> and set <b>Min trades</b> (for example 100) to remove the lucky small samples.']},
+ topt:{t:'Top 10 by t-score',s:'The 10 most reliable combos (highest t-score) in each chart, family and view.',
+  r:['Same columns as TOP 10 BY PF. Here the order is by <b>t-score</b>: how sure we are it is not luck (2+ good, 3+ for a pick from this big grid).','<b>WR</b> shows its target next to it.'],
+  u:['A high t-score with a small avg RR = steady but small. A high PF with a low t-score = maybe luck.']},
+ proof:{t:'Proof checklist',s:'The short list of combos, run through all 7 proof checks.',
+  r:['Each check is <b>yes</b> or <b>no</b>: 1 PF 1.3+ and avg RR above 0 · 2 beats a random entry · 3 t-score 3+ · 4 positive in the first 70% AND the last 30% · 5 its neighbours also make money · 6 positive in 2 of 3 years · 7 still positive without its 5 best trades.','<b>WR</b> shows the target from the code next to it.','<b>PASS</b> = all 7.'],
+  u:['Only PASS rows went on to the 2026 retest.']},
+ fsum:{t:'Filters summary',s:'Does a filter (session, trend, MMPD…) make setups better in general?',
+  r:['<b>Combos</b> = how many setups the filter was tried on. <b>Gain</b> = avg RR with the filter minus without (middle value).','<b>% combos improved</b> = how often the filter helped.'],
+  u:['A good filter helps most combos (60%+) by a clear gain. Open FILTERS DETAIL to see each combo.']},
+ filt:{t:'Filters detail',s:'Every filter on every combo: the result with and without it.',
+  r:['<b>avg RR with filter</b> vs <b>no filter</b>, and the <b>Gain</b>.','<b>WR</b> shows the target from the code next to it.','<b>t-diff</b> rows = how sure the difference is (2+ = probably real).'],
+  u:['Pick a filter and a group in the dropdowns, then sort by Gain.']},
+ g1:{t:'Full grid · 1m',s:'Every combo on the 1-minute chart: one row per entry + stop + exit, every target from 1:2 to 1:7.',
+  r:['<b>Code</b> = entry · stop · exit. Then the result at <b>1:2 RR</b>, then the same at <b>1:3 … 1:7 RR</b> on the right.','Every WR column title shows its target.','<b>first 70% / last 30% / 2023 / 2024 / 2025</b> = the same combo on parts of the dates.','<b>Best target</b> = the target with the best avg RR.'],
+  u:['Pick a family, set Min trades, tick PASS only, then sort by avg RR or t-score.','On 1m the 1 pt cost is big against small stops: very few combos survive.']},
+ g5:{t:'Full grid · 5m',s:'Every combo on the 5-minute chart: one row per entry + stop + exit, every target from 1:2 to 1:7.',
+  r:['Same columns as FULL GRID 1m. Every WR column title shows its target.'],u:['Pick a family, set Min trades, tick PASS only, then sort.']},
+ g15:{t:'Full grid · 15m',s:'Every combo on the 15-minute chart: one row per entry + stop + exit, every target from 1:2 to 1:7.',
+  r:['Same columns as FULL GRID 1m. Every WR column title shows its target.'],u:['Pick a family, set Min trades, tick PASS only, then sort. 15m is where most MMM strategies were found.']},
+ g60:{t:'Full grid · 1h',s:'Every combo on the 1-hour chart: one row per entry + stop + exit, every target from 1:2 to 1:7.',
+  r:['Same columns as FULL GRID 1m. Every WR column title shows its target.'],u:['Pick a family, set Min trades, tick PASS only, then sort. Fewer trades here: watch the t-score.']}
+};
+function pageHead(id){const p=PAGES[id];if(!p)return '';
+ return `<header class="ph" data-id="${id}"><h1>${p.t}</h1><p class="phs">${p.s}</p><details class="phd" open><summary>How to read this page</summary><ul>${p.r.map(x=>`<li>${x}</li>`).join('')}</ul>${p.u.length?`<p class="phu"><b>How to use it</b></p><ul>${p.u.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</details></header>`}
+function allHeads(){return Object.keys(PAGES).filter(k=>k!=='readme').map(k=>{const p=PAGES[k];return `<section class="wide"><h2>${p.t}</h2><p class="note" style="margin:0 0 6px">${p.s}</p><ul>${p.r.map(x=>`<li>${x}</li>`).join('')}</ul>${p.u.length?`<p style="margin:6px 0 2px"><b>How to use it</b></p><ul>${p.u.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</section>`}).join('')}
+
 // ───────────────── tabs, router, 2022–25 grids ─────────────────
 const TABS=[
  {grp:'GUIDE'},
@@ -1236,6 +1337,7 @@ function fmt(v,t){
     case 't':return v.toFixed(2);
     case 'pf':return v>=99?'∞':v.toFixed(2);
     case 'n1':return v.toFixed(1);
+    case 'tg':return '1:'+v+' RR';
     default:return String(v);
   }
 }
@@ -1258,7 +1360,7 @@ async function show(id){
   const sc=$('#scroll');sc.onscroll=null;sc.scrollTop=0;sc.scrollLeft=0;
   $('#sub').textContent=t.kind==='guide'?'NQ 1m 2022–25 + fresh MNQ Dec 2025 – Oct 2026 · every number after costs (1 pt a trade)':'2022–25 foundation grid · NQ 1m · 1 pt cost';
   if(t.kind==='guide'){$('#bar').innerHTML='';G[t.id](sc);return}
-  if(t.kind==='doc'){$('#bar').innerHTML='';sc.innerHTML=document.getElementById('doc-'+t.id).innerHTML;return}
+  if(t.kind==='doc'){$('#bar').innerHTML='';sc.innerHTML=(t.id==='readme'?'<div class="doc">'+allHeads()+'</div>':'')+document.getElementById('doc-'+t.id).innerHTML;return}
   sc.innerHTML='<div class="loading">Loading '+t.name+'…</div>';
   let file=t.file,key=t.id,pre=null;
   if(t.tf){
@@ -1276,6 +1378,10 @@ async function show(id){
 function grid(t,D,key,pre){
   const st=state[key]||(state[key]={f:{},minN:D.minN??0,pass:false,q:'',sort:D.sort??null,dir:D.dir??-1});
   const cols=D.cols;
+  // the target of a row: the Target column (1:N), else the 1:N inside the code / best exit
+  const iN=cols.findIndex(c=>c.k==='N'),iS=cols.map((c,i)=>c.t==='s'?i:-1).filter(i=>i>=0);
+  const tgOf=row=>{if(iN>=0&&row[iN]!=null)return '1:'+row[iN]+' RR';for(const i of iS){const m=String(row[i]??'').match(/1:(\d+)/);if(m)return '1:'+m[1]+' RR'}return ''};
+  const wrT=c=>(c.k==='wr'||c.k==='bwr')&&!/1:\d/.test(c.l)&&t.id!=='marg';
   const bar=$('#bar');bar.innerHTML='';
   if(pre)pre(bar);
   (D.filters||[]).forEach(k=>{
@@ -1310,13 +1416,14 @@ function grid(t,D,key,pre){
     return rows;
   }
   function paint(){
-    const top=sc.scrollTop,h=sc.clientHeight;
+    const top=Math.max(0,sc.scrollTop-tbl.offsetTop),h=sc.clientHeight;
     const a=Math.max(0,Math.floor((top)/RH)-20),b=Math.min(view.length,Math.ceil((top+h)/RH)+20);
     let html=`<tr style="height:${a*RH}px"></tr>`;
     for(let r=a;r<b;r++){const row=view[r];html+='<tr><td class="rn">'+(r+1)+'</td>';
       cols.forEach((c,i)=>{const v=row[i];
         if(c.t==='s')html+=`<td class="s${c.code?' code':''}">${v??''}</td>`;
         else if(c.t==='b')html+=`<td class="s">${v==='PASS'?'<span class="pass">PASS</span>':'<span class="fail">'+(v||'')+'</span>'}</td>`;
+        else if(wrT(c)){const tg=tgOf(row);html+=`<td class="${cls(v,c.t)}">${fmt(v,c.t)}${tg?` <span class="tg">${tg}</span>`:''}</td>`}
         else html+=`<td class="${cls(v,c.t)}">${fmt(v,c.t)}</td>`});
       html+='</tr>'}
     html+=`<tr style="height:${(view.length-b)*RH}px"></tr>`;tb.innerHTML=html;
@@ -1340,6 +1447,8 @@ function grid(t,D,key,pre){
 })();
 
 buildTabs();
+new MutationObserver(()=>{const sc=$('#scroll');if(!cur)return;const f=sc.firstElementChild;if(!f||f.classList.contains('loading'))return;
+  if(f.classList.contains('ph')&&f.dataset.id===cur.id)return;sc.querySelectorAll(':scope>.ph').forEach(x=>x.remove());sc.insertAdjacentHTML('afterbegin',pageHead(cur.id))}).observe($('#scroll'),{childList:true});
 let start=null;try{start=location.hash.slice(1)||store('mmm-tab2')}catch(e){}
 show(TABS.some(t=>t.id===start)?start:'start');
 window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(TABS.some(t=>t.id===h))show(h)});
