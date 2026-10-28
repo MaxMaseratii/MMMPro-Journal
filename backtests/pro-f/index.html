@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MMM PRO f lab · Retest odds, before and after the touch | MMM Trading</title>
+<meta name="description" content="MMM PRO f backtests: HTF level → LTF reversal box → retest → BC entry. Retest odds, what happens before and after the touch, box types, entry areas, BE management. NQ 2022–25 + MNQ 2026.">
+<link rel="canonical" href="https://www.maxmaserati.com/backtests/pro-f/">
+<meta name="mmm-page" content="backtests">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<meta name="theme-color" content="#07080a">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600&display=swap">
+<style>
+/* Layout: trading-terminal sheet — findings strip, money bar, tabs, filters, one dense sortable table (or strategy cards) per tab */
+:root{
+  --bg:#07080a; --panel:#0f1114; --panel2:#0b0d10; --row:#14171b; --row2:#101317; --line:#252a31;
+  --fg:#d9dde3; --mute:#8f97a1; --gold:#e1b31a; --up:#3ddc97; --dn:#ff5c6c; --mix:#f2c94c;
+  --g:#0d2c20; --y:#2b2610; --r:#2f1216;
+  --display:'Barlow Condensed','Arial Narrow',sans-serif; --body:'Barlow',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  color-scheme:dark;
+}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:14px;margin:0} .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 40px}
+main{max-width:1500px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+main h1{font-family:var(--display);font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-size:30px;margin:0;text-wrap:balance}
+.sub{color:var(--mute);margin:2px 0 0;max-width:95ch;line-height:1.45}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);padding:11px 13px;min-width:0}
+.card h3{font-family:var(--display);color:var(--gold);letter-spacing:.06em;text-transform:uppercase;font-size:15px;margin:0 0 5px}
+.card p{margin:0;line-height:1.45}
+b.up{color:var(--up)} b.dn{color:var(--dn)}
+.money{display:flex;flex-wrap:wrap;gap:10px;align-items:end;background:var(--panel);border:1px solid var(--line);padding:10px 12px}
+.money .lab{font-family:var(--display);color:var(--gold);letter-spacing:.06em;text-transform:uppercase;font-size:15px;margin-right:6px;align-self:center}
+label{display:flex;flex-direction:column;gap:3px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+main select,main input[type=number]{background:var(--bg);color:var(--fg);border:1px solid var(--line);padding:5px 8px;font-family:var(--body);font-size:13px;max-width:100%}
+main input[type=number]{font-family:var(--mono);width:96px}
+.money .eg{font-family:var(--mono);font-size:12px;align-self:center;color:var(--mute)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button{font-family:var(--display);font-size:16px;letter-spacing:.05em;text-transform:uppercase;background:var(--panel);color:var(--mute);border:1px solid var(--line);padding:6px 12px;cursor:pointer}
+.tabs button[aria-selected=true]{color:var(--bg);background:var(--gold);border-color:var(--gold)}
+main button:focus-visible,main select:focus-visible,input:focus-visible,th:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.ttl{font-family:var(--display);color:var(--gold);letter-spacing:.08em;text-transform:uppercase;font-size:18px;margin:4px 0 0}
+.note{color:var(--mute);font-size:13px;margin:0;max-width:115ch;line-height:1.5}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.cnt{font-family:var(--mono);color:var(--mute);font-size:12px;margin-left:auto;align-self:center}
+.tw{overflow:auto;border:1px solid var(--line);max-height:72vh}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
+th{position:sticky;top:0;z-index:1;background:#000;color:var(--gold);text-align:left;font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none;font-family:var(--display);font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+th .h2{display:block;color:var(--mute);font-weight:400;font-size:10.5px;text-transform:none;letter-spacing:0;font-family:var(--body)}
+th.s::after{content:" ▾";color:var(--fg)} th.s.asc::after{content:" ▴"}
+td{padding:4px 8px;white-space:nowrap;border-bottom:1px solid #1a1e23}
+tbody tr:nth-child(odd){background:var(--row)} tbody tr:nth-child(even){background:var(--row2)}
+tbody tr.g{background:var(--g)} tbody tr.y{background:var(--y)} tbody tr.r{background:var(--r)}
+td.p{color:var(--up)} td.n{color:var(--dn)}
+.v{font-family:var(--display);letter-spacing:.04em;font-size:13px;padding:1px 6px;border:1px solid currentColor;white-space:nowrap}
+.v.PASS{color:var(--up)} .v.MIXED{color:var(--mix)} .v.FAIL{color:var(--dn)}
+.v b{color:var(--fg);font-weight:600}
+.warn{border:1px solid var(--gold);padding:10px 14px;background:var(--panel);line-height:1.45}
+.cards{display:grid;gap:14px}
+.sc{background:var(--panel);border:1px solid var(--line);padding:14px 16px;display:grid;gap:12px;min-width:0}
+.sc.g{border-left:4px solid var(--up)} .sc.y{border-left:4px solid var(--mix)}
+.sc header{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.sc h3{font-family:var(--display);font-size:26px;margin:0;color:var(--gold);letter-spacing:.04em}
+.pass{display:flex;flex-wrap:wrap;align-items:center;gap:0;background:var(--up);color:#00170d;font-family:var(--display);font-size:15px;letter-spacing:.04em;font-weight:700}
+.pass span{padding:3px 10px;border-left:1px solid #0a3d27}
+.pass span:first-child{border-left:0;background:#1aa86f;color:#00170d}
+.rob{color:var(--mute);font-size:12.5px}
+.tag{font-family:var(--display);letter-spacing:.06em;text-transform:uppercase;font-size:12px;color:var(--mute);border:1px solid var(--line);padding:1px 7px}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.kpi div{background:var(--panel2);border:1px solid var(--line);padding:8px 10px;min-width:0}
+.kpi dt{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:12px;color:var(--mute)}
+.kpi dd{margin:2px 0 0;font-family:var(--mono);font-size:19px;font-weight:600}
+.spec{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px 16px;margin:0}
+.spec dt{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:12px;color:var(--mute)}
+.spec dd{margin:0;line-height:1.4}
+.small{font-size:12.5px;color:var(--mute)}
+ul{margin:4px 0;padding-left:20px;line-height:1.55;max-width:110ch}
+@media (max-width:600px){h1{font-size:24px}.kpi dd{font-size:16px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="mmm-header"></div>
+
+<div class="wrap"><main>
+<header>
+<h1>MMM PRO f lab</h1>
+<p class="sub">HTF level → LTF reversal box → retest → BC entry, plus the PRO f order flow on its own chart. NQ 1m Dec 2022 – Dec 2025 (2022–25) checked on MNQ 1m 2026 (Mar–May + Sep–Oct, about 3 months). 1 pt cost per trade. Closed candles only. New York time. WR = win rate · PF = profit factor · RR = reward ÷ risk · t = t-score (2+ = strong).</p>
+</header>
+<section class="sum" id="learn"></section>
+<div class="money" role="group" aria-label="Your size">
+ <span class="lab">Your size</span>
+ <label for="m-asset">Asset<select id="m-asset"><option value="2">MNQ · $2 a point</option><option value="20">NQ · $20 a point</option></select></label>
+ <label for="m-qty">Contracts<input type="number" id="m-qty" min="1" max="100" step="1" value="1"></label>
+ <label for="m-risk">Risk per trade $ (tables)<input type="number" id="m-risk" min="10" max="100000" step="10" value="200"></label>
+ <span class="eg" id="m-eg"></span>
+</div>
+<div class="tabs" role="tablist" id="tabs"></div>
+<section id="view" style="display:grid;gap:10px;min-width:0"></section>
+<p class="note" style="margin-top:18px">Education only, not financial advice. Backtests describe the past and do not promise future results. Futures trading carries a high risk of loss.</p></main></div>
+
+<div id="mmm-footer"></div>
+<script id="main" type="text/plain">const D=window.__PROF;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pc=x=>x==null?'—':Math.round(x*100)+'%';
+const sg=(x,p=2)=>x==null?'—':(x>0?'+':x<0?'−':'')+Math.abs(x).toFixed(p);
+const nf=(x,p=1)=>x==null?'—':(+x).toFixed(p);
+function usd(v){if(v==null||isNaN(v))return '—';const s=v<0?'−':v>0?'+':'';return s+'$'+Math.abs(Math.round(v)).toLocaleString('en-US');}
+function size(){const a=+$('m-asset').value||2,q=Math.max(1,+$('m-qty').value||1),r=Math.max(1,+$('m-risk').value||200);return{k:a/2*q,risk:r,a,q};}
+const STOPT={S20:'stop 20 pts',S30:'stop 30 pts',S50:'stop 50 pts',Sbox:'stop at zone edge (20–50)',Szone:'stop at zone edge (no cap)'};
+const TGTT={TP2:'1:2',TP3:'1:3',TP5:'1:5',TP10:'1:10',RUN:'runner'};
+const TRT={'':'',BE1:'BE after 1 BC',BE2:'BE after 2 BC',trailBC:'trail each BC',trailOpp:'trail after opp candle'};
+function cfgTxt(c){if(!c)return '—';const p=c.split(' | ');
+  if(p.length===4&&(p[2].startsWith('BE')||p[2]==='no BE'))return [STOPT[p[0]]||p[0],TGTT[p[1]]||p[1],p[2],p[3]].join(' · ');
+  return [STOPT[p[0]]||p[0],p[1]?'box exit':null,TGTT[p[2]]||p[2],TRT[p[3]]||p[3]].filter(Boolean).join(' · ');}
+function verdict(both){return both>=0.6?'PASS':both>=0.2?'MIXED':'FAIL';}
+const rowCls={PASS:'g',MIXED:'y',FAIL:'r'};
+function vb(both,wr,avg,pf){const v=verdict(both);return `<span class="v ${v}">${v==='PASS'?'✔ ':v==='FAIL'?'✖ ':'~ '}${v} · WR <b>${pc(wr)}</b> · avg <b>${sg(avg)}</b> RR${pf!=null?' · PF <b>'+nf(pf,2)+'</b>':''}</span>`;}
+
+/* ── findings ── */
+const LEARN=[
+ ['Which breaks come back to retest',`Right after the break candle: an <b class="up">NBC</b> → the box gets retested 76–86% of the time. An <b class="up">opposite BC</b> → about 100% (it usually is the retest). A <b class="dn">2nd BC</b> → only 50–70%, and <b class="dn">2 more BCs in a row</b> → 25–57%. Strong momentum often never comes back.`],
+ ['After the retest',`The next candle after the touch is most often an <b class="up">NBC</b> (40–63%). About 4–7 retests in 10 end with a BC back out (your entry); 2–5 in 10 close through the box first. After an opposite BC the box breaks about half the time. At all levels the entry wins 35–42% at 1:2 with a 50 pt stop: about break-even. Best at UPG gaps: <b class="up">5m break → opposite BC → retest → NBC → BC</b> (WR 46% / 54%).`],
+ ['Box type',`A box <b class="up">with an NBC</b> inside gets retested 71–83% of the time. A <b class="dn">BC on BC</b> box (no NBC) only 49–67%. With NBC is also a little better to trade on 5m and 15m. BC on BC has small samples.`],
+ ['Before the touch',`Best on 15m: the <b class="up">retest comes straight after the break</b> (nothing in between, P0). On 1m / 5m: 2nd BC + opposite BC before the touch (P5), small sample. Worst: lots of back and forth before the touch (P6 / P7) and 2nd BC → touch (P1).`],
+ ['Retest + 1st BC',`Works at <b class="up">UPG gaps on 15m</b>: retest only wicks the box → 1st BC out → next open. F.M17: WR 37%, +0.15 RR a trade, t 3.2, 71% of settings pass. Best result of round 3.`],
+ ['Touch vs close inside',`Again a wick touch (no close inside the box) is better than a close inside on 5m and 15m. On 1m both lose.`],
+ ['1m and prop firms',`1m still has no edge on most levels. BE after the 2nd BC makes the shape prop-friendly (F.M22: only 6% full stop-outs, max DD 6.5 RR), but it rests on a small 2026 sample.`]];
+$('learn').innerHTML=LEARN.map(([h,p])=>`<div class="card"><h3>${h}</h3><p>${p}</p></div>`).join('');
+
+/* ── strategies ── */
+function stratTab(st){
+  const U=size(); const S=D.S;
+  const rounds=[...new Set(S.map(s=>s.round))];
+  let h=`<div class="warn">Pick ONE strategy. Study it, check it fits your style, backtest it yourself, then decide. Do not trade them all together. 2026 has only about 3 months of 1m data, so treat it as a check, not proof.</div>`;
+  h+=`<div class="filters"><label for="s-tf">Entry TF<select id="s-tf"><option value="">All</option>${[...new Set(S.map(s=>s.ltf))].map(v=>`<option ${st.tf===v?'selected':''}>${v}</option>`).join('')}</select></label>
+  <label for="s-rd">Round<select id="s-rd"><option value="">All</option>${rounds.map(v=>`<option ${st.rd===v?'selected':''}>${esc(v)}</option>`).join('')}</select></label>
+  <label for="s-sort">Sort by<select id="s-sort">${[['','Newest first'],['WR','Win rate'],['avgRR','avg RR'],['PF','Profit factor'],['t','t-score'],['rob','% settings pass']].map(([v,l])=>`<option value="${v}" ${st.sort===v?'selected':''}>${l}</option>`).join('')}</select></label></div>`;
+  let L=S.filter(s=>(!st.tf||s.ltf===st.tf)&&(!st.rd||s.round===st.rd));
+  if(st.sort){L=[...L].sort((a,b)=>st.sort==='rob'?(b.rob||0)-(a.rob||0):((b.b||{})[st.sort]||0)-((a.b||{})[st.sort]||0));} else L=[...L].reverse();
+  h+='<div class="cards">'+L.map(s=>card(s,U)).join('')+'</div>';
+  return h;
+}
+function card(s,U){
+  const b=s.b||{},o=s.o||{},f=s.f||{}; const ok=(o.avgRR>0&&f.avgRR>0);
+  const tgt=s.target;
+  const setupNote=s.setup?' (per setup)':'';
+  const fl=b.full_loss!=null&&b.WR<0.3?`<p class="small">Low WR because many trades end at BE or a small loss. Full stop-outs: <b>${pc(b.full_loss)}</b> of trades.</p>`:'';
+  const rows=['o','f','b'].map(p=>{const x=s[p]||{};const nm={o:'2022–25',f:'2026',b:'Both'}[p];
+    return `<tr class="${p==='b'?'g':''}"><td>${nm}</td><td>${x.trades??'—'}</td><td>${nf(x.per_month)}</td><td class="${x.avgRR>0?'p':'n'}">${pc(x.WR)}</td><td>${nf(x.PF,2)}</td><td class="${x.avgRR>0?'p':'n'}">${sg(x.avgRR)}</td><td>${nf(x.t)}</td><td>${sg(x.netRR,1)}</td><td class="p">${usd(x.won_usd*U.k)}</td><td class="n">${usd(x.lost_usd*U.k)}</td><td class="${x.net_usd>0?'p':'n'}">${usd(x.net_usd*U.k)}</td><td>${nf(x.maxDD_RR)}</td><td>${x.max_wins??'—'} / ${x.max_losses??'—'}</td><td>${nf(x.avg_stop,0)}</td></tr>`;}).join('');
+  return `<article class="sc ${ok?'g':'y'}"><header><h3>${s.code}</h3>
+   <span class="pass" title="Made money in both 2022–25 and 2026"><span>✔ PASS</span><span>WR ${pc(b.WR)}</span><span>avg ${sg(b.avgRR)} RR</span><span>PF ${nf(b.PF,2)}</span><span>target ${esc(tgt)}</span></span>
+   <span class="rob">${s.rob!=null?s.rob+'% of its settings pass both periods':''}</span><span class="tag">${esc(s.ltf)} entry</span><span class="tag">${esc(s.round.split(' · ')[0])}</span></header>
+   <dl class="kpi"><div><dt>Win rate${setupNote}</dt><dd>${pc(b.WR)}</dd></div><div><dt>avg RR a trade</dt><dd class="${b.avgRR>0?'up':''}" style="color:var(--up)">${sg(b.avgRR)}</dd></div><div><dt>Profit factor</dt><dd>${nf(b.PF,2)}</dd></div><div><dt>Trades / month</dt><dd>${nf(b.per_month)}</dd></div><div><dt>Net (your size)</dt><dd style="color:${b.net_usd>0?'var(--up)':'var(--dn)'}">${usd(b.net_usd*U.k)}</dd></div><div><dt>Max DD</dt><dd>${nf(b.maxDD_RR)} RR</dd></div></dl>
+   ${fl}
+   <dl class="spec"><div><dt>Level / signal</dt><dd>${esc(s.level)}</dd></div><div><dt>Entry</dt><dd>${esc(s.entry)}</dd></div>${s.time&&s.time!=='as written'?`<div><dt>Time</dt><dd>${esc(s.time)}</dd></div>`:''}<div><dt>Stop</dt><dd>${esc(s.stop)}</dd></div><div><dt>Close back past the zone = out</dt><dd>${s.boxexit?'yes':'no'}</dd></div><div><dt>Target</dt><dd>${esc(tgt)} RR</dd></div><div><dt>Trail / management</dt><dd>${esc(s.trail)}</dd></div></dl>
+   <div class="tw" style="max-height:none"><table><thead><tr><th>Period</th><th>Trades</th><th>Per month</th><th>WR</th><th>PF</th><th>avg RR</th><th>t</th><th>Net RR</th><th>Won</th><th>Lost</th><th>Net</th><th>Max DD RR</th><th>Wins / losses in a row</th><th>avg stop pts</th></tr></thead><tbody>${rows}</tbody></table></div></article>`;
+}
+
+/* ── generic explorer over packed tables ── */
+function unpack(T){const c=T.cols,dct=T.dict;return T.rows.map(r=>{const o={};c.forEach((k,i)=>o[k]=dct[k]?dct[k][r[i]]:r[i]);return o;});}
+const X7=unpack(D.X7),M7=unpack(D.M7),X3=unpack(D.X3),RT=unpack(D.RT),PS=unpack(D.PS);
+const LVLORDER=l=>l==='ALL levels'?'0':l.startsWith('ALL')?'1'+l:'2'+l;
+const DIMS7=[['ltf','Entry TF'],['level','HTF level'],['pre','Before the touch'],['touch','Retest type'],['box','LTF box type'],['area','Entry area'],['held','Level held']];
+const DIMSM=[['ltf','Entry TF'],['level','HTF level'],['pre','Before the touch'],['touch','Retest type'],['box','LTF box type'],['held','Level held']];
+const DIMS3=[['ltf','Entry TF'],['level','HTF level'],['valid','Before the retest'],['seq','After the touch'],['area','Entry area'],['held','Level held']];
+function bothAvg(r,a,b){const n=(r.n_o||0)+(r.n_f||0);return n?((r[a]||0)*(r.n_o||0)+(r[b]||0)*(r.n_f||0))/n:null;}
+const COL_STD=[
+ ['n_o','Trades','22–25',r=>r.n_o],['n_f','Trades','2026',r=>r.n_f],
+ ['verdict','Verdict','2 periods · best setting',r=>r.both,r=>vb(r.both,r.best_b_wr,bothAvg(r,'best_o_avg','best_f_avg'),r.best_b_pf)],
+ ['both','Settings pass','% of 250 + in both',r=>r.both,r=>pc(r.both)],
+ ['o_med','Median RR','22–25 all settings',r=>r.o_med,r=>sg(r.o_med,3),r=>r.o_med],['f_med','Median RR','2026 all settings',r=>r.f_med,r=>sg(r.f_med,3),r=>r.f_med],
+ ['best_cfg','Best setting','',r=>r.best_cfg,r=>esc(cfgTxt(r.best_cfg))],
+ ['best_b_wr','WR','best setting',r=>r.best_b_wr,r=>pc(r.best_b_wr)],
+ ['best_o_avg','avg RR','best · 22–25',r=>r.best_o_avg,r=>sg(r.best_o_avg,3),r=>r.best_o_avg],['best_f_avg','avg RR','best · 2026',r=>r.best_f_avg,r=>sg(r.best_f_avg,3),r=>r.best_f_avg],
+ ['best_b_pf','PF','best',r=>r.best_b_pf,r=>nf(r.best_b_pf,2)],['best_b_t','t','best',r=>r.best_b_t,r=>nf(r.best_b_t)],['best_b_dd','Max DD','RR · best',r=>r.best_b_dd,r=>nf(r.best_b_dd)],
+ ['usd','$ a trade','at your risk · best',r=>bothAvg(r,'best_o_avg','best_f_avg'),r=>usd(bothAvg(r,'best_o_avg','best_f_avg')*size().risk),r=>bothAvg(r,'best_o_avg','best_f_avg')]];
+const COL7=[...COL_STD,['max_o_avg','Your model','BE after 2 BC · runner · 22–25',r=>r.max_o_avg,r=>sg(r.max_o_avg,3),r=>r.max_o_avg],['max_f_avg','Your model','2026',r=>r.max_f_avg,r=>sg(r.max_f_avg,3),r=>r.max_f_avg]];
+const COLM=[...COL_STD,['mg1_o_avg','BE+fees 1 BC','22–25 per setup',r=>r.mg1_o_avg,r=>sg(r.mg1_o_avg,3),r=>r.mg1_o_avg],['mg1_f_avg','BE+fees 1 BC','2026',r=>r.mg1_f_avg,r=>sg(r.mg1_f_avg,3),r=>r.mg1_f_avg],
+ ['mg2_o_avg','BE+fees 2 BC','22–25',r=>r.mg2_o_avg,r=>sg(r.mg2_o_avg,3),r=>r.mg2_o_avg],['mg2_f_avg','BE+fees 2 BC','2026',r=>r.mg2_f_avg,r=>sg(r.mg2_f_avg,3),r=>r.mg2_f_avg],
+ ['mg1r_o_avg','1 BC + 3 re-entries','22–25',r=>r.mg1r_o_avg,r=>sg(r.mg1r_o_avg,3),r=>r.mg1r_o_avg],['mg1r_f_avg','1 BC + 3 re-entries','2026',r=>r.mg1r_f_avg,r=>sg(r.mg1r_f_avg,3),r=>r.mg1r_f_avg]];
+const COL3=COL_STD;
+const EXPL={
+ pre:{rows:X7,dims:DIMS7,cols:COL7,title:'Before the touch: break candle → ? → touch → 1st BC',
+   note:'What happens between the break candle and the first touch of the box. P0 = the retest comes right away · P1 = a 2nd BC first · P2 = an NBC first · P4–P7 = mixes. After the touch the entry is the 1st BC that closes out of the box. "all" rows add every case together. Row color: green = 60%+ of the 250 stop / exit settings made money in BOTH periods, yellow = 20–60%, red = under 20%.',
+   def:{level:'ALL levels',touch:'all',box:'all',area:'A1 next open',held:'any'},sort:['ltf',1]},
+ box:{rows:X7,dims:DIMS7,cols:COL7,title:'LTF box type × entry area',
+   note:'BC on BC = the reversal box is made of two body closes with no NBC between them. Box with NBC = there is an NBC inside. Each entry area is a different place to get in after the 1st BC out of the box.',
+   def:{level:'ALL levels',pre:'all',touch:'all',held:'any'},sort:['area',1]},
+ exp:{rows:X7,dims:DIMS7,cols:COL7,title:'Explorer · every combination',
+   note:'Every HTF level × what happens before the touch × retest type × box type × entry area. Choose any filter. "Show" = PASS only by default. Click a column to sort. Rows with fewer than 60 trades in 2022–25 or 10 in 2026 are left out.',
+   def:{},show:'PASS',sort:['best_b_t',-1]},
+ mg:{rows:M7,dims:DIMSM,cols:COLM,title:'Your management · retest + 1st BC → next open',
+   note:'BE + fees = stop moved to entry + 1 pt once in profit after the 1st BC, the 2nd BC, or an opposite candle then a BC. Re-entry = after a stop or BE exit, enter again on touch → BC out while the box still holds. Results are per setup (all its trades added together). Best setting is picked from 192 stop / target / BE / re-entry mixes.',
+   def:{level:'ALL levels',pre:'all',touch:'all',box:'all',held:'any'},sort:['ltf',1]},
+ aft:{rows:X3,dims:DIMS3,cols:COL3,title:'After the touch (round 2)',
+   note:'What happens after the first touch before the entry BC. S1 touch → BC · S2 touch → NBC → BC · S3 touch → NBC → opposite → BC · S4 touch → opposite → BC. "2 BCs (validated)" = a 2nd BC printed before the retest.',
+   def:{level:'ALL levels',valid:'1 BC (break only)',area:'A1 next open next',held:'any'},sort:['ltf',1]}};
+EXPL.aft.def.area='A1 next open';
+const state={tab:'str',str:{},f:{},show:{},sort:{}};
+try{const s=JSON.parse(localStorage.getItem('mmmf_state')||'null');if(s&&s.tab)Object.assign(state,s);}catch(e){}
+function save(){try{localStorage.setItem('mmmf_state',JSON.stringify(state));}catch(e){}}
+function explTab(key){
+  const E=EXPL[key]; if(!state.f[key])state.f[key]={...E.def}; if(state.show[key]==null)state.show[key]=E.show||''; if(!state.sort[key])state.sort[key]=E.sort;
+  const F=state.f[key];
+  let h=`<h2 class="ttl">${E.title}</h2><p class="note">${E.note}</p><div class="filters">`;
+  for(const [k,lab] of E.dims){let vals=[...new Set(E.rows.map(r=>r[k]))];vals.sort((a,b)=>k==='level'?LVLORDER(a).localeCompare(LVLORDER(b)):(a==='all'?-1:b==='all'?1:String(a).localeCompare(String(b),'en',{numeric:true})));
+    h+=`<label for="f-${key}-${k}">${lab}<select id="f-${key}-${k}" data-k="${k}"><option value="">Any</option>${vals.map(v=>`<option value="${esc(v)}" ${F[k]===v?'selected':''}>${esc(v)}</option>`).join('')}</select></label>`;}
+  h+=`<label for="f-${key}-show">Show<select id="f-${key}-show"><option value="">Everything</option>${['PASS','MIXED','FAIL'].map(v=>`<option ${state.show[key]===v?'selected':''}>${v}</option>`).join('')}</select></label>`;
+  h+=`<label for="f-${key}-min">Min trades 2026<input type="number" id="f-${key}-min" min="10" step="5" value="${F._min||10}"></label>`;
+  let L=E.rows.filter(r=>E.dims.every(([k])=>!F[k]||r[k]===F[k])&&(!state.show[key]||verdict(r.both)===state.show[key])&&(r.n_f||0)>=(+F._min||10));
+  const [sk,sd]=state.sort[key]; const col=E.cols.find(c=>c[0]===sk);
+  const get=col?col[3]:(r=>r[sk]);
+  const tie=(a,b)=>{for(const [k] of E.dims){const c=String(a[k]).localeCompare(String(b[k]),'en',{numeric:true});if(c)return c;}return 0;};
+  L.sort((a,b)=>{const x=get(a),y=get(b);if(x==null&&y==null)return tie(a,b);if(x==null)return 1;if(y==null)return -1;const c=(typeof x==='string'?x.localeCompare(y,'en',{numeric:true}):x-y)*sd;return c||tie(a,b);});
+  const N=L.length; L=L.slice(0,500);
+  h+=`<span class="cnt">${N} rows${N>500?' · first 500 shown':''}</span></div>`;
+  const dimCols=E.dims.filter(([k])=>!F[k]);
+  h+=`<div class="tw"><table><thead><tr>${dimCols.map(([k,l])=>`<th data-s="${k}" tabindex="0" class="${sk===k?'s'+(sd>0?' asc':''):''}">${l}</th>`).join('')}${E.cols.map(c=>`<th data-s="${c[0]}" tabindex="0" class="${sk===c[0]?'s'+(sd>0?' asc':''):''}">${c[1]}<span class="h2">${c[2]}</span></th>`).join('')}</tr></thead><tbody>`;
+  for(const r of L){h+=`<tr class="${rowCls[verdict(r.both)]}">${dimCols.map(([k])=>`<td>${esc(r[k])}</td>`).join('')}${E.cols.map(c=>{const v=c[4]?c[4](r):esc(c[3](r));const t=c[5]?c[5](r):null;return `<td class="${t==null?'':t>0?'p':t<0?'n':''}">${v}</td>`;}).join('')}</tr>`;}
+  h+='</tbody></table></div>';
+  return h;
+}
+/* retest odds */
+const RTDIM={first:'1st candle after the break',first2:'1st + 2nd candle after the break',boxtype:'LTF box type',all:'all boxes'};
+function rtTab(){
+  const F=state.f.rt||(state.f.rt={ltf:'',L:'ALL levels',dim:'first'});
+  let h=`<h2 class="ttl">Which boxes come back to retest</h2><p class="note">Every first LTF reversal box after an HTF level touch. "Retested" = price came back and touched the box before closing through it (1m: 60 candles, 5m: 12, 15m: 16). "Retest → BC entry" = after the touch a BC closed back out of the box (your entry). An opposite BC right after the break is almost always the retest candle itself. Green = retested 75%+ in both periods, red = under 55%.</p><div class="filters">`;
+  h+=`<label for="rt-ltf">Entry TF<select id="rt-ltf"><option value="">Any</option>${['1m','5m','15m'].map(v=>`<option ${F.ltf===v?'selected':''}>${v}</option>`).join('')}</select></label>`;
+  const lv=[...new Set(RT.map(r=>r.L))].sort((a,b)=>LVLORDER(a).localeCompare(LVLORDER(b)));
+  h+=`<label for="rt-L">HTF level<select id="rt-L">${lv.map(v=>`<option ${F.L===v?'selected':''}>${esc(v)}</option>`).join('')}</select></label>`;
+  h+=`<label for="rt-dim">Split by<select id="rt-dim">${Object.entries(RTDIM).map(([k,l])=>`<option value="${k}" ${F.dim===k?'selected':''}>${l}</option>`).join('')}</select></label>`;
+  const L=RT.filter(r=>(!F.ltf||r.ltf===F.ltf)&&r.L===F.L&&r.dim===F.dim).sort((a,b)=>a.ltf.localeCompare(b.ltf,'en',{numeric:true})||b.retest_old-a.retest_old);
+  h+=`<span class="cnt">${L.length} rows</span></div><div class="tw"><table><thead><tr><th>Entry TF</th><th>${RTDIM[F.dim]}</th><th>Boxes<span class="h2">22–25 / 2026</span></th><th>Retested<span class="h2">22–25</span></th><th>Retested<span class="h2">2026</span></th><th>Retest → BC entry<span class="h2">22–25</span></th><th>Retest → BC entry<span class="h2">2026</span></th><th>Candles to the retest<span class="h2">median</span></th></tr></thead><tbody>`;
+  for(const r of L){const c=r.retest_old>=0.75&&r.retest_fresh>=0.75?'g':(r.retest_old<0.55&&(r.retest_fresh??0)<0.55?'r':'y');
+    h+=`<tr class="${c}"><td>${r.ltf}</td><td>${esc(r.name)}</td><td>${r.n_old} / ${r.n_fresh??'—'}</td><td>${pc(r.retest_old)}</td><td>${pc(r.retest_fresh)}</td><td>${pc(r.entry_old)}</td><td>${pc(r.entry_fresh)}</td><td>${r.bars_old==null?'—':nf(r.bars_old,0)}</td></tr>`;}
+  return h+'</tbody></table></div>';
+}
+/* after the retest */
+function psTab(){
+  const F=state.f.ps||(state.f.ps={ltf:'',L:'ALL levels',first:''});
+  let h=`<h2 class="ttl">After the retest: which candle comes next, and does the entry win?</h2><p class="note">Every first LTF reversal box after an HTF level touch that came back for a retest. Split by the candle right after the break, then by the candle right after the touch. "Share" = how often that next candle happens. "Ends in an entry" = a BC later closes out of the box (the retest + 1st BC entry). "Box broke" = price closed through the box first. WR and avg RR are for that entry with a fixed 50 pt stop at 1:2 (needs about 34% WR to break even after costs) and with the stop past the box at 1:2. Green = avg RR above 0 in both periods (50 pt stop), red = below 0 in both.</p><div class="filters">`;
+  h+=`<label for="ps-ltf">Entry TF<select id="ps-ltf"><option value="">Any</option>${['1m','5m','15m'].map(v=>`<option ${F.ltf===v?'selected':''}>${v}</option>`).join('')}</select></label>`;
+  const lv=[...new Set(PS.map(r=>r.L))].sort((a,b)=>LVLORDER(a).localeCompare(LVLORDER(b)));
+  h+=`<label for="ps-L">HTF level<select id="ps-L">${lv.map(v=>`<option ${F.L===v?'selected':''}>${esc(v)}</option>`).join('')}</select></label>`;
+  h+=`<label for="ps-first">Candle after the break<select id="ps-first"><option value="">Any</option>${['2nd BC','NBC','opposite BC'].map(v=>`<option ${F.first===v?'selected':''}>${v}</option>`).join('')}</select></label>`;
+  const L=PS.filter(r=>(!F.ltf||r.tf===F.ltf)&&r.L===F.L&&(!F.first||r.firstN===F.first)).sort((a,b)=>a.tf.localeCompare(b.tf,'en',{numeric:true})||a.firstN.localeCompare(b.firstN)||a.nx-b.nx);
+  h+=`<span class="cnt">${L.length} rows</span></div><div class="tw"><table><thead><tr><th>Entry TF</th><th>After the break</th><th>After the touch</th><th>Retests<span class="h2">22–25 / 2026</span></th><th>Share<span class="h2">22–25</span></th><th>Share<span class="h2">2026</span></th><th>Ends in an entry<span class="h2">22–25</span></th><th>Box broke<span class="h2">22–25</span></th><th>WR<span class="h2">50 pts · 1:2 · 22–25</span></th><th>WR<span class="h2">50 pts · 1:2 · 2026</span></th><th>avg RR<span class="h2">50 pts · 22–25</span></th><th>avg RR<span class="h2">50 pts · 2026</span></th><th>WR<span class="h2">box stop · 22–25</span></th><th>WR<span class="h2">box stop · 2026</span></th><th>avg RR<span class="h2">box stop · 22–25</span></th><th>avg RR<span class="h2">box stop · 2026</span></th></tr></thead><tbody>`;
+  for(const r of L){const e=r.nx!==5; const c=!e?'':(r.av50_old>0&&r.av50_fresh>0?'g':(r.av50_old<0&&r.av50_fresh<0?'r':'y'));
+    const cl=v=>v==null?'':v>0?'p':'n';
+    h+=`<tr class="${c}"><td>${r.tf}</td><td>${esc(r.firstN)}</td><td>${r.nx===-1?'<b>all</b>':esc(r.nxN)}</td><td>${r.n_old} / ${r.n_fresh??'—'}</td><td>${pc(r.share_old)}</td><td>${pc(r.share_fresh)}</td><td>${pc(r.entry_old)}</td><td>${pc(r.broke_old)}</td>${e?`<td>${pc(r.wr50_old)}</td><td>${pc(r.wr50_fresh)}</td><td class="${cl(r.av50_old)}">${sg(r.av50_old)}</td><td class="${cl(r.av50_fresh)}">${sg(r.av50_fresh)}</td><td>${pc(r.wrbx_old)}</td><td>${pc(r.wrbx_fresh)}</td><td class="${cl(r.avbx_old)}">${sg(r.avbx_old)}</td><td class="${cl(r.avbx_fresh)}">${sg(r.avbx_fresh)}</td>`:'<td colspan="8" style="color:var(--mute)">no entry: the box broke</td>'}</tr>`;}
+  return h+'</tbody></table></div>';
+}
+/* close back inside + order flow */
+function biTab(){
+  const F=state.f.bi||(state.f.bi={tf:''});
+  let h=`<h2 class="ttl">Close back inside the broken box?</h2><p class="note">Every PRO f break (LD / SD / CDL / CDS) on its own chart. We look at the first 3 candles after the break, then at what happens until the next break. Green = next break goes the same way 65%+ of the time.</p><div class="filters"><label for="bi-tf">TF<select id="bi-tf"><option value="">Any</option>${['1m','5m','15m','1h'].map(v=>`<option ${F.tf===v?'selected':''}>${v}</option>`).join('')}</select></label></div>`;
+  const L=D.BI.filter(r=>!F.tf||r.tf===F.tf);
+  h+=`<div class="tw"><table><thead><tr><th>TF</th><th>Break</th><th>Period</th><th>After the break</th><th>Breaks</th><th>Next break same way</th><th>Closes through far edge</th><th>Median move with (pts)</th><th>Median move against (pts)</th></tr></thead><tbody>`;
+  for(const r of L){const p=r['P(next break = same way)'];h+=`<tr class="${p>=0.65?'g':p<0.58?'r':'y'}"><td>${r.tf}</td><td>${esc(r.grp)}</td><td>${r.per==='old'?'2022–25':'2026'}</td><td>${esc(r['after the break'])}</td><td>${r.n}</td><td>${pc(p)}</td><td>${pc(r['P(close through far edge)'])}</td><td>${nf(r['median MFE pts'],0)}</td><td>${nf(r['median MAE pts'],0)}</td></tr>`;}
+  return h+'</tbody></table></div>';
+}
+function ofTab(){
+  const F=state.f.of||(state.f.of={tf:''});
+  let h=`<h2 class="ttl">PRO f order flow entries on its own chart</h2><p class="note">O1 break close · O2 retest of the broken box · O3 retest of the new T# · O4 retest of the LEZ · "v" = only after a 2nd BC · O5 enter after K candles with no close back inside · O6 it closed back inside, enter on the next BC out.</p><div class="filters"><label for="of-tf">TF<select id="of-tf"><option value="">Any</option>${['1m','5m','15m','1h'].map(v=>`<option ${F.tf===v?'selected':''}>${v}</option>`).join('')}</select></label></div>`;
+  const L=D.OF.filter(r=>!F.tf||r.tf===F.tf).sort((a,b)=>b.both-a.both);
+  h+=`<div class="tw"><table><thead><tr><th>TF</th><th>Break</th><th>Entry</th><th>Trades 22–25</th><th>Trades 2026</th><th>Settings pass</th><th>Median RR 22–25</th><th>Median RR 2026</th></tr></thead><tbody>`;
+  for(const r of L)h+=`<tr class="${rowCls[verdict(r.both)]}"><td>${r.tf}</td><td>${esc(r.break)}</td><td>${esc(r.entry)}</td><td>${r.n_o}</td><td>${r.n_f}</td><td>${pc(r.both)}</td><td>${sg(r.o_med,3)}</td><td>${sg(r.f_med,3)}</td></tr>`;
+  return h+'</tbody></table></div>';
+}
+function howTab(){return `<h2 class="ttl">How it was tested</h2><ul>
+<li><b>HTF levels, first touch only:</b> PRO f boxes on M15 / H1 / H4 (T1, T#, P#, R#, internal, CDL, CDS, LD, SD, Bu / Be LEZ), UPG gaps M15 / H1 / H4 / D / W, daily, RTH and weekly opening gaps, PDH / PDL / PD close, PWH / PWL, prior H4 high / low, session and opening ranges (Asia, London, pre-open, Globex, NY AM, NY PM) and the main opens.</li>
+<li><b>LTF reversal box (1m, 5m, 15m):</b> the first PRO f turn box of the trade direction after the touch. BC on BC = no NBC inside it, box with NBC = an NBC inside.</li>
+<li><b>Before the touch:</b> every candle between the break candle and the first touch is checked for a 2nd BC, an NBC and an opposite BC (P0–P7).</li>
+<li><b>Retest + 1st BC:</b> after the first touch, the first BC that closes back out of the box is the entry candle. Wick touch only = no candle closed inside the box during the retest.</li>
+<li><b>Entry areas:</b> A1 next open · A2 limit at 50% of the entry BC · A3 limit at its open · A4 limit at the high / low it broke · A5 limit at the box edge · A6 limit at a GMC gap.</li>
+<li><b>Every entry × every stop × every exit (250 settings):</b> stops 20 / 30 / 50 / zone edge 20–50 / zone edge no cap · close back past the zone = out (on / off) · targets 1:2, 1:3, 1:5, 1:10, runner · trails none, BE after 1 BC, BE after 2 BC, under each BC, after the 1st opposite candle.</li>
+<li><b>Your management (192 settings):</b> BE + 1 pt fees after the 1st BC, 2nd BC, or an opposite candle then a BC · re-entry 0 / 1 / 3 times while the box holds.</li>
+<li><b>Session hold rule:</b> at the next session open (18:00 · 02:00 · 08:00 · 09:30) a losing trade exits, a winning trade trails each BC; out at the second session open.</li>
+<li><b>PASS:</b> made money in BOTH 2022–25 and 2026. With this many tests some settings look good by luck, so the % of settings that also pass matters: the higher, the more likely the edge is real.</li>
+<li>Stops are checked before targets inside a candle. Limit fills are checked candle by candle. Money = $2 a point for 1 MNQ, scaled by "Your size".</li></ul>`;}
+const TABS=[['str','Strategies'],['pre','Before the touch'],['rt','Retest odds'],['ps','After the retest'],['box','Box type × entry'],['mg','Your management'],['exp','Explorer'],['aft','After the touch'],['bi','Close back inside'],['of','Order flow'],['how','How tested']];
+function render(){
+  $('tabs').innerHTML=TABS.map(([k,l])=>`<button role="tab" id="tab-${k}" data-t="${k}" aria-selected="${state.tab===k}">${l}</button>`).join('');
+  const t=state.tab; const U=size();
+  $('m-eg').textContent=`1 point = $${(U.a*U.q).toLocaleString('en-US')} · 1 RR in the tables = $${U.risk.toLocaleString('en-US')}`;
+  $('view').innerHTML=t==='str'?stratTab(state.str):t==='rt'?rtTab():t==='ps'?psTab():t==='bi'?biTab():t==='of'?ofTab():t==='how'?howTab():explTab(t);
+  save();
+}
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-t]');if(!b)return;state.tab=b.dataset.t;render();});
+['m-asset','m-qty','m-risk'].forEach(id=>$(id).addEventListener('input',render));
+$('view').addEventListener('change',e=>{const el=e.target,id=el.id,t=state.tab;
+  if(id.startsWith('s-')){state.str[{'s-tf':'tf','s-rd':'rd','s-sort':'sort'}[id]]=el.value;}
+  else if(id.startsWith('rt-')){state.f.rt[id.slice(3)]=el.value;}
+  else if(id.startsWith('ps-')){state.f.ps[id.slice(3)]=el.value;}
+  else if(id==='bi-tf'){state.f.bi.tf=el.value;} else if(id==='of-tf'){state.f.of.tf=el.value;}
+  else if(id.endsWith('-show')){state.show[t]=el.value;} else if(id.endsWith('-min')){state.f[t]._min=+el.value||10;}
+  else if(el.dataset.k){state.f[t][el.dataset.k]=el.value;}
+  render(); const n=$(id); if(n)n.focus();});
+function sortBy(th){const k=th.dataset.s,t=state.tab,cur=state.sort[t]||['',1];state.sort[t]=[k,cur[0]===k?-cur[1]:(['ltf','level','pre','touch','box','area','held','valid','seq','best_cfg'].includes(k)?1:-1)];render();}
+$('view').addEventListener('click',e=>{const th=e.target.closest('th[data-s]');if(th)sortBy(th);});
+$('view').addEventListener('keydown',e=>{const th=e.target.closest('th[data-s]');if(th&&(e.key==='Enter'||e.key===' ')){e.preventDefault();sortBy(th);}});
+if(location.hash&&TABS.some(([k])=>'#'+k===location.hash))state.tab=location.hash.slice(1);
+render();
+</script>
+<script>
+fetch('data.json').then(function(r){return r.json();}).then(function(j){window.__PROF=j;var s=document.createElement('script');s.textContent=document.getElementById('main').textContent;document.body.appendChild(s);})
+.catch(function(){document.getElementById('view').innerHTML='<p class="note">The data could not load. Reload the page to try again.</p>';});
+</script>
+<script src="/assets/nav.js"></script>
+<script src="/assets/site.js"></script>
+<script src="/i18n.js"></script>
+</body>
+</html>
