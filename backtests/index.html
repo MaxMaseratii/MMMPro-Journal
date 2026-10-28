@@ -619,6 +619,7 @@ G.start=sc=>{
 <a href="/strategies/"><b class="serif">Strategy book</b><span>Every strategy that passed, as steps you can follow on a chart: when, entry, stop, target, exit. Start here if you want to trade.</span></a>
 <a href="/backtests/sheet/"><b class="serif">Results sheet</b><span>Every strategy, session, hour, stop and exit we tested, colored green / yellow / red, with how to trade each row.</span></a>
 <a href="/backtests/ny-open/"><b class="serif">NY open lab · 09:30–11:30</b><span>When the morning high and low are made, the 09:30 and 10:00 candles, the opening range, opening gaps and BC runs until 11:30.</span></a>
+<a href="/backtests/ny-open/study/"><b class="serif">9:30 AM to 11:30 AM Testing Studies</b><span>The document: every NY morning test in one place, with the best read per timeframe and a 09:30–11:30 game plan.</span></a>
 <a href="/backtests/pro-f/"><b class="serif">MMM PRO FVA lab</b><span>HTF level → LTF box → retest → BC: retest odds, what happens before and after the touch, box types and entry areas.</span></a>
 <button type="button" data-go="verdicts"><b class="serif">Verdicts</b><span>The decision board: trade, use as a filter, watch, or don’t trade, with the reason for each.</span></button>
 </nav></section>
@@ -627,6 +628,8 @@ G.start=sc=>{
 <tbody><tr><td class="l" colspan="11">Loading…</td></tr></tbody></table></div>
 <p class="note">Row color: green = profitable and probably not luck (avg RR above 0, t-score 2+, did not fail a period), yellow = maybe, red = not profitable. Click a row to open its rules.</p></section>
 <section><h2 class="serif">Latest findings</h2><ul class="log">
+<li><time>Oct 28 2026</time><div><b>The NY morning is made early.</b> The 09:30–11:30 high or low is in by 10:00 on 83 / 85% of days, and the 09:30–10:00 range breaks one side only on most days (both sides 14 / 11%). See the <a href="/backtests/ny-open/">NY open lab</a>.</div></li>
+<li><time>Oct 28 2026</time><div><b>Runs after 10:00 are 2 BCs long.</b> Median 2 body closes and 30–36 pts on 5m before the other side closes, but the exit on the opposite candle gives it back. The first BC after 10:00 with a 50 pt stop at 1:2: no edge (t-score under 2).</div></li>
 <li><time>Oct 25 2026</time><div><b>A touch is a coin flip.</b> At every level and every opening candle, about half of first touches reverse and half close through. Neither pays: 0 of 2,550 plain combos and 77 of 39,222 CDL / CDS combos passed (luck level).</div></li>
 <li><time>Oct 25 2026</time><div><b>C.M8 passes.</b> The 09:30 15m BuBC that closes above the pre-open high: buy the 09:45 close, 50 pts, 1:3, out on a close below the candle low. avg RR +0.40, t-score 3.75, every year positive. London opening candles: no edge.</div></li>
 <li><time>Oct 24 2026</time><div><b>Honest fills, corrected.</b> The first Level Retest test skipped limit fills on candles that closed back past the PO4 T1. Those trades mostly lose, so it looked far better than it is. Every number now counts them, and the old figures are withdrawn.</div></li>
@@ -656,6 +659,7 @@ G.start=sc=>{
 <ul><li><b>WR</b> = win rate. <b>PF</b> = profit factor (won ÷ lost). <b>avg RR</b> = average result per trade in stops, after costs. <b>t-score</b> = how sure it is not luck.</li>
 <li>Live trading: expect less than the backtest. Start small.</li></ul></section>
 <section class="wide"><h2 class="serif">The research lab</h2><div class="go">
+<button type="button" data-go="nyopen"><b>NY OPEN 09:30–11:30</b><span>The morning in numbers: high / low timing, the 09:30 and 10:00 candles, opening range, gaps, BC runs until 11:30.</span></button>
 <button type="button" data-go="book"><b>STRATEGY BOOK (DETAIL)</b><span>Each strategy with every target, year by year, long vs short, months and the equity curve.</span></button>
 <button type="button" data-go="words"><b>MMM WORDS</b><span>Every MMM, indicator and test word in plain English. Search it.</span></button>
 <button type="button" data-go="ind"><b>INDICATORS</b><span>MMM Pro XCS One, MMM PRO c, x, s, EDGE PRO and MMPD: what you see on the chart.</span></button>
@@ -995,6 +999,31 @@ G.levels=async sc=>{
 };
 
 // 2026 RETEST
+G.nyopen=sc=>{
+ sc.innerHTML=`<div class="doc desk">
+<section class="wide"><p class="lede">The New York morning in numbers: when the high and low are made, what the 09:30 and 10:00 MMM candles tell you, the 30-minute opening range, the 09:30–10:00 UPG gaps, and how far a run of body closes goes before the other side closes. NQ 1m 2022–25 (763 days) / MNQ 1m 2026 (61 days).</p>
+<nav class="doors" aria-label="NY open pages"><a href="/backtests/ny-open/"><b class="serif">NY open lab</b><span>Every table, with timeframe and rule switches.</span></a><a href="/backtests/ny-open/study/"><b class="serif">9:30 AM to 11:30 AM Testing Studies</b><span>The document: all of it in one place, printable.</span></a></nav></section>
+<section class="wide"><h2>The answers</h2><div class="tw"><table>
+<tr><th class="l">Question</th><th class="l">Answer · 2022–25 / 2026</th></tr>
+<tr><td class="l">When is the morning high / low made?</td><td class="l">In by 10:00 on 83 / 85% of days. The first 15 minutes make about 30–33% of them. 11:15–11:30 is second for the high (20 / 21%).</td></tr>
+<tr><td class="l">How big is the morning?</td><td class="l">Median 09:30–11:30 range 155 / 235 pts. 11:30 closes above 09:30 about half the time (51 / 53%).</td></tr>
+<tr><td class="l">The 09:30 opening candle</td><td class="l">5m BC+: the next candle takes its target first 85 / 87%. No opening candle tells you the 11:30 close (about 50%).</td></tr>
+<tr><td class="l">The 09:30–10:00 opening range</td><td class="l">Median 94 / 167 pts. Closed out of by 11:30 on 94 / 92% of days, median run 51 / 71 pts past the edge, both sides only 14 / 11%.</td></tr>
+<tr><td class="l">The candle that closes at 10:00</td><td class="l">BC+ → target first 86–92% on 5m, 15m, 1h and 4H. BC− → coin flip. The 10:00 lean does not call 16:00.</td></tr>
+<tr><td class="l">09:30–10:00 UPG gaps</td><td class="l">5m gaps touched 83 / 73% in a median 5 / 4 minutes. With the 4H 06–10 candle they react 68 / 79%, against it 47 / 29%.</td></tr>
+<tr><td class="l">An open gap behind the 10:00 target</td><td class="l">There on 56–78% of days. Strong candles (BC+ / C2) ignore it (5–22% first). Weak candles visit it first 15% (5m) to 52% (4H).</td></tr>
+<tr><td class="l">Runs after 10:00 until 11:30</td><td class="l">Median 2 same-side BCs, 2–3 NBCs. MFE median 30–36 pts (5m), 36 pts (15m). At the opposite candle about 0: take points.</td></tr>
+<tr><td class="l">Trade test: first BC after 10:00, 50 pt stop, 1:2</td><td class="l"><span class="st no">DON’T TRADE</span> WR 45–47%, avg RR about 0, every t-score under 2.</td></tr>
+</table></div></section>
+<section><h2>Best read per timeframe</h2><ul>
+<li><b>4H:</b> BC+ at 10:00 → target first 87–90%. Weak 4H candle → the gap behind it first 52%.</li>
+<li><b>1h:</b> BC+ → 86–91%. Weak candle → gap or target is a coin flip.</li>
+<li><b>15m:</b> the best balance. BC+ → 89–92%. 20 pts reached 70 / 87%.</li>
+<li><b>5m:</b> the fastest. Gaps with the 4H side react 68 / 79%. Runs end in 25–35 minutes.</li></ul></section>
+<section><h2>What does not work</h2><ul>
+<li>The 10:00 lean for the 16:00 close.</li><li>A BC− for direction.</li><li>Holding until the opposite candle.</li><li>The first BC after 10:00 as an entry.</li><li>Guessing the side of the opening range before it breaks.</li></ul></section>
+</div>`;
+};
 G.retest=sc=>{
  const corr=[{l:'5m',a:.39},{l:'15m',a:.28},{l:'1h',a:.17},{l:'4H',a:-.12},{l:'Daily',a:-.06}];
  sc.innerHTML=`<div class="doc">
@@ -1248,6 +1277,9 @@ const PAGES={
  levels:{t:'Levels & odds',s:'What the next candle usually does: take the previous high or low, break a box, fill a pullback.',
   r:['<b>PH</b> = the next candle trades above the previous candle’s high. <b>PL</b> = below its low. Both can happen in one candle.','Rows are split by the type of the previous candle (BuBC = closed above the high before it · BeBC = closed below the low · NBC = neither).','Percentages are how often it happened. Two numbers = NQ / MNQ.'],
   u:['Use these odds for targets: aim for the level that gets taken most often.']},
+ nyopen:{t:'NY open · 09:30 to 11:30',s:'What NQ does in the two hours Max trades, from the cash open to 11:30.',
+  r:['Every cell = <b>2022–25 / 2026</b>. 2022–25 = 763 days of NQ, 2026 = 61 days of MNQ (small sample).','These are counts of what price does, not trading signals. Only the last row is a trade test.'],
+  u:['Open the <b>NY open lab</b> to switch timeframes, or the <b>study document</b> to read it all in one place.']},
  retest:{t:'2026 retest',s:'Every old test, run again on 10 fresh months of MNQ: what held and what did not.',
   r:['<b>Rank correlation</b> = does a great old result stay great? 1 = same order, 0 = no link.','<b>Old t-score → fresh result</b> = how much of the old avg RR survived.','<b>What held / what did not</b> = the survivors and the casualties.'],
   u:['Rule of thumb: expect about ¼ of a backtest’s avg RR live, unless it passed a fresh test like this.']},
@@ -1314,6 +1346,7 @@ const TABS=[
  {id:'prop',name:'PROP & SIZE',kind:'guide'},
  {id:'levels',name:'LEVELS & ODDS',kind:'guide'},
  {id:'retest',name:'2026 RETEST',kind:'guide'},
+ {id:'nyopen',name:'NY OPEN 09:30–11:30',kind:'guide',win:true},
  {grp:'2022–25 GRID'},
  {id:'readme',name:'HOW TO READ',kind:'doc'},
  {id:'answers',name:'ANSWERS',kind:'doc'},
