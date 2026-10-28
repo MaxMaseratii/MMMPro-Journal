@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>The MMM Order-Flow Indicators · Candle Bias, Candle, Swing, Expander Block, Fair Value Area | MMM Trading</title>
-<meta name="description" content="The MMM order-flow indicators for TradingView: MMM Candle Bias Pro (how to read every candle), MMM Pro C Candle OrderFlow, MMM Pro S Swing OrderFlow, MMM Pro X Expander Block OrderFlow, MMM Pro FVA Fair Value Area OrderFlow and XCS One. Closed candles only, no repaint.">
+<meta name="description" content="The MMM order-flow indicators for TradingView: MMM Candle Bias Pro (how to read every candle), MMM Pro C Candle OrderFlow, MMM Pro S Swing OrderFlow, MMM Pro X Expander Block OrderFlow, MMM Pro FVA Fair Value Area OrderFlow, XCS One and Gamma Walls and Institutional Bias (options walls, COT and open interest). Closed candles only, no repaint.">
 <link rel="canonical" href="https://www.maxmaserati.com/indicators/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MMM Trading">
@@ -172,10 +172,21 @@ ol.how li b{color:var(--fg)}
 .e-cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 22px;border-top:1px solid var(--line);background:var(--panel2)}
 .e-cta .btn-try{font-size:16px;padding:12px 16px}
 .e-cta span{color:var(--mute);font-size:14px}
+.e-cta .btn-ghost{font-size:15px;padding:11px 14px}
+
+/* gamma walls */
+#gdia svg{min-width:470px}
+#gdia [data-g]{cursor:pointer}
+#gdia [data-g]:focus{outline:none}
+#gdia [data-g]:focus-visible text{text-decoration:underline}
+.see.hud td:first-child{width:28%}
+.see.hud td:last-child{font:500 13.5px/1.45 var(--mono);color:#e6ebf0}
+.gnote{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
+.gnote a{color:var(--teal)}
 
 /* compare */
 .tw{overflow-x:auto;border:1px solid var(--line);margin-top:20px}
-table.cmp{width:100%;border-collapse:collapse;min-width:900px;font-size:14.5px}
+table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
 .cmp th{background:#000;font:700 15px/1.2 var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--gold);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
 .cmp th small{display:block;font:600 11.5px/1.2 var(--display);letter-spacing:.07em;color:var(--mute)}
 .cmp td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top;color:#cfd5da;line-height:1.45}
@@ -348,17 +359,63 @@ table.cmp{width:100%;border-collapse:collapse;min-width:900px;font-size:14.5px}
   </div>
 </section>
 
+<section class="sec" id="gamma" aria-labelledby="h-gamma">
+  <div class="desk">
+    <span class="eyebrow">The options map · a different lens</span>
+    <h2 id="h-gamma">Gamma Walls and Institutional Bias</h2>
+    <p class="lede">The MMM engines read the candles. This one reads the options market and the big money. Options dealers must hedge, and their hedging builds <b>walls</b>: prices where moves often slow down or speed up. Every morning you paste the day’s levels from the free <a href="/gamma/" style="color:var(--teal)">MMM Gamma page</a>. The indicator draws them on your ES or NQ chart and tells you what kind of day it is.</p>
+    <article class="engine" style="--ec:#5b8cff">
+      <div class="e-head"><h3 translate="no">Gamma Walls <i>&amp; Bias</i></h3><span class="full">Options walls · COT · open interest · footprint</span></div>
+      <div class="e-body">
+        <div class="e-l">
+          <p class="idea-t">Reads where the options market will push back. Big option positions sit at a few strikes. The dealers on the other side must buy and sell futures to stay hedged. Above the flip they trade against price, like a shock absorber: walls tend to hold. Below the flip they trade with price, like a gas pedal: breaks tend to run. The indicator puts those walls on your chart and adds what the big money is doing.</p>
+          <div><div class="lab" style="margin-bottom:4px">How it works</div><ol class="how">
+            <li><span>Each morning, copy the day’s block from the free <a href="/gamma/" style="color:var(--teal)">MMM Gamma page</a> and paste it into <b>Paste Daily Block</b>. It holds today’s strikes (0DTE) and the 90-day walls.</span></li>
+            <li><span>The indicator draws today’s <b>call wall</b> (the ceiling), <b>put wall</b> (the floor) and <b>flip</b>, plus the 90-day walls, zero gamma and the magnets. Index levels (SPX / NDX) are turned into ES / NQ prices for you.</span></li>
+            <li><span><b>MARKET</b> tells you the type of day: <b>CALM</b> when price is above the flip (walls tend to hold), <b>FAST</b> when it is below (breaks tend to run).</span></li>
+            <li><span><b>BIAS</b> reads the last month, week and day candles and checks yesterday’s open interest (new money in or out). <b>MONEY</b> adds the weekly COT: what asset managers and hedge funds are doing.</span></li>
+            <li><span>At a wall a signal prints: <b>Wall Held</b>, <b>Trap</b>, <b>Break</b> or <b>Fake Break</b>, graded A, B or C by how many checks agree. Hover it to see where the idea is wrong and where the job is done.</span></li>
+            <li><span><b>DO</b> turns it all into one line, for example “Buy dips at floors” or “No bias · stand aside”.</span></li>
+          </ol></div>
+          <p class="best"><b>Best for:</b> ES / NQ traders who want the day’s ceilings and floors before the open, and want to know if it is a day to fade the walls or to follow the breaks.</p>
+          <p class="gnote">Research only, not advice. The gamma signals are not part of the tested MMM strategies. Watch them on your own chart first.</p>
+          <div><div class="lab" style="margin-bottom:2px">The table (HUD) · example</div><table class="see hud"><tbody id="ghud"></tbody></table></div>
+        </div>
+        <div class="e-r">
+          <div class="dside"><div class="lab">The gamma map · tap a level or a signal</div><span class="seg" role="group" aria-label="Type of day"><button type="button" data-gm="calm" aria-pressed="true">Calm day</button><button type="button" data-gm="fast" aria-pressed="false">Fast day</button></span></div>
+          <div class="dia" id="gdia"></div>
+          <div class="dinfo" id="ginfo"></div>
+          <div><div class="lab" style="margin-bottom:2px">What you see on the chart</div><table class="see"><tbody>
+            <tr><td>Call wall today</td><td>Deep blue, thick. The strike with the most call gamma today: the day’s ceiling.</td></tr>
+            <tr><td>Put wall today</td><td>Orange, thick. The strike with the most put gamma today: the day’s floor.</td></tr>
+            <tr><td>Flip</td><td>Purple. Where dealer hedging changes side. Above = CALM, below = FAST.</td></tr>
+            <tr><td>Call / put wall 90D</td><td>Green / red. The big walls for the next three months. Leave them at 0 and the indicator estimates them.</td></tr>
+            <tr><td>Zero γ 90D</td><td>Black. The 90-day flip. With no paste, a 90-day VWAP estimate takes its place.</td></tr>
+            <tr><td>Magnets</td><td>Grey dotted. The next biggest call strikes: price is often pulled toward them.</td></tr>
+            <tr><td>Plan line</td><td>Dotted. Today’s plan from yesterday’s candle and its open interest.</td></tr>
+            <tr><td>Histogram</td><td>Gamma by strike, 3 candles right of price, always between price and the labels. Green = calls, red = puts.</td></tr>
+            <tr><td>Signals</td><td>Wall Held · Trap · Break · Fake Break, graded A / B / C. They delete themselves when the idea is wrong or the job is done.</td></tr>
+            <tr><td>+120</td><td>Each level shows its distance from price in points. Turn on Show Prices to add the price.</td></tr>
+            <tr><td>Your style</td><td>Every line has its own color, width and style. Lines can start where the level was born, at price or at the histogram.</td></tr>
+          </tbody></table></div>
+        </div>
+      </div>
+      <div class="e-cta"><a class="btn-try" href="https://whop.com/mmmtrading/mmm-pro/" target="_blank" rel="noopener">Get it on Whop</a><a class="btn-ghost" href="/gamma/">Today’s free levels</a><a class="btn-ghost" href="https://www.tradingview.com/u/MaxMaserati/" target="_blank" rel="noopener">MaxMaserati on TradingView</a></div>
+    </article>
+  </div>
+</section>
+
 <section class="sec" id="fit" aria-labelledby="h-fit">
   <div class="desk">
     <span class="eyebrow">Pick yours</span>
     <h2 id="h-fit">Which one fits the way you trade?</h2>
     <div class="tw"><table class="cmp">
-      <thead><tr><th></th><th>Candle Bias Pro<small>the foundation</small></th><th>MMM Pro C<small>Candle OrderFlow</small></th><th>MMM Pro S<small>Swing OrderFlow</small></th><th>MMM Pro X<small>Expander Block OrderFlow</small></th><th>MMM Pro FVA<small>Fair Value Area OrderFlow</small></th><th>XCS One<small>all in one</small></th></tr></thead>
+      <thead><tr><th></th><th>Candle Bias Pro<small>the foundation</small></th><th>MMM Pro C<small>Candle OrderFlow</small></th><th>MMM Pro S<small>Swing OrderFlow</small></th><th>MMM Pro X<small>Expander Block OrderFlow</small></th><th>MMM Pro FVA<small>Fair Value Area OrderFlow</small></th><th>XCS One<small>all in one</small></th><th>Gamma Walls &amp; Bias<small>the options map</small></th></tr></thead>
       <tbody>
-        <tr><td>Reads</td><td>The last closed candle of any timeframe: the foundation</td><td>Every candle close: body closes (urgency), 3-candle gaps (extreme urgency), NBCs (negotiation)</td><td>Turning points: swings made by a BC flip of the urgency</td><td>Expander blocks (the BC + its NBCs, high to low) and balance zones (the NBC bodies)</td><td>Fair value areas: where the negotiation started inside the balance, and their breaks</td><td>Boxes + candles + swings</td></tr>
-        <tr><td>Order-flow idea</td><td>Which side won the candle, its target and its protected end</td><td>Which side forced the last close, and how urgently</td><td>Which defenders got absorbed, with volume and delta behind it</td><td>Which side won the argument about value</td><td>Where the winners last loaded up, and whether price respects it on the way back</td><td>All of them, with the odds of what usually comes next</td></tr>
-        <tr><td>Speed</td><td>One candle</td><td>Fastest</td><td>Medium</td><td>Slowest, most selective</td><td>Medium, built for retests</td><td>Zone speed, candle detail</td></tr>
-        <tr><td>Fits</td><td>Everyone: read this first</td><td>Scalpers, precise entries</td><td>Structure traders</td><td>Range and value traders</td><td>Level traders who wait for a retest</td><td>One-chart traders</td></tr>
+        <tr><td>Reads</td><td>The last closed candle of any timeframe: the foundation</td><td>Every candle close: body closes (urgency), 3-candle gaps (extreme urgency), NBCs (negotiation)</td><td>Turning points: swings made by a BC flip of the urgency</td><td>Expander blocks (the BC + its NBCs, high to low) and balance zones (the NBC bodies)</td><td>Fair value areas: where the negotiation started inside the balance, and their breaks</td><td>Boxes + candles + swings</td><td>Options gamma by strike, COT and open interest</td></tr>
+        <tr><td>Order-flow idea</td><td>Which side won the candle, its target and its protected end</td><td>Which side forced the last close, and how urgently</td><td>Which defenders got absorbed, with volume and delta behind it</td><td>Which side won the argument about value</td><td>Where the winners last loaded up, and whether price respects it on the way back</td><td>All of them, with the odds of what usually comes next</td><td>Where dealers must hedge, and what the big money is doing</td></tr>
+        <tr><td>Speed</td><td>One candle</td><td>Fastest</td><td>Medium</td><td>Slowest, most selective</td><td>Medium, built for retests</td><td>Zone speed, candle detail</td><td>One map per day, set before the open</td></tr>
+        <tr><td>Fits</td><td>Everyone: read this first</td><td>Scalpers, precise entries</td><td>Structure traders</td><td>Range and value traders</td><td>Level traders who wait for a retest</td><td>One-chart traders</td><td>ES / NQ traders who want the day’s ceilings and floors</td></tr>
       </tbody>
     </table></div>
   </div>
@@ -687,6 +744,82 @@ table.cmp{width:100%;border-collapse:collapse;min-width:900px;font-size:14.5px}
   var h = (location.hash || '').slice(1); if (ENG[h]) ESEL = h; if (h === 'pro-f' || h === 'fva') ESEL = 'fva'; if (h === 'xcs-one') ESEL = 'xcs';
   engPaint();
   if (h && (ENG[h] || h === 'pro-f' || h === 'xcs-one')) setTimeout(function () { var el = document.getElementById('engines'); if (el) el.scrollIntoView(); }, 50);
+
+  /* ---------------- Gamma Walls and Institutional Bias ---------------- */
+  // levels: key, y, label, color, width, dash (same order and default look as the indicator)
+  var GLV = [['c90', 34, 'Call wall 90D', '#089981', 2, ''], ['cw', 70, 'Call wall today', '#5b8cff', 3.2, ''], ['mg', 104, 'Magnet', '#8f97a1', 1.3, '2 4'], ['flip', 146, 'Flip', '#9a7bd8', 1.5, ''], ['pw', 182, 'Put wall today', '#ff7a1a', 3.2, ''], ['p90', 224, 'Put wall 90D', '#f23645', 2, '']];
+  // histogram: y, length (+ = calls, green · − = puts, red)
+  var GHI = [[34, 30], [46, 10], [58, 18], [70, 84], [82, 22], [94, 16], [104, 52], [118, 12], [130, 8], [146, 4], [158, -10], [170, -20], [182, -80], [196, -26], [210, -14], [224, -38], [236, -8]];
+  var GPATH = {
+    calm: 'M20,128 L40,118 L58,124 L76,108 L94,112 L112,92 L128,98 L146,80 L160,72 L172,80 L188,92 L204,100 L218,105 L232,98 L248,92 L262,96 L280,86 L300,90',
+    fast: 'M20,160 L40,154 L58,166 L76,160 L94,172 L112,168 L128,178 L142,182 L156,180 L170,190 L184,197 L198,205 L214,200 L230,212 L246,218 L262,223 L278,216 L300,220'
+  };
+  // signals per day type: key, x, y, label, up (true = buy), text under / over
+  var GSIG = {
+    calm: [['held', 160, 72, '▼ Wall Held A', false, 160, 60], ['buy', 218, 105, '▲ Wall Held B', true, 218, 125]],
+    fast: [['brk', 184, 197, '▼ Break A', false, 146, 216], ['done', 262, 223, 'job done', true, 256, 241]]
+  };
+  var GTXT = {
+    c90: ['Call wall 90D', 'The biggest call wall for the next three months: the big-picture ceiling. Green by default, a bit thinner than today’s walls.'],
+    cw: ['Call wall today', 'The strike with the most call gamma for today (0DTE). Dealers sell into rallies there, so it often acts as the day’s ceiling.'],
+    mg: ['Magnet', 'The next biggest call strikes after the call wall. Price is often pulled toward them. Walls and magnets are the zones that SELL AT and BUY AT point to.'],
+    flip: ['Flip', 'Where dealer hedging changes side. Above it the market is CALM: dealers slow price down. Below it the market is FAST: dealers push price further.'],
+    pw: ['Put wall today', 'The strike with the most put gamma for today. Often the day’s floor, where selling gets absorbed.'],
+    p90: ['Put wall 90D', 'The biggest put wall for the next three months: the big-picture floor.'],
+    hist: ['Gamma histogram', 'One bar per strike, 3 candles to the right of price. Green = calls, red = puts. The longest bars are the walls.'],
+    held: ['Wall Held · sell', 'Calm day: price touched the call wall and got pushed back. Grade A = most checks agree (bias, big money, footprint, market type). Hover it on the chart to see where the idea is wrong and where the job is done.'],
+    buy: ['Wall Held · buy', 'Price came down to a magnet and held. On a calm day the walls and magnets are where price tends to turn. Grade B = half or more of the checks agree.'],
+    brk: ['Break · sell', 'Fast day: a candle closed through the put wall below the flip. Dealers now sell with price, so the break tends to run.'],
+    done: ['Job done', 'The next wall in the way. The signal shows this “job done” price when you hover it. Here it is the 90D put wall, the next big floor.']
+  };
+  var GHUD = {
+    calm: [['BIAS', 'BULL · M▲ W▲ D▲ · OI ✓'], ['DO', 'Buy dips at floors'], ['MARKET', 'CALM · above flip · walls hold'], ['SELL AT', '+28 · Call wall'], ['BUY AT', '−24 · Magnet']],
+    fast: [['BIAS', 'BEAR · M▼ W▼ D▼ · OI ✓'], ['DO', 'Sell breakdowns, let it run'], ['MARKET', 'FAST · below flip · breaks run'], ['SELL AT', '+60 · Put wall'], ['BUY AT', '−8 · Put wall 90D']]
+  };
+  var GMODE = 'calm', GK = 'cw';
+  function gammaSVG() {
+    var M = 'font-family="IBM Plex Mono,monospace"', s = '<svg viewBox="0 0 540 256" role="img" translate="no" aria-label="Gamma map, ' + (GMODE === 'calm' ? 'calm day' : 'fast day') + ': walls, flip, magnet, histogram and signals. Tap a level or a signal.">';
+    s += '<rect width="540" height="256" fill="#0b0d10"/>';
+    // the zone the market is in (above / below the flip)
+    s += GMODE === 'calm' ? '<rect x="20" y="20" width="280" height="126" fill="rgba(61,220,151,.04)"/>' : '<rect x="20" y="146" width="280" height="96" fill="rgba(255,92,108,.05)"/>';
+    s += '<text x="24" y="' + (GMODE === 'calm' ? 140 : 238) + '" fill="#5f6873" ' + M + ' font-size="10">' + (GMODE === 'calm' ? 'CALM · above the flip' : 'FAST · below the flip') + '</text>';
+    GLV.forEach(function (l) {
+      var on = GK === l[0];
+      s += '<g data-g="' + l[0] + '" tabindex="0" role="button" aria-label="' + esc(l[2]) + '">';
+      if (on) s += '<line x1="20" x2="402" y1="' + l[1] + '" y2="' + l[1] + '" stroke="' + l[3] + '" stroke-opacity=".28" stroke-width="' + (l[4] + 6) + '"/>';
+      s += '<line x1="20" x2="402" y1="' + l[1] + '" y2="' + l[1] + '" stroke="' + l[3] + '" stroke-width="' + l[4] + '"' + (l[5] ? ' stroke-dasharray="' + l[5] + '"' : '') + '/>';
+      s += '<rect x="404" y="' + (l[1] - 10) + '" width="132" height="20" fill="transparent"/><text x="408" y="' + (l[1] + 4) + '" fill="' + l[3] + '" ' + M + ' font-size="11.5" font-weight="' + (on ? 700 : 500) + '">' + esc(l[2]) + '</text></g>';
+    });
+    // histogram: 3 candles right of price, between price and the labels
+    s += '<g data-g="hist" tabindex="0" role="button" aria-label="Gamma histogram">';
+    s += '<rect x="312" y="22" width="90" height="222" fill="' + (GK === 'hist' ? 'rgba(91,140,255,.10)' : 'transparent') + '"/>';
+    GHI.forEach(function (h) { var len = Math.abs(h[1]); s += '<rect x="316" y="' + (h[0] - 4) + '" width="' + len + '" height="8" fill="' + (h[1] > 0 ? 'rgba(0,230,118,.62)' : 'rgba(255,82,82,.62)') + '"/>'; });
+    s += '<text x="316" y="16" fill="' + (GK === 'hist' ? '#5b8cff' : '#8f97a1') + '" ' + M + ' font-size="10.5"' + (GK === 'hist' ? ' font-weight="700"' : '') + '>histogram</text></g>';
+    // price
+    s += '<path d="' + GPATH[GMODE] + '" fill="none" stroke="#d9dde3" stroke-width="2" stroke-linejoin="round"/>';
+    s += '<circle cx="300" cy="' + (GMODE === 'calm' ? 90 : 220) + '" r="3" fill="#d9dde3"/>';
+    GSIG[GMODE].forEach(function (g) {
+      var on = GK === g[0], col = g[0] === 'done' ? '#e1b31a' : g[4] ? '#3ddc97' : '#ff5c6c', tx = g[5], ty = g[6];
+      s += '<g data-g="' + g[0] + '" tabindex="0" role="button" aria-label="' + esc(g[3]) + '"><circle cx="' + g[1] + '" cy="' + g[2] + '" r="' + (on ? 7 : 4.5) + '" fill="' + (on ? col : '#0f1114') + '" stroke="' + col + '" stroke-width="1.8"/>';
+      s += '<rect x="' + (tx - 50) + '" y="' + (ty - 12) + '" width="100" height="16" fill="transparent"/><text x="' + tx + '" y="' + ty + '" text-anchor="middle" fill="' + col + '" ' + M + ' font-size="11" font-weight="' + (on ? 700 : 600) + '" paint-order="stroke" stroke="#0b0d10" stroke-width="3">' + esc(g[3]) + '</text></g>';
+    });
+    s += '<text x="300" y="' + (GMODE === 'calm' ? 80 : 210) + '" text-anchor="middle" fill="#8f97a1" ' + M + ' font-size="10" paint-order="stroke" stroke="#0b0d10" stroke-width="3">now</text>';
+    return s + '</svg>';
+  }
+  function gammaPaint(flash) {
+    document.querySelectorAll('[data-gm]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.gm === GMODE)); });
+    $('#gdia').innerHTML = gammaSVG();
+    var t = GTXT[GK] || GTXT.cw, x = $('#ginfo');
+    x.innerHTML = '<b>' + esc(t[0]) + '</b><p>' + esc(t[1]) + '</p>';
+    $('#ghud').innerHTML = GHUD[GMODE].map(function (r) { return '<tr><td translate="no">' + esc(r[0]) + '</td><td translate="no">' + esc(r[1]) + '</td></tr>'; }).join('');
+    if (flash) { x.classList.remove('flash'); void x.offsetWidth; x.classList.add('flash'); }
+  }
+  document.addEventListener('click', function (e) {
+    var g = e.target.closest('#gdia [data-g]'); if (g) { GK = g.dataset.g; gammaPaint(true); if (e.detail === 0) { var n = document.querySelector('#gdia [data-g="' + GK + '"]'); if (n) n.focus(); } return; }
+    var m = e.target.closest('[data-gm]'); if (m) { GMODE = m.dataset.gm; if (!GTXT[GK] || (['held', 'buy', 'brk', 'done'].indexOf(GK) >= 0)) GK = GMODE === 'calm' ? 'held' : 'brk'; gammaPaint(true); if (e.detail === 0) m.focus(); }
+  });
+  document.addEventListener('keydown', function (e) { var g = e.target.closest && e.target.closest('#gdia [data-g]'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); g.dispatchEvent(new MouseEvent('click', { bubbles: true })); } });
+  gammaPaint(false);
 
   /* ---------------- try bar ---------------- */
   var bar = $('#trybar'), closed = false;
