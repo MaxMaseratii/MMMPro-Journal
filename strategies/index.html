@@ -415,7 +415,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       (p1 ? '<tr><td class="l">Period 1 · ' + esc(x.p1lab || A.p1) + '</td><td>' + p1.n + '</td><td>' + pc(p1.wr) + '</td><td class="' + (p1.av > 0 ? 'pos' : 'neg') + '">' + sg(p1.av) + '</td><td>' + (p1.pf == null ? '–' : p1.pf.toFixed(2)) + '</td><td>' + (p1.t == null ? '–' : p1.t.toFixed(1)) + '</td></tr>' : '') +
       (p2 ? '<tr><td class="l">Period 2 · ' + esc(x.p2lab || A.p2) + '</td><td>' + p2.n + '</td><td>' + pc(p2.wr) + '</td><td class="' + (p2.av > 0 ? 'pos' : 'neg') + '">' + sg(p2.av) + '</td><td>' + (p2.pf == null ? '–' : p2.pf.toFixed(2)) + '</td><td>' + (p2.t == null ? '–' : p2.t.toFixed(1)) + '</td></tr>' : '') +
       '<tr><td class="l"><b>Both</b></td><td><b>' + b.n + '</b></td><td><b>' + pc(b.wr) + '</b></td><td class="' + (b.av > 0 ? 'pos' : 'neg') + '"><b>' + sg(b.av) + '</b></td><td>' + (b.pf == null ? '–' : b.pf.toFixed(2)) + '</td><td>' + (b.t == null ? '–' : b.t.toFixed(1)) + '</td></tr></table>' +
-      '<p><span class="mkv ' + v + '" translate="no">' + MKVL[v] + '</span> <span>Same code and rules as NQ.</span> ' + '<span>Stop ' + A.fx + ' · cost ' + A.cost + '</span>' + (x.alt && x.alt.verdict.indexOf('PASS · edge') === 0 && v !== 'e' ? ' <span>Another setting held with a t-score of 2 or more (watch):</span> ' + NT(esc(x.alt.pairing) + ' · t ' + x.alt.t.toFixed(1)) : '') + '</p></div>';
+      '<p><span class="mkv ' + v + '" translate="no">' + MKVL[v] + '</span> <span>' + (x.fva ? 'Same rules as NQ, run on a rebuilt copy of the FVA test engine (close to the book, not identical).' : 'Same code and rules as NQ.') + '</span> ' + '<span>Stop ' + A.fx + ' · cost ' + A.cost + '</span>' + (x.alt && x.alt.verdict.indexOf('PASS · edge') === 0 && v !== 'e' ? ' <span>Another setting held with a t-score of 2 or more (watch):</span> ' + NT(esc(x.alt.pairing) + ' · t ' + x.alt.t.toFixed(1)) : '') + '</p></div>';
   }
   function AS() { return ASSET[$('#m-asset').value] || ASSET.MNQ; }
   function isNQ() { return ['NQ', 'MNQ', 'NNQ'].indexOf($('#m-asset').value) >= 0; }
@@ -537,8 +537,8 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     $('#m-eql').hidden = nq;
     if (nq) { $('#m-eg').textContent = '1 point = ' + fm(a[0] * q) + ' · money below is for this size'; return; }
     var f = mkf();
-    if (f && MKA && MKA[f]) { var A = MKA[f], k = 0; Object.keys(A.sheets).forEach(function (c) { if (A.sheets[c].ok) k++; });
-      $('#m-eg').textContent = 'Also tested on ' + A.name + ' itself: ' + k + ' of 18 made money in both periods there. Each card shows its own ' + A.name + ' result. Money below = the NQ test at a ' + EQ() + ' pt stop.'; return; }
+    if (f && MKA && MKA[f]) { var A = MKA[f], k = 0, kn = 0; Object.keys(A.sheets).forEach(function (c) { kn++; if (A.sheets[c].ok) k++; });
+      $('#m-eg').textContent = 'Also tested on ' + A.name + ' itself: ' + k + ' of ' + kn + ' made money in both periods there. Each card shows its own ' + A.name + ' result. Money below = the NQ test at a ' + EQ() + ' pt stop.'; return; }
     $('#m-eg').textContent = 'Estimate: tested on NQ / MNQ, ES, gold and crude only. A 50-pt NQ stop ≈ ' + EQ() + ' pts here = ' + fm(a[0] * EQ() * q) + ' risk. Money below = the same avg RR at that risk.';
   }
   function paint() {

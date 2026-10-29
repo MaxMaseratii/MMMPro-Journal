@@ -849,7 +849,7 @@ G.edge=async sc=>{
 <div class="tw" id="etab"></div><p class="note"><b>X.M5 in 2026:</b> these numbers include months with only 15-min bars, which make limit fills look better. On the 1-min / 5-min months X.M5 makes +0.06 avg RR (WATCH).</p></section>
 <section><h2>Avg RR per trade, by strategy</h2>${KEY}<div class="ch" id="ech"></div></section>
 <section><h2>Every gate for one strategy</h2><div class="ctl"><span><span class="lab">Strategy</span><span class="seg" id="egk"></span></span></div><div class="tw" id="egt"></div><p class="note">Same stop and exit as above. For the 50k prop evaluation of each strategy, open <b>PROP &amp; SIZE</b>.</p></section>
-<section class="wide"><h2>Win rate by time of day and weekday</h2><div class="ctl"><span><span class="lab">Strategy</span><span class="seg" id="tk"></span></span><span><span class="lab">View</span><span class="seg" id="tm"></span></span></div>${KEY}<div class="ch" id="tch"></div><p class="note" id="tnote"></p></section>
+<section class="wide"><h2>Win rate by time of day and weekday</h2><div class="ctl"><span><span class="lab">Market</span><span class="seg" id="tmk"></span></span></div><div class="ctl" style="margin-top:8px"><span><span class="lab">Strategy</span><span class="seg" id="tk"></span></span><span><span class="lab">View</span><span class="seg" id="tm"></span></span></div><div id="tkey">${KEY}</div><div class="ch" id="tch"></div><p class="note" id="tnote"></p></section>
 <section><h2>Where MMPD sits at the signal</h2><div class="ctl"><span><span class="lab">Strategy</span><span class="seg" id="mk"></span></span></div><div class="ctl" style="margin-top:6px"><span><span class="lab">Trade</span><span class="seg" id="mm"></span></span></div><div class="tw" id="mtab"></div><p class="note">MMPD 27 on 15m. CHASE = long at 80+ / short at 20 or lower. FADE = the opposite. MIDDLE = in between. The whole edge lives in CHASE.</p></section>
 <section><h2>Trading FROM the extreme <span class="note">· the fade ideas</span></h2><div class="ctl"><select id="fe" aria-label="Fade entry idea" style="font-family:var(--f-ui);font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 6px;max-width:100%"></select><span class="seg" id="fs"></span></div><div class="tw" id="ftab"></div><p class="note">None of these passed. They are here so you can see it for yourself.</p></section>
 </div>`;
@@ -880,9 +880,12 @@ G.edge=async sc=>{
  paintMain();
  // time
  const WIN=['18–20','20–22','22–00','00–02','09:30–10:30','10:30–11:30','11:30–12:30','12:30–13:30'],DAY=['Mon','Tue','Wed','Thu','Fri'];
- function paintT(){const L=EL.tm==='w'?WIN:DAY;const grp=L.map(x=>{const o=D.time[`old|${EL.tk}|${EL.tm}|${x}`],f=D.time[`fresh|${EL.tk}|${EL.tm}|${x}`];return{l:x.replace('09:30–','9:30–'),a:o?.wr,b:f?.wr,sub:o&&f?`${o.n}/${f.n}`:''}});
-  $('#tch').innerHTML=barChart(grp,{label:'win rate by window',fmt:v=>Math.round(v)+'%',tick:v=>Math.round(v)+'%',fixMin:30,gw:L.length>5?96:80,minW:420,ref:60,refL:'60% WR'});
-  $('#tnote').innerHTML=`<b>How to read it:</b> each bar = the win rate (WR) of ${EPN[EL.tk]} trades that started in that window, New York time. Target: ${ETG.half[EL.tk]}, no gate. The small numbers under each window = how many trades: 2022–25 / 2026. The dotted line = 60% WR. 00:00–02:00 is the weakest window for these strategies, so the indicator skips it (except X.M5).`}
+ function paintT(){const L=EL.tm==='w'?WIN:DAY;const m=EL.mkt||'NQ';const src=m==='NQ'?D.time:((LAB&&LAB[m]&&LAB[m].time)||{});const k1=m==='NQ'?'old':'P1',k2=m==='NQ'?'fresh':'P2';
+  const grp=L.map(x=>{const o=src[`${k1}|${EL.tk}|${EL.tm}|${x}`],f=src[`${k2}|${EL.tk}|${EL.tm}|${x}`];return{l:x.replace('09:30–','9:30–'),a:o?.wr,b:f?.wr,sub:(o||f)?`${o?o.n:0}/${f?f.n:0}`:''}});
+  $('#tkey').innerHTML=LKEY(m);
+  $('#tch').innerHTML=grp.some(g=>g.a!=null||g.b!=null)?barChart(grp,{label:'win rate by window',fmt:v=>Math.round(v)+'%',tick:v=>Math.round(v)+'%',fixMin:30,gw:L.length>5?96:80,minW:420,ref:60,refL:'60% WR'}):'<p class="note">No trades of this strategy here.</p>';
+  $('#tnote').innerHTML=m==='NQ'?`<b>How to read it:</b> each bar = the win rate (WR) of ${EPN[EL.tk]} trades that started in that window, New York time. Target: ${ETG.half[EL.tk]}, no gate. The small numbers under each window = how many trades: 2022–25 / 2026. The dotted line = 60% WR. 00:00–02:00 is the weakest window for these strategies, so the indicator skips it (except X.M5).`:`<b>How to read it:</b> each bar = the win rate (WR) of ${EPN[EL.tk]} trades on <span translate="no">${LMK[m]}</span> that started in that window, New York time, with the same code and rules as NQ (½ out, tested stop, all Asia hours, no gate). The small numbers = how many trades: period 1 / period 2. Under 20 trades a bar is a guess. The dotted line = 60% WR.`}
+ seg('tmk',['NQ','ES','GC','CL'].map(m=>[m,LMK[m]]),EL.mkt||'NQ',async v=>{EL.mkt=v;if(v!=='NQ')await getLab();paintT()});
  seg('tk',EKS.map(k=>[k,EPN[k]]),EL.tk,v=>{EL.tk=v;paintT()});
  seg('tm',[['w','Time window (NY)'],['d','Weekday']],EL.tm,v=>{EL.tm=v;paintT()});paintT();
  // mmpd split
@@ -902,7 +905,9 @@ G.edge=async sc=>{
 // PROP & SIZE
 const PS={dd:2000,ins:'MNQ',code:'X.M4'};
 const INS={MNQ:{pv:2,es:false,mini:false},NQ:{pv:20,es:false,mini:true},MES:{pv:5,es:true,mini:false},ES:{pv:50,es:true,mini:true}};
-const PQ={k:'Z',ex:'prop',g:'MOM2',w:'both',u:2};
+const PQ={k:'Z',ex:'prop',g:'MOM2',w:'both',u:2,m:'NQ'};
+let LAB=null;async function getLab(){if(!LAB){try{LAB=await (await fetch('d_lab_mkt.json')).json()}catch(e){LAB={}}}return LAB}
+const LMK={NQ:'NQ / MNQ',ES:'ES / MES',GC:'Gold GC / MGC',CL:'Crude CL / MCL'},LMU={NQ:'MNQ',ES:'MES',GC:'MGC',CL:'MCL'},LKEY=m=>m==='NQ'?KEY:`<div class="key"><span><i class="o"></i>Period 1 · Dec 2025 – May 2026 (<span translate="no">${LMK[m]}</span>)</span><span><i class="n"></i>Period 2 · Jun – Oct 2026</span></div>`;
 const PGN={NONE:'No filter',MOM:'MMPD 27 Momentum',MOM2:'MMPD 27 Momentum + max 2 open trades'};
 const PWN={both:'2022–26 (3 years + 10 months)',old:'2022–25 (3 years)',fresh:'Dec 2025 – Oct 2026 (10 months)'};
 const SIZES=[1,2,3,4,5,6,8,10,15,20,30,40];
@@ -913,8 +918,9 @@ G.prop=async sc=>{
  sc.innerHTML=`<div class="doc">
 <section class="wide"><h2>How long does it take to pass a 50k prop evaluation?</h2>
 <p class="note" style="margin:0 0 10px">Pick what you trade. The answer below comes from replaying a real evaluation, again and again, on every trade of the tests.</p>
-<div class="ctl"><span><span class="lab">Strategy</span><span class="seg" id="qk"></span></span><span><span class="lab">Exit</span><span class="seg" id="qx"></span></span></div>
-<div class="ctl" style="margin-top:8px"><span><span class="lab">Filter</span><span class="seg" id="qg"></span></span></div>
+<div class="ctl"><span><span class="lab">Market</span><span class="seg" id="qm"></span></span></div>
+<div class="ctl" style="margin-top:8px"><span><span class="lab">Strategy</span><span class="seg" id="qk"></span></span><span><span class="lab">Exit</span><span class="seg" id="qx"></span></span></div>
+<div class="ctl" style="margin-top:8px" id="qgw"><span><span class="lab">Filter</span><span class="seg" id="qg"></span></span></div>
 <div class="ctl" style="margin-top:8px"><span><span class="lab">Size</span><span class="seg" id="qu"></span></span><span><span class="lab">Data</span><span class="seg" id="qw"></span></span></div>
 <div class="out" id="qans" style="margin-top:14px"></div>
 <p class="note" id="qline" style="margin-top:10px"></p></section>
@@ -946,7 +952,7 @@ G.prop=async sc=>{
 </div><div class="out" id="pout"></div><p class="note"><b>Survival size</b> plans for a drawdown 1.5 times worse than the worst one this strategy had in the tests. <b>MMM buffer rule</b> = 1 micro per $1,000 of drawdown (1 mini per $10,000 from $10,000), about 10% of the drawdown per trade. Survive first, then grow.</p></section>
 <section><h2>Fixed 50 pt stop at 1:2 · the reference</h2><div class="tw"><table><tr><th class="l">Size</th><th>Risk per trade</th><th>Win at 1:2</th><th>Losses in a row to lose $2,000</th></tr>
 <tr><td class="l">1 MNQ</td><td>$100</td><td>$200</td><td>20</td></tr><tr><td class="l">2 MNQ</td><td>$200</td><td>$400</td><td>10</td></tr><tr><td class="l">4 MNQ</td><td>$400</td><td>$800</td><td>5</td></tr><tr><td class="l">1 NQ (= 10 MNQ)</td><td>$1,000</td><td>$2,000</td><td>2</td></tr></table></div><p class="note">ES uses a 20 pt stop: 1 MES = $100 risk, 1 ES = $1,000. The worst losing streaks in the tests were 12–38 stops in a row (in R), so 10 losses in a row is not rare.</p></section></div>`;
- const Q=()=>D.prop2[`${PQ.w}|${PQ.ex}|${PQ.g}|${PQ.k}`];
+ const Q=()=>PQ.m==='NQ'?D.prop2[`${PQ.w}|${PQ.ex}|${PQ.g}|${PQ.k}`]:((LAB&&LAB[PQ.m]&&LAB[PQ.m].prop)||{})[`${PQ.ex}|${PQ.k}`];
  const nm=k=>SN[k];
  const d0=v=>v==null?'—':Math.round(v).toLocaleString('en-US');
  function paintQ(){
@@ -960,12 +966,13 @@ G.prop=async sc=>{
    `<div class="fact"><div class="d">Trading days to pass</div><div class="n">${d0(v.d)}</div><div class="d">about ${v.d==null?'—':Math.max(1,Math.round(v.d/21))} month${v.d!=null&&Math.round(v.d/21)>1?'s':''} of trading</div></div>`+
    `<div class="fact"><div class="d">Trades to pass</div><div class="n">${d0(v.t)}</div><div class="d">about ${v.t&&v.d?(v.t/v.d).toFixed(1):'—'} trades a day</div></div>`+
    `<div class="fact"><div class="d">A failed try lasts</div><div class="n">${v.fd==null?'—':d0(v.fd)}</div><div class="d">${v.fd==null?'no try failed':'trading days'}</div></div>`;
-  $('#qline').innerHTML=`<b>In one sentence:</b> trading <b>${nm(PQ.k)}</b> with <b>${PQ.u} MNQ</b>, ${exN}, ${PQ.g==='NONE'?'no filter':PGN[PQ.g]}, about <b>${P0(v.pr)}</b> of tries passed the 50k evaluation, in about <b>${d0(v.d)} trading days</b> and <b>${d0(v.t)} trades</b>. Data: ${PWN[PQ.w]}.`;
+  $('#qline').innerHTML=`<b>In one sentence:</b> trading <b>${nm(PQ.k)}</b> on <span translate="no">${LMK[PQ.m]}</span> with <b translate="no">${PQ.u} ${LMU[PQ.m]}</b>, ${exN}, ${PQ.m==='NQ'?(PQ.g==='NONE'?'no filter':PGN[PQ.g]):'no filter'}, about <b>${P0(v.pr)}</b> of tries passed the 50k evaluation, in about <b>${d0(v.d)} trading days</b> and <b>${d0(v.t)} trades</b>. Data: ${PQ.m==='NQ'?PWN[PQ.w]:'Dec 2025 – Oct 2026 (<span translate="no">'+LMK[PQ.m]+'</span>, same code and rules as NQ, tested stop, skip 00–02)'}.`;
   let h=`<table><tr><th class="l">Size</th><th>Pass chance</th><th>Tries<small>passed · failed</small></th><th>Trading days to pass</th><th>Trades to pass</th><th>A failed try lasts<small>trading days</small></th></tr>`;
   SIZES.forEach(u=>{const x=r[String(u)];if(!x)return;const nn=x.p+x.f;const me=u===PQ.u;const c=x.pr==null?'':x.pr>=75?'pos':x.pr<50?'neg':'';
-   h+=`<tr${me?' class="me"':''}><td class="l">${u} MNQ${u===10?' (= 1 NQ)':''}${me?' ← you':''}</td><td class="${c}">${nn?P0(x.pr):'—'}${nn&&nn<10?' <small>few</small>':''}</td><td>${x.p} · ${x.f}</td><td>${d0(x.d)}</td><td>${d0(x.t)}</td><td>${d0(x.fd)}</td></tr>`});
+   h+=`<tr${me?' class="me"':''}><td class="l"><span translate="no">${u} ${LMU[PQ.m]}${u===10?' (= 1 '+LMU[PQ.m].slice(1)+')':''}</span>${me?' ← you':''}</td><td class="${c}">${nn?P0(x.pr):'—'}${nn&&nn<10?' <small>few</small>':''}</td><td>${x.p} · ${x.f}</td><td>${d0(x.d)}</td><td>${d0(x.t)}</td><td>${d0(x.fd)}</td></tr>`});
   $('#qtab').innerHTML=h+'</table>';
  }
+ seg('qm',['NQ','ES','GC','CL'].map(m=>[m,LMK[m]]),PQ.m,async v=>{PQ.m=v;if(v!=='NQ'){await getLab();PQ.g='NONE';PQ.w='both'}$('#qgw').style.display=v==='NQ'?'':'none';$('#qw').parentElement.style.display=v==='NQ'?'':'none';seg('qg',[['NONE','No filter'],['MOM','MMPD 27 Momentum'],['MOM2','MMPD 27 Momentum + max 2 open']],PQ.g,v2=>{PQ.g=v2;paintQ()});seg('qu',[1,2,3,4,6,10].map(u=>[u,u===10?'1 '+LMU[PQ.m].slice(1):u+' '+LMU[PQ.m]]),PQ.u,v2=>{PQ.u=+v2;paintQ()});paintQ()});
  seg('qk',EKS.map(k=>[k,EPN[k]]),PQ.k,v=>{PQ.k=v;paintQ()});
  seg('qx',[['prop','½ out'],['full','Full exit']],PQ.ex,v=>{PQ.ex=v;paintQ()});
  seg('qg',[['NONE','No filter'],['MOM','MMPD 27 Momentum'],['MOM2','MMPD 27 Momentum + max 2 open']],PQ.g,v=>{PQ.g=v;paintQ()});
@@ -1355,7 +1362,7 @@ const MKS=['NQ','ES','GC','CL'],MKN={NQ:'NQ / MNQ',ES:'ES / MES',GC:'Gold · GC 
 const MK_MICRO={NQ:'MNQ',ES:'MES',GC:'MGC',CL:'MCL'};
 const NT=x=>`<span translate="no">${x}</span>`;
 let MKT=(()=>{const v=store('mmm-mkt');return MKS.includes(v)?v:'NQ'})();
-let MKD=null,MKI=null;const MV={view:null,otf:'15m',om:'tgt',ctf:'15m',study:''};
+let MKD=null,MKI=null,MKF=null,MKL=null,MKQ=null,MKST=null;const MV={view:null,otf:'15m',om:'tgt',ctf:'15m',study:''};
 function setMkt(m){if(!MKS.includes(m))return;MKT=m;store('mmm-mkt',m);const s=$('#mkt');if(s&&s.value!==m)s.value=m;if(typeof BK!=='undefined'&&BK_FAMOF[BK.c]!==m)BK.c=MK_MICRO[m]}
 function mvk(v){v=v||'';return v.startsWith('PASS · edge')?'e':v.startsWith('PASS')?'w':v.startsWith('weak')?'k':v.startsWith('too few')?'f':'n'}
 const MVL={e:'PASS · EDGE',w:'PASS · WATCH',k:'WEAK',f:'TOO FEW TRADES',n:'NO EDGE'};
@@ -1369,7 +1376,7 @@ const ST_N={flip:'Flip: the first opposite BC, and its confirmation BC',patt:'Pu
  block_touch:'Block touches: eBlock, iBlock and balanced block, same timeframe',htf_block_ltf:'HTF block → LTF reaction entry',break_candle:'Break candle entries: flip, T2 to T6, every entry point and stop',
  level_entry:'HTF level → 15m / LTF entry (AFs at a GMC, PO4 level; touch vs close through)',gmc_grid:'GMC grid: every GMC entry × stop × exit',indicator_entries:'Indicator entries: OFS swing breaks, SWP+ sweep reclaim, AX continuation, Concepts R# box, MMM Pro P# / R#'};
 const TFN_={'5':'5m','15':'15m','60':'1h','4h':'4H','D':'Daily','5m':'5m','15m':'15m','1H':'1h','4H':'4H','M5':'5m','M15':'15m','H1':'1h','H4':'4H'};
-async function mkLoad(){if(!MKD){const [a,b]=await Promise.all([fetch('d_markets.json').then(r=>r.json()),fetch('d_ideas.json').then(r=>r.json()).catch(()=>null)]);MKD=a;MKI=b}}
+async function mkLoad(){if(!MKD){const [a,b,c,d,e,f]=await Promise.all([fetch('d_markets.json').then(r=>r.json()),fetch('d_ideas.json').then(r=>r.json()).catch(()=>null),fetch('d_fva_mkts.json').then(r=>r.json()).catch(()=>null),fetch('d_liq_mkt.json').then(r=>r.json()).catch(()=>null),fetch('d_lab_mkt.json').then(r=>r.json()).catch(()=>null),fetch('/strategies/strategies.json').then(r=>r.json()).catch(()=>null)]);MKD=a;MKI=b;MKF=c;MKL=d;MKQ=e;MKST=f}}
 function mkOdd(tf,ty,M){const D=MKD.odds,b=D[tf+'|'+ty+'|bull'],e=D[tf+'|'+ty+'|bear'];if(!b||!e||!b[M]||!e[M])return null;const x=b[M],y=e[M],n=x.n+y.n;
   return{n,tgt:(x.tgt*x.n+y.tgt*y.n)/n,first:x.first==null?null:(x.first*x.n+y.first*y.n)/n}}
 function mkGrid(M,tf){const fine=['5','15'].includes(tf),src=M==='NQ'?'NQ 1m 2022-25 vs MNQ 2026':(fine?'finest bars 2026':'1h base Jun 2024-Oct 2026');return MKD.grid.find(g=>g.mkt===M&&g.tf===tf&&g.src===src)}
@@ -1380,6 +1387,31 @@ function mkIv(L){if(!L||!L.length)return null;const s=L.reduce((a,r)=>a+(r.stron
   const trend=bs>0&&b<0.5*bs&&s>1.5*Math.max(l,1);
   return{strong:s,luck:Math.round(l*10)/10,enough:e,v:e===0?'f':trend?'t':s>=3*Math.max(l,1)?'e':s>1.5*Math.max(l,1)?'w':'n'}}
 const MIV={t:'<span class="mv k">TREND, NOT EDGE</span>',e:'<span class="mv e">BEATS LUCK</span>',w:'<span class="mv w">A FEW MORE THAN LUCK</span>',n:'<span class="mv n">LUCK LEVEL</span>',f:'<span class="mv f">TOO FEW TRADES</span>'};
+
+// ── FVA strategies, liquidity filters and portfolio rules per market ──
+const FVK=v=>v==null?'k':v.startsWith('PASS · edge')?'e':v.startsWith('PASS')?'w':v.startsWith('weak')?'k':v.startsWith('too few')?'k':'n';
+const FVN=v=>v==null?'—':v.startsWith('PASS · edge')?'PASS · EDGE':v.startsWith('PASS')?'PASS · WATCH':v.startsWith('weak')?'WEAK':v.startsWith('too few')?'TOO FEW TRADES':'NO EDGE';
+function fvaSec(M){if(!MKF||!MKF[M])return '';const F=MKF[M],NQ=MKF.NQ,BK=MKST?Object.fromEntries(MKST.strategies.map(x=>[x.code,x])):{};const codes=Object.keys(F);
+  const pass=codes.filter(c=>F[c].verdict.startsWith('PASS')),few=codes.filter(c=>F[c].verdict.startsWith('too few'));
+  const cell=o=>{if(!o||!o.both)return '<td colspan="4" class="mu">—</td>';const b=o.both;return `<td>${N0(b.n)}</td><td>${PCT(b.wr)}</td><td class="${PC(b.av)}">${SGN(b.av)}</td><td><span class="${PC(o.p1&&o.p1.av)}">${o.p1?SGN(o.p1.av):'—'}</span> → <span class="${PC(o.p2&&o.p2.av)}">${o.p2?SGN(o.p2.av):'—'}</span></td>`};
+  let h=`<section class="wide"><h2>The ${codes.length} MMM PRO FVA strategies on ${NT(MKS2[M])}</h2>
+  <p class="note" style="margin:0 0 8px">${M==='NQ'?'NQ is where these 22 strategies were found. Two numbers here: the <b>book</b> (the original test, 2022–25 + 2026) and the <b>rebuilt engine</b> (the copy of the test we run on every market, same data). They are close, not identical: that gap is the margin of error of the copy.':`Same rules as the NQ book, run with the <b>rebuilt engine</b> on ${NT(MKS2[M])}. 1m and 5m strategies use only the days with 5-minute bars or finer (two short periods), 15m and 1h strategies use the full two periods.`}</p>
+  <div class="tw"><table class="mkt-t"><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Chart</th>${M==='NQ'?'<th>Book<small>trades · WR · avg RR</small></th>':'<th>NQ rebuilt<small>WR · avg RR</small></th>'}<th>Trades</th><th>WR</th><th>avg RR</th><th>Period 1 → 2<small>avg RR</small></th><th class="l">Verdict</th></tr>
+  ${codes.map(c=>{const o=F[c],b=BK[c]||{},q=NQ&&NQ[c]&&NQ[c].both;return `<tr class="v-${FVK(o.verdict)}"><td class="l" translate="no"><b><a href="/strategies/#s-${c.replace(/\./g,'-')}" class="lnk" style="text-decoration:none">${c}</a></b></td><td class="l"><div>${esc(b.name||'')}</div><div class="mtg">${esc(b.tgt||'')}</div></td><td class="l">${esc(o.tf)}${o.side===1?' · long':''}</td>${M==='NQ'?`<td class="mu">${b.all?`${N0(b.all.n)} · ${PCT(b.all.wr)} · ${SGN(b.all.av)}`:'—'}</td>`:`<td class="mu">${q?`${PCT(q.wr)} · ${SGN(q.av)}`:'—'}</td>`}${cell(o)}<td class="l">${mvb(o.verdict)}</td></tr>`}).join('')}</table></div>
+  <p class="note"><b>${pass.length} of ${codes.length}</b> made money in both periods on ${NT(MKS2[M])}${few.length?` · ${few.length} had too few trades (under 10 in a period)`:''}. Verdicts as above: PASS · EDGE needs a t-score of 2 or more. ${M==='NQ'?'':'The FVA level and box engine was rebuilt from the test rules for this run (the original test code was not kept), so treat these as a close copy of the book test, not the same program.'} Rules of each strategy: <a href="/strategies/" class="lnk">the strategies page</a>.</p></section>`;
+  return h}
+function liqSec(M){if(!MKL||!MKL[M])return '';const L=MKL[M];const F=L.filters,P=L.portfolio;
+  const st=x=>x&&x.n?`${PCT(x.wr)} · ${SGN(x.av)} <span class="mu">(${N0(x.n)})</span>`:'—';
+  const help=(f)=>{const a=f.per.P1,b=f.per.P2;if(!a.yes.n||!a.no.n||!b.yes.n||!b.no.n||a.yes.n<15||b.yes.n<15)return ['k','too few trades'];const h1=a.no.av-a.yes.av,h2=b.no.av-b.yes.av;if(h1>0.05&&h2>0.05)return ['e','skipping helps in both periods'];if(h1<-0.05&&h2<-0.05)return ['n','skipping hurts in both periods'];return ['w','no steady difference: do not skip']};
+  const G={LIQ:'any liquidity (equal, unfinished, 4H / day / week / month)',EQUF:'equal + unfinished highs / lows',SW:'swing highs / lows',HTF:'4H / day / week / month highs and lows'};
+  let h=`<section class="wide"><h2>Liquidity filters on ${NT(MKS2[M])} · skip the trade when…</h2><div class="tw"><table><tr><th class="l">Level type</th><th class="l">Rule</th><th>Period 1<small>YES: WR · avg RR</small></th><th>Period 1<small>NO</small></th><th>Period 2<small>YES</small></th><th>Period 2<small>NO</small></th><th class="l">Verdict</th></tr>
+  ${Object.keys(F).map(k=>{const f=F[k],[v,t]=help(f);return `<tr><td class="l">${esc(G[f.group]||f.group)}</td><td class="l">${esc(f.label)}</td><td>${st(f.per.P1.yes)}</td><td>${st(f.per.P1.no)}</td><td>${st(f.per.P2.yes)}</td><td>${st(f.per.P2.no)}</td><td class="l"><span class="mv ${v}">${t}</span></td></tr>`}).join('')}</table></div>
+  <p class="note">The 5 EDGE PRO strategies (tested settings) on ${NT(MKS2[M])}. YES = an untaken liquidity level sits where the rule says (inside the stop = under 1R on the stop side) when the signal candle closes. NO = it does not. A filter is worth using only if the NO trades beat the YES trades by more than +0.05 avg RR in <b>both</b> periods. Same answer as on NQ: liquidity inside the stop is not a reason to skip.</p></section>`;
+  const MD={A:'A · everything on, every hour, max 2 open trades, no daily stop',B:'B · A + daily stop after 2 losses',C:'C · B + Asia (18:00–02:00) and NY AM (09:30–13:30) signals only'};
+  h+=`<section class="wide"><h2>Daily stop and session rules on ${NT(MKS2[M])} · the 5 EDGE PRO strategies as a portfolio</h2><div class="tw"><table><tr><th class="l">How it was run</th><th>Period</th><th>Trades<small>a month</small></th><th>WR</th><th>avg RR</th><th>R a month</th><th>Worst losing streak</th><th>Max drawdown<small>R</small></th><th>Losing weeks</th></tr>
+  ${Object.keys(P).map(m=>['P1','P2'].map((pn,i)=>{const x=P[m][pn];return `<tr><td class="l">${i===0?esc(MD[m]):''}</td><td>${pn==='P1'?'1':'2'}</td><td>${x.per_mo}</td><td>${PCT(x.wr)}</td><td class="${PC(x.av)}">${SGN(x.av)}</td><td class="${PC(x.R_mo)}">${x.R_mo>0?'+':''}${x.R_mo}</td><td>${x.streak}</td><td>${x.dd}</td><td>${x.losing_weeks==null?'—':PCT(x.losing_weeks)}</td></tr>`}).join('')).join('')}</table></div>
+  <p class="note">Full exits (no ½ out), tested stops, all hours, the same portfolio replay as the NQ user-losses check. A daily stop after 2 losses and the Asia / NY AM window change the shape (fewer trades, shorter streaks) more than the total. R = one stop. Research, not advice.</p></section>`;
+  return h}
 G.markets=async sc=>{
   sc.innerHTML='<div class="loading">Loading the market tests…</div>';
   try{await mkLoad()}catch(e){sc.innerHTML='<div class="loading">This tab could not load. Reload the page to try again.</div>';return}
@@ -1420,6 +1452,7 @@ G.markets=async sc=>{
     h+=`<section class="wide"><h2>The 18 MMM EDGE PRO strategies on ${NT(MKS2[M])}</h2><div class="tw"><table class="mkt-t"><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Chart</th><th>Trades</th><th>WR</th><th>avg RR</th><th>PF</th><th>t-score</th><th>Period 1 → 2<small>avg RR</small></th><th class="l">Verdict</th>${M!=='NQ'?'<th>NQ<small>WR · avg RR</small></th>':''}</tr>
     ${E.map(s=>{const x=s.m[M],q=s.m.NQ;return `<tr class="v-${mvk(x.v)}"><td class="l"><b>${s.code}</b></td><td class="l"><div>${esc(s.name)}</div><div class="mtg">${esc(s.tgt)}</div></td><td class="l">${esc(s.tf)}</td><td>${N0(x.n)}</td><td>${PCT(x.wr)}</td><td class="${PC(x.av)}">${SGN(x.av)}</td><td>${x.pf==null?'—':x.pf.toFixed(2)}</td><td>${x.t==null?'—':x.t.toFixed(1)}</td><td><span class="${PC(x.p1)}">${SGN(x.p1)}</span> → <span class="${PC(x.p2)}">${SGN(x.p2)}</span></td><td class="l">${mvb(x.v)}</td>${M!=='NQ'?`<td class="mu">${PCT(q.wr)} · ${SGN(q.av)}</td>`:''}</tr>`}).join('')}</table></div>
     <p class="note">Tested settings on every market: ½ out where the strategy uses it, skip 00:00–02:00 where it is on by default. PASS · EDGE = avg RR above +0.05 in both periods (10+ trades each) and a t-score of 2 or more${M==='NQ'?' (on NQ: the TRADE status)':''}. PASS · WATCH = made money in both periods, t-score under 2. WEAK = made money overall, one period flat or lost. Strategy rules: <button type="button" class="lnk" data-go="book">STRATEGY BOOK</button>.</p></section>`;
+    h+=fvaSec(M);
     // charts
     const TFS=[['1m','1m',null,null],['5m','5m','5','5m'],['15m','15m','15','15m'],['1h','1h','60','1h'],['4H','4H','4h','4H'],['Daily','Daily','D','Daily']];
     h+=`<section class="wide"><h2>Which chart works on ${NT(MKS2[M])}</h2><div class="tw"><table><tr><th class="l">Chart</th><th class="l">EDGE PRO strategies that held</th><th class="l">Grid search<small>every entry × stop × exit</small></th><th>BC+ → takes its target</th></tr>
@@ -1464,6 +1497,7 @@ G.markets=async sc=>{
       ${row(`Trade test · first BC after 10:00 on 15m · ${stp}${u} stop · 1:2`,x=>{const t=(x.tt||{})['15m|all'];return t?NT(`${N0(t.n)} · WR ${P0(t.wr)} · <span class="${PC(t.av)}">${SGN(t.av)}</span> · t ${t.t.toFixed(1)}`):'—'})}</table></div>
       <p class="note">Same rules as the NQ study. Each day uses the finest bars we have for it (15m candles and the range need 5m bars or finer, 5m candles need 1m bars). (n) = days. Under 10 days a number is a guess. Full NQ study: <a href="/backtests/ny-open/">NY open lab</a>.</p></section>`}
     // data
+    if(M!=='NQ')h+=liqSec(M);
     h+=`<section class="wide"><h2>Data and rules for ${NT(MKS2[M])}</h2><ul><li>Period 1: ${esc(m.p1)}. Period 2: ${esc(m.p2)}.</li><li>Fixed stop ${esc(m.fix)} (NQ 50 pts) · cost ${esc(m.cost)} a trade · tick ${esc(m.tick)}. ATR and candle stops size themselves.</li>
     <li>${M==='NQ'?'NQ 1-minute 2022–25 and MNQ 2026 TradingView / repo data.':'TradingView exports (back-adjustment off, extended hours) plus 1-minute bars where we have them. Raw prices, never mixed with back-adjusted NQ.'}</li>
     <li>Big and micro contracts trade at the same price, so one test covers both: only the $ per point changes.</li><li>1h / 4H tests: ${esc(MKD.common.h1)}. Daily / weekly: ${esc(MKD.common.d1)}.</li></ul></section>`;

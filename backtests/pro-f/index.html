@@ -79,6 +79,7 @@ td.p{color:var(--up)} td.n{color:var(--dn)}
 ul{margin:4px 0;padding-left:20px;line-height:1.55;max-width:110ch}
 @media (max-width:600px){h1{font-size:24px}.kpi dd{font-size:16px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.mv{display:inline-block;padding:1px 7px;border-radius:3px;font:700 11px/1.5 var(--display,inherit);letter-spacing:.05em;text-transform:uppercase}.mv.e{background:#163327;color:#3ddc97}.mv.w{background:#2b2a12;color:#f2cf5b}.mv.k{background:#1f2227;color:#8f97a1}.mv.n{background:#2d1518;color:#ff5c6c}.mu{color:#8f97a1}
 </style>
 </head>
 <body>
@@ -282,12 +283,29 @@ function howTab(){return `<h2 class="ttl">How it was tested</h2><ul>
 <li><b>Session hold rule:</b> at the next session open (18:00 · 02:00 · 08:00 · 09:30) a losing trade exits, a winning trade trails each BC; out at the second session open.</li>
 <li><b>PASS:</b> made money in BOTH 2022–25 and 2026. With this many tests some settings look good by luck, so the % of settings that also pass matters: the higher, the more likely the edge is real.</li>
 <li>Stops are checked before targets inside a candle. Limit fills are checked candle by candle. Money = $2 a point for 1 MNQ, scaled by "Your size".</li></ul>`;}
-const TABS=[['str','Strategies'],['pre','Before the touch'],['rt','Retest odds'],['ps','After the retest'],['box','Box type × entry'],['mg','Your management'],['exp','Explorer'],['aft','After the touch'],['bi','Close back inside'],['of','Order flow'],['how','How tested']];
+const TABS=[['str','Strategies'],['pre','Before the touch'],['rt','Retest odds'],['ps','After the retest'],['box','Box type × entry'],['mg','Your management'],['exp','Explorer'],['aft','After the touch'],['bi','Close back inside'],['of','Order flow'],['mk','ES · gold · crude'],['how','How tested']];
+
+let MKF=null;fetch('../d_fva_mkts.json').then(r=>r.json()).then(j=>{MKF=j;if(state.tab==='mk')render();}).catch(()=>{});
+const MKN={NQ:'NQ / MNQ',ES:'ES / MES',GC:'Gold GC / MGC',CL:'Crude CL / MCL'};
+function mkTab(){
+  if(!MKF)return `<h2 class="ttl">The 22 strategies on ES, gold and crude oil</h2><p class="note">Loading…</p>`;
+  const codes=Object.keys(MKF.ES||MKF.GC||{});const vk=v=>v.startsWith('PASS · edge')?'e':v.startsWith('PASS')?'w':v.startsWith('too few')?'k':v.startsWith('weak')?'k':'n';
+  const vn=v=>v.startsWith('PASS · edge')?'PASS · EDGE':v.startsWith('PASS')?'PASS · WATCH':v.startsWith('too few')?'TOO FEW':v.startsWith('weak')?'WEAK':'NO EDGE';
+  const cell=o=>{if(!o||!o.both)return '<td class="mu">—</td>';const b=o.both;return `<td><span class="mv ${vk(o.verdict)}">${vn(o.verdict)}</span><br><small translate="no">${b.n} · WR ${Math.round(b.wr*100)}% · ${b.av>0?'+':''}${b.av.toFixed(2)}</small></td>`};
+  const MS=['NQ','ES','GC','CL'].filter(m=>MKF[m]);
+  const cnt=m=>codes.filter(c=>MKF[m][c]&&MKF[m][c].verdict.startsWith('PASS')).length;
+  return `<h2 class="ttl">The 22 strategies on ES, gold and crude oil</h2>
+  <p class="note">Every FVA.M strategy was run again with the same rules on <b>ES / MES</b>, <b>gold (GC / MGC)</b> and <b>crude oil (CL / MCL)</b>, Dec 2025 – Oct 2026, cut into two periods: a result counts only if it made money in both (avg RR above +0.05, 10+ trades each). 1m and 5m strategies use only the days with 5-minute bars or finer. The level and box engine was <b>rebuilt</b> from the test rules for this run (the original test program was not kept); on NQ the rebuilt copy lands close to the book numbers, not on them, so read it as a close copy. Stops scale with the market: NQ 50 = ES 20 = gold 12 = crude 0.50. Full tables and every other MMM test on these markets: the <a href="/backtests/#markets">MARKETS tab</a>.</p>
+  <p class="note"><b>Made money in both periods:</b> ${MS.map(m=>`<span translate="no">${MKN[m]}</span> <b>${cnt(m)} of ${codes.length}</b>`).join(' · ')}${MKF.NQ?' (NQ = the rebuilt engine on the book data)':''}.</p>
+  <div class="tw"><table><thead><tr><th>Strategy</th><th>Chart</th>${MS.map(m=>`<th><span translate="no">${MKN[m]}</span><br><small>${m==='NQ'?'rebuilt · 2022–25 → 2026':'period 1 → 2'}</small></th>`).join('')}</tr></thead><tbody>
+  ${codes.map(c=>`<tr><td translate="no"><b><a href="/strategies/#s-${c.replace(/\./g,'-')}">${c}</a></b></td><td>${(MKF[MS[0]][c]||{}).tf||''}</td>${MS.map(m=>cell(MKF[m][c])).join('')}</tr>`).join('')}</tbody></table></div>
+  <p class="note">WR = win rate · avg RR = average result per trade in stops, after costs (NQ 1 pt, ES 0.5, gold 0.2, crude 0.02). PASS · EDGE also needs a t-score of 2 or more over both periods. Research, not advice. Pick ONE strategy.</p>`;
+}
 function render(){
   $('tabs').innerHTML=TABS.map(([k,l])=>`<button role="tab" id="tab-${k}" data-t="${k}" aria-selected="${state.tab===k}">${l}</button>`).join('');
   const t=state.tab; const U=size();
   $('m-eg').textContent=`1 point = $${(U.a*U.q).toLocaleString('en-US')} · 1 RR in the tables = $${U.risk.toLocaleString('en-US')}`;
-  $('view').innerHTML=t==='str'?stratTab(state.str):t==='rt'?rtTab():t==='ps'?psTab():t==='bi'?biTab():t==='of'?ofTab():t==='how'?howTab():explTab(t);
+  $('view').innerHTML=t==='str'?stratTab(state.str):t==='rt'?rtTab():t==='ps'?psTab():t==='bi'?biTab():t==='of'?ofTab():t==='how'?howTab():t==='mk'?mkTab():explTab(t);
   save();
 }
 $('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-t]');if(!b)return;state.tab=b.dataset.t;render();});
