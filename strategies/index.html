@@ -252,6 +252,24 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
 .mkbox td,.mkbox th{padding:3px 6px;text-align:right;border-bottom:1px solid var(--line)} .mkbox th{font:600 11px var(--body);color:var(--mute)} .mkbox .l{text-align:left}
 .mkbox p{margin:6px 0 0;font-size:12px;color:var(--mute)}
 .mkv{display:inline-block;font:600 10px var(--mono);letter-spacing:.05em;border-radius:3px;padding:1px 6px}
+.mktbar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--teal);padding:10px 12px;margin-top:18px}
+.mktbar .lab{font-size:15px;color:var(--teal);margin-right:4px}
+.mktbar .seg{flex-wrap:wrap}
+.mktbar .seg button{font-size:14px;padding:8px 13px}
+.mktbar .seg button[aria-pressed="true"]{background:var(--teal);color:#04201d}
+.mktbar .eg{font-family:var(--mono);font-size:12px;color:var(--mute);max-width:70ch;line-height:1.45;flex:1 1 280px;min-width:0}
+.mktbar .chk{display:flex;gap:6px;align-items:center;font-size:12.5px;color:var(--mute);cursor:pointer}
+.mktbar .chk[hidden]{display:none}
+.bar{margin-top:10px}
+.tag.on{color:var(--teal);border-color:rgba(79,209,197,.55)}
+.tag.on.only{color:var(--mute);border-color:var(--line2)}
+.t-head .mmm{flex-basis:100%;font:12px var(--mono);color:var(--mute);margin:-4px 0 0}
+.nm .mmm{display:block;font:11px var(--mono);color:var(--mute);margin-top:2px}
+.nqh{margin:0 0 8px;font:600 13px var(--body);color:var(--mute);letter-spacing:.02em}
+.mkbox .money{margin:6px 0 0;font:12px var(--mono);color:var(--fg)}
+.ons{display:flex;gap:4px;flex-wrap:nowrap}
+.ons span{font:600 11px/1 var(--display);letter-spacing:.05em;padding:3px 6px;border:1px solid var(--line2);color:var(--mute);white-space:nowrap}
+.ons span.y{color:var(--teal);border-color:rgba(79,209,197,.55)}
 .mkv.e{background:var(--g);color:var(--up)} .mkv.w{background:var(--y);color:var(--mix)} .mkv.k{background:var(--row);color:var(--mix)} .mkv.n{background:var(--r);color:var(--dn)} .mkv.f{background:var(--row);color:var(--mute)}
 </style>
 </head>
@@ -263,7 +281,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     <div>
       <h1>The MMM strategy book</h1>
       <p class="lede">Every day-trading strategy that passed our tests, written as steps you can follow on a chart: which chart, what time, where to enter, where the stop goes and when to get out.</p>
-      <p class="facts">Built on NQ 1-minute data from Dec 2022 to Dec 2025, then checked on fresh MNQ data from Dec 2025 to Oct 2026 that was never used to build the rules. Every trade pays 1 point in costs. Money is shown for 1 MNQ ($2 a point).</p>
+      <p class="facts">Tested on 4 markets, each on its own 1-minute data and split into 2 periods: NQ / MNQ from Dec 2022 to Oct 2026, where the rules were built, then ES / MES, gold (GC / MGC) and crude oil (CL / MCL) from Dec 2025 to Oct 2026. A strategy passes a market only if it made money in both periods there. Every trade pays its costs. Pick a market and your size below to see the money.</p>
       <p class="adv"><b>Pick ONE strategy.</b> Study it, understand it, check that it fits your trading style and backtest it yourself. Then decide. We never advise trading several strategies at once.</p>
       <div class="acts" style="margin-top:18px"><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="hero">Try the indicators for free →</a><a class="btn-ghost" href="/backtests/#words">MMM words · glossary</a><a class="btn-ghost" href="/backtests/ny-open/study/">9:30–11:30 AM study</a></div>
     </div>
@@ -290,9 +308,15 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       </div>
       <div class="acts"><a class="btn-ghost" href="/backtests/#words">MMM words · glossary</a><a class="btn-ghost" href="/backtests/ny-open/study/">9:30–11:30 AM study</a><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="book">Try it for free</a></div>
     </div>
+    <div class="mktbar" role="group" aria-label="Market">
+      <span class="lab">Market</span>
+      <span class="seg" id="f-mkt"><button type="button" data-mkt="ALL" aria-pressed="true">All markets</button><button type="button" data-mkt="NQ" aria-pressed="false"><span translate="no">NQ</span>&nbsp;· Nasdaq</button><button type="button" data-mkt="ES" aria-pressed="false"><span translate="no">ES</span>&nbsp;· S&amp;P 500</button><button type="button" data-mkt="GC" aria-pressed="false">Gold</button><button type="button" data-mkt="CL" aria-pressed="false">Crude oil</button></span>
+      <span class="eg" id="mk-eg"></span>
+      <label class="chk" id="f-failw" hidden><input type="checkbox" id="f-fail"> Also show the ones that did not pass here</label>
+    </div>
     <div class="bar" role="group" aria-label="Your size">
       <span class="lab">Your size</span>
-      <label for="m-asset">Asset<select id="m-asset"><optgroup label="Nasdaq-100"><option value="NQ">NQ · E-mini Nasdaq · $20 a point</option><option value="MNQ" selected>MNQ · Micro Nasdaq · $2 a point</option><option value="NNQ">NNQ · E-nano Nasdaq · $0.2 a point</option></optgroup><optgroup label="S&P 500"><option value="ES">ES · E-mini S&P · $50 a point</option><option value="MES">MES · Micro S&P · $5 a point</option><option value="NES">NES · E-nano S&P · $0.5 a point</option></optgroup><optgroup label="Dow"><option value="YM">YM · E-mini Dow · $5 a point</option><option value="MYM">MYM · Micro Dow · $0.5 a point</option><option value="NDOW">NDOW · E-nano Dow · $0.05 a point</option></optgroup><optgroup label="Russell 2000"><option value="RTY">RTY · E-mini Russell · $50 a point</option><option value="M2K">M2K · Micro Russell · $5 a point</option><option value="N2K">N2K · E-nano Russell · $0.5 a point</option></optgroup><optgroup label="Gold"><option value="GC">GC · Gold · $100 a point</option><option value="MGC">MGC · Micro Gold · $10 a point</option><option value="1OZ">1OZ · 1-Ounce Gold · $1 a point</option></optgroup><optgroup label="Silver"><option value="SI">SI · Silver · $5,000 a point</option><option value="SIL">SIL · Micro Silver · $1,000 a point</option></optgroup><optgroup label="Crude oil"><option value="CL">CL · Crude Oil · $1,000 a point</option><option value="MCL">MCL · Micro Crude Oil · $100 a point</option></optgroup><optgroup label="Natural gas"><option value="NG">NG · Natural Gas · $10,000 a point</option></optgroup><optgroup label="Bitcoin"><option value="BTC">BTC · Bitcoin · $5 a point</option><option value="MBT">MBT · Micro Bitcoin · $0.1 a point</option></optgroup><optgroup label="Ether"><option value="ETH">ETH · Ether · $50 a point</option><option value="MET">MET · Micro Ether · $0.1 a point</option></optgroup><optgroup label="Euro"><option value="6E">6E · Euro FX · $125,000 a point</option><option value="M6E">M6E · Micro Euro · $12,500 a point</option></optgroup><optgroup label="10-Year Note"><option value="ZN">ZN · 10-Year Note · $1,000 a point</option></optgroup></select></label>
+      <label for="m-asset">Contract<select id="m-asset"><optgroup label="Nasdaq-100"><option value="NQ">NQ · E-mini Nasdaq · $20 a point</option><option value="MNQ" selected>MNQ · Micro Nasdaq · $2 a point</option><option value="NNQ">NNQ · E-nano Nasdaq · $0.2 a point</option></optgroup><optgroup label="S&P 500"><option value="ES">ES · E-mini S&P · $50 a point</option><option value="MES">MES · Micro S&P · $5 a point</option><option value="NES">NES · E-nano S&P · $0.5 a point</option></optgroup><optgroup label="Dow"><option value="YM">YM · E-mini Dow · $5 a point</option><option value="MYM">MYM · Micro Dow · $0.5 a point</option><option value="NDOW">NDOW · E-nano Dow · $0.05 a point</option></optgroup><optgroup label="Russell 2000"><option value="RTY">RTY · E-mini Russell · $50 a point</option><option value="M2K">M2K · Micro Russell · $5 a point</option><option value="N2K">N2K · E-nano Russell · $0.5 a point</option></optgroup><optgroup label="Gold"><option value="GC">GC · Gold · $100 a point</option><option value="MGC">MGC · Micro Gold · $10 a point</option><option value="1OZ">1OZ · 1-Ounce Gold · $1 a point</option></optgroup><optgroup label="Silver"><option value="SI">SI · Silver · $5,000 a point</option><option value="SIL">SIL · Micro Silver · $1,000 a point</option></optgroup><optgroup label="Crude oil"><option value="CL">CL · Crude Oil · $1,000 a point</option><option value="MCL">MCL · Micro Crude Oil · $100 a point</option></optgroup><optgroup label="Natural gas"><option value="NG">NG · Natural Gas · $10,000 a point</option></optgroup><optgroup label="Bitcoin"><option value="BTC">BTC · Bitcoin · $5 a point</option><option value="MBT">MBT · Micro Bitcoin · $0.1 a point</option></optgroup><optgroup label="Ether"><option value="ETH">ETH · Ether · $50 a point</option><option value="MET">MET · Micro Ether · $0.1 a point</option></optgroup><optgroup label="Euro"><option value="6E">6E · Euro FX · $125,000 a point</option><option value="M6E">M6E · Micro Euro · $12,500 a point</option></optgroup><optgroup label="10-Year Note"><option value="ZN">ZN · 10-Year Note · $1,000 a point</option></optgroup></select></label>
       <label for="m-eq" id="m-eql">Same stop here (pts)<input type="number" id="m-eq" min="0" step="any" value="50"></label>
       <label for="m-qty">Contracts<input type="number" id="m-qty" min="1" max="100" step="1" value="1"></label>
       <span class="eg" id="m-eg"></span>
@@ -308,12 +332,12 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     <div class="ledger-wrap prot">
       <table class="ledger" id="ledger">
         <thead><tr>
-          <th class="l" scope="col" data-s="code">Code</th><th class="l" scope="col">Strategy</th><th class="l" scope="col">Status</th><th class="l" scope="col">Chart</th>
+          <th class="l" scope="col" data-s="code">Code</th><th class="l" scope="col">Strategy</th><th class="l" scope="col" title="Markets where it made money in both periods">Trade on</th><th class="l" scope="col">Status</th><th class="l" scope="col">Chart</th>
           <th class="l" scope="col" data-s="wr" title="2-period test, win rate and average result per trade">Result</th>
           <th scope="col" data-s="pf" title="Profit factor: money won ÷ money lost">PF</th><th scope="col" data-s="t" title="2 or more = probably not luck">t-score</th><th scope="col" data-s="money" title="Average money a month at your size, after costs">$ a month</th><th scope="col" data-s="net" title="All the money made in the test at your size, after costs">Net $</th>
           <th scope="col" data-s="tpm">Trades / month</th><th scope="col">Equity, in stops</th>
         </tr></thead>
-        <tbody><tr><td colspan="11" class="l loading">Loading the book…</td></tr></tbody>
+        <tbody><tr><td colspan="12" class="l loading">Loading the book…</td></tr></tbody>
       </table>
     </div>
     <div class="runs"><p><b>Every strategy in this book is read straight off the MMM indicators.</b> The fastest way to see if one fits you: put the indicator on your own chart and watch the setup form live.</p><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="runs">Try it for free →</a></div>
@@ -365,7 +389,8 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       <div><dt>avg RR</dt><dd>The average result of one trade, measured in stops. +0.20 means each trade made a fifth of its stop on average, after costs.</dd></div>
       <div><dt>PF</dt><dd>Profit factor: all the money won divided by all the money lost. Above 1 makes money.</dd></div>
       <div><dt>t-score</dt><dd>How sure we are it is not luck. 2 or more is the bar. More trades and steadier results push it up.</dd></div>
-      <div><dt>2-period test</dt><dd>Period 1 = Dec 2022 – Dec 2025 (NQ, where the rules were found). Period 2 = Dec 2025 – Oct 2026 (fresh MNQ). PASS = avg RR above +0.05 in both. It is a test, not a profit score.</dd></div>
+      <div><dt>2-period test</dt><dd>NQ: period 1 = Dec 2022 – Dec 2025, where the rules were found, period 2 = Dec 2025 – Oct 2026 (fresh MNQ). ES, gold and crude: period 1 = Dec 2025 – Jun 2026, period 2 = Jun – Oct 2026. Some tests on 1m and 5m charts have less data, so their periods are shorter: each card shows its exact dates. PASS = avg RR above +0.05 in both. It is a test, not a profit score.</dd></div>
+      <div><dt>Trade on</dt><dd>The markets where the strategy made money in both periods on that market’s own data. NQ only = it did not pass anywhere else yet.</dd></div>
       <div><dt>Trade and Watch</dt><dd>Trade = proven in both periods. Watch = it passed, but period 2 has few trades or a weak result. Paper-trade a Watch strategy before using money.</dd></div>
       <div><dt><span class="sw" style="background:var(--up)"></span>Green, <span class="sw" style="background:var(--mix)"></span>yellow edge</dt><dd>The colour on the left of each strategy card. Green = made money and t-score 2+. Yellow = made money but the t-score is under 2: it could be luck.</dd></div>
       <div><dt>Equity curve</dt><dd>The running total of every trade, in stops. The shaded part on the right is period 2, the fresh data.</dd></div>
@@ -378,7 +403,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       <a href="/backtests/#verdicts"><b>Verdicts</b><span>The decision board: trade, filter, watch or don’t trade, with the reason for each.</span></a>
       <a href="/backtests/"><b>Research lab</b><span>How we tested, the full grids, the EDGE PRO lab and the 2026 retest.</span></a>
     </nav>
-    <p class="legal">Education only, not financial advice. Backtests describe the past and do not promise future results. Futures trading carries a high risk of loss. Numbers use 1 MNQ, a 1 point cost per trade, and fills 1 tick through the limit price; stop and target in the same minute count as a loss.</p>
+    <p class="legal">Education only, not financial advice. Backtests describe the past and do not promise future results. Futures trading carries a high risk of loss. Costs per trade: 1 point on NQ, 0.5 on ES, 0.2 on gold, 0.02 on crude. Limit orders fill 1 tick through the limit price; stop and target in the same minute count as a loss.</p>
   </div>
 </section>
 
@@ -393,15 +418,35 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
 <script>
 (function () {
   'use strict';
-  var D = null, F = { status: '', ind: '', side: '', tf: '', sort: 'wr' }, SHOW = 10, PIC = {};
+  var D = null, F = { status: '', ind: '', side: '', tf: '', sort: 'wr', mkt: 'ALL', fail: '' }, SHOW = 10, PIC = {};
   var $ = function (s) { return document.querySelector(s); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function sg(v, d) { return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(d == null ? 2 : d); }
   function pc(v) { return Math.round(v * 100) + '%'; }
   var ASSET = {'NQ':[20,50],'MNQ':[2,50],'NNQ':[0.2,50],'ES':[50,20],'MES':[5,20],'NES':[0.5,20],'YM':[5,150],'MYM':[0.5,150],'NDOW':[0.05,150],'RTY':[50,8],'M2K':[5,8],'N2K':[0.5,8],'GC':[100,12],'MGC':[10,12],'1OZ':[1,12],'SI':[5000,0.3],'SIL':[1000,0.3],'CL':[1000,0.5],'MCL':[100,0.5],'NG':[10000,0.05],'BTC':[5,1000],'MBT':[0.1,1000],'ETH':[50,50],'MET':[0.1,50],'6E':[125000,0.003],'M6E':[12500,0.003],'ZN':[1000,0.35]};
-  var MKA = null, MKFAM = { ES: 'ES', MES: 'ES', NES: 'ES', GC: 'GC', MGC: 'GC', '1OZ': 'GC', CL: 'CL', MCL: 'CL' };
+  var MKA = null;
   fetch('/backtests/d_book_assets.json').then(function (r) { return r.json(); }).then(function (j) { MKA = j; if (D) paint(); }).catch(function () {});
-  function mkf() { return MKFAM[$('#m-asset').value] || null; }
+  // the market picked in the Market bar (ALL, NQ, ES, GC, CL). ES / GC / CL show that market's own test.
+  var FAM = { NQ: ['NQ', 'MNQ', 'NNQ'], ES: ['ES', 'MES', 'NES'], GC: ['GC', 'MGC', '1OZ'], CL: ['CL', 'MCL'] }, MICRO = { NQ: 'MNQ', ES: 'MES', GC: 'MGC', CL: 'MCL' };
+  var MKN = { NQ: 'NQ', ES: 'ES', GC: 'Gold', CL: 'Crude oil' };
+  function mkf() { return MKA && MKA[F.mkt] ? F.mkt : null; }
+  function months(x) { var a = Date.parse((x.p1lab || '').slice(0, 10)), z = Date.parse((x.p2lab || '').slice(-10)); return a && z ? Math.max(1, (z - a) / 864e5 / 30.44) : 1; }
+  // one strategy on one market: its own stats for both periods
+  function mres(s, M) {
+    var x = MKA && MKA[M] && MKA[M].sheets[s.code]; if (!x) return null;
+    var b = x.per.length > 1 ? x.per[1] : x.per[0]; return { x: x, b: b, v: mkvk(x.verdict), mo: months(x) };
+  }
+  // markets where it passed (made money in both periods): NQ always (the book), then ES, gold, crude
+  function onMk(s) { var o = ['NQ']; ['ES', 'GC', 'CL'].forEach(function (M) { var r = mres(s, M); if (r && r.x.ok) o.push(M); }); return o; }
+  function onTag(s) { var o = onMk(s); return '<span class="tag on' + (o.length === 1 ? ' only' : '') + '" title="Markets where it made money in both periods"><span>Trade on:</span> ' + (o.length === 1 ? '<span>NQ only</span>' : o.map(function (M) { return M === 'GC' ? '<span>Gold</span>' : M === 'CL' ? '<span>Crude</span>' : '<span translate="no">' + M + '</span>'; }).join(' · ')) + '</span>'; }
+  // all-markets view: one row per market
+  function mkStrip(s) {
+    var NT = function (x) { return '<span translate="no">' + x + '</span>'; };
+    var row = function (lab, v, b) { return '<tr><td class="l">' + lab + '</td><td class="l"><span class="mkv ' + v + '" translate="no">' + MKVL[v] + '</span></td>' + (b ? '<td>' + b.n + '</td><td>' + pc(b.wr) + '</td><td class="' + (b.av > 0 ? 'pos' : 'neg') + '">' + sg(b.av) + '</td>' : '<td>–</td><td>–</td><td>–</td>') + '</tr>'; };
+    var h = row(NT('NQ'), s.status === 'trade' ? 'e' : 'w', { n: s.all.n, wr: s.all.wr, av: s.all.av });
+    ['ES', 'GC', 'CL'].forEach(function (M) { var r = mres(s, M); if (r) h += row(M === 'ES' ? NT('ES') : MKN[M], r.v, r.b); });
+    return '<div class="mkbox"><h4>Tested on 4 markets · both periods</h4><table><tr><th class="l">Market</th><th class="l">Result</th><th>Trades</th><th>WR</th><th>avg RR</th></tr>' + h + '</table><p>Pick a market above to see its own numbers and money.</p></div>';
+  }
   function mkvk(v) { v = v || ''; return v.indexOf('PASS · edge') === 0 ? 'e' : v.indexOf('PASS') === 0 ? 'w' : v.indexOf('weak') === 0 ? 'k' : v.indexOf('too few') === 0 ? 'f' : 'n'; }
   var MKVL = { e: 'PASS · EDGE', w: 'PASS · WATCH', k: 'WEAK', f: 'TOO FEW TRADES', n: 'NO EDGE' };
   function mkBox(s) {
@@ -410,15 +455,17 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     var j = x.per.length > 1 ? 1 : 0, b = x.per[j], v = mkvk(x.verdict);
     var NT = function (x) { return '<span translate="no">' + x + '</span>'; };
     if (!b) return '<div class="mkbox"><h4>Tested on <span>' + esc(A.name) + '</span> ' + NT('(' + esc(A.fam) + ')') + '</h4><p>No trades in the test data.</p></div>';
-    var p1 = x.p1, p2 = x.p2;
-    return '<div class="mkbox"><h4>Tested on <span>' + esc(A.name) + '</span> ' + NT('(' + esc(A.fam) + ')') + ' · its own data</h4><table><tr><th class="l"></th><th>Trades</th><th>WR</th><th>avg RR</th><th>PF</th><th>t-score</th></tr>' +
+    var p1 = x.p1, p2 = x.p2, mo = months(x), m$ = b.netPts != null ? '<p class="money">Net at your size: <b class="' + (b.netPts > 0 ? 'pos' : 'neg') + '">' + usdP(b.netPts) + '</b> · ' + usdP(b.netPts / mo) + ' a month · max drawdown ' + usdP(-(b.ddPts || 0)) + '</p>' : '';
+    return '<div class="mkbox"><h4>Tested on <span>' + esc(A.name) + '</span> ' + NT('(' + esc(A.fam) + ')') + ' · its own data</h4>' + m$ + '<table><tr><th class="l"></th><th>Trades</th><th>WR</th><th>avg RR</th><th>PF</th><th>t-score</th></tr>' +
       (p1 ? '<tr><td class="l">Period 1 · ' + esc(x.p1lab || A.p1) + '</td><td>' + p1.n + '</td><td>' + pc(p1.wr) + '</td><td class="' + (p1.av > 0 ? 'pos' : 'neg') + '">' + sg(p1.av) + '</td><td>' + (p1.pf == null ? '–' : p1.pf.toFixed(2)) + '</td><td>' + (p1.t == null ? '–' : p1.t.toFixed(1)) + '</td></tr>' : '') +
       (p2 ? '<tr><td class="l">Period 2 · ' + esc(x.p2lab || A.p2) + '</td><td>' + p2.n + '</td><td>' + pc(p2.wr) + '</td><td class="' + (p2.av > 0 ? 'pos' : 'neg') + '">' + sg(p2.av) + '</td><td>' + (p2.pf == null ? '–' : p2.pf.toFixed(2)) + '</td><td>' + (p2.t == null ? '–' : p2.t.toFixed(1)) + '</td></tr>' : '') +
       '<tr><td class="l"><b>Both</b></td><td><b>' + b.n + '</b></td><td><b>' + pc(b.wr) + '</b></td><td class="' + (b.av > 0 ? 'pos' : 'neg') + '"><b>' + sg(b.av) + '</b></td><td>' + (b.pf == null ? '–' : b.pf.toFixed(2)) + '</td><td>' + (b.t == null ? '–' : b.t.toFixed(1)) + '</td></tr></table>' +
-      '<p><span class="mkv ' + v + '" translate="no">' + MKVL[v] + '</span> <span>' + (x.fva ? 'Same rules as NQ, run on a rebuilt copy of the FVA test engine (close to the book, not identical).' : 'Same code and rules as NQ.') + '</span> ' + '<span>Stop ' + A.fx + ' · cost ' + A.cost + '</span>' + (x.alt && x.alt.verdict.indexOf('PASS · edge') === 0 && v !== 'e' ? ' <span>Another setting held with a t-score of 2 or more (watch):</span> ' + NT(esc(x.alt.pairing) + ' · t ' + x.alt.t.toFixed(1)) : '') + '</p></div>';
+      '<p><span class="mkv ' + v + '" translate="no">' + MKVL[v] + '</span> <span>' + (x.fva ? 'Same rules as NQ, run on a rebuilt copy of the FVA test engine (close to the book, not identical).' : 'Same code and rules as NQ.') + '</span> ' + '<span>Cost ' + A.cost + ' a trade</span>' + (x.alt && x.alt.verdict.indexOf('PASS · edge') === 0 && v !== 'e' ? ' <span>Another setting held with a t-score of 2 or more (watch):</span> ' + NT(esc(x.alt.pairing) + ' · t ' + x.alt.t.toFixed(1)) : '') + '</p></div>';
   }
   function AS() { return ASSET[$('#m-asset').value] || ASSET.MNQ; }
   function isNQ() { return ['NQ', 'MNQ', 'NNQ'].indexOf($('#m-asset').value) >= 0; }
+  // money from a market's own test, in points, for your contract and size
+  function usdP(pts) { var v = pts * AS()[0] * QTY(); return (v < 0 ? '−' : '+') + '$' + Math.abs(Math.round(v)).toLocaleString('en-US'); }
   function EQ() { if (isNQ()) return 50; var v = +$('#m-eq').value; return v > 0 ? v : AS()[1]; }
   function QTY() { return Math.max(1, Math.min(100, +$('#m-qty').value || 1)); }
   // money in the tests is for 1 MNQ ($2 a point). Other markets: same avg RR, with the 50-pt NQ stop scaled to that market (EQ points).
@@ -500,18 +547,18 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
   function ticket(s) {
     var a = s.all, cls = s.test === 'pass' ? '' : ' unsure', w = wordsOf(s);
     return '<article class="ticket c-' + s.color + '" id="' + id(s.code) + '" aria-labelledby="' + id(s.code) + '-h">' +
-      '<div class="t-head"><span class="code">' + esc(s.code) + '</span><h3 id="' + id(s.code) + '-h">' + esc(s.name) + '</h3>' +
-      '<span class="pbadge' + cls + '" title="2-period test, win rate, average result per trade, profit factor and target"><span>' + TEST[s.test] + '</span><span>WR ' + pc(a.wr) + '</span><span>avg ' + sg(a.av) + ' RR</span><span>PF ' + a.pf.toFixed(2) + '</span><span>' + esc(s.tgt || '') + '</span></span>' +
-      '<div class="tags"><span class="st ' + s.status + '">' + (s.status === 'trade' ? 'Trade' : 'Watch') + '</span><span class="tag">' + esc(indName(s.ind)) + '</span><span class="tag">' + esc(s.tf) + '</span><span class="tag">' + esc(s.side) + '</span></div></div>' +
+      '<div class="t-head"><span class="code">' + esc(s.code) + '</span><h3 id="' + id(s.code) + '-h">' + esc(s.name) + '</h3>' + hbadge(s, cls) +
+      '<div class="tags"><span class="st ' + s.status + '">' + (s.status === 'trade' ? 'Trade' : 'Watch') + '</span>' + onTag(s) + '<span class="tag">' + esc(indName(s.ind)) + '</span><span class="tag">' + esc(s.tf) + '</span><span class="tag">' + esc(s.side) + '</span></div>' +
+      (s.mmm ? '<p class="mmm"><span>MMM name:</span> <span translate="no">' + esc(s.mmm) + '</span></p>' : '') + '</div>' +
       '<div class="t-body"><div class="t-left">' + picBlock(s) +
       (s.plain ? '<p class="plain"><b>In plain words</b>' + esc(s.plain) + '</p>' : '') +
       '<p class="t-when"><b>When</b><span>' + esc(s.when) + '</span></p>' +
       '<ol class="steps">' + s.steps.map(function (x) { return '<li><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></li>'; }).join('') + '</ol>' +
-      '</div><div class="t-right">' + mkBox(s) +
+      '</div><div class="t-right">' + (F.mkt === 'ALL' ? mkStrip(s) : mkBox(s)) + (F.mkt !== 'NQ' ? '<h4 class="nqh"><span>On NQ, where the rules were built.</span>' + (mkf() ? ' <span>Money here is for 1 MNQ.</span>' : '') + '</h4>' : '') +
       '<dl class="kpi">' +
         '<div><dt>Trades</dt><dd>' + a.n.toLocaleString('en-US') + '</dd></div><div><dt>A month</dt><dd>' + a.tpm + '</dd></div><div><dt>WR</dt><dd>' + pc(a.wr) + ' <small class="tgt">' + esc(s.tgt || '') + '</small></dd></div>' +
         '<div><dt>avg RR</dt><dd class="' + (a.av > 0 ? 'pos' : 'neg') + '">' + sg(a.av) + '</dd></div><div><dt>PF</dt><dd>' + a.pf.toFixed(2) + '</dd></div><div><dt>t-score</dt><dd>' + a.t.toFixed(2) + '</dd></div>' +
-        '<div><dt>Net, your size</dt><dd class="' + (a.net > 0 ? 'pos' : 'neg') + '">' + usd(a.net) + '</dd></div><div><dt>Max drawdown</dt><dd>' + usd(-a.dd) + '</dd></div><div><dt>Max losses in a row</dt><dd>' + a.ml + '</dd></div>' +
+        '<div><dt>Net, your size</dt><dd class="' + (a.net > 0 ? 'pos' : 'neg') + '">' + usdK(a.net) + '</dd></div><div><dt>Max drawdown</dt><dd>' + usdK(-a.dd) + '</dd></div><div><dt>Max losses in a row</dt><dd>' + a.ml + '</dd></div>' +
       '</dl>' +
       '<div class="curve">' + curveSVG(s) + '<div class="cap"><span>Running total of every trade, in stops</span><span><i>Shaded</i> = period 2, fresh data</span></div></div>' +
       '<div><table class="periods"><thead><tr><th class="l" scope="col">2-period test</th><th scope="col">Trades</th><th scope="col">WR · ' + esc(s.tgt || '') + '</th><th scope="col">avg RR</th><th scope="col">t-score</th></tr></thead><tbody>' +
@@ -524,36 +571,68 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       '</div></div></article>';
   }
   function perMonth(s) { return s.all.tpm > 0 ? s.all.net * s.all.tpm / s.all.n : 0; }
+  // NQ money on the card: your size on NQ / all markets; 1 MNQ when another market is picked (its own money is in the market box)
+  function usdK(v) { return mkf() ? (v < 0 ? '−' : '+') + '$' + Math.abs(Math.round(v)).toLocaleString('en-US') : usd(v); }
+  function hbadge(s, cls) {
+    var r = mkf() && mres(s, F.mkt);
+    if (r && r.b) { var b = r.b; return '<span class="pbadge' + (r.v === 'e' || r.v === 'w' ? '' : ' unsure') + '" title="Result on this market’s own data, both periods"><span translate="no">' + F.mkt + ' · ' + MKVL[r.v] + '</span><span>WR ' + pc(b.wr) + '</span><span>avg ' + sg(b.av) + ' RR</span><span>PF ' + (b.pf == null ? '–' : b.pf.toFixed(2)) + '</span></span>'; }
+    var a = s.all; return '<span class="pbadge' + cls + '" title="2-period test, win rate, average result per trade, profit factor and target"><span>' + TEST[s.test] + '</span><span>WR ' + pc(a.wr) + '</span><span>avg ' + sg(a.av) + ' RR</span><span>PF ' + a.pf.toFixed(2) + '</span><span>' + esc(s.tgt || '') + '</span></span>';
+  }
+  // the numbers the list sorts on and the ledger shows: NQ book, or the picked market's own test
+  function V(s) {
+    var r = mkf() && mres(s, F.mkt);
+    if (!r || !r.b) { var a = s.all; return { m: 0, n: a.n, wr: a.wr, av: a.av, pf: a.pf, t: a.t, net: a.net, mon: perMonth(s), tpm: a.tpm, net$: usd(a.net), mon$: usd(perMonth(s)) }; }
+    var b = r.b, np = b.netPts != null ? b.netPts : 0;
+    return { m: 1, r: r, n: b.n, wr: b.wr, av: b.av, pf: b.pf == null ? 0 : b.pf, t: b.t == null ? 0 : b.t, net: np, mon: np / r.mo, tpm: +(b.n / r.mo).toFixed(1), net$: b.netPts != null ? usdP(np) : '–', mon$: b.netPts != null ? usdP(np / r.mo) : '–' };
+  }
+  function mSpark(r) {
+    var c = (r.x.curve || []).map(function (p) { return [p[0], p[1], 0]; }); if (c.length < 2) return '–';
+    var p2 = (r.x.p2lab || '').slice(0, 10), k = c.findIndex(function (p) { return p[0] >= p2; }); if (k > 0) c[k][2] = 1;
+    var col = r.v === 'e' ? 'green' : r.v === 'w' ? 'yellow' : 'red';
+    return sparkSVG({ curve: c, color: col });
+  }
   function list() {
-    var L = D.strategies.filter(function (s) { return (!F.status || s.status === F.status) && (!F.ind || s.ind === F.ind) && (!F.side || s.side === F.side) && (!F.tf || s.tf === F.tf); });
-    var key = { wr: function (s) { return s.all.wr; }, money: perMonth, av: function (s) { return s.all.av; }, t: function (s) { return s.all.t; }, pf: function (s) { return s.all.pf; }, net: function (s) { return s.all.net; }, tpm: function (s) { return s.all.tpm; } }[F.sort];
+    var M = mkf();
+    var L = D.strategies.filter(function (s) { return (!F.status || s.status === F.status) && (!F.ind || s.ind === F.ind) && (!F.side || s.side === F.side) && (!F.tf || s.tf === F.tf) && (!M || F.fail || (mres(s, M) && mres(s, M).x.ok)); });
     if (F.sort === 'code') return L.slice().sort(function (a, b) { return a.code.localeCompare(b.code, 'en', { numeric: true }); });
-    key = key || perMonth;
-    return L.slice().sort(function (a, b) { return (key(b) - key(a)) || (perMonth(b) - perMonth(a)); });
+    var f = { wr: 'wr', money: 'mon', av: 'av', t: 't', pf: 'pf', net: 'net', tpm: 'tpm' }[F.sort] || 'mon';
+    var ok = function (s) { var r = M && mres(s, M); return r && r.x.ok ? 1 : 0; };
+    return L.slice().sort(function (a, b) { var A = V(a), B = V(b); return (ok(b) - ok(a)) || (B[f] - A[f]) || (B.mon - A.mon); });
   }
   function fm(v) { return '$' + (v < 1 ? (+v.toFixed(2)).toString() : Math.round(v).toLocaleString('en-US')); }
   function paintBar() {
-    var a = AS(), q = QTY(), nq = isNQ();
-    $('#m-eql').hidden = nq;
+    var a = AS(), q = QTY(), nq = isNQ(), f = mkf();
+    // the Market bar
+    document.querySelectorAll('#f-mkt button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mkt === F.mkt)); });
+    $('#f-failw').hidden = !f; $('#f-fail').checked = !!F.fail;
+    if (F.mkt === 'ALL') $('#mk-eg').textContent = 'All ' + D.strategies.length + ' strategies. Each card lists the markets it can be traded on: where it made money in both periods.';
+    else if (F.mkt === 'NQ') $('#mk-eg').textContent = 'NQ / MNQ / NNQ · Dec 2022 – Oct 2026 · stop 50 pts · cost 1 point a trade. All ' + D.strategies.length + ' strategies passed here: this is where the rules were built.';
+    else if (f) { var A = MKA[f], k = 0; D.strategies.forEach(function (s) { var r = mres(s, f); if (r && r.x.ok) k++; });
+      $('#mk-eg').textContent = A.fam + ' · its own data, Dec 2025 – Oct 2026 · stop ' + A.fx + ' pts · cost ' + A.cost + ' a trade. ' + k + ' of ' + D.strategies.length + ' strategies made money in both periods here.'; }
+    else $('#mk-eg').textContent = 'Loading the market tests…';
+    // the size bar: contracts of the picked market only
+    var fam = FAM[F.mkt];
+    $('#m-asset').querySelectorAll('option').forEach(function (o) { var off = !!fam && fam.indexOf(o.value) < 0; o.disabled = off; o.hidden = off; });
+    $('#m-asset').querySelectorAll('optgroup').forEach(function (g) { g.hidden = !![].every.call(g.children, function (o) { return o.hidden; }); });
+    $('#m-eql').hidden = nq || !!f;
+    if (f) { $('#m-eg').textContent = '1 point = ' + fm(a[0] * q) + ' · money below is from the ' + MKA[f].name + ' test, at this size'; return; }
     if (nq) { $('#m-eg').textContent = '1 point = ' + fm(a[0] * q) + ' · money below is for this size'; return; }
-    var f = mkf();
-    if (f && MKA && MKA[f]) { var A = MKA[f], k = 0, kn = 0; Object.keys(A.sheets).forEach(function (c) { kn++; if (A.sheets[c].ok) k++; });
-      $('#m-eg').textContent = 'Also tested on ' + A.name + ' itself: ' + k + ' of ' + kn + ' made money in both periods there. Each card shows its own ' + A.name + ' result. Money below = the NQ test at a ' + EQ() + ' pt stop.'; return; }
-    $('#m-eg').textContent = 'Estimate: tested on NQ / MNQ, ES, gold and crude only. A 50-pt NQ stop ≈ ' + EQ() + ' pts here = ' + fm(a[0] * EQ() * q) + ' risk. Money below = the same avg RR at that risk.';
+    $('#m-eg').textContent = 'Estimate: this contract was not tested on its own. A 50-pt NQ stop ≈ ' + EQ() + ' pts here = ' + fm(a[0] * EQ() * q) + ' risk. Money below = the NQ avg RR at that risk.';
   }
   function paint() {
     var L = list(); paintBar();
     $('#count').textContent = L.length + ' of ' + D.strategies.length + ' strategies';
     document.querySelectorAll('.ledger th[data-s]').forEach(function (th) { th.classList.toggle('s', th.dataset.s === F.sort); });
     $('#ledger tbody').innerHTML = L.map(function (s) {
-      var a = s.all;
-      return '<tr class="c-' + s.color + '" data-go="' + id(s.code) + '" tabindex="0"><td class="l code">' + esc(s.code) + '</td>' +
+      var v = V(s), on = onMk(s), cl = v.m ? (v.r.v === 'e' ? 'green' : v.r.v === 'w' ? 'yellow' : 'red') : s.color;
+      return '<tr class="c-' + cl + '" data-go="' + id(s.code) + '" tabindex="0"><td class="l code">' + esc(s.code) + '</td>' +
         '<td class="l nm"><b>' + esc(s.name) + '</b><small>' + esc(indName(s.ind)) + ', ' + esc(s.side.toLowerCase()) + '</small></td>' +
+        '<td class="l"><span class="ons">' + ['NQ', 'ES', 'GC', 'CL'].map(function (M) { return '<span' + (on.indexOf(M) >= 0 ? ' class="y"' : '') + ' translate="no">' + M + '</span>'; }).join('') + '</span></td>' +
         '<td class="l"><span class="st ' + s.status + '">' + (s.status === 'trade' ? 'Trade' : 'Watch') + '</span></td><td class="l">' + esc(s.tf) + '</td>' +
-        '<td class="l">' + badge(s) + '</td><td>' + a.pf.toFixed(2) + '</td><td>' + a.t.toFixed(2) + '</td>' +
-        '<td class="' + (a.net > 0 ? 'pos' : 'neg') + '">' + usd(perMonth(s)) + '</td><td class="' + (a.net > 0 ? 'pos' : 'neg') + '">' + usd(a.net) + '</td>' +
-        '<td>' + a.tpm + '</td><td>' + sparkSVG(s) + '</td></tr>';
-    }).join('') || '<tr><td colspan="11" class="l loading">No strategy matches these filters. Clear one to see more.</td></tr>';
+        '<td class="l">' + (v.m ? '<span class="badge ' + (v.r.v === 'e' || v.r.v === 'w' ? 'pass' : 'unsure') + '"><span translate="no">' + MKVL[v.r.v] + '</span><span>WR <b>' + pc(v.wr) + '</b></span><span>avg <b>' + sg(v.av) + '</b> RR</span></span>' : badge(s)) + '</td><td>' + (v.pf ? v.pf.toFixed(2) : '–') + '</td><td>' + (v.t ? v.t.toFixed(2) : '–') + '</td>' +
+        '<td class="' + (v.net > 0 ? 'pos' : 'neg') + '">' + v.mon$ + '</td><td class="' + (v.net > 0 ? 'pos' : 'neg') + '">' + v.net$ + '</td>' +
+        '<td>' + v.tpm + '</td><td>' + (v.m ? mSpark(v.r) : sparkSVG(s)) + '</td></tr>';
+    }).join('') || '<tr><td colspan="12" class="l loading">No strategy matches these filters. Clear one to see more.</td></tr>';
     $('#tickets').innerHTML = L.map(ticket).join('');
   }
   function repaintPic(code) {
@@ -566,6 +645,13 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     $('#rejected').innerHTML = (open ? R : R.slice(0, SHOW)).map(function (r) { return '<li><b>' + r.title + '</b><span>' + r.why + '</span></li>'; }).join('');
     $('#more').textContent = open ? 'Show fewer' : 'Show all ' + R.length;
   }
+  // pick a market: its contracts only in the size bar (keeps your contract when it belongs to that market)
+  function setMkt(M) {
+    F.mkt = FAM[M] || M === 'ALL' ? M : 'ALL';
+    var fam = FAM[F.mkt]; if (fam && fam.indexOf($('#m-asset').value) < 0) { $('#m-asset').value = MICRO[F.mkt]; $('#m-eq').value = AS()[1]; }
+    paint(); save();
+  }
+  window.setMkt = setMkt;
   function go(target) { var el = document.getElementById(target); if (el) el.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); }
   function save() { try { localStorage.setItem('mmm-book', JSON.stringify({ F: F, a: $('#m-asset').value, q: $('#m-qty').value, e: $('#m-eq').value })); } catch (e) {} }
   document.addEventListener('click', function (e) {
@@ -576,11 +662,13 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     }
     var th = e.target.closest('.ledger th[data-s]'); if (th) { F.sort = th.dataset.s; $('#f-sort').value = ['wr', 'money', 'av', 't', 'code'].indexOf(F.sort) >= 0 ? F.sort : $('#f-sort').value; paint(); save(); return; }
     var tr = e.target.closest('tr[data-go]'); if (tr) { go(tr.dataset.go); return; }
+    var mb = e.target.closest('#f-mkt button'); if (mb) { setMkt(mb.dataset.mkt); return; }
     if (e.target.closest('#more')) { var m = $('#more'); m.setAttribute('aria-expanded', String(m.getAttribute('aria-expanded') !== 'true')); paintLists(); }
   });
   document.addEventListener('change', function (e) {
     var el = e.target;
     if (el.dataset && el.dataset.f) { F[el.dataset.f] = el.value; paint(); save(); }
+    if (el.id === 'f-fail') { F.fail = el.checked ? '1' : ''; paint(); save(); }
   });
   document.addEventListener('input', function (e) { if (e.target.id === 'm-asset') { $('#m-eq').value = AS()[1]; } if (e.target.id === 'm-asset' || e.target.id === 'm-qty' || e.target.id === 'm-eq') { paint(); save(); } });
   document.addEventListener('change', function (e) { if (e.target.id === 'm-asset') { $('#m-eq').value = AS()[1]; paint(); save(); } });
@@ -597,11 +685,13 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     $('#f-tf').insertAdjacentHTML('beforeend', tfs.sort().map(function (x) { return '<option value="' + esc(x) + '">' + esc(x) + '</option>'; }).join(''));
     try { var sv = JSON.parse(localStorage.getItem('mmm-book') || 'null'); if (sv) { Object.keys(F).forEach(function (k) { if (sv.F && sv.F[k] != null) F[k] = sv.F[k]; }); var av = sv.a === '20' ? 'NQ' : (ASSET[sv.a] ? sv.a : 'MNQ'); $('#m-asset').value = av; $('#m-qty').value = sv.q || '1'; $('#m-eq').value = sv.e || ASSET[av][1]; } } catch (e) {}
     ['status', 'ind', 'side', 'tf', 'sort'].forEach(function (k) { var el = $('#f-' + k); if (el) el.value = F[k]; if (el && el.value !== F[k]) F[k] = el.value; });
-    if (location.hash) F.status = F.ind = F.side = F.tf = '';
+    if (location.hash) { F.status = F.ind = F.side = F.tf = ''; F.mkt = 'ALL'; }
+    if (!(FAM[F.mkt] || F.mkt === 'ALL')) F.mkt = 'ALL';
+    var fam0 = FAM[F.mkt]; if (fam0 && fam0.indexOf($('#m-asset').value) < 0) { $('#m-asset').value = MICRO[F.mkt]; $('#m-eq').value = AS()[1]; }
     ['status', 'ind', 'side', 'tf'].forEach(function (k) { $('#f-' + k).value = F[k]; });
     paint(); paintLists();
     if (location.hash) setTimeout(function () { go(location.hash.slice(1)); }, 60);
-  }).catch(function () { $('#ledger tbody').innerHTML = '<tr><td colspan="11" class="l loading">The book could not load. Reload the page to try again.</td></tr>'; });
+  }).catch(function () { $('#ledger tbody').innerHTML = '<tr><td colspan="12" class="l loading">The book could not load. Reload the page to try again.</td></tr>'; });
 })();
 </script>
 <script src="/assets/nav.js"></script>
