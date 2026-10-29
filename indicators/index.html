@@ -149,6 +149,7 @@ ol.how li b{color:var(--fg)}
 @media (max-width:860px){.chainmap{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
 @media (max-width:520px){.chainmap{grid-template-columns:minmax(0,1fr)}}
 .dside{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+#cb-pm{padding:12px 16px 16px;display:grid;gap:12px;border-top:1px solid var(--line)}
 .pm{border:1px solid var(--line2);background:var(--panel2);padding:10px 12px;display:grid;gap:8px}
 .pm h4{margin:0;font:700 15px/1.2 var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--gold2)}
 .pm ul{margin:0;padding-left:18px;display:grid;gap:5px;color:#d4dae0;line-height:1.5;font-size:15px}
@@ -310,6 +311,7 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
         <div class="hd"><span class="seg" role="group" aria-label="Side"><button type="button" data-side="bu" aria-pressed="true">Bull types (Bu)</button><button type="button" data-side="be" aria-pressed="false">Bear types (Be)</button></span><span class="seg" id="cb-view" role="group" aria-label="View"></span><span class="lab">Grey = the previous candle</span></div>
         <div class="chips" id="cb-chips" role="group" aria-label="Candle type"></div>
         <div id="cb-pic"></div>
+        <div id="cb-pm"></div>
       </div>
       <div class="panel">
         <div class="explain" id="cb-explain"></div>
@@ -478,9 +480,9 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
   ODDS.D = {"BuC2+":[195,89,83,7,48,5,47,13,7,71,78,30,9],"BuC2-":[17,59,null,18,35,12,53,null,0,null,null,2,0],"BeC2+":[197,83,85,9,35,5,61,12,5,80,null,26,4],"BeC2-":[47,43,null,21,19,9,72,null,1,null,null,1,2],"BuBC+":[1184,87,89,16,45,8,48,17,41,85,82,162,45],"BuBC-":[469,57,47,38,29,17,54,84,15,40,36,43,11],"BeBC+":[696,82,72,14,36,8,56,27,24,79,73,74,22],"BeBC-":[410,46,35,40,21,21,59,83,16,31,37,46,19],"S&D.BuAF":[164,66,47,17,41,7,52,58,8,50,29,19,7],"S&D.BeAF":[180,66,56,23,34,11,56,64,3,null,null,25,4],"BuAFs+":[749,75,69,32,39,17,44,44,23,65,78,88,18],"BuAFs-":[237,61,75,44,26,25,49,54,6,50,57,24,7],"BeAFs+":[707,69,68,37,31,20,49,52,21,67,68,77,22],"BeAFs-":[356,61,66,44,29,20,51,64,12,83,89,47,9],"CI.BuAF":[433,80,67,44,42,19,39,51,10,70,50,63,12],"CI.BeAF":[319,75,77,44,37,25,38,43,11,91,70,35,10]};
   ODDS.W = {"BuC2+":[40,88,88,8,45,2,52,12,0,null,null,40,1],"BuC2-":[2,50,null,0,50,0,50,null,0,null,null,2,0],"BeC2+":[32,81,81,9,38,6,56,22,3,null,null,32,2],"BeC2-":[9,44,null,33,11,22,67,null,0,null,null,9,0],"BuBC+":[317,88,87,16,50,8,42,18,10,100,100,316,9],"BuBC-":[97,60,54,41,34,20,46,69,1,null,null,96,2],"BeBC+":[144,83,82,18,38,12,50,25,5,80,80,142,5],"BeBC-":[71,46,44,42,14,24,62,69,1,null,null,71,1],"S&D.BuAF":[30,77,72,27,53,7,40,38,0,null,null,29,0],"S&D.BeAF":[32,69,69,28,28,22,50,41,0,null,null,32,0],"BuAFs+":[151,81,77,26,50,11,39,40,10,80,78,151,9],"BuAFs-":[56,52,48,46,23,23,54,66,2,null,null,56,3],"BeAFs+":[162,72,69,36,35,20,44,47,6,100,100,161,5],"BeAFs-":[69,74,71,30,42,14,43,51,1,null,null,68,1],"CI.BuAF":[55,80,73,29,44,15,42,40,0,null,null,55,0],"CI.BeAF":[51,75,69,43,33,22,45,39,3,null,null,49,2]};
   var ORDER = ['BC+', 'BC−', 'C2+', 'C2−', 'AFs+', 'AFs−', 'CI', 'S&D'];
-  var cbSide = 'bu', cbKey = 'BC+', cbView = 'candle', oddsOpen = false, oddsTF = '15m', oddsMkt = 'NQ';
+  var cbSide = 'bu', cbKey = 'BC+', cbView = 'candle', oddsTF = '15m', oddsMkt = 'NQ';
   var CBO = null, MKN = { NQ: 'NQ / MNQ', ES: 'ES / MES', GC: 'Gold GC / MGC', CL: 'Crude CL / MCL' };
-  fetch('/backtests/d_cb_odds.json').then(function (r) { return r.json(); }).then(function (j) { CBO = j; if (oddsOpen) cbPaint(false); }).catch(function () {});
+  fetch('/backtests/d_cb_odds.json').then(function (r) { return r.json(); }).then(function (j) { CBO = j; cbPaint(false); }).catch(function () {});
   // the four-market file: [n, TGT, TGT first, protected, back to 50% first, BC lean, BC other, NBC, n period 2, TGT p2, TGT first p2] -> the page order
   function cboRow(m, tf, k) { var r = CBO && CBO[m] && CBO[m][tf] && CBO[m][tf][k.replace('.', '.').replace('−', '-')]; if (!r) return null; return [r[0], r[1], r[2], r[3], r[5], r[6], r[7], r[4], r[8], r[9], r[10]]; }
   var PAIRS = [['above', 'below'], ['high', 'low'], ['top', 'bottom'], ['Buyers', 'Sellers'], ['buyers', 'sellers'], ['Bullish', 'Bearish'], ['bullish', 'bearish'], ['bull', 'bear'], ['BuAF', 'BeAF'], ['Bu', 'Be'], ['bought', 'sold'], ['up', 'down'], ['green', 'red']];
@@ -602,18 +604,17 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
     ex.innerHTML = '<div class="ttl" translate="no">' + esc(nm) + '</div>' +
       '<dl class="kv"><dt>Rule</dt><dd>' + esc(rule) + '</dd><dt>Means</dt><dd>' + esc(mean) + '</dd><dt>Lean</dt><dd><span class="lean ' + leanCls + '">' + esc(leanTxt) + '</span></dd><dt>Read it as</dt><dd>' + esc(read) + '</dd></dl>' +
       wickHTML() +
-      '<button type="button" class="oddsbtn" id="cb-odds" aria-expanded="' + oddsOpen + '">' + (oddsOpen ? 'Hide the odds' : 'Show the odds: TGT, protected, next close') + '</button>' +
-      (oddsOpen ? oddsHTML() : '') +
-      '<div class="pm"><h4>How “+” and “−” work</h4><p style="margin:0;color:var(--mute);font-size:14.5px">It is where the close sits inside the candle’s own range: the low is 0%, the high is 100%. The gold box on the ladder is the “+” zone.</p><ul>' + pmList.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div>' +
-      '<div><div class="lab" style="margin:6px 0 6px">The candle ladder (close % of its own range)</div><div class="ladder"><span><b>XD</b> 0</span><span><b>D</b> 12.5</span><span><b>MD</b> 25</span><span><b>BAL</b> 50</span><span><b>MP</b> 75</span><span><b>P</b> 87.5</span><span><b>XP</b> 100</span></div></div>' +
+      oddsHTML() +
       '<p style="margin:0;color:var(--mute);font-size:14.5px;line-height:1.5">TGT = the end the candle leans to. Protected = the end its owners must defend: a close past it cancels the read.</p>';
+    // How + and − work, and the ladder: under the candle picture, so the odds stay in view on the right
+    $('#cb-pm').innerHTML = '<div class="pm"><h4>How “+” and “−” work</h4><p style="margin:0;color:var(--mute);font-size:14.5px">It is where the close sits inside the candle’s own range: the low is 0%, the high is 100%. The gold box on the ladder is the “+” zone.</p><ul>' + pmList.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul></div>' +
+      '<div><div class="lab" style="margin:6px 0 6px">The candle ladder (close % of its own range)</div><div class="ladder"><span><b>XD</b> 0</span><span><b>D</b> 12.5</span><span><b>MD</b> 25</span><span><b>BAL</b> 50</span><span><b>MP</b> 75</span><span><b>P</b> 87.5</span><span><b>XP</b> 100</span></div></div>';
     if (flash) { ex.classList.remove('flash'); void ex.offsetWidth; ex.classList.add('flash'); }
   }
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-cb]'); if (b) { cbKey = b.dataset.cb; cbPaint(true); if (e.detail === 0) { var n = document.querySelector('[data-cb="' + cbKey.replace(/"/g, '') + '"]'); if (n) n.focus(); } return; }
     var sd = e.target.closest('[data-side]'); if (sd) { cbSide = sd.dataset.side; document.querySelectorAll('[data-side]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === sd)); }); cbPaint(true); return; }
     var v = e.target.closest('[data-cbv]'); if (v) { cbView = v.dataset.cbv; cbPaint(false); var f = document.querySelector('[data-cbv="' + cbView + '"]'); if (f && e.detail === 0) f.focus(); return; }
-    if (e.target.closest('#cb-odds')) { oddsOpen = !oddsOpen; cbPaint(false); var ob = document.getElementById('cb-odds'); if (ob) ob.focus(); return; }
     var ot = e.target.closest('[data-otf]'); if (ot) { oddsTF = ot.dataset.otf; cbPaint(false); var q = document.querySelector('[data-otf="' + oddsTF + '"]'); if (q) q.focus(); return; }
     var om = e.target.closest('[data-omk]'); if (om) { oddsMkt = om.dataset.omk; cbPaint(false); var q2 = document.querySelector('[data-omk="' + oddsMkt + '"]'); if (q2) q2.focus(); }
   });
