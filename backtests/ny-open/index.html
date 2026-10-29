@@ -51,6 +51,7 @@ table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12.5
 th{background:#000;color:var(--gold);text-align:left;font-weight:600;padding:7px 9px;border-bottom:1px solid var(--line);font-family:var(--display);font-size:13.5px;letter-spacing:.04em;text-transform:uppercase;vertical-align:bottom;white-space:nowrap}
 th small{display:block;color:var(--mute);font:400 11px/1.3 var(--body);text-transform:none;letter-spacing:0;white-space:normal;min-width:80px}
 td{padding:6px 9px;white-space:nowrap;border-bottom:1px solid #1a1e23}
+#mk-t td:first-child{white-space:normal;min-width:170px}
 tbody tr:nth-child(odd){background:var(--row)} tbody tr:nth-child(even){background:var(--row2)}
 td:first-child{font-family:var(--body);font-weight:600;color:var(--fg)}
 td .s{color:var(--mute)}
@@ -101,6 +102,12 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
   <div class="card"><h3>The 10:00 candle</h3><p>A BC+ that closes at 10:00: the next candle takes its target first <b>86–92%</b> on 5m, 15m, 1h and 4H. A BC− is close to a coin flip. A weak candle often visits the open gap behind it first.</p></div>
   <div class="card"><h3>Runs until 11:30</h3><p>From the first BC after 10:00: median <b>2</b> same-side BCs, about 2–3 NBCs, then the other side closes. The run goes a median <b>30–36 pts</b> (5m) and <b>36 pts</b> (15m) our way, but the exit on the opposite candle gives it back.</p></div>
   <div class="card no"><h3>What does NOT work</h3><p>The 10:00 lean for the 16:00 close, a BC− for direction, holding until the opposite candle, and the first BC after 10:00 as an entry with a 50 pt stop at 1:2 (avg RR about 0, t-score under 2).</p></div>
+</section>
+
+<section class="blk" id="mkts" aria-labelledby="h-mk">
+  <div class="bh"><h2 id="h-mk">The same morning on ES, gold and crude oil<small>Same rules, each market's own data, period 1 / period 2</small></h2><span class="seg" role="group" aria-label="Market"><button type="button" data-mk="ES" aria-pressed="true">ES / MES</button><button type="button" data-mk="GC" aria-pressed="false">Gold</button><button type="button" data-mk="CL" aria-pressed="false">Crude oil</button></span></div>
+  <div class="bb"><div class="tw"><table id="mk-t"></table></div><div class="tw"><table id="mk-c"></table></div>
+    <p class="note" id="mk-n"></p></div>
 </section>
 
 <section class="blk" id="window" aria-labelledby="h-win">
@@ -309,10 +316,34 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
     ['5m', '15m'].forEach(function (tf) { G.forEach(function (g) { var a = D.q7[tf + '|old|' + g[0]], b = D.q7[tf + '|fresh|' + g[0]]; if (!a || !b) return; var cl = function (v) { return v > 0 ? 'hi' : v < 0 ? 'lo' : ''; }; r += '<tr><td>' + tf + '</td><td>' + g[1] + '</td><td>' + nn(a.n, b.n) + '</td><td>' + c2(a.WR, b.WR) + '</td><td>' + '<span class="' + cl(a.avgRR) + '">' + (a.avgRR > 0 ? '+' : '') + a.avgRR.toFixed(2) + '</span> <span class="s">/</span> <span class="' + cl(b.avgRR) + '">' + (b.avgRR > 0 ? '+' : '') + b.avgRR.toFixed(2) + '</span></td><td>' + c2(a.PF, b.PF) + '</td><td>' + c2(a.t, b.t) + '</td></tr>'; }); });
     $('#q7-t').innerHTML = h + '<tbody>' + r + '</tbody>';
   }
+  var MKD = null, MKC = 'ES', MKN = { ES: 'ES / MES', GC: 'Gold GC / MGC', CL: 'Crude CL / MCL' };
+  function mkT() {
+    if (!MKD) return; var N = MKD.nyo[MKC]; if (!N) return; var u = MKC === 'CL' ? '' : ' pts', q = function (v) { return v == null ? '–' : (MKC === 'CL' ? (+v).toFixed(2) : (+v).toFixed(1)); };
+    var a = N.P1 || {}, b = N.P2 || {}, pc = function (v) { return v == null ? '–' : Math.round(v) + '%'; };
+    var row = function (n, f) { return '<tr><td>' + n + '</td><td>' + f(a) + ' <span class="s">/</span> ' + f(b) + '</td></tr>'; };
+    var c10 = function (x, tf) { var z = ((x.c10 || {})[tf] || []).filter(function (r) { return r.k === 'BC+ both'; })[0]; return z && z.n ? pc(z.first) + ' (' + z.n + ')' : '–'; };
+    var tt = function (x) { var t = (x.tt || {})['15m|all']; return t ? '<span translate="no">' + t.n + ' · WR ' + pc(t.wr) + ' · ' + (t.av > 0 ? '+' : '') + t.av.toFixed(2) + ' · t ' + t.t.toFixed(1) + '</span>' : '–'; };
+    $('#mk-t').innerHTML = '<thead><tr><th>' + MKN[MKC] + '</th><th>Period 1 / Period 2</th></tr></thead><tbody>' +
+      row('Days (with 1m bars)', function (x) { return x.days + ' (' + x.d1 + ')'; }) + row('Median 09:30–11:30 range', function (x) { return q(x.rng) + u; }) +
+      row('High or low in by 10:00', function (x) { return pc(x.in10); }) + row('11:30 closes above 09:30', function (x) { return pc(x.up); }) +
+      row('First 15 minutes make the high / the low', function (x) { return pc(x.hw[0]) + ' · ' + pc(x.lw[0]); }) +
+      row('Opening range 09:30–10:00, median', function (x) { return x.or ? q(x.or.rng) + u : '–'; }) + row('Closed out of the range by 11:30', function (x) { return x.or ? pc(x.or.broke) : '–'; }) +
+      row('Closed out of the other side too', function (x) { return x.or ? pc(x.or.other) : '–'; }) + row('Run past the first edge, median', function (x) { return x.or ? q(x.or.ext) + u : '–'; }) +
+      row('15m BC+ at 10:00 → target first (days)', function (x) { return c10(x, '15m'); }) + row('1h BC+ at 10:00 → target first (days)', function (x) { return c10(x, '1h'); }) +
+      row('4H BC+ at 10:00 → target first (days)', function (x) { return c10(x, '4H'); }) +
+      row('Trade test · first BC after 10:00 · 15m · ' + MKD.nyo_stop[MKC] + u + ' stop · 1:2', tt) + '</tbody>';
+    var A = N.ALL || N.P1, oc = (A.oc || {})['15m'] || [];
+    $('#mk-c').innerHTML = '<thead><tr><th>15m opening candle · both periods</th><th>Days</th><th>Next candle target first</th><th>Target before the other end by 11:30</th><th>11:30 closes its way</th></tr></thead><tbody>' +
+      oc.map(function (z) { return '<tr><td>' + esc(z.k) + '</td><td>' + z.n + '</td><td>' + pc(z.first) + '</td><td>' + pc(z.before) + '</td><td>' + pc(z.way) + '</td></tr>'; }).join('') + '</tbody>';
+    var m = MKD.markets[MKC];
+    $('#mk-n').textContent = 'Period 1 = ' + m.p1 + ', period 2 = ' + m.p2 + '. Each day uses the finest bars we have for it: 15m candles and the opening range need 5m bars or finer, 5m candles need 1m bars. Stops scale with the market (NQ 50 pts = ES 20 = gold 12 = crude 0.50). Under 10 days a number is a guess. Every other MMM test on these markets: the MARKETS tab of the backtests page.';
+  }
+  fetch('../d_markets.json').then(function (r) { return r.json(); }).then(function (j) { MKD = j; mkT(); }).catch(function () {});
   function all() { timeline(); openT(); orK(); c10T(); gapT(); oppT(); runT(); hrT(); q7T(); }
   document.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.per) { PER = b.dataset.per; press('data-per', PER); timeline(); }
+    if (b.dataset.mk) { MKC = b.dataset.mk; press('data-mk', MKC); mkT(); }
+    else if (b.dataset.per) { PER = b.dataset.per; press('data-per', PER); timeline(); }
     else if (b.dataset.otf) { OTF = b.dataset.otf; press('data-otf', OTF); openT(); }
     else if (b.dataset.ctf) { CTF = b.dataset.ctf; press('data-ctf', CTF); c10T(); }
     else if (b.dataset.ptf) { PTF = b.dataset.ptf; press('data-ptf', PTF); oppT(); }

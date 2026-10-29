@@ -245,6 +245,14 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 @media print{body{display:none!important}}
+/* own-market results (ES / gold / crude tested separately) */
+.mkbox{border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:6px;padding:9px 11px;margin:0 0 12px;background:var(--panel2)}
+.mkbox h4{margin:0 0 6px;font:600 13px var(--body);color:var(--teal);letter-spacing:.02em}
+.mkbox table{width:100%;border-collapse:collapse;font:12px var(--mono);font-variant-numeric:tabular-nums}
+.mkbox td,.mkbox th{padding:3px 6px;text-align:right;border-bottom:1px solid var(--line)} .mkbox th{font:600 11px var(--body);color:var(--mute)} .mkbox .l{text-align:left}
+.mkbox p{margin:6px 0 0;font-size:12px;color:var(--mute)}
+.mkv{display:inline-block;font:600 10px var(--mono);letter-spacing:.05em;border-radius:3px;padding:1px 6px}
+.mkv.e{background:var(--g);color:var(--up)} .mkv.w{background:var(--y);color:var(--mix)} .mkv.k{background:var(--row);color:var(--mix)} .mkv.n{background:var(--r);color:var(--dn)} .mkv.f{background:var(--row);color:var(--mute)}
 </style>
 </head>
 <body>
@@ -390,7 +398,25 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function sg(v, d) { return (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(d == null ? 2 : d); }
   function pc(v) { return Math.round(v * 100) + '%'; }
-  var ASSET = {'NQ':[20,50],'MNQ':[2,50],'NNQ':[0.2,50],'ES':[50,20],'MES':[5,20],'NES':[0.5,20],'YM':[5,150],'MYM':[0.5,150],'NDOW':[0.05,150],'RTY':[50,8],'M2K':[5,8],'N2K':[0.5,8],'GC':[100,12],'MGC':[10,12],'1OZ':[1,12],'SI':[5000,0.3],'SIL':[1000,0.3],'CL':[1000,0.4],'MCL':[100,0.4],'NG':[10000,0.05],'BTC':[5,1000],'MBT':[0.1,1000],'ETH':[50,50],'MET':[0.1,50],'6E':[125000,0.003],'M6E':[12500,0.003],'ZN':[1000,0.35]};
+  var ASSET = {'NQ':[20,50],'MNQ':[2,50],'NNQ':[0.2,50],'ES':[50,20],'MES':[5,20],'NES':[0.5,20],'YM':[5,150],'MYM':[0.5,150],'NDOW':[0.05,150],'RTY':[50,8],'M2K':[5,8],'N2K':[0.5,8],'GC':[100,12],'MGC':[10,12],'1OZ':[1,12],'SI':[5000,0.3],'SIL':[1000,0.3],'CL':[1000,0.5],'MCL':[100,0.5],'NG':[10000,0.05],'BTC':[5,1000],'MBT':[0.1,1000],'ETH':[50,50],'MET':[0.1,50],'6E':[125000,0.003],'M6E':[12500,0.003],'ZN':[1000,0.35]};
+  var MKA = null, MKFAM = { ES: 'ES', MES: 'ES', NES: 'ES', GC: 'GC', MGC: 'GC', '1OZ': 'GC', CL: 'CL', MCL: 'CL' };
+  fetch('/backtests/d_book_assets.json').then(function (r) { return r.json(); }).then(function (j) { MKA = j; if (D) paint(); }).catch(function () {});
+  function mkf() { return MKFAM[$('#m-asset').value] || null; }
+  function mkvk(v) { v = v || ''; return v.indexOf('PASS · edge') === 0 ? 'e' : v.indexOf('PASS') === 0 ? 'w' : v.indexOf('weak') === 0 ? 'k' : v.indexOf('too few') === 0 ? 'f' : 'n'; }
+  var MKVL = { e: 'PASS · EDGE', w: 'PASS · WATCH', k: 'WEAK', f: 'TOO FEW TRADES', n: 'NO EDGE' };
+  function mkBox(s) {
+    var f = mkf(); if (!f || !MKA || !MKA[f]) return '';
+    var A = MKA[f], x = A.sheets[s.code]; if (!x) return '';
+    var j = x.per.length > 1 ? 1 : 0, b = x.per[j], v = mkvk(x.verdict);
+    var NT = function (x) { return '<span translate="no">' + x + '</span>'; };
+    if (!b) return '<div class="mkbox"><h4>Tested on <span>' + esc(A.name) + '</span> ' + NT('(' + esc(A.fam) + ')') + '</h4><p>No trades in the test data.</p></div>';
+    var p1 = x.p1, p2 = x.p2;
+    return '<div class="mkbox"><h4>Tested on <span>' + esc(A.name) + '</span> ' + NT('(' + esc(A.fam) + ')') + ' · its own data</h4><table><tr><th class="l"></th><th>Trades</th><th>WR</th><th>avg RR</th><th>PF</th><th>t-score</th></tr>' +
+      (p1 ? '<tr><td class="l">Period 1 · ' + esc(x.p1lab || A.p1) + '</td><td>' + p1.n + '</td><td>' + pc(p1.wr) + '</td><td class="' + (p1.av > 0 ? 'pos' : 'neg') + '">' + sg(p1.av) + '</td><td>' + (p1.pf == null ? '–' : p1.pf.toFixed(2)) + '</td><td>' + (p1.t == null ? '–' : p1.t.toFixed(1)) + '</td></tr>' : '') +
+      (p2 ? '<tr><td class="l">Period 2 · ' + esc(x.p2lab || A.p2) + '</td><td>' + p2.n + '</td><td>' + pc(p2.wr) + '</td><td class="' + (p2.av > 0 ? 'pos' : 'neg') + '">' + sg(p2.av) + '</td><td>' + (p2.pf == null ? '–' : p2.pf.toFixed(2)) + '</td><td>' + (p2.t == null ? '–' : p2.t.toFixed(1)) + '</td></tr>' : '') +
+      '<tr><td class="l"><b>Both</b></td><td><b>' + b.n + '</b></td><td><b>' + pc(b.wr) + '</b></td><td class="' + (b.av > 0 ? 'pos' : 'neg') + '"><b>' + sg(b.av) + '</b></td><td>' + (b.pf == null ? '–' : b.pf.toFixed(2)) + '</td><td>' + (b.t == null ? '–' : b.t.toFixed(1)) + '</td></tr></table>' +
+      '<p><span class="mkv ' + v + '" translate="no">' + MKVL[v] + '</span> <span>Same code and rules as NQ.</span> ' + '<span>Stop ' + A.fx + ' · cost ' + A.cost + '</span>' + (x.alt && x.alt.verdict.indexOf('PASS · edge') === 0 && v !== 'e' ? ' <span>Another setting held with a t-score of 2 or more (watch):</span> ' + NT(esc(x.alt.pairing) + ' · t ' + x.alt.t.toFixed(1)) : '') + '</p></div>';
+  }
   function AS() { return ASSET[$('#m-asset').value] || ASSET.MNQ; }
   function isNQ() { return ['NQ', 'MNQ', 'NNQ'].indexOf($('#m-asset').value) >= 0; }
   function EQ() { if (isNQ()) return 50; var v = +$('#m-eq').value; return v > 0 ? v : AS()[1]; }
@@ -481,7 +507,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       (s.plain ? '<p class="plain"><b>In plain words</b>' + esc(s.plain) + '</p>' : '') +
       '<p class="t-when"><b>When</b><span>' + esc(s.when) + '</span></p>' +
       '<ol class="steps">' + s.steps.map(function (x) { return '<li><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></li>'; }).join('') + '</ol>' +
-      '</div><div class="t-right">' +
+      '</div><div class="t-right">' + mkBox(s) +
       '<dl class="kpi">' +
         '<div><dt>Trades</dt><dd>' + a.n.toLocaleString('en-US') + '</dd></div><div><dt>A month</dt><dd>' + a.tpm + '</dd></div><div><dt>WR</dt><dd>' + pc(a.wr) + ' <small class="tgt">' + esc(s.tgt || '') + '</small></dd></div>' +
         '<div><dt>avg RR</dt><dd class="' + (a.av > 0 ? 'pos' : 'neg') + '">' + sg(a.av) + '</dd></div><div><dt>PF</dt><dd>' + a.pf.toFixed(2) + '</dd></div><div><dt>t-score</dt><dd>' + a.t.toFixed(2) + '</dd></div>' +
@@ -510,7 +536,10 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     var a = AS(), q = QTY(), nq = isNQ();
     $('#m-eql').hidden = nq;
     if (nq) { $('#m-eg').textContent = '1 point = ' + fm(a[0] * q) + ' · money below is for this size'; return; }
-    $('#m-eg').textContent = 'Estimate: tested on NQ / MNQ only. A 50-pt NQ stop ≈ ' + EQ() + ' pts here = ' + fm(a[0] * EQ() * q) + ' risk. Money below = the same avg RR at that risk.';
+    var f = mkf();
+    if (f && MKA && MKA[f]) { var A = MKA[f], k = 0; Object.keys(A.sheets).forEach(function (c) { if (A.sheets[c].ok) k++; });
+      $('#m-eg').textContent = 'Also tested on ' + A.name + ' itself: ' + k + ' of 18 made money in both periods there. Each card shows its own ' + A.name + ' result. Money below = the NQ test at a ' + EQ() + ' pt stop.'; return; }
+    $('#m-eg').textContent = 'Estimate: tested on NQ / MNQ, ES, gold and crude only. A 50-pt NQ stop ≈ ' + EQ() + ' pts here = ' + fm(a[0] * EQ() * q) + ' risk. Money below = the same avg RR at that risk.';
   }
   function paint() {
     var L = list(); paintBar();

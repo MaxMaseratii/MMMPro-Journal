@@ -108,6 +108,17 @@ table.g tbody tr:hover td{background:var(--sel)}
 .verdict.ok{border-left-color:var(--teal);background:var(--teal-soft)}
 .tag{font-family:var(--f-num);background:var(--neutral);border:1px solid var(--line);border-radius:3px;padding:0 4px;font-size:11px}
 .loading{padding:40px;color:var(--muted)}
+/* MARKETS */
+.mktl{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.mktl select{font-family:var(--f-ui);font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--teal);border-radius:4px;padding:3px 6px}
+.mbn{font-size:12px;line-height:1.4;border-left:3px solid var(--teal);background:var(--teal-soft);padding:5px 10px;border-radius:0 4px 4px 0}
+.mbn button,.lnk{font-family:var(--f-ui);font-size:12px;font-weight:700;color:var(--teal);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.mv{display:inline-block;font-family:var(--f-num);font-size:10px;font-weight:600;letter-spacing:.05em;border-radius:3px;padding:1px 6px;white-space:nowrap}
+.mv.e{background:var(--good-bg);color:var(--good)} .mv.w{background:var(--warn-bg);color:var(--warn)} .mv.k{background:var(--neutral);color:var(--warn)} .mv.n{background:var(--bad-bg);color:var(--bad)} .mv.f{background:var(--neutral);color:var(--muted)}
+.mkt-t tr.v-e td{background:var(--good-bg2)} .mkt-t tr.v-w td{background:var(--sel)}
+.mkt-t td.mvc{text-align:center;line-height:1.6}
+.mtg{display:block;color:var(--muted);font-size:11px}
+.mu{color:var(--muted)}
 /* START HERE */
 .lede{font-size:15px;line-height:1.55;max-width:80ch;margin:0}
 .lede b{color:var(--teal)}
@@ -224,8 +235,9 @@ table.g tbody tr:hover td{background:var(--sel)}
 
 
 <div class="top">
-  <div class="title"><h1>MMM <b>Indicators</b> · Backtests · Strategies</h1><select class="mmm-lang" aria-label="Language" style="margin-left:auto;font-family:var(--f-ui);font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:3px 6px"></select><span class="sub" id="sub">NQ 1m 2022–25 + fresh MNQ Dec 2025 – Oct 2026 · every number after costs (1 pt a trade)</span></div>
+  <div class="title"><h1>MMM <b>Indicators</b> · Backtests · Strategies</h1><label class="mktl">Market <select id="mkt" aria-label="Market"><option value="NQ">NQ / MNQ</option><option value="ES">ES / MES</option><option value="GC">Gold GC / MGC</option><option value="CL">Crude CL / MCL</option></select></label><select class="mmm-lang" aria-label="Language" style="margin-left:auto;font-family:var(--f-ui);font-size:12px;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:3px 6px"></select><span class="sub" id="sub">NQ 1m 2022–25 + fresh MNQ Dec 2025 – Oct 2026 · every number after costs (1 pt a trade)</span></div>
   <div class="bar" id="bar"></div>
+  <div class="mbn" id="mbn" hidden></div>
 </div>
 <main><div class="scroll" id="scroll"><div class="loading">Loading…</div></div></main>
 <nav class="tabs" id="tabs"></nav>
@@ -621,6 +633,7 @@ G.start=sc=>{
 <a href="/backtests/ny-open/"><b class="serif">NY open lab · 09:30–11:30</b><span>When the morning high and low are made, the 09:30 and 10:00 candles, the opening range, opening gaps and BC runs until 11:30.</span></a>
 <a href="/backtests/ny-open/study/"><b class="serif">9:30 AM to 11:30 AM Testing Studies</b><span>The document: every NY morning test in one place, with the best read per timeframe and a 09:30–11:30 game plan.</span></a>
 <a href="/backtests/pro-f/"><b class="serif">MMM PRO FVA lab</b><span>HTF level → LTF box → retest → BC: retest odds, what happens before and after the touch, box types and entry areas.</span></a>
+<button type="button" data-go="markets"><b class="serif">Markets · NQ, ES, gold, crude oil</b><span>Every test run again on ES / MES, gold and crude oil: what works on which market and which chart.</span></button>
 <button type="button" data-go="verdicts"><b class="serif">Verdicts</b><span>The decision board: trade, use as a filter, watch, or don’t trade, with the reason for each.</span></button>
 </nav></section>
 <section class="wide"><div class="sh"><h2 class="serif">The book at a glance</h2><a class="lk" href="/strategies/">Open the full strategy book</a></div>
@@ -659,6 +672,7 @@ G.start=sc=>{
 <ul><li><b>WR</b> = win rate. <b>PF</b> = profit factor (won ÷ lost). <b>avg RR</b> = average result per trade in stops, after costs. <b>t-score</b> = how sure it is not luck.</li>
 <li>Live trading: expect less than the backtest. Start small.</li></ul></section>
 <section class="wide"><h2 class="serif">The research lab</h2><div class="go">
+<button type="button" data-go="markets"><b>MARKETS</b><span>NQ, ES, gold and crude oil side by side: the 18 strategies, every VERDICTS idea, candle odds, blocks and the NY morning.</span></button>
 <button type="button" data-go="nyopen"><b>NY OPEN 09:30–11:30</b><span>The morning in numbers: high / low timing, the 09:30 and 10:00 candles, opening range, gaps, BC runs until 11:30.</span></button>
 <button type="button" data-go="book"><b>STRATEGY BOOK (DETAIL)</b><span>Each strategy with every target, year by year, long vs short, months and the equity curve.</span></button>
 <button type="button" data-go="words"><b>MMM WORDS</b><span>Every MMM, indicator and test word in plain English. Search it.</span></button>
@@ -1067,9 +1081,10 @@ function cbRun(codes,w){const T=[];codes.forEach(c=>{const d=TRD&&TRD[c];if(!d)r
 // contract · family · name · $ per point · tick
 const BK_CT=[['NQ','NQ','Nasdaq-100 E-mini',20,'0.25'],['MNQ','NQ','Nasdaq-100 Micro',2,'0.25'],['NNQ','NQ','Nasdaq-100 E-nano',0.2,'0.25'],
  ['ES','ES','S&P 500 E-mini',50,'0.25'],['MES','ES','S&P 500 Micro',5,'0.25'],['NES','ES','S&P 500 E-nano',0.5,'0.25'],
- ['GC','GC','Gold Standard',100,'0.10'],['MGC','GC','Gold Micro',10,'0.10'],['1OZ','GC','Gold Nano',1,'0.25']];
+ ['GC','GC','Gold Standard',100,'0.10'],['MGC','GC','Gold Micro',10,'0.10'],['1OZ','GC','Gold Nano',1,'0.25'],
+ ['CL','CL','Crude Oil WTI',1000,'0.01'],['MCL','CL','Crude Oil Micro',100,'0.01'],['QM','CL','Crude Oil E-mini',500,'0.025']];
 const BK_PTV=Object.fromEntries(BK_CT.map(c=>[c[0],c[3]])),BK_FAMOF=Object.fromEntries(BK_CT.map(c=>[c[0],c[1]]));
-const BK_GRP=[['NQ','Nasdaq-100'],['ES','S&P 500'],['GC','Gold']];
+const BK_GRP=[['NQ','Nasdaq-100'],['ES','S&P 500'],['GC','Gold'],['CL','Crude oil']];
 function bkFam(){return BK_FAMOF[BK.c]||'NQ'}
 function bkPv(v){return '$'+(v<1?v.toFixed(2):v)}
 function bkA(){const f=bkFam();return f==='NQ'||!BKA?null:BKA[f]}
@@ -1077,7 +1092,7 @@ function bkA(){const f=bkFam();return f==='NQ'||!BKA?null:BKA[f]}
 function bkPer(){const a=bkA();if(!a)return BK_PER;return [['fresh',a.name+' 2026',a.from+' – '+a.to],['all','NQ Blended','to compare · R only']]}
 function bkSv(s){const a=bkA();if(!a)return s;const x=a.sheets[s.code];if(!x)return null;
   const per={fresh:x.per,all:s.per.all,old:[]};const xb=x.per[s.labels.length>1?s.best:0];
-  return Object.assign({},s,{per,ok:x.ok,why:x.why,status:s.status==='trade'&&xb&&xb.t>=2?'trade':'watch',years:[['2026 '+a.name,x.per[s.labels.length>1?s.best:0]]],
+  return Object.assign({},s,{per,ok:x.ok,why:x.why,status:x.verdict&&x.verdict.startsWith('PASS · edge')?'trade':'watch',years:[['2026 '+a.name,x.per[s.labels.length>1?s.best:0]]],
     sides:(x.sides||[]).map(([d,b])=>[d,{fresh:b,all:((s.sides.find(z=>z[0]===d)||[0,{}])[1]||{}).all}]),
     months:x.months||{n:0,up:0,best:['—',0],worst:['—',0]},curve:x.curve||[],asset:true})}
 const BK_IND={x:'MMM PRO x',c:'MMM PRO c',s:'MMM PRO s',XCS:'MMM PRO XCS (x + c + s)',MPD:'MMPD'};
@@ -1115,7 +1130,7 @@ G.book=async sc=>{
   const bar=$('#bar');bar.innerHTML=`<label>Contract<select id="bkc">${BK_GRP.map(([g,gn])=>`<optgroup label="${gn}">${BK_CT.filter(c=>c[1]===g).map(c=>`<option value="${c[0]}">${c[0]} (${bkPv(c[3])} a point)</option>`).join('')}</optgroup>`).join('')}</select></label><label>Contracts<select id="bkn">${[1,2,3,4,5,10].map(n=>`<option>${n}</option>`).join('')}</select></label><label>Jump to<select id="bkj"></select></label>`;
   function jump(){const L=BOOK.map(bkSv).filter(s=>s&&s.ok!==false);$('#bkj').innerHTML=`<option value="">—</option>${L.map(s=>`<option value="${s.code}">${s.code} · ${esc(s.name)}</option>`).join('')}`}
   $('#bkc').value=BK.c;$('#bkn').value=BK.n;
-  $('#bkc').onchange=e=>{BK.c=e.target.value;jump();paint()};$('#bkn').onchange=e=>{BK.n=+e.target.value;paint()};
+  $('#bkc').onchange=e=>{BK.c=e.target.value;setMkt(BK_FAMOF[BK.c]);jump();paint()};$('#bkn').onchange=e=>{BK.n=+e.target.value;paint()};
   $('#bkj').onchange=e=>{const t=document.getElementById('bk-'+e.target.value);if(t)t.scrollIntoView({block:'start'})};
   function sheet(s){const j=BK.pick[s.code]??s.best;const multi=s.labels.length>1;const PR=bkPer(),PK=PR.map(p=>p[0]);let pv=BK.per[s.code]||(s.asset?'fresh':'all');if(!PK.includes(pv))pv=PK[0];const a=bkA();
     const noM=w=>s.asset&&w==='all';
@@ -1136,7 +1151,7 @@ G.book=async sc=>{
     <div style="min-width:0"><h3>Long vs short · ${bl}</h3><div class="tw"><table><tr><th class="l"></th>${PR.map(p=>`<th colspan="3">${p[1]}</th>`).join('')}</tr><tr><th class="l">Side</th>${('<th>Trades</th><th>WR · '+esc(bl)+'</th><th>Avg RR</th>').repeat(PK.length)}</tr>${sd}</table></div>
     <p class="note">Months: ${m.up} of ${m.n} in profit. Best month ${m.best[0]} (${R2(m.best[1],1)}R). Worst month ${m.worst[0]} (${R2(m.worst[1],1)}R).</p></div></div>
     <h3>Equity curve · ${bl} · in R</h3><div class="ch">${bkCurve(s.curve)}</div>${KEY}</section>`;return h}
-  function paint(){const y=sc.scrollTop;const A=bkA(),fam=bkFam();if(fam!=='NQ'&&!BKA){sc.innerHTML='<div class="loading">The ES and gold tests could not load. Reload the page to try again.</div>';return}const V=BOOK.map(bkSv);const B=V.filter(s=>s&&s.ok!==false);
+  function paint(){const y=sc.scrollTop;const A=bkA(),fam=bkFam();if(fam!=='NQ'&&!BKA){sc.innerHTML='<div class="loading">The market tests could not load. Reload the page to try again.</div>';return}const V=BOOK.map(bkSv);const B=V.filter(s=>s&&s.ok!==false);
     const hid=A?BOOK.filter((s,i)=>!V[i]||!V[i].ok):[];
     const idx=B.map(s=>{const j=s.best,a=(A?s.per.fresh:s.per.all)[j];const st=s.status==='trade'?'trade':'watch';return `<tr><td class="l"><a href="#bk-${s.code}" data-j="${s.code}"><b>${s.code}</b></a></td><td class="l">${esc(s.name)}</td><td class="l"><span class="st ${st}">${ST[st]}</span></td>
       <td>${bkTrio(s,j,b=>b?N0(b.n):'—')}</td><td class="l"><span class="tg">${esc(tgL(s,j))}</span></td><td>${bkTrio(s,j,b=>b?P0(100*b.wr):'—')}</td><td>${bkTrio(s,j,b=>b?R2(b.av):'—')}</td><td>${bkTrio(s,j,b=>b?F2(b.pf):'—')}</td><td>${bkTrio(s,j,b=>b?R2(b.t,1):'—')}</td>
@@ -1146,9 +1161,9 @@ G.book=async sc=>{
     const subR=A?`<span>${A.name} 2026</span>`:`<span>both periods</span>`;
     const key=A?`<div class="chips" style="margin:4px 0 8px;font-size:12px"><span class="tag"><b>${A.name} 2026</b> = this market only · <span>${A.from} – ${A.to}</span> · <span>${A.days}</span> trading days</span><span class="tag" style="color:var(--muted)">NQ both = NQ 2022–25 + MNQ 2026 together, in R, to compare</span></div>`
       :`<div class="chips" style="margin:4px 0 8px;font-size:12px"><span class="tag"><b>2022–25</b> = NQ, 3 years: where the idea was found</span><span class="tag">→ <b>2026</b> = MNQ, 10 months: fresh data the idea never saw (the real check)</span><span class="tag">· <b>Both</b> (bold) = the two runs together: the total</span></div>`;
-    const lede=A?`<p class="lede">Strategy book on <b>${A.name}</b> (${A.fam}). Every strategy was run again with the same code on ${A.name} data <b>${A.from} – ${A.to}</b> (<b>${A.days}</b> trading days, the finest bars we have). Only the strategies that also worked on ${A.name} are shown: avg RR above 0, PF above 1, t-score 1 or more, at least 20 trades. Money = ${BK.n} ${ct[0]} contract${BK.n>1?'s':''} (${bkPv(ct[3])} a point), after a ${A.cost} pt cost on every trade. The fixed 50 pt stop of NQ = ${A.fx} pts here. Status: TRADE only if the t-score on ${A.name} is 2 or more, else WATCH.</p>
+    const lede=A?`<p class="lede">Strategy book on <b>${A.name}</b> (${A.fam}). Every strategy was run again with the same code on ${A.name} data <b>${A.from} – ${A.to}</b> (<b>${A.days}</b> trading days, the finest bars we have). The test is cut into two periods (<b>${A.p1}</b> and <b>${A.p2}</b>). Only the strategies that made money in <b>both</b> on ${A.name} are shown: avg RR above +0.05 in each period, 10+ trades in each. Money = ${BK.n} ${ct[0]} contract${BK.n>1?'s':''} (${bkPv(ct[3])} a point), after a ${A.cost} pt cost on every trade. The fixed 50 pt stop of NQ = ${A.fx} pts here. Status: TRADE only if the t-score on ${A.name} is 2 or more, else WATCH. Every market side by side: <button type="button" class="lnk" data-go="markets">MARKETS</button>.</p>
       ${A.days<120?`<p class="verdict" style="margin-top:8px">Short history: only <b>${A.days}</b> trading days of ${A.name} data. Treat every ${A.name} number as a first look, not proof.</p>`:''}
-      <p class="verdict" style="margin-top:8px">Not shown on ${A.name} (did not work there): ${hid.length?hid.map(s=>`<b>${s.code}</b>`).join(' · '):'none'}</p>`
+      <p class="verdict" style="margin-top:8px">Not shown on ${A.name} (did not work there): <span translate="no">${hid.length?hid.map(s=>`<b>${s.code}</b>`).join(' · '):'—'}</span></p>`
       :`<p class="lede">Every strategy that held in <b>both</b> test periods, in one format. Each number is shown as <b>2022–25 → 2026 · Blended</b>: the NQ result 2022–25, then the fresh MNQ result 2026, then both periods together as one run. Money = ${BK.n} ${ct[0]} contract${BK.n>1?'s':''} (${bkPv(ct[3])} a point, change it at the top), after a 1 pt cost on every trade.</p>`;
     let h=`<div class="doc"><section class="wide">${lede}</section>
     <section><h2>Strategy names</h2><p>Every strategy has a code: the indicator letters, then M1, M2, M3… (M = model).</p><div class="tw"><table><tr><th class="l">Code</th><th class="l">Indicator</th><th class="l">What it focuses on</th></tr>${BK_NAMES.map(n=>`<tr><td class="l"><b>${n[0]}.M1, ${n[0]}.M2…</b></td><td class="l">${n[1]}</td><td class="l">${n[2]}</td></tr>`).join('')}</table></div></section>
@@ -1250,6 +1265,9 @@ const PAGES={
  start:{t:'Start here',s:'The front desk of the MMM research: what was tested, how, and where to go next.',
   r:['Every number is after a 1 point cost on every trade.','<b>2022–25</b> = NQ, 3 years: where each idea was found. <b>2026</b> = fresh MNQ, 10 months: data the idea never saw. A strategy must work in both.','<b>WR</b> = win rate, always shown with its target (for example <b>1:2 RR</b> = the target is 2 times the stop). <b>avg RR</b> = the average result per trade, in stops. <b>PF</b> = money won ÷ money lost. <b>t-score</b> 2+ = probably not luck.'],
   u:['Want to trade? Open <b>STRATEGY BOOK</b> and pick ONE strategy.','Want the reasons? Open <b>VERDICTS</b>.']},
+ markets:{t:'Markets · NQ, ES, gold, crude oil',s:'Every MMM test, run again on ES / MES, gold GC / MGC and crude oil CL / MCL with the same code and rules as NQ.',
+  r:['Pick a market at the top. <b>Compare all</b> puts the four side by side.','Each market is cut into <b>two periods</b>. A result counts only if it made money in both (avg RR above +0.05 in each).','<b>WR</b> = win rate. <b>avg RR</b> = average result per trade in stops, after costs. <b>t-score</b> 2+ = probably not luck. <b>Luck gives</b> = how many combos would pass by chance.','Fixed stops scale with the market: NQ 50 pts = ES 20 = gold 12 = crude 0.50. Costs: NQ 1 pt, ES 0.5, gold 0.2, crude 0.02.'],
+  u:['Trade a market only with a strategy that passed on <b>that</b> market. Pick ONE.','Candle odds are the same on every market. Use them to read the chart, not as an entry.']},
  words:{t:'MMM words',s:'The dictionary: every MMM word used on these pages, in plain English.',
   r:['Each card = one word, what it means, and where you see it.','Use the chips to show one group of words, or type in the search box.'],
   u:['Stuck on a word in another tab? Come here and search it.']},
@@ -1332,10 +1350,155 @@ function pageHead(id){const p=PAGES[id];if(!p)return '';
  return `<header class="ph" data-id="${id}"><h1>${p.t}</h1><p class="phs">${p.s}</p><details class="phd" open><summary>How to read this page</summary><ul>${p.r.map(x=>`<li>${x}</li>`).join('')}</ul>${p.u.length?`<p class="phu"><b>How to use it</b></p><ul>${p.u.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</details></header>`}
 function allHeads(){return Object.keys(PAGES).filter(k=>k!=='readme').map(k=>{const p=PAGES[k];return `<section class="wide"><h2>${p.t}</h2><p class="note" style="margin:0 0 6px">${p.s}</p><ul>${p.r.map(x=>`<li>${x}</li>`).join('')}</ul>${p.u.length?`<p style="margin:6px 0 2px"><b>How to use it</b></p><ul>${p.u.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</section>`}).join('')}
 
+// ───────────────── MARKETS: every MMM test on NQ, ES, gold and crude oil ─────────────────
+const MKS=['NQ','ES','GC','CL'],MKN={NQ:'NQ / MNQ',ES:'ES / MES',GC:'Gold · GC / MGC',CL:'Crude oil · CL / MCL'},MKS2={NQ:'NQ',ES:'ES',GC:'Gold',CL:'Crude'};
+const MK_MICRO={NQ:'MNQ',ES:'MES',GC:'MGC',CL:'MCL'};
+const NT=x=>`<span translate="no">${x}</span>`;
+let MKT=(()=>{const v=store('mmm-mkt');return MKS.includes(v)?v:'NQ'})();
+let MKD=null,MKI=null;const MV={view:null,otf:'15m',om:'tgt',ctf:'15m',study:''};
+function setMkt(m){if(!MKS.includes(m))return;MKT=m;store('mmm-mkt',m);const s=$('#mkt');if(s&&s.value!==m)s.value=m;if(typeof BK!=='undefined'&&BK_FAMOF[BK.c]!==m)BK.c=MK_MICRO[m]}
+function mvk(v){v=v||'';return v.startsWith('PASS · edge')?'e':v.startsWith('PASS')?'w':v.startsWith('weak')?'k':v.startsWith('too few')?'f':'n'}
+const MVL={e:'PASS · EDGE',w:'PASS · WATCH',k:'WEAK',f:'TOO FEW TRADES',n:'NO EDGE'};
+const mvb=v=>`<span class="mv ${mvk(v)}" translate="no">${MVL[mvk(v)]}</span>`;
+const PCT=v=>v==null||isNaN(v)?'—':Math.round(v*100)+'%';
+const SGN=(v,d=2)=>{if(v==null||isNaN(v))return'—';const r=Math.abs(v).toFixed(d);return(+r===0?'':v>0?'+':'−')+r};
+const MK_TFB=t=>String(t).startsWith('15m')?'15m':t;
+const ST_N={flip:'Flip: the first opposite BC, and its confirmation BC',patt:'Pullback and block patterns: the 2nd break, expander block break, block retest after a long range',
+ patt2:'GMC patterns: failed GMC short, close past the last GMC + NBC, 1H opposite-side GMC + expander',liq_sweep:'Liquidity sweeps and breaks: 4H, day, week, month, swings, equal and unfinished highs / lows',
+ clusters:'Liquidity clusters: trading into and away from them',body_close:'Plain body closes (BuBC / BeBC / AFs) on 1H and 4H, by hour',gmc_pullback:'GMC pullback system: H1 / H4 GMC → lower-timeframe entry',
+ block_touch:'Block touches: eBlock, iBlock and balanced block, same timeframe',htf_block_ltf:'HTF block → LTF reaction entry',break_candle:'Break candle entries: flip, T2 to T6, every entry point and stop',
+ level_entry:'HTF level → 15m / LTF entry (AFs at a GMC, PO4 level; touch vs close through)',gmc_grid:'GMC grid: every GMC entry × stop × exit',indicator_entries:'Indicator entries: OFS swing breaks, SWP+ sweep reclaim, AX continuation, Concepts R# box, MMM Pro P# / R#'};
+const TFN_={'5':'5m','15':'15m','60':'1h','4h':'4H','D':'Daily','5m':'5m','15m':'15m','1H':'1h','4H':'4H','M5':'5m','M15':'15m','H1':'1h','H4':'4H'};
+async function mkLoad(){if(!MKD){const [a,b]=await Promise.all([fetch('d_markets.json').then(r=>r.json()),fetch('d_ideas.json').then(r=>r.json()).catch(()=>null)]);MKD=a;MKI=b}}
+function mkOdd(tf,ty,M){const D=MKD.odds,b=D[tf+'|'+ty+'|bull'],e=D[tf+'|'+ty+'|bear'];if(!b||!e||!b[M]||!e[M])return null;const x=b[M],y=e[M],n=x.n+y.n;
+  return{n,tgt:(x.tgt*x.n+y.tgt*y.n)/n,first:x.first==null?null:(x.first*x.n+y.first*y.n)/n}}
+function mkGrid(M,tf){const fine=['5','15'].includes(tf),src=M==='NQ'?'NQ 1m 2022-25 vs MNQ 2026':(fine?'finest bars 2026':'1h base Jun 2024-Oct 2026');return MKD.grid.find(g=>g.mkt===M&&g.tf===tf&&g.src===src)}
+function mkGv(g){if(!g)return'—';const v=g.v;return v.startsWith('real')?'<span class="mv e">BEATS LUCK</span>':v.startsWith('trend')?'<span class="mv k">TREND, NOT EDGE</span>':v.startsWith('some')?'<span class="mv w">A FEW MORE THAN LUCK</span>':'<span class="mv n">LUCK LEVEL</span>'}
+function mkIdea(st,M){if(!MKI)return null;return MKI.sum.filter(r=>r.study===st&&r.mkt===M)}
+function mkIv(L){if(!L||!L.length)return null;const s=L.reduce((a,r)=>a+(r.strong||0),0),l=L.reduce((a,r)=>a+(r.luck||0),0),e=L.reduce((a,r)=>a+(r.enough||0),0);
+  const bk=L.filter(r=>r.beat!=null),b=bk.reduce((a,r)=>a+r.beat,0),bs=bk.reduce((a,r)=>a+(r.strong||0),0);
+  const trend=bs>0&&b<0.5*bs&&s>1.5*Math.max(l,1);
+  return{strong:s,luck:Math.round(l*10)/10,enough:e,v:e===0?'f':trend?'t':s>=3*Math.max(l,1)?'e':s>1.5*Math.max(l,1)?'w':'n'}}
+const MIV={t:'<span class="mv k">TREND, NOT EDGE</span>',e:'<span class="mv e">BEATS LUCK</span>',w:'<span class="mv w">A FEW MORE THAN LUCK</span>',n:'<span class="mv n">LUCK LEVEL</span>',f:'<span class="mv f">TOO FEW TRADES</span>'};
+G.markets=async sc=>{
+  sc.innerHTML='<div class="loading">Loading the market tests…</div>';
+  try{await mkLoad()}catch(e){sc.innerHTML='<div class="loading">This tab could not load. Reload the page to try again.</div>';return}
+  if(!cur||cur.id!=='markets')return;
+  if(MV.view==null)MV.view=MKT;
+  const bar=$('#bar');bar.innerHTML=`<label>Show</label><span class="seg" id="mvw"></span>`;
+  seg('mvw',[...MKS.map(m=>[m,MKN[m]]),['ALL','Compare all']],MV.view,v=>{MV.view=v;if(v!=='ALL')setMkt(v);paint()});
+  function paint(){const y=sc.scrollTop;sc.innerHTML='<div class="doc">'+(MV.view==='ALL'?compare():one(MV.view))+'</div>';sc.scrollTop=y;wire()}
+  function wire(){
+    seg('mot',[['5m','5m'],['15m','15m'],['1h','1h'],['4H','4H'],['Daily','Daily'],['Weekly','Weekly']],MV.otf,v=>{MV.otf=v;paint()});
+    seg('mom',[['tgt','Takes its target'],['first','Target before the other end'],['way','Closes its way']],MV.om,v=>{MV.om=v;paint()});
+    sc.querySelectorAll('[data-mk]').forEach(b=>b.onclick=()=>{MV.view=b.dataset.mk;setMkt(b.dataset.mk);seg('mvw',[...MKS.map(m=>[m,MKN[m]]),['ALL','Compare all']],MV.view,v=>{MV.view=v;if(v!=='ALL')setMkt(v);paint()});paint()});
+    sc.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
+  }
+  // ── one market ──
+  function one(M){const m=MKD.markets[M],E=MKD.edge;
+    const pass=E.filter(s=>s.m[M].v.startsWith('PASS')),edgeN=pass.filter(s=>s.m[M].v.startsWith('PASS · edge')).length;
+    const alts=E.filter(s=>!s.m[M].v.startsWith('PASS')&&s.m[M].alt&&s.m[M].alt.verdict.startsWith('PASS · edge'));
+    const lost=E.filter(s=>s.m[M].v==='no edge');
+    const o15=mkOdd('15m','BC+',M),o4=mkOdd('4H','BC+',M);
+    let h=`<section class="wide"><h2>${NT(MKN[M])}</h2><p class="lede">${M==='NQ'?'The home market: every MMM test was built on NQ first. Period 1 = NQ 1-minute Dec 2022 – Dec 2025, period 2 = fresh MNQ Dec 2025 – Oct 2026.':`Every MMM test was run again on <b>${NT(MKS2[M])}</b> with the same code and rules as NQ. Two periods: <b>${esc(m.p1)}</b> and <b>${esc(m.p2)}</b>. A result counts only if it holds in both.`}</p>
+    <div class="facts"><div class="fact"><div class="n t">${pass.length} / 18</div><div class="d">EDGE PRO strategies that made money in both periods (tested settings)</div></div>
+    <div class="fact"><div class="n">${M==='NQ'?'10':edgeN}</div><div class="d">${M==='NQ'?'of them are TRADE':'with a t-score of 2 or more'}</div></div>
+    <div class="fact"><div class="n">${esc(m.fix)}</div><div class="d">fixed stop (NQ 50 pts) · cost ${esc(m.cost)} a trade</div></div>
+    <div class="fact"><div class="n">${o15?PCT(o15.tgt):'—'}</div><div class="d">15m BC+: the next candle takes its target (odds, not a trade)</div></div></div>
+    ${M!=='NQ'?`<p class="note" style="margin-top:10px">${esc(m.note)}</p>`:''}</section>`;
+    // what works
+    const ideasOk=MKI?Object.keys(ST_N).map(st=>[st,mkIv(mkIdea(st,M))]).filter(([st,x])=>x&&x.v==='e'):[];
+    const gridOk=['5','15','60','4h'].map(tf=>[tf,mkGrid(M,tf)]).filter(([tf,g])=>g&&g.v.startsWith('real'));
+    h+=`<section class="wide"><h2>What works on ${NT(MKS2[M])}</h2><ul>
+    ${pass.length?pass.map(s=>{const x=s.m[M];return `<li>${NT('<b>'+s.code+'</b>')} <span>${esc(s.name)}</span> ${NT(` · ${esc(MK_TFB(s.tf))} · WR ${PCT(x.wr)} · avg RR ${SGN(x.av)} · t-score ${SGN(x.t,1).replace('+','')}`)} ${mvb(x.v)}</li>`}).join(''):'<li>No EDGE PRO strategy made money in both periods at its tested settings.</li>'}
+    ${alts.map(s=>{const a=s.m[M].alt;return `<li>${NT('<b>'+s.code+'</b>')} <span>with another setting:</span> ${NT(`${esc(a.pairing)} · WR ${PCT(a.wr)} · avg RR ${SGN(a.av)} · t-score ${a.t.toFixed(1)}`)} <span class="mv w">WATCH · FOUND LATER</span></li>`}).join('')}
+    ${gridOk.map(([tf,g])=>`<li>Grid search on <b>${TFN_[tf]}</b>: ${N0(g.t2)} combos with a t-score of 2+ in both periods, luck gives ${g.luck}. <span class="mv e">BEATS LUCK</span></li>`).join('')}
+    ${ideasOk.map(([st,x])=>`<li>${esc(ST_N[st])}: ${x.strong} strong combos, luck gives ${x.luck}. <span class="mv e">BEATS LUCK</span></li>`).join('')}</ul>
+    ${lost.length?`<p class="note"><b>Lost on ${NT(MKS2[M])}</b> (tested settings): ${NT(lost.map(s=>s.code).join(' · '))}.</p>`:''}
+    <p class="adv" style="margin-top:8px"><b>Pick ONE strategy.</b> Research, not advice. Live results are usually worse than a backtest. Start small.</p></section>`;
+    // 18 strategies
+    h+=`<section class="wide"><h2>The 18 MMM EDGE PRO strategies on ${NT(MKS2[M])}</h2><div class="tw"><table class="mkt-t"><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Chart</th><th>Trades</th><th>WR</th><th>avg RR</th><th>PF</th><th>t-score</th><th>Period 1 → 2<small>avg RR</small></th><th class="l">Verdict</th>${M!=='NQ'?'<th>NQ<small>WR · avg RR</small></th>':''}</tr>
+    ${E.map(s=>{const x=s.m[M],q=s.m.NQ;return `<tr class="v-${mvk(x.v)}"><td class="l"><b>${s.code}</b></td><td class="l"><div>${esc(s.name)}</div><div class="mtg">${esc(s.tgt)}</div></td><td class="l">${esc(s.tf)}</td><td>${N0(x.n)}</td><td>${PCT(x.wr)}</td><td class="${PC(x.av)}">${SGN(x.av)}</td><td>${x.pf==null?'—':x.pf.toFixed(2)}</td><td>${x.t==null?'—':x.t.toFixed(1)}</td><td><span class="${PC(x.p1)}">${SGN(x.p1)}</span> → <span class="${PC(x.p2)}">${SGN(x.p2)}</span></td><td class="l">${mvb(x.v)}</td>${M!=='NQ'?`<td class="mu">${PCT(q.wr)} · ${SGN(q.av)}</td>`:''}</tr>`}).join('')}</table></div>
+    <p class="note">Tested settings on every market: ½ out where the strategy uses it, skip 00:00–02:00 where it is on by default. PASS · EDGE = avg RR above +0.05 in both periods (10+ trades each) and a t-score of 2 or more${M==='NQ'?' (on NQ: the TRADE status)':''}. PASS · WATCH = made money in both periods, t-score under 2. WEAK = made money overall, one period flat or lost. Strategy rules: <button type="button" class="lnk" data-go="book">STRATEGY BOOK</button>.</p></section>`;
+    // charts
+    const TFS=[['1m','1m',null,null],['5m','5m','5','5m'],['15m','15m','15','15m'],['1h','1h','60','1h'],['4H','4H','4h','4H'],['Daily','Daily','D','Daily']];
+    h+=`<section class="wide"><h2>Which chart works on ${NT(MKS2[M])}</h2><div class="tw"><table><tr><th class="l">Chart</th><th class="l">EDGE PRO strategies that held</th><th class="l">Grid search<small>every entry × stop × exit</small></th><th>BC+ → takes its target</th></tr>
+    ${TFS.map(([k,n,gk,ok])=>{const L=E.filter(s=>MK_TFB(s.tf)===k&&s.m[M].v.startsWith('PASS'));const g=gk?mkGrid(M,gk):null;const o=ok?mkOdd(ok,'BC+',M):null;
+      return `<tr><td class="l"><b>${n}</b></td><td class="l">${L.length?L.map(s=>`<b>${s.code}</b> ${PCT(s.m[M].wr)}`).join(' · '):'—'}</td><td class="l">${g?`${mkGv(g)} <span class="mu">${N0(g.t2)} vs luck ${g.luck}</span>`:'—'}</td><td>${o?PCT(o.tgt):'—'}</td></tr>`}).join('')}</table></div>
+    <p class="note">Grid search = the full MMM grid (zone, candle, swing, body close, candle types, contraction) with every entry, stop, exit and target. "Luck" = how many combos would pass a t-score of 2 in both periods by chance. 1h and 4H use Jun 2024 – Oct 2026 for all four markets.</p></section>`;
+    // ideas
+    if(MKI){h+=`<section class="wide"><h2>Every idea from VERDICTS, tested on ${NT(MKS2[M])}</h2><div class="tw"><table><tr><th class="l">Idea family</th><th>Combos<small>enough trades</small></th><th>Made money in both</th><th>t-score 2+ in both</th><th>Luck gives</th><th class="l">On ${NT(MKS2[M])}</th>${M!=='NQ'?'<th class="l">On NQ</th>':''}</tr>
+      ${Object.keys(ST_N).map(st=>{const L=mkIdea(st,M);const x=mkIv(L);if(!x)return'';const q=mkIv(mkIdea(st,'NQ'));const pb=L.reduce((a,r)=>a+(r.pass_both||0),0);
+        return `<tr><td class="l">${esc(ST_N[st])}</td><td>${N0(x.enough)}</td><td>${N0(pb)}</td><td>${N0(x.strong)}</td><td>${x.luck}</td><td class="l">${MIV[x.v]}</td>${M!=='NQ'?`<td class="l">${q?MIV[q.v]:'—'}</td>`:''}</tr>`}).join('')}</table></div>
+      <p class="note">Each family = one test page of VERDICTS, with every entry, stop, side, session (all hours or Asia + NY AM) and exit. Made money in both = avg RR above +0.05 in both periods (30+ and 10+ trades). An idea family is real only when the count with a t-score of 2+ in both periods clearly beats luck. TREND, NOT EDGE = the combos that passed were mostly longs in a market that went up the whole time (crude, gold): random entries with the same stop did as well.</p>
+      ${(()=>{const T=(MKI.top||[]).filter(r=>r.mkt===M).slice(0,12);return T.length?`<h3>Strongest combos on ${NT(MKS2[M])}</h3><div class="tw"><table><tr><th class="l">Idea</th><th class="l">Combo</th><th class="l">Side · session · exit</th><th>P1<small>trades · avg RR · t</small></th><th>P2<small>trades · avg RR · t</small></th><th>WR</th></tr>${T.map(r=>`<tr><td class="l">${esc(ST_N[r.study]||r.study)}</td><td class="l mu" translate="no">${esc(r.combo)}</td><td class="l" translate="no">${esc(r.side)} · ${esc(r.session)} · ${esc(r.exit)}</td><td>${N0(r.n1)} · ${SGN(r.av1)} · ${r.t1.toFixed(1)}</td><td>${N0(r.n2)} · ${SGN(r.av2)} · ${r.t2.toFixed(1)}</td><td>${PCT(r.wr)}</td></tr>`).join('')}</table></div><p class="note">Found by scanning thousands of combos: a watch list for a third period, not proven edges.</p>`:''})()}</section>`}
+    // candle odds
+    const TY=['BC+','BC−','C2+','C2−','AFs+','AFs−','S&D+','S&D−','CI+','CI−'];
+    h+=`<section class="wide"><h2>Candle odds on ${NT(MKS2[M])} · what the next candle does</h2><div class="ctl"><span class="lab">Chart</span><span class="seg" id="mot"></span><span class="lab">Read</span><span class="seg" id="mom"></span></div>
+    <div class="tw"><table><tr><th class="l">Candle</th><th>Bull<small>P1 / P2</small></th><th>Bear<small>P1 / P2</small></th><th>Candles</th>${M!=='NQ'?'<th>NQ<small>bull · bear</small></th>':''}</tr>
+    ${TY.map(ty=>{const b=(MKD.odds[MV.otf+'|'+ty+'|bull']||{})[M],e=(MKD.odds[MV.otf+'|'+ty+'|bear']||{})[M];if(!b||!e)return'';const nb=(MKD.odds[MV.otf+'|'+ty+'|bull']||{}).NQ,ne=(MKD.odds[MV.otf+'|'+ty+'|bear']||{}).NQ;
+      const v=x=>MV.om==='tgt'?x.tgt:MV.om==='first'?x.first:x.way,p=x=>MV.om==='tgt'?`${PCT(x.t1)} / ${PCT(x.t2)}`:MV.om==='first'?`${PCT(x.f1)} / ${PCT(x.f2)}`:'';
+      return `<tr><td class="l"><b>${esc(ty)}</b></td><td><b>${PCT(v(b))}</b> <small class="mu">${p(b)}</small></td><td><b>${PCT(v(e))}</b> <small class="mu">${p(e)}</small></td><td>${N0(b.n+e.n)}</td>${M!=='NQ'?`<td class="mu">${nb&&ne?PCT(v(nb))+' · '+PCT(v(ne)):'—'}</td>`:''}</tr>`}).join('')}</table></div>
+    <p class="note">BC = closes past the previous high (bull) or low (bear). C2 = a BC that took the other side first. + = closes in its strong 25% (BC, C2) or strong half (AFs, S&amp;D, CI). Target = the lean-side extreme. "Target before the other end" reads the next candle on smaller bars (not for 1h, daily and weekly). The odds are nearly the same on all four markets: the candle language is universal, the edges are not.</p></section>`;
+    // levels + flow
+    const all=o=>o?(o.ALL||(o.P1&&o.P2?{n:o.P1.n+o.P2.n,ph:(o.P1.ph*o.P1.n+o.P2.ph*o.P2.n)/(o.P1.n+o.P2.n),pl:(o.P1.pl*o.P1.n+o.P2.pl*o.P2.n)/(o.P1.n+o.P2.n),bcs:o.P1.bcs!=null?(o.P1.bcs*o.P1.n+o.P2.bcs*o.P2.n)/(o.P1.n+o.P2.n):null,nbc:o.P1.nbc!=null?(o.P1.nbc*o.P1.n+o.P2.nbc*o.P2.n)/(o.P1.n+o.P2.n):null}:o.P1)):null;
+    const TF6=['5m','15m','1h','4H','Daily','Weekly'];
+    h+=`<section><h2>Previous high / low · PH / PL</h2><div class="tw"><table><tr><th class="l">Chart</th><th>After a BuBC<small>PH / PL</small></th><th>After a BeBC<small>PH / PL</small></th><th>After an NBC<small>PH / PL</small></th></tr>
+    ${TF6.map(tf=>`<tr><td class="l">${tf}</td>${['BuBC','BeBC','NBC'].map(ty=>{const x=all((MKD.phpl[tf+'|'+ty]||{})[M]);return `<td>${x?PCT(x.ph)+' / '+PCT(x.pl):'—'}</td>`}).join('')}</tr>`).join('')}</table></div>
+    <p class="note">PH / PL = the next candle trades above the previous high / below the previous low.</p></section>
+    <section><h2>BC flow · how long a run lasts</h2><div class="tw"><table><tr><th class="l">Chart</th><th>BCs per run<small>bull / bear</small></th><th>NBCs before the flip<small>bull / bear</small></th></tr>
+    ${TF6.map(tf=>{const b=all((MKD.flow[tf+'|bull']||{})[M]),e=all((MKD.flow[tf+'|bear']||{})[M]);return b&&e?`<tr><td class="l">${tf}</td><td>${b.bcs.toFixed(1)} / ${e.bcs.toFixed(1)}</td><td>${b.nbc.toFixed(1)} / ${e.nbc.toFixed(1)}</td></tr>`:''}).join('')}</table></div></section>`;
+    // blocks
+    const BT=[['M5','5m'],['M15','15m'],['H1','1h'],['H4','4H']];
+    h+=`<section class="wide"><h2>Blocks % on ${NT(MKS2[M])} · blocks vs random boxes</h2><div class="tw"><table><tr><th class="l">Chart</th><th>Touches</th><th>Block holds</th><th>Random box holds</th><th>Block gave 1:2</th><th>Random gave 1:2</th><th>Block avg RR<small>1:2, after costs</small></th></tr>
+    ${BT.map(([k,n])=>{const B=((MKD.blocks[k]||{}).BLOCKS||{})[M],R=((MKD.blocks[k]||{})['random box']||{})[M];if(!B||!R)return'';const b=B.ALL,r=R.ALL;return `<tr><td class="l">${n}</td><td>${N0(b.n)}</td><td>${PCT(b.hold)}</td><td>${PCT(r.hold)}</td><td>${PCT(b.g12)}</td><td>${PCT(r.g12)}</td><td class="${PC(b.av)}">${SGN(b.av)}</td></tr>`}).join('')}</table></div>
+    <p class="note">Hold = no candle closes through the box in the 10 candles after the first touch. Gave 1:2 = it reacted (BC or AFs) and the trade (enter at the reaction close, stop at the reaction candle) reached 2R. On every market a random box holds as often as a block: blocks are a read of the market, not an edge.</p></section>`;
+    // NY morning
+    const N=MKD.nyo[M];if(N){const P=['P1','P2','ALL'].filter(k=>N[k]),lab={P1:'Period 1',P2:'Period 2',ALL:'Both'},u=M==='CL'?'':' pts',q=v=>v==null?'—':(M==='CL'?(+v).toFixed(2):M==='NQ'?(+v).toFixed(0):(+v).toFixed(1));
+      const row=(nm,f)=>`<tr><td class="l">${nm}</td>${P.map(k=>`<td>${f(N[k])}</td>`).join('')}</tr>`;const stp=MKD.nyo_stop[M];
+      h+=`<section class="wide"><h2>The NY morning on ${NT(MKS2[M])} · 09:30 to 11:30</h2><div class="tw"><table><tr><th class="l"></th>${P.map(k=>`<th>${lab[k]}</th>`).join('')}</tr>
+      ${row('Days (with 1-minute bars)',x=>N0(x.days)+' ('+N0(x.d1)+')')}${row('Median 09:30–11:30 range',x=>q(x.rng)+u)}${row('High or low already made by 10:00',x=>P0(x.in10))}${row('11:30 closes above 09:30',x=>P0(x.up))}
+      ${row('Closed out of the 09:30–10:00 range by 11:30',x=>x.or?P0(x.or.broke):'—')}${row('… and out of the other side too',x=>x.or?P0(x.or.other):'—')}${row('Run past the first edge, median',x=>x.or?q(x.or.ext)+u:'—')}
+      ${row('15m BC+ at 10:00: next candle takes its target first',x=>{const L=(x.c10||{})['15m']||[];const z=L.find(r=>r.k==='BC+ both');return z&&z.n?P0(z.first)+' <small class="mu">('+z.n+')</small>':'—'})}
+      ${row('1h BC+ at 10:00: next candle takes its target first',x=>{const L=(x.c10||{})['1h']||[];const z=L.find(r=>r.k==='BC+ both');return z&&z.n?P0(z.first)+' <small class="mu">('+z.n+')</small>':'—'})}
+      ${row(`Trade test · first BC after 10:00 on 15m · ${stp}${u} stop · 1:2`,x=>{const t=(x.tt||{})['15m|all'];return t?NT(`${N0(t.n)} · WR ${P0(t.wr)} · <span class="${PC(t.av)}">${SGN(t.av)}</span> · t ${t.t.toFixed(1)}`):'—'})}</table></div>
+      <p class="note">Same rules as the NQ study. Each day uses the finest bars we have for it (15m candles and the range need 5m bars or finer, 5m candles need 1m bars). (n) = days. Under 10 days a number is a guess. Full NQ study: <a href="/backtests/ny-open/">NY open lab</a>.</p></section>`}
+    // data
+    h+=`<section class="wide"><h2>Data and rules for ${NT(MKS2[M])}</h2><ul><li>Period 1: ${esc(m.p1)}. Period 2: ${esc(m.p2)}.</li><li>Fixed stop ${esc(m.fix)} (NQ 50 pts) · cost ${esc(m.cost)} a trade · tick ${esc(m.tick)}. ATR and candle stops size themselves.</li>
+    <li>${M==='NQ'?'NQ 1-minute 2022–25 and MNQ 2026 TradingView / repo data.':'TradingView exports (back-adjustment off, extended hours) plus 1-minute bars where we have them. Raw prices, never mixed with back-adjusted NQ.'}</li>
+    <li>Big and micro contracts trade at the same price, so one test covers both: only the $ per point changes.</li><li>1h / 4H tests: ${esc(MKD.common.h1)}. Daily / weekly: ${esc(MKD.common.d1)}.</li></ul></section>`;
+    return h}
+  // ── compare all four ──
+  function compare(){const E=MKD.edge;
+    let h=`<section class="wide"><h2>Compare the four markets</h2><p class="lede">The same tests on <b>NQ</b>, <b>ES</b>, <b>gold</b> and <b>crude oil</b>. Click a market name to open its page.</p><div class="chips" style="margin-top:8px">${MKS.map(m=>`<button type="button" class="chip" data-mk="${m}">${MKN[m]}</button>`).join('')}</div></section>
+    <section class="wide"><h2>The 18 strategies · WR and avg RR on each market</h2><div class="tw"><table class="mkt-t"><tr><th class="l">Code</th><th class="l">Strategy</th><th class="l">Chart</th>${MKS.map(m=>`<th>${NT(MKS2[m])}<small>WR · avg RR</small></th>`).join('')}</tr>
+    ${E.map(s=>`<tr><td class="l" translate="no"><b>${s.code}</b></td><td class="l"><div>${esc(s.name)}</div></td><td class="l">${esc(s.tf)}</td>${MKS.map(m=>{const x=s.m[m];return `<td class="mvc ${mvk(x.v)}">${NT(x.n?PCT(x.wr)+' · '+SGN(x.av):'—')}<br>${mvb(x.v)}</td>`}).join('')}</tr>`).join('')}
+    <tr><td class="l" colspan="3"><b>Made money in both periods</b></td>${MKS.map(m=>`<td><b>${E.filter(s=>s.m[m].v.startsWith('PASS')).length} / 18</b></td>`).join('')}</tr></table></div>
+    <p class="note">Tested settings. NQ = 2022–25 + 2026 together. On NQ, PASS · EDGE = the TRADE status.</p></section>`;
+    const TFS=[['5m','5','5m'],['15m','15','15m'],['1h','60','1h'],['4H','4h','4H']];
+    h+=`<section class="wide"><h2>Grid search by chart</h2><div class="tw"><table><tr><th class="l">Chart</th>${MKS.map(m=>`<th class="l">${NT(MKS2[m])}<small>t 2+ in both vs luck</small></th>`).join('')}</tr>
+    ${TFS.map(([n,k])=>`<tr><td class="l"><b>${n}</b></td>${MKS.map(m=>{const g=mkGrid(m,k);return `<td class="l">${g?mkGv(g)+` <span class="mu">${N0(g.t2)} vs ${g.luck}</span>`:'—'}</td>`}).join('')}</tr>`).join('')}</table></div>
+    <p class="note">Gold 4H passes thousands of combos, but random entries with the same stops did as well: gold doubled from 2024 to 2026, so anything long made money. That is the trend, not an MMM edge.</p></section>`;
+    if(MKI)h+=`<section class="wide"><h2>Every idea from VERDICTS · four markets</h2><div class="tw"><table><tr><th class="l">Idea family</th>${MKS.map(m=>`<th class="l">${NT(MKS2[m])}<small>t 2+ in both vs luck</small></th>`).join('')}</tr>
+    ${Object.keys(ST_N).map(st=>`<tr><td class="l">${esc(ST_N[st])}</td>${MKS.map(m=>{const x=mkIv(mkIdea(st,m));return `<td class="l">${x?MIV[x.v]+` <span class="mu">${N0(x.strong)} vs ${x.luck}</span>`:'—'}</td>`}).join('')}</tr>`).join('')}</table></div></section>`;
+    const TY=['BC+','BC−','C2+','AFs+','S&D+','CI+'];
+    h+=`<section class="wide"><h2>Candle odds · four markets</h2><div class="ctl"><span class="lab">Chart</span><span class="seg" id="mot"></span><span class="lab">Read</span><span class="seg" id="mom"></span></div>
+    <div class="tw"><table><tr><th class="l">Candle</th>${MKS.map(m=>`<th>${NT(MKS2[m])}<small>bull · bear</small></th>`).join('')}</tr>
+    ${TY.map(ty=>`<tr><td class="l"><b>${esc(ty)}</b></td>${MKS.map(m=>{const b=(MKD.odds[MV.otf+'|'+ty+'|bull']||{})[m],e=(MKD.odds[MV.otf+'|'+ty+'|bear']||{})[m];const v=x=>x?(MV.om==='tgt'?x.tgt:MV.om==='first'?x.first:x.way):null;return `<td>${b&&e?PCT(v(b))+' · '+PCT(v(e)):'—'}</td>`}).join('')}</tr>`).join('')}</table></div>
+    <p class="note">The next candle takes a BC+ target 76–86% of the time on every market and chart. The odds travel; the strategies mostly do not.</p></section>`;
+    h+=`<section class="wide"><h2>The NY morning · four markets</h2><div class="tw"><table><tr><th class="l"></th>${MKS.map(m=>`<th>${NT(MKS2[m])}</th>`).join('')}</tr>
+    ${[['High or low made by 10:00',x=>P0(x.in10)],['11:30 closes above 09:30',x=>P0(x.up)],['Closed out of the 09:30–10:00 range by 11:30',x=>x.or?P0(x.or.broke):'—'],['… and out of the other side too',x=>x.or?P0(x.or.other):'—'],
+      ['15m BC+ at 10:00 → target first',x=>{const z=((x.c10||{})['15m']||[]).find(r=>r.k==='BC+ both');return z&&z.n?P0(z.first)+' <small class="mu">('+z.n+')</small>':'—'}],
+      ['First BC after 10:00 · 15m · 1:2 · avg RR',x=>{const t=(x.tt||{})['15m|all'];return t?NT(`<span class="${PC(t.av)}">${SGN(t.av)}</span> <small class="mu">t ${t.t.toFixed(1)}</small>`):'—'}]].map(([nm,f])=>`<tr><td class="l">${nm}</td>${MKS.map(m=>{const x=(MKD.nyo[m]||{}).ALL;return `<td>${x?f(x):'—'}</td>`}).join('')}</tr>`).join('')}</table></div></section>`;
+    return h}
+  paint();
+};
+
 // ───────────────── tabs, router, 2022–25 grids ─────────────────
 const TABS=[
  {grp:'GUIDE'},
  {id:'start',name:'START HERE',kind:'guide',win:true},
+ {id:'markets',name:'MARKETS · NQ ES GOLD OIL',kind:'guide',win:true},
  {id:'words',name:'MMM WORDS',kind:'guide'},
  {id:'ind',name:'INDICATORS',kind:'guide'},
  {id:'tested',name:'HOW WE TESTED',kind:'guide'},
@@ -1397,7 +1560,8 @@ async function show(id){
   document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.id==='tab-'+t.id));
   const on=document.getElementById('tab-'+t.id);if(on)on.scrollIntoView({block:'nearest',inline:'nearest'});
   const sc=$('#scroll');sc.onscroll=null;sc.scrollTop=0;sc.scrollLeft=0;
-  $('#sub').textContent=t.kind==='guide'?'NQ 1m 2022–25 + fresh MNQ Dec 2025 – Oct 2026 · every number after costs (1 pt a trade)':'2022–25 foundation grid · NQ 1m · 1 pt cost';
+  $('#sub').textContent=t.id==='markets'?'NQ · ES · gold · crude oil · two periods each · every number after costs':t.kind==='guide'?'NQ 1m 2022–25 + fresh MNQ Dec 2025 – Oct 2026 · every number after costs (1 pt a trade)':'2022–25 foundation grid · NQ 1m · 1 pt cost';
+  const mb=$('#mbn');if(mb){const nq=MKT==='NQ'||['markets','book'].includes(t.id);mb.hidden=nq;if(!nq){mb.innerHTML=`You picked <b translate="no">${MKN[MKT]}</b>. This tab shows the NQ / MNQ tests. Results on <span translate="no">${MKS2[MKT]}</span>: <button type="button" data-mgo="1">MARKETS</button> and the <button type="button" data-bgo="1">STRATEGY BOOK</button>.`;mb.querySelector('[data-mgo]').onclick=()=>{MV.view=MKT;show('markets')};mb.querySelector('[data-bgo]').onclick=()=>show('book')}}
   if(t.kind==='guide'){$('#bar').innerHTML='';G[t.id](sc);return}
   if(t.kind==='doc'){$('#bar').innerHTML='';sc.innerHTML=(t.id==='readme'?'<div class="doc">'+allHeads()+'</div>':'')+document.getElementById('doc-'+t.id).innerHTML;return}
   sc.innerHTML='<div class="loading">Loading '+t.name+'…</div>';
