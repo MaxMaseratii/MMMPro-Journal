@@ -14,12 +14,13 @@
     var re = new RegExp('(^|[^A-Za-z])(' + keys.join('|') + ')(?=[^A-Za-z]|$)', 'g');
     return s.replace(re, function (m, a, w) { return a + map[w]; });
   }
-  var STOPLBL = { zone: 'stop past the box', zonefree: 'stop past the box', S50: 'stop 50 pts', S20: 'stop 20 pts', S40: 'stop 40 pts', S35: 'stop 35 pts', ATR: 'stop ATR', afs: 'stop past AFs+ low' };
+  var STOPLBL = { zone: 'stop past the box', zonefree: 'stop past the box', S50: 'stop 50 pts', S20: 'stop 20 pts', S40: 'stop 40 pts', S35: 'stop 35 pts', ATR: 'stop ATR', afs: 'stop past AFs+ low', top50: 'stop: block top − 50' };
 
   /* ---------- builders (long direction, price 0–100) ---------- */
   function addRisk(sc, entryY, entryX, spec, boxLow) {
     var stopY = (spec.stop === 'zone' || spec.stop === 'zonefree' || spec.stop === 'afs') ? boxLow - 1.2 : entryY - (spec.stop === 'S20' ? 7 : spec.stop === 'S35' ? 9 : spec.stop === 'S40' ? 10 : 12);
     if (spec.stop === 'ATR') stopY = entryY - 11;
+    if (spec.stop === 'top50') stopY = boxLow;
     var risk = entryY - stopY;
     sc.lines.push({ y: entryY, x0: entryX, cls: 'entry', label: 'entry' });
     sc.lines.push({ y: stopY, x0: entryX, cls: 'stop', label: STOPLBL[spec.stop] || 'stop' });
@@ -154,13 +155,21 @@
     var sc = { c: [], zones: [], lines: [], marks: [], notes: [] };
     [K(14, 22, 13, 21), K(21, 26, 18, 20), K(20, 27, 19, 26), K(26, 36, 25, 35), K(35, 38, 31, 33), K(33, 39, 32, 37), K(37, 49, 36, 48), K(48, 51, 43, 45), K(45, 50, 44, 47)].forEach(function (k) { sc.c.push(k); });
     sc.c.push(K(47, 61, 46, 60, 'break'));
-    sc.c.push(K(60, 66, 58, 65)); sc.c.push(K(65, 74, 64, 73));
+    if (spec.ent === 'mp') { sc.c.push(K(60, 62, 56.5, 58)); sc.c.push(K(58, 66, 57, 65)); sc.c.push(K(65, 74, 64, 73)); }
+    else { sc.c.push(K(60, 66, 58, 65)); sc.c.push(K(65, 74, 64, 73)); }
     sc.zones.push({ x0: 0.6, x1: 2.6, y0: 18, y1: 27, cls: 'box2', label: 'P1' });
     sc.zones.push({ x0: 3.6, x1: 5.6, y0: 31, y1: 39, cls: 'box2', label: 'P2' });
     sc.zones.push({ x0: 6.6, x1: 9.5, y0: 43, y1: 51, cls: 'box', label: spec.tier === 'P5+' ? 'P5 box' : spec.tier === 'P1+' ? 'any P# box' : 'expander box' });
     sc.marks.push({ x: 9, y: 61, t: 'tag', label: (spec.tier || 'T3+') + ' break: close above the box', side: 1 });
-    sc.marks.push({ x: 9, y: 60, t: 'fill', label: 'enter at its close', side: -1 });
-    addRisk(sc, 60, 9.4, spec, 50);
+    if (spec.ent === 'mp') {
+      var mp = 46 + 0.75 * (61 - 46);
+      sc.lines.push({ y: mp, x0: 9, x1: 10, cls: 'lim', label: '' });
+      sc.marks.push({ x: 10, y: mp, t: 'fill', label: 'buy limit at MP (75% up the candle) fills', side: -1 });
+      addRisk(sc, mp, 10, spec, 50);
+    } else {
+      sc.marks.push({ x: 9, y: 60, t: 'fill', label: 'enter at its close', side: -1 });
+      addRisk(sc, 60, 9.4, spec, 50);
+    }
     if (spec.filt === 'daily') sc.notes.push({ x: 0.2, y: 93, text: 'yesterday’s daily candle: green', f: 1, box: 1, candle: 1 });
     sessBand(sc, spec, 8.5);
     return sc;
@@ -177,6 +186,7 @@
     if (spec.afs) sc.marks.push({ x: 5, y: 63, t: 'tag', label: 'new high, closes back inside c2', side: 1 });
     sc.marks.push({ x: 5, y: e, t: 'fill', label: 'enter at the c3 close', side: -1 });
     addRisk(sc, e, 5.4, spec, 46);
+    if (spec.sx) sc.notes.push({ x: 0, y: 8, text: 'out at the next session open (02:00 · 08:00 · 09:30)' });
     if (spec.filt === 'daily' || spec.filt === 'daily1h') sc.notes.push({ x: 0.2, y: 93, text: spec.filt === 'daily1h' ? 'yesterday green + 1h box trend ↑' : 'yesterday’s daily candle: green', f: 1, box: 1, candle: 1 });
     sessBand(sc, spec, 2.5);
     return sc;
@@ -213,6 +223,12 @@
     [K(20, 30, 19, 29), K(29, 33, 26, 31), K(31, 41, 30, 40), K(40, 44, 37, 42), K(42, 46, 41, 45), K(45, 57, 44, 56, 'T4 break')].forEach(function (k) { sc.c.push(k); });
     sc.c.push(K(56, 60, 52, 54)); sc.c.push(K(54, 55, 45.5, 48)); sc.c.push(K(48, 58, 47, 57)); sc.c.push(K(57, 66, 56, 65));
     sc.zones.push({ x0: 2.6, x1: 99, y0: 37, y1: 46, cls: 'box', label: 'iBlock (T4+)' });
+    if (spec.ent === 'close') {
+      sc.marks.push({ x: 5, y: 57, t: 'tag', label: 'block born', side: 1 });
+      sc.marks.push({ x: 5, y: 56, t: 'fill', label: 'buy the close of that candle', side: -1 });
+      addRisk(sc, 56, 5.4, spec, 46 - 12);
+      return sc;
+    }
     sc.lines.push({ y: 46, x0: 5, x1: 7, cls: 'lim', label: '' });
     sc.marks.push({ x: 5, y: 57, t: 'tag', label: 'block born: place the limit', side: 1 });
     sc.marks.push({ x: 7, y: 46, t: 'fill', label: 'buy limit at the block top (XP) fills', side: -1 });
