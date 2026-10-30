@@ -484,7 +484,7 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
   var CBO = null, MKN = { NQ: 'NQ / MNQ', ES: 'ES / MES', GC: 'Gold GC / MGC', CL: 'Crude CL / MCL' };
   fetch('/backtests/d_cb_odds.json').then(function (r) { return r.json(); }).then(function (j) { CBO = j; cbPaint(false); }).catch(function () {});
   // the four-market file: [n, TGT, TGT first, protected, back to 50% first, BC lean, BC other, NBC, n period 2, TGT p2, TGT first p2] -> the page order
-  function cboRow(m, tf, k) { var r = CBO && CBO[m] && CBO[m][tf] && CBO[m][tf][k.replace('.', '.').replace('−', '-')]; if (!r) return null; return [r[0], r[1], r[2], r[3], r[5], r[6], r[7], r[4], r[8], r[9], r[10]]; }
+  function cboRow(m, tf, k) { var r = CBO && CBO[m] && CBO[m][tf] && CBO[m][tf][k.replace('.', '.').replace('−', '-')]; if (!r) return null; return [r[0], r[1], r[2], r[3], r[5], r[6], r[7], r[4], r[8], r[9], r[10], r[11], r[12]]; }
   var PAIRS = [['above', 'below'], ['high', 'low'], ['top', 'bottom'], ['Buyers', 'Sellers'], ['buyers', 'sellers'], ['Bullish', 'Bearish'], ['bullish', 'bearish'], ['bull', 'bear'], ['BuAF', 'BeAF'], ['Bu', 'Be'], ['bought', 'sold'], ['up', 'down'], ['green', 'red']];
   var SWM = {}; PAIRS.forEach(function (p) { SWM[p[0]] = p[1]; SWM[p[1]] = p[0]; });
   function swapSide(x) { return x.replace(/\b(above|below|high|low|top|bottom|Buyers|Sellers|buyers|sellers|Bullish|Bearish|bullish|bearish|bull|bear|BuAF|BeAF|Bu|Be|bought|sold|up|down|green|red)\b/g, function (w) { return SWM[w]; }); }
@@ -553,6 +553,18 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
     s += '<text x="' + (box ? 138 : x0) + '" y="' + (H - 10) + '" text-anchor="middle" fill="#8f97a1" font-family="Barlow,sans-serif" font-size="12">previous</text><text x="' + x1 + '" y="' + (H - 10) + '" text-anchor="middle" fill="#d9dde3" font-family="Barlow,sans-serif" font-size="12">' + (box ? 'the H4 candle on your 15m chart' : 'this candle') + '</text>';
     return s + '</svg>';
   }
+  // where the order inside the next candle comes from (TGT first, 50% first) on 1h / daily / weekly
+  var OSRC = {
+    '1h': { NQ: 'NQ 1-minute 2022–25 + MNQ 15m / 5m 2026', other: 'TradingView 15m (Dec 2025 – Jul 2026) and 5m (Jul – Oct 2026)' },
+    D: { NQ: 'NQ 1-minute 2022–25 + MNQ 15m 2026', other: 'TradingView 15m, Dec 2025 – Oct 2026' },
+    W: { NQ: 'the daily candles of the next week, 2000–2026', other: 'the daily candles of the next week' }
+  };
+  function orderNote(tf, m, r) {
+    var s = OSRC[tf]; if (!s || r[11] == null) return '';
+    var t = '¹ TGT first and the 50% need the order inside the next candle. They are read from ' + (m === 'NQ' ? s.NQ : s.other) + ': ' + r[11].toLocaleString('en-US') + ' candles. A small bar that hits both sides is skipped. – = fewer than 10.';
+    if (r[10] != null) t += ' Second period: TGT first ' + r[10] + '% (' + r[12].toLocaleString('en-US') + ' candles).';
+    return '<p class="nt">' + t + '</p>';
+  }
   function oddsHTML() {
     var live = CBO && cboRow(oddsMkt, oddsTF, oddsKey(cbKey, cbSide));
     var r = oddsMkt === 'NQ' && !live ? (ODDS[oddsTF] || {})[oddsKey(cbKey, cbSide)] : live;
@@ -563,23 +575,23 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
     var row = function (lab, v, col) { var na = v == null; return '<div class="orow"><span>' + lab + '</span><span class="tr"><i style="width:' + (na ? 0 : v) + '%;background:' + col + '"></i></span><b style="color:' + (na ? '#8f97a1' : col) + '">' + (na ? '–' : v + '%') + '</b></div>'; };
     var htf = oddsTF === 'D' || oddsTF === 'W', hr = oddsTF === '1h' || oddsTF === '4h';
     var nq = oddsMkt === 'NQ', n1 = r[0].toLocaleString('en-US'), n2 = (r[8] || 0).toLocaleString('en-US'), MN = '<span translate="no">' + MKN[oddsMkt] + '</span> ';
-    var chk = (r[9] == null) ? 'too few candles of this type yet.' : '(' + n2 + ' candles): takes the TGT ' + r[9] + '%' + (r[10] == null ? '' : ', TGT first ' + r[10] + '%') + '.';
+    var chk = (r[9] == null) ? 'too few candles of this type yet.' : '(' + n2 + ' candles): takes the TGT ' + r[9] + '%' + (r[10] == null || oddsTF === '1h' || oddsTF === 'D' || oddsTF === 'W' ? '' : ', TGT first ' + r[10] + '%') + '.';
     var note;
-    if (htf) note = MN + (oddsTF === 'D' ? 'daily' : 'weekly') + ' candles, ' + (oddsMkt === 'GC' ? 'Jan 2020' : 'Sep 2000') + ' – Oct 2026 (front month): ' + n1 + ' candles. Second period (' + (oddsMkt === 'GC' ? 'May 2023' : '2013') + ' – Oct 2026) check: ' + chk + ' ¹ TGT first is not read on daily and weekly candles here. The daily and weekly candles frame the trend and the bias for the lower charts. Odds, not signals.';
-    else if (hr) note = MN + oddsTF + ' candles, Jun 2024 – Oct 2026 (1h data): ' + n1 + ' candles. Second period (Aug 2025 – Oct 2026) check: ' + chk + (oddsTF === '1h' ? ' TGT first and the 50% need the order inside the next candle, so they are not read on 1h.' : '') + ' Odds, not signals.';
+    if (htf) note = MN + (oddsTF === 'D' ? 'daily' : 'weekly') + ' candles, ' + (oddsMkt === 'GC' ? 'Jan 2020' : 'Sep 2000') + ' – Oct 2026 (front month): ' + n1 + ' candles. Second period (' + (oddsMkt === 'GC' ? 'May 2023' : '2013') + ' – Oct 2026) check: ' + chk + ' The daily and weekly candles frame the trend and the bias for the lower charts. Odds, not signals.';
+    else if (hr) note = MN + oddsTF + ' candles, Jun 2024 – Oct 2026 (1h data): ' + n1 + ' candles. Second period (Aug 2025 – Oct 2026) check: ' + chk + ' Odds, not signals.';
     else if (nq) note = 'NQ 1-minute data, Dec 2022 – Dec 2025, all sessions: ' + n1 + ' candles. Check on MNQ 2026 ' + chk + ' “+” candles close next to their TGT, so part of the high % is just distance. Odds, not signals.';
     else note = MN + 'TradingView data, Dec 2025 – Oct 2026 (' + oddsTF + ' charts' + (oddsTF === '5m' ? ', days with 5-minute bars or finer' : '') + '): ' + n1 + ' candles. Second period (' + (oddsTF === '5m' ? 'Sep – Oct 2026' : 'Jun – Oct 2026') + ') check: ' + chk + ' Same code and rules as NQ. Odds, not signals.';
     return head +
       '<div class="lab">The next candle…</div>' +
       row('takes the TGT', r[1], '#3ddc97') +
-      row('takes the TGT before the protected end' + (htf ? ' ¹' : ''), r[2], '#3ddc97') +
+      row('takes the TGT before the protected end' + (htf || oddsTF === '1h' ? ' ¹' : ''), r[2], '#3ddc97') +
       row('takes the protected end', r[3], '#ff5c6c') +
-      row('comes back to the 50% before the TGT' + (htf ? ' ¹' : ''), r[7], '#4fd1c5') +
+      row('comes back to the 50% before the TGT' + (htf || oddsTF === '1h' ? ' ¹' : ''), r[7], '#4fd1c5') +
       '<div class="lab" style="margin-top:4px">It closes as…</div>' +
       row('a BC on the lean side', r[4], '#3ddc97') +
       row('a BC on the other side', r[5], '#ff5c6c') +
       row('an NBC (inside)', r[6], '#8f97a1') +
-      '<p class="nt">' + note + '</p></div>';
+      '<p class="nt">' + note + '</p>' + orderNote(oddsTF, oddsMkt, r) + '</div>';
   }
   function wickHTML() {
     var sh = shape(), rg = sh.hi - sh.lo, tw = Math.round((sh.hi - Math.max(sh.o, sh.c)) / rg * 100), bwk = Math.round((Math.min(sh.o, sh.c) - sh.lo) / rg * 100), bd = 100 - tw - bwk;
