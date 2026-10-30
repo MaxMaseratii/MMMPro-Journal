@@ -10,3 +10,12 @@ window.MMM_NAV = [
   ['Gamma & News', '/gamma/'],
   ['Trading Test', '/diagnostic/']
 ];
+
+/* Site analytics (Whop Pixel + tagged Whop links). See /assets/analytics.js. */
+(function () {
+  if (window.__mmmAnalytics || location.pathname.indexOf('/admin') === 0) return;
+  var s = document.createElement('script');
+  s.src = '/assets/analytics.js';
+  s.async = true;
+  (document.head || document.documentElement).appendChild(s);
+})();
