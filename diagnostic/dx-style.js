@@ -20,7 +20,7 @@ DX.STYLE = [
 // ses: am = Asia + NY AM windows · ny = NY morning only · any = every 15m candle · pre = 08:00-09:15 New York
 // every strategy runs in MMM EDGE PRO · ind = the MMM indicator it comes from · mk = markets where it worked
 DX.EDGES = [
-  { code: 'X.M4', name: 'T3+ Break', ind: 'MMM PRO x', t: 'T', wr: 72, av: 0.18, ts: 5.4, maxL: 4, pm: 17, dir: 'both', entry: 'market', exit: 'half', stop: 'atr', ses: 'am', mk: ['NQ', 'ES'] },
+  { code: 'X.M4', name: 'T3+ Break', ind: 'MMM PRO x', t: 'T', wr: 73, av: 0.22, ts: 5.9, maxL: 4, pm: 16, dir: 'both', entry: 'market', exit: 'half', stop: 'atr', ses: 'am', mk: ['NQ', 'ES'] },
   { code: 'C.M3', name: 'GMC Long', ind: 'MMM PRO c', t: 'T', wr: 60, av: 0.08, ts: 4.0, maxL: 10, pm: 54, dir: 'long', entry: 'market', exit: 'half', stop: 'atr', ses: 'am', mk: ['NQ', 'ES'] },
   { code: 'C.M4', name: 'GMC AFs Long', ind: 'MMM PRO c', t: 'T', wr: 50, av: 0.36, ts: 5.3, maxL: 13, pm: 13, dir: 'long', entry: 'market', exit: 'full', stop: 'fixed', ses: 'am', mk: ['NQ', 'ES'] },
   { code: 'X.M5', name: 'Contraction Limit Long', ind: 'MMM PRO x', t: 'W', wr: 63, av: 0.08, ts: 2.3, maxL: 5, pm: 8, dir: 'long', entry: 'limit', exit: 'half', stop: 'fixed', ses: 'am', mk: ['NQ'] },
@@ -28,7 +28,7 @@ DX.EDGES = [
   { code: 'X.M1', name: 'Zone T3+ Break', ind: 'MMM PRO x', t: 'T', wr: 42, av: 0.23, ts: 5.2, maxL: 16, pm: 28, dir: 'both', entry: 'market', exit: 'full', stop: 'atr', ses: 'am', mk: ['NQ'] },
   { code: 'X.M2', name: 'Contraction T3+ Limit', ind: 'MMM PRO x', t: 'W', wr: 43, av: 0.12, ts: 2.9, maxL: 9, pm: 18, dir: 'both', entry: 'limit', exit: 'full', stop: 'fixed', ses: 'am', mk: ['NQ'] },
   { code: 'X.M3', name: '5m iBlock T4+ Long · Birth Close', ind: 'MMM PRO x', t: 'W', wr: 47, av: 0.13, ts: 5.4, maxL: 23, pm: 65, dir: 'long', entry: 'market', exit: 'full', stop: 'fixed', ses: 'any', mk: ['NQ', 'ES'] },
-  { code: 'C.M1', name: 'GMC c3 AFs Against', ind: 'MMM PRO c', t: 'T', wr: 33, av: 0.16, ts: 4.6, maxL: 17, pm: 66, dir: 'both', entry: 'market', exit: 'full', stop: 'atr', ses: 'am', mk: ['NQ', 'GC'] },
+  { code: 'C.M1', name: 'GMC c3 AFs Against', ind: 'MMM PRO c', t: 'T', wr: 34, av: 0.21, ts: 5.0, maxL: 16, pm: 57, dir: 'both', entry: 'market', exit: 'full', stop: 'atr', ses: 'am', mk: ['NQ', 'GC'] },
   { code: 'C.M2', name: 'GMC Long Fixed 50', ind: 'MMM PRO c', t: 'T', wr: 42, av: 0.07, ts: 4.6, maxL: 22, pm: 114, dir: 'long', entry: 'market', exit: 'full', stop: 'fixed', ses: 'am', mk: ['NQ'] },
   { code: 'XCS.M1', name: 'Late Continuation Break P5+', ind: 'MMM PRO XCS (x + c + s)', t: 'T', wr: 40, av: 0.17, ts: 3.9, maxL: 17, pm: 29, dir: 'both', entry: 'market', exit: 'full', stop: 'fixed', ses: 'any', mk: ['NQ'] },
   { code: 'XCS.M2', name: 'Any Continuation Break', ind: 'MMM PRO XCS (x + c + s)', t: 'T', wr: 37, av: 0.05, ts: 3.4, maxL: 27, pm: 190, dir: 'both', entry: 'market', exit: 'full', stop: 'fixed', ses: 'any', mk: ['NQ'] },
