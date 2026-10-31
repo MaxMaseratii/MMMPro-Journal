@@ -3,9 +3,9 @@
  * Page views show in the Whop dashboard under Websites, and visitors are linked to their Whop purchases.
  * Also tags every whop.com link with utm_source=website so Whop shows which site page sent each visit.
  * Loaded on every page by /assets/nav.js (and directly on /live/, /replay/ and /mmm-journal.html).
- * TradingView: a visit counts as TradingView when it arrives with utm_source=tradingview
- * or, untagged, from a tradingview.com referrer. The source is kept for the whole visit,
- * sent to Whop as utm_source=tradingview, and passed on to every whop.com link.
+ * TradingView: a visit counts as TradingView when it arrives with a numbered utm_source
+ * from 100 to 299 (for example 101 or 201), or, untagged, from a tradingview.com referrer
+ * (recorded as 100). The code is kept for the whole visit and passed on to every whop.com link.
  * Skipped on /admin/.
  */
 (function () {
@@ -22,15 +22,17 @@
     var q = new URLSearchParams(location.search);
     var ref = document.referrer || '';
     var fromTV = /(^|\.)tradingview\.com$/i.test((function () { try { return new URL(ref).hostname; } catch (e) { return ''; } })());
-    if ((q.get('utm_source') || '').toLowerCase() === 'tradingview') {
-      tv = { medium: q.get('utm_medium') || 'indicator', campaign: q.get('utm_campaign') || 'tradingview' };
+    var src = (q.get('utm_source') || '').trim();
+    if (/^[12]\d\d$/.test(src)) {
+      tv = { code: src };
     } else if (fromTV && !q.has('utm_source')) {
-      tv = { medium: 'referral', campaign: 'tv_referral' };
-      q.set('utm_source', 'tradingview'); q.set('utm_medium', 'referral'); q.set('utm_campaign', 'tv_referral');
+      tv = { code: '100' };
+      q.set('utm_source', '100');
       history.replaceState(history.state, '', location.pathname + '?' + q.toString() + location.hash);
     }
     if (tv) sessionStorage.setItem('mmm_tv', JSON.stringify(tv));
     else tv = JSON.parse(sessionStorage.getItem('mmm_tv') || 'null');
+    if (tv && !tv.code) tv = null;
   } catch (e) {}
 
   whop.track("page");
@@ -45,10 +47,7 @@
       if (url.hostname !== 'whop.com' && url.hostname !== 'www.whop.com') return;
       if (url.searchParams.has('utm_source')) return;
       if (tv) {
-        url.searchParams.set('utm_source', 'tradingview');
-        url.searchParams.set('utm_medium', tv.medium);
-        url.searchParams.set('utm_campaign', tv.campaign);
-        url.searchParams.set('utm_content', 'site_' + page);
+        url.searchParams.set('utm_source', tv.code);
       } else {
         url.searchParams.set('utm_source', 'website');
         url.searchParams.set('utm_medium', 'site');
