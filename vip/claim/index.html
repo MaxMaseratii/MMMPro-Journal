@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Get your V.I.P code | MMM Trading</title>
+<meta name="description" content="MMM Trading V.I.P sign-up. Private link.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
+<meta name="theme-color" content="#0a0a0a">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  body { background: hsl(0,0%,4%); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .glow { background-image: radial-gradient(circle at 15% 15%, hsla(45,100%,55%,0.16), transparent 42%), radial-gradient(circle at 85% 25%, hsla(180,70%,55%,0.12), transparent 45%); }
+  .card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.1); border-radius: 1rem; }
+  .btn-cta { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; background: linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light)); color: #000; font-weight: 800; border-radius: .75rem; padding: .85rem 1.2rem; transition: filter .15s; }
+  .btn-cta:hover { filter: brightness(1.08); }
+  .btn-cta:disabled { opacity: .6; cursor: wait; }
+  .in { background: #0b0b0b; border: 1px solid rgba(255,255,255,.16); border-radius: .75rem; padding: .9rem 1rem; width: 100%; color: #fff; font: 500 16px/1.2 Inter, system-ui, sans-serif; outline: none; }
+  .in:focus { border-color: var(--mmm-tiffany); }
+  .eyebrow { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--mmm-gold-light); }
+  .timer { font-family: 'JetBrains Mono', monospace; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body class="text-white">
+
+<div id="mmm-header"></div>
+
+<section class="glow" style="background:linear-gradient(135deg,#050505,#0a0a0a 45%,hsl(45,40%,8%));min-height:calc(100vh - 68px)">
+  <div class="max-w-xl mx-auto px-5 sm:px-8 pt-14 pb-20">
+    <div class="text-center">
+      <div class="eyebrow">Private invitation</div>
+      <h1 class="mt-3 text-4xl sm:text-5xl font-extrabold tracking-tight"><span style="background-image:linear-gradient(90deg,var(--mmm-gold),var(--mmm-gold-light));-webkit-background-clip:text;background-clip:text;color:transparent">Get your V.I.P code</span></h1>
+      <p class="mt-4 text-gray-400 leading-relaxed">Max sent you this private link. Type your email and your personal V.I.P code arrives in your inbox.</p>
+    </div>
+
+    <div id="checking" class="card mt-10 p-6 text-center text-gray-400">Checking your link…</div>
+
+    <form id="form" class="card mt-10 p-6 sm:p-8 grid gap-4" autocomplete="on" hidden>
+      <label for="email" class="text-sm font-semibold text-gray-300">Your email</label>
+      <input id="email" class="in" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required maxlength="120">
+      <button id="go" class="btn-cta w-full" type="submit">Send my V.I.P code</button>
+      <p class="text-xs text-gray-500 text-center">This link works for <span id="left" class="timer text-gray-300">15:00</span> more. One code per email.</p>
+      <p id="msg" class="text-sm text-center min-h-[1.25rem]" aria-live="polite"></p>
+    </form>
+
+    <div id="done" class="card mt-10 p-6 sm:p-8 text-center" hidden>
+      <div class="mx-auto h-12 w-12 rounded-full flex items-center justify-center" style="background:hsla(142,76%,36%,.18);border:1px solid hsla(142,76%,45%,.5)">
+        <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="hsl(142,70%,55%)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>
+      </div>
+      <h2 class="mt-4 text-xl font-extrabold">Check your inbox</h2>
+      <p class="mt-2 text-gray-400 leading-relaxed">Your code is on its way to <b id="sentTo" class="text-white"></b>. It can take a minute. Check spam too.</p>
+      <a href="/vip/" class="btn-cta mt-6">Go to the V.I.P area</a>
+    </div>
+
+    <div id="bad" class="card mt-10 p-6 sm:p-8 text-center" hidden>
+      <h2 class="text-xl font-extrabold">This link has expired</h2>
+      <p id="badMsg" class="mt-2 text-gray-400 leading-relaxed">Private links only work for 15 minutes. Ask Max for a new one.</p>
+      <a href="/vip/" class="inline-block mt-5 text-sm font-semibold text-[color:var(--mmm-gold-light)] hover:underline">Already have a code? Enter it here</a>
+    </div>
+  </div>
+</section>
+
+<div id="mmm-footer"></div>
+<script src="/assets/nav.js"></script>
+<script src="/assets/site.js"></script>
+<script src="/i18n.js"></script>
+<script src="/vip/config.js"></script>
+<script src="/vip/vip.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var t = new URLSearchParams(location.search).get('t') || '';
+  // hide the token from the address bar, history and screenshots once read
+  try { history.replaceState(null, '', location.pathname); } catch (e) {}
+  function only(id) { ['checking', 'form', 'done', 'bad'].forEach(function (x) { $(x).hidden = x !== id; }); }
+  function bad(text) { if (text) $('badMsg').textContent = text; only('bad'); }
+  if (!MMMVip.hasApi()) return bad('V.I.P sign-up is not switched on yet. Ask Max for your code.');
+  if (!t) return bad();
+  var timer = null;
+  function countdown(s) {
+    clearInterval(timer);
+    var end = Date.now() + s * 1000;
+    var tick = function () { var l = Math.max(0, Math.round((end - Date.now()) / 1000)); $('left').textContent = Math.floor(l / 60) + ':' + ('0' + l % 60).slice(-2); if (!l) { clearInterval(timer); } };
+    tick(); timer = setInterval(tick, 1000);
+  }
+  MMMVip.checkLink(t).then(function (r) {
+    if (!r || !r.ok) return bad();
+    only('form'); countdown((r.left || 0) + 120); $('email').focus();
+  }).catch(function () { bad('Could not check your link. Check your connection and open it again.'); });
+
+  var ERR = { expired: 'This link has expired. Ask Max for a new one.', email: 'Please type a real email address.', full: 'This link has been used too many times. Ask Max for a new one.', revoked: 'V.I.P access for this email is switched off. Contact Max.' };
+  $('form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var email = $('email').value.trim(), go = $('go'), msg = $('msg');
+    go.disabled = true; go.textContent = 'Sending…'; msg.textContent = ''; msg.className = 'text-sm text-center min-h-[1.25rem]';
+    MMMVip.claim(t, email).then(function (r) {
+      if (r && r.ok) { $('sentTo').textContent = email; only('done'); return; }
+      var err = r && r.error;
+      if (err === 'expired' || err === 'full') return bad(ERR[err]);
+      msg.textContent = ERR[err] || 'Something went wrong. Try again.'; msg.className += ' text-red-400';
+    }).catch(function () {
+      msg.textContent = 'Could not send. Check your connection and try again.'; msg.className += ' text-red-400';
+    }).finally(function () { go.disabled = false; go.textContent = 'Send my V.I.P code'; });
+  });
+})();
+</script>
+</body>
+</html>

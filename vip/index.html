@@ -100,6 +100,7 @@
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 <script src="/i18n.js"></script>
+<script src="/vip/config.js"></script>
 <script src="/vip/vip.js"></script>
 <script>
 (function () {
@@ -107,6 +108,7 @@
   function show(unlocked) { $('gate').hidden = unlocked; $('area').hidden = !unlocked; }
   if (!MMMVip.supported()) { $('nosupport').hidden = false; return; }
   show(MMMVip.hasKey());
+  if (MMMVip.hasKey()) MMMVip.recheck().then(function (ok) { if (!ok) { show(false); $('msg').textContent = 'Your V.I.P access was switched off. Contact Max.'; } });
   $('gateForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var code = $('code').value, go = $('go'), msg = $('msg');

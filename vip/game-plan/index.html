@@ -39,6 +39,7 @@
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 <script src="/i18n.js"></script>
+<script src="/vip/config.js"></script>
 <script src="/vip/vip.js"></script>
 <script>
 (function () {
@@ -46,13 +47,14 @@
   function fail(html) { state.innerHTML = '<div class="box">' + html + '</div>'; }
   if (!MMMVip.supported()) return fail('<p>This browser is too old to open the V.I.P area. Please update Chrome, Safari, Edge or Firefox.</p>');
   if (!MMMVip.hasKey()) { location.replace('/vip/'); return; }
-  MMMVip.open('/vip/game-plan/payload.json').then(function (html) {
+  MMMVip.recheck().then(function (ok) { if (!ok) throw new Error('revoked'); return MMMVip.open('/vip/game-plan/payload.json'); }).then(function (html) {
     if (html == null) { location.replace('/vip/'); return; }
     var doc = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>' + html + '</body></html>';
     frame.src = URL.createObjectURL(new Blob([doc], { type: 'text/html' }));
     frame.onload = function () { state.hidden = true; frame.hidden = false; };
     frame.hidden = false;
-  }).catch(function () {
+  }).catch(function (e) {
+    if (e && e.message === 'revoked') { location.replace('/vip/'); return; }
     fail('<p>The builder could not load. Check your connection and refresh.</p><a class="btn-cta" href="/vip/">Back to V.I.P</a>');
   });
 })();
