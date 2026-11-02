@@ -81,6 +81,25 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
 .note{color:var(--faint);font-size:12.5px;line-height:1.6;margin:18px 0 40px;max-width:90ch}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--gold);color:#111;font-weight:700;font-size:14px;padding:10px 16px;border-radius:6px;z-index:70}
 @media (max-width:1000px){.panels{grid-template-columns:minmax(0,1fr)}}
+.vip{border:1px solid rgba(245,197,24,.45);background:linear-gradient(180deg,rgba(245,197,24,.07),var(--sheet));padding:18px 20px;margin-top:22px}
+.vip h2{font-family:var(--serif);font-size:20px;margin:0 0 4px;color:var(--gold)}
+.vip .sub{color:var(--mute);font-size:13.5px;margin:0 0 14px}
+.vip .mk{display:grid;grid-template-columns:auto auto minmax(160px,1fr) auto;gap:10px;align-items:end}
+@media (max-width:760px){.vip .mk{grid-template-columns:1fr 1fr}}
+.vip label{display:block;font:600 11px var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--mute);margin-bottom:5px}
+.vip select,.vip input{background:var(--paper);color:var(--ink);border:1px solid var(--rule2);border-radius:4px;padding:9px 10px;font:14px var(--sans);width:100%}
+.vip .seg2{display:inline-grid;grid-auto-flow:column;gap:4px}
+.vip .seg2 button{font:600 13px var(--mono);background:var(--paper);color:var(--ink);border:1px solid var(--rule2);border-radius:4px;padding:9px 12px;cursor:pointer}
+.vip .seg2 button[aria-pressed=true]{background:var(--gold);color:#111;border-color:var(--gold)}
+.vip .out{margin-top:14px;border:1px dashed var(--gold);padding:12px;display:grid;gap:8px}
+.vip .out input{font:13px var(--mono)}
+.vip .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.vip .big{font:700 15px var(--mono);color:var(--gold)}
+.vip table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
+.vip td,.vip th{text-align:left;padding:7px 8px;border-bottom:1px solid var(--rule)}
+.vip th{font:600 11px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.vip .tw{overflow-x:auto;margin-top:10px}
+.vip .ok{color:var(--win)}.vip .no{color:var(--loss)}.vip .dim{color:var(--faint)}
 </style>
 </head>
 <body>
@@ -97,6 +116,24 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
       <a class="btn" id="b-sheet" href="#" target="_blank" rel="noopener">Open the Google Sheet</a>
     </div>
   </div>
+  <section class="vip" id="vip" hidden>
+    <h2>V.I.P sign-up links</h2>
+    <p class="sub">Make a fresh private link, send it to your buyer. They type their email and get their own V.I.P code by email. Only you can make links.</p>
+    <div class="mk">
+      <div><label>Link lives</label><div class="seg2" id="vipMin"><button type="button" data-m="5">5 min</button><button type="button" data-m="15" aria-pressed="true">15 min</button><button type="button" data-m="30">30 min</button><button type="button" data-m="60">60 min</button></div></div>
+      <div><label for="vipPeople">People</label><input id="vipPeople" type="number" min="1" max="50" value="1" style="width:90px"></div>
+      <div><label for="vipNote">Who is it for (optional)</label><input id="vipNote" type="text" maxlength="80" placeholder="e.g. Whop buyer John"></div>
+      <div><button class="btn gold" id="vipMake" type="button">Make a fresh link</button></div>
+    </div>
+    <div class="out" id="vipOut" hidden>
+      <input id="vipLink" readonly aria-label="Private link">
+      <div class="row"><button class="btn gold" id="vipCopy" type="button">Copy link</button><span>Works for <span class="big" id="vipLeft">15:00</span> · up to <b id="vipPpl">1</b> people</span></div>
+    </div>
+    <div class="row" style="margin-top:14px"><b>Recent links</b><button class="btn" id="vipRefresh" type="button">Refresh</button><a class="btn" id="vipSheet" href="#" target="_blank" rel="noopener">Open the V.I.P Sheet</a><span class="dim" id="vipQuota"></span></div>
+    <div class="tw"><table><thead><tr><th>Made</th><th>For</th><th>Lives until</th><th>Used</th><th>Status</th></tr></thead><tbody id="vipLinks"></tbody></table></div>
+    <div class="row" style="margin-top:16px"><b>V.I.P codes</b></div>
+    <div class="tw"><table><thead><tr><th>When</th><th>Email</th><th>Code</th><th>For</th><th>Last used</th><th>Status</th><th></th></tr></thead><tbody id="vipCodes"></tbody></table></div>
+  </section>
   <div id="gate"></div>
   <div id="board" hidden>
     <div class="kpis" id="kpis"></div>
@@ -352,6 +389,61 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
   document.addEventListener('click', function (e) { if (e.target.id === 'b-login') window.MMM.openAuth('login'); });
   document.addEventListener('mmm:auth', function (e) { onUser(e.detail); });
   gate('<h2>Loading…</h2><p>Checking who is logged in.</p>');
+})();
+</script>
+<script src="/vip/config.js"></script>
+<script>
+/* V.I.P sign-up links (maxmaserati.com/admin/): only shows when the V.I.P script confirms this log-in is the admin */
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s === undefined || s === null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var USER = null, MIN = 15, timer = null;
+  var API = function () { return (window.MMM_VIP_API || '').trim(); };
+  function post(body) {
+    if (!USER) return Promise.reject(new Error('nouser'));
+    return USER.getIdToken().then(function (tok) { body.idToken = tok;
+      return fetch(API(), { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }).then(function (r) { return r.json(); }); });
+  }
+  var when = function (t) { return t ? new Date(t).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—'; };
+  function draw(j) {
+    $('vip').hidden = false;
+    $('vipSheet').href = j.sheet || '#';
+    $('vipQuota').textContent = j.quota != null ? 'Emails left today: ' + j.quota : '';
+    $('vipLinks').innerHTML = (j.links || []).map(function (l) {
+      var st = l.live ? '<span class="ok">live</span>' : l.used >= l.people ? '<span class="dim">full</span>' : '<span class="dim">expired</span>';
+      return '<tr><td>' + when(l.created) + '</td><td>' + esc(l.note || '—') + '</td><td>' + when(l.expires) + '</td><td>' + l.used + ' / ' + l.people + '</td><td>' + st + '</td></tr>';
+    }).join('') || '<tr><td colspan="5" class="dim">No links yet.</td></tr>';
+    $('vipCodes').innerHTML = (j.codes || []).map(function (c) {
+      var on = c.status === 'active';
+      return '<tr><td>' + when(c.created) + '</td><td>' + esc(c.email) + '</td><td style="font-family:var(--mono)">' + esc(c.code) + '</td><td>' + esc(c.note || '') + '</td><td>' + when(c.lastUsed) + (c.uses ? ' · ' + c.uses + '×' : '') + '</td><td class="' + (on ? 'ok' : 'no') + '">' + (on ? 'active' : 'revoked') + '</td>' +
+        '<td><button class="btn" type="button" data-vcode="' + esc(c.code) + '" data-vto="' + (on ? 'revoked' : 'active') + '">' + (on ? 'Revoke' : 'Restore') + '</button></td></tr>';
+    }).join('') || '<tr><td colspan="7" class="dim">No codes yet.</td></tr>';
+  }
+  function refresh() { return post({ action: 'list' }).then(function (j) { if (j && j.ok) draw(j); else $('vip').hidden = true; }).catch(function () {}); }
+  function countdown(end) {
+    clearInterval(timer);
+    var tick = function () { var l = Math.max(0, Math.round((end - Date.now()) / 1000)); $('vipLeft').textContent = Math.floor(l / 60) + ':' + ('0' + l % 60).slice(-2); if (!l) { clearInterval(timer); $('vipLeft').textContent = 'expired'; refresh(); } };
+    tick(); timer = setInterval(tick, 1000);
+  }
+  $('vipMin').addEventListener('click', function (e) { var b = e.target.closest('button[data-m]'); if (!b) return; MIN = +b.dataset.m; [].forEach.call($('vipMin').children, function (x) { x.setAttribute('aria-pressed', x === b); }); });
+  $('vipMake').addEventListener('click', function () {
+    var btn = $('vipMake'); btn.disabled = true; btn.textContent = 'Making…';
+    post({ action: 'newLink', minutes: MIN, people: +$('vipPeople').value || 1, note: $('vipNote').value }).then(function (j) {
+      if (!j || !j.ok) { alertish('Could not make a link: ' + ((j && j.error) || 'error')); return; }
+      $('vipOut').hidden = false; $('vipLink').value = j.link; $('vipPpl').textContent = j.people; $('vipNote').value = '';
+      countdown(j.expires); refresh();
+    }).catch(function () { alertish('Could not reach the V.I.P script.'); }).finally(function () { btn.disabled = false; btn.textContent = 'Make a fresh link'; });
+  });
+  $('vipCopy').addEventListener('click', function () {
+    var v = $('vipLink').value; navigator.clipboard.writeText(v).then(function () { $('vipCopy').textContent = 'Copied'; setTimeout(function () { $('vipCopy').textContent = 'Copy link'; }, 1500); }, function () { $('vipLink').select(); });
+  });
+  $('vipRefresh').addEventListener('click', refresh);
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-vcode]'); if (!b) return;
+    b.disabled = true; post({ action: 'setStatus', code: b.dataset.vcode, status: b.dataset.vto }).then(refresh).catch(function () { b.disabled = false; });
+  });
+  function alertish(t) { var el = document.createElement('div'); el.className = 'toast'; el.textContent = t; document.body.appendChild(el); setTimeout(function () { el.remove(); }, 3000); }
+  document.addEventListener('mmm:auth', function (e) { USER = e.detail || null; if (!USER || !API()) { $('vip').hidden = true; return; } refresh(); });
 })();
 </script>
 <script src="/assets/nav.js"></script>
