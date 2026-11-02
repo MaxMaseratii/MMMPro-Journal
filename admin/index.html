@@ -418,8 +418,18 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
         '<td><button class="btn" type="button" data-vcode="' + esc(c.code) + '" data-vto="' + (on ? 'revoked' : 'active') + '">' + (on ? 'Revoke' : 'Restore') + '</button></td></tr>';
     }).join('') || '<tr><td colspan="7" class="dim">No codes yet.</td></tr>';
   }
+  // codes made with an old key (from an earlier V.I.P build) get the key that opens the tools now
+  var repaired = false;
+  function repair(t) {
+    if (repaired || !MMMVip.hasKey()) return Promise.resolve(t);
+    return V.repair(t).then(function (r) {
+      if (r.ok) { repaired = true; if (r.fixed) toast('Fixed ' + r.fixed + ' V.I.P code' + (r.fixed > 1 ? 's' : '') + ': they open the builder now.'); }
+      else if (r.error === 'oldkey') { MMMVip.lock(); keyRow(); toast('This device had an old V.I.P key. Unlock again with your master code.'); }
+      return t;
+    }).catch(function () { return t; });
+  }
   function refresh() {
-    return tok().then(function (t) { return V.list(t); }).then(draw).catch(function (e) {
+    return tok().then(repair).then(function (t) { return V.list(t); }).then(draw).catch(function (e) {
       if (e && e.message === 'notadmin') { $('vip').hidden = true; return; }
       $('vip').hidden = false; keyRow(); $('vipErr').textContent = 'Could not load the V.I.P list. If this is the first time, add the V.I.P rules in Firebase (see the setup guide).';
     });
@@ -432,7 +442,7 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
   $('vipMin').addEventListener('click', function (e) { var b = e.target.closest('button[data-m]'); if (!b) return; MIN = +b.dataset.m; [].forEach.call($('vipMin').children, function (x) { x.setAttribute('aria-pressed', x === b); }); });
   $('vipMasterGo').addEventListener('click', function () {
     var b = $('vipMasterGo'); b.disabled = true; $('vipMasterMsg').textContent = 'Checking…';
-    MMMVip.unlock($('vipMaster').value).then(function (ok) { $('vipMasterMsg').textContent = ok ? '' : 'That code did not work.'; if (ok) { $('vipMaster').value = ''; keyRow(); } })
+    MMMVip.unlock($('vipMaster').value).then(function (ok) { ok = ok === true; $('vipMasterMsg').textContent = ok ? '' : 'That code did not work.'; if (ok) { $('vipMaster').value = ''; keyRow(); repaired = false; refresh(); } })
       .catch(function () { $('vipMasterMsg').textContent = 'No connection.'; }).finally(function () { b.disabled = false; });
   });
   $('vipMake').addEventListener('click', function () {
@@ -440,7 +450,7 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
     var btn = $('vipMake'); btn.disabled = true; btn.textContent = 'Making…';
     var people = Math.max(1, Math.min(50, Math.round(+$('vipPeople').value || 1)));
     tok().then(function (t) { return V.newLink(t, MIN, people, $('vipNote').value, USER.email); }).then(function (j) {
-      if (!j.ok) { toast(j.error === 'nokey' ? 'Unlock V.I.P on this device first.' : j.error === 'notadmin' ? 'Only the admin login can make links.' : 'Could not make a link.'); keyRow(); return; }
+      if (!j.ok) { toast(j.error === 'nokey' ? 'Unlock V.I.P on this device first.' : j.error === 'oldkey' ? 'This device had an old V.I.P key. Unlock again with your master code, then make the link.' : j.error === 'notadmin' ? 'Only the admin login can make links.' : 'Could not make a link.'); keyRow(); return; }
       $('vipOut').hidden = false; $('vipLink').value = j.link; $('vipPpl').textContent = j.people; $('vipNote').value = '';
       countdown(j.expires); refresh();
     }).catch(function () { toast('Could not reach Firebase.'); }).finally(function () { btn.disabled = false; btn.textContent = 'Make a fresh link'; });
