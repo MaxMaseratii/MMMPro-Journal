@@ -25,7 +25,8 @@
     ['Backtests', '/backtests/'],
     ['Free MMM Mastery Course', '/journal/?course=1'],
     ['Gamma & News', '/gamma/'],
-    ['Trading Test', '/diagnostic/']
+    ['Trading Test', '/diagnostic/'],
+    ['V.I.P', '/vip/']
   ];
   // Max's channels (handle @MaxMaserati)
   var SOCIAL = [
@@ -72,9 +73,11 @@
   /* ---------- header ---------- */
   function headerHTML() {
     var links = NAV.map(function (n) {
+      if (n[1] === '/vip/') return '<a href="/vip/" class="vip-link transition font-extrabold px-3 py-1.5 rounded-lg bg-black border hover:bg-gray-900 whitespace-nowrap" style="color:var(--mmm-gold);border-color:' + (here(n[1]) ? 'var(--mmm-tiffany)' : '#000') + '"' + (here(n[1]) ? ' aria-current="page"' : '') + '>' + '<svg viewBox="0 0 24 24" class="inline-block h-3.5 w-3.5 mr-1 -mt-0.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>' + n[0] + '</a>';
       return '<a href="' + n[1] + '" class="hover:text-black transition' + (here(n[1]) ? ' active' : '') + '">' + n[0] + '</a>';
     }).join('');
     var mlinks = NAV.map(function (n) {
+      if (n[1] === '/vip/') return '<a href="/vip/" class="block px-2 py-2.5 rounded-lg hover:bg-white/5 text-[color:var(--mmm-gold)] font-extrabold">' + '<svg viewBox="0 0 24 24" class="inline-block h-3.5 w-3.5 mr-1 -mt-0.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>' + n[0] + '</a>';
       return '<a href="' + n[1] + '" class="block px-2 py-2.5 rounded-lg hover:bg-white/5">' + n[0] + '</a>';
     }).join('');
     return '' +

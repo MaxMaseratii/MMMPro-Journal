@@ -8,7 +8,8 @@ window.MMM_NAV = [
   ['Backtests', '/backtests/'],
   ['Free MMM Mastery Course', '/journal/?course=1'],
   ['Gamma & News', '/gamma/'],
-  ['Trading Test', '/diagnostic/']
+  ['Trading Test', '/diagnostic/'],
+  ['V.I.P', '/vip/']
 ];
 
 /* Site analytics (Whop Pixel + tagged Whop links). See /assets/analytics.js. */

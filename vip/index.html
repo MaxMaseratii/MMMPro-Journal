@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>V.I.P Area | MMM Trading</title>
+<meta name="description" content="The MMM Trading V.I.P area: members-only tools, opened with your personal access code.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
+<meta name="theme-color" content="#0a0a0a">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  body { background: hsl(0,0%,4%); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .num { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+  .glow { background-image: radial-gradient(circle at 15% 15%, hsla(45,100%,55%,0.16), transparent 42%), radial-gradient(circle at 85% 25%, hsla(180,70%,55%,0.12), transparent 45%); }
+  .card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.1); border-radius: 1rem; }
+  .btn-cta { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; background: linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light)); color: #000; font-weight: 800; border-radius: .75rem; padding: .85rem 1.2rem; transition: filter .15s; }
+  .btn-cta:hover { filter: brightness(1.08); }
+  .btn-cta:disabled { opacity: .6; cursor: wait; }
+  .btn-out { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border: 1px solid rgba(255,255,255,.22); color: #fff; font-weight: 700; border-radius: .75rem; padding: .75rem 1.1rem; transition: border-color .15s, background .15s; }
+  .btn-out:hover { border-color: hsla(45,100%,55%,.55); background: rgba(255,255,255,.04); }
+  .code-in { background: #0b0b0b; border: 1px solid rgba(255,255,255,.16); border-radius: .75rem; padding: .9rem 1rem; width: 100%; color: #fff; font: 600 18px/1.2 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; text-align: center; outline: none; }
+  .code-in:focus { border-color: var(--mmm-tiffany); }
+  .eyebrow { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--mmm-gold-light); }
+  .tool { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+  .tool:hover { transform: translateY(-3px); border-color: hsla(45,100%,55%,.45); box-shadow: 0 10px 40px -12px hsla(45,100%,55%,.3); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body class="text-white">
+
+<div id="mmm-header"></div>
+
+<section class="glow" style="background:linear-gradient(135deg,#050505,#0a0a0a 45%,hsl(45,40%,8%));">
+  <div class="max-w-5xl mx-auto px-5 sm:px-8 pt-14 pb-16 sm:pt-20 sm:pb-20">
+    <div class="text-center">
+      <div class="inline-flex items-center gap-2 rounded-full border border-[color:var(--mmm-gold)]/40 px-3 py-1 eyebrow">
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        Members only
+      </div>
+      <h1 class="mt-5 text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.05]"><span style="background-image:linear-gradient(90deg,var(--mmm-gold),var(--mmm-gold-light));-webkit-background-clip:text;background-clip:text;color:transparent">MMM V.I.P</span></h1>
+      <p class="mt-4 text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">The tools Max uses to plan every prop account. Built on every tested EDGE PRO trade. Open them with your access code.</p>
+    </div>
+
+    <!-- gate -->
+    <div id="gate" class="card max-w-md mx-auto mt-10 p-6 sm:p-8" hidden>
+      <form id="gateForm" autocomplete="off" class="grid gap-4">
+        <label for="code" class="text-sm font-semibold text-gray-300 text-center">Enter your V.I.P access code</label>
+        <input id="code" class="code-in" type="text" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="MMM-XXXX-XXXX" required>
+        <button id="go" class="btn-cta w-full" type="submit">Unlock V.I.P</button>
+        <p id="msg" class="text-sm text-center min-h-[1.25rem]" aria-live="polite"></p>
+      </form>
+      <div class="mt-5 pt-5 border-t border-white/10 text-center text-sm text-gray-400">
+        No code yet? <a href="/whop/" class="font-semibold text-[color:var(--mmm-gold-light)] hover:underline">Get V.I.P access</a>
+      </div>
+    </div>
+
+    <div id="nosupport" class="card max-w-md mx-auto mt-10 p-6 text-center text-gray-300" hidden>
+      This browser is too old to open the V.I.P area. Please update Chrome, Safari, Edge or Firefox.
+    </div>
+
+    <!-- unlocked -->
+    <div id="area" class="mt-12" hidden>
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div><div class="eyebrow">Unlocked on this device</div><h2 class="text-2xl font-extrabold mt-1">Your V.I.P tools</h2></div>
+        <button id="lockBtn" class="btn-out text-sm" type="button">
+          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          Lock this device
+        </button>
+      </div>
+      <div class="grid gap-5 md:grid-cols-2">
+        <a href="/vip/game-plan/" class="tool card block p-6 sm:p-7">
+          <div class="flex items-start justify-between gap-4">
+            <div class="h-12 w-12 rounded-xl flex items-center justify-center" style="background:hsla(45,100%,55%,.12);border:1px solid hsla(45,100%,55%,.35)">
+              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="var(--mmm-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>
+            </div>
+            <span class="eyebrow" style="color:var(--mmm-tiffany-light)">New</span>
+          </div>
+          <h3 class="mt-5 text-xl font-extrabold">MMM Game Plan Builder</h3>
+          <p class="mt-2 text-gray-400 leading-relaxed">Type your prop account's real rules and your hours. It tests them on every EDGE PRO trade, picks a safe risk size and builds your full plan: contracts, daily limits, what to trade and when, kill switch.</p>
+          <span class="mt-5 inline-flex items-center gap-1.5 font-bold text-[color:var(--mmm-gold-light)]">Open the builder
+            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <div class="card p-6 sm:p-7 flex flex-col justify-center border-dashed">
+          <div class="eyebrow">Coming next</div>
+          <h3 class="mt-2 text-lg font-bold text-gray-200">More V.I.P tools</h3>
+          <p class="mt-2 text-gray-500 leading-relaxed">New members-only tools land here first. Your code opens them all.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="mmm-footer"></div>
+<script src="/assets/nav.js"></script>
+<script src="/assets/site.js"></script>
+<script src="/i18n.js"></script>
+<script src="/vip/vip.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function show(unlocked) { $('gate').hidden = unlocked; $('area').hidden = !unlocked; }
+  if (!MMMVip.supported()) { $('nosupport').hidden = false; return; }
+  show(MMMVip.hasKey());
+  $('gateForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var code = $('code').value, go = $('go'), msg = $('msg');
+    go.disabled = true; go.textContent = 'Checking…'; msg.textContent = ''; msg.className = 'text-sm text-center min-h-[1.25rem]';
+    MMMVip.unlock(code).then(function (ok) {
+      if (ok) { show(true); $('code').value = ''; }
+      else { msg.textContent = 'That code did not work. Check it and try again.'; msg.className += ' text-red-400'; }
+    }).catch(function () {
+      msg.textContent = 'Could not reach the V.I.P area. Check your connection and try again.'; msg.className += ' text-red-400';
+    }).finally(function () { go.disabled = false; go.textContent = 'Unlock V.I.P'; });
+  });
+  $('lockBtn').addEventListener('click', function () { MMMVip.lock(); show(false); $('code').focus(); });
+})();
+</script>
+</body>
+</html>
