@@ -64,14 +64,6 @@
       This browser is too old to open the V.I.P area. Please update Chrome, Safari, Edge or Firefox.
     </div>
 
-    <!-- one-time Google setup helper: /vip/?setup=1 after unlocking with your master code -->
-    <div id="setupBox" class="card max-w-xl mx-auto mt-10 p-6" hidden>
-      <div class="eyebrow">One-time setup · for Max</div>
-      <p class="mt-2 text-gray-300 text-sm leading-relaxed">Copy this key into Google Apps Script → Project Settings → Script properties → <b>VIP_CONTENT_KEY</b>. Every unlocked device already holds this key, so it gives nothing new to a member, but keep it off screens and streams.</p>
-      <button id="copyKey" class="btn-cta mt-4" type="button">Copy key for Google setup</button>
-      <span id="copyMsg" class="ml-3 text-sm text-gray-400" aria-live="polite"></span>
-    </div>
-
     <!-- unlocked -->
     <div id="area" class="mt-12" hidden>
       <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
@@ -108,7 +100,6 @@
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 <script src="/i18n.js"></script>
-<script src="/vip/config.js"></script>
 <script src="/vip/vip.js"></script>
 <script>
 (function () {
@@ -116,7 +107,7 @@
   function show(unlocked) { $('gate').hidden = unlocked; $('area').hidden = !unlocked; }
   if (!MMMVip.supported()) { $('nosupport').hidden = false; return; }
   show(MMMVip.hasKey());
-  if (MMMVip.hasKey()) MMMVip.recheck().then(function (ok) { if (!ok) { show(false); $('msg').textContent = 'Your V.I.P access was switched off. Contact Max.'; } });
+  if (MMMVip.hasKey()) MMMVip.recheck().then(function (ok) { if (!ok) { show(false); $('msg').textContent = 'Your V.I.P access was switched off. Contact Max.'; $('msg').className += ' text-red-400'; } });
   $('gateForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var code = $('code').value, go = $('go'), msg = $('msg');
@@ -127,14 +118,6 @@
     }).catch(function () {
       msg.textContent = 'Could not reach the V.I.P area. Check your connection and try again.'; msg.className += ' text-red-400';
     }).finally(function () { go.disabled = false; go.textContent = 'Unlock V.I.P'; });
-  });
-  var wantSetup = new URLSearchParams(location.search).has('setup');
-  function setupBox() { $('setupBox').hidden = !(wantSetup && MMMVip.hasKey()); }
-  setupBox(); new MutationObserver(setupBox).observe($('area'), { attributes: true });
-  $('copyKey').addEventListener('click', function () {
-    var k = ''; try { k = localStorage.getItem('mmmVipKey') || sessionStorage.getItem('mmmVipKey') || ''; } catch (e) {}
-    if (!k) { $('copyMsg').textContent = 'Unlock with your master code first.'; return; }
-    navigator.clipboard.writeText(k).then(function () { $('copyMsg').textContent = 'Copied. Paste it in Script properties.'; }, function () { $('copyMsg').textContent = 'Copy blocked by the browser: try again.'; });
   });
   $('lockBtn').addEventListener('click', function () { MMMVip.lock(); show(false); $('code').focus(); });
 })();

@@ -1,0 +1,39 @@
+    // ===================== MMM V.I.P (paste this block INSIDE: match /databases/{database}/documents { ... }) =====================
+    // vipLinks/{token}  private sign-up links made by Max on maxmaserati.com/admin/ (expiry + number of people)
+    // vipCodes/{code}   one code per person; status "active" or "revoked"
+    // vipEmails/{email} one code per email
+    function vipAdmin() {
+      return request.auth != null && request.auth.token.email == 'infotrade@maxmaserati.com' && request.auth.token.email_verified == true;
+    }
+    function vipLinkPath(t) { return /databases/$(database)/documents/vipLinks/$(t); }
+    function vipClaimOk(c, d) {
+      let L = get(vipLinkPath(d.link)).data;
+      return c.size() >= 15 && c.size() <= 24
+        && d.keys().hasOnly(['email', 'link', 'key', 'status', 'created', 'note'])
+        && d.status == 'active' && d.email is string && d.email.size() >= 6 && d.email.size() <= 120
+        && d.created == request.time
+        && L.expires > request.time && L.used < L.max
+        && d.key == L.key && d.note == L.note
+        && getAfter(vipLinkPath(d.link)).data.used == L.used + 1
+        && getAfter(/databases/$(database)/documents/vipEmails/$(d.email)).data.code == c;
+    }
+    match /vipLinks/{t} {
+      allow get: if vipAdmin() || resource.data.expires > request.time;
+      allow list, create, delete: if vipAdmin();
+      // a claim adds exactly 1 to "used", only while the link is live and not full
+      allow update: if vipAdmin() || (
+        resource.data.expires > request.time && resource.data.used < resource.data.max
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['used'])
+        && request.resource.data.used == resource.data.used + 1);
+    }
+    match /vipCodes/{c} {
+      allow get: if vipAdmin() || resource.data.status == 'active';
+      allow list, update, delete: if vipAdmin();
+      allow create: if vipAdmin() || vipClaimOk(c, request.resource.data);
+    }
+    match /vipEmails/{e} {
+      allow get, list, update, delete: if vipAdmin();
+      allow create: if request.resource.data.keys().hasOnly(['code'])
+        && getAfter(/databases/$(database)/documents/vipCodes/$(request.resource.data.code)).data.email == e;
+    }
+    // ===================== end MMM V.I.P =====================

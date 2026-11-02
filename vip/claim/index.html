@@ -38,7 +38,7 @@
     <div class="text-center">
       <div class="eyebrow">Private invitation</div>
       <h1 class="mt-3 text-4xl sm:text-5xl font-extrabold tracking-tight"><span style="background-image:linear-gradient(90deg,var(--mmm-gold),var(--mmm-gold-light));-webkit-background-clip:text;background-clip:text;color:transparent">Get your V.I.P code</span></h1>
-      <p class="mt-4 text-gray-400 leading-relaxed">Max sent you this private link. Type your email and your personal V.I.P code arrives in your inbox.</p>
+      <p class="mt-4 text-gray-400 leading-relaxed">Max sent you this private link. Type your email and get your personal V.I.P code.</p>
     </div>
 
     <div id="checking" class="card mt-10 p-6 text-center text-gray-400">Checking your link…</div>
@@ -46,7 +46,7 @@
     <form id="form" class="card mt-10 p-6 sm:p-8 grid gap-4" autocomplete="on" hidden>
       <label for="email" class="text-sm font-semibold text-gray-300">Your email</label>
       <input id="email" class="in" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" required maxlength="120">
-      <button id="go" class="btn-cta w-full" type="submit">Send my V.I.P code</button>
+      <button id="go" class="btn-cta w-full" type="submit">Get my V.I.P code</button>
       <p class="text-xs text-gray-500 text-center">This link works for <span id="left" class="timer text-gray-300">--:--</span> more. One code per email.</p>
       <p id="msg" class="text-sm text-center min-h-[1.25rem]" aria-live="polite"></p>
     </form>
@@ -55,9 +55,12 @@
       <div class="mx-auto h-12 w-12 rounded-full flex items-center justify-center" style="background:hsla(142,76%,36%,.18);border:1px solid hsla(142,76%,45%,.5)">
         <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="hsl(142,70%,55%)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>
       </div>
-      <h2 class="mt-4 text-xl font-extrabold">Check your inbox</h2>
-      <p class="mt-2 text-gray-400 leading-relaxed">Your code is on its way to <b id="sentTo" class="text-white"></b>. It can take a minute. Check spam too.</p>
-      <a href="/vip/" class="btn-cta mt-6">Go to the V.I.P area</a>
+      <h2 class="mt-4 text-xl font-extrabold">Welcome to V.I.P</h2>
+      <p class="mt-2 text-gray-400">Your personal code:</p>
+      <p id="theCode" class="mt-3 select-all rounded-xl border px-4 py-4 text-2xl font-bold tracking-[.18em]" style="font-family:'JetBrains Mono',monospace;border-color:var(--mmm-gold);color:var(--mmm-gold-light);background:#000"></p>
+      <button id="copyCode" class="btn-cta mt-4" type="button">Copy my code</button>
+      <p class="mt-4 text-sm text-gray-400 leading-relaxed">Save it somewhere safe (notes or password manager). This device is already unlocked. Use the code on your other devices. It is for you only: shared codes get switched off.</p>
+      <a href="/vip/" class="inline-block mt-5 font-semibold text-[color:var(--mmm-gold-light)] hover:underline">Open the V.I.P area →</a>
     </div>
 
     <div id="bad" class="card mt-10 p-6 sm:p-8 text-center" hidden>
@@ -72,7 +75,6 @@
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 <script src="/i18n.js"></script>
-<script src="/vip/config.js"></script>
 <script src="/vip/vip.js"></script>
 <script>
 (function () {
@@ -82,34 +84,38 @@
   try { history.replaceState(null, '', location.pathname); } catch (e) {}
   function only(id) { ['checking', 'form', 'done', 'bad'].forEach(function (x) { $(x).hidden = x !== id; }); }
   function bad(text, title) { if (text) $('badMsg').textContent = text; $('bad').querySelector('h2').textContent = title || 'This link has expired'; only('bad'); }
-  if (!MMMVip.hasApi()) return bad('V.I.P sign-up is not switched on yet. Ask Max for your code.');
+  var FULL = ['Every place on this link was taken. Ask Max for a new one.', 'This link is full'];
+  if (!MMMVip.supported()) return bad('This browser is too old. Please update Chrome, Safari, Edge or Firefox.', 'Browser too old');
   if (!t) return bad();
   var timer = null;
   function countdown(s) {
     clearInterval(timer);
     var end = Date.now() + s * 1000;
-    var tick = function () { var l = Math.max(0, Math.round((end - Date.now()) / 1000)); $('left').textContent = Math.floor(l / 60) + ':' + ('0' + l % 60).slice(-2); if (!l) { clearInterval(timer); } };
+    var tick = function () { var l = Math.max(0, Math.round((end - Date.now()) / 1000)); $('left').textContent = Math.floor(l / 60) + ':' + ('0' + l % 60).slice(-2); if (!l) clearInterval(timer); };
     tick(); timer = setInterval(tick, 1000);
   }
   MMMVip.checkLink(t).then(function (r) {
-    if (!r || !r.ok) return r && r.reason === 'full' ? bad('Every place on this link was taken. Ask Max for a new one.', 'This link is full') : bad();
-    only('form'); countdown(r.left || 0); $('email').focus();
-  }).catch(function () { bad('Could not check your link. Check your connection and open it again.'); });
+    if (!r.ok) return r.reason === 'full' ? bad(FULL[0], FULL[1]) : bad();
+    only('form'); countdown(r.left); $('email').focus();
+  }).catch(function () { bad('Could not check your link. Check your connection and open it again.', 'No connection'); });
 
-  var ERR = { expired: 'This link has expired. Ask Max for a new one.', email: 'Please type a real email address.', full: 'This link is full: every place was taken. Ask Max for a new one.', revoked: 'V.I.P access for this email is switched off. Contact Max.' };
+  var ERR = { email: 'Please type a real email address.', taken: 'This email already has a V.I.P code. Use the code you saved, or ask Max.' };
   $('form').addEventListener('submit', function (e) {
     e.preventDefault();
     var email = $('email').value.trim(), go = $('go'), msg = $('msg');
-    go.disabled = true; go.textContent = 'Sending…'; msg.textContent = ''; msg.className = 'text-sm text-center min-h-[1.25rem]';
+    go.disabled = true; go.textContent = 'Getting your code…'; msg.textContent = ''; msg.className = 'text-sm text-center min-h-[1.25rem]';
     MMMVip.claim(t, email).then(function (r) {
-      if (r && r.ok) { $('sentTo').textContent = email; only('done'); return; }
-      var err = r && r.error;
-      if (err === 'expired') return bad(ERR.expired);
-      if (err === 'full') return bad(ERR.full, 'This link is full');
-      msg.textContent = ERR[err] || 'Something went wrong. Try again.'; msg.className += ' text-red-400';
+      if (r.ok) { $('theCode').textContent = r.code; only('done'); return; }
+      if (r.error === 'expired') return bad();
+      if (r.error === 'full') return bad(FULL[0], FULL[1]);
+      msg.textContent = ERR[r.error] || 'Something went wrong. Try again.'; msg.className += ' text-red-400';
     }).catch(function () {
-      msg.textContent = 'Could not send. Check your connection and try again.'; msg.className += ' text-red-400';
-    }).finally(function () { go.disabled = false; go.textContent = 'Send my V.I.P code'; });
+      msg.textContent = 'Could not connect. Check your connection and try again.'; msg.className += ' text-red-400';
+    }).finally(function () { go.disabled = false; go.textContent = 'Get my V.I.P code'; });
+  });
+  $('copyCode').addEventListener('click', function () {
+    var c = $('theCode').textContent;
+    navigator.clipboard.writeText(c).then(function () { $('copyCode').textContent = 'Copied'; }, function () { var r = document.createRange(); r.selectNodeContents($('theCode')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); });
   });
 })();
 </script>
