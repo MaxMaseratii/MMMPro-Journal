@@ -7,13 +7,15 @@
  *   3. gzips + encrypts each VIP tool with the content key                                 → vip/<tool>/payload.json
  *
  * Usage (codes are NEVER saved in the repo - keep them somewhere private):
- *   node tools/vip-build.mjs --codes "CODE-ONE,CODE-TWO" --src game-plan=/path/to/MMM_Game_Plan_Builder.html
+ *   node tools/vip-build.mjs --codes "CODE-ONE,CODE-TWO" --src game-plan=/path/to/MMM_Game_Plan_Builder.html [--key BASE64]
  *
+ *   --key     reuse the content key (member codes from the sign-up link keep working). Leave it out only to
+ *             start fresh: every saved device and the Apps Script key must then be updated.
  *   --codes   comma-separated access codes. Letters and numbers only count; case and dashes are ignored.
  *   --src     one or more tool=path pairs (repeat --src). Each becomes vip/<tool>/payload.json.
  *
- * Changing or removing a code = run the script again with the new list AND every --src. A new content key is made
- * each run, so old codes stop working and members' saved keys are cleared on their next visit.
+ * --codes are MASTER codes (yours): they open the V.I.P area even if the sign-up server is down.
+ * Member codes are made by the private sign-up link (tools/vip-apps-script.gs) and live in the Google Sheet.
  * The source HTML files must stay OUTSIDE this repo.
  */
 import { webcrypto as crypto } from 'node:crypto';
@@ -35,7 +37,11 @@ const b64 = u => Buffer.from(u).toString('base64');
 const rnd = n => crypto.getRandomValues(new Uint8Array(n));
 const enc = new TextEncoder();
 
-const keyRaw = rnd(32);
+// --key keeps the same content key (needed once the sign-up link is live: the Apps Script hands this key to member codes).
+// Without --key a new key is made and printed: put it in the Apps Script property VIP_CONTENT_KEY.
+const keyArg = val('--key')[0];
+const keyRaw = keyArg ? new Uint8Array(Buffer.from(keyArg, 'base64')) : rnd(32);
+if (keyRaw.length !== 32) { console.error('--key must be the 32-byte base64 content key'); process.exit(1); }
 const contentKey = await crypto.subtle.importKey('raw', keyRaw, { name: 'AES-GCM' }, false, ['encrypt']);
 
 const slots = [];
@@ -58,4 +64,5 @@ for (const [tool, path] of srcs) {
   writeFileSync(join(dir, 'payload.json'), JSON.stringify({ v: 1, iv: b64(iv), ct: b64(ct) }) + '\n');
   console.log(`vip/${tool}/payload.json  ${(html.length / 1024).toFixed(0)} KB → ${(ct.length / 1024).toFixed(0)} KB encrypted`);
 }
-console.log(`vip/keys.json  ${slots.length} code slot(s)`);
+console.log(`vip/keys.json  ${slots.length} master code slot(s)`);
+if (!keyArg) console.log(`\nNEW CONTENT KEY (keep private; put in Apps Script property VIP_CONTENT_KEY, and pass --key next time):\n${b64(keyRaw)}`);

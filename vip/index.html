@@ -107,6 +107,7 @@
   function show(unlocked) { $('gate').hidden = unlocked; $('area').hidden = !unlocked; }
   if (!MMMVip.supported()) { $('nosupport').hidden = false; return; }
   show(MMMVip.hasKey());
+  if (MMMVip.hasKey()) MMMVip.recheck().then(function (ok) { if (!ok) { show(false); $('msg').textContent = 'Your V.I.P access was switched off. Contact Max.'; $('msg').className += ' text-red-400'; } });
   $('gateForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var code = $('code').value, go = $('go'), msg = $('msg');
