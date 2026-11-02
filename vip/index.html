@@ -113,7 +113,8 @@
     var code = $('code').value, go = $('go'), msg = $('msg');
     go.disabled = true; go.textContent = 'Checking…'; msg.textContent = ''; msg.className = 'text-sm text-center min-h-[1.25rem]';
     MMMVip.unlock(code).then(function (ok) {
-      if (ok) { show(true); $('code').value = ''; }
+      if (ok === true) { show(true); $('code').value = ''; }
+      else if (ok === 'stale') { msg.textContent = 'Your code is real but needs a quick update from Max. Try again in a few minutes.'; msg.className += ' text-yellow-400'; }
       else { msg.textContent = 'That code did not work. Check it and try again.'; msg.className += ' text-red-400'; }
     }).catch(function () {
       msg.textContent = 'Could not reach the V.I.P area. Check your connection and try again.'; msg.className += ' text-red-400';

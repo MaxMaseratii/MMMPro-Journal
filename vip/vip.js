@@ -66,7 +66,13 @@
   }
   async function unlock(code) {
     if (!norm(code)) return false;
-    try { var k = await memberKey(code); if (k) { storeKey(k); put(CODE_STORE, norm(code)); put(CHECK_STORE, String(Date.now())); return true; } } catch (e) { /* offline: master codes below */ }
+    try {
+      var k = await memberKey(code);
+      if (k) {
+        if (!(await keyWorks(k))) return 'stale'; // a real code, made with an old key: Max's admin page fixes it
+        storeKey(k); put(CODE_STORE, norm(code)); put(CHECK_STORE, String(Date.now())); return true;
+      }
+    } catch (e) { /* offline: master codes below */ }
     var res = await fetch('/vip/keys.json', { cache: 'no-store' }); if (!res.ok) throw new Error('keys');
     var kj = await res.json();
     for (var i = 0; i < kj.slots.length; i++) {
@@ -80,6 +86,16 @@
     return false;
   }
   function lock() { [KEY_STORE, CODE_STORE, CHECK_STORE].forEach(del); }
+  /* does this key open the V.I.P tools that are live now? (an old key from an earlier build does not) */
+  var PROBE = '/vip/game-plan/payload.json', okKeys = {};
+  async function keyWorks(k) {
+    if (!k) return false; if (okKeys[k] !== undefined) return okKeys[k];
+    var res = await fetch(PROBE, { cache: 'no-store' }); if (!res.ok) throw new Error('payload');
+    var p = await res.json();
+    try { var key = await crypto.subtle.importKey('raw', b64(k), { name: 'AES-GCM' }, false, ['decrypt']); await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(p.iv) }, key, b64(p.ct)); okKeys[k] = true; }
+    catch (e) { okKeys[k] = false; }
+    return okKeys[k];
+  }
   /* twice a day: is this device's member code still active? revoked -> lock; no network -> keep */
   async function recheck() {
     var code = get(CODE_STORE); if (!code) return true;
@@ -88,12 +104,17 @@
     catch (e) { return true; }
   }
   async function contentKey() { var k = get(KEY_STORE); return k ? crypto.subtle.importKey('raw', b64(k), { name: 'AES-GCM' }, false, ['decrypt']) : null; }
-  async function open(url) {
+  async function open(url, again) {
     var key = await contentKey(); if (!key) return null;
     var res = await fetch(url, { cache: 'no-store' }); if (!res.ok) throw new Error('payload');
     var p = await res.json(), plainBuf;
     try { plainBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(p.iv) }, key, b64(p.ct)); }
-    catch (e) { lock(); return null; }
+    catch (e) {
+      // the key on this device is old: a member code fetches its (fixed) key again before giving up
+      var code = get(CODE_STORE);
+      if (code && !again) { try { var k2 = await memberKey(code); if (k2 && k2 !== get(KEY_STORE) && await keyWorks(k2)) { storeKey(k2); put(CHECK_STORE, String(Date.now())); return open(url, true); } } catch (x) {} }
+      lock(); return null;
+    }
     return await new Response(new Blob([plainBuf]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
   }
 
@@ -127,6 +148,7 @@
   /* ---------- admin side (Max, logged in on /admin/) ---------- */
   async function adminNewLink(idToken, minutes, people, note, by) {
     var key = get(KEY_STORE); if (!key) return { ok: false, error: 'nokey' };
+    if (!(await keyWorks(key))) { lock(); return { ok: false, error: 'oldkey' }; }
     var t = rand(22), expires = new Date(Date.now() + minutes * 60000);
     var body = { writes: [{ update: { name: docName('vipLinks', t), fields: fields({ key: key, expires: expires, max: people, used: 0, note: String(note || '').slice(0, 80), by: by || '' }) },
       updateTransforms: [{ fieldPath: 'created', setToServerValue: 'REQUEST_TIME' }], currentDocument: { exists: false } }] };
@@ -145,6 +167,21 @@
     codes.forEach(function (c) { delete c.key; c.code = pretty(c.id); });
     return { ok: true, links: links, codes: codes };
   }
+  /* codes and links made with an old key: give them the key that opens the tools now (members keep their codes) */
+  async function adminRepair(idToken) {
+    var key = get(KEY_STORE); if (!key || !(await keyWorks(key))) return { ok: false, error: 'oldkey' };
+    var fixed = 0, cols = ['vipCodes', 'vipLinks'];
+    for (var c = 0; c < cols.length; c++) {
+      var docs = await adminQuery(idToken, cols[c], 1000);
+      for (var i = 0; i < docs.length; i++) {
+        if (docs[i].key && docs[i].key !== key) {
+          var r = await req('PATCH', '/' + cols[c] + '/' + docs[i].id + '?updateMask.fieldPaths=key&currentDocument.exists=true', { fields: fields({ key: key }) }, idToken);
+          if (r.status === 200 && cols[c] === 'vipCodes') fixed++;
+        }
+      }
+    }
+    return { ok: true, fixed: fixed };
+  }
   async function adminSetStatus(idToken, code, status) {
     var r = await req('PATCH', '/vipCodes/' + norm(code) + '?updateMask.fieldPaths=status&currentDocument.exists=true', { fields: fields({ status: status === 'active' ? 'active' : 'revoked' }) }, idToken);
     return { ok: r.status === 200 };
@@ -152,5 +189,5 @@
 
   window.MMMVip = { supported: supported, unlock: unlock, open: open, lock: lock, recheck: recheck, checkLink: checkLink, claim: claim,
     hasKey: function () { return !!get(KEY_STORE); }, pretty: pretty,
-    admin: { newLink: adminNewLink, list: adminList, setStatus: adminSetStatus } };
+    admin: { newLink: adminNewLink, list: adminList, setStatus: adminSetStatus, repair: adminRepair } };
 })();
