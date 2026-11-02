@@ -270,7 +270,8 @@ function mmmLoadDict(lang) {
     return fetch(url, { cache: 'force-cache' }).then(function (r) { return r.ok ? r.json() : {}; }).catch(function () { return {}; })
       .then(function (j) { for (var k in j) MMM_DICT[lang][k] = j[k]; });
   }
-  MMM_DICT_LOADED[lang] = Promise.all([get('/i18n/' + lang + '/common.json'), get('/i18n/' + lang + '/' + mmmPageKey() + '.json')]);
+  var B = (window.MMM_I18N_BASE || '') + '/i18n/';   // pages drawn in a blob frame (V.I.P tools) pass the site origin
+  MMM_DICT_LOADED[lang] = Promise.all([get(B + lang + '/common.json'), get(B + lang + '/' + mmmPageKey() + '.json')]);
   return MMM_DICT_LOADED[lang];
 }
 function mmmSyncSelects(lang) {
@@ -325,6 +326,8 @@ function mmmFillSelect(sel) {
   }
   if (__mmmLang === 'en') mmmApplyLang('en');
   else mmmLoadDict(__mmmLang).then(function () { mmmApplyLang(__mmmLang); });
+  // the language picked in another tab or in the page around a frame (V.I.P tools) follows here too
+  window.addEventListener('storage', function (e) { if (e.key === 'mmm-language' && (e.newValue || 'en') !== __mmmLang) mmmSetLang(e.newValue || 'en'); });
 })();
 
 /* For the translation build: list every key on the page right now. */

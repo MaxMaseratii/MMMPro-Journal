@@ -51,7 +51,7 @@
   <iframe id="app" title="MMM Game Plan Builder" hidden></iframe>
 </div>
 
-<div id="jm" hidden role="dialog" aria-modal="true" aria-labelledby="jmT"><div class="box"><h2 id="jmT">Send to my MMM Journal</h2><p class="sub" id="jmSub"></p><div id="jmBody"></div><p class="msg" id="jmMsg" aria-live="polite"></p></div></div>
+<div id="jm" hidden role="dialog" aria-modal="true" aria-labelledby="jmT"><div class="box"><h2 id="jmT">Send to my MMM Journal</h2><p class="sub" id="jmSub" translate="no"></p><div id="jmBody"></div><p class="msg" id="jmMsg" aria-live="polite"></p></div></div>
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 <script src="/i18n.js"></script>
@@ -64,7 +64,10 @@
   if (!MMMVip.hasKey()) { location.replace('/vip/'); return; }
   MMMVip.recheck().then(function (ok) { if (!ok) throw new Error('revoked'); return MMMVip.open('/vip/game-plan/payload.json'); }).then(function (html) {
     if (html == null) { location.replace('/vip/'); return; }
-    var doc = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>' + html + '</body></html>';
+    // the site's translations run inside the builder too (same dictionary as the V.I.P pages: /i18n/<lang>/vip.json)
+    var o = location.origin;
+    var doc = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="mmm-page" content="vip"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>' + html +
+      '<scr' + 'ipt>window.MMM_I18N_BASE=' + JSON.stringify(o) + ';</scr' + 'ipt><scr' + 'ipt src="' + o + '/i18n.js"></scr' + 'ipt></body></html>';
     frame.src = URL.createObjectURL(new Blob([doc], { type: 'text/html' }));
     frame.onload = function () { state.hidden = true; frame.hidden = false; try { frame.contentWindow.postMessage({ type: 'mmm-host', v: 1 }, '*'); } catch (e) {} };
     frame.hidden = false;
@@ -121,7 +124,7 @@
     var best = ACC.find(function (a) { return +a.startingBalance === +PLAN.start && (PLAN.phase === 'eval' ? a.accountType === 'challenge' : a.accountType === 'funded'); }) || ACC.find(function (a) { return +a.startingBalance === +PLAN.start; }) || ACC[0];
     var TYPE = { challenge: 'Evaluation', funded: 'Funded', live: 'Live', paper: 'Paper' };
     $('jmBody').innerHTML = '<p style="margin:0 0 8px">Which account follows this plan?</p>' + ACC.map(function (a) {
-      return '<label class="acc"><input type="radio" name="jmAcc" value="' + esc(a.id) + '"' + (a.id === best.id ? ' checked' : '') + '><span><b>' + esc(a.name) + ' #' + esc(a.accountNumber || 1) + '</b><small>' + esc(TYPE[a.accountType] || a.accountType || '') + ' · ' + money(a.startingBalance) + ' · drawdown ' + money(a.maxDrawdown) + (a.riskTolerance ? ' · risk locked at ' + money(a.riskTolerance) : '') + '</small></span></label>';
+      return '<label class="acc"><input type="radio" name="jmAcc" value="' + esc(a.id) + '"' + (a.id === best.id ? ' checked' : '') + '><span><b translate="no">' + esc(a.name) + ' #' + esc(a.accountNumber || 1) + '</b><small>' + esc(TYPE[a.accountType] || a.accountType || '') + ' · ' + money(a.startingBalance) + ' · drawdown ' + money(a.maxDrawdown) + (a.riskTolerance ? ' · risk locked at ' + money(a.riskTolerance) : '') + '</small></span></label>';
     }).join('') +
       '<label class="opt"><input type="checkbox" id="jmPlan" checked><span><b>Daily plan</b>: risk ' + money(PLAN.rtu) + ', max ' + esc(PLAN.maxT) + ' trades, max loss ' + money(PLAN.capL) + ' a day, session ' + esc(PLAN.windows.length ? PLAN.windows[0][0] + '–' + PLAN.windows[PLAN.windows.length - 1][1] : '—') + ' NY, allowed setups. New Daily Log entries start from it.</span></label>' +
       '<label class="opt"><input type="checkbox" id="jmRules" checked><span><b>Strategy "MMM Game Plan"</b> with the plan rules as its checklist (long and short).</span></label>' +
@@ -150,7 +153,7 @@
     upd.gamePlan = { v: 1, name: PLAN.name, strategies: PLAN.strategies, windows: PLAN.windowsTx, rule: PLAN.rule, rtu: PLAN.rtu, capL: PLAN.capL, wk: PLAN.wk, card: String(PLAN.card || '').slice(0, 4000), settings: String(PLAN.settings || '').slice(0, 2000), at: Date.now() };
     var go = $('jmGo'); go.disabled = true; go.textContent = 'Saving…';
     MMM.db().then(function (db) { return db.collection('users').doc(USER.uid).collection('accounts').doc(a.id).update(upd); }).then(function () {
-      $('jmBody').innerHTML = '<p class="ok"><b>Done.</b> ' + esc(a.name) + ' #' + esc(a.accountNumber || 1) + ' now follows this plan.</p>' + (notes.length ? '<p class="warn">' + esc(notes.join(' ')) + '</p>' : '') + '<div class="row"><a class="btn-cta" href="/journal/">Open my journal</a><button class="ghost" type="button" data-jm="x">Back to the builder</button></div>';
+      $('jmBody').innerHTML = '<p class="ok"><b>Done.</b> <span translate="no">' + esc(a.name) + ' #' + esc(a.accountNumber || 1) + '</span> now follows this plan.</p>' + (notes.length ? '<p class="warn">' + esc(notes.join(' ')) + '</p>' : '') + '<div class="row"><a class="btn-cta" href="/journal/">Open my journal</a><button class="ghost" type="button" data-jm="x">Back to the builder</button></div>';
     }).catch(function (e) { go.disabled = false; go.textContent = 'Update my journal'; $('jmMsg').className = 'msg bad'; $('jmMsg').textContent = 'Could not save (' + (e && e.code || 'error') + '). Try again.'; });
   }
 })();
