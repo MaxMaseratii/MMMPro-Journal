@@ -26,6 +26,21 @@
   @keyframes s { to { transform: rotate(360deg); } }
   .btn-cta { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light)); color: #000; font-weight: 800; border-radius: .75rem; padding: .8rem 1.2rem; }
   [hidden] { display: none !important; }
+  /* Send to my MMM Journal */
+  #jm { position: fixed; inset: 0; z-index: 80; background: rgba(0,0,0,.66); display: grid; place-items: center; padding: 16px; }
+  #jm .box { width: min(520px, 100%); max-height: calc(100dvh - 32px); overflow: auto; background: #0f1416; color: #eef2f3; border: 1px solid hsla(45,100%,55%,.45); border-radius: 16px; padding: 20px; font-size: 14px; line-height: 1.5; }
+  #jm h2 { margin: 0 0 4px; font-size: 18px; font-weight: 800; color: hsl(45,100%,60%); }
+  #jm .sub { margin: 0 0 14px; color: #9aa6ab; font-size: 13px; }
+  #jm .acc { display: flex; gap: 10px; align-items: flex-start; border: 1px solid rgba(255,255,255,.12); border-radius: 10px; padding: 10px 12px; margin: 0 0 8px; cursor: pointer; }
+  #jm .acc:has(input:checked) { border-color: hsl(45,100%,55%); background: rgba(245,197,24,.06); }
+  #jm .acc small { display: block; color: #9aa6ab; }
+  #jm .opt { display: flex; gap: 8px; align-items: flex-start; margin: 6px 0; color: #c9cdd3; }
+  #jm .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+  #jm .btn-cta { background: linear-gradient(90deg, var(--mmm-gold, #f5c518), var(--mmm-gold-light, #ffd84d)); color: #000; border: 0; cursor: pointer; text-decoration: none; }
+  #jm .btn-cta:disabled { opacity: .6; cursor: wait; }
+  #jm .ghost { background: transparent; color: #eef2f3; border: 1px solid rgba(255,255,255,.22); border-radius: .75rem; padding: .75rem 1.1rem; font-weight: 700; cursor: pointer; }
+  #jm .msg { margin-top: 10px; min-height: 1.2em; font-size: 13px; }
+  #jm .ok { color: hsl(152,70%,55%); } #jm .bad { color: #ff7b7b; } #jm .warn { color: hsl(45,100%,62%); }
 </style>
 </head>
 <body class="text-white">
@@ -36,6 +51,7 @@
   <iframe id="app" title="MMM Game Plan Builder" hidden></iframe>
 </div>
 
+<div id="jm" hidden role="dialog" aria-modal="true" aria-labelledby="jmT"><div class="box"><h2 id="jmT">Send to my MMM Journal</h2><p class="sub" id="jmSub"></p><div id="jmBody"></div><p class="msg" id="jmMsg" aria-live="polite"></p></div></div>
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 <script src="/i18n.js"></script>
@@ -50,12 +66,93 @@
     if (html == null) { location.replace('/vip/'); return; }
     var doc = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>' + html + '</body></html>';
     frame.src = URL.createObjectURL(new Blob([doc], { type: 'text/html' }));
-    frame.onload = function () { state.hidden = true; frame.hidden = false; };
+    frame.onload = function () { state.hidden = true; frame.hidden = false; try { frame.contentWindow.postMessage({ type: 'mmm-host', v: 1 }, '*'); } catch (e) {} };
     frame.hidden = false;
   }).catch(function (e) {
     if (e && e.message === 'revoked') { location.replace('/vip/'); return; }
     fail('<p>The builder could not load. Check your connection and refresh.</p><a class="btn-cta" href="/vip/">Back to V.I.P</a>');
   });
+})();
+
+/* ---------- Send to my MMM Journal: the builder asks, this page writes (logged-in member, own accounts only) ---------- */
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var frame = $('app'), PLAN = null, ACC = [], USER = null;
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var money = function (v) { return '$' + Math.round(+v || 0).toLocaleString('en-US'); };
+  function close() { $('jm').hidden = true; }
+  $('jm').addEventListener('click', function (e) { if (e.target === $('jm') || e.target.closest('[data-jm=x]')) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  window.addEventListener('message', function (e) {
+    if (e.source !== frame.contentWindow || !e.data || e.data.type !== 'mmm-plan-send' || !e.data.plan) return;
+    PLAN = e.data.plan; open();
+  });
+  document.addEventListener('mmm:auth', function (e) { USER = e.detail || null; if (!$('jm').hidden) open(); });
+  function rulesOf(p) {
+    return [
+      'Only these strategies: ' + p.strategies.join(' → ') + ' (first signal wins)',
+      'Hours: ' + p.windowsTx.join(' + '),
+      'One trade at a time · ' + p.rule,
+      'Risk ' + money(p.rtu) + ' a trade' + (p.size ? ' · ' + p.size + ' at ' + p.stop + ' pts' : '') + ' · round DOWN',
+      'Daily cap −' + money(p.capL) + ' · weekly stop −' + money(p.wk),
+      'Flat by 16:30 NY · stop never moves away · no trade outside the plan'
+    ];
+  }
+  function open() {
+    $('jm').hidden = false; $('jmMsg').textContent = ''; $('jmMsg').className = 'msg';
+    $('jmSub').textContent = PLAN ? PLAN.name + ' · ' + PLAN.windowsTx.join(' + ') + ' · risk ' + money(PLAN.rtu) : '';
+    USER = (window.MMM && MMM.user && MMM.user()) || USER;
+    if (!USER) {
+      $('jmBody').innerHTML = '<p>Log in with the email of your MMM Journal. Your plan goes into one of your journal accounts.</p><div class="row"><button class="btn-cta" type="button" id="jmLogin">Log in</button><button class="ghost" type="button" data-jm="x">Cancel</button></div>';
+      $('jmLogin').onclick = function () { if (window.MMM && MMM.openAuth) MMM.openAuth('login'); };
+      return;
+    }
+    $('jmBody').innerHTML = '<p>Loading your journal accounts…</p>';
+    MMM.db().then(function (db) { return db.collection('users').doc(USER.uid).collection('accounts').get(); }).then(function (snap) {
+      ACC = []; snap.forEach(function (d) { var a = d.data(); a.id = d.id; if (!a.archived) ACC.push(a); });
+      draw();
+    }).catch(function () { $('jmBody').innerHTML = '<p class="bad">Could not open your journal. Check your connection and try again.</p><div class="row"><button class="ghost" type="button" data-jm="x">Close</button></div>'; });
+  }
+  function draw() {
+    if (!ACC.length) {
+      $('jmBody').innerHTML = '<p>You have no journal account yet. Add your prop account in the journal first, then send the plan.</p><div class="row"><a class="btn-cta" href="/journal/">Open my journal</a><button class="ghost" type="button" data-jm="x">Close</button></div>';
+      return;
+    }
+    var best = ACC.find(function (a) { return +a.startingBalance === +PLAN.start && (PLAN.phase === 'eval' ? a.accountType === 'challenge' : a.accountType === 'funded'); }) || ACC.find(function (a) { return +a.startingBalance === +PLAN.start; }) || ACC[0];
+    var TYPE = { challenge: 'Evaluation', funded: 'Funded', live: 'Live', paper: 'Paper' };
+    $('jmBody').innerHTML = '<p style="margin:0 0 8px">Which account follows this plan?</p>' + ACC.map(function (a) {
+      return '<label class="acc"><input type="radio" name="jmAcc" value="' + esc(a.id) + '"' + (a.id === best.id ? ' checked' : '') + '><span><b>' + esc(a.name) + ' #' + esc(a.accountNumber || 1) + '</b><small>' + esc(TYPE[a.accountType] || a.accountType || '') + ' · ' + money(a.startingBalance) + ' · drawdown ' + money(a.maxDrawdown) + (a.riskTolerance ? ' · risk locked at ' + money(a.riskTolerance) : '') + '</small></span></label>';
+    }).join('') +
+      '<label class="opt"><input type="checkbox" id="jmPlan" checked><span><b>Daily plan</b>: risk ' + money(PLAN.rtu) + ', max ' + esc(PLAN.maxT) + ' trades, max loss ' + money(PLAN.capL) + ' a day, session ' + esc(PLAN.windows.length ? PLAN.windows[0][0] + '–' + PLAN.windows[PLAN.windows.length - 1][1] : '—') + ' NY, allowed setups. New Daily Log entries start from it.</span></label>' +
+      '<label class="opt"><input type="checkbox" id="jmRules" checked><span><b>Strategy "MMM Game Plan"</b> with the plan rules as its checklist (long and short).</span></label>' +
+      '<label class="opt"><input type="checkbox" id="jmRisk" checked><span><b>Risk tolerance ' + money(PLAN.rtu) + '</b> a trade (skipped when the account already has a locked one).</span></label>' +
+      '<div class="row"><button class="btn-cta" type="button" id="jmGo">Update my journal</button><button class="ghost" type="button" data-jm="x">Cancel</button></div>';
+    $('jmGo').onclick = save;
+  }
+  function save() {
+    var id = (document.querySelector('input[name=jmAcc]:checked') || {}).value, a = ACC.find(function (x) { return x.id === id; });
+    if (!a) return;
+    var upd = {}, rules = rulesOf(PLAN), notes = [];
+    if ($('jmPlan').checked) {
+      var old = a.dailyPlanTemplate || {};
+      var w = PLAN.windows;
+      upd.dailyPlanTemplate = Object.assign({ targetProfit: '', plannedTrades: '2', riskRewardRatio: '' }, old, {
+        riskAmount: (+PLAN.rtu).toFixed(2), maxTrades: /^\d+$/.test(String(PLAN.maxT)) ? String(PLAN.maxT) : (old.maxTrades || ''),
+        maxLossPerDay: String(Math.round(PLAN.capL)), startTime: w.length ? w[0][0] : (old.startTime || ''), endTime: w.length ? w[w.length - 1][1] : (old.endTime || ''),
+        notes: 'MMM GAME PLAN (times New York)\n' + rules.join('\n'), cadence: old.cadence || 'weekly'
+      });
+      if (/^\d+$/.test(String(PLAN.maxT)) && +upd.dailyPlanTemplate.plannedTrades > +PLAN.maxT) upd.dailyPlanTemplate.plannedTrades = String(PLAN.maxT);
+    }
+    if ($('jmRules').checked) {
+      upd.strategies = (a.strategies || []).filter(function (s) { return s && s.id !== 'mmm-game-plan'; }).concat([{ id: 'mmm-game-plan', name: 'MMM Game Plan · ' + PLAN.strategies.slice(0, 4).join(' · ') + (PLAN.strategies.length > 4 ? ' +' + (PLAN.strategies.length - 4) : ''), longRules: rules, shortRules: rules }]);
+    }
+    if ($('jmRisk').checked) { if (a.riskTolerance) notes.push('Your locked risk tolerance (' + money(a.riskTolerance) + ') stays: the journal keeps it until this account passes or fails.'); else upd.riskTolerance = Math.round(PLAN.rtu * 100) / 100; }
+    upd.gamePlan = { v: 1, name: PLAN.name, strategies: PLAN.strategies, windows: PLAN.windowsTx, rule: PLAN.rule, rtu: PLAN.rtu, capL: PLAN.capL, wk: PLAN.wk, card: String(PLAN.card || '').slice(0, 4000), settings: String(PLAN.settings || '').slice(0, 2000), at: Date.now() };
+    var go = $('jmGo'); go.disabled = true; go.textContent = 'Saving…';
+    MMM.db().then(function (db) { return db.collection('users').doc(USER.uid).collection('accounts').doc(a.id).update(upd); }).then(function () {
+      $('jmBody').innerHTML = '<p class="ok"><b>Done.</b> ' + esc(a.name) + ' #' + esc(a.accountNumber || 1) + ' now follows this plan.</p>' + (notes.length ? '<p class="warn">' + esc(notes.join(' ')) + '</p>' : '') + '<div class="row"><a class="btn-cta" href="/journal/">Open my journal</a><button class="ghost" type="button" data-jm="x">Back to the builder</button></div>';
+    }).catch(function (e) { go.disabled = false; go.textContent = 'Update my journal'; $('jmMsg').className = 'msg bad'; $('jmMsg').textContent = 'Could not save (' + (e && e.code || 'error') + '). Try again.'; });
+  }
 })();
 </script>
 </body>
