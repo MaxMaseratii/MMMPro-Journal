@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>MMM Game Plan Builder | V.I.P | MMM Trading</title>
+<meta name="description" content="MMM V.I.P: the Game Plan Builder for prop firm traders.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
+<meta name="theme-color" content="#0a0a0a">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  html, body { background: #07080a; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; overflow: hidden; }
+  #wrap { position: relative; height: calc(100dvh - 68px); }
+  @supports not (height: 100dvh) { #wrap { height: calc(100vh - 68px); } }
+  #app { display: block; width: 100%; height: 100%; border: 0; background: #07080a; }
+  #state { position: absolute; inset: 0; z-index: 2; background: #07080a; display: grid; place-items: center; padding: 24px; text-align: center; color: #c9cdd3; }
+  #state .box { max-width: 420px; display: grid; gap: 14px; justify-items: center; }
+  .spin { width: 34px; height: 34px; border-radius: 50%; border: 3px solid rgba(255,255,255,.12); border-top-color: var(--mmm-gold, #f5c518); animation: s 0.9s linear infinite; }
+  @keyframes s { to { transform: rotate(360deg); } }
+  .btn-cta { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light)); color: #000; font-weight: 800; border-radius: .75rem; padding: .8rem 1.2rem; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body class="text-white">
+
+<div id="mmm-header"></div>
+<div id="wrap">
+  <div id="state"><div class="box"><div class="spin" aria-hidden="true"></div><p id="stateMsg">Opening your Game Plan Builder…</p></div></div>
+  <iframe id="app" title="MMM Game Plan Builder" hidden></iframe>
+</div>
+
+<script src="/assets/nav.js"></script>
+<script src="/assets/site.js"></script>
+<script src="/i18n.js"></script>
+<script src="/vip/vip.js"></script>
+<script>
+(function () {
+  var state = document.getElementById('state'), frame = document.getElementById('app');
+  function fail(html) { state.innerHTML = '<div class="box">' + html + '</div>'; }
+  if (!MMMVip.supported()) return fail('<p>This browser is too old to open the V.I.P area. Please update Chrome, Safari, Edge or Firefox.</p>');
+  if (!MMMVip.hasKey()) { location.replace('/vip/'); return; }
+  MMMVip.open('/vip/game-plan/payload.json').then(function (html) {
+    if (html == null) { location.replace('/vip/'); return; }
+    var doc = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>' + html + '</body></html>';
+    frame.src = URL.createObjectURL(new Blob([doc], { type: 'text/html' }));
+    frame.onload = function () { state.hidden = true; frame.hidden = false; };
+    frame.hidden = false;
+  }).catch(function () {
+    fail('<p>The builder could not load. Check your connection and refresh.</p><a class="btn-cta" href="/vip/">Back to V.I.P</a>');
+  });
+})();
+</script>
+</body>
+</html>

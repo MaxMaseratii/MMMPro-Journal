@@ -12,7 +12,7 @@
   window.__mmmTopbar = true;
 
   var NAV = window.MMM_NAV || [
-    ['Indicators', '/indicators/'], ['Strategies', '/strategies/'], ['Backtests', '/backtests/'], ['Free MMM Mastery Course', '/journal/?course=1'], ['Gamma & News', '/gamma/'], ['Trading Test', '/diagnostic/']
+    ['Indicators', '/indicators/'], ['Strategies', '/strategies/'], ['Backtests', '/backtests/'], ['Free MMM Mastery Course', '/journal/?course=1'], ['Gamma & News', '/gamma/'], ['Trading Test', '/diagnostic/'], ['V.I.P', '/vip/']
   ];
 
   function active(href) {
