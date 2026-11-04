@@ -769,7 +769,7 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
     var pfx = ENGPFX[k];
     if (!pfx) return '<p class="mkt-note">MMM Pro S has no strategy of its own in the book yet: its swings and OFS breaks were tested as ideas (SWP+ sweep reclaim, swing breaks) and did not beat luck on any market. See the VERDICTS and MARKETS tabs of the backtests.</p>';
     if (!MKS) return '<p class="mkt-note">Loading the test results…</p>';
-    var list = MKS.strategies.filter(function (x) { return x.code.indexOf(pfx) === 0; });
+    var list = MKS.strategies.filter(function (x) { return x.code.indexOf(pfx) === 0 && x.status !== 'weak'; });
     if (!list.length) return '';
     var rows = list.map(function (x) {
       var a = x.all;
@@ -779,7 +779,7 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
     var n = list.length, cnt = function (st) { return list.filter(function (x) { return x.status === st; }).length; };
     var good = function (m) { return list.filter(function (x) { var sh = MKA && MKA[m] && MKA[m].sheets && MKA[m].sheets[x.code]; return sh && sh.verdict && sh.verdict !== 'NO'; }).length; };
     return '<div class="mkt-wrap"><table class="mkt-t"><thead><tr><th>Strategy</th><th>NQ / MNQ<br>all data</th><th>Years<br>green</th><th>NQ each year<br>net in stops</th><th>ES / MES<br>short data</th><th>Gold GC / MGC<br>short data</th><th>Crude CL / MCL<br>short data</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-      '<p class="mkt-note"><b>' + n + ' strategies</b> of this engine on NQ / MNQ: ' + cnt('trade') + ' TRADE · ' + cnt('watch') + ' WATCH · ' + cnt('weak') + ' WEAK. WEAK = it did not hold up year after year: do not trade it.</p>' +
+      '<p class="mkt-note"><b>' + n + ' strategies</b> of this engine on NQ / MNQ: ' + cnt('trade') + ' TRADE · ' + cnt('watch') + ' WATCH.</p>' +
       '<p class="mkt-note">NQ / MNQ = Dec 2022 – Oct 2026: one result over all the data, then each year alone, so a few months never count like a full year. Years green = years that made money, of the years with enough trades. Small numbers = trades · WR (win rate) · avg RR (average result per trade in stops, after costs). Each year = the net result of that year, in stops.</p>' +
       '<p class="mkt-note">ES, gold and crude have only about 11 months of data (Dec 2025 – Oct 2026), so each one is one all-data result (short data): GOOD, MAYBE or NO. GOOD or MAYBE on ES: ' + good('ES') + ' of ' + n + ' · gold: ' + good('GC') + ' of ' + n + ' · crude: ' + good('CL') + ' of ' + n + '.' + (k === 'fva' ? ' The FVA strategies on ES, gold and crude ran on a rebuilt copy of the test engine: close to the NQ book numbers, not identical.' : '') + ' Research, not advice. Pick ONE.</p>';
   }
