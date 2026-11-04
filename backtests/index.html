@@ -1385,7 +1385,7 @@ G.blocks=async sc=>{
     const ht=BLK.htf.filter(x=>x[0]===BS.np).map(x=>`<tr${x[2]==='RAND'?' class="me"':''}><td class="l">${x[1]==='M5'?'5m':'15m'}</td><td class="l">${x[2]==='RAND'?'Random BC or AFs (no block)':({M15:'15m',H1:'1h',H4:'4h',D:'Daily',W:'Weekly',M:'Monthly'})[x[2]]+' block'}</td><td>${N0(x[3])}</td><td>${N0(x[7])} pts</td><td>${BP(x[4])}</td><td class="${PC(x[5])}">${R2(x[5])}</td><td>${R2(x[6],1)}</td></tr>`).join('');
     const ml=BLK.ml,dec=r0=>(r0||[]).map(r=>`<td>${r[2]==null?'—':Math.round(100*r[2])+'%'}</td>`).join('');
     const LM=BLK.lim||{},bst=b=>b?`<span class="tg">${esc(b[0])}</span> <span class="${PC(b[2])}">${R2(b[2])}</span><small> · each year ${b[4].map(v=>R2(v)).join(' · ')}</small>`:'—';
-    const lmr=BL_TF.map(([k,n])=>{const o=LM[k];if(!o)return'';return `<tr><td class="l">${n}</td><td>${o.L.green} of ${o.L.tested}</td><td class="l">${bst(o.L.best)}</td><td>${o.R.green} of ${o.R.tested}</td><td class="l">${bst(o.R.best)}</td></tr>`}).join('');
+    const lmr=BL_TF.map(([k,n])=>{const o=LM[k];if(!o)return'';return `<tr><td class="l">${n}</td><td>${o.L.green} of ${o.L.tested}</td><td class="l" translate="no">${bst(o.L.best)}</td><td>${o.R.green} of ${o.R.tested}</td><td class="l" translate="no">${bst(o.R.best)}</td></tr>`}).join('');
     const SR=(BLK.scan||{}).res||{BLOCKS:[0,0],RANDOM:[0,0]},sp=a=>a[0]?(100*a[1]/a[0]).toFixed(1)+'%':'—';
     const g12=(ml.BLOCKS_give12||[]),gW=g12[0],gB=g12[9];
     h+=`<section class="wide"><h2>What did not work</h2><div class="ctl"><span><span class="lab">Data</span><span class="seg" id="blNp"></span></span></div>
