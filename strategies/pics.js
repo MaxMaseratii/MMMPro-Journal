@@ -7,18 +7,18 @@
   var K = function (o, h, l, c, tag) { return { o: o, h: h, l: l, c: c, tag: tag || '' }; };
   var SWAP = [['BuBC', 'BeBC'], ['Bu LEZ', 'Be LEZ'], ['CDL', 'CDS'], ['LD', 'SD'], ['buy', 'sell'], ['Buy', 'Sell'], ['buyers', 'sellers'], ['Buyers', 'Sellers'],
     ['high', 'low'], ['High', 'Low'], ['highs', 'lows'], ['above', 'below'], ['Above', 'Below'], ['top', 'bottom'], ['Top', 'Bottom'], ['green', 'red'], ['up', 'down'], ['Up', 'Down'],
-    ['↑', '↓'], ['long', 'short'], ['Long', 'Short'], ['bull', 'bear'], ['Bull', 'Bear'], ['bullish', 'bearish'], ['Bullish', 'Bearish'], ['upper', 'lower'], ['MP', 'MD'], ['XP', 'XD']];
+    ['↑', '↓'], ['long', 'short'], ['Long', 'Short'], ['bull', 'bear'], ['Bull', 'Bear'], ['bullish', 'bearish'], ['Bullish', 'Bearish'], ['upper', 'lower'], ['MP', 'MD'], ['XP', 'XD'], ['▲', '▼'], ['rises', 'drops'], ['climbs', 'falls']];
   function swapWords(s) {
     var map = {}; SWAP.forEach(function (p) { map[p[0]] = p[1]; map[p[1]] = p[0]; });
     var keys = Object.keys(map).sort(function (a, b) { return b.length - a.length; }).map(function (k) { return k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); });
     var re = new RegExp('(^|[^A-Za-z])(' + keys.join('|') + ')(?=[^A-Za-z]|$)', 'g');
     return s.replace(re, function (m, a, w) { return a + map[w]; });
   }
-  var STOPLBL = { zone: 'stop past the box', zonefree: 'stop past the box', S50: 'stop 50 pts', S20: 'stop 20 pts', S40: 'stop 40 pts', S35: 'stop 35 pts', ATR: 'stop ATR', afs: 'stop past AFs+ low', top50: 'stop: block top − 50' };
+  var STOPLBL = { zone: 'stop past the box', zonefree: 'stop past the box', S50: 'stop 50 pts', S20: 'stop 20 pts', S40: 'stop 40 pts', S35: 'stop 35 pts', ATR: 'stop ATR', afs: 'stop past AFs+ low', top50: 'stop: block top − 50', struct: 'stop: low of last 3 candles − 2 pts' };
 
   /* ---------- builders (long direction, price 0–100) ---------- */
   function addRisk(sc, entryY, entryX, spec, boxLow) {
-    var stopY = (spec.stop === 'zone' || spec.stop === 'zonefree' || spec.stop === 'afs') ? boxLow - 1.2 : entryY - (spec.stop === 'S20' ? 7 : spec.stop === 'S35' ? 9 : spec.stop === 'S40' ? 10 : 12);
+    var stopY = (spec.stop === 'zone' || spec.stop === 'zonefree' || spec.stop === 'afs' || spec.stop === 'struct') ? boxLow - 1.2 : entryY - (spec.stop === 'S20' ? 7 : spec.stop === 'S35' ? 9 : spec.stop === 'S40' ? 10 : 12);
     if (spec.stop === 'ATR') stopY = entryY - 11;
     if (spec.stop === 'top50') stopY = boxLow;
     var risk = entryY - stopY;
@@ -263,6 +263,46 @@
     return sc;
   };
 
+
+  /* MMPD Lite: fall into the red background → ▲ arrow → last bearish BC → setup BC → (green MMPD candles) → buy.
+     sc.osc = the MMPD candle of each price candle (open / close on a 0–100 scale), drawn in a pane under the price. */
+  B.mmpd = function (spec) {
+    var sc = { c: [], zones: [], lines: [], marks: [], notes: [], osc: [], oscTags: [] };
+    var P = function (k, o, c) { sc.c.push(k); sc.osc.push({ o: o, c: c }); };
+    P(K(84, 86, 76, 78), 62, 46); P(K(78, 79, 68, 70), 46, 31); P(K(70, 71, 58, 60), 31, 19);
+    P(K(60, 61, 52, 54), 18, 11); P(K(54, 58, 52, 57), 11, 14); P(K(57, 58, 47, 49), 14, 8); P(K(49, 52, 45, 51), 8, 16);
+    var ai = sc.c.length; P(K(51, 56, 50, 55), 22, 31);
+    var bi = sc.c.length; P(K(55, 56, 47, 48, 'last bearish BC'), 31, 25);
+    var si = sc.c.length; P(K(48, 59, 47, 58, 'setup BC'), 25, 41);
+    var conf = spec.conf || 0, ei = si, mo = 41;
+    for (var i = 0; i < conf; i++) {
+      var pc = sc.c[sc.c.length - 1].c; P(K(pc, pc + 3.5, pc - 2, pc + 2.5), mo, mo + 8); mo += 8;
+      ei = sc.c.length - 1;
+    }
+    if (conf) sc.oscTags.push({ label: conf > 1 ? conf + ' green MMPD' : 'green MMPD', i0: si + 1, i1: ei });
+    var e = sc.c[ei].c, lo3 = Math.min(sc.c[ei].l, sc.c[ei - 1].l, sc.c[ei - 2].l);
+    P(K(e, e + 6, e - 1, e + 5), mo, mo + 9); P(K(e + 5, e + 12, e + 4, e + 11), mo + 9, mo + 16); P(K(e + 11, e + 17, e + 9, e + 16), mo + 16, mo + 22);
+    sc.lines.push({ y: 55, x0: bi - 0.35, x1: si + 0.45, cls: 'lim', label: '' });
+    sc.marks.push({ x: bi, y: 56, t: 'tag', label: 'its open', side: 1 });
+    sc.marks.push({ x: bi, y: 47, t: 'tag', label: 'last bearish BC', side: -1 });
+    sc.marks.push({ x: si, y: 59, t: 'tag', label: 'setup BC', side: 1 });
+    sc.marks.push({ x: ei, y: e, t: 'fill', label: 'buy the close', side: -1 });
+    addRisk(sc, e, ei + 0.4, spec, lo3);
+    if (spec.block) {
+      sc.zones.push({ x0: ai, x1: 99, y0: 45, y1: 50, cls: 'box2', label: 'XD block' });
+      sc.notes.push({ x: 0, y: 8, text: 'out on a close below the XD block' });
+    }
+    if (spec.filt === 'pure') sc.notes.push({ x: 0, y: 8, text: 'skip if the red background was pure (all red candles)', f: 1 });
+    if (spec.lock) sc.notes.push({ x: 0, y: 8, text: 'at +2R: stop → +1R, then STRONG2' });
+    if (spec.be) sc.notes.push({ x: 0, y: 8, text: 'at +1R: stop → entry + 1 pt, then STRONG2' });
+    if (spec.opp) sc.notes.push({ x: 0, y: 8, text: 'out if a short setup prints' });
+    if (spec.max) sc.notes.push({ x: 0, y: 8, text: 'out when MMPD rises to 50 then closes back below 50' });
+    var swing = /^MMPD\.M[56]$/.test(spec.code || '');
+    if (swing) sc.notes.push({ x: 0, y: 8, text: 'swing · holds overnight' });
+    else sc.zones.push({ x0: si - 0.5, x1: 99, y0: 2, y1: 99, cls: 'sess', label: '09:30–11:30 New York', lpos: 'top' });
+    return sc;
+  };
+
   /* ---------- renderer ---------- */
   var W = 600, RM = 152, LM = 12;
   function render(spec, dir, filt) {
@@ -272,7 +312,8 @@
     var notes = sc.notes.filter(show), zones = sc.zones.filter(show), lines = sc.lines.filter(show), marks = sc.marks.filter(show);
     var chipsH = notes.length ? notes.length * 21 + 6 : 6, legend = [];
     zones.forEach(function (z) { if (z.label && !legend.some(function (l) { return l.t === z.label; })) legend.push({ cls: z.cls, t: z.label }); });
-    var TM = chipsH + 14, PH = 236, BM = 34, H = TM + PH + BM;
+    var osc = sc.osc && sc.osc.length === sc.c.length ? sc.osc : null, OG = 12, OH = osc ? 86 : 0;
+    var TM = chipsH + 14, PH = 236, BM = 34, H = TM + PH + (osc ? OG + OH : 0) + BM;
     var n = sc.c.length, cw = (W - LM - RM) / n;
     var lo = 1e9, hi = -1e9;
     sc.c.forEach(function (k) { lo = Math.min(lo, k.l); hi = Math.max(hi, k.h); });
@@ -331,7 +372,39 @@
       var y = 8 + i * 21, txt = T(t.text), w = Math.min(W - 24, 18 + txt.length * 6.25 * 1.3);
       o.push('<rect x="' + LM + '" y="' + y + '" width="' + w.toFixed(1) + '" height="17" rx="2" class="' + (t.f ? 'pz-chip' : 'pz-chip2') + '"/><text x="' + (LM + 7) + '" y="' + (y + 12.5) + '" class="pt-note' + (t.f ? ' f' : '') + '">' + esc(txt) + '</text>');
     });
-    var lx = LM, ly = TM + PH + 22;
+    if (osc) {
+      // the MMPD pane: 0–100, dashed 20 / 50 / 80, a shaded background where the whole body is at 20 or below, ▲ where the body gets back above 20
+      var oy0 = TM + PH + OG, OV = function (v) { if (bear) v = 100 - v; return oy0 + 4 + (1 - v / 100) * (OH - 8); };
+      o.push('<rect x="' + LM + '" y="' + oy0 + '" width="' + (W - RM - LM + 2) + '" height="' + OH + '" class="po-bg"/>');
+      var wasBg = false;
+      osc.forEach(function (m, i) {
+        var inBg = Math.max(m.o, m.c) <= 20;
+        if (inBg) o.push('<rect x="' + (X(i) - cw / 2).toFixed(1) + '" y="' + oy0 + '" width="' + cw.toFixed(1) + '" height="' + OH + '" class="' + (bear ? 'po-bgup' : 'po-bgdn') + '"/>');
+        m._arrow = !inBg && wasBg && Math.min(m.o, m.c) > 20; if (inBg) wasBg = true; else if (m._arrow) wasBg = false;
+      });
+      [20, 50, 80].forEach(function (v) {
+        var y = OV(v).toFixed(1);
+        o.push('<line x1="' + LM + '" x2="' + (W - RM + 2) + '" y1="' + y + '" y2="' + y + '" class="pl-osc"/><text x="' + (W - RM + 8) + '" y="' + (+y + 3.5).toFixed(1) + '" class="pt-osc">' + (bear ? 100 - v : v) + '</text>');
+      });
+      o.push('<text x="' + (LM + 4) + '" y="' + (oy0 + 11) + '" class="ph pt-oscn">MMPD</text>');
+      osc.forEach(function (m, i) {
+        var x = X(i), bw = Math.max(4, cw * 0.56), yo = OV(m.o), yc = OV(m.c), top = Math.min(yo, yc), bh = Math.max(1.5, Math.abs(yo - yc));
+        o.push('<rect x="' + (x - bw / 2).toFixed(1) + '" y="' + top.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + bh.toFixed(1) + '" class="' + (m.c >= m.o ? (bear ? 'po-dn' : 'po-up') : (bear ? 'po-up' : 'po-dn')) + '"/>');
+        if (m._arrow) {
+          var ay = bear ? top - 4 : top + bh + 11;
+          o.push('<text x="' + x.toFixed(1) + '" y="' + ay.toFixed(1) + '" text-anchor="middle" class="' + (bear ? 'pt-arrdn' : 'pt-arrup') + '">' + (bear ? '▼' : '▲') + '</text>');
+          var al = T('arrow: body back above 20'), aw = al.length * 6.25;
+          o.push('<text x="' + (x + 8).toFixed(1) + '" y="' + (bear ? oy0 + 12 : oy0 + OH - 5).toFixed(1) + '" class="ph pt-osct">' + esc(bear ? al.replace('20', '80') : al) + '</text>');
+        }
+      });
+      (sc.oscTags || []).forEach(function (t) {
+        var x = X((t.i0 + t.i1) / 2), yt = bear ? 1e9 : -1e9;
+        for (var q = t.i0; q <= t.i1; q++) yt = bear ? Math.min(yt, OV(osc[q].o), OV(osc[q].c)) : Math.max(yt, OV(osc[q].o), OV(osc[q].c));
+        yt = bear ? yt - 4 : yt + 11;
+        o.push('<text x="' + x.toFixed(1) + '" y="' + yt.toFixed(1) + '" text-anchor="middle" class="ph pt-osct">' + esc(T(t.label)) + '</text>');
+      });
+    }
+    var lx = LM, ly = TM + PH + (osc ? OG + OH : 0) + 22;
     legend.forEach(function (l) {
       var txt = T(l.t), w = 16 + txt.length * 6.25 + 14;
       if (lx + w > W - 4) { return; }

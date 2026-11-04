@@ -168,12 +168,25 @@ ol.how li b{color:var(--fg)}
 .orow b{font:700 15px/1 var(--mono);text-align:right}
 @media (max-width:600px){.orow{grid-template-columns:minmax(0,1fr) 46px;gap:4px 10px}.orow>span:first-child{grid-column:1/-1}.orow .tr{grid-column:1;grid-row:2}.orow b{grid-column:2;grid-row:2}}
 .odds .nt{margin:0;color:var(--mute);font-size:13px;line-height:1.45}
+.oyr{overflow-x:auto;border:1px solid var(--line)}
+.oyr.long{max-height:232px;overflow-y:auto}
+.oyt{width:100%;border-collapse:collapse;font:500 12.5px/1.25 var(--mono);font-variant-numeric:tabular-nums;color:#d4dae0}
+.oyt th{position:sticky;top:0;background:#14171b;font:600 11.5px/1.15 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--mute);padding:5px 5px;text-align:right;vertical-align:bottom}
+.oyt td{padding:4px 5px;border-top:1px solid var(--line);text-align:right;white-space:nowrap}
+.oyt th:first-child,.oyt td:first-child{text-align:left}
+.oyt tr.all td{color:var(--gold2);font-weight:600;background:#17140a}
+@media (max-width:600px){.oyt{font-size:11.5px}.oyt th{font-size:10.5px;padding:4px 3px}.oyt td{padding:4px 3px}}
 .dinfo b{font:700 17px/1.2 var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--fg)}
 .dinfo p{margin:4px 0 0;color:#cfd5da;line-height:1.5}
 .lab{font:600 13px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
 .mkt-t{width:100%;border-collapse:collapse;font-size:13.5px}.mkt-t th,.mkt-t td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}.mkt-t th{color:var(--mute);font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
 .mv{display:inline-block;padding:1px 7px;border-radius:3px;font:700 11px/1.5 var(--display);letter-spacing:.05em;text-transform:uppercase}.mv.e{background:#163327;color:#3ddc97}.mv.w{background:#2b2a12;color:#f2cf5b}.mv.k{background:#1f2227;color:#8f97a1}.mv.n{background:#2d1518;color:#ff5c6c}
+.mkt-t tr.weak td{opacity:.62}
+.mkt-t td{vertical-align:top}.mkt-t small{color:var(--mute)}
+.mky span{display:inline-block;font:600 11.5px/1.4 var(--mono);padding:0 5px;margin-right:3px;border-radius:3px}.mky .u{background:#163327;color:#3ddc97}.mky .d{background:#2d1518;color:#ff5c6c}.mky .z{color:var(--faint)}
 .mkt-wrap{overflow-x:auto;margin-top:8px}.mkt-note{color:var(--mute);font-size:13px;margin:6px 0 0;line-height:1.45}
+.e-tests{padding:16px 22px 18px;border-top:1px solid var(--line)}
+@media (max-width:600px){.e-tests{padding:14px 14px 16px}}
 .e-cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 22px;border-top:1px solid var(--line);background:var(--panel2)}
 .e-cta .btn-try{font-size:16px;padding:12px 16px}
 .e-cta span{color:var(--mute);font-size:14px}
@@ -476,15 +489,15 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
     'CI': { o: 48, h: 66, l: 44, c: 62, fam: 'half', rule: 'Inside candle: no sweep of the previous high or low. CI•BuAF = close in the top half.', mean: 'A pause. Price agreed for now. Coiling.', lean: 0, read: 'Neutral. Wait for the break of its high or low.', wick: 'Small wicks and no sweep: nobody was hunted. The longer wick shows who pushed back.' },
     'S&D': { o: 50, h: 76, l: 34, c: 64, fam: 'half', rule: 'Takes BOTH the previous high and low, closes back inside the old range. S&D•BuAF = close in the top half.', mean: 'An outside candle that hunted both sides. Weak bias to the close side.', lean: 1, read: 'Both sides got hit. The close half decides the lean.', wick: 'Long wicks on both ends: both sides got hunted. The bottom wick is longer: buyers pushed back harder.' }
   };
-  var ODDS = {"5m":{"BuC2+":[4564,81,80,10,39,5,56,19,385,81,80],"BuC2-":[666,48,47,17,22,8,70,61,68,29,29],"BeC2+":[4355,81,80,9,38,4,58,21,381,83,82],"BeC2-":[787,46,46,17,21,8,71,62,67,37,37],"BuBC+":[29120,82,81,16,39,7,54,23,2139,83,82],"BuBC-":[16051,51,48,35,24,16,60,68,1329,51,48],"BeBC+":[24401,81,80,16,37,7,56,24,2010,83,81],"BeBC-":[16262,49,46,34,22,16,62,70,1342,50,47],"S&D.BuAF":[4533,59,57,26,28,12,60,55,376,59,57],"S&D.BeAF":[4188,61,59,23,28,10,62,54,372,54,52],"BuAFs+":[24521,72,69,30,35,13,52,43,2002,72,69],"BuAFs-":[10594,64,59,37,30,18,52,58,895,63,58],"BeAFs+":[24257,71,68,32,33,15,52,45,2006,70,66],"BeAFs-":[11755,64,60,37,31,17,52,57,951,62,57],"CI.BuAF":[17243,74,68,37,36,17,47,44,1309,73,68],"CI.BeAF":[15682,74,68,38,34,18,48,44,1270,75,69]},"15m":{"BuC2+":[1756,82,82,10,39,5,56,16,125,86,85],"BuC2-":[271,44,42,18,20,5,75,59,30,47,47],"BeC2+":[1573,77,77,10,36,6,58,22,139,83,82],"BeC2-":[395,41,40,16,18,6,76,68,41,32,32],"BuBC+":[10023,82,81,16,40,7,53,22,722,81,80],"BuBC-":[5248,50,46,35,25,16,59,74,471,45,41],"BeBC+":[7724,81,80,15,37,8,55,24,663,83,82],"BeBC-":[5347,49,47,31,22,15,63,75,454,49,47],"S&D.BuAF":[1603,58,56,24,30,12,58,59,152,60,59],"S&D.BeAF":[1555,60,58,23,25,11,64,58,109,58,58],"BuAFs+":[7947,72,69,29,37,14,50,48,606,74,71],"BuAFs-":[3386,63,59,37,29,19,52,64,286,63,58],"BeAFs+":[7735,72,69,32,34,15,51,50,636,70,69],"BeAFs-":[3808,64,60,37,31,16,52,63,303,60,56],"CI.BuAF":[5749,73,68,36,37,17,46,50,433,74,70],"CI.BeAF":[5031,72,68,37,34,19,48,51,436,70,66]},"1h":{"BuC2+":[512,84,83,14,41,8,51,20,35,80,80],"BuC2-":[95,60,60,26,23,10,67,70,8,62,62],"BeC2+":[442,82,81,12,34,7,59,20,32,91,91],"BeC2-":[125,46,46,22,24,13,63,62,7,29,29],"BuBC+":[2572,83,82,17,43,8,50,20,206,82,81],"BuBC-":[1369,51,47,35,26,16,58,75,114,51,47],"BeBC+":[1741,80,80,14,38,7,55,25,153,86,86],"BeBC-":[1306,48,44,33,24,16,60,76,113,53,50],"S&D.BuAF":[430,60,58,24,30,13,57,61,30,30,30],"S&D.BeAF":[383,62,60,28,29,16,56,60,34,71,68],"BuAFs+":[1854,74,71,27,40,13,47,44,150,74,71],"BuAFs-":[777,61,56,38,28,21,51,69,73,55,51],"BeAFs+":[1808,72,69,33,32,17,52,49,147,63,58],"BeAFs-":[915,64,58,36,35,17,48,67,65,57,49],"CI.BuAF":[1283,72,68,34,38,16,46,53,95,75,72],"CI.BeAF":[1107,72,68,35,33,19,48,55,93,71,66]},"4h":{"BuC2+":[182,87,86,20,52,10,38,14,11,100,100],"BuC2-":[27,48,41,44,15,18,67,74,2,50,50],"BeC2+":[150,89,89,17,38,7,55,18,11,73,73],"BeC2-":[57,58,53,39,19,14,67,63,1,0,0],"BuBC+":[707,82,81,19,45,9,46,20,54,80,78],"BuBC-":[363,56,47,40,35,16,50,75,44,64,64],"BeBC+":[391,80,79,18,38,10,52,20,43,86,86],"BeBC-":[364,46,41,34,27,20,52,76,24,54,50],"S&D.BuAF":[128,66,61,32,37,17,46,63,6,33,33],"S&D.BeAF":[137,69,64,34,32,18,50,59,7,43,43],"BuAFs+":[417,72,68,30,37,15,48,47,41,61,54],"BuAFs-":[154,58,51,35,23,18,59,70,10,70,70],"BeAFs+":[373,72,69,30,36,18,46,48,32,66,66],"BeAFs-":[192,52,45,32,28,16,56,66,19,74,74],"CI.BuAF":[420,71,67,30,39,13,48,49,28,82,82],"CI.BeAF":[318,66,62,36,32,18,50,52,23,70,70]}};
-  ODDS.D = {"BuC2+":[195,89,83,7,48,5,47,13,7,71,78,30,9],"BuC2-":[17,59,null,18,35,12,53,null,0,null,null,2,0],"BeC2+":[197,83,85,9,35,5,61,12,5,80,null,26,4],"BeC2-":[47,43,null,21,19,9,72,null,1,null,null,1,2],"BuBC+":[1184,87,89,16,45,8,48,17,41,85,82,162,45],"BuBC-":[469,57,47,38,29,17,54,84,15,40,36,43,11],"BeBC+":[696,82,72,14,36,8,56,27,24,79,73,74,22],"BeBC-":[410,46,35,40,21,21,59,83,16,31,37,46,19],"S&D.BuAF":[164,66,47,17,41,7,52,58,8,50,29,19,7],"S&D.BeAF":[180,66,56,23,34,11,56,64,3,null,null,25,4],"BuAFs+":[749,75,69,32,39,17,44,44,23,65,78,88,18],"BuAFs-":[237,61,75,44,26,25,49,54,6,50,57,24,7],"BeAFs+":[707,69,68,37,31,20,49,52,21,67,68,77,22],"BeAFs-":[356,61,66,44,29,20,51,64,12,83,89,47,9],"CI.BuAF":[433,80,67,44,42,19,39,51,10,70,50,63,12],"CI.BeAF":[319,75,77,44,37,25,38,43,11,91,70,35,10]};
-  ODDS.W = {"BuC2+":[40,88,88,8,45,2,52,12,0,null,null,40,1],"BuC2-":[2,50,null,0,50,0,50,null,0,null,null,2,0],"BeC2+":[32,81,81,9,38,6,56,22,3,null,null,32,2],"BeC2-":[9,44,null,33,11,22,67,null,0,null,null,9,0],"BuBC+":[317,88,87,16,50,8,42,18,10,100,100,316,9],"BuBC-":[97,60,54,41,34,20,46,69,1,null,null,96,2],"BeBC+":[144,83,82,18,38,12,50,25,5,80,80,142,5],"BeBC-":[71,46,44,42,14,24,62,69,1,null,null,71,1],"S&D.BuAF":[30,77,72,27,53,7,40,38,0,null,null,29,0],"S&D.BeAF":[32,69,69,28,28,22,50,41,0,null,null,32,0],"BuAFs+":[151,81,77,26,50,11,39,40,10,80,78,151,9],"BuAFs-":[56,52,48,46,23,23,54,66,2,null,null,56,3],"BeAFs+":[162,72,69,36,35,20,44,47,6,100,100,161,5],"BeAFs-":[69,74,71,30,42,14,43,51,1,null,null,68,1],"CI.BuAF":[55,80,73,29,44,15,42,40,0,null,null,55,0],"CI.BeAF":[51,75,69,43,33,22,45,39,3,null,null,49,2]};
   var ORDER = ['BC+', 'BC−', 'C2+', 'C2−', 'AFs+', 'AFs−', 'CI', 'S&D'];
   var cbSide = 'bu', cbKey = 'BC+', cbView = 'candle', oddsTF = '15m', oddsMkt = 'NQ';
-  var CBO = null, MKN = { NQ: 'NQ / MNQ', ES: 'ES / MES', GC: 'Gold GC / MGC', CL: 'Crude CL / MCL' };
-  fetch('/backtests/d_cb_odds.json').then(function (r) { return r.json(); }).then(function (j) { CBO = j; cbPaint(false); }).catch(function () {});
-  // the four-market file: [n, TGT, TGT first, protected, back to 50% first, BC lean, BC other, NBC, n period 2, TGT p2, TGT first p2] -> the page order
-  function cboRow(m, tf, k) { var r = CBO && CBO[m] && CBO[m][tf] && CBO[m][tf][k.replace('.', '.').replace('−', '-')]; if (!r) return null; return [r[0], r[1], r[2], r[3], r[5], r[6], r[7], r[4], r[8], r[9], r[10], r[11], r[12]]; }
+  var CBO = null, CBOERR = false, MKN = { NQ: 'NQ / MNQ', ES: 'ES / MES', GC: 'Gold GC / MGC', CL: 'Crude CL / MCL' };
+  fetch('/backtests/d_cb_odds.json').then(function (r) { return r.json(); }).then(function (j) { CBO = j; cbPaint(false); }).catch(function () { CBOERR = true; cbPaint(false); });
+  // d_cb_odds.json, one result over all the data + each year alone (no period split):
+  //   CBO[mkt][tf][type] = { a: [n, TGT, TGT first, protected, back to 50% first, BC lean, BC other, NBC, n order], y: { '2023': same | [n] } }
+  //   CBO.meta[mkt][tf] = { from, to, short (about 11 months: no years), years, ord: null | { from, to, src } }
+  function cboGet(m, tf, k) { return CBO && CBO[m] && CBO[m][tf] && CBO[m][tf][k] || null; }
+  function cboMeta(m, tf) { return CBO && CBO.meta && CBO.meta[m] && CBO.meta[m][tf] || null; }
   var PAIRS = [['above', 'below'], ['high', 'low'], ['top', 'bottom'], ['Buyers', 'Sellers'], ['buyers', 'sellers'], ['Bullish', 'Bearish'], ['bullish', 'bearish'], ['bull', 'bear'], ['BuAF', 'BeAF'], ['Bu', 'Be'], ['bought', 'sold'], ['up', 'down'], ['green', 'red']];
   var SWM = {}; PAIRS.forEach(function (p) { SWM[p[0]] = p[1]; SWM[p[1]] = p[0]; });
   function swapSide(x) { return x.replace(/\b(above|below|high|low|top|bottom|Buyers|Sellers|buyers|sellers|Bullish|Bearish|bullish|bearish|bull|bear|BuAF|BeAF|Bu|Be|bought|sold|up|down|green|red)\b/g, function (w) { return SWM[w]; }); }
@@ -553,45 +566,51 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
     s += '<text x="' + (box ? 138 : x0) + '" y="' + (H - 10) + '" text-anchor="middle" fill="#8f97a1" font-family="Barlow,sans-serif" font-size="12">previous</text><text x="' + x1 + '" y="' + (H - 10) + '" text-anchor="middle" fill="#d9dde3" font-family="Barlow,sans-serif" font-size="12">' + (box ? 'the H4 candle on your 15m chart' : 'this candle') + '</text>';
     return s + '</svg>';
   }
-  // where the order inside the next candle comes from (TGT first, 50% first) on 1h / daily / weekly
-  var OSRC = {
-    '1h': { NQ: 'NQ 1-minute 2022–25 + MNQ 15m / 5m 2026', other: 'TradingView 15m (Dec 2025 – Jul 2026) and 5m (Jul – Oct 2026)' },
-    D: { NQ: 'NQ 1-minute 2022–25 + MNQ 15m 2026', other: 'TradingView 15m, Dec 2025 – Oct 2026' },
-    W: { NQ: 'the daily candles of the next week, 2000–2026', other: 'the daily candles of the next week' }
-  };
-  function orderNote(tf, m, r) {
-    var s = OSRC[tf]; if (!s || r[11] == null) return '';
-    var t = '¹ TGT first and the 50% need the order inside the next candle. They are read from ' + (m === 'NQ' ? s.NQ : s.other) + ': ' + r[11].toLocaleString('en-US') + ' candles. A small bar that hits both sides is skipped. – = fewer than 10.';
-    if (r[10] != null) t += ' Second period: TGT first ' + r[10] + '% (' + r[12].toLocaleString('en-US') + ' candles).';
-    return '<p class="nt">' + t + '</p>';
+  // the odds panel: all data first, then each year alone
+  var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function ym(x) { var p = String(x).split('-'); return MON[+p[1] - 1] + ' ' + p[0]; }
+  var OSRC = { nq1m: 'daily candles rebuilt from the NQ 1-minute and MNQ bars', h1: 'daily candles rebuilt from the 1-hour bars', tv: '1h candles rebuilt from the TradingView 1m / 5m / 15m bars', d1: 'the daily candles of the next week' };
+  function srcText(m, tf, mt) {
+    var rg = ym(mt.from) + ' – ' + ym(mt.to);
+    if (m === 'NQ' && tf !== 'D' && tf !== 'W') return 'NQ 1-minute data up to Dec 11, 2025, then MNQ from Dec 12, 2025 to ' + ym(mt.to) + ', all sessions. No day is counted twice.' + (tf === '5m' ? ' On MNQ the 5m chart uses only days with 5-minute bars or finer (Mar – Oct 2026).' : '');
+    if (tf === 'D' || tf === 'W') return (tf === 'D' ? 'Daily' : 'Weekly') + ' candles of the front month, ' + rg + '.';
+    if (mt.short) return 'TradingView data, ' + rg + ' (' + tf + ' charts' + (tf === '5m' ? ', days with 5-minute bars or finer' : '') + ').';
+    return 'TradingView 1-hour data, ' + rg + '.';
+  }
+  function yearsHTML(e, mt) {
+    var pc = function (v) { return v == null ? '–' : v + '%'; };
+    var tr = function (lab, r, cls) { r = r || []; return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + lab + '</td><td>' + (r[0] || 0).toLocaleString('en-US') + '</td><td>' + pc(r[1]) + '</td><td>' + pc(r[2]) + '</td><td>' + pc(r[3]) + '</td><td>' + pc(r[4]) + '</td><td>' + pc(r[5]) + '</td></tr>'; };
+    var ys = (mt.years || []).slice().reverse();
+    return '<div class="lab" style="margin-top:4px">Year by year · each year alone</div>' +
+      '<div class="oyr' + (ys.length > 6 ? ' long' : '') + '"><table class="oyt"><thead><tr><th>Year</th><th>Candles</th><th>TGT</th><th>TGT first</th><th>Protected</th><th>50% first</th><th>BC lean</th></tr></thead><tbody>' +
+      tr('All', e.a, 'all') + ys.map(function (y) { return tr('<span translate="no">' + y + '</span>', e.y && e.y[y]); }).join('') + '</tbody></table></div>' +
+      '<p class="nt">– = fewer than 10 candles that year (30 for TGT first and the 50%).' + (ys.length > 6 ? ' Scroll the table for the older years.' : '') + '</p>';
   }
   function oddsHTML() {
-    var live = CBO && cboRow(oddsMkt, oddsTF, oddsKey(cbKey, cbSide));
-    var r = oddsMkt === 'NQ' && !live ? (ODDS[oddsTF] || {})[oddsKey(cbKey, cbSide)] : live;
+    var e = cboGet(oddsMkt, oddsTF, oddsKey(cbKey, cbSide)), mt = cboMeta(oddsMkt, oddsTF);
     var tfs = '<span class="seg" role="group" aria-label="Timeframe">' + [['5m', '5m'], ['15m', '15m'], ['1h', '1h'], ['4h', '4h'], ['D', 'Daily'], ['W', 'Weekly']].map(function (k) { return '<button type="button" data-otf="' + k[0] + '" aria-pressed="' + (k[0] === oddsTF) + '">' + k[1] + '</button>'; }).join('') + '</span>';
     var mks = '<span class="seg" role="group" aria-label="Market">' + ['NQ', 'ES', 'GC', 'CL'].map(function (m) { return '<button type="button" data-omk="' + m + '" aria-pressed="' + (m === oddsMkt) + '" translate="no">' + MKN[m] + '</button>'; }).join('') + '</span>';
     var head = '<div class="odds"><div class="tfs"><span class="lab">Market</span>' + mks + '</div><div class="tfs"><span class="lab">Timeframe</span>' + tfs + '</div>';
-    if (!r) return head + '<p class="nt">' + (CBO ? 'Fewer than 10 candles of this type here.' : 'Loading…') + '</p></div>';
+    if (!e || !mt) return head + '<p class="nt">' + (CBO ? 'Fewer than 10 candles of this type here.' : CBOERR ? 'The odds could not load. Try again later.' : 'Loading…') + '</p></div>';
+    var r = e.a, ord = !!mt.ord, sup = ord ? ' ¹' : '';
     var row = function (lab, v, col) { var na = v == null; return '<div class="orow"><span>' + lab + '</span><span class="tr"><i style="width:' + (na ? 0 : v) + '%;background:' + col + '"></i></span><b style="color:' + (na ? '#8f97a1' : col) + '">' + (na ? '–' : v + '%') + '</b></div>'; };
-    var htf = oddsTF === 'D' || oddsTF === 'W', hr = oddsTF === '1h' || oddsTF === '4h';
-    var nq = oddsMkt === 'NQ', n1 = r[0].toLocaleString('en-US'), n2 = (r[8] || 0).toLocaleString('en-US'), MN = '<span translate="no">' + MKN[oddsMkt] + '</span> ';
-    var chk = (r[9] == null) ? 'too few candles of this type yet.' : '(' + n2 + ' candles): takes the TGT ' + r[9] + '%' + (r[10] == null || oddsTF === '1h' || oddsTF === 'D' || oddsTF === 'W' ? '' : ', TGT first ' + r[10] + '%') + '.';
-    var note;
-    if (htf) note = MN + (oddsTF === 'D' ? 'daily' : 'weekly') + ' candles, ' + (oddsMkt === 'GC' ? 'Jan 2020' : 'Sep 2000') + ' – Oct 2026 (front month): ' + n1 + ' candles. Second period (' + (oddsMkt === 'GC' ? 'May 2023' : '2013') + ' – Oct 2026) check: ' + chk + ' The daily and weekly candles frame the trend and the bias for the lower charts. Odds, not signals.';
-    else if (hr) note = MN + oddsTF + ' candles, Jun 2024 – Oct 2026 (1h data): ' + n1 + ' candles. Second period (Aug 2025 – Oct 2026) check: ' + chk + ' Odds, not signals.';
-    else if (nq) note = 'NQ 1-minute data, Dec 2022 – Dec 2025, all sessions: ' + n1 + ' candles. Check on MNQ 2026 ' + chk + ' “+” candles close next to their TGT, so part of the high % is just distance. Odds, not signals.';
-    else note = MN + 'TradingView data, Dec 2025 – Oct 2026 (' + oddsTF + ' charts' + (oddsTF === '5m' ? ', days with 5-minute bars or finer' : '') + '): ' + n1 + ' candles. Second period (' + (oddsTF === '5m' ? 'Sep – Oct 2026' : 'Jun – Oct 2026') + ') check: ' + chk + ' Same code and rules as NQ. Odds, not signals.';
+    var htf = oddsTF === 'D' || oddsTF === 'W';
+    var note = '<p class="nt"><span translate="no">' + MKN[oddsMkt] + '</span> · <span>' + srcText(oddsMkt, oddsTF, mt) + '</span> ' +
+      (mt.short ? '<span>Short data (under one year): one number for all of it, no year-by-year view.</span> ' : '') +
+      '<span>' + (htf ? 'The daily and weekly candles frame the trend and the bias for the lower charts.' : '“+” candles close next to their TGT, so part of the high % is just distance.') + '</span> <span>Odds, not signals.</span></p>';
+    var onote = ord ? '<p class="nt">¹ TGT first and the 50% need the order inside the next candle. They are read from ' + OSRC[mt.ord.src] + ', ' + ym(mt.ord.from) + ' – ' + ym(mt.ord.to) + ': ' + (r[8] || 0).toLocaleString('en-US') + ' candles. A small bar that hits both sides is skipped.</p>' : '';
     return head +
-      '<div class="lab">The next candle…</div>' +
+      '<div class="lab">All data · ' + r[0].toLocaleString('en-US') + ' candles · the next candle…</div>' +
       row('takes the TGT', r[1], '#3ddc97') +
-      row('takes the TGT before the protected end' + (htf || oddsTF === '1h' ? ' ¹' : ''), r[2], '#3ddc97') +
+      row('takes the TGT before the protected end' + sup, r[2], '#3ddc97') +
       row('takes the protected end', r[3], '#ff5c6c') +
-      row('comes back to the 50% before the TGT' + (htf || oddsTF === '1h' ? ' ¹' : ''), r[7], '#4fd1c5') +
+      row('comes back to the 50% before the TGT' + sup, r[4], '#4fd1c5') +
       '<div class="lab" style="margin-top:4px">It closes as…</div>' +
-      row('a BC on the lean side', r[4], '#3ddc97') +
-      row('a BC on the other side', r[5], '#ff5c6c') +
-      row('an NBC (inside)', r[6], '#8f97a1') +
-      '<p class="nt">' + note + '</p>' + orderNote(oddsTF, oddsMkt, r) + '</div>';
+      row('a BC on the lean side', r[5], '#3ddc97') +
+      row('a BC on the other side', r[6], '#ff5c6c') +
+      row('an NBC (inside)', r[7], '#8f97a1') +
+      (mt.short || !(mt.years || []).length ? '' : yearsHTML(e, mt)) +
+      note + onote + '</div>';
   }
   function wickHTML() {
     var sh = shape(), rg = sh.hi - sh.lo, tw = Math.round((sh.hi - Math.max(sh.o, sh.c)) / rg * 100), bwk = Math.round((Math.min(sh.o, sh.c) - sh.lo) / rg * 100), bd = 100 - tw - bwk;
@@ -727,11 +746,24 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
   var ENGPFX = { c: 'C.', s: null, x: 'X.', fva: 'FVA.', xcs: 'XCS.' };
   function mkVerd(v) {
     if (!v) return '<span class="mv k">not tested</span>';
-    if (v === 'trade' || v.indexOf('PASS · edge') === 0) return '<span class="mv e">' + (v === 'trade' ? 'TRADE' : 'PASS · EDGE') + '</span>';
-    if (v === 'watch' || v.indexOf('PASS · watch') === 0) return '<span class="mv w">' + (v === 'watch' ? 'WATCH' : 'PASS · WATCH') + '</span>';
-    if (v.indexOf('weak') === 0) return '<span class="mv k">WEAK</span>';
-    if (v.indexOf('too few') === 0) return '<span class="mv k">TOO FEW TRADES</span>';
-    return '<span class="mv n">NO EDGE</span>';
+    if (v === 'trade') return '<span class="mv e">TRADE</span>';
+    if (v === 'watch') return '<span class="mv w">WATCH</span>';
+    if (v === 'weak') return '<span class="mv k">WEAK · NO TRADE</span>';
+    if (v.indexOf('GOOD') === 0) return '<span class="mv e">GOOD</span>';
+    if (v.indexOf('MAYBE') === 0) return '<span class="mv w">MAYBE</span>';
+    return '<span class="mv n">NO</span>';
+  }
+  // ES / gold / crude: the all-data block of the tested target (the d_book "best" target when there are several)
+  function mkBlock(code, sh) {
+    if (!sh || !sh.per || !sh.per.length) return null;
+    var bk = MKB && MKB.filter ? MKB.filter(function (x) { return x.code === code; })[0] : null;
+    var i = sh.per.length > 1 ? (sh.fva ? sh.per.length - 1 : (bk && bk.labels && bk.labels.length > 1 ? bk.best : 0)) : 0;
+    return sh.per[i] || sh.per.filter(Boolean)[0] || null;
+  }
+  var MKY = ['2023', '2024', '2025', '2026'];
+  function mkYears(x) {
+    var y = x.years || {};
+    return '<td class="mky" translate="no">' + MKY.map(function (k) { var b = y[k]; if (!b || b.netR == null) return '<span class="z">' + k + ' –</span>'; var v = b.netR; return '<span class="' + (v > 0 ? 'u' : 'd') + '">' + k + ' ' + (v > 0 ? '+' : '') + Math.round(v) + '</span>'; }).join('') + '</td>';
   }
   function mkTable(k) {
     var pfx = ENGPFX[k];
@@ -740,13 +772,16 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
     var list = MKS.strategies.filter(function (x) { return x.code.indexOf(pfx) === 0; });
     if (!list.length) return '';
     var rows = list.map(function (x) {
-      var nq = x.status;
-      var cells = ['ES', 'GC', 'CL'].map(function (m) { var sh = MKA && MKA[m] && MKA[m].sheets && MKA[m].sheets[x.code]; var b = sh && sh.per && sh.per.length ? sh.per[sh.per.length - 1] : null; return '<td>' + mkVerd(sh ? sh.verdict : null) + (b && b.n ? ' <small translate="no">' + b.n + ' · ' + Math.round(b.wr * 100) + '% · ' + (b.av > 0 ? '+' : '') + b.av.toFixed(2) + '</small>' : '') + '</td>'; }).join('');
-      return '<tr><td><a href="/strategies/#s-' + x.code.replace(/\./g, '-') + '" translate="no"><b>' + esc(x.code) + '</b></a> <small>' + esc(x.tf) + '</small></td><td>' + mkVerd(nq) + ' <small translate="no">' + (x.all ? x.all.n + ' · ' + Math.round(x.all.wr * 100) + '% · ' + (x.all.av > 0 ? '+' : '') + x.all.av.toFixed(2) : '') + '</small></td>' + cells + '</tr>';
+      var a = x.all;
+      var cells = ['ES', 'GC', 'CL'].map(function (m) { var sh = MKA && MKA[m] && MKA[m].sheets && MKA[m].sheets[x.code]; var b = mkBlock(x.code, sh); return '<td>' + mkVerd(sh ? sh.verdict : null) + (b && b.n ? '<br><small translate="no">' + b.n + ' · ' + Math.round(b.wr * 100) + '% · ' + (b.av > 0 ? '+' : '') + b.av.toFixed(2) + '</small>' : '') + '</td>'; }).join('');
+      return '<tr' + (x.status === 'weak' ? ' class="weak"' : '') + '><td><a href="/strategies/#s-' + x.code.replace(/\./g, '-') + '" translate="no"><b>' + esc(x.code) + '</b></a><br><small>' + esc(x.tf) + '</small></td><td>' + mkVerd(x.status) + '<br><small translate="no">' + (a ? a.n + ' · ' + Math.round(a.wr * 100) + '% · ' + (a.av > 0 ? '+' : '') + a.av.toFixed(2) : '') + '</small></td><td translate="no">' + (x.counted ? x.green + ' / ' + x.counted : '–') + '</td>' + mkYears(x) + cells + '</tr>';
     }).join('');
-    var n = list.length, pass = function (m) { return list.filter(function (x) { var sh = MKA && MKA[m] && MKA[m].sheets && MKA[m].sheets[x.code]; return sh && sh.verdict && sh.verdict.indexOf('PASS') === 0; }).length; };
-    return '<div class="mkt-wrap"><table class="mkt-t"><thead><tr><th>Strategy</th><th>NQ / MNQ</th><th>ES / MES</th><th>Gold GC / MGC</th><th>Crude CL / MCL</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-      '<p class="mkt-note"><b>' + n + ' strategies</b> of this engine passed on NQ. Made money in both periods on ES: ' + pass('ES') + ' of ' + n + ' · gold: ' + pass('GC') + ' of ' + n + ' · crude: ' + pass('CL') + ' of ' + n + '. Small numbers = trades · WR (win rate) · avg RR (average result per trade in stops, after costs). NQ = 2022–25 + 2026. ES, gold and crude = Dec 2025 – Oct 2026 cut into two periods; a result counts only if it made money in both.' + (k === 'fva' ? ' The FVA strategies on ES, gold and crude ran on a rebuilt copy of the test engine: close to the NQ book numbers, not identical.' : '') + ' Research, not advice. Pick ONE.</p>';
+    var n = list.length, cnt = function (st) { return list.filter(function (x) { return x.status === st; }).length; };
+    var good = function (m) { return list.filter(function (x) { var sh = MKA && MKA[m] && MKA[m].sheets && MKA[m].sheets[x.code]; return sh && sh.verdict && sh.verdict !== 'NO'; }).length; };
+    return '<div class="mkt-wrap"><table class="mkt-t"><thead><tr><th>Strategy</th><th>NQ / MNQ<br>all data</th><th>Years<br>green</th><th>NQ each year<br>net in stops</th><th>ES / MES<br>short data</th><th>Gold GC / MGC<br>short data</th><th>Crude CL / MCL<br>short data</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<p class="mkt-note"><b>' + n + ' strategies</b> of this engine on NQ / MNQ: ' + cnt('trade') + ' TRADE · ' + cnt('watch') + ' WATCH · ' + cnt('weak') + ' WEAK. WEAK = it did not hold up year after year: do not trade it.</p>' +
+      '<p class="mkt-note">NQ / MNQ = Dec 2022 – Oct 2026: one result over all the data, then each year alone, so a few months never count like a full year. Years green = years that made money, of the years with enough trades. Small numbers = trades · WR (win rate) · avg RR (average result per trade in stops, after costs). Each year = the net result of that year, in stops.</p>' +
+      '<p class="mkt-note">ES, gold and crude have only about 11 months of data (Dec 2025 – Oct 2026), so each one is one all-data result (short data): GOOD, MAYBE or NO. GOOD or MAYBE on ES: ' + good('ES') + ' of ' + n + ' · gold: ' + good('GC') + ' of ' + n + ' · crude: ' + good('CL') + ' of ' + n + '.' + (k === 'fva' ? ' The FVA strategies on ES, gold and crude ran on a rebuilt copy of the test engine: close to the NQ book numbers, not identical.' : '') + ' Research, not advice. Pick ONE.</p>';
   }
   var EORDER = ['c', 's', 'x', 'fva', 'xcs'], ESEL = 'c', DIAK = 'LD1';
   var DIA = {
@@ -794,9 +829,10 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
       '<div class="e-head"><h3 translate="no">' + esc(e.name) + ' <i>' + esc(e.letter) + '</i></h3><span class="full">' + esc(e.full) + '</span></div>' +
       '<div class="e-body"><div class="e-l"><p class="idea-t">' + esc(e.idea) + '</p><div><div class="lab" style="margin-bottom:4px">How the order flow works</div><ol class="how">' + e.how.map(function (h) { return '<li><span>' + h + '</span></li>'; }).join('') + '</ol></div>' +
       '<p class="best"><b>Best for:</b> ' + esc(e.best) + '</p>' +
-      '<div><div class="lab" style="margin-bottom:2px">What the tests say · NQ, ES, gold, crude oil</div>' + mkTable(ESEL) + '</div></div>' +
+      '</div>' +
       '<div class="e-r"><div class="dside"><div class="lab">The trend staircase · tap a point</div><span class="seg" role="group" aria-label="Example side"><button type="button" data-dside="bu" aria-pressed="' + (DSIDE === 'bu') + '">Bull example</button><button type="button" data-dside="be" aria-pressed="' + (DSIDE === 'be') + '">Bear example</button></span></div><div class="dia" id="dia">' + stairSVG(e.L) + '</div><div class="dinfo" id="dinfo"><b>' + esc(d[0]) + '</b><p>' + esc(d[1]) + '</p></div>' +
       '<div><div class="lab" style="margin-bottom:2px">What you see on the chart</div><table class="see"><tbody>' + e.see.map(function (r) { return '<tr><td translate="no">' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>'; }).join('') + '</tbody></table></div></div></div>' +
+      '<div class="e-tests"><div class="lab" style="margin-bottom:2px">What the tests say · NQ, ES, gold, crude oil</div>' + mkTable(ESEL) + '</div>' +
       '<div class="e-cta"><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="' + ESEL + '">Try ' + esc(e.name + ' ' + e.letter) + ' for free</a><span>On your own chart, your market, your hours.</span></div></article>';
   }
   document.addEventListener('click', function (e) {

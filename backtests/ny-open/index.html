@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>NY open lab · 09:30 to 11:30 stats | MMM Trading</title>
-<meta name="description" content="What NQ does from 09:30 to 11:30 New York: when the high and low are made, the 09:30 and 10:00 MMM candles, the opening range, UPG gaps, BC runs until 11:30 and a 50 pt 1:2 check. NQ 2022–25 + MNQ 2026.">
+<meta name="description" content="What NQ does from 09:30 to 11:30 New York: when the high and low are made, the 09:30 and 10:00 MMM candles, the opening range, UPG gaps, BC runs until 11:30 and a 50 pt 1:2 check. NQ / MNQ Dec 2022 – Nov 2026, all data and each year alone.">
 <link rel="canonical" href="https://www.maxmaserati.com/backtests/ny-open/">
 <meta name="mmm-page" content="nyopen">
 <link rel="icon" href="/favicon.ico" sizes="any">
@@ -80,7 +80,18 @@ td.hi{color:var(--up)} td.lo{color:var(--dn)}
 .links a.try{background:var(--gold);color:#0b0b0b;border-color:var(--gold)}
 .legal{color:var(--mute);font-size:12.5px;line-height:1.5;margin:0}
 main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-@media (max-width:600px){.reach .r{grid-template-columns:52px minmax(0,1fr) 96px}}
+.yearbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;background:rgba(7,8,10,.94);border:1px solid var(--line);padding:8px 12px;backdrop-filter:blur(4px)}
+.yearbar>span:first-child{font:600 13px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.yearbar .seg button[aria-pressed="true"]{background:var(--teal);color:#06110f}
+.yt{width:auto;min-width:min(100%,620px)}
+.yt td{text-align:right}
+.yt td:first-child{text-align:left;white-space:normal;min-width:150px}
+.yt th:nth-child(n+2){text-align:right}
+.yt td.al{color:var(--gold2);font-weight:600;background:rgba(225,179,26,.07)}
+.yt td.on,.yt th.on{box-shadow:inset 0 0 0 1px var(--teal)}
+.cap{font:600 13px/1.3 var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin:0}
+.cap b{color:var(--gold2)}
+@media (max-width:600px){.reach .r{grid-template-columns:52px minmax(0,1fr) 96px}.yt{min-width:100%}.yt td,.yt th{padding:6px 4px;font-size:11.5px}.yt th{white-space:normal}.yt td:first-child{min-width:96px;padding-left:7px}.yearbar .seg button{padding:8px 10px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -93,32 +104,35 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
 <h1>09:30 to 11:30 New York</h1>
 <p class="sub">The two hours Max trades. What NQ does from the cash open to 11:30: when the high and low are made, what the 09:30 and 10:00 MMM candles tell you, the opening range, the 09:30–10:00 gaps, and how far a run of body closes goes before the other side closes. Counts of what price does, not trading signals.</p>
 </header>
-<div class="legend" role="note"><span>Every cell = <b>2022–25 / 2026</b></span><span><b>2022–25</b> = NQ 1m, Dec 2022 – Dec 2025, 763 days</span><span><b>2026</b> = MNQ 1m, Mar–May + Sep–Oct 2026, 61 days (small sample)</span><span><b>*</b> = fewer than 30 cases in 2026</span><span>pts = NQ points</span></div>
+<div class="legend" role="note" id="lg"><span><b>All data</b> = NQ / MNQ, every day counted once</span><span><b>2023 · 2024 · 2025 · 2026</b> = each year alone</span><span><b>*</b> = fewer than 30 cases</span><span>pts = NQ points</span></div>
+<div class="yearbar"><span>Tables show</span><span class="seg" role="group" aria-label="Years"><button type="button" data-per="all" aria-pressed="true">All data</button><button type="button" data-per="2023" aria-pressed="false">2023</button><button type="button" data-per="2024" aria-pressed="false">2024</button><button type="button" data-per="2025" aria-pressed="false">2025</button><button type="button" data-per="2026" aria-pressed="false">2026</button></span></div>
 
 <section class="sum" aria-label="The main findings">
-  <div class="card"><h3>The window</h3><p>Median 09:30–11:30 range: <b>155 / 235 pts</b>. The first 15 minutes make the high on about <b>30–32%</b> of days and the low on about <b>32–33%</b>. The high or the low is already in by 10:00 on <b>83 / 85%</b> of days.</p></div>
-  <div class="card"><h3>The 09:30 candle</h3><p>A 5m BC+ at the open: the next 5m candle takes its target first <b>85 / 87%</b>, and the target is hit by 11:30 <b>97 / 100%</b>. But 11:30 only closes its way <b>53 / 67%</b>: it shows the first push, not the morning.</p></div>
-  <div class="card"><h3>The opening range</h3><p>09:30–10:00 high to low: median <b>94 / 167 pts</b>. Price closes out of it by 11:30 <b>94 / 92%</b> of days, then runs a median <b>51 / 71 pts</b> past the edge. It closes back out of the OTHER side only <b>14 / 11%</b>.</p></div>
-  <div class="card"><h3>The 10:00 candle</h3><p>A BC+ that closes at 10:00: the next candle takes its target first <b>86–92%</b> on 5m, 15m, 1h and 4H. A BC− is close to a coin flip. A weak candle often visits the open gap behind it first.</p></div>
-  <div class="card"><h3>Runs until 11:30</h3><p>From the first BC after 10:00: median <b>2</b> same-side BCs, about 2–3 NBCs, then the other side closes. The run goes a median <b>30–36 pts</b> (5m) and <b>36 pts</b> (15m) our way, but the exit on the opposite candle gives it back.</p></div>
+  <div class="card"><h3>The window</h3><p>Median 09:30–11:30 range: <b>176 pts</b>. The first 15 minutes make the high on about <b>32%</b> of days and the low on about <b>32%</b>. The high or the low is already in by 10:00 on <b>83%</b> of days, and on 80–86% in every year.</p></div>
+  <div class="card"><h3>The 09:30 candle</h3><p>A 5m BC+ at the open: the next 5m candle takes its target first <b>85%</b> (81–90% each year), and the target is hit by 11:30 <b>97%</b>. But 11:30 only closes its way <b>54%</b>: it shows the first push, not the morning.</p></div>
+  <div class="card"><h3>The opening range</h3><p>09:30–10:00 high to low: median <b>99 pts</b>. Price closes out of it by 11:30 <b>94%</b> of days, then runs a median <b>53 pts</b> past the edge. It closes back out of the OTHER side only <b>14%</b>.</p></div>
+  <div class="card"><h3>The 10:00 candle</h3><p>A BC+ that closes at 10:00: the next candle takes its target first <b>87–90%</b> on 5m, 15m, 1h and 4H. A BC− is close to a coin flip. A weak candle often visits the open gap behind it first.</p></div>
+  <div class="card"><h3>Runs until 11:30</h3><p>From the first BC after 10:00: median <b>2</b> same-side BCs, about 3–4 NBCs, then the other side closes. The run goes a median <b>32–38 pts</b> (5m) and <b>39–41 pts</b> (15m) our way, but the exit on the opposite candle gives it back.</p></div>
   <div class="card no"><h3>What does NOT work</h3><p>The 10:00 lean for the 16:00 close, a BC− for direction, holding until the opposite candle, and the first BC after 10:00 as an entry with a 50 pt stop at 1:2 (avg RR about 0, t-score under 2).</p></div>
 </section>
 
 <section class="blk" id="mkts" aria-labelledby="h-mk">
-  <div class="bh"><h2 id="h-mk">The same morning on ES, gold and crude oil<small>Same rules, each market's own data, period 1 / period 2</small></h2><span class="seg" role="group" aria-label="Market"><button type="button" data-mk="ES" aria-pressed="true">ES / MES</button><button type="button" data-mk="GC" aria-pressed="false">Gold</button><button type="button" data-mk="CL" aria-pressed="false">Crude oil</button></span></div>
+  <div class="bh"><h2 id="h-mk">The same morning on ES, gold and crude oil<small>Same rules, each market's own data · short data, so no years</small></h2><span class="seg" role="group" aria-label="Market"><button type="button" data-mk="ES" aria-pressed="true">ES / MES</button><button type="button" data-mk="GC" aria-pressed="false">Gold</button><button type="button" data-mk="CL" aria-pressed="false">Crude oil</button></span></div>
   <div class="bb"><div class="tw"><table id="mk-t"></table></div><div class="tw"><table id="mk-c"></table></div>
     <p class="note" id="mk-n"></p></div>
 </section>
 
 <section class="blk" id="window" aria-labelledby="h-win">
-  <div class="bh"><h2 id="h-win">1 · When the high and the low are made<small>09:30 to 11:30, by 15-minute slot</small></h2><span class="seg" role="group" aria-label="Period"><button type="button" data-per="old" aria-pressed="true">2022–25</button><button type="button" data-per="fresh" aria-pressed="false">2026</button></span></div>
+  <div class="bh"><h2 id="h-win">1 · When the high and the low are made<small>09:30 to 11:30, by 15-minute slot</small></h2></div>
   <div class="bb">
+    <p class="cap" id="tl-cap"></p>
     <div class="tl" id="tl"></div>
-    <dl class="kpis" id="win-k"></dl>
+    <div class="tw"><table class="yt" id="win-y"></table></div>
     <ul class="find">
-      <li><b>The open is where the extremes are made.</b> The 09:30–09:45 slot makes the morning high or low more than any other slot, 3 to 4 times more than a middle slot.</li>
-      <li><b>The last slot (11:15–11:30) is second for the high</b> (20 / 21%). Strong mornings often push into 11:30, so a long can be held until your stop time.</li>
-      <li><b>Both extremes after 10:00 is rare</b> (17 / 15%). If 10:00 comes and price is far from the open, one side of the morning is probably already done.</li>
+      <li><b>The open is where the extremes are made.</b> The 09:30–09:45 slot makes the morning high or low on about 32% of days (29–34% each year), 3 to 4 times more than a middle slot.</li>
+      <li><b>The last slot (11:15–11:30) is second for the high</b> (about 20% every year). Strong mornings often push into 11:30, so a long can be held until your stop time.</li>
+      <li><b>Both extremes after 10:00 is rare</b> (17%, 14–20% each year). If 10:00 comes and price is far from the open, one side of the morning is probably already done.</li>
+      <li><b>Points grow every year because NQ price is higher</b> (median range 130 pts in 2023, 265 in 2026). Compare the % between years, not the points.</li>
     </ul>
   </div>
 </section>
@@ -126,12 +140,14 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
 <section class="blk" id="open" aria-labelledby="h-open">
   <div class="bh"><h2 id="h-open">2 · The 09:30 opening candle<small>The first 5m or 15m candle, read with MMM Candle Bias, until 11:30</small></h2><span class="seg" role="group" aria-label="Chart"><button type="button" data-otf="5m" aria-pressed="true">5m</button><button type="button" data-otf="15m" aria-pressed="false">15m</button></span></div>
   <div class="bb">
+    <p class="cap" id="open-cap"></p>
     <div class="tw"><table id="open-t"></table></div>
     <p class="note">Target (TGT) = the candle's lean-side extreme (high for a bull type). Protected = the other end. "11:30 its way" = the 11:30 close is past the 09:30 candle close in the lean direction. MFE = most points in favour from the candle close before 11:30, MAE = most points against.</p>
+    <div class="tw"><table class="yt" id="open-y"></table></div>
     <ul class="find">
-      <li><b>C2 and S&amp;D are the most common opening candles</b> (about 40% and 11–15%): the pre-open candle is small, so the open takes both sides of it.</li>
-      <li><b>BC+ is the cleanest:</b> target first next candle 82–87%, target before the protected end 87–93%.</li>
-      <li><b>None of them tells you the 11:30 close:</b> about 50% in 2022–25 (AFs only 28%). Use the 09:30 candle for the first push only.</li>
+      <li><b>C2 is the most common opening candle</b> (about 40%), then BC+ (about 22%): the pre-open candle is small, so the open takes both sides of it.</li>
+      <li><b>BC+ is the cleanest:</b> on 5m the next candle takes its target first 85% (81–90% each year), and the target comes before the protected end 91%.</li>
+      <li><b>None of them tells you the 11:30 close:</b> about 50% (AFs only 30%). Use the 09:30 candle for the first push only.</li>
     </ul>
   </div>
 </section>
@@ -139,10 +155,10 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
 <section class="blk" id="or" aria-labelledby="h-or">
   <div class="bh"><h2 id="h-or">3 · The 30-minute opening range<small>The 09:30–10:00 high and low, and the first close out of it before 11:30</small></h2></div>
   <div class="bb">
-    <dl class="kpis" id="or-k"></dl>
+    <div class="tw"><table class="yt" id="or-y"></table></div>
     <ul class="find">
-      <li><b>The first close out of the range usually holds the morning:</b> 11:30 still closes past that edge 57 / 63% of the time, and price closes back out of the other side only 14 / 11%.</li>
-      <li><b>Up or down is about even.</b> Do not guess the side: wait for the first 1m close out of the range.</li>
+      <li><b>The first close out of the range usually holds the morning:</b> 11:30 still closes past that edge 57% (54–59% each year), and price closes back out of the other side only 14% (10–19%).</li>
+      <li><b>Up or down is about even</b> (50% up, 44% down). Do not guess the side: wait for the first 1m close out of the range.</li>
     </ul>
   </div>
 </section>
@@ -150,24 +166,28 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
 <section class="blk" id="c10" aria-labelledby="h-c10">
   <div class="bh"><h2 id="h-c10">4 · The candle that closes at 10:00<small>4H 06:00–10:00 · 1h 09:00–10:00 · 15m 09:45–10:00 · 5m 09:55–10:00</small></h2><span class="seg" role="group" aria-label="Timeframe"><button type="button" data-ctf="4h" aria-pressed="false">4H</button><button type="button" data-ctf="1h" aria-pressed="false">1h</button><button type="button" data-ctf="15m" aria-pressed="true">15m</button><button type="button" data-ctf="5m" aria-pressed="false">5m</button></span></div>
   <div class="bb">
+    <p class="cap" id="c10-cap"></p>
     <div class="tw"><table id="c10-t"></table></div>
+    <div class="tw"><table class="yt" id="c10-y"></table></div>
     <ul class="find">
-      <li><b>BC+ works on every timeframe:</b> the next candle takes the lean-side extreme first 86–92%. The close already sits next to that extreme, like a ball at the door.</li>
-      <li><b>BC− is a coin flip</b> for which side goes first. The close position matters more than the body close.</li>
+      <li><b>BC+ works on every timeframe:</b> the next candle takes the lean-side extreme first 87–90%. Every year stays above 84%, except the 4H in 2026 (76%, only 21 days). The close already sits next to that extreme, like a ball at the door.</li>
+      <li><b>BC− is a coin flip</b> for which side goes first (about 50%). The close position matters more than the body close.</li>
       <li><b>16:00:</b> the 10:00 lean does not tell you the close of the day (about 50–60%). Trade the morning, not the day.</li>
     </ul>
   </div>
 </section>
 
 <section class="blk" id="gaps" aria-labelledby="h-gaps">
-  <div class="bh"><h2 id="h-gaps">5 · UPG gaps made 09:30–10:00<small>3-candle gaps on 5m and 1m: touch, fill, react or fail</small></h2></div>
+  <div class="bh"><h2 id="h-gaps">5 · UPG gaps made 09:30–10:00<small>3-candle gaps on 5m and 1m: touch, fill, react or fail, until 16:00</small></h2></div>
   <div class="bb">
+    <p class="cap" id="gap-cap"></p>
     <div class="tw"><table id="gap-t"></table></div>
     <div class="tw"><table id="gapl-t"></table></div>
-    <p class="note">Touch = price trades back into the gap. Full fill = through the far edge. React = after the touch, a 5m candle closes back out on the gap side before any 5m close past the far edge. Fail = the far-edge close comes first.</p>
+    <p class="note">Touch = price trades back into the gap. Full fill = through the far edge. React = after the touch, a 5m candle closes back out on the gap side before any 5m close past the far edge. Fail = the far-edge close comes first. The 4H 06–10 candle closes at 10:00, so before 10:00 you read it while it is still forming.</p>
+    <div class="tw"><table class="yt" id="gap-y"></table></div>
     <ul class="find">
-      <li><b>Opening gaps get touched fast:</b> 5m gaps 83 / 73%, median 5 / 4 minutes after they form. A gap is a sponge: price comes back to soak it up.</li>
-      <li><b>With the 4H 06–10 lean, the gap reacts 68 / 79%.</b> Against it only 47 / 29%. Trade the gaps that point the same way as the 4H candle.</li>
+      <li><b>Opening gaps get touched fast:</b> 5m gaps 82% (76–87% each year), median 5 minutes after they form. A gap is a sponge: price comes back to soak it up.</li>
+      <li><b>With the 4H 06–10 lean, a 5m gap reacts 68%</b> (66–76% each year). Against it only 46% (35–57%). Trade the gaps that point the same way as the 4H candle.</li>
     </ul>
   </div>
 </section>
@@ -175,12 +195,14 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
 <section class="blk" id="opp" aria-labelledby="h-opp">
   <div class="bh"><h2 id="h-opp">6 · An open gap on the other side of the 10:00 target<small>Does price visit the gap behind it before the target? 10:00 to 11:30</small></h2><span class="seg" role="group" aria-label="Timeframe"><button type="button" data-ptf="4h" aria-pressed="false">4H</button><button type="button" data-ptf="1h" aria-pressed="false">1h</button><button type="button" data-ptf="15m" aria-pressed="true">15m</button><button type="button" data-ptf="5m" aria-pressed="false">5m</button></span></div>
   <div class="bb">
+    <p class="cap" id="opp-cap"></p>
     <div class="tw"><table id="opp-t"></table></div>
-    <p class="note">Gap = an untouched UPG gap made since 18:00, fully on the other side of the 10:00 close (below price for a bull lean). The closest one counts. "Weak" = BC−, AFs, CI or S&amp;D.</p>
+    <p class="note">Gap = an untouched 5m UPG gap made since 18:00, fully on the other side of the 10:00 close (below price for a bull lean). The closest one counts. "Weak" = BC−, AFs, CI or S&amp;D.</p>
+    <div class="tw"><table class="yt" id="opp-y"></table></div>
     <ul class="find">
-      <li><b>A gap is usually there</b> (56–78% of days), and it does not stop the target.</li>
+      <li><b>A gap is usually there</b> (56–77% of days), and it does not stop the target.</li>
       <li><b>Strong candles ignore it:</b> after BC+ or C2, the gap comes first only 5% (5m) to 22% (1h).</li>
-      <li><b>Weak candles go there first</b> 15% (5m), 32% (15m), 45% (1h), 52% (4H). On 1h and 4H, wait at the gap on those days.</li>
+      <li><b>Weak candles go there first</b> 15% (5m), 30% (15m), 44% (1h), 50% (4H). The same in 2023, 2024 and 2025. On 1h and 4H, wait at the gap on those days.</li>
     </ul>
   </div>
 </section>
@@ -191,11 +213,12 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
     <span class="seg" role="group" aria-label="Opposite candle rule"><button type="button" data-rm="opp BC" aria-pressed="false">Opposite BC</button><button type="button" data-rm="close past BC open" aria-pressed="false">Close past BC open</button><button type="button" data-rm="close past BC low" aria-pressed="true">Close past BC low</button></span></div></div>
   <div class="bb">
     <p class="note">The opposite candle: <b>Opposite BC</b> = the first body close the other way. <b>Close past BC open</b> = a close below the open of the last bull BC (bear run: above the last bear BC open). <b>Close past BC low</b> = a close below the low of the last bull BC (bear run: above its high).</p>
+    <p class="cap" id="run-cap"></p>
     <div class="tw"><table id="run-t"></table></div>
-    <div><div class="note" style="margin-bottom:8px">How often the run gives X points our way before the opposite candle (gold = 2022–25, teal = 2026):</div><div class="reach" id="reach"></div></div>
+    <div class="tw"><table class="yt" id="run-y"></table></div>
     <ul class="find">
       <li><b>Runs are short:</b> median 2 same-side BCs on every chart. 1m runs end in about 5 minutes, 5m in 25–35, 15m in about an hour.</li>
-      <li><b>The points are there, the exit is late:</b> MFE median 30–36 pts on 5m, but at the opposite candle the average is about 0. Take points before the other side closes.</li>
+      <li><b>The points are there, the exit is late:</b> MFE median 32–38 pts on 5m, but at the opposite candle the average is about 0, in every year (−5 to +5 pts). Take points before the other side closes.</li>
       <li><b>"Close past BC low" holds the longest</b> and gives the most points. The 4H lean does not change the run.</li>
     </ul>
   </div>
@@ -204,32 +227,36 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
 <section class="blk" id="hours" aria-labelledby="h-hours">
   <div class="bh"><h2 id="h-hours">8 · 5m BC runs by the hour they start<small>Every run in the data, not only 10:00</small></h2></div>
   <div class="bb">
+    <p class="cap" id="hr-cap"></p>
     <div class="tw"><table id="hr-t"></table></div>
-    <ul class="find"><li><b>09:30–11:30 runs have the same count</b> of BCs as other hours, but they travel more points: 27 / 41 pts median vs 10 / 18. Same number of steps, bigger steps.</li></ul>
+    <div class="tw"><table class="yt" id="hr-y"></table></div>
+    <ul class="find"><li><b>09:30–11:30 runs have the same count</b> of BCs as other hours, but they travel more points: 29 pts median vs 7–19 for the other hours, and it is the top hour in every year. Same number of steps, bigger steps.</li></ul>
   </div>
 </section>
 
 <section class="blk" id="check" aria-labelledby="h-check">
   <div class="bh"><h2 id="h-check">9 · 50 pt stop at 1:2 on the first BC after 10:00<small>Entry at the BC close, stop 50, target 100, out at 11:30, 1 pt cost</small></h2></div>
   <div class="bb">
+    <div class="tw"><table class="yt" id="q7-y"></table></div>
+    <p class="cap" id="q7-cap"></p>
     <div class="tw"><table id="q7-t"></table></div>
     <p class="note">WR = win rate. avg RR = average result in risk units (1 = one stop). PF = profit factor: money won ÷ money lost. t-score: 2 or more = probably not luck.</p>
-    <ul class="find"><li><b>No edge.</b> The first BC after 10:00 is the start of the count, not an entry. The working morning strategies are in the strategy book.</li></ul>
+    <ul class="find"><li><b>No edge.</b> All data: avg RR +0.05 (5m) and +0.04 (15m), t-score under 2. Only one year group reaches t-score 2 (5m, first BC is a BC+, 2024), and 2026 is negative on 5m. The first BC after 10:00 is the start of the count, not an entry. The working morning strategies are in the strategy book.</li></ul>
   </div>
 </section>
 
 <section class="blk" aria-labelledby="h-best">
   <div class="bh"><h2 id="h-best">Best read per timeframe</h2></div>
   <div class="bb"><div class="best">
-    <div><b>4H</b><ul><li>BC+ at 10:00: target first 87–90% (75–78% in 2026).</li><li>Weak 4H candle: the gap behind it comes first 52%. Wait there.</li><li>Pullback when the lean is right: median 34 / 65 pts, mostly before 10:30.</li></ul></div>
-    <div><b>1h</b><ul><li>BC+: target first 86–91%.</li><li>Weak 1h candle: gap or target is a coin flip.</li></ul></div>
-    <div><b>15m</b><ul><li>The best balance. BC+: target first 89–92%.</li><li>Runs after 10:00: about half still alive at 11:30.</li><li>20 pts reached 70 / 87%, 30 pts 59 / 73%.</li></ul></div>
-    <div><b>5m</b><ul><li>The fastest. BC+: target first 86–89%.</li><li>Opening gaps: react 68 / 79% with the 4H lean.</li><li>Runs end in 25–35 minutes. 20 pts reached 68 / 80%.</li></ul></div>
+    <div><b>4H</b><ul><li>BC+ at 10:00: target first 88% (76% in 2026, only 21 days).</li><li>Weak 4H candle: the gap behind it comes first 50%. Wait there.</li></ul></div>
+    <div><b>1h</b><ul><li>BC+: target first 89% (85–92% each year).</li><li>Weak 1h candle: gap or target is a coin flip.</li></ul></div>
+    <div><b>15m</b><ul><li>The best balance. BC+: target first 90% (86–92% each year).</li><li>Runs after 10:00: about 6 in 10 still alive at 11:30.</li><li>20 pts reached 73%, 30 pts 63%.</li></ul></div>
+    <div><b>5m</b><ul><li>The fastest. BC+: target first 87%.</li><li>Opening gaps: react 68% with the 4H lean.</li><li>Runs end in 25–35 minutes. 20 pts reached 70%.</li></ul></div>
   </div></div>
 </section>
 
 <div class="links"><a class="try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener">Try the indicators for free</a><a href="/strategies/">The strategy book</a><a href="/backtests/">All backtests</a><a href="/indicators/#candle-bias">MMM Candle Bias</a></div>
-<p class="legal">Education only, not financial advice. Backtests describe the past and do not promise future results. Futures trading carries a high risk of loss. These are counts of what price did, not tested strategies, except section 9. The 2026 sample is 61 days.</p>
+<p class="legal">Education only, not financial advice. Backtests describe the past and do not promise future results. Futures trading carries a high risk of loss. These are counts of what price did, not tested strategies, except section 9. 2026 has fewer days with 1m bars than the other years.</p>
 </main></div>
 
 <div id="mmm-footer"></div>
@@ -238,16 +265,38 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
   'use strict';
   var $ = function (s) { return document.querySelector(s); };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  var D = null, PER = 'old', OTF = '5m', CTF = '15m', PTF = '15m', RTF = '5m', RM = 'close past BC low';
+  var D = null, PER = 'all', OTF = '5m', CTF = '15m', PTF = '15m', RTF = '5m', RM = 'close past BC low';
+  var PS = ['all', '2023', '2024', '2025', '2026'], PN = { all: 'All data', '2023': '2023', '2024': '2024', '2025': '2025', '2026': '2026' };
   function f(v) { return v == null || v !== v ? '–' : (Math.round(v * 10) / 10).toString(); }
-  function c2(a, b) { return f(a) + ' <span class="s">/</span> ' + f(b); }
-  function nn(a, b) { return f(a) + ' / ' + f(b) + (b < 30 ? ' *' : ''); }
+  function pc(v) { return v == null || v !== v ? '–' : Math.round(v) + '%'; }
+  function st(n) { return n != null && n < 30 ? ' *' : ''; }
+  function nn(n) { return n == null ? '–' : n + st(n); }
+  function rr(v) { return v == null ? '–' : '<span class="' + (v > 0 ? 'hi' : v < 0 ? 'lo' : '') + '">' + (v > 0 ? '+' : '') + v.toFixed(2) + '</span>'; }
   function th(h) { return '<thead><tr>' + h.map(function (x) { return '<th>' + x + '</th>'; }).join('') + '</tr></thead>'; }
   function press(attr, v) { document.querySelectorAll('[' + attr + ']').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute(attr) === v)); }); }
   var FAM = { 'BC+': 'BC+', 'BC-': 'BC−', 'C2': 'C2', 'AFs': 'AFs', 'CI': 'CI', 'S&D': 'S&amp;D', 'ALL': 'All candles' };
+  var TFN = { '4h': '4H', '1h': '1h', '15m': '15m', '5m': '5m' };
+  // year table: first column = label, then All data (gold) + each year; the year picked above is outlined
+  function ytab(head, rows) {
+    var h = '<thead><tr><th>' + head + '</th>' + PS.map(function (p) { return '<th' + (p === PER ? ' class="on"' : '') + '>' + PN[p] + '</th>'; }).join('') + '</tr></thead>';
+    return h + '<tbody>' + rows.map(function (r) { return '<tr><td>' + r[0] + '</td>' + PS.map(function (p) { var c = (p === 'all' ? 'al' : '') + (p === PER ? ' on' : ''); return '<td' + (c ? ' class="' + c.trim() + '"' : '') + '>' + r[1](p) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+  }
+  function cap(id, what) { $(id).innerHTML = '<span>Showing</span> <b>' + PN[PER] + '</b>' + (what ? ' · ' + what : ''); }
+  function tfl(t) { return '<span translate="no">' + t + '</span> '; }
+  function dz(n) { return '<span>' + n + ' days</span>'; }
+  // BC+ bull + BC+ bear as one row (n-weighted)
+  function both(rows, fam, k) { var a = rows.filter(function (r) { return r.key.indexOf(fam + ' ') === 0; }), n = 0, s = 0; a.forEach(function (r) { if (r[k] != null) { n += r.n; s += r.n * r[k]; } }); return { n: n, v: n ? s / n : null }; }
 
+  function legend() {
+    var I = D.info, a = I.all;
+    $('#lg').innerHTML = '<span><b>All data</b> = NQ / MNQ, ' + a.first + ' → ' + a.last + ', ' + a.days + ' days, each day counted once</span>' +
+      '<span><b>2023 · 2024 · 2025 · 2026</b> = each year alone (2023 starts ' + I['2023'].first + ')</span>' +
+      '<span>Days with 1m bars: ' + a.d1 + ' (2026: ' + I['2026'].d1 + '). Tables that look inside a candle use only these days.</span>' +
+      '<span><b>*</b> = fewer than 30 cases</span><span>pts = NQ points</span>';
+  }
   function timeline() {
     var w = D.win[PER], W = 760, H = 250, L = 46, B = 206, T = 18, bw = 26;
+    cap('#tl-cap', dz(w.days));
     var mx = Math.max.apply(null, w.hw.concat(w.lw)) * 1.1;
     var Y = function (v) { return B - (B - T) * v / mx; };
     var lab = ['09:30', '09:45', '10:00', '10:15', '10:30', '10:45', '11:00', '11:15'];
@@ -263,87 +312,140 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
     s += '<line x1="' + L + '" x2="' + (W - 10) + '" y1="' + B + '" y2="' + B + '" stroke="#333a43"/>';
     s += '<rect x="' + L + '" y="' + (H - 16) + '" width="10" height="10" fill="#3ddc97"/><text x="' + (L + 16) + '" y="' + (H - 7) + '" fill="#c9d0d6">high made %</text><rect x="' + (L + 120) + '" y="' + (H - 16) + '" width="10" height="10" fill="#ff5c6c"/><text x="' + (L + 136) + '" y="' + (H - 7) + '" fill="#c9d0d6">low made %</text>';
     $('#tl').innerHTML = s + '</svg>';
-    var o = D.win.old, n = D.win.fresh;
-    $('#win-k').innerHTML = [['Days', o.days + ' <span>/ ' + n.days + '</span>'], ['Median range', f(o.range.med) + ' <span>/ ' + f(n.range.med) + ' pts</span>'], ['Range 25–75%', f(o.range.p25) + '–' + f(o.range.p75) + ' <span>/ ' + f(n.range.p25) + '–' + f(n.range.p75) + '</span>'], ['High or low in by 10:00', f(o.by10) + ' <span>/ ' + f(n.by10) + '%</span>'], ['11:30 closes above 09:30', f(o.up) + ' <span>/ ' + f(n.up) + '%</span>'], ['High made before the low', f(o.hf) + ' <span>/ ' + f(n.hf) + '%</span>']].map(function (k) { return '<div><dt>' + k[0] + '</dt><dd>' + k[1] + '</dd></div>'; }).join('');
+    var W_ = function (p) { return D.win[p]; };
+    $('#win-y').innerHTML = ytab('The morning', [
+      ['Days', function (p) { return W_(p).days; }],
+      ['Median range, pts', function (p) { return f(W_(p).range.med); }],
+      ['Range 25–75%, pts', function (p) { return Math.round(W_(p).range.p25) + '–' + Math.round(W_(p).range.p75); }],
+      ['High or low in by 10:00', function (p) { return pc(W_(p).by10); }],
+      ['Both made after 10:00', function (p) { return pc(100 - W_(p).by10); }],
+      ['First 15 minutes make the high', function (p) { return pc(W_(p).hw[0]); }],
+      ['First 15 minutes make the low', function (p) { return pc(W_(p).lw[0]); }],
+      ['11:15–11:30 makes the high', function (p) { return pc(W_(p).hw[7]); }],
+      ['11:30 closes above 09:30', function (p) { return pc(W_(p).up); }],
+      ['High made before the low', function (p) { return pc(W_(p).hf); }]]);
   }
   function openT() {
-    var A = D.open.old[OTF], B = D.open.fresh[OTF];
+    var A = D.open[PER][OTF];
+    cap('#open-cap', '<span translate="no">' + OTF + '</span> · ' + dz(A[0].n));
     var h = th(['Family', 'n', 'Share %', 'Next candle TGT first %', 'TGT by 11:30 %', 'Protected by 11:30 %', 'TGT before protected %', '11:30 its way %', 'Median pts to 11:30', 'MFE median pts', 'MAE median pts']);
-    var r = A.filter(function (a) { return a.n >= 10; }).map(function (a) { var b = B.filter(function (x) { return x.key === a.key; })[0] || {}; return '<tr><td>' + FAM[a.key] + '</td><td>' + nn(a.n, b.n || 0) + '</td><td>' + c2(a.share, b.share) + '</td><td>' + c2(a.next_tgt_first, b.next_tgt_first) + '</td><td>' + c2(a.tgt_by1130, b.tgt_by1130) + '</td><td>' + c2(a.prot_by1130, b.prot_by1130) + '</td><td>' + c2(a.tgt_before_prot, b.tgt_before_prot) + '</td><td>' + c2(a.close_lean, b.close_lean) + '</td><td>' + c2(a.pts_med, b.pts_med) + '</td><td>' + c2(a.mfe_med, b.mfe_med) + '</td><td>' + c2(a.mae_med, b.mae_med) + '</td></tr>'; }).join('');
+    var r = A.filter(function (a) { return a.n >= 3; }).map(function (a) { return '<tr><td>' + FAM[a.key] + '</td><td>' + nn(a.n) + '</td><td>' + f(a.share) + '</td><td>' + f(a.next_tgt_first) + '</td><td>' + f(a.tgt_by1130) + '</td><td>' + f(a.prot_by1130) + '</td><td>' + f(a.tgt_before_prot) + '</td><td>' + f(a.close_lean) + '</td><td>' + f(a.pts_med) + '</td><td>' + f(a.mfe_med) + '</td><td>' + f(a.mae_med) + '</td></tr>'; }).join('');
     $('#open-t').innerHTML = h + '<tbody>' + r + '</tbody>';
+    var g = function (p, k) { return D.open[p][OTF].filter(function (x) { return x.key === k; })[0] || {}; };
+    var cell = function (k, fld) { return function (p) { var x = g(p, k); return x.n ? pc(x[fld]) + st(x.n) : '–'; }; };
+    $('#open-y').innerHTML = ytab('Opening candle, by year', [
+      ['BC+ · next candle TGT first', cell('BC+', 'next_tgt_first')], ['BC+ · TGT before protected', cell('BC+', 'tgt_before_prot')],
+      ['C2 · next candle TGT first', cell('C2', 'next_tgt_first')], ['BC− · next candle TGT first', cell('BC-', 'next_tgt_first')],
+      ['All candles · 11:30 its way', cell('ALL', 'close_lean')]]);
   }
   function orK() {
-    var o = D.or.old, n = D.or.fresh;
-    $('#or-k').innerHTML = [['Median range', f(o.rng_med) + ' <span>/ ' + f(n.rng_med) + ' pts</span>'], ['Closed out by 11:30', f(o.broke) + ' <span>/ ' + f(n.broke) + '%</span>'], ['First close out: up', f(o.first_up) + ' <span>/ ' + f(n.first_up) + '%</span>'], ['First close out: down', f(o.first_dn) + ' <span>/ ' + f(n.first_dn) + '%</span>'], ['Run past the edge, median', f(o.ext_med) + ' <span>/ ' + f(n.ext_med) + ' pts</span>'], ['Run past the edge, 75th pct', f(o.ext_p75) + ' <span>/ ' + f(n.ext_p75) + ' pts</span>'], ['Closed out of the other side too', f(o.other_side) + ' <span>/ ' + f(n.other_side) + '%</span>'], ['11:30 still past that edge', f(o.end_with) + ' <span>/ ' + f(n.end_with) + '%</span>']].map(function (k) { return '<div><dt>' + k[0] + '</dt><dd>' + k[1] + '</dd></div>'; }).join('');
+    var O = function (p) { return D.or[p]; };
+    $('#or-y').innerHTML = ytab('Opening range', [
+      ['Days', function (p) { return O(p).n; }],
+      ['Median range, pts', function (p) { return f(O(p).rng_med); }],
+      ['Closed out by 11:30', function (p) { return pc(O(p).broke); }],
+      ['First close out: up', function (p) { return pc(O(p).first_up); }],
+      ['First close out: down', function (p) { return pc(O(p).first_dn); }],
+      ['Run past the edge, median pts', function (p) { return f(O(p).ext_med); }],
+      ['Run past the edge, 75th pct pts', function (p) { return f(O(p).ext_p75); }],
+      ['Closed out of the other side too', function (p) { return pc(O(p).other_side); }],
+      ['11:30 still past that edge', function (p) { return pc(O(p).end_with); }]]);
   }
   function c10T() {
-    var A = D.c10.old[CTF], B = D.c10.fresh[CTF];
+    var A = D.c10[PER][CTF];
+    cap('#c10-cap', '<span translate="no">' + TFN[CTF] + '</span>');
     var h = th(['Family + lean', 'n', 'Share %', 'Next candle takes the lean side FIRST %', 'Takes the lean side at all %', 'Next candle same lean %', '16:00 closes the lean way %']);
-    var r = A.map(function (a, i) { var b = B[i] || {}; var k = a.key.split(' '); return '<tr><td>' + FAM[k[0]] + ' ' + (k[1] === 'bull' ? '<span style="color:var(--up)">bull</span>' : '<span style="color:var(--dn)">bear</span>') + '</td><td>' + nn(a.n, b.n || 0) + '</td><td>' + c2(a.share, b.share) + '</td><td>' + c2(a.first, b.first) + '</td><td>' + c2(a.at, b.at) + '</td><td>' + c2(a.nxt, b.nxt) + '</td><td>' + c2(a.c16, b.c16) + '</td></tr>'; }).join('');
+    var r = A.filter(function (a) { return a.n > 0; }).map(function (a) { var k = a.key.split(' '); return '<tr><td>' + FAM[k[0]] + ' ' + (k[1] === 'bull' ? '<span style="color:var(--up)">bull</span>' : '<span style="color:var(--dn)">bear</span>') + '</td><td>' + nn(a.n) + '</td><td>' + f(a.share) + '</td><td>' + f(a.first) + '</td><td>' + f(a.at) + '</td><td>' + f(a.nxt) + '</td><td>' + f(a.c16) + '</td></tr>'; }).join('');
     $('#c10-t').innerHTML = h + '<tbody>' + r + '</tbody>';
+    var cell = function (tf, fam, k) { return function (p) { var b = both(D.c10[p][tf], fam, k); return b.n ? pc(b.v) + st(b.n) : '–'; }; };
+    $('#c10-y').innerHTML = ytab('Bull + bear together, by year', [
+      [tfl('4H') + 'BC+ · target first', cell('4h', 'BC+', 'first')], [tfl('1h') + 'BC+ · target first', cell('1h', 'BC+', 'first')],
+      [tfl('15m') + 'BC+ · target first', cell('15m', 'BC+', 'first')], [tfl('5m') + 'BC+ · target first', cell('5m', 'BC+', 'first')],
+      [tfl(TFN[CTF]) + 'BC− · target first', cell(CTF, 'BC-', 'first')], [tfl(TFN[CTF]) + 'BC+ · 16:00 closes its way', cell(CTF, 'BC+', 'c16')]]);
   }
   function gapT() {
-    var A = D.gaps.old.sum, B = D.gaps.fresh.sum;
+    var G = D.gaps[PER];
+    cap('#gap-cap', dz(G.days));
     var h = th(['Gaps', 'n gaps', 'Gaps a day', 'Median size pts', 'Touched %', 'Median minutes to touch', 'Full fill %', 'React %', 'Fail %']);
-    var r = A.map(function (a, i) { var b = B[i]; return '<tr><td>' + esc(a.key) + '</td><td>' + nn(a.n, b.n) + '</td><td>' + c2(a.day, b.day) + '</td><td>' + c2(a.size, b.size) + '</td><td>' + c2(a.t, b.t) + '</td><td>' + c2(a.mt, b.mt) + '</td><td>' + c2(a.ff, b.ff) + '</td><td>' + c2(a.re, b.re) + '</td><td>' + c2(a.fa, b.fa) + '</td></tr>'; }).join('');
-    $('#gap-t').innerHTML = h + '<tbody>' + r + '</tbody>';
-    var A2 = D.gaps.old.lean, B2 = D.gaps.fresh.lean;
+    $('#gap-t').innerHTML = h + '<tbody>' + G.sum.map(function (a) { return '<tr><td>' + esc(a.key) + '</td><td>' + nn(a.n) + '</td><td>' + f(a.day) + '</td><td>' + f(a.size) + '</td><td>' + f(a.t) + '</td><td>' + f(a.mt) + '</td><td>' + f(a.ff) + '</td><td>' + f(a.re) + '</td><td>' + f(a.fa) + '</td></tr>'; }).join('') + '</tbody>';
     var h2 = th(['Gap vs the 4H 06–10 candle', 'n gaps', 'Touched %', 'Full fill %', 'React %', 'Fail %']);
-    $('#gapl-t').innerHTML = h2 + '<tbody>' + A2.map(function (a, i) { var b = B2[i]; return '<tr><td>' + esc(a.key.replace('06-10', '06–10')) + '</td><td>' + nn(a.n, b.n) + '</td><td>' + c2(a.t, b.t) + '</td><td>' + c2(a.ff, b.ff) + '</td><td>' + c2(a.re, b.re) + '</td><td>' + c2(a.fa, b.fa) + '</td></tr>'; }).join('') + '</tbody>';
+    $('#gapl-t').innerHTML = h2 + '<tbody>' + G.lean.map(function (a) { return '<tr><td>' + esc(a.key.replace('06-10', '06–10')) + '</td><td>' + nn(a.n) + '</td><td>' + f(a.t) + '</td><td>' + f(a.ff) + '</td><td>' + f(a.re) + '</td><td>' + f(a.fa) + '</td></tr>'; }).join('') + '</tbody>';
+    var s = function (p, k) { return D.gaps[p].sum.filter(function (x) { return x.key === k; })[0]; }, l = function (p, i) { return D.gaps[p].lean[i]; };
+    $('#gap-y').innerHTML = ytab('Gaps, by year', [
+      ['5m gaps · touched', function (p) { return pc(s(p, '5m all').t); }], ['5m gaps · minutes to touch', function (p) { return f(s(p, '5m all').mt); }],
+      ['5m gap WITH the 4H lean · react', function (p) { var x = l(p, 0); return pc(x.re) + st(x.n); }], ['5m gap AGAINST the 4H lean · react', function (p) { var x = l(p, 1); return pc(x.re) + st(x.n); }],
+      ['1m gap WITH the 4H lean · react', function (p) { var x = l(p, 2); return pc(x.re) + st(x.n); }], ['1m gap AGAINST the 4H lean · react', function (p) { var x = l(p, 3); return pc(x.re) + st(x.n); }]]);
   }
+  var OG = [['ALL', 'All candles'], ['BC+/C2', 'BC+ or C2 (strong)'], ['other', 'Weak (BC−, AFs, CI, S&amp;D)']];
   function oppT() {
+    cap('#opp-cap', '<span translate="no">' + TFN[PTF] + '</span>');
     var h = th(['10:00 candle', 'n', 'Open gap there %', 'TGT by 11:30 with the gap %', 'TGT by 11:30, no gap %', 'Gap BEFORE TGT %', 'TGT after the gap %', 'Gap distance pts']);
-    var r = [['ALL', 'All candles'], ['BC+/C2', 'BC+ or C2 (strong)'], ['other', 'Weak (BC−, AFs, CI, S&amp;D)']].map(function (g) { var a = D.opp[PTF + '|old|' + g[0]], b = D.opp[PTF + '|fresh|' + g[0]]; return '<tr><td>' + g[1] + '</td><td>' + nn(a.n, b.n) + '</td><td>' + c2(a.has, b.has) + '</td><td>' + c2(a.tgt_with, b.tgt_with) + '</td><td>' + c2(a.tgt_without, b.tgt_without) + '</td><td>' + c2(a.gap_first, b.gap_first) + '</td><td>' + c2(a.tgt_after_gap, b.tgt_after_gap) + '</td><td>' + c2(a.dist, b.dist) + '</td></tr>'; }).join('');
+    var r = OG.map(function (g) { var a = D.opp[PER][PTF + '|' + g[0]]; return '<tr><td>' + g[1] + '</td><td>' + nn(a.n) + '</td><td>' + f(a.has) + '</td><td>' + f(a.tgt_with) + '</td><td>' + f(a.tgt_without) + '</td><td>' + f(a.gap_first) + '</td><td>' + f(a.tgt_after_gap) + '</td><td>' + f(a.dist) + '</td></tr>'; }).join('');
     $('#opp-t').innerHTML = h + '<tbody>' + r + '</tbody>';
+    var x = function (p, tf, g) { return D.opp[p][tf + '|' + g]; };
+    var rows = [];
+    ['4h', '1h', '15m', '5m'].forEach(function (tf) {
+      rows.push([tfl(TFN[tf]) + 'strong · gap BEFORE TGT', function (p) { var a = x(p, tf, 'BC+/C2'); return pc(a.gap_first) + st(a.n_gap); }]);
+      rows.push([tfl(TFN[tf]) + 'weak · gap BEFORE TGT', function (p) { var a = x(p, tf, 'other'); return pc(a.gap_first) + st(a.n_gap); }]);
+    });
+    $('#opp-y').innerHTML = ytab('Gap first, by year', rows);
   }
+  var RG = [['all', 'All runs'], ['with 4H lean', 'With the 4H lean'], ['against 4H lean', 'Against the 4H lean'], ['with 4H BC+/C2', 'With a 4H BC+ or C2']];
+  var RMN = { 'opp BC': 'Opposite BC', 'close past BC open': 'Close past BC open', 'close past BC low': 'Close past BC low' };
   function runT() {
+    cap('#run-cap', '<span translate="no">' + RTF + '</span> · <span>' + RMN[RM] + '</span>');
     var h = th(['Group', 'n', 'Same-side BCs median', 'Same-side BCs average', 'NBCs average', 'MFE median pts', 'MFE 75th pct pts', 'Points at the end, average', 'End in profit %', 'Still alive at 11:30 %', 'Minutes median']);
-    var G = [['all', 'All runs'], ['with 4H lean', 'With the 4H lean'], ['against 4H lean', 'Against the 4H lean'], ['with 4H BC+/C2', 'With a 4H BC+ or C2']];
-    var r = G.map(function (g) { var a = D.runs[RTF + '|old|' + RM + '|' + g[0]], b = D.runs[RTF + '|fresh|' + RM + '|' + g[0]]; return '<tr><td>' + g[1] + '</td><td>' + nn(a.n, b.n) + '</td><td>' + c2(a.same_med, b.same_med) + '</td><td>' + c2(a.same_avg, b.same_avg) + '</td><td>' + c2(a.nbc_avg, b.nbc_avg) + '</td><td>' + c2(a.mfe_med, b.mfe_med) + '</td><td>' + c2(a.mfe75, b.mfe75) + '</td><td>' + c2(a.end_avg, b.end_avg) + '</td><td>' + c2(a.end_win, b.end_win) + '</td><td>' + c2(a.alive, b.alive) + '</td><td>' + c2(a.mins, b.mins) + '</td></tr>'; }).join('');
+    var r = RG.map(function (g) { var a = D.runs[PER][RTF + '|' + RM + '|' + g[0]]; if (!a || !a.n) return ''; return '<tr><td>' + g[1] + '</td><td>' + nn(a.n) + '</td><td>' + f(a.same_med) + '</td><td>' + f(a.same_avg) + '</td><td>' + f(a.nbc_avg) + '</td><td>' + f(a.mfe_med) + '</td><td>' + f(a.mfe75) + '</td><td>' + f(a.end_avg) + '</td><td>' + f(a.end_win) + '</td><td>' + f(a.alive) + '</td><td>' + f(a.mins) + '</td></tr>'; }).join('');
     $('#run-t').innerHTML = h + '<tbody>' + r + '</tbody>';
-    var A = D.reach[RTF + '|old|' + RM], B = D.reach[RTF + '|fresh|' + RM];
-    $('#reach').innerHTML = [10, 20, 30, 50, 80].map(function (p, i) { return '<div class="r"><span>' + p + ' pts</span><span class="tr"><i class="a" style="width:' + A[i] + '%"></i><i class="b" style="width:' + B[i] + '%"></i></span><span>' + Math.round(A[i]) + ' / ' + Math.round(B[i]) + '%</span></div>'; }).join('');
+    var a = function (p) { return D.runs[p][RTF + '|' + RM + '|all']; }, re = function (p) { return D.reach[p][RTF + '|' + RM]; };
+    var rows = [['Runs', function (p) { return nn(a(p).n); }], ['MFE median pts', function (p) { return f(a(p).mfe_med); }], ['Points at the end, average', function (p) { return f(a(p).end_avg); }], ['Still alive at 11:30', function (p) { return pc(a(p).alive); }]];
+    [10, 20, 30, 50, 80].forEach(function (pt, i) { rows.push(['Reached ' + pt + ' pts our way', function (p) { return pc(re(p)[i]); }]); });
+    $('#run-y').innerHTML = ytab('This run, by year', rows);
   }
   function hrT() {
-    var A = D.runhours.old, B = D.runhours.fresh;
+    var A = D.runhours[PER];
+    cap('#hr-cap', '');
     var h = th(['Run starts in', 'n runs', 'BCs average', 'Only 1 BC %', 'NBCs average', 'Got a 2nd BC %', 'Median pts to the run extreme']);
-    $('#hr-t').innerHTML = h + '<tbody>' + A.map(function (a, i) { var b = B[i]; var em = a.key.indexOf('NY AM') === 0 ? ' style="background:#1b1a0e"' : ''; return '<tr' + em + '><td>' + esc(a.key) + '</td><td>' + nn(a.n, b.n) + '</td><td>' + c2(a.avg, b.avg) + '</td><td>' + c2(a.one, b.one) + '</td><td>' + c2(a.nbc, b.nbc) + '</td><td>' + c2(a.g2, b.g2) + '</td><td>' + c2(a.pts, b.pts) + '</td></tr>'; }).join('') + '</tbody>';
+    $('#hr-t').innerHTML = h + '<tbody>' + A.map(function (a) { var em = a.key.indexOf('NY AM') === 0 ? ' style="background:#1b1a0e"' : ''; return '<tr' + em + '><td>' + esc(a.key) + '</td><td>' + nn(a.n) + '</td><td>' + f(a.avg) + '</td><td>' + f(a.one) + '</td><td>' + f(a.nbc) + '</td><td>' + f(a.g2) + '</td><td>' + f(a.pts) + '</td></tr>'; }).join('') + '</tbody>';
+    $('#hr-y').innerHTML = ytab('Median pts to the run extreme, by year', D.runhours.all.map(function (z, i) { return [esc(z.key), function (p) { return f(D.runhours[p][i].pts); }]; }));
   }
+  var QG = [['all', 'All'], ['with 4H lean', 'With the 4H lean'], ['against 4H lean', 'Against the 4H lean'], ['first BC is BC+', 'The first BC is a BC+'], ['with 4H BC+/C2', 'With a 4H BC+ or C2']];
   function q7T() {
+    cap('#q7-cap', '');
     var h = th(['Chart', 'Group', 'n', 'WR %', 'avg RR', 'PF', 't-score']);
-    var G = [['all', 'All'], ['with 4H lean', 'With the 4H lean'], ['against 4H lean', 'Against the 4H lean'], ['first BC is BC+', 'The first BC is a BC+'], ['with 4H BC+/C2', 'With a 4H BC+ or C2']];
     var r = '';
-    ['5m', '15m'].forEach(function (tf) { G.forEach(function (g) { var a = D.q7[tf + '|old|' + g[0]], b = D.q7[tf + '|fresh|' + g[0]]; if (!a || !b) return; var cl = function (v) { return v > 0 ? 'hi' : v < 0 ? 'lo' : ''; }; r += '<tr><td>' + tf + '</td><td>' + g[1] + '</td><td>' + nn(a.n, b.n) + '</td><td>' + c2(a.WR, b.WR) + '</td><td>' + '<span class="' + cl(a.avgRR) + '">' + (a.avgRR > 0 ? '+' : '') + a.avgRR.toFixed(2) + '</span> <span class="s">/</span> <span class="' + cl(b.avgRR) + '">' + (b.avgRR > 0 ? '+' : '') + b.avgRR.toFixed(2) + '</span></td><td>' + c2(a.PF, b.PF) + '</td><td>' + c2(a.t, b.t) + '</td></tr>'; }); });
+    ['5m', '15m'].forEach(function (tf) { QG.forEach(function (g) { var a = D.q7[PER][tf + '|' + g[0]]; if (!a || !a.n) return; r += '<tr><td>' + tf + '</td><td>' + g[1] + '</td><td>' + nn(a.n) + '</td><td>' + f(a.WR) + '</td><td>' + rr(a.avgRR) + '</td><td>' + f(a.PF) + '</td><td>' + f(a.t) + '</td></tr>'; }); });
     $('#q7-t').innerHTML = h + '<tbody>' + r + '</tbody>';
+    var rows = [];
+    ['5m', '15m'].forEach(function (tf) { [QG[0], QG[1], QG[3]].forEach(function (g) { rows.push([tfl(tf) + g[1], function (p) { var a = D.q7[p][tf + '|' + g[0]]; return a && a.n ? rr(a.avgRR) + ' <span class="s">t</span> ' + f(a.t) + st(a.n) : '–'; }]); }); });
+    $('#q7-y').innerHTML = ytab('avg RR and t-score, by year', rows);
   }
   var MKD = null, MKC = 'ES', MKN = { ES: 'ES / MES', GC: 'Gold GC / MGC', CL: 'Crude CL / MCL' };
   function mkT() {
-    if (!MKD) return; var N = MKD.nyo[MKC]; if (!N) return; var u = MKC === 'CL' ? '' : ' pts', q = function (v) { return v == null ? '–' : (MKC === 'CL' ? (+v).toFixed(2) : (+v).toFixed(1)); };
-    var a = N.P1 || {}, b = N.P2 || {}, pc = function (v) { return v == null ? '–' : Math.round(v) + '%'; };
-    var row = function (n, f) { return '<tr><td>' + n + '</td><td>' + f(a) + ' <span class="s">/</span> ' + f(b) + '</td></tr>'; };
-    var c10 = function (x, tf) { var z = ((x.c10 || {})[tf] || []).filter(function (r) { return r.k === 'BC+ both'; })[0]; return z && z.n ? pc(z.first) + ' (' + z.n + ')' : '–'; };
-    var tt = function (x) { var t = (x.tt || {})['15m|all']; return t ? '<span translate="no">' + t.n + ' · WR ' + pc(t.wr) + ' · ' + (t.av > 0 ? '+' : '') + t.av.toFixed(2) + ' · t ' + t.t.toFixed(1) + '</span>' : '–'; };
-    $('#mk-t').innerHTML = '<thead><tr><th>' + MKN[MKC] + '</th><th>Period 1 / Period 2</th></tr></thead><tbody>' +
-      row('Days (with 1m bars)', function (x) { return x.days + ' (' + x.d1 + ')'; }) + row('Median 09:30–11:30 range', function (x) { return q(x.rng) + u; }) +
-      row('High or low in by 10:00', function (x) { return pc(x.in10); }) + row('11:30 closes above 09:30', function (x) { return pc(x.up); }) +
-      row('First 15 minutes make the high / the low', function (x) { return pc(x.hw[0]) + ' · ' + pc(x.lw[0]); }) +
-      row('Opening range 09:30–10:00, median', function (x) { return x.or ? q(x.or.rng) + u : '–'; }) + row('Closed out of the range by 11:30', function (x) { return x.or ? pc(x.or.broke) : '–'; }) +
-      row('Closed out of the other side too', function (x) { return x.or ? pc(x.or.other) : '–'; }) + row('Run past the first edge, median', function (x) { return x.or ? q(x.or.ext) + u : '–'; }) +
-      row('15m BC+ at 10:00 → target first (days)', function (x) { return c10(x, '15m'); }) + row('1h BC+ at 10:00 → target first (days)', function (x) { return c10(x, '1h'); }) +
-      row('4H BC+ at 10:00 → target first (days)', function (x) { return c10(x, '4H'); }) +
-      row('Trade test · first BC after 10:00 · 15m · ' + MKD.nyo_stop[MKC] + u + ' stop · 1:2', tt) + '</tbody>';
-    var A = N.ALL || N.P1, oc = (A.oc || {})['15m'] || [];
-    $('#mk-c').innerHTML = '<thead><tr><th>15m opening candle · both periods</th><th>Days</th><th>Next candle target first</th><th>Target before the other end by 11:30</th><th>11:30 closes its way</th></tr></thead><tbody>' +
-      oc.map(function (z) { return '<tr><td>' + esc(z.k) + '</td><td>' + z.n + '</td><td>' + pc(z.first) + '</td><td>' + pc(z.before) + '</td><td>' + pc(z.way) + '</td></tr>'; }).join('') + '</tbody>';
-    var m = MKD.markets[MKC];
-    $('#mk-n').textContent = 'Period 1 = ' + m.p1 + ', period 2 = ' + m.p2 + '. Each day uses the finest bars we have for it: 15m candles and the opening range need 5m bars or finer, 5m candles need 1m bars. Stops scale with the market (NQ 50 pts = ES 20 = gold 12 = crude 0.50). Under 10 days a number is a guess. Every other MMM test on these markets: the MARKETS tab of the backtests page.';
+    if (!MKD) return; var x = MKD[MKC]; if (!x) return; var cl = MKC === 'CL', u = cl ? '' : ' pts', q = function (v) { return v == null ? '–' : (cl ? '$' + (+v).toFixed(2) : (+v).toFixed(1)); };
+    var row = function (n, v) { return '<tr><td>' + n + '</td><td>' + v + '</td></tr>'; };
+    var c10 = function (tf) { var z = x.c10[tf]; return z && z.n ? pc(z.first) + ' (' + z.n + ')' : '–'; };
+    var t = x.tt, tt = t && t.n ? '<span translate="no">' + t.n + ' · WR ' + pc(t.WR) + ' · ' + (t.avgRR > 0 ? '+' : '') + t.avgRR.toFixed(2) + ' · t ' + (t.t == null ? '–' : t.t.toFixed(1)) + '</span>' : '–';
+    var o = x.orr || {};
+    $('#mk-t').innerHTML = '<thead><tr><th>' + MKN[MKC] + '</th><th>All data (short data)</th></tr></thead><tbody>' +
+      row('Days (with 1m bars)', x.days + ' (' + x.d1 + ')') + row('Median 09:30–11:30 range', q(x.rng) + u) +
+      row('High or low in by 10:00', pc(x.in10)) + row('11:30 closes above 09:30', pc(x.up)) +
+      row('First 15 minutes make the high / the low', pc(x.hw0) + ' · ' + pc(x.lw0)) +
+      row('Opening range 09:30–10:00, median', q(o.rng) + u) + row('Closed out of the range by 11:30', pc(o.broke)) +
+      row('Closed out of the other side too', pc(o.other)) + row('Run past the first edge, median', q(o.ext) + u) +
+      row('15m BC+ at 10:00 → target first (days)', c10('15m')) + row('1h BC+ at 10:00 → target first (days)', c10('1h')) +
+      row('4H BC+ at 10:00 → target first (days)', c10('4H')) +
+      row('Trade test · first BC after 10:00 · 15m · ' + (cl ? '$' + x.stop.toFixed(2) : x.stop + u) + ' stop · 1:2', tt) + '</tbody>';
+    $('#mk-c').innerHTML = '<thead><tr><th>15m opening candle · all data</th><th>Days</th><th>Next candle target first</th><th>Target before the other end by 11:30</th><th>11:30 closes its way</th></tr></thead><tbody>' +
+      x.oc.map(function (z) { return '<tr><td>' + FAM[z.k] + '</td><td>' + nn(z.n) + '</td><td>' + pc(z.first) + '</td><td>' + pc(z.before) + '</td><td>' + pc(z.way) + '</td></tr>'; }).join('') + '</tbody>';
+    $('#mk-n').innerHTML = 'Short data: ' + x.first + ' → ' + x.last + ', ' + x.days + ' days, ' + x.d1 + ' with 1m bars. Under one year, so no year columns. Each day uses the finest bars we have for it: the window and range use every day, everything that looks inside a candle uses only the 1m days. Stops scale with the market (NQ 50 pts = ES 20 = gold 12 = crude 0.50). Under 10 days a number is a guess. Every other MMM test on these markets: the MARKETS tab of the backtests page.';
   }
-  fetch('../d_markets.json').then(function (r) { return r.json(); }).then(function (j) { MKD = j; mkT(); }).catch(function () {});
-  function all() { timeline(); openT(); orK(); c10T(); gapT(); oppT(); runT(); hrT(); q7T(); }
+  fetch('mkts.json').then(function (r) { return r.json(); }).then(function (j) { MKD = j; mkT(); }).catch(function () {});
+  function all() { legend(); timeline(); openT(); orK(); c10T(); gapT(); oppT(); runT(); hrT(); q7T(); }
   document.addEventListener('click', function (e) {
     var b = e.target.closest('button'); if (!b) return;
     if (b.dataset.mk) { MKC = b.dataset.mk; press('data-mk', MKC); mkT(); }
-    else if (b.dataset.per) { PER = b.dataset.per; press('data-per', PER); timeline(); }
+    else if (b.dataset.per) { PER = b.dataset.per; press('data-per', PER); if (D) all(); }
     else if (b.dataset.otf) { OTF = b.dataset.otf; press('data-otf', OTF); openT(); }
     else if (b.dataset.ctf) { CTF = b.dataset.ctf; press('data-ctf', CTF); c10T(); }
     else if (b.dataset.ptf) { PTF = b.dataset.ptf; press('data-ptf', PTF); oppT(); }
