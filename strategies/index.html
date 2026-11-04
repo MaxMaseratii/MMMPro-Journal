@@ -314,7 +314,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
         <li><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--up)"/></svg><span>It made money in every year on its own: 2023, 2024, 2025 and 2026. Years with under 10 trades do not count. That is WORKS.</span></li>
         <li><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--up)"/></svg><span>Limit orders fill the honest way: a candle that trades through your price fills you, even if it closes against you.</span></li>
         <li><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6" style="color:var(--mix)"/></svg><span>Made money, but one losing year or a t-score under 2? That is MAYBE. It stays in the book as Watch. Paper-trade those first.</span></li>
-        <li><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--dn)"/></svg><span>No edge over all the data? That is NO. It stays on the page as Weak, so you can see it. Do not trade it.</span></li>
+        <li><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--dn)"/></svg><span>No edge over all the data, or it lost money in two years or more? That is NO. It comes off this page. You can still see it in the backtests (Year by year).</span></li>
       </ul>
       <p class="foot">Want every number behind it? Open the <a href="/backtests/sheet/">full results sheet</a>.</p>
     </aside>
@@ -326,7 +326,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     <div class="sh-h">
       <div>
         <h2 id="h-book">The book</h2>
-        <p>Click a strategy to open its rules and its example picture. The badge gives the verdict: ✔ WORKS = it made money in every year, ~ MAYBE = it made money but had one losing year or a t-score under 2, ✖ NO = no edge. Trade = proven, Watch = paper-trade it first, Weak = do not trade it.</p>
+        <p>Click a strategy to open its rules and its example picture. The badge gives the verdict: ✔ WORKS = it made money in every year, ~ MAYBE = it made money but had one losing year or a t-score under 2, ✖ NO = no edge. Trade = proven, Watch = paper-trade it first. Strategies with no edge (NO) are not on this page: they are in the backtests.</p>
       </div>
       <div class="acts"><a class="btn-ghost" href="/backtests/#words">MMM words · glossary</a><a class="btn-ghost" href="/backtests/ny-open/study/">9:30–11:30 AM study</a><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="book">Try it for free</a></div>
     </div>
@@ -344,7 +344,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       <span class="eg" id="m-eg"></span>
     </div>
     <div class="filters" role="group" aria-label="Filter strategies" style="margin-top:10px">
-      <label for="f-status">Status<select id="f-status" data-f="status"><option value="">All</option><option value="trade">Trade</option><option value="watch">Watch</option><option value="weak">Weak · no edge</option></select></label>
+      <label for="f-status">Status<select id="f-status" data-f="status"><option value="">All</option><option value="trade">Trade</option><option value="watch">Watch</option></select></label>
       <label for="f-ind">Tool<select id="f-ind" data-f="ind"><option value="">All</option></select></label>
       <label for="f-side">Side<select id="f-side" data-f="side"><option value="">All</option><option value="Long only">Long only</option><option value="Short only">Short only</option><option value="Long and short">Long and short</option></select></label>
       <label for="f-tf">Chart<select id="f-tf" data-f="tf"><option value="">All</option></select></label>
@@ -415,7 +415,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       <div><dt>Year by year</dt><dd>One report over all the data, then each year alone: 2023 (it also holds the last days of Dec 2022), 2024, 2025 and 2026 (up to Oct). Each year is judged on its own, so a few months never weigh like 3 years. A green year = it made money that year. Years with under 10 trades do not count.</dd></div>
       <div><dt>WORKS, MAYBE, NO</dt><dd>WORKS = 100 trades or more, a t-score of 2 or more over all the data, and money made in every year that counts. MAYBE = it made money with a t-score of 1 or more, and at most one losing year. NO = anything else: no edge.</dd></div>
       <div><dt>Trade on</dt><dd>The markets where the strategy works on that market’s own data. NQ only = it did not pass anywhere else yet.</dd></div>
-      <div><dt>Trade, Watch, Weak</dt><dd>Trade = WORKS: proven over all the data and in every year. Watch = MAYBE: paper-trade it before using money. Weak = NO: no edge over all the data. It stays on the page so you can see it, but do not trade it.</dd></div>
+      <div><dt>Trade, Watch</dt><dd>Trade = WORKS: proven over all the data and in every year. Watch = MAYBE: paper-trade it before using money. NO = no edge over all the data: it is taken off this page and kept in the backtests.</dd></div>
       <div><dt><span class="sw" style="background:var(--up)"></span>Green, <span class="sw" style="background:var(--mix)"></span>amber, <span class="sw" style="background:var(--dn)"></span>red edge</dt><dd>The colour on the left of each strategy card. Green = WORKS. Amber = MAYBE: it could be luck, or one year lost. Red = NO edge.</dd></div>
       <div><dt>Short data</dt><dd>ES, gold and crude only have Dec 2025 to Oct 2026, about 11 months. They get one report and no years. Treat it as a first check, not proof.</dd></div>
       <div><dt>Equity curve</dt><dd>The running total of every trade, in stops. A thin line marks the start of each new year.</dd></div>
@@ -656,7 +656,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     $('#f-failw').hidden = !f; $('#f-fail').checked = !!F.fail;
     var cnt = function (st) { return D.strategies.filter(function (s) { return s.status === st; }).length; };
     if (F.mkt === 'ALL') $('#mk-eg').textContent = 'All ' + D.strategies.length + ' strategies. Each card lists the markets it can be traded on: where it works on that market’s own data.';
-    else if (F.mkt === 'NQ') $('#mk-eg').textContent = 'NQ / MNQ / NNQ · Dec 2022 – Oct 2026 · stop 50 pts · cost 1 point a trade. Judged year by year: ' + cnt('trade') + ' work, ' + cnt('watch') + ' maybe, ' + cnt('weak') + ' weak. This is where the rules were built.';
+    else if (F.mkt === 'NQ') $('#mk-eg').textContent = 'NQ / MNQ / NNQ · Dec 2022 – Oct 2026 · stop 50 pts · cost 1 point a trade. Judged year by year: ' + cnt('trade') + ' work, ' + cnt('watch') + ' maybe. ' + (D.removed || []).length + ' more did not hold year after year and were taken off this page (they stay in Backtests · Year by year). This is where the rules were built.';
     else if (f) { var A = MKA[f], k = 0; D.strategies.forEach(function (s) { var r = mres(s, f); if (r && r.x.ok) k++; });
       $('#mk-eg').textContent = A.fam + ' · its own data, Dec 2025 – Oct 2026 (short data, no years) · stop ' + A.fx + ' pts · cost ' + A.cost + ' a trade. ' + k + ' of ' + D.strategies.length + ' strategies made money here.'; }
     else $('#mk-eg').textContent = 'Loading the market tests…';
@@ -672,7 +672,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
   function paint() {
     var L = list(); paintBar();
     var by = { trade: 0, watch: 0, weak: 0 }; L.forEach(function (s) { by[s.status] = (by[s.status] || 0) + 1; });
-    $('#count').textContent = L.length + ' of ' + D.strategies.length + ' strategies · ' + by.trade + ' trade · ' + by.watch + ' watch · ' + by.weak + ' weak';
+    $('#count').textContent = L.length + ' of ' + D.strategies.length + ' strategies · ' + by.trade + ' trade · ' + by.watch + ' watch';
     var dn = F.ind && (IND_DESC[F.ind] || FULL[F.ind]); $('#ind-note').hidden = !dn; if (dn) $('#ind-note').innerHTML = '<b>' + esc(F.ind) + '</b> · <span>' + esc(dn) + '</span>';
     document.querySelectorAll('.ledger th[data-s]').forEach(function (th) { th.classList.toggle('s', th.dataset.s === F.sort); });
     $('#ledger tbody').innerHTML = L.map(function (s) {
@@ -732,6 +732,10 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
   document.addEventListener('contextmenu', function (e) { if (e.target.closest && e.target.closest('.prot')) e.preventDefault(); });
   fetch('strategies.json').then(function (r) { return r.json(); }).then(function (j) {
     D = j;
+    // only strategies that still work (or are worth watching) are on this page; the weak ones stay in the backtests
+    D.removed = D.strategies.filter(function (s) { return s.status === 'weak'; });
+    D.strategies = D.strategies.filter(function (s) { return s.status !== 'weak'; });
+    if (F.status === 'weak') F.status = '';
     var inds = [], tfs = []; D.strategies.forEach(function (s) { if (inds.indexOf(s.ind) < 0) inds.push(s.ind); if (tfs.indexOf(s.tf) < 0) tfs.push(s.tf); });
     $('#f-ind').insertAdjacentHTML('beforeend', inds.map(function (x) { return '<option value="' + esc(x) + '">' + esc(x) + '</option>'; }).join(''));
     $('#f-tf').insertAdjacentHTML('beforeend', tfs.sort().map(function (x) { return '<option value="' + esc(x) + '">' + esc(x) + '</option>'; }).join(''));
