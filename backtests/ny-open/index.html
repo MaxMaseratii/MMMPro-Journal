@@ -84,6 +84,7 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
 .yearbar>span:first-child{font:600 13px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
 .yearbar .seg button[aria-pressed="true"]{background:var(--teal);color:#06110f}
 .yt{width:auto;min-width:min(100%,620px)}
+.tw:has(>table.yt){width:fit-content;max-width:100%}
 .yt td{text-align:right}
 .yt td:first-child{text-align:left;white-space:normal;min-width:150px}
 .yt th:nth-child(n+2){text-align:right}
@@ -440,6 +441,9 @@ main button:focus-visible,main a:focus-visible{outline:2px solid var(--gold);out
       x.oc.map(function (z) { return '<tr><td>' + FAM[z.k] + '</td><td>' + nn(z.n) + '</td><td>' + pc(z.first) + '</td><td>' + pc(z.before) + '</td><td>' + pc(z.way) + '</td></tr>'; }).join('') + '</tbody>';
     $('#mk-n').innerHTML = 'Short data: ' + x.first + ' → ' + x.last + ', ' + x.days + ' days, ' + x.d1 + ' with 1m bars. Under one year, so no year columns. Each day uses the finest bars we have for it: the window and range use every day, everything that looks inside a candle uses only the 1m days. Stops scale with the market (NQ 50 pts = ES 20 = gold 12 = crude 0.50). Under 10 days a number is a guess. Every other MMM test on these markets: the MARKETS tab of the backtests page.';
   }
+  // keep the year picker just under the site's sticky menu bar
+  function ybTop() { var h = document.querySelector('.sticky.top-0'), y = $('.yearbar'); if (y) y.style.top = (h ? Math.round(h.getBoundingClientRect().height) : 0) + 'px'; }
+  window.addEventListener('resize', ybTop); window.addEventListener('load', ybTop); setTimeout(ybTop, 800);
   fetch('mkts.json').then(function (r) { return r.json(); }).then(function (j) { MKD = j; mkT(); }).catch(function () {});
   function all() { legend(); timeline(); openT(); orK(); c10T(); gapT(); oppT(); runT(); hrT(); q7T(); }
   document.addEventListener('click', function (e) {

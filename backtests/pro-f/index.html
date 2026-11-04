@@ -297,8 +297,8 @@ function ofTab(){
   const F=state.f.of||(state.f.of={tf:''});
   let h=`<h2 class="ttl">PRO FVA order flow entries on its own chart</h2><p class="note">O1 break close · O2 retest of the broken box · O3 retest of the new T# · O4 retest of the LEZ · "v" = only after a 2nd BC · O5 enter after K candles with no close back inside · O6 it closed back inside, enter on the next BC out.</p><p class="note">One number over all data (NQ 2022–25 + the 2026 check months): the old test kept only totals, so years can not be split here. Median RR = the typical result of the 250 stop / exit settings, a mix of the two medians (about right, not exact). Green = +0.05 RR or more with 100+ trades, yellow = above 0, red = 0 or less.</p><div class="filters"><label for="of-tf">TF<select id="of-tf"><option value="">Any</option>${TFS.map(v=>`<option ${F.tf===v?'selected':''}>${v}</option>`).join('')}</select></label></div>`;
   const L=D.OF.filter(r=>!F.tf||r.tf===F.tf).sort((a,b)=>b.med-a.med);
-  h+=`<div class="tw"><table><thead><tr><th>TF</th><th>Break</th><th>Entry</th><th>Trades<span class="h2">all data</span></th><th>Median RR<span class="h2">all 250 settings · about</span></th><th>Verdict</th></tr></thead><tbody>`;
-  for(const r of L){const v=ofv(r);h+=`<tr class="${rowCls[v]}"><td>${r.tf}</td><td>${esc(r.brk)}</td><td>${esc(r.entry)}</td><td>${r.n}</td><td class="${cl(r.med)}"><b>${sg(r.med,3)}</b></td><td><span class="v ${v}">${v}</span></td></tr>`;}
+  h+=`<div class="tw"><table><thead><tr><th>TF</th><th>Trades<span class="h2">all data</span></th><th>Median RR<span class="h2">all 250 settings · about</span></th><th>Verdict</th><th>Break</th><th>Entry</th></tr></thead><tbody>`;
+  for(const r of L){const v=ofv(r);h+=`<tr class="${rowCls[v]}"><td>${r.tf}</td><td>${r.n}</td><td class="${cl(r.med)}"><b>${sg(r.med,3)}</b></td><td><span class="v ${v}">${v}</span></td><td>${esc(r.brk)}</td><td>${esc(r.entry)}</td></tr>`;}
   return h+'</tbody></table></div>';
 }
 function howTab(){return `<h2 class="ttl">How it was tested</h2><ul>

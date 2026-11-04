@@ -934,10 +934,10 @@ G.edge=async sc=>{
    $('#tkey').innerHTML='';
    $('#tch').innerHTML=grp.some(g=>g.v!=null)?eyBars(grp,{label:'win rate by window',fmt:v=>Math.round(v)+'%',tick:v=>Math.round(v)+'%',fixMin:30,gw:L.length>5?72:64,minW:300,ref:60,refL:'60% WR',year:y!=='all'}):'<p class="note">No trades of this strategy here.</p>'}
   else{const src=(LAB&&LAB[m]&&LAB[m].time)||{};
-   const grp=L.map(x=>{const o=src[`P1|${EL.tk}|${EL.tm}|${x}`],f=src[`P2|${EL.tk}|${EL.tm}|${x}`];return{l:x.replace('09:30–','9:30–'),a:o?.wr,b:f?.wr,sub:(o||f)?`${o?o.n:0}/${f?f.n:0}`:''}});
-   $('#tkey').innerHTML=LKEY(m);
-   $('#tch').innerHTML=grp.some(g=>g.a!=null||g.b!=null)?barChart(grp,{label:'win rate by window',fmt:v=>Math.round(v)+'%',tick:v=>Math.round(v)+'%',fixMin:30,gw:L.length>5?96:80,minW:420,ref:60,refL:'60% WR'}):'<p class="note">No trades of this strategy here.</p>'}
-  $('#tnote').innerHTML=nq?`<b>How to read it:</b> each bar = the win rate (WR) of ${EPN[EL.tk]} trades that started in that window, New York time. Target: ${ETG.half[EL.tk]}, no gate. Pick <b>All data</b> or one year. The small number under each bar = how many trades. Under 20 trades a bar is a guess. The dotted line = 60% WR. 00:00–02:00 is the weakest window, so the indicator skips it (except X.M5).`:`<b>How to read it:</b> each bar = the win rate (WR) of ${EPN[EL.tk]} trades on <span translate="no">${LMK[m]}</span> that started in that window, New York time, with the same code and rules as NQ (½ out, tested stop, all Asia hours, no gate). The small numbers = how many trades: period 1 / period 2. Under 20 trades a bar is a guess. The dotted line = 60% WR.`}
+   const grp=L.map(x=>{const c=src[`ALL|${EL.tk}|${EL.tm}|${x}`];return{l:x.replace('09:30–','9:30–'),v:c?c.wr:null,sub:c?N0(c.n):''}});
+   $('#tkey').innerHTML='';
+   $('#tch').innerHTML=grp.some(g=>g.v!=null)?eyBars(grp,{label:'win rate by window',fmt:v=>Math.round(v)+'%',tick:v=>Math.round(v)+'%',fixMin:30,gw:L.length>5?88:64,minW:300,ref:60,refL:'60% WR',year:false}):'<p class="note">No trades of this strategy here.</p>'}
+  $('#tnote').innerHTML=nq?`<b>How to read it:</b> each bar = the win rate (WR) of ${EPN[EL.tk]} trades that started in that window, New York time. Target: ${ETG.half[EL.tk]}, no gate. Pick <b>All data</b> or one year. The small number under each bar = how many trades. Under 20 trades a bar is a guess. The dotted line = 60% WR. 00:00–02:00 is the weakest window, so the indicator skips it (except X.M5).`:`<b>How to read it:</b> each bar = the win rate (WR) of ${EPN[EL.tk]} trades on <span translate="no">${LMK[m]}</span> that started in that window, New York time, with the same code and rules as NQ (½ out, tested stop, all Asia hours, no gate). <b>Short data</b>: one result over Dec 2025 – Oct 2026 (about 11 months), no years yet. The small number under each bar = how many trades. Under 20 trades a bar is a guess. The dotted line = 60% WR.`}
  seg('tmk',['NQ','ES','GC','CL'].map(m=>[m,LMK[m]]),EL.mkt||'NQ',async v=>{EL.mkt=v;if(v!=='NQ')await getLab();paintT()});
  seg('tk',EKS.map(k=>[k,EPN[k]]),EL.tk,v=>{EL.tk=v;paintT()});
  seg('tm',[['w','Time window (NY)'],['d','Weekday']],EL.tm,v=>{EL.tm=v;paintT()});
@@ -1010,7 +1010,7 @@ G.prop=async sc=>{
 </div><div class="out" id="pout"></div><p class="note"><b>Survival size</b> plans for a drawdown 1.5 times worse than the worst one this strategy had in the tests. <b>MMM buffer rule</b> = 1 micro per $1,000 of drawdown (1 mini per $10,000 from $10,000), about 10% of the drawdown per trade. Survive first, then grow.</p></section>
 <section><h2>Fixed 50 pt stop at 1:2 · the reference</h2><div class="tw"><table><tr><th class="l">Size</th><th>Risk per trade</th><th>Win at 1:2</th><th>Losses in a row to lose $2,000</th></tr>
 <tr><td class="l">1 MNQ</td><td>$100</td><td>$200</td><td>20</td></tr><tr><td class="l">2 MNQ</td><td>$200</td><td>$400</td><td>10</td></tr><tr><td class="l">4 MNQ</td><td>$400</td><td>$800</td><td>5</td></tr><tr><td class="l">1 NQ (= 10 MNQ)</td><td>$1,000</td><td>$2,000</td><td>2</td></tr></table></div><p class="note">ES uses a 20 pt stop: 1 MES = $100 risk, 1 ES = $1,000. The worst losing streaks in the tests were 12–38 stops in a row (in R), so 10 losses in a row is not rare.</p></section></div>`;
- // NQ: prop2["ex|gate|strat"] = {all:{size:{p,f,pr,d,t,fd}}, "2023":{size:…}, …} · other markets: LAB (period 1 + 2 together)
+ // NQ: prop2["ex|gate|strat"] = {all:{size:{p,f,pr,d,t,fd}}, "2023":{size:…}, …} · other markets: LAB (all data, short data)
  const QC=()=>PQ.m==='NQ'?D.prop2[`${PQ.ex}|${PQ.g}|${PQ.k}`]:null;
  const Q=()=>PQ.m==='NQ'?(QC()||{})[PQ.w]:((LAB&&LAB[PQ.m]&&LAB[PQ.m].prop)||{})[`${PQ.ex}|${PQ.k}`];
  const nm=k=>SN[k];
@@ -1032,7 +1032,7 @@ G.prop=async sc=>{
    `<div class="fact"><div class="d">Trading days to pass</div><div class="n">${d0(v.d)}</div><div class="d">about ${v.d==null?'—':Math.max(1,Math.round(v.d/21))} month${v.d!=null&&Math.round(v.d/21)>1?'s':''} of trading</div></div>`+
    `<div class="fact"><div class="d">Trades to pass</div><div class="n">${d0(v.t)}</div><div class="d">about ${v.t&&v.d?(v.t/v.d).toFixed(1):'—'} trades a day</div></div>`+
    `<div class="fact"><div class="d">A failed try lasts</div><div class="n">${v.fd==null?'—':d0(v.fd)}</div><div class="d">${v.fd==null?'no try failed':'trading days'}</div></div>`;
-  $('#qline').innerHTML=`<b>In one sentence:</b> trading <b>${nm(PQ.k)}</b> on <span translate="no">${LMK[PQ.m]}</span> with <b translate="no">${PQ.u} ${LMU[PQ.m]}</b>, ${exN}, ${PQ.m==='NQ'?(PQ.g==='NONE'?'no filter':PGN[PQ.g]):'no filter'}, about <b>${P0(v.pr)}</b> of tries passed the 50k evaluation, in about <b>${d0(v.d)} trading days</b> and <b>${d0(v.t)} trades</b>. Data: ${PQ.m==='NQ'?PWN[PQ.w]:'Dec 2025 – Oct 2026 (<span translate="no">'+LMK[PQ.m]+'</span>, same code and rules as NQ, tested stop, skip 00–02)'}.`;
+  $('#qline').innerHTML=`<b>In one sentence:</b> trading <b>${nm(PQ.k)}</b> on <span translate="no">${LMK[PQ.m]}</span> with <b translate="no">${PQ.u} ${LMU[PQ.m]}</b>, ${exN}, ${PQ.m==='NQ'?(PQ.g==='NONE'?'no filter':PGN[PQ.g]):'no filter'}, about <b>${P0(v.pr)}</b> of tries passed the 50k evaluation, in about <b>${d0(v.d)} trading days</b> and <b>${d0(v.t)} trades</b>. Data: ${PQ.m==='NQ'?PWN[PQ.w]:'Dec 2025 – Oct 2026, about 11 months: <b>short data</b>, one result over all of it (<span translate="no">'+LMK[PQ.m]+'</span>, same code and rules as NQ, tested stop, skip 00–02)'}.`;
  }
  seg('qm',['NQ','ES','GC','CL'].map(m=>[m,LMK[m]]),PQ.m,async v=>{PQ.m=v;if(v!=='NQ'){await getLab();PQ.g='NONE';PQ.w='all';seg('qw',EYP,PQ.w,v2=>{PQ.w=v2;paintQ()})}$('#qgw').style.display=v==='NQ'?'':'none';$('#qw').parentElement.style.display=v==='NQ'?'':'none';seg('qg',[['NONE','No filter'],['MOM','MMPD 27 Momentum'],['MOM2','MMPD 27 Momentum + max 2 open']],PQ.g,v2=>{PQ.g=v2;paintQ()});seg('qu',[1,2,3,4,6,10].map(u=>[u,u===10?'1 '+LMU[PQ.m].slice(1):u+' '+LMU[PQ.m]]),PQ.u,v2=>{PQ.u=+v2;paintQ()});paintQ()});
  seg('qk',EKS.map(k=>[k,EPN[k]]),PQ.k,v=>{PQ.k=v;paintQ()});
@@ -1063,7 +1063,7 @@ let LVD=null;const LV={w:'all',bx:'M15',pb:'H4',bi:'all',fl:'all',bl:'M15'};
 const LV_Y=[['all','All data'],['2023','2023'],['2024','2024'],['2025','2025'],['2026','2026']],LV_W=LV_Y.map(p=>p[0]);
 const LV_TN={'60':'1H','4h':'4H',D:'Daily',W:'Weekly',M1:'1m',M5:'5m',M15:'15m',H1:'1h',H4:'4H'};
 // lowest–highest year (each year alone), in %
-function lvRng(vals){const v=vals.filter(x=>x!=null&&!isNaN(x));if(!v.length)return '—';const a=Math.round(Math.min(...v)),b=Math.round(Math.max(...v));return a===b?a+'%':a+'–'+b+'%'}
+function lvRng(vals){const v=vals.filter(x=>x!=null&&!isNaN(x));if(!v.length)return '—';const a=Math.round(Math.min(...v)),b=Math.round(Math.max(...v));return a+'–'+b+'%'}
 // a row of cells: All data (bold) + each year
 function lvYc(f,cls){return LV_W.map((w,i)=>{const t=f(w);const c=cls?cls(w):'';return `<td${c?` class="${c}"`:''}>${i?t:'<b>'+t+'</b>'}</td>`}).join('')}
 const LV_YH=`${LV_Y.map(p=>`<th>${p[1]}</th>`).join('')}`;
@@ -1118,25 +1118,25 @@ G.levels=async sc=>{
 // 2026 RETEST
 G.nyopen=sc=>{
  sc.innerHTML=`<div class="doc desk">
-<section class="wide"><p class="lede">The New York morning in numbers: when the high and low are made, what the 09:30 and 10:00 MMM candles tell you, the 30-minute opening range, the 09:30–10:00 UPG gaps, and how far a run of body closes goes before the other side closes. NQ 1m 2022–25 (763 days) / MNQ 1m 2026 (61 days).</p>
+<section class="wide"><p class="lede">The New York morning in numbers: when the high and low are made, what the 09:30 and 10:00 MMM candles tell you, the 30-minute opening range, the 09:30–10:00 UPG gaps, and how far a run of body closes goes before the other side closes. NQ / MNQ, 993 days, Dec 2022 – Nov 2026: all the data, and each year alone in the lab.</p>
 <nav class="doors" aria-label="NY open pages"><a href="/backtests/ny-open/"><b class="serif">NY open lab</b><span>Every table, with timeframe and rule switches.</span></a><a href="/backtests/ny-open/study/"><b class="serif">9:30 AM to 11:30 AM Testing Studies</b><span>The document: all of it in one place, printable.</span></a></nav></section>
 <section class="wide"><h2>The answers</h2><div class="tw"><table>
-<tr><th class="l">Question</th><th class="l">Answer · 2022–25 / 2026</th></tr>
-<tr><td class="l">When is the morning high / low made?</td><td class="l">In by 10:00 on 83 / 85% of days. The first 15 minutes make about 30–33% of them. 11:15–11:30 is second for the high (20 / 21%).</td></tr>
-<tr><td class="l">How big is the morning?</td><td class="l">Median 09:30–11:30 range 155 / 235 pts. 11:30 closes above 09:30 about half the time (51 / 53%).</td></tr>
-<tr><td class="l">The 09:30 opening candle</td><td class="l">5m BC+: the next candle takes its target first 85 / 87%. No opening candle tells you the 11:30 close (about 50%).</td></tr>
-<tr><td class="l">The 09:30–10:00 opening range</td><td class="l">Median 94 / 167 pts. Closed out of by 11:30 on 94 / 92% of days, median run 51 / 71 pts past the edge, both sides only 14 / 11%.</td></tr>
-<tr><td class="l">The candle that closes at 10:00</td><td class="l">BC+ → target first 86–92% on 5m, 15m, 1h and 4H. BC− → coin flip. The 10:00 lean does not call 16:00.</td></tr>
-<tr><td class="l">09:30–10:00 UPG gaps</td><td class="l">5m gaps touched 83 / 73% in a median 5 / 4 minutes. With the 4H 06–10 candle they react 68 / 79%, against it 47 / 29%.</td></tr>
-<tr><td class="l">An open gap behind the 10:00 target</td><td class="l">There on 56–78% of days. Strong candles (BC+ / C2) ignore it (5–22% first). Weak candles visit it first 15% (5m) to 52% (4H).</td></tr>
-<tr><td class="l">Runs after 10:00 until 11:30</td><td class="l">Median 2 same-side BCs, 2–3 NBCs. MFE median 30–36 pts (5m), 36 pts (15m). At the opposite candle about 0: take points.</td></tr>
-<tr><td class="l">Trade test: first BC after 10:00, 50 pt stop, 1:2</td><td class="l"><span class="st no">DON’T TRADE</span> WR 45–47%, avg RR about 0, every t-score under 2.</td></tr>
+<tr><th class="l">Question</th><th class="l">Answer · all data (each year in the lab)</th></tr>
+<tr><td class="l">When is the morning high / low made?</td><td class="l">In by 10:00 on 83% of days (80–86% each year). The first 15 minutes make about 32% of them. 11:15–11:30 is second for the high (20%).</td></tr>
+<tr><td class="l">How big is the morning?</td><td class="l">Median 09:30–11:30 range 176 pts, growing every year with the price (130 → 265 pts): compare % between years, not points. 11:30 closes above 09:30 about half the time (52%).</td></tr>
+<tr><td class="l">The 09:30 opening candle</td><td class="l">5m BC+: the next candle takes its target first 85%. No opening candle tells you the 11:30 close (about 50%).</td></tr>
+<tr><td class="l">The 09:30–10:00 opening range</td><td class="l">Median 99 pts. Closed out of by 11:30 on 94% of days, median run 53 pts past the edge, the other side too only 14%.</td></tr>
+<tr><td class="l">The candle that closes at 10:00</td><td class="l">BC+ → target first 87–90% on 5m, 15m, 1h and 4H, above 84% in every year except the 4H in 2026 (76%, 21 days). BC− → coin flip. The 10:00 lean does not call 16:00.</td></tr>
+<tr><td class="l">09:30–10:00 UPG gaps</td><td class="l">5m gaps touched 82% in a median 5 minutes. With the 4H lean they react 68%, against it 46%.</td></tr>
+<tr><td class="l">An open gap behind the 10:00 target</td><td class="l">There on most days (4H: 77%). Strong candles (BC+ / C2) go to the target first. Weak 4H candles visit the gap first about half the time (50%).</td></tr>
+<tr><td class="l">Runs after 10:00 until 11:30</td><td class="l">Median 2 same-side BCs, 2–3 NBCs, 32–38 pts of run on 5m. At the opposite candle it is given back: take points.</td></tr>
+<tr><td class="l">Trade test: first BC after 10:00, 50 pt stop, 1:2</td><td class="l"><span class="st no">DON’T TRADE</span> WR about 45%, avg RR +0.04 to +0.05, every t-score under 2. 2026 lost on 5m.</td></tr>
 </table></div></section>
 <section><h2>Best read per timeframe</h2><ul>
-<li><b>4H:</b> BC+ at 10:00 → target first 87–90%. Weak 4H candle → the gap behind it first 52%.</li>
-<li><b>1h:</b> BC+ → 86–91%. Weak candle → gap or target is a coin flip.</li>
-<li><b>15m:</b> the best balance. BC+ → 89–92%. 20 pts reached 70 / 87%.</li>
-<li><b>5m:</b> the fastest. Gaps with the 4H side react 68 / 79%. Runs end in 25–35 minutes.</li></ul></section>
+<li><b>4H:</b> BC+ at 10:00 → target first about 90% (85% for the bear side). Weak 4H candle → the gap behind it first about half the time.</li>
+<li><b>1h:</b> BC+ → target first most days. Weak candle → gap or target is a coin flip.</li>
+<li><b>15m:</b> the best balance. BC+ → target first about 90%.</li>
+<li><b>5m:</b> the fastest. Gaps with the 4H lean react 68%. Runs end in 25–35 minutes.</li></ul></section>
 <section><h2>What does not work</h2><ul>
 <li>The 10:00 lean for the 16:00 close.</li><li>A BC− for direction.</li><li>Holding until the opposite candle.</li><li>The first BC after 10:00 as an entry.</li><li>Guessing the side of the opening range before it breaks.</li></ul></section>
 </div>`;
@@ -1446,7 +1446,7 @@ const PAGES={
   r:['<b>PH</b> = the next candle trades above the previous candle’s high. <b>PL</b> = below its low. Both can happen in one candle.','Rows are split by the type of the previous candle (BuBC = closed above the high before it · BeBC = closed below the low · NBC = neither).','Percentages are how often it happened. <b>All data</b> (bold) = one count over Dec 2022 – Oct 2026. <b>2023 · 2024 · 2025 · 2026</b> = each year alone. Two numbers in one cell = bull / bear, or fills / then target.'],
   u:['Use these odds for targets: aim for the level that gets taken most often. Lean only on numbers that stay about the same in every year.']},
  nyopen:{t:'NY open · 09:30 to 11:30',s:'What NQ does in the two hours Max trades, from the cash open to 11:30.',
-  r:['Every cell = <b>2022–25 / 2026</b>. 2022–25 = 763 days of NQ, 2026 = 61 days of MNQ (small sample).','These are counts of what price does, not trading signals. Only the last row is a trade test.'],
+  r:['Every answer = <b>all the data</b>: 993 days of NQ / MNQ, Dec 2022 – Nov 2026. The lab shows each year alone too.','These are counts of what price does, not trading signals. Only the last row is a trade test.'],
   u:['Open the <b>NY open lab</b> to switch timeframes, or the <b>study document</b> to read it all in one place.']},
  retest:{t:'Year by year',s:'Why every result is now one run over all the data, checked year by year.',
   r:['<b>All data</b> = every trade from Dec 2022 to Oct 2026 in one run. <b>Each year alone</b> = 2023, 2024, 2025, 2026.','<b>WORKS</b> = t-score 2+ over all the data and money made in every year. A few good months can no longer outweigh 3 years.'],
