@@ -209,7 +209,7 @@ function prep(t) {
 }
 Object.keys(ROWS).forEach(prep);
 const VL = { g: '✔ WORKS', y: '~ MAYBE', r: '✖ NO', n: '—' };
-const yrsTxt = r => !r.yn ? '' : YRS.map((Y, i) => r.yn[i] ? `${Y} ${(r.y[i] > 0 ? '+' : '') + r.y[i].toFixed(2)} (${r.yn[i]})` : `${Y} —`).join(' · ');
+const yrsTxt = r => !r.yn ? '' : YRS.map((Y, i) => r.yn[i] ? `${Y} ${(r.y[i] > 0 ? '+' : '') + r.y[i].toFixed(Math.abs(r.y[i]) < 0.005 && r.y[i] !== 0 ? 3 : 2)} (${r.yn[i]})` : `${Y} —`).join(' · ');
 const state = { tab: 'strat', f: {}, sort: {}, show: {}, from: {}, to: {}, sel: {} };
 // ═══ PLAYBOOK: how to trade every row (Entry TF · setup · entry · stop · exit · when) ═══
 const SES_A = { 'Globex open (1st hour)': '18:00–19:00', 'Asia': '19:00–02:00', 'Asia / London overlap': '02:00–03:00', 'London': '03:00–08:00', 'London / NY overlap': '08:00–09:30', 'NY AM': '09:30–12:00', 'NY PM': '12:00–15:45', 'MOC (close)': '15:45–16:00', 'After close': '16:00–17:00', 'Maintenance': '17:00–18:00', 'All sessions': 'any time' };
@@ -335,7 +335,7 @@ function verdict(r) { return r.vd || vcalc(r); }
 function why(r) {
   const v = verdict(r); if (v === 'n') return 'Read-only row: it measures how far price runs, it is not a trade.';
   const pc = x => Math.round(x * 100) + '%', sg = x => (x > 0 ? '+' : '') + x.toFixed(2);
-  const t = r.t, tt = t === undefined || t === null ? '—' : t.toFixed(1);
+  const t = r.t, tt = t === undefined || t === null ? '—' : t.toFixed(2);
   const be = (r.aw && r.al) ? Math.abs(r.al) / (r.aw + Math.abs(r.al)) : null;
   const wr = `${pc(r.wr)} wins` + (be ? ` vs ${pc(be)} needed to break even` : '');
   const lost = YRS.filter((Y, i) => r.yn[i] >= 10 && r.y[i] !== null && r.y[i] <= 0);
@@ -388,7 +388,7 @@ function cell(k, v, r) {
   if (k === 'mx') return [(v > 0 ? '+' : '') + v.toFixed(2), v > 0 ? 'p' : 'n'];
   if (k === 'av_old' || k === 'av_new' || k === 'pts_next') return [(v > 0 ? '+' : '') + v.toFixed(2), v > 0 ? 'p' : v < 0 ? 'n' : ''];
   if (k === 't_old' || k === 't_new') return [v.toFixed(2), ''];
-  if (/^y20\d\d$/.test(k)) { const c = r['n' + k.slice(1)]; return [(v > 0 ? '+' : '') + v.toFixed(2) + `<span class="yn">${c}</span>`, (c < 10 ? 'few ' : '') + (v > 0 ? 'p' : v < 0 ? 'n' : '')]; }
+  if (/^y20\d\d$/.test(k)) { const c = r['n' + k.slice(1)]; return [(v > 0 ? '+' : '') + v.toFixed(Math.abs(v) < 0.005 && v !== 0 ? 3 : 2) + `<span class="yn">${c}</span>`, (c < 10 ? 'few ' : '') + (v > 0 ? 'p' : v < 0 ? 'n' : '')]; }
   if (/^m20\d\d$/.test(k)) { const c = r['d' + k.slice(1)]; return [v.toFixed(1) + `<span class="yn">${c}</span>`, c < 10 ? 'few' : '']; }
   if (['touch25', 'touch50', 'touched', 'close50', 'close100', 'closed'].includes(k)) return [(v * 100).toFixed(0) + '%', ''];
   if (k === 'tpm') return [v < 1 ? v.toFixed(1) : v.toFixed(0), ''];
