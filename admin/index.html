@@ -406,6 +406,7 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
   function tok() { return USER.getIdToken(); }
   function toast(t) { var el = document.createElement('div'); el.className = 'toast'; el.textContent = t; document.body.appendChild(el); setTimeout(function () { el.remove(); }, 3000); }
   function keyRow() { $('vipUnlock').hidden = MMMVip.hasKey(); }
+  document.addEventListener('mmm:vip', function () { keyRow(); });
   function draw(j) {
     $('vip').hidden = false; keyRow(); $('vipErr').textContent = '';
     $('vipLinks').innerHTML = (j.links || []).map(function (l) {

@@ -163,6 +163,7 @@
   }
   async function adminList(idToken) {
     var links = await adminQuery(idToken, 'vipLinks', 12), codes = await adminQuery(idToken, 'vipCodes', 60);
+    links = links.filter(function (l) { return l.id !== HOLD; });
     links.forEach(function (l) { delete l.key; l.live = l.expires > Date.now() && l.used < l.max; });
     codes.forEach(function (c) { delete c.key; c.code = pretty(c.id); });
     return { ok: true, links: links, codes: codes };
@@ -187,7 +188,50 @@
     return { ok: r.status === 200 };
   }
 
+  /* ---------- admin auto-unlock: Max logged in with the admin email opens V.I.P with no code ----------
+   * The content key already sits in the sign-up links and member codes he made (only the admin account can read them,
+   * see tools/vip-firestore.rules). This takes the newest key that opens the live tools. After a master-code unlock the
+   * key is also saved in one hidden admin-only record (vipLinks/ADMINKEYHOLDER…: expired, 0 places, so nobody can use it
+   * as a sign-up link). */
+  var ADMIN = 'infotrade@maxmaserati.com', HOLD = 'ADMINKEYHOLDER0000000000';
+  function isAdmin(u) { return !!(u && String(u.email || '').toLowerCase() === ADMIN && u.emailVerified); }
+  function vipEvent(n) { try { document.dispatchEvent(new CustomEvent(n)); } catch (e) {} }
+  async function adminAuto(tok) {
+    var cols = ['vipLinks', 'vipCodes'];
+    for (var c = 0; c < cols.length; c++) {
+      var docs = await adminQuery(tok, cols[c], 40);
+      for (var i = 0; i < docs.length; i++) {
+        if (docs[i].key && await keyWorks(docs[i].key)) { storeKey(docs[i].key); del(CODE_STORE); put(CHECK_STORE, String(Date.now())); return true; }
+      }
+    }
+    return false;
+  }
+  async function adminHold(tok) {
+    var key = get(KEY_STORE); if (!key || get('mmmVipHold') === key || !(await keyWorks(key))) return;
+    var body = { writes: [{ update: { name: docName('vipLinks', HOLD), fields: fields({ key: key, expires: new Date(0), max: 0, used: 0, note: 'Admin auto-unlock (not a sign-up link)', by: 'admin' }) },
+      updateTransforms: [{ fieldPath: 'created', setToServerValue: 'REQUEST_TIME' }] }] };
+    var r = await req('POST', ':commit', body, tok);
+    if (r.status === 200) { try { sessionStorage.setItem('mmmVipHold', key); } catch (e) {} }
+  }
+  document.addEventListener('mmm:auth', function (e) {
+    var u = e.detail;
+    if (!isAdmin(u)) { vipEvent('mmm:vipnone'); return; }
+    u.getIdToken().then(function (tok) {
+      if (get(KEY_STORE)) return adminHold(tok).then(function () { vipEvent('mmm:vip'); });
+      return adminAuto(tok).then(function (ok) { vipEvent(ok ? 'mmm:vip' : 'mmm:vipnone'); });
+    }).catch(function () { vipEvent('mmm:vipnone'); });
+  });
+  /* tool pages: wait a moment for the admin auto-unlock before sending a visitor back to the code box */
+  function ready(ms) {
+    if (get(KEY_STORE)) return Promise.resolve(true);
+    return new Promise(function (res) {
+      var done = false; function fin() { if (!done) { done = true; res(!!get(KEY_STORE)); } }
+      document.addEventListener('mmm:vip', fin); document.addEventListener('mmm:vipnone', fin);
+      setTimeout(fin, ms || 6000);
+    });
+  }
+
   window.MMMVip = { supported: supported, unlock: unlock, open: open, lock: lock, recheck: recheck, checkLink: checkLink, claim: claim,
-    hasKey: function () { return !!get(KEY_STORE); }, pretty: pretty,
+    hasKey: function () { return !!get(KEY_STORE); }, pretty: pretty, ready: ready,
     admin: { newLink: adminNewLink, list: adminList, setStatus: adminSetStatus, repair: adminRepair } };
 })();

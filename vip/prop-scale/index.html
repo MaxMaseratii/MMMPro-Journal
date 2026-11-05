@@ -45,8 +45,7 @@
   var state = document.getElementById('state'), frame = document.getElementById('app');
   function fail(html) { state.innerHTML = '<div class="box">' + html + '</div>'; }
   if (!MMMVip.supported()) return fail('<p>This browser is too old to open the V.I.P area. Please update Chrome, Safari, Edge or Firefox.</p>');
-  if (!MMMVip.hasKey()) { location.replace('/vip/'); return; }
-  MMMVip.recheck().then(function (ok) { if (!ok) throw new Error('revoked'); return MMMVip.open('/vip/prop-scale/payload.json'); }).then(function (html) {
+  MMMVip.ready().then(function (has) { if (!has) return null; return MMMVip.recheck(); }).then(function (ok) { if (ok === null) return null; if (!ok) throw new Error('revoked'); return MMMVip.open('/vip/prop-scale/payload.json'); }).then(function (html) {
     if (html == null) { location.replace('/vip/'); return; }
     // links between the two V.I.P pages are written as /vip/... : point them at this site and open them in the main window
     html = html.split('href="/vip/').join('target="_top" href="' + location.origin + '/vip/');
