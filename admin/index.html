@@ -100,11 +100,26 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
 .vip th{font:600 11px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
 .vip .tw{overflow-x:auto;margin-top:10px}
 .vip .ok{color:var(--win)}.vip .no{color:var(--loss)}.vip .dim{color:var(--faint)}
+.vip [hidden],.crm[hidden],.atabs[hidden]{display:none!important}
+.vip .master{border-style:solid;background:rgba(245,197,24,.06);margin:0 0 16px}
+.vip .master .big{font-size:18px;letter-spacing:.04em}
+/* admin tabs: Members · V.I.P · CRM */
+.atabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid var(--rule2);margin:6px 0 18px}
+.atabs button{font:600 14px var(--sans);background:none;color:var(--mute);border:0;border-bottom:3px solid transparent;padding:9px 14px;cursor:pointer}
+.atabs button[aria-selected=true]{color:var(--gold);border-bottom-color:var(--gold)}
+.atabs button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+main[data-tab=members] #vip,main[data-tab=members] #crm,
+main[data-tab=vip] #board,main[data-tab=vip] #gate,main[data-tab=vip] #acts,main[data-tab=vip] #crm,
+main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main[data-tab=crm] #vip{display:none!important}
+.vip{margin-top:0}
+.crm{display:grid;gap:10px}
+.crm .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;color:var(--mute);font-size:13.5px}
+.crm iframe{width:100%;height:calc(100vh - 230px);min-height:620px;border:1px solid var(--rule2);border-radius:6px;background:var(--sheet);display:block}
 </style>
 </head>
 <body>
 <div id="mmm-header"></div>
-<main class="desk" translate="no" id="app">
+<main class="desk" translate="no" id="app" data-tab="members">
   <div class="head">
     <div>
       <span class="lock"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Private · admin only</span>
@@ -116,7 +131,16 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
       <a class="btn" id="b-sheet" href="#" target="_blank" rel="noopener">Open the Google Sheet</a>
     </div>
   </div>
+  <nav class="atabs" id="atabs" role="tablist" aria-label="Admin sections" hidden>
+    <button type="button" role="tab" data-tab="members" aria-selected="true">Members</button>
+    <button type="button" role="tab" data-tab="vip" aria-selected="false">V.I.P</button>
+    <button type="button" role="tab" data-tab="crm" aria-selected="false">CRM</button>
+  </nav>
   <section class="vip" id="vip" hidden>
+    <div class="out master" id="vmBox">
+      <div><b>Your master code</b> <span class="dim">Opens the V.I.P area on any device. It is kept in your Firebase, and only your admin login can see it here.</span></div>
+      <div class="row"><span class="big" id="vmCode">Loading…</span><button class="btn" id="vmShow" type="button" hidden>Show</button><button class="btn" id="vmCopy" type="button" hidden>Copy</button><button class="btn gold" id="vmNew" type="button">Make a new master code</button><span class="dim" id="vmMsg"></span></div>
+    </div>
     <h2>V.I.P sign-up links</h2>
     <p class="sub">Make a fresh private link and send it to your buyer. They type their email and get their own V.I.P code on screen. Only your admin login can make links.</p>
     <div class="mk">
@@ -137,6 +161,10 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
     <div class="tw"><table><thead><tr><th>Made</th><th>For</th><th>Lives until</th><th>Used</th><th>Status</th></tr></thead><tbody id="vipLinks"></tbody></table></div>
     <div class="row" style="margin-top:16px"><b>V.I.P codes</b></div>
     <div class="tw"><table><thead><tr><th>When</th><th>Email</th><th>Code</th><th>For</th><th></th><th>Status</th><th></th></tr></thead><tbody id="vipCodes"></tbody></table></div>
+  </section>
+  <section class="crm" id="crm" hidden>
+    <div class="bar"><span>Marketing, CRM and revenue dashboard.</span><a class="btn" href="https://maxmaseratii.github.io/dashboard-analytics-CRM/#crm" target="_blank" rel="noopener">Open in a new tab</a></div>
+    <iframe id="crmFrame" title="MMM Marketing Hub CRM" loading="lazy" referrerpolicy="no-referrer"></iframe>
   </section>
   <div id="gate"></div>
   <div id="board" hidden>
@@ -429,8 +457,25 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
       return t;
     }).catch(function () { return t; });
   }
+  /* master code box */
+  var MASTER = null, SHOW = false, confirmT = null;
+  function mask(c) { return c.replace(/[A-Z0-9]/g, function (x, i) { return i < 3 ? x : '•'; }); }
+  function drawMaster(list) {
+    var a = (list || []).filter(function (m) { return m.status === 'active'; })[0];
+    MASTER = a ? a.code : null;
+    $('vmCode').textContent = MASTER ? (SHOW ? MASTER : mask(MASTER)) : list ? 'No master code yet' : 'Could not load';
+    $('vmShow').hidden = $('vmCopy').hidden = !MASTER; $('vmShow').textContent = SHOW ? 'Hide' : 'Show';
+    $('vmNew').textContent = MASTER ? 'Make a new master code' : 'Make my master code';
+  }
+  // the admin never needs to type a code on this page: the key comes from this device or from Firebase
+  function autoKey(t) {
+    if (MMMVip.hasKey()) return Promise.resolve(t);
+    return V.findKey(t).then(function () { keyRow(); return t; }).catch(function () { return t; });
+  }
   function refresh() {
-    return tok().then(repair).then(function (t) { return V.list(t); }).then(draw).catch(function (e) {
+    return tok().then(autoKey).then(repair).then(function (t) {
+      return Promise.all([V.list(t), V.masters(t).catch(function () { return null; })]);
+    }).then(function (r) { draw(r[0]); drawMaster(r[1]); }).catch(function (e) {
       if (e && e.message === 'notadmin') { $('vip').hidden = true; return; }
       $('vip').hidden = false; keyRow(); $('vipErr').textContent = 'Could not load the V.I.P list. If this is the first time, add the V.I.P rules in Firebase (see the setup guide).';
     });
@@ -460,11 +505,56 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
     var v = $('vipLink').value; navigator.clipboard.writeText(v).then(function () { $('vipCopy').textContent = 'Copied'; setTimeout(function () { $('vipCopy').textContent = 'Copy link'; }, 1500); }, function () { $('vipLink').select(); });
   });
   $('vipRefresh').addEventListener('click', refresh);
+  $('vmShow').addEventListener('click', function () { SHOW = !SHOW; drawMaster(MASTER ? [{ status: 'active', code: MASTER }] : []); });
+  $('vmCopy').addEventListener('click', function () {
+    if (!MASTER) return;
+    navigator.clipboard.writeText(MASTER).then(function () { $('vmCopy').textContent = 'Copied'; setTimeout(function () { $('vmCopy').textContent = 'Copy'; }, 1500); },
+      function () { SHOW = true; drawMaster([{ status: 'active', code: MASTER }]); });
+  });
+  $('vmNew').addEventListener('click', function () {
+    var b = $('vmNew');
+    if (MASTER && !confirmT) { b.textContent = 'Yes, replace it (the old one stops working)'; confirmT = setTimeout(function () { confirmT = null; drawMaster([{ status: 'active', code: MASTER }]); }, 6000); return; }
+    clearTimeout(confirmT); confirmT = null; b.disabled = true; $('vmMsg').textContent = 'Making…';
+    tok().then(function (t) { return V.newMaster(t, USER.email); }).then(function (j) {
+      if (!j.ok) { $('vmMsg').textContent = j.error === 'nokey' ? 'No V.I.P key found on this device or in Firebase. Ask Claude to rebuild the V.I.P key.' : j.error === 'notadmin' ? 'Only the admin login can do this.' : 'Could not save it. Try again.'; return; }
+      SHOW = true; MASTER = j.code; drawMaster([{ status: 'active', code: j.code }]); $('vmMsg').textContent = 'Saved. Use it to unlock V.I.P on any device.'; keyRow(); refresh();
+    }).catch(function () { $('vmMsg').textContent = 'Could not reach Firebase.'; }).finally(function () { b.disabled = false; });
+  });
   document.addEventListener('click', function (e) {
     var b = e.target.closest('[data-vcode]'); if (!b) return;
     b.disabled = true; tok().then(function (t) { return V.setStatus(t, b.dataset.vcode, b.dataset.vto); }).then(refresh).catch(function () { b.disabled = false; });
   });
   document.addEventListener('mmm:auth', function (e) { USER = e.detail || null; if (!USER || !V) { $('vip').hidden = true; return; } refresh(); });
+})();
+</script>
+<script>
+/* admin tabs: Members · V.I.P · CRM (they show once the admin login is confirmed) */
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], crm: ['CRM', 'Marketing, CRM and revenue.'] };
+  var SUB = $('sub').textContent;
+  function pick(t, push) {
+    if (!TABS[t]) t = 'members';
+    main.dataset.tab = t;
+    [].forEach.call(tabs.querySelectorAll('[data-tab]'), function (b) { b.setAttribute('aria-selected', b.dataset.tab === t); });
+    document.querySelector('.head h1').textContent = TABS[t][0];
+    $('sub').textContent = t === 'members' ? SUB : TABS[t][1];
+    if (t === 'crm' && !$('crmFrame').src) $('crmFrame').src = 'https://maxmaseratii.github.io/dashboard-analytics-CRM/#crm';
+    if (push) { try { history.replaceState(null, '', t === 'members' ? location.pathname : '#' + t); } catch (e) {} }
+  }
+  function admin() { return !$('board').hidden || !$('vip').hidden; }
+  function sync() {
+    var ok = admin(), was = tabs.hidden;
+    if (tabs.hidden === ok) tabs.hidden = !ok;
+    if ($('crm').hidden === ok) $('crm').hidden = !ok;
+    if (!ok && main.dataset.tab !== 'members') pick('members');
+    if (was && ok) pick((location.hash || '').slice(1));
+  }
+  tabs.addEventListener('click', function (e) { var b = e.target.closest('[data-tab]'); if (b) pick(b.dataset.tab, true); });
+  var mo = new MutationObserver(sync);
+  mo.observe($('board'), { attributes: true, attributeFilter: ['hidden'] });
+  mo.observe($('vip'), { attributes: true, attributeFilter: ['hidden'] });
+  pick('members'); sync();
 })();
 </script>
 <script src="/assets/nav.js"></script>

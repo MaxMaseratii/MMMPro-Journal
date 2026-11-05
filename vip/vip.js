@@ -6,6 +6,8 @@
  *     Revoked codes stop working; unlocked devices re-check every 12 hours and lock themselves.
  * Private sign-up links (Firestore vipLinks) are made by Max on maxmaserati.com/admin/: they expire after
  * 5-60 minutes and take a set number of people. Firestore security rules enforce all of it (tools/vip-firestore.rules).
+ * The admin master code is a vipCodes doc with role "master": made on /admin/, shown only to the admin login there,
+ * and a new one revokes the old one. (vip/keys.json codes still work offline as before.)
  */
 (function () {
   'use strict';
@@ -165,6 +167,7 @@
     var links = await adminQuery(idToken, 'vipLinks', 12), codes = await adminQuery(idToken, 'vipCodes', 60);
     links = links.filter(function (l) { return l.id !== HOLD; });
     links.forEach(function (l) { delete l.key; l.live = l.expires > Date.now() && l.used < l.max; });
+    codes = codes.filter(function (c) { return c.role !== 'master'; });
     codes.forEach(function (c) { delete c.key; c.code = pretty(c.id); });
     return { ok: true, links: links, codes: codes };
   }
@@ -231,7 +234,37 @@
     });
   }
 
+  /* the key that opens the tools now: this device first, then any code or link in Firebase (admin only) */
+  async function adminFindKey(idToken) {
+    var k = get(KEY_STORE); if (k && await keyWorks(k)) return k;
+    var cols = ['vipCodes', 'vipLinks'];
+    for (var c = 0; c < cols.length; c++) {
+      var docs = await adminQuery(idToken, cols[c], 300);
+      for (var i = 0; i < docs.length; i++) if (docs[i].key && await keyWorks(docs[i].key)) { storeKey(docs[i].key); return docs[i].key; }
+    }
+    return null;
+  }
+  /* master codes (newest first); only the admin login can read them */
+  async function adminMasters(idToken) {
+    var r = await req('POST', ':runQuery', { structuredQuery: { from: [{ collectionId: 'vipCodes' }],
+      where: { fieldFilter: { field: { fieldPath: 'role' }, op: 'EQUAL', value: { stringValue: 'master' } } }, limit: 50 } }, idToken);
+    if (r.status !== 200) throw new Error(r.status === 403 ? 'notadmin' : 'error');
+    return (r.json || []).filter(function (x) { return x.document; }).map(function (x) { var c = plain(x.document); delete c.key; c.code = pretty(c.id); return c; })
+      .sort(function (a, b) { return (b.created || 0) - (a.created || 0); });
+  }
+  /* a new master code; every older master code in Firebase stops working at the same moment */
+  async function adminNewMaster(idToken, by) {
+    var key = await adminFindKey(idToken); if (!key) return { ok: false, error: 'nokey' };
+    var old = await adminMasters(idToken), id = 'MMM' + rand(12);
+    var writes = [{ update: { name: docName('vipCodes', id), fields: fields({ email: 'master', link: '', key: key, status: 'active', note: 'MASTER CODE', role: 'master', by: by || '' }) },
+      updateTransforms: [{ fieldPath: 'created', setToServerValue: 'REQUEST_TIME' }], currentDocument: { exists: false } }];
+    old.forEach(function (o) { if (o.status === 'active') writes.push({ update: { name: docName('vipCodes', o.id), fields: fields({ status: 'revoked' }) }, updateMask: { fieldPaths: ['status'] }, currentDocument: { exists: true } }); });
+    var r = await req('POST', ':commit', { writes: writes }, idToken);
+    if (r.status !== 200) return { ok: false, error: r.status === 403 ? 'notadmin' : 'error' };
+    return { ok: true, code: pretty(id) };
+  }
+
   window.MMMVip = { supported: supported, unlock: unlock, open: open, lock: lock, recheck: recheck, checkLink: checkLink, claim: claim,
     hasKey: function () { return !!get(KEY_STORE); }, pretty: pretty, ready: ready,
-    admin: { newLink: adminNewLink, list: adminList, setStatus: adminSetStatus, repair: adminRepair } };
+    admin: { newLink: adminNewLink, list: adminList, setStatus: adminSetStatus, repair: adminRepair, findKey: adminFindKey, masters: adminMasters, newMaster: adminNewMaster } };
 })();
