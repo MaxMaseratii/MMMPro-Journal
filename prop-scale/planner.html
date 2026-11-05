@@ -199,11 +199,11 @@ a{color:var(--gold2)}
 </div>
 <ol>
   <li><b>We studied the interviews.</b> We read 171 interviews of futures and prop traders from 6 channels: <a href="https://www.youtube.com/@chart-fanatics" target="_blank" rel="noopener">Chart Fanatics</a>, <a href="https://www.youtube.com/@titans.of.tomorrow" target="_blank" rel="noopener">Titans of Tomorrow</a>, <a href="https://www.youtube.com/@wordsofrizdom" target="_blank" rel="noopener">Words of Rizdom</a>, <a href="https://www.youtube.com/@korbstrading" target="_blank" rel="noopener">Speculators</a>, <a href="https://www.youtube.com/@DesireToTRADE" target="_blank" rel="noopener">Desire To Trade</a> and <a href="https://www.youtube.com/@ChatWithTradersPodcast" target="_blank" rel="noopener">Chat With Traders</a>. They claim $250k to $5M in prop payouts. We wrote down their exact rules and how they run their accounts, in their own words.</li>
-  <li><b>We coded and tested their own rules.</b> We coded every rule we could from their own words and tested it on NQ, ES and gold from Dec 2022 to Nov 2026, with a random twin for every trade (same trade, random time). We pooled all trades from 2023 to 2026 and judged each year on its own. <b>4 of 48 headline rules made money year after year.</b> Fabio Valentini's NY trend model WORKS (green all 4 years, t-score 2+). Vince's 80% rule, Marci Silfrain's measured move and the 15-minute opening range breakout are GOOD (3 of 4 years green and the fixed 1:2 test green). These edges are real but small: Fabio's is about +10% a year at his risk, not the 500% contest return. Most of the other rules did no better than random entries. So their big payouts had to come from something else.</li>
-  <li><b>We found what really pays them.</b> The money comes from how they run the accounts, and they say it themselves: <b>many accounts</b> (11 of 12), <b>big risk to pass and small risk once funded</b> ("two wins, you're funded"), <b>payouts as soon as the rules allow</b>, and <b>a lot spent on evaluations</b> (about $300k to collect $1.3M; $350k for about $1.1M). Only the payout-star channels show this method; the pro channels (Speculators, Chat With Traders) describe small risk and one account, and post no million-dollar payout totals. A prop firm CEO said it plainly: traders learn "the skill of getting paid, not necessarily the skill of trading". Their method works even with no edge. Add a real, tested edge and the same method becomes a business, not a lottery.</li>
+  <li><b>We coded and tested their own rules.</b> We coded every rule we could from their own words and tested it on NQ, ES and gold from Dec 2022 to Nov 2026, with a random twin for every trade (same trade, random time). We pooled all trades from 2023 to 2026 and judged each year on its own. <b>4 of 48 headline rules made money year after year.</b> Fabio Valentini's NY trend model WORKS (green all 4 years, t-score 2+). Vince's 80% rule, Marci Silfrain's measured move and the 15-minute opening range breakout are GOOD (3 of 4 years green and the fixed 1:2 test green). These edges are real but small: Fabio's is about +10% a year at his risk, not the 500% contest return. Most of the other rules had a low win rate and did no better than random entries. Yet their payouts are real: the channels verify them. So we dug deeper into how they get paid so much.</li>
+  <li><b>We found their real strategy.</b> It is not only the chart setup. It is the business side: how they run their accounts. They say it themselves: <b>many accounts</b> (11 of 12), <b>big risk to pass and small risk once funded</b> ("two wins, you're funded"), <b>payouts as soon as the rules allow</b>, and <b>a lot spent on evaluations</b> (about $300k to collect $1.3M; $350k for about $1.1M). Only the payout-star channels show this method; the pro channels (Speculators, Chat With Traders) describe small risk and one account, and post no million-dollar payout totals. A prop firm CEO said it plainly: traders learn "the skill of getting paid, not necessarily the skill of trading". Their method can pay even with a small edge. Add a real, tested edge and the same method becomes a real business.</li>
   <li><b>So we built this planner.</b> It does the same math for you: your strategy, your firm's rules and your money. It tells you how many accounts to run, how to copy them, how much to risk in each phase, and how much money you really need. It also tells you when to <b>stop</b>.</li>
 </ol>
-<p class="small" style="color:var(--mute)">Full proof, trader by trader: <a href="/prop-scale/#proof" target="_top">Prop Traders: What Really Works</a>. Research only, not financial advice. Interview claims are the traders' own and are not verified.</p>
+<p class="small" style="color:var(--mute)">Full proof, trader by trader: <a href="/prop-scale/#proof" target="_top">Prop Traders: What Really Works</a>. Research only, not financial advice. Payouts are as shown and verified on each channel.</p>
 </section>
   <section class="panel sec intro" id="intro"><h2>Ready when you are</h2><p class="lede">Fill in steps 0 to 4 on the left, then press <b>Calculate</b>. The planner plays out thousands of futures, so it takes about 10 seconds. Change anything later and press Calculate again.</p></section>
   <section class="verdict v-warn res" id="verdict"><div class="pill" id="vpill">…</div><div><h3 id="vtitle">Checking your strategy</h3><ul id="vlist"></ul></div></section>
@@ -675,4 +675,85 @@ $('#cap_bank').addEventListener('keydown',e=>{if(e.key==='Enter')find()});
 for(let i=0;i<4;i++)$('#z_p'+i).addEventListener('change',()=>{$('#z_p'+i).dataset.edited='1';save();soon()});
 $('#custom').onclick=()=>{const C=cfg(),p=customP();C.P=Object.assign(C.P,{n0:p.n,g:p.g,st:Math.max(0,Math.round(num('c_st'))),mode:p.mode,max:p.mode==='steady'?p.n:p.max});$('#custom').disabled=true;worker.postMessage({type:'custom',cfg:C});save()};
 if(!load())setPreset('apex50');if(mmFromHash())segSet('smode','mmm');if(!['mmm','simple','list'].includes(segVal('smode')))segSet('smode','mmm');summaries(cfg());
+</script>
+<script>
+// ───────── maxmaserati.com only (/prop-scale/): free account for the full results, one free MMM strategy, the rest V.I.P ─────────
+(function () {
+  const ONSITE = /\/prop-scale\//.test(location.pathname);
+  if (!ONSITE) return;                                   // the private artifact copy stays fully open
+  if (window.top === window) { location.replace('/prop-scale/'); return; }   // opened alone: show it inside the site page
+  const P = () => { try { return window.parent.MMM || null; } catch (e) { return null; } };
+  const vip = () => { try { return !!(localStorage.getItem('mmmVipKey') || sessionStorage.getItem('mmmVipKey')); } catch (e) { return false; } };
+  const user = () => { const m = P(); try { return m && m.user ? m.user() : null; } catch (e) { return null; } };
+  const auth = k => { const m = P(); if (m && m.openAuth) m.openAuth(k); else window.top.location.href = '/prop-scale/#' + k; };
+  const LOCK = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-1px"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+
+  const css = document.createElement('style');
+  css.textContent = `
+  body.gated.ready main>.res.gx{filter:blur(7px);pointer-events:none;user-select:none;opacity:.55}
+  #gate{display:none}body.gated.ready #gate{display:block}
+  #gate{border:1px solid var(--gold);background:linear-gradient(180deg,rgba(225,179,26,.10),rgba(225,179,26,.03));border-radius:12px;padding:22px 20px;text-align:center}
+  #gate h2{font:700 22px var(--display);letter-spacing:.04em;color:var(--gold2);margin:0 0 6px;text-transform:uppercase}
+  #gate p{margin:0 auto 14px;max-width:62ch;color:var(--fg)}#gate ul{display:inline-grid;gap:4px;text-align:left;margin:0 0 16px;padding-left:18px;color:var(--mute)}
+  #gate .gb{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  #gate button{font:700 14px var(--body);border-radius:9px;padding:11px 18px;cursor:pointer;border:1px solid var(--gold)}
+  #gate .go{background:var(--gold);color:#000}#gate .ln{background:transparent;color:var(--gold2)}
+  #gate small{display:block;margin-top:10px;color:var(--faint)}
+  .sitem.lk{opacity:.6;cursor:pointer}.sitem.lk span{color:var(--gold2)!important}
+  .mini.lk,.seg button.lk{opacity:.6}
+  #vipNote{border:1px dashed var(--gold);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--fg);background:rgba(225,179,26,.06)}
+  #vipNote a{color:var(--gold2)}
+  #vipNote.flash{animation:vf .9s}@keyframes vf{0%,100%{background:rgba(225,179,26,.06)}40%{background:rgba(225,179,26,.28)}}`;
+  document.head.appendChild(css);
+
+  /* 1 · full results need a free account (V.I.P members count as signed in) */
+  const R = [...document.querySelectorAll('main>section.res')];
+  R.slice(2).forEach(s => s.classList.add('gx'));         // verdict + "Money in → money out" stay open
+  const g = document.createElement('section');
+  g.id = 'gate'; g.className = 'panel';
+  g.innerHTML = '<h2>Your full plan is ready</h2><p>Create your <b>free MMM account</b> to see the rest. It takes 20 seconds and the same account opens the course, the journal and the free tools.</p>' +
+    '<ul><li>Your 5 best options and why</li><li>The plan in numbers: payouts, bad case, time to profit</li><li>How to set up and copy the accounts</li><li>The steps to repeat, the best account size, and what your strategy needs</li></ul>' +
+    '<div class="gb"><button type="button" class="go" data-g="register">Create my free account</button><button type="button" class="ln" data-g="login">I have an account · Log in</button></div><small>Free. No card. Your results stay on this page.</small>';
+  if (R[2]) R[2].before(g);
+  g.addEventListener('click', e => { const b = e.target.closest('[data-g]'); if (b) auth(b.dataset.g); });
+  function gate() { document.body.classList.toggle('gated', !(user() || vip())); }
+  gate();
+  let tries = 0, hooked = false;
+  (function hook() {
+    const m = P();
+    if (m && !hooked) { hooked = true; try { window.parent.document.addEventListener('mmm:auth', gate); } catch (e) {} }
+    gate();
+    if (++tries < 40 && !(user() || vip())) setTimeout(hook, 500);
+  })();
+  window.addEventListener('storage', gate);
+
+  /* 2 · MMM strategies: the free plan is MMM Plan B (NY open, 8 strategies) as one bundle. Single strategies and their stats,
+       Plan A, Auto and the Game Plan card are V.I.P. (One strategy alone trades too rarely to pass a prop account.) */
+  if (vip()) return;
+  const FREE_SEL = PLANS.B.sel.slice(), FREE_WINS = PLANS.B.wins.map(w => w.slice());
+  const note = document.createElement('div');
+  note.id = 'vipNote';
+  note.innerHTML = LOCK + ' Free: <b>MMM Plan B</b> (NY open, ' + FREE_SEL.length + ' MMM EDGE PRO strategies working as one plan). Picking single strategies and their stats, Plan A, Auto and your Game Plan card are in the <a href="/vip/" target="_top">V.I.P Game Plan Builder</a>. You can also type your own stats or paste your trades.';
+  const box = document.getElementById('mmmBox'); if (box) box.prepend(note);
+  const nudge = () => { note.classList.remove('flash'); void note.offsetWidth; note.classList.add('flash'); note.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+  mm.sel = FREE_SEL.slice(); mm.wins = FREE_WINS.map(w => w.slice()); mm.auto = false;
+  const draw0 = drawMM;
+  drawMM = function () {
+    mm.auto = false; mm.sel = FREE_SEL.slice();
+    draw0();
+    document.querySelectorAll('#mList .sitem').forEach(b => {
+      const inB = FREE_SEL.includes(b.dataset.s);
+      b.classList.add('lk'); b.setAttribute('aria-disabled', 'true');
+      const sp = b.querySelector('span'); if (sp) sp.innerHTML = inB ? 'in the free Plan B · stats ' + LOCK + ' V.I.P' : LOCK + ' V.I.P';
+    });
+    const a = document.querySelector('#mAuto [data-v="auto"]'); if (a) { a.classList.add('lk'); a.setAttribute('aria-disabled', 'true'); }
+  };
+  document.getElementById('mList').addEventListener('click', e => { if (e.target.closest('.sitem')) { e.stopImmediatePropagation(); nudge(); } }, true);
+  document.getElementById('mAuto').addEventListener('click', e => { const b = e.target.closest('button'); if (b && b.dataset.v === 'auto') { e.stopImmediatePropagation(); nudge(); } }, true);
+  const pa = document.getElementById('mPlanA'); if (pa) { pa.classList.add('lk'); pa.onclick = nudge; }
+  const pb = document.getElementById('mPlanB'); if (pb) pb.onclick = () => { mm.wins = FREE_WINS.map(w => w.slice()); mmChange(); };
+  const cg = document.getElementById('mCardGo'); if (cg) cg.onclick = nudge;
+  const cm = document.getElementById('mCardMsg'); if (cm) cm.innerHTML = LOCK + ' Pasting a Game Plan card is for V.I.P members.';
+  mmClear(); mmChange();
+})();
 </script>
