@@ -23,9 +23,12 @@
     ['Indicators', '/indicators/'],
     ['Strategies', '/strategies/'],
     ['Backtests', '/backtests/'],
-    ['Free MMM Mastery Course', '/journal/?course=1'],
-    ['Gamma & News', '/gamma/'],
-    ['Trading Test', '/diagnostic/'],
+    ['Free MMM Mastery & Tools', [
+      ['Free MMM Mastery Course', '/journal/?course=1', 'The full MMM method, free'],
+      ['Trading Test', '/diagnostic/', 'Check your trading discipline'],
+      ['Gamma & News', '/gamma/', 'Daily gamma levels and news calendar'],
+      ['Prop Scale Planner', '/prop-scale/', 'Plan your prop accounts, with proof']
+    ]],
     ['V.I.P', '/vip/']
   ];
   // Max's channels (handle @MaxMaserati)
@@ -58,6 +61,22 @@
     '.mmm-lang-wrap select{appearance:none;-webkit-appearance:none;background:transparent;border:0;font:700 12px/1 Inter,system-ui,sans-serif;letter-spacing:.04em;color:inherit;padding:2px 2px;cursor:pointer;outline:none}',
     '.mmm-lang-wrap select:focus-visible{outline:2px solid #000;outline-offset:2px;border-radius:4px}',
     '.mmm-lang-wrap select option,.mmm-lang-m select option{color:#000;background:#fff}',
+    '.mmm-dd{position:relative}',
+    '.mmm-dd>button{display:inline-flex;align-items:center;gap:5px;font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;white-space:nowrap}',
+    '.mmm-dd>button:hover,.mmm-dd.active>button{color:#000}',
+    '.mmm-dd.active>button{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:2px}',
+    '.mmm-dd>button svg{width:12px;height:12px;transition:transform .15s}',
+    '.mmm-dd.open>button svg,.mmm-dd:hover>button svg{transform:rotate(180deg)}',
+    '.mmm-dd-panel{position:absolute;left:50%;top:100%;transform:translateX(-50%);padding-top:14px;display:none;z-index:60}',
+    '.mmm-dd:hover .mmm-dd-panel,.mmm-dd.open .mmm-dd-panel,.mmm-dd:focus-within .mmm-dd-panel{display:block}',
+    '.mmm-dd-box{width:300px;background:#0b0b0b;border:1px solid rgba(255,255,255,.12);border-top:2px solid var(--mmm-gold);border-radius:12px;padding:6px;box-shadow:0 18px 40px rgba(0,0,0,.55)}',
+    '.mmm-dd-box a{display:block;padding:10px 12px;border-radius:9px;color:#e5e7eb;text-decoration:none}',
+    '.mmm-dd-box a:hover,.mmm-dd-box a:focus-visible{background:rgba(255,255,255,.06);color:#fff;outline:none}',
+    '.mmm-dd-box a.here{background:hsla(45,100%,55%,.12)}',
+    '.mmm-dd-box .t{display:block;font-weight:700;font-size:14px}',
+    '.mmm-dd-box a.here .t{color:var(--mmm-gold-light)}',
+    '.mmm-dd-box .d{display:block;font-weight:500;font-size:12px;color:#9ca3af;margin-top:2px}',
+    '.mmm-m-grp{margin:6px 0 4px;padding:8px 2px 2px;border-top:1px solid rgba(255,255,255,.08);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mmm-gold-light)}',
     '.mmm-lang-m select{background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font:600 13px/1 Inter,system-ui,sans-serif;padding:8px 10px}'
   ].join('\n');
   document.head.appendChild(css);
@@ -72,11 +91,24 @@
 
   /* ---------- header ---------- */
   function headerHTML() {
-    var links = NAV.map(function (n) {
+    var CHEV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+    var links = NAV.map(function (n, gi) {
+      if (Array.isArray(n[1])) {
+        var on = n[1].some(function (c) { return here(c[1]); });
+        return '<div class="mmm-dd' + (on ? ' active' : '') + '"><button type="button" aria-expanded="false" aria-controls="mmm-dd-' + gi + '"><span>' + n[0] + '</span>' + CHEV + '</button>' +
+          '<div class="mmm-dd-panel" id="mmm-dd-' + gi + '"><div class="mmm-dd-box">' + n[1].map(function (c) {
+            return '<a href="' + c[1] + '"' + (here(c[1]) ? ' class="here" aria-current="page"' : '') + '><span class="t">' + c[0] + '</span>' + (c[2] ? '<span class="d">' + c[2] + '</span>' : '') + '</a>';
+          }).join('') + '</div></div></div>';
+      }
       if (n[1] === '/vip/') return '<a href="/vip/" class="vip-link transition font-extrabold px-3 py-1.5 rounded-lg bg-black border hover:bg-gray-900 whitespace-nowrap" style="color:var(--mmm-gold);border-color:' + (here(n[1]) ? 'var(--mmm-tiffany)' : '#000') + '"' + (here(n[1]) ? ' aria-current="page"' : '') + '>' + '<svg viewBox="0 0 24 24" class="inline-block h-3.5 w-3.5 mr-1 -mt-0.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>' + n[0] + '</a>';
       return '<a href="' + n[1] + '" class="hover:text-black transition' + (here(n[1]) ? ' active' : '') + '">' + n[0] + '</a>';
     }).join('');
     var mlinks = NAV.map(function (n) {
+      if (Array.isArray(n[1])) {
+        return '<div class="mmm-m-grp">' + n[0] + '</div>' + n[1].map(function (c) {
+          return '<a href="' + c[1] + '" class="block px-2 py-2.5 rounded-lg hover:bg-white/5' + (here(c[1]) ? ' text-[color:var(--mmm-gold-light)]' : '') + '">' + c[0] + '</a>';
+        }).join('') + '<div class="mb-1 border-b border-white/[0.08]"></div>';
+      }
       if (n[1] === '/vip/') return '<a href="/vip/" class="block px-2 py-2.5 rounded-lg hover:bg-white/5 text-[color:var(--mmm-gold)] font-extrabold">' + '<svg viewBox="0 0 24 24" class="inline-block h-3.5 w-3.5 mr-1 -mt-0.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>' + n[0] + '</a>';
       return '<a href="' + n[1] + '" class="block px-2 py-2.5 rounded-lg hover:bg-white/5">' + n[0] + '</a>';
     }).join('');
@@ -136,7 +168,7 @@
       '<p class="leading-relaxed max-w-sm">Order-flow education, the MMM Pro indicators and a prop-firm journal for ES and NQ futures traders.</p>' +
       '<p class="mt-4"><a href="mailto:infotrade@maxmaserati.com" class="hover:text-white transition">infotrade@maxmaserati.com</a></p></div>' +
       col('MMM', [['MMM Pro Indicators', '/indicators/'], ['Backtests & Strategies', '/backtests/'], ['Free Course', '/journal/?course=1'], ['MMM Pro Journal', '/journal/'], ['Pricing', '/whop/']]) +
-      col('Free tools', [['Gamma Levels', '/gamma/'], ['News Calendar', '/news/'], ['Trading Discipline Test', '/diagnostic/']]) +
+      col('Free tools', [['Gamma Levels', '/gamma/'], ['News Calendar', '/news/'], ['Trading Discipline Test', '/diagnostic/'], ['Prop Scale Planner', '/prop-scale/']]) +
       col('Watch live', SOCIAL) +
       '</div>' +
       '<div class="max-w-6xl mx-auto px-5 sm:px-8 pb-10">' +
@@ -300,6 +332,17 @@
   if (f) f.outerHTML = footerHTML();
   document.body.insertAdjacentHTML('beforeend', modalHTML());
   renderAcct(null);
+
+  // menu dropdowns: hover opens on desktop; a click / tap / Enter toggles; outside click or Escape closes
+  function ddClose(except) {
+    document.querySelectorAll('.mmm-dd.open').forEach(function (d) { if (d !== except) { d.classList.remove('open'); d.querySelector('button').setAttribute('aria-expanded', 'false'); } });
+  }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('.mmm-dd>button');
+    if (b) { var d = b.parentNode, op = !d.classList.contains('open'); ddClose(d); d.classList.toggle('open', op); b.setAttribute('aria-expanded', String(op)); return; }
+    if (!e.target.closest('.mmm-dd')) ddClose(null);
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { ddClose(null); var f = document.activeElement; if (f && f.closest && f.closest('.mmm-dd')) f.blur(); } });
 
   document.addEventListener('click', function (e) {
     var t = e.target.closest('[data-mmm],[data-tab],#mmm-burger');
