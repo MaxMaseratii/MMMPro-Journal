@@ -12,7 +12,9 @@
   window.__mmmTopbar = true;
 
   var NAV = window.MMM_NAV || [
-    ['Indicators', '/indicators/'], ['Strategies', '/strategies/'], ['Backtests', '/backtests/'], ['Free MMM Mastery Course', '/journal/?course=1'], ['Gamma & News', '/gamma/'], ['Trading Test', '/diagnostic/'], ['V.I.P', '/vip/']
+    ['Indicators', '/indicators/'], ['Strategies', '/strategies/'], ['Backtests', '/backtests/'],
+    ['Free MMM Mastery & Tools', [['Free MMM Mastery Course', '/journal/?course=1', 'The full MMM method, free'], ['Trading Test', '/diagnostic/', 'Check your trading discipline'], ['Gamma & News', '/gamma/', 'Daily gamma levels and news calendar']]],
+    ['V.I.P', '/vip/']
   ];
 
   function active(href) {
@@ -47,6 +49,18 @@
     '#mmm-tb-tab{position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:2147483000;display:none;border:0;cursor:pointer;',
     ' background:linear-gradient(90deg,hsl(45,100%,55%),hsl(45,100%,65%));color:#000;font:800 11px/1 Inter,system-ui,sans-serif;letter-spacing:.06em;',
     ' padding:calc(4px + env(safe-area-inset-top,0px)) 12px 5px;border-radius:0 0 10px 10px;box-shadow:0 3px 10px rgba(0,0,0,.4);opacity:.92}',
+    '#mmm-tb .dd{position:relative}',
+    '#mmm-tb .dd>button{font:inherit;color:rgba(0,0,0,.8);background:none;border:0;padding:0;cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}',
+    '#mmm-tb .dd>button:hover,#mmm-tb .dd.on>button{color:#000;text-decoration:underline;text-underline-offset:5px}',
+    '#mmm-tb .dd>button svg{width:11px;height:11px}',
+    '#mmm-tb .dd .pn{position:absolute;left:0;top:100%;padding-top:10px;display:none;z-index:2}',
+    '#mmm-tb .dd:hover .pn,#mmm-tb .dd.open .pn,#mmm-tb .dd:focus-within .pn{display:block}',
+    '#mmm-tb .dd .bx{width:290px;background:#0b0b0b;border:1px solid rgba(255,255,255,.12);border-top:2px solid hsl(45,100%,55%);border-radius:12px;padding:6px;box-shadow:0 18px 40px rgba(0,0,0,.55)}',
+    '#mmm-tb .dd .bx a{display:block;padding:9px 11px;border-radius:9px;color:#e5e7eb;text-decoration:none;white-space:normal}',
+    '#mmm-tb .dd .bx a:hover,#mmm-tb .dd .bx a:focus-visible{background:rgba(255,255,255,.06);color:#fff;text-decoration:none}',
+    '#mmm-tb .dd .bx a.on{background:hsla(45,100%,55%,.12);text-decoration:none}',
+    '#mmm-tb .dd .bx .t{display:block;font-weight:700;font-size:14px}',
+    '#mmm-tb .dd .bx .d{display:block;font-weight:500;font-size:12px;color:#9ca3af;margin-top:2px}',
     '@media (hover:none),(pointer:coarse){#mmm-tb-tab{display:block}#mmm-tb-zone{display:none}}',
     '@media (max-width:640px){#mmm-tb .in{gap:8px}#mmm-tb nav{gap:4px 14px;font-size:13px}}',
     '@media (prefers-reduced-motion:reduce){#mmm-tb{transition:none}}',
@@ -61,6 +75,11 @@
     var bar = document.createElement('div'); bar.id = 'mmm-tb'; bar.setAttribute('role', 'banner');
     bar.innerHTML = '<div class="in"><a class="home" href="/" aria-label="MMM Trading home"><span class="crown">' + CROWN + '</span>MMM Trading</a>' +
       '<nav aria-label="Site menu">' + NAV.map(function (n) {
+        if (Array.isArray(n[1])) {
+          var on = n[1].some(function (c) { return active(c[1]); });
+          return '<div class="dd' + (on ? ' on' : '') + '"><button type="button" aria-expanded="false"><span>' + n[0] + '</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button><div class="pn"><div class="bx">' +
+            n[1].map(function (c) { return '<a href="' + c[1] + '"' + (active(c[1]) ? ' class="on" aria-current="page"' : '') + '><span class="t">' + c[0] + '</span>' + (c[2] ? '<span class="d">' + c[2] + '</span>' : '') + '</a>'; }).join('') + '</div></div></div>';
+        }
         return '<a href="' + n[1] + '"' + (active(n[1]) ? ' class="on" aria-current="page"' : '') + '>' + n[0] + '</a>';
       }).join('') + '</nav>' + (/^\/journal\//.test(location.pathname) && !/course=1/.test(location.search) ? '' : '<a class="oj" href="/journal/">Open Journal</a>') + (typeof window.mmmSetLang === 'function' ? '<select class="mmm-lang lang" aria-label="Language"><option value="en">EN</option><option value="fr">FR</option><option value="es">ES</option><option value="ht">HT</option><option value="ja">JA</option><option value="zh">ZH</option><option value="de">DE</option></select>' : '') +
       '<button type="button" class="x" aria-label="Close menu">&times;</button></div>';
@@ -81,6 +100,13 @@
     bar.addEventListener('focusout', function () { setTimeout(function () { if (!bar.contains(document.activeElement)) close(true); }, 0); });
     // also open when the pointer touches the very top edge (some apps cover the hot zone)
     document.addEventListener('mousemove', function (e) { if (e.clientY <= 4) open(); }, { passive: true });
+    bar.addEventListener('click', function (e) {
+      var b = e.target.closest('.dd>button'); var all = bar.querySelectorAll('.dd.open');
+      if (!b) { if (!e.target.closest('.dd')) all.forEach(function (d) { d.classList.remove('open'); }); return; }
+      var d = b.parentNode, op = !d.classList.contains('open');
+      all.forEach(function (x) { x.classList.remove('open'); x.querySelector('button').setAttribute('aria-expanded', 'false'); });
+      d.classList.toggle('open', op); b.setAttribute('aria-expanded', String(op));
+    });
     tab.addEventListener('click', function () { if (bar.classList.contains('open')) close(true); else open(); });
     bar.querySelector('.x').addEventListener('click', function () { document.activeElement && document.activeElement.blur(); close(true); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && bar.classList.contains('open')) close(true); });

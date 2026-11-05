@@ -6,9 +6,12 @@ window.MMM_NAV = [
   ['Indicators', '/indicators/'],
   ['Strategies', '/strategies/'],
   ['Backtests', '/backtests/'],
-  ['Free MMM Mastery Course', '/journal/?course=1'],
-  ['Gamma & News', '/gamma/'],
-  ['Trading Test', '/diagnostic/'],
+  // a group = [title, [[title, link, one-line description], ...]] -> a dropdown on desktop, a sub-list on mobile
+  ['Free MMM Mastery & Tools', [
+    ['Free MMM Mastery Course', '/journal/?course=1', 'The full MMM method, free'],
+    ['Trading Test', '/diagnostic/', 'Check your trading discipline'],
+    ['Gamma & News', '/gamma/', 'Daily gamma levels and news calendar']
+  ]],
   ['V.I.P', '/vip/']
 ];
 
