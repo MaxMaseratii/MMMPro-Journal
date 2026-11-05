@@ -642,6 +642,7 @@ G.start=sc=>{
 <tbody><tr><td class="l" colspan="11">Loading…</td></tr></tbody></table></div>
 <p class="note">Row color: green = WORKS (t-score 2+ over all the data and money made every year), yellow = MAYBE (one losing year or t-score under 2), red = no edge. Click a row to open its rules.</p></section>
 <section><h2 class="serif">Latest findings</h2><ul class="log">
+<li><time>Nov 5 2026</time><div><b>Tests 11–13: enter the 1st break.</b> The XD / XP order flow is not a filter or an exit for the MMPD entry, and flip-to-flip trading has no edge once the NQ rise is taken out. Waiting for a 2nd break or for a touch back into the XD box only cuts trades. See <button type="button" class="lnk" data-go="mmpdlab">MMPD TESTS</button>.</div></li>
 <li><time>Nov 5 2026</time><div><b>New: MMPD.M7 (A) and MMPD.M8 (A+).</b> The general MMPD scalping entry: NQ 2m long, 09:30–11:30, ▲ arrow on a GREEN or PINK MMPD candle, then a bullish BC above the last bearish BC high, 1:2. A: 906 trades, WR 40%, avg RR +0.11, t 2.34. A+ (wait for an MMPD open above 50, 45-pt stop): 607 trades, WR 41%, avg RR +0.14, t 2.43, half the drawdown. Both made money in every year.</div></li>
 <li><time>Nov 5 2026</time><div><b>10 MMPD tests in one day.</b> Skip ▲ on PALE GREEN. Don't wait for extra green candles, don't filter on the arrow's price candle or GMC vs MC. Keep the 50-pt stop (winners need 40–45 pts of room). Hold when the MMPD stalls at 50. See <button type="button" class="lnk" data-go="mmpdlab">MMPD TESTS</button>.</div></li>
 <li><time>Nov 4 2026</time><div><b>Every result, year by year.</b> No more “2022–25 vs 2026”: each strategy is one run over all the data, then each year alone. 27 of 46 strategies made money in every year (WORKS). See <button type="button" class="lnk" data-go="retest">YEAR BY YEAR</button>.</div></li>
@@ -1146,7 +1147,7 @@ G.nyopen=sc=>{
 G.mmpdlab=sc=>{
  const T='<span class="st trade">USE</span>',F='<span class="st filter">FILTER</span>',W='<span class="st watch">WATCH</span>',N='<span class="st no">NO</span>';
  sc.innerHTML=`<div class="doc desk">
-<section class="wide"><p class="lede">Ten tests of the MMPD scalping entry, run on Nov 5 2026: the ▲▼ arrow, then a BC that closes past the last opposite BC. NQ Dec 2022 – Nov 2026 on 1m, 2m, 5m and 15m, each year alone, plus ES and gold (only a few months, so short data). One trade at a time, FOMC days skipped, 1 pt cost every trade. Long view; shorts are the mirror.</p>
+<section class="wide"><p class="lede">Thirteen tests of the MMPD scalping entry, run on Nov 5 2026: the ▲▼ arrow, then a BC that closes past the last opposite BC. NQ Dec 2022 – Nov 2026 on 1m, 2m, 5m and 15m, each year alone, plus ES and gold (only a few months, so short data). One trade at a time, FOMC days skipped, 1 pt cost every trade. Long view; shorts are the mirror.</p>
 <p class="note">Words: <b>WR</b> = win rate. <b>avg RR</b> = the average trade in R (1R = the stop). <b>PF</b> = profit factor (money won ÷ money lost). <b>t</b> = t-score (2+ = not luck). <b>MMPD candle colours</b> (long view): GREEN = up and rising, PALE GREEN = up but falling, PINK = down but rising, RED = down and falling.</p></section>
 <section class="wide"><h2>The two new strategies</h2><div class="tw"><table>
 <tr><th class="l">Code</th><th class="l">Version</th><th>Trades</th><th>WR</th><th>avg RR</th><th>PF</th><th>t</th><th>Avg pts</th><th>Net $ per MNQ</th><th>Max DD $</th><th>Losses in a row</th><th>Trades a month</th><th class="l">Years</th></tr>
@@ -1164,7 +1165,10 @@ G.mmpdlab=sc=>{
 <tr><td>7</td><td class="l">What do the 50, 10, 90, 0 and 100 lines mean after entry?</td><td class="l">A full MMPD candle above 50 or a spike to 80 = good (WR 42–49%). Neither = almost always a loser (WR 2–13%). Body ≥ 90 = strong, never short against it (15m −12.2 pts). ≤ 10 means “don't buy”, not “sell”. Close above 100 = the move keeps going.</td><td class="l">${F} in-trade check</td></tr>
 <tr><td>8</td><td class="l">MMPD stuck at 50, then a BeBC: exit?</td><td class="l">Hold. The BeBC exit changed avg RR by about 0.00. 70% of 2m trades stuck 10 candles still get going. Cut only on 5m after 6+ stuck candles, 15m after 9+.</td><td class="l">${N} on 1m / 2m</td></tr>
 <tr><td>9</td><td class="l">Exit on PALE GREEN + BeBC?</td><td class="l">Any time: no (+1.4 pts vs +5.7, t 1.08). Before hope only: a fair risk control on NQ (+4.9 pts, PF 1.24, DD −609 vs −772). Never on gold.</td><td class="l">${W} optional, before hope</td></tr>
-<tr><td>10</td><td class="l">GMC break vs a plain MC break?</td><td class="l">Same result. With the A+ wait: GMC +7.6 pts, MC +7.3 pts per trade. The A+ wait already removes the weak GMC breaks.</td><td class="l">${N}</td></tr></table></div></section>
+<tr><td>10</td><td class="l">GMC break vs a plain MC break?</td><td class="l">Same result. With the A+ wait: GMC +7.6 pts, MC +7.3 pts per trade. The A+ wait already removes the weak GMC breaks.</td><td class="l">${N}</td></tr>
+<tr><td>11</td><td class="l">Does the XD / XP order flow (MMM PRO x) help? With or against the flow, at the T# / R# / P# box, exit on the opposite CDL / CDS, or trade flip to flip?</td><td class="l">No. With vs against the flow: within ±0.01 avg RR on NQ. Main setup: against the flow +0.21 (t 2.72) vs with +0.07. The FLIP exit only rides the NQ rise (longs better, shorts worse). Flip to flip with no stop: no edge on any chart after a buy-and-hold check. Watch: NQ 1m CDL long, NY AM, T# box stop, 1:3 (215 trades, t 3.27, 2.89 after the check).</td><td class="l">${N}</td></tr>
+<tr><td>12</td><td class="l">Skip the 1st break, wait for an opposite BC, enter the 2nd break?</td><td class="l">No. NQ: same as the 1st break (lift +0.002) with half the trades. Main setup: 2nd break +0.11 (t 1.70) vs 1st break +0.13 (t 2.70). If price closes below the XD box between the breaks, it is worse (−0.053).</td><td class="l">${N}</td></tr>
+<tr><td>13</td><td class="l">Skip the 1st break, wait for a touch back into the XD box (no close below it), then the next BC?</td><td class="l">No. Every version is worse than the 1st break on NQ (−0.007 to −0.033 avg RR) and keeps only 22–61% of the trades. Only 35–48% of 1st breaks ever touch the box back. Main setup best retest: +0.09 (t 0.88) vs +0.13.</td><td class="l">${N}</td></tr></table></div></section>
 <section><h2>Where it works</h2><ul>
 <li><b>NQ 2m longs, NY AM 09:30–11:30.</b> The only proven place.</li>
 <li>Every other NQ session loses on average (Asia worst, about −0.11 avg RR on 2m).</li>
@@ -1173,7 +1177,8 @@ G.mmpdlab=sc=>{
 <section><h2>Watch list · not proven yet</h2><ul>
 <li>NQ 5m London shorts on a ▼ PALE GREEN arrow (547 trades, +0.15 avg RR, t 2.34, 12 of 16 versions positive).</li>
 <li>NQ 1m NY pre-market 08:30–09:30 (164 trades, +0.24 avg RR, t 2.05).</li>
-<li>NQ 5m NY AM background-retest rejection (102 trades, t 2.20).</li></ul>
+<li>NQ 5m NY AM background-retest rejection (102 trades, t 2.20).</li>
+<li>NQ 1m CDL long in NY AM (XD / XP flow), stop under the new T# box, 1:3 (215 trades, t 3.27). Big stop, 2024 lost points, not on other charts.</li></ul>
 <p class="note">About 15,000 NQ rows were tested, so a few will look good by luck. These need more data before real money.</p></section>
 </div>`;
 };
