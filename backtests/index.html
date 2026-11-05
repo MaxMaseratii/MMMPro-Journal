@@ -642,6 +642,8 @@ G.start=sc=>{
 <tbody><tr><td class="l" colspan="11">Loading…</td></tr></tbody></table></div>
 <p class="note">Row color: green = WORKS (t-score 2+ over all the data and money made every year), yellow = MAYBE (one losing year or t-score under 2), red = no edge. Click a row to open its rules.</p></section>
 <section><h2 class="serif">Latest findings</h2><ul class="log">
+<li><time>Nov 5 2026</time><div><b>New: MMPD.M7 (A) and MMPD.M8 (A+).</b> The general MMPD scalping entry: NQ 2m long, 09:30–11:30, ▲ arrow on a GREEN or PINK MMPD candle, then a bullish BC above the last bearish BC high, 1:2. A: 906 trades, WR 40%, avg RR +0.11, t 2.34. A+ (wait for an MMPD open above 50, 45-pt stop): 607 trades, WR 41%, avg RR +0.14, t 2.43, half the drawdown. Both made money in every year.</div></li>
+<li><time>Nov 5 2026</time><div><b>10 MMPD tests in one day.</b> Skip ▲ on PALE GREEN. Don't wait for extra green candles, don't filter on the arrow's price candle or GMC vs MC. Keep the 50-pt stop (winners need 40–45 pts of room). Hold when the MMPD stalls at 50. See <button type="button" class="lnk" data-go="mmpdlab">MMPD TESTS</button>.</div></li>
 <li><time>Nov 4 2026</time><div><b>Every result, year by year.</b> No more “2022–25 vs 2026”: each strategy is one run over all the data, then each year alone. 27 of 46 strategies made money in every year (WORKS). See <button type="button" class="lnk" data-go="retest">YEAR BY YEAR</button>.</div></li>
 <li><time>Nov 4 2026</time><div><b>New: 6 MMPD strategies.</b> The ▲▼ arrow, then a BC past the last opposite BC open. Best day trades: MMPD.M1 (1m, 2 green MMPD candles, 1:1), MMPD.M2 (2m, first setup, lock 1R + STRONG2), MMPD.M3 (15m, 1 green MMPD candle, STRONG2). All three made money in every year 2023–2026.</div></li>
 <li><time>Oct 28 2026</time><div><b>The NY morning is made early.</b> The 09:30–11:30 high or low is in by 10:00 on 83 / 85% of days, and the 09:30–10:00 range breaks one side only on most days (both sides 14 / 11%). See the <a href="/backtests/ny-open/">NY open lab</a>.</div></li>
@@ -1141,6 +1143,40 @@ G.nyopen=sc=>{
 <li>The 10:00 lean for the 16:00 close.</li><li>A BC− for direction.</li><li>Holding until the opposite candle.</li><li>The first BC after 10:00 as an entry.</li><li>Guessing the side of the opening range before it breaks.</li></ul></section>
 </div>`;
 };
+G.mmpdlab=sc=>{
+ const T='<span class="st trade">USE</span>',F='<span class="st filter">FILTER</span>',W='<span class="st watch">WATCH</span>',N='<span class="st no">NO</span>';
+ sc.innerHTML=`<div class="doc desk">
+<section class="wide"><p class="lede">Ten tests of the MMPD scalping entry, run on Nov 5 2026: the ▲▼ arrow, then a BC that closes past the last opposite BC. NQ Dec 2022 – Nov 2026 on 1m, 2m, 5m and 15m, each year alone, plus ES and gold (only a few months, so short data). One trade at a time, FOMC days skipped, 1 pt cost every trade. Long view; shorts are the mirror.</p>
+<p class="note">Words: <b>WR</b> = win rate. <b>avg RR</b> = the average trade in R (1R = the stop). <b>PF</b> = profit factor (money won ÷ money lost). <b>t</b> = t-score (2+ = not luck). <b>MMPD candle colours</b> (long view): GREEN = up and rising, PALE GREEN = up but falling, PINK = down but rising, RED = down and falling.</p></section>
+<section class="wide"><h2>The two new strategies</h2><div class="tw"><table>
+<tr><th class="l">Code</th><th class="l">Version</th><th>Trades</th><th>WR</th><th>avg RR</th><th>PF</th><th>t</th><th>Avg pts</th><th>Net $ per MNQ</th><th>Max DD $</th><th>Losses in a row</th><th>Trades a month</th><th class="l">Years</th></tr>
+<tr><td>MMPD.M7</td><td class="l"><b>A</b> · 50-pt stop · 1:2 (+100 pts)</td><td>906</td><td>40.1%</td><td>+0.11</td><td>1.18</td><td>2.34</td><td>+5.4</td><td>$9,707</td><td>$2,248</td><td>12</td><td>19.6</td><td class="l">${T} WORKS · 4 of 4 green</td></tr>
+<tr><td>MMPD.M8</td><td class="l"><b>A+</b> · wait for an MMPD open above 50 · 45-pt stop · 1:2 (+90 pts)</td><td>607</td><td>41.2%</td><td>+0.14</td><td>1.24</td><td>2.43</td><td>+6.2</td><td>$7,534</td><td>$1,202</td><td>10</td><td>13.1</td><td class="l">${T} WORKS · 4 of 4 green</td></tr></table></div>
+<p class="note">Both: NQ 2m, long only, entries 09:30–11:30 New York, flat at 16:00. ▲ arrow on a GREEN or PINK MMPD candle (skip PALE GREEN). A bullish BC closes above the high of the last bearish BC (before or after the arrow), enter at the close once both are in. Dead if price closes below the XD box first. A+ makes less in total but has about half the drawdown. Full rules: <a href="/strategies/">strategy book</a>.</p></section>
+<section class="wide"><h2>What each test answered</h2><div class="tw"><table>
+<tr><th>#</th><th class="l">Question</th><th class="l">Answer · key numbers</th><th class="l">Use it?</th></tr>
+<tr><td>1</td><td class="l">Wait for 1 or 2 green MMPD candles before entry?</td><td class="l">No difference: ±0.01 avg RR on every market and timeframe. It only removes trades (keeps 85–90%). The best rows use no wait.</td><td class="l">${N}</td></tr>
+<tr><td>2</td><td class="l">Does the colour of the arrow candle matter?</td><td class="l">Only one case: ▲ on PALE GREEN (▼ on PINK) is a weak arrow, −0.07 to −0.13 avg RR worse on NQ, worse in 3 of 4 years. GREEN vs PINK is about ±0.02.</td><td class="l">${F} skip ▲ PALE GREEN</td></tr>
+<tr><td>3</td><td class="l">Is the arrow's price candle (BC or NBC) a filter?</td><td class="l">No. No candle type won across timeframes. The background hold adds +0.005 avg RR on NQ, +0.04 on gold.</td><td class="l">${N}</td></tr>
+<tr><td>4</td><td class="l">How much heat do winners take? Smaller stop?</td><td class="l">Average NQ winner goes 20–22 pts against you, 90% stay under 40–45. Avg pts per trade: +5.9 at 50, +4.2 at 40, +2.6 to +3.7 at 15–35. The box exit cuts losses but cuts more winners.</td><td class="l">${T} keep 50, never under 40</td></tr>
+<tr><td>5</td><td class="l">Buy the retest after a red background closes out?</td><td class="l">Price comes back to the box top 80–85% of the time, but the rejection BuBC loses on 24h (NQ 1m −0.08 avg RR, t −4.35). One pocket: NQ 5m NY AM middle touch, 1:3, +0.42 avg RR, t 2.20, 102 trades. A 45-pt stop cuts the main setup's drawdown (−1,026 → −772 pts).</td><td class="l">${W} 5m NY AM pocket</td></tr>
+<tr><td>6</td><td class="l">Is the market on our side at the arrow?</td><td class="l">Outside New York, skip ▲ if no MMPD candle opened above 50 in the last 30 candles (NQ Asia: worse in 25 setups, better in 0). NY AM longs are best after 2+ failed arrows (+9.8 pts vs +3.1). Waiting for an MMPD open above 50 lifts the main setup to +7.1 pts, DD −601.</td><td class="l">${T} the A+ wait</td></tr>
+<tr><td>7</td><td class="l">What do the 50, 10, 90, 0 and 100 lines mean after entry?</td><td class="l">A full MMPD candle above 50 or a spike to 80 = good (WR 42–49%). Neither = almost always a loser (WR 2–13%). Body ≥ 90 = strong, never short against it (15m −12.2 pts). ≤ 10 means “don't buy”, not “sell”. Close above 100 = the move keeps going.</td><td class="l">${F} in-trade check</td></tr>
+<tr><td>8</td><td class="l">MMPD stuck at 50, then a BeBC: exit?</td><td class="l">Hold. The BeBC exit changed avg RR by about 0.00. 70% of 2m trades stuck 10 candles still get going. Cut only on 5m after 6+ stuck candles, 15m after 9+.</td><td class="l">${N} on 1m / 2m</td></tr>
+<tr><td>9</td><td class="l">Exit on PALE GREEN + BeBC?</td><td class="l">Any time: no (+1.4 pts vs +5.7, t 1.08). Before hope only: a fair risk control on NQ (+4.9 pts, PF 1.24, DD −609 vs −772). Never on gold.</td><td class="l">${W} optional, before hope</td></tr>
+<tr><td>10</td><td class="l">GMC break vs a plain MC break?</td><td class="l">Same result. With the A+ wait: GMC +7.6 pts, MC +7.3 pts per trade. The A+ wait already removes the weak GMC breaks.</td><td class="l">${N}</td></tr></table></div></section>
+<section><h2>Where it works</h2><ul>
+<li><b>NQ 2m longs, NY AM 09:30–11:30.</b> The only proven place.</li>
+<li>Every other NQ session loses on average (Asia worst, about −0.11 avg RR on 2m).</li>
+<li>Longs beat shorts on NQ (NY AM +0.025 vs −0.028 avg RR).</li>
+<li>ES loses on every timeframe. Gold looks good in Asia, but on only a few months of data.</li></ul></section>
+<section><h2>Watch list · not proven yet</h2><ul>
+<li>NQ 5m London shorts on a ▼ PALE GREEN arrow (547 trades, +0.15 avg RR, t 2.34, 12 of 16 versions positive).</li>
+<li>NQ 1m NY pre-market 08:30–09:30 (164 trades, +0.24 avg RR, t 2.05).</li>
+<li>NQ 5m NY AM background-retest rejection (102 trades, t 2.20).</li></ul>
+<p class="note">About 15,000 NQ rows were tested, so a few will look good by luck. These need more data before real money.</p></section>
+</div>`;
+};
 G.retest=async sc=>{
  sc.innerHTML='<div class="loading">Loading the strategy book…</div>';
  if(!BOOK){try{BOOK=await (await fetch('d_book.json')).json()}catch(e){sc.innerHTML='<div class="loading">This tab could not load. Reload the page to try again.</div>';return}}
@@ -1219,7 +1255,7 @@ function bkSv(s){const a=bkA();if(!a)return s;const x0=a.sheets[s.code];if(!x0)r
     sides:(x.sides||[]).map(([d,b])=>[d,{fresh:b,all:((s.sides.find(z=>z[0]===d)||[0,{}])[1]||{}).all}]),
     months:x.months||{n:0,up:0,best:['—',0],worst:['—',0]},curve:x.curve||[],asset:true})}
 const BK_IND={x:'MMM PRO x',c:'MMM PRO c',s:'MMM PRO s',XCS:'MMM PRO XCS (x + c + s)',FVA:'MMM PRO FVA · MMM EDGE PRO FVA',MPD:'MMPD'};
-const BK_NAMES=[['X','MMM PRO x','The zone engine: balanced zones, zone breaks, eBlocks and iBlocks. X.M1–X.M5.'],['C','MMM PRO c','The candle order-flow engine: PO4, GMC, candle breaks, candle types, the 09:30 candle and the level retest. C.M1–C.M8.'],['S','MMM PRO s','The swing engine: swing breaks.'],['XCS','MMM PRO XCS (x + c + s)','x, c and s together. XCS.M1–XCS.M5. MMM Pro XCS One gives no signals: it shows the odds of what usually happens next.'],['FVA','MMM PRO FVA','The reaction at higher-timeframe levels (UPG gaps, FVA boxes, LEZ, session highs / lows) with the lower-timeframe reversal box. FVA.M1–FVA.M22, all inside MMM EDGE PRO FVA.'],['MMPD','MMPD','Premium / discount oscillator: arrows, backgrounds and MMPD candle colours. MMPD.M1–MMPD.M6.']];
+const BK_NAMES=[['X','MMM PRO x','The zone engine: balanced zones, zone breaks, eBlocks and iBlocks. X.M1–X.M5.'],['C','MMM PRO c','The candle order-flow engine: PO4, GMC, candle breaks, candle types, the 09:30 candle and the level retest. C.M1–C.M8.'],['S','MMM PRO s','The swing engine: swing breaks.'],['XCS','MMM PRO XCS (x + c + s)','x, c and s together. XCS.M1–XCS.M5. MMM Pro XCS One gives no signals: it shows the odds of what usually happens next.'],['FVA','MMM PRO FVA','The reaction at higher-timeframe levels (UPG gaps, FVA boxes, LEZ, session highs / lows) with the lower-timeframe reversal box. FVA.M1–FVA.M22, all inside MMM EDGE PRO FVA.'],['MMPD','MMPD','Premium / discount oscillator: arrows, backgrounds and MMPD candle colours. MMPD.M1–MMPD.M8 (M7 = A, M8 = A+: the general scalping entry).']];
 // every strategy runs in MMM EDGE PRO: turn on ONE at a time
 const BK_PER=[['all','All data','Dec 2022 – Oct 2026 · one run'],['2023','2023','NQ · from Dec 26 2022'],['2024','2024','NQ'],['2025','2025','NQ to Dec 11 · then MNQ'],['2026','2026','MNQ']];
 const BK_Y=['2023','2024','2025','2026'];
@@ -1704,6 +1740,7 @@ const TABS=[
  {id:'levels',name:'LEVELS & ODDS',kind:'guide'},
  {id:'retest',name:'YEAR BY YEAR',kind:'guide'},
  {id:'nyopen',name:'NY OPEN 09:30–11:30',kind:'guide',win:true},
+ {id:'mmpdlab',name:'MMPD TESTS',kind:'guide',win:true},
  {grp:'2022–25 GRID'},
  {id:'readme',name:'HOW TO READ',kind:'doc'},
  {id:'answers',name:'ANSWERS',kind:'doc'},

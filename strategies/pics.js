@@ -14,11 +14,11 @@
     var re = new RegExp('(^|[^A-Za-z])(' + keys.join('|') + ')(?=[^A-Za-z]|$)', 'g');
     return s.replace(re, function (m, a, w) { return a + map[w]; });
   }
-  var STOPLBL = { zone: 'stop past the box', zonefree: 'stop past the box', S50: 'stop 50 pts', S20: 'stop 20 pts', S40: 'stop 40 pts', S35: 'stop 35 pts', ATR: 'stop ATR', afs: 'stop past AFs+ low', top50: 'stop: block top − 50', struct: 'stop: low of last 3 candles − 2 pts' };
+  var STOPLBL = { zone: 'stop past the box', zonefree: 'stop past the box', S50: 'stop 50 pts', S20: 'stop 20 pts', S40: 'stop 40 pts', S35: 'stop 35 pts', S45: 'stop 45 pts', ATR: 'stop ATR', afs: 'stop past AFs+ low', top50: 'stop: block top − 50', struct: 'stop: low of last 3 candles − 2 pts' };
 
   /* ---------- builders (long direction, price 0–100) ---------- */
   function addRisk(sc, entryY, entryX, spec, boxLow) {
-    var stopY = (spec.stop === 'zone' || spec.stop === 'zonefree' || spec.stop === 'afs' || spec.stop === 'struct') ? boxLow - 1.2 : entryY - (spec.stop === 'S20' ? 7 : spec.stop === 'S35' ? 9 : spec.stop === 'S40' ? 10 : 12);
+    var stopY = (spec.stop === 'zone' || spec.stop === 'zonefree' || spec.stop === 'afs' || spec.stop === 'struct') ? boxLow - 1.2 : entryY - (spec.stop === 'S20' ? 7 : spec.stop === 'S35' ? 9 : spec.stop === 'S40' ? 10 : spec.stop === 'S45' ? 11 : 12);
     if (spec.stop === 'ATR') stopY = entryY - 11;
     if (spec.stop === 'top50') stopY = boxLow;
     var risk = entryY - stopY;
@@ -282,8 +282,9 @@
     if (conf) sc.oscTags.push({ label: conf > 1 ? conf + ' green MMPD' : 'green MMPD', i0: si + 1, i1: ei });
     var e = sc.c[ei].c, lo3 = Math.min(sc.c[ei].l, sc.c[ei - 1].l, sc.c[ei - 2].l);
     P(K(e, e + 6, e - 1, e + 5), mo, mo + 9); P(K(e + 5, e + 12, e + 4, e + 11), mo + 9, mo + 16); P(K(e + 11, e + 17, e + 9, e + 16), mo + 16, mo + 22);
-    sc.lines.push({ y: 55, x0: bi - 0.35, x1: si + 0.45, cls: 'lim', label: '' });
-    sc.marks.push({ x: bi, y: 56, t: 'tag', label: 'its open', side: 1 });
+    var hiLv = spec.lvl === 'high';
+    sc.lines.push({ y: hiLv ? 56 : 55, x0: bi - 0.35, x1: si + 0.45, cls: 'lim', label: '' });
+    sc.marks.push({ x: bi, y: hiLv ? 57 : 56, t: 'tag', label: hiLv ? 'its high' : 'its open', side: 1 });
     sc.marks.push({ x: bi, y: 47, t: 'tag', label: 'last bearish BC', side: -1 });
     sc.marks.push({ x: si, y: 59, t: 'tag', label: 'setup BC', side: 1 });
     sc.marks.push({ x: ei, y: e, t: 'fill', label: 'buy the close', side: -1 });
@@ -297,6 +298,9 @@
     if (spec.be) sc.notes.push({ x: 0, y: 8, text: 'at +1R: stop → entry + 1 pt, then STRONG2' });
     if (spec.opp) sc.notes.push({ x: 0, y: 8, text: 'out if a short setup prints' });
     if (spec.max) sc.notes.push({ x: 0, y: 8, text: 'out when MMPD rises to 50 then closes back below 50' });
+    if (spec.colour) sc.notes.push({ x: 0, y: 8, text: 'arrow candle GREEN or PINK · skip PALE GREEN' });
+    if (spec.w50) sc.notes.push({ x: 0, y: 8, text: 'A+: wait for an MMPD candle that opens above 50' });
+    if (spec.xd) sc.notes.push({ x: 0, y: 8, text: 'dead if price closes below the XD box before entry' });
     var swing = /^MMPD\.M[56]$/.test(spec.code || '');
     if (swing) sc.notes.push({ x: 0, y: 8, text: 'swing · holds overnight' });
     else sc.zones.push({ x0: si - 0.5, x1: 99, y0: 2, y1: 99, cls: 'sess', label: '09:30–11:30 New York', lpos: 'top' });
