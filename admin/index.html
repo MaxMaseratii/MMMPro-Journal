@@ -423,7 +423,7 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
   gate('<h2>Loading…</h2><p>Checking who is logged in.</p>');
 })();
 </script>
-<script src="/vip/vip.js"></script>
+<script src="/vip/vip.js?v=20261105b"></script>
 <script>
 /* V.I.P sign-up links (maxmaserati.com/admin/): Firestore rules only let the admin login make links and see codes */
 (function () {
@@ -472,7 +472,11 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
     if (MMMVip.hasKey()) return Promise.resolve(t);
     return V.findKey(t).then(function () { keyRow(); return t; }).catch(function () { return t; });
   }
+  // a browser that kept an older V.I.P script: say so instead of hanging on "Loading…"
+  var OLD = !(V && V.masters && V.newMaster && V.findKey);
+  if (OLD) { $('vmCode').textContent = 'Reload this page (Ctrl + Shift + R)'; $('vmNew').disabled = true; }
   function refresh() {
+    if (OLD) return tok().then(repair).then(function (t) { return V.list(t); }).then(draw).catch(function () { $('vip').hidden = false; });
     return tok().then(autoKey).then(repair).then(function (t) {
       return Promise.all([V.list(t), V.masters(t).catch(function () { return null; })]);
     }).then(function (r) { draw(r[0]); drawMaster(r[1]); }).catch(function (e) {
