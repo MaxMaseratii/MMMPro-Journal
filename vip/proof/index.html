@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>The proof: Claims vs Results | V.I.P | MMM Trading</title>
-<meta name="description" content="MMM V.I.P: the study behind the Prop Scale Planner.">
+<title>The proof: Claims vs Results | MMM Trading</title>
+<meta name="description" content="The study behind the MMM Prop Scale Planner: 171 funded-trader interviews and 57 strategies tested year by year.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -39,24 +39,13 @@
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 <script src="/i18n.js"></script>
-<script src="/vip/vip.js?v=20261105b"></script>
 <script>
 (function () {
+  // the proof is open to anyone with the link (not in the menu, hidden from search engines); the planner stays V.I.P
   var state = document.getElementById('state'), frame = document.getElementById('app');
-  function fail(html) { state.innerHTML = '<div class="box">' + html + '</div>'; }
-  if (!MMMVip.supported()) return fail('<p>This browser is too old to open the V.I.P area. Please update Chrome, Safari, Edge or Firefox.</p>');
-  MMMVip.ready().then(function (has) { if (!has) return null; return MMMVip.recheck(); }).then(function (ok) { if (ok === null) return null; if (!ok) throw new Error('revoked'); return MMMVip.open('/vip/proof/payload.json'); }).then(function (html) {
-    if (html == null) { location.replace('/vip/'); return; }
-    // links between the two V.I.P pages are written as /vip/... : point them at this site and open them in the main window
-    html = html.split('href="/vip/').join('target="_top" href="' + location.origin + '/vip/');
-    html = html.split("href='/vip/").join("target='_top' href='" + location.origin + "/vip/");
-    frame.src = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
-    frame.onload = function () { state.hidden = true; frame.hidden = false; };
-    frame.hidden = false;
-  }).catch(function (e) {
-    if (e && e.message === 'revoked') { location.replace('/vip/'); return; }
-    fail('<p>This page could not load. Check your connection and refresh.</p><a class="btn-cta" href="/vip/">Back to V.I.P</a>');
-  });
+  frame.onload = function () { state.hidden = true; frame.hidden = false; };
+  frame.src = '/vip/proof/page.html';
+  frame.hidden = false;
 })();
 </script>
 </body>
