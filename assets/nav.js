@@ -10,8 +10,7 @@ window.MMM_NAV = [
   ['Free MMM Mastery & Tools', [
     ['Free MMM Mastery Course', '/journal/?course=1', 'The full MMM method, free'],
     ['Trading Test', '/diagnostic/', 'Check your trading discipline'],
-    ['Gamma & News', '/gamma/', 'Daily gamma levels and news calendar'],
-    ['Prop Scale Planner', '/prop-scale/', 'Free proof · full plan for V.I.P']
+    ['Gamma & News', '/gamma/', 'Daily gamma levels and news calendar']
   ]],
   ['V.I.P', '/vip/']
 ];

@@ -26,8 +26,7 @@
     ['Free MMM Mastery & Tools', [
       ['Free MMM Mastery Course', '/journal/?course=1', 'The full MMM method, free'],
       ['Trading Test', '/diagnostic/', 'Check your trading discipline'],
-      ['Gamma & News', '/gamma/', 'Daily gamma levels and news calendar'],
-      ['Prop Scale Planner', '/prop-scale/', 'Free proof · full plan for V.I.P']
+      ['Gamma & News', '/gamma/', 'Daily gamma levels and news calendar']
     ]],
     ['V.I.P', '/vip/']
   ];
@@ -168,7 +167,7 @@
       '<p class="leading-relaxed max-w-sm">Order-flow education, the MMM Pro indicators and a prop-firm journal for ES and NQ futures traders.</p>' +
       '<p class="mt-4"><a href="mailto:infotrade@maxmaserati.com" class="hover:text-white transition">infotrade@maxmaserati.com</a></p></div>' +
       col('MMM', [['MMM Pro Indicators', '/indicators/'], ['Backtests & Strategies', '/backtests/'], ['Free Course', '/journal/?course=1'], ['MMM Pro Journal', '/journal/'], ['Pricing', '/whop/']]) +
-      col('Free tools', [['Gamma Levels', '/gamma/'], ['News Calendar', '/news/'], ['Trading Discipline Test', '/diagnostic/'], ['Prop Scale Planner', '/prop-scale/']]) +
+      col('Free tools', [['Gamma Levels', '/gamma/'], ['News Calendar', '/news/'], ['Trading Discipline Test', '/diagnostic/']]) +
       col('Watch live', SOCIAL) +
       '</div>' +
       '<div class="max-w-6xl mx-auto px-5 sm:px-8 pb-10">' +
