@@ -147,6 +147,22 @@
     return { ok: false, error: 'taken' }; // this email already has a code
   }
 
+  /* ---------- earned V.I.P: one public sign-up link that the /vip/ page uses after the social steps ----------
+   * Max turns it on (or off) once on /admin/. It works like any sign-up link: one code per email, revocable,
+   * and it carries the key, so anyone who reads this page's code could use it too (same as sharing a code). */
+  var EARN = 'EARNVIPPUBLICSTEPS00001';
+  function earnStatus() { return checkLink(EARN).catch(function () { return { ok: false, reason: 'net' }; }); }
+  function earnClaim(email) { return claim(EARN, email); }
+  async function adminEarn(idToken, on, by) {
+    var key = await adminFindKey(idToken); if (!key) return { ok: false, error: 'nokey' };
+    var cur = await req('GET', '/vipLinks/' + EARN, null, idToken), used = 0;
+    if (cur.status === 200) used = plain(cur.json).used || 0;
+    var body = { writes: [{ update: { name: docName('vipLinks', EARN), fields: fields({ key: key, expires: new Date(on ? Date.now() + 365 * 86400000 : 0), max: 100000, used: used, note: 'Earned V.I.P (social steps)', by: by || '' }) },
+      updateTransforms: [{ fieldPath: 'created', setToServerValue: 'REQUEST_TIME' }] }] };
+    var r = await req('POST', ':commit', body, idToken);
+    return r.status === 200 ? { ok: true, on: on, used: used } : { ok: false, error: r.status === 403 ? 'notadmin' : 'error' };
+  }
+
   /* ---------- admin side (Max, logged in on /admin/) ---------- */
   async function adminNewLink(idToken, minutes, people, note, by) {
     var key = get(KEY_STORE); if (!key) return { ok: false, error: 'nokey' };
@@ -264,7 +280,7 @@
     return { ok: true, code: pretty(id) };
   }
 
-  window.MMMVip = { supported: supported, unlock: unlock, open: open, lock: lock, recheck: recheck, checkLink: checkLink, claim: claim,
+  window.MMMVip = { supported: supported, unlock: unlock, open: open, lock: lock, recheck: recheck, checkLink: checkLink, claim: claim, earnStatus: earnStatus, earnClaim: earnClaim,
     hasKey: function () { return !!get(KEY_STORE); }, pretty: pretty, ready: ready,
-    admin: { newLink: adminNewLink, list: adminList, setStatus: adminSetStatus, repair: adminRepair, findKey: adminFindKey, masters: adminMasters, newMaster: adminNewMaster } };
+    admin: { newLink: adminNewLink, list: adminList, setStatus: adminSetStatus, repair: adminRepair, findKey: adminFindKey, masters: adminMasters, newMaster: adminNewMaster, earn: adminEarn } };
 })();

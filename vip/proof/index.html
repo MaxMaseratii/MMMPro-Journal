@@ -5,7 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>The proof: Claims vs Results | MMM Trading</title>
 <meta name="description" content="The study behind the MMM Prop Scale Planner: 171 funded-trader interviews and 57 strategies tested year by year.">
-<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://www.maxmaserati.com/vip/proof/">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://www.maxmaserati.com/vip/proof/">
+<meta property="og:title" content="We tested the strategies of the traders who get paid millions">
+<meta property="og:description" content="171 funded-trader interviews, 57 of their strategies tested year by year on NQ, ES and gold. Only 4 made money every year. The big payouts come from how they run their accounts.">
+<meta property="og:image" content="https://www.maxmaserati.com/mmm-logo-lockup.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@MaxMaserati">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
@@ -26,6 +33,8 @@
   @keyframes s { to { transform: rotate(360deg); } }
   .btn-cta { display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light)); color: #000; font-weight: 800; border-radius: .75rem; padding: .8rem 1.2rem; }
   [hidden] { display: none !important; }
+  #shareX { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 5; display: inline-flex; align-items: center; gap: .5rem; background: linear-gradient(90deg, #5aa2ff, #8b7bff); color: #fff; font-weight: 800; border-radius: 999px; padding: .75rem 1.1rem; box-shadow: 0 10px 30px -10px rgba(90,162,255,.6); text-decoration: none; }
+  #shareX:hover { filter: brightness(1.1); }
 </style>
 </head>
 <body class="text-white">
@@ -34,6 +43,7 @@
 <div id="wrap">
   <div id="state"><div class="box"><div class="spin" aria-hidden="true"></div><p id="stateMsg">Opening the proof…</p></div></div>
   <iframe id="app" title="The proof: Claims vs Results" hidden></iframe>
+  <a id="shareX" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M17.8 3H21l-7 8 8.2 10h-6.4l-5-6.2L5 21H1.8l7.5-8.6L1.4 3h6.6l4.5 5.7L17.8 3Zm-1.1 16.2h1.8L7.3 4.7H5.4l11.3 14.5Z"/></svg>Share this study on X</a>
 </div>
 
 <script src="/assets/nav.js"></script>
@@ -41,10 +51,12 @@
 <script src="/i18n.js"></script>
 <script>
 (function () {
-  // the proof is open to anyone with the link (not in the menu, hidden from search engines); the planner stays V.I.P
+  // the proof is public and shareable; the planner stays V.I.P
   var state = document.getElementById('state'), frame = document.getElementById('app');
   frame.onload = function () { state.hidden = true; frame.hidden = false; };
   frame.src = '/vip/proof/page.html';
+  var post = 'We read 171 funded-trader interviews and tested 57 of their strategies year by year on NQ, ES and gold.\n\nOnly 4 made money every year. The big payouts come from how they run their accounts.\n\nThe full study, free, by @MaxMaserati #MMMTrading';
+  document.getElementById('shareX').href = 'https://x.com/intent/post?text=' + encodeURIComponent(post) + '&url=' + encodeURIComponent('https://www.maxmaserati.com/vip/proof/');
   frame.hidden = false;
 })();
 </script>

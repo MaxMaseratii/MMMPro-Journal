@@ -141,6 +141,10 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
       <div><b>Your master code</b> <span class="dim">Opens the V.I.P area on any device. It is kept in your Firebase, and only your admin login can see it here.</span></div>
       <div class="row"><span class="big" id="vmCode">Loading…</span><button class="btn" id="vmShow" type="button" hidden>Show</button><button class="btn" id="vmCopy" type="button" hidden>Copy</button><button class="btn gold" id="vmNew" type="button">Make a new master code</button><span class="dim" id="vmMsg"></span></div>
     </div>
+    <div class="out master" id="earnBox">
+      <div><b>Free V.I.P by social steps</b> <span class="dim">People who finish the steps on maxmaserati.com/vip/ (share the proof on X, boost 5 indicators, follow) get their own code by email, with no link from you. Turn it on once; it lasts a year.</span></div>
+      <div class="row"><span class="big" id="earnState">Checking…</span><button class="btn gold" id="earnOn" type="button">Turn on (1 year)</button><button class="btn" id="earnOff" type="button">Turn off</button></div>
+    </div>
     <h2>V.I.P sign-up links</h2>
     <p class="sub">Make a fresh private link and send it to your buyer. They type their email and get their own V.I.P code on screen. Only your admin login can make links.</p>
     <div class="mk">
@@ -509,6 +513,14 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
     var v = $('vipLink').value; navigator.clipboard.writeText(v).then(function () { $('vipCopy').textContent = 'Copied'; setTimeout(function () { $('vipCopy').textContent = 'Copy link'; }, 1500); }, function () { $('vipLink').select(); });
   });
   $('vipRefresh').addEventListener('click', refresh);
+  function earnDraw() { MMMVip.earnStatus().then(function (r) { $('earnState').textContent = r.ok ? 'On · ' + Math.round(r.left / 86400) + ' days left · ' + (r.link.used || 0) + ' people' : 'Off'; }); }
+  earnDraw();
+  ['earnOn', 'earnOff'].forEach(function (id) { $(id).addEventListener('click', function () {
+    var on = id === 'earnOn', b = $(id); b.disabled = true;
+    tok().then(function (t) { return V.earn(t, on, USER.email); }).then(function (r) {
+      toast(r.ok ? (on ? 'Free V.I.P is on for a year.' : 'Free V.I.P is off.') : r.error === 'nokey' ? 'Unlock V.I.P on this device first.' : 'Could not change it.'); earnDraw();
+    }).catch(function () { toast('Could not change it.'); }).finally(function () { b.disabled = false; });
+  }); });
   $('vmShow').addEventListener('click', function () { SHOW = !SHOW; drawMaster(MASTER ? [{ status: 'active', code: MASTER }] : []); });
   $('vmCopy').addEventListener('click', function () {
     if (!MASTER) return;
