@@ -1,8 +1,8 @@
 User-agent: *
 Allow: /
+Allow: /journal/course/
 Disallow: /journal/
-Sitemap: https://www.maxmaserati.com/sitemap.xml
-
-User-agent: *
 Disallow: /live/
 Disallow: /replay/
+
+Sitemap: https://www.maxmaserati.com/sitemap.xml

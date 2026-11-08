@@ -3,108 +3,248 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>V.I.P Area | MMM Trading</title>
-<meta name="description" content="The MMM Trading V.I.P area: members-only tools, opened with your personal access code.">
-<meta name="robots" content="noindex, nofollow">
+<title>MMM V.I.P · Members-Only Tools for Futures Prop Traders | MMM Trading</title>
+<meta name="description" content="MMM V.I.P: members-only tools for futures prop traders. A Game Plan Builder tested on every MMM Pro Edge trade, a Prop Scale Planner for how many accounts to run, and our backtest of the strategies of traders paid millions, from 171 YouTube interviews.">
+<link rel="canonical" href="https://www.maxmaserati.com/vip/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.maxmaserati.com/vip/">
+<meta property="og:title" content="MMM V.I.P · members-only tools for futures prop traders">
+<meta property="og:description" content="Plan every prop account with tested numbers, and see what the traders paid millions really do: 171 interviews, 57 strategies backtested.">
+<meta property="og:image" content="https://www.maxmaserati.com/mmm-logo-lockup.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@MaxMaserati">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
 <meta name="theme-color" content="#0a0a0a">
-<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What is MMM V.I.P?","acceptedAnswer":{"@type":"Answer","text":"Free members-only tools for futures prop traders: the Game Plan Builder (tests your prop account rules on every MMM Pro Edge trade from Dec 2022 to Oct 2026) and the Prop Scale Planner (how many accounts to run, how to copy them and how much money you need)."}},
+{"@type":"Question","name":"How do MMM users get V.I.P access?","acceptedAnswer":{"@type":"Answer","text":"MMM users get V.I.P access free by supporting the work in 5 steps on maxmaserati.com/vip/: share the backtested study on X, boost 5 MMM indicators on TradingView, follow on TradingView, follow on X and subscribe on YouTube. Then they type their email and get a personal code on screen."}},
+{"@type":"Question","name":"What is the backtested study?","acceptedAnswer":{"@type":"Answer","text":"We studied 171 interviews of futures prop traders who claim $250k to $5M in payouts, from 6 YouTube channels (Chart Fanatics, Titans of Tomorrow, Words of Rizdom, Speculators, Desire To Trade, Chat With Traders). We coded 57 of their strategies from their own words and backtested them year by year on NQ, ES and gold. Only 4 of their 48 headline rules made money year after year. Their real edge is how they run their accounts."}},
+{"@type":"Question","name":"Where do the numbers come from?","acceptedAnswer":{"@type":"Answer","text":"From one master trade file: every MMM Pro Edge trade on NQ and MNQ from Dec 26 2022 to Oct 16 2026, with real entry and exit times. A strategy is only kept if it made money in both test periods with a t-score per day of 3 or more, without tuning on the new data."}},
+{"@type":"Question","name":"Is this financial advice?","acceptedAnswer":{"@type":"Answer","text":"No. These are research tools built on backtests. Past results do not promise future results, and real trading is usually worse than a backtest."}}]}
+</script>
 <style>
+  :root { --trust:#5aa2ff; --trust2:#8cc0ff; --hope:#3ddc97; --power:#8b7bff; }
   body { background: hsl(0,0%,4%); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   .num { font-family: 'JetBrains Mono', ui-monospace, monospace; }
-  .glow { background-image: radial-gradient(circle at 15% 15%, hsla(45,100%,55%,0.16), transparent 42%), radial-gradient(circle at 85% 25%, hsla(180,70%,55%,0.12), transparent 45%); }
+  .glow { background-image: radial-gradient(circle at 12% 12%, rgba(90,162,255,.16), transparent 42%), radial-gradient(circle at 88% 20%, rgba(139,123,255,.13), transparent 45%), radial-gradient(circle at 50% 100%, hsla(45,100%,55%,.08), transparent 50%); }
   .card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.1); border-radius: 1rem; }
-  .btn-cta { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; background: linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light)); color: #000; font-weight: 800; border-radius: .75rem; padding: .85rem 1.2rem; transition: filter .15s; }
-  .btn-cta:hover { filter: brightness(1.08); }
-  .btn-cta:disabled { opacity: .6; cursor: wait; }
+  .btn-cta { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; background: linear-gradient(90deg, var(--trust), var(--power)); color: #fff; font-weight: 800; border-radius: .75rem; padding: .85rem 1.2rem; transition: filter .15s; }
+  .btn-cta:hover { filter: brightness(1.1); }
+  .btn-cta:disabled { opacity: .5; cursor: not-allowed; }
   .btn-out { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; border: 1px solid rgba(255,255,255,.22); color: #fff; font-weight: 700; border-radius: .75rem; padding: .75rem 1.1rem; transition: border-color .15s, background .15s; }
-  .btn-out:hover { border-color: hsla(45,100%,55%,.55); background: rgba(255,255,255,.04); }
-  .code-in { background: #0b0b0b; border: 1px solid rgba(255,255,255,.16); border-radius: .75rem; padding: .9rem 1rem; width: 100%; color: #fff; font: 600 18px/1.2 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; text-align: center; outline: none; }
-  .code-in:focus { border-color: var(--mmm-tiffany); }
-  .eyebrow { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--mmm-gold-light); }
+  .btn-out:hover { border-color: rgba(90,162,255,.6); background: rgba(255,255,255,.04); }
+  .code-in, .in { background: #0b0b0b; border: 1px solid rgba(255,255,255,.16); border-radius: .75rem; padding: .8rem 1rem; width: 100%; color: #fff; outline: none; }
+  .code-in { font: 600 18px/1.2 'JetBrains Mono', monospace; letter-spacing: .12em; text-transform: uppercase; text-align: center; }
+  .in { font: 500 14px/1.3 Inter, system-ui, sans-serif; }
+  .code-in:focus, .in:focus { border-color: var(--trust); }
+  .eyebrow { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--trust2); }
+  .gold { color: var(--mmm-gold-light, #f2cf5b); }
   .tool { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
-  .tool:hover { transform: translateY(-3px); border-color: hsla(45,100%,55%,.45); box-shadow: 0 10px 40px -12px hsla(45,100%,55%,.3); }
+  .tool:hover { transform: translateY(-3px); border-color: rgba(90,162,255,.5); box-shadow: 0 10px 40px -12px rgba(90,162,255,.35); }
+  .peek { background: #0b0d10; border: 1px solid rgba(255,255,255,.08); border-radius: .75rem; padding: .8rem .9rem; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: .5rem; }
+  .peek div { display: grid; gap: 2px; min-width: 0; }
+  .peek b { font: 700 18px 'JetBrains Mono', monospace; }
+  .peek span { font-size: 11px; color: #8f97a1; line-height: 1.3; }
+  .step { border: 1px solid rgba(255,255,255,.1); border-radius: 1rem; padding: 1rem 1.1rem; background: rgba(255,255,255,.02); display: grid; gap: .6rem; }
+  .step[data-state=locked] { opacity: .45; }
+  .step[data-state=done] { border-color: rgba(61,220,151,.45); background: rgba(61,220,151,.05); }
+  .step[data-state=open] { border-color: rgba(90,162,255,.5); }
+  .step .n { width: 1.75rem; height: 1.75rem; border-radius: 999px; display: grid; place-items: center; font: 700 13px 'JetBrains Mono', monospace; background: rgba(255,255,255,.08); flex: none; }
+  .step[data-state=done] .n { background: var(--hope); color: #04140c; }
+  .step[data-state=open] .n { background: var(--trust); color: #06101f; }
+  .tag { font: 700 10px 'JetBrains Mono', monospace; letter-spacing: .08em; text-transform: uppercase; border-radius: 999px; padding: 2px 8px; border: 1px solid; }
+  .tag.chk { color: var(--hope); border-color: rgba(61,220,151,.5); }
+  .tag.hon { color: #9aa3ad; border-color: rgba(255,255,255,.2); }
+  .msg-ok { color: var(--hope); } .msg-bad { color: #ffab70; }
+  details.faq { border-top: 1px solid rgba(255,255,255,.08); padding: .9rem 0; }
+  details.faq summary { cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 1rem; }
+  details.faq summary::-webkit-details-marker { display: none; }
+  details.faq summary::after { content: "+"; color: var(--trust2); font-weight: 800; }
+  details.faq[open] summary::after { content: "–"; }
+  details.faq p { margin-top: .5rem; color: #a7aeb6; line-height: 1.6; }
+  :root { --g1: var(--mmm-gold, #e1b31a); --g2: var(--mmm-gold-light, #f2cf5b); }
+  .eyebrow { color: var(--g2); }
+  .lux { background: radial-gradient(ellipse at 20% 0%, rgba(225,179,26,.16), transparent 55%), radial-gradient(ellipse at 90% 10%, rgba(90,162,255,.08), transparent 50%), linear-gradient(180deg,#060606,#0a0a0a); }
+  .goldline { height: 1px; background: linear-gradient(90deg, transparent, rgba(225,179,26,.55), transparent); }
+  .btn-gold { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; background: linear-gradient(90deg, var(--g1), var(--g2)); color: #111; font-weight: 800; border-radius: .75rem; padding: .9rem 1.3rem; transition: filter .15s; letter-spacing: .01em; }
+  .btn-gold:hover { filter: brightness(1.07); }
+  .btn-out:hover { border-color: rgba(225,179,26,.6); }
+  .card.lux-card { background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.01)); border-color: rgba(225,179,26,.18); }
+  .tool:hover { border-color: rgba(225,179,26,.55); box-shadow: 0 10px 40px -12px rgba(225,179,26,.28); }
+  .badge-vip { font: 800 10px 'JetBrains Mono', monospace; letter-spacing: .14em; color: #111; background: linear-gradient(90deg, var(--g1), var(--g2)); border-radius: 999px; padding: 3px 9px; }
+  .badge-open { font: 800 10px 'JetBrains Mono', monospace; letter-spacing: .14em; color: var(--hope); border: 1px solid rgba(61,220,151,.5); border-radius: 999px; padding: 2px 9px; }
+  .stat b { font: 800 clamp(26px,4vw,40px)/1 'JetBrains Mono', monospace; color: var(--g2); }
+  .stat span { display: block; margin-top: .35rem; font-size: 12.5px; color: #9aa3ad; }
+  .chan { font: 600 12px Inter, sans-serif; color: #cfd4da; border: 1px solid rgba(255,255,255,.14); border-radius: 999px; padding: 4px 10px; }
+  #earnPanel { overflow: hidden; }
+  details.faq summary::after { color: var(--g2); }
   [hidden] { display: none !important; }
 </style>
+<link rel="stylesheet" href="/assets/tw.css?v=20261108">
 </head>
 <body class="text-white">
 
 <div id="mmm-header"></div>
 
-<section class="glow" style="background:linear-gradient(135deg,#050505,#0a0a0a 45%,hsl(45,40%,8%));">
-  <div class="max-w-5xl mx-auto px-5 sm:px-8 pt-14 pb-16 sm:pt-20 sm:pb-20">
-    <div class="text-center">
-      <div class="inline-flex items-center gap-2 rounded-full border border-[color:var(--mmm-gold)]/40 px-3 py-1 eyebrow">
+<section class="lux">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 pt-16 pb-14 sm:pt-24">
+    <div class="max-w-3xl">
+      <div class="inline-flex items-center gap-2 rounded-full border px-3 py-1 eyebrow" style="border-color:rgba(225,179,26,.45)">
         <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        Members only
+        MMM V.I.P · Members only</div>
+      <h1 class="mt-5 text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.04]">The room where MMM traders <span style="background-image:linear-gradient(90deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;color:transparent">plan every prop account</span>.</h1>
+      <p class="mt-5 text-lg text-gray-300 leading-relaxed">Members-only tools for futures prop traders. Plan each account with numbers tested on every MMM Pro Edge trade from Dec 2022 to Oct 2026, and see what the traders who get paid millions really do.</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <button type="button" class="btn-gold" id="openEarn" aria-expanded="false" aria-controls="earnPanel">Get Free V.I.P Access · MMM Users</button>
+        <a href="/vip/proof/" class="btn-out">Read the backtested study</a>
       </div>
-      <h1 class="mt-5 text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.05]"><span style="background-image:linear-gradient(90deg,var(--mmm-gold),var(--mmm-gold-light));-webkit-background-clip:text;background-clip:text;color:transparent">MMM V.I.P</span></h1>
-      <p class="mt-4 text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed">The tools Max uses to plan every prop account. Built on every tested EDGE PRO trade. Open them with your access code.</p>
+      <p class="mt-4 text-xs text-gray-500">Research tools built on backtests. Not financial advice. Past results do not promise future results.</p>
     </div>
 
-    <!-- gate -->
-    <div id="gate" class="card max-w-md mx-auto mt-10 p-6 sm:p-8" hidden>
-      <form id="gateForm" autocomplete="off" class="grid gap-4">
-        <label for="code" class="text-sm font-semibold text-gray-300 text-center">Enter your V.I.P access code</label>
-        <input id="code" class="code-in" type="text" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="MMM-XXXX-XXXX" required>
-        <button id="go" class="btn-cta w-full" type="submit">Unlock V.I.P</button>
-        <p id="msg" class="text-sm text-center min-h-[1.25rem]" aria-live="polite"></p>
-      </form>
-      <div class="mt-5 pt-5 border-t border-white/10 text-center text-sm text-gray-400">
-        No code yet? <a href="/whop/" class="font-semibold text-[color:var(--mmm-gold-light)] hover:underline">Get V.I.P access</a>
-      </div>
-    </div>
-
-    <div id="nosupport" class="card max-w-md mx-auto mt-10 p-6 text-center text-gray-300" hidden>
-      This browser is too old to open the V.I.P area. Please update Chrome, Safari, Edge or Firefox.
-    </div>
+    <div id="nosupport" class="card max-w-md mt-10 p-6 text-center text-gray-300" hidden>This browser is too old to open the V.I.P area. Please update Chrome, Safari, Edge or Firefox.</div>
 
     <!-- unlocked -->
     <div id="area" class="mt-12" hidden>
       <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <div><div class="eyebrow">Unlocked on this device</div><h2 class="text-2xl font-extrabold mt-1">Your V.I.P tools</h2></div>
-        <button id="lockBtn" class="btn-out text-sm" type="button">
-          <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-          Lock this device
-        </button>
+        <div><div class="eyebrow">Unlocked on this device</div><h2 class="text-2xl font-extrabold mt-1">Your V.I.P tools</h2><p id="myCode" class="text-sm text-gray-400 mt-1"></p></div>
+        <button id="lockBtn" class="btn-out text-sm" type="button">Lock this device</button>
       </div>
       <div class="grid gap-5 md:grid-cols-2">
-        <a href="/vip/game-plan/" class="tool card block p-6 sm:p-7">
-          <div class="flex items-start justify-between gap-4">
-            <div class="h-12 w-12 rounded-xl flex items-center justify-center" style="background:hsla(45,100%,55%,.12);border:1px solid hsla(45,100%,55%,.35)">
-              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="var(--mmm-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>
-            </div>
-            <span class="eyebrow" style="color:var(--mmm-tiffany-light)">New</span>
-          </div>
-          <h3 class="mt-5 text-xl font-extrabold">MMM Game Plan Builder</h3>
-          <p class="mt-2 text-gray-400 leading-relaxed">Type your prop account's real rules and your hours. It tests them on every EDGE PRO trade, picks a safe risk size and builds your full plan: contracts, daily limits, what to trade and when, kill switch.</p>
-          <span class="mt-5 inline-flex items-center gap-1.5 font-bold text-[color:var(--mmm-gold-light)]">Open the builder
-            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </a>
-        <a href="/vip/prop-scale/" class="tool card block p-6 sm:p-7">
-          <div class="flex items-start justify-between gap-4">
-            <div class="h-12 w-12 rounded-xl flex items-center justify-center" style="background:hsla(45,100%,55%,.12);border:1px solid hsla(45,100%,55%,.35)">
-              <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="var(--mmm-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M17.5 14v7M14 17.5h7"/></svg>
-            </div>
-            <span class="eyebrow" style="color:var(--mmm-tiffany-light)">New</span>
-          </div>
-          <h3 class="mt-5 text-xl font-extrabold">MMM Prop Scale Planner</h3>
-          <p class="mt-2 text-gray-400 leading-relaxed">The business side of prop trading, worked out for your money: how many accounts, how to copy them, how much to risk in each phase, the best account size and when to stop. Built from 171 funded-trader interviews.</p>
-          <span class="mt-5 inline-flex items-center gap-1.5 font-bold text-[color:var(--mmm-gold-light)]">Open the planner
-            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-        </a>
-        <div class="card p-6 sm:p-7 flex flex-col justify-center border-dashed">
-          <div class="eyebrow">Coming next</div>
-          <h3 class="mt-2 text-lg font-bold text-gray-200">More V.I.P tools</h3>
-          <p class="mt-2 text-gray-500 leading-relaxed">New members-only tools land here first. Your code opens them all.</p>
-        </div>
+        <a href="/vip/game-plan/" class="tool card lux-card block p-6"><span class="badge-vip">V.I.P</span><h3 class="mt-3 text-xl font-extrabold">MMM Game Plan Builder</h3><p class="mt-2 text-gray-400">Your account rules tested on every MMM Pro Edge trade: what to trade, when, how big, and what a normal day looks like.</p></a>
+        <a href="/vip/prop-scale/" class="tool card lux-card block p-6"><span class="badge-vip">V.I.P</span><h3 class="mt-3 text-xl font-extrabold">MMM Prop Scale Planner</h3><p class="mt-2 text-gray-400">How many accounts, how to copy them, how much money you need, and your plan month by month.</p></a>
       </div>
     </div>
+  </div>
+
+  <!-- free access: opens only when asked -->
+  <div id="earnPanel" class="max-w-6xl mx-auto px-5 sm:px-8 pb-14" hidden>
+  <div id="earn" class="card p-6 sm:p-8" style="border-color:rgba(225,179,26,.35);background:linear-gradient(160deg,rgba(225,179,26,.07),rgba(90,162,255,.03) 55%,transparent)">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div><div class="eyebrow">Free V.I.P access · MMM users</div>
+      <h2 class="mt-2 text-3xl font-extrabold">Support the work in 5 steps. Your personal code shows on screen.</h2></div>
+      <button type="button" id="closeEarn" class="btn-out text-sm">Close</button>
+    </div>
+    <p class="mt-2 text-gray-400 max-w-3xl">Steps 1 and 2 are checked by this page. Steps 3 to 5 open in a new tab: do them there, then come back. Each step opens after the one before. Your progress is saved on this device.</p>
+    <ol class="mt-6 grid gap-3" id="steps">
+      <li class="step" data-s="1">
+        <div class="flex items-center gap-3"><span class="n">1</span><b>Share the study on X</b><span class="tag chk">checked</span></div>
+        <p class="text-sm text-gray-400">Post it from your X account, then paste the link to your post. We check that the post is public and links the study.</p>
+        <div class="flex flex-wrap gap-2"><a class="btn-gold text-sm share-x" href="#" target="_blank" rel="noopener">Post on X</a></div>
+        <div class="flex flex-wrap gap-2"><input id="xUrl" class="in flex-1 min-w-[220px]" type="url" placeholder="https://x.com/yourname/status/…"><button id="xCheck" class="btn-out text-sm" type="button">Check my post</button></div>
+        <p id="xMsg" class="text-sm min-h-[1.2rem]" aria-live="polite"></p>
+      </li>
+      <li class="step" data-s="2">
+        <div class="flex items-center gap-3"><span class="n">2</span><b>Boost 5 MMM indicators on TradingView</b><span class="tag chk">checked</span></div>
+        <p class="text-sm text-gray-400">Open 5 indicators you like and press the rocket (Boost) under each one. Paste the 5 links here: each must be a different @MaxMaserati script.</p>
+        <a class="btn-out text-sm justify-self-start" href="https://www.tradingview.com/u/MaxMaserati/#published-scripts" target="_blank" rel="noopener">Open the indicators</a>
+        <div class="grid gap-2 sm:grid-cols-2" id="tvInputs"></div>
+        <button id="tvCheck" class="btn-out text-sm justify-self-start" type="button">Check my 5 links</button>
+        <p id="tvMsg" class="text-sm min-h-[1.2rem]" aria-live="polite"></p>
+      </li>
+      <li class="step" data-s="3">
+        <div class="flex items-center gap-3"><span class="n">3</span><b>Follow Max on TradingView</b><span class="tag hon">opens a new tab</span></div>
+        <a class="btn-out text-sm justify-self-start away" data-step="3" href="https://www.tradingview.com/u/MaxMaserati/" target="_blank" rel="noopener">Follow on TradingView</a>
+        <p class="text-sm min-h-[1.2rem] awaymsg" aria-live="polite"></p>
+      </li>
+      <li class="step" data-s="4">
+        <div class="flex items-center gap-3"><span class="n">4</span><b>Follow @MaxMaserati on X</b><span class="tag hon">opens a new tab</span></div>
+        <a class="btn-out text-sm justify-self-start away" data-step="4" href="https://x.com/intent/follow?screen_name=MaxMaserati" target="_blank" rel="noopener">Follow on X</a>
+        <p class="text-sm min-h-[1.2rem] awaymsg" aria-live="polite"></p>
+      </li>
+      <li class="step" data-s="5">
+        <div class="flex items-center gap-3"><span class="n">5</span><b>Subscribe on YouTube</b><span class="tag hon">opens a new tab</span></div>
+        <a class="btn-out text-sm justify-self-start away" data-step="5" href="https://www.youtube.com/@MaxMaserati?sub_confirmation=1" target="_blank" rel="noopener">Subscribe on YouTube</a>
+        <p class="text-sm min-h-[1.2rem] awaymsg" aria-live="polite"></p>
+      </li>
+      <li class="step" data-s="6">
+        <div class="flex items-center gap-3"><span class="n">✓</span><b>Get your personal V.I.P code</b></div>
+        <form id="earnForm" class="flex flex-wrap gap-2" autocomplete="on"><input id="earnEmail" class="in flex-1 min-w-[220px]" type="email" autocomplete="email" placeholder="you@example.com" required maxlength="120"><button id="earnGo" class="btn-gold" type="submit">Get my V.I.P code</button></form>
+        <p class="text-xs text-gray-500">One code per email. It opens the V.I.P tools on any device. We use your email only for your V.I.P access.</p>
+        <p id="earnMsg" class="text-sm min-h-[1.2rem]" aria-live="polite"></p>
+        <div id="earnDone" class="card p-5 text-center" hidden><p class="text-gray-400">Your personal code (keep it safe):</p><p id="earnCode" class="mt-2 select-all text-2xl font-bold num tracking-[.18em] gold"></p><a href="#area" class="btn-gold mt-4">Open my V.I.P tools</a></div>
+      </li>
+    </ol>
+    <div class="goldline my-6"></div>
+    <details id="code" class="max-w-md"><summary class="cursor-pointer text-sm font-semibold text-gray-300">Already a V.I.P member? Enter your code</summary>
+      <div id="gate" class="mt-4" hidden>
+        <form id="gateForm" autocomplete="off" class="grid gap-3">
+          <input id="code-in" class="code-in" type="text" inputmode="text" autocapitalize="characters" spellcheck="false" placeholder="MMM-XXXX-XXXX" required aria-label="Your V.I.P code">
+          <button id="go" class="btn-gold w-full" type="submit">Unlock V.I.P</button>
+          <p id="msg" class="text-sm text-center min-h-[1.25rem]" aria-live="polite"></p>
+        </form>
+      </div>
+    </details>
+  </div>
+  </div>
+</section>
+
+<div class="goldline"></div>
+
+<!-- the study -->
+<section id="study" class="max-w-6xl mx-auto px-5 sm:px-8 py-16">
+  <div class="grid gap-10 lg:grid-cols-[1.15fr_1fr] items-start">
+    <div>
+      <div class="eyebrow">The study behind V.I.P</div>
+      <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold leading-tight">We backtested the strategies of the traders who get paid millions.</h2>
+      <p class="mt-4 text-gray-300 leading-relaxed">We studied <b>171 interviews</b> of futures prop traders who claim <b>$250k to $5M</b> in payouts, from 6 popular YouTube channels. We wrote down their rules in their own words, coded <b>57 of their strategies</b> and backtested each one year by year on NQ, ES and gold.</p>
+      <p class="mt-3 text-gray-300 leading-relaxed"><b>Only 4 of their 48 headline rules made money year after year.</b> Yet their payouts are real. Their edge is mostly how they run their accounts: many accounts, big risk to pass, small risk once funded, payouts as soon as the rules allow. V.I.P turns that method into numbers for your own account.</p>
+      <div class="mt-5 flex flex-wrap gap-2"><span class="chan">Chart Fanatics</span><span class="chan">Titans of Tomorrow</span><span class="chan">Words of Rizdom</span><span class="chan">Speculators</span><span class="chan">Desire To Trade</span><span class="chan">Chat With Traders</span></div>
+      <div class="mt-7 flex flex-wrap gap-3"><a href="/vip/proof/" class="btn-gold">Read the backtested study</a><a class="btn-out share-x" href="#" target="_blank" rel="noopener">Share it on X</a></div>
+    </div>
+    <div class="card lux-card p-6 grid grid-cols-2 gap-6">
+      <div class="stat"><b>171</b><span>trader interviews studied</span></div>
+      <div class="stat"><b>6</b><span>YouTube channels</span></div>
+      <div class="stat"><b>57</b><span>strategies coded from their own words and backtested</span></div>
+      <div class="stat"><b style="color:var(--hope)">4</b><span>of 48 headline rules made money year after year</span></div>
+      <p class="col-span-2 text-xs text-gray-500">NQ, ES and gold, Dec 2022 – Nov 2026, every year judged on its own, with a random twin for every trade (same trade, random time).</p>
+    </div>
+  </div>
+</section>
+
+<!-- what V.I.P opens -->
+<section id="tools" class="max-w-6xl mx-auto px-5 sm:px-8 pb-16">
+  <div class="eyebrow">What V.I.P opens</div>
+  <h2 class="mt-2 text-3xl font-extrabold">Real numbers you can check. One master trade file behind all of them.</h2>
+  <div class="mt-8 grid gap-5 md:grid-cols-3">
+    <article class="tool card lux-card p-6 grid gap-4 content-start">
+      <div class="flex items-center justify-between gap-3"><h3 class="text-xl font-extrabold">Game Plan Builder</h3><span class="badge-vip">V.I.P</span></div>
+      <p class="text-gray-400">Type your prop account's rules. It tests them on every trade, picks a safe risk size and writes your daily rules, your TradingView settings and your kill switch.</p>
+      <div class="peek"><div><b style="color:var(--hope)">95%</b><span>evals passed</span></div><div><b>3%</b><span>evals blew</span></div><div><b>73</b><span>median days to pass</span></div></div>
+      <p class="text-xs text-gray-500">Example: Highest Pass Rate goal (C.M6 · C.M8), $50K EOD account, $200 a trade, every start day from Dec 2022 tested as a new account.</p>
+    </article>
+    <article class="tool card lux-card p-6 grid gap-4 content-start">
+      <div class="flex items-center justify-between gap-3"><h3 class="text-xl font-extrabold">Prop Scale Planner</h3><span class="badge-vip">V.I.P</span></div>
+      <p class="text-gray-400">The business side: how many accounts to start, how to split them into copy groups, how much money you need, when the first payout comes and when it pays you back.</p>
+      <div class="peek"><div><b>20</b><span>accounts, 3 copy groups</span></div><div><b style="color:var(--hope)">79%</b><span>end the year ahead</span></div><div><b>1%</b><span>lose all their money</span></div></div>
+      <p class="text-xs text-gray-500">Example run: $5,000 to invest, C.M6 · C.M8, 50K EOD accounts at $100, 12 months. Your numbers change with your inputs.</p>
+    </article>
+    <article class="tool card lux-card p-6 grid gap-4 content-start">
+      <div class="flex items-center justify-between gap-3"><h3 class="text-xl font-extrabold">The traders' strategies, backtested</h3><span class="badge-open">OPEN</span></div>
+      <p class="text-gray-400">Trader by trader: what they claim, the rules they gave in their own words, and what those rules did in our backtest, year by year.</p>
+      <div class="peek"><div><b>171</b><span>interviews</span></div><div><b>57</b><span>strategies tested</span></div><div><b style="color:var(--hope)">4</b><span>of 48 rules made money every year</span></div></div>
+      <a href="/vip/proof/" class="btn-out text-sm justify-self-start">Read the backtested study</a>
+    </article>
+  </div>
+</section>
+
+<!-- questions people ask before joining -->
+<section class="max-w-6xl mx-auto px-5 sm:px-8 pb-20">
+  <div class="eyebrow">Questions</div>
+  <h2 class="mt-2 text-3xl font-extrabold">What traders ask before they join</h2>
+  <div class="mt-4 max-w-3xl">
+    <details class="faq"><summary>How do MMM users get V.I.P access?</summary><p>Support the work in 5 steps: share the backtested study on X, boost 5 MMM indicators on TradingView, follow on TradingView, follow on X and subscribe on YouTube. Then type your email and your personal code shows on screen. You can also get a code from Max directly.</p></details>
+    <details class="faq"><summary>What is the backtested study?</summary><p>We studied 171 interviews of futures prop traders who claim $250k to $5M in payouts, from Chart Fanatics, Titans of Tomorrow, Words of Rizdom, Speculators, Desire To Trade and Chat With Traders. We coded 57 of their strategies from their own words and backtested them year by year on NQ, ES and gold. Only 4 of their 48 headline rules made money year after year: their payouts come mostly from how they run their accounts.</p></details>
+    <details class="faq"><summary>Where do the V.I.P numbers come from?</summary><p>One master trade file: every MMM Pro Edge trade on NQ and MNQ from Dec 26 2022 to Oct 16 2026, with real entry and exit times. A strategy is kept only if it made money in both test periods with a t-score per day of 3 or more, without tuning on the new data.</p></details>
+    <details class="faq"><summary>Which prop accounts does it work for?</summary><p>EOD trailing and static drawdown accounts. Type your firm's real rules: drawdown, target, daily limit, payout rules. Intraday (unrealized) trailing drawdown is not tested and the tools tell you to avoid it.</p></details>
+    <details class="faq"><summary>Do I need MMM Pro Edge?</summary><p>MMM Pro Edge comes inside the <a href="/whop/" class="gold">MMM PRO package</a>. The Game Plan Builder plans around its 5 strategies. In the Prop Scale Planner you can also type your own strategy's stats or paste your own trades.</p></details>
+    <details class="faq"><summary>What are the limits?</summary><p>It is a backtest. Real trading is usually worse: slippage, missed trades, nerves. The planner cuts the edge a little on purpose, and every page says how the test works. It is research, not financial advice.</p></details>
+    <details class="faq"><summary>Can I lose access?</summary><p>Codes can be switched off if they are shared in public. One code per email, and it works on all your devices: open "Already a V.I.P member?" under Free V.I.P access.</p></details>
   </div>
 </section>
 
@@ -112,28 +252,119 @@
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 <script src="/i18n.js"></script>
-<script src="/vip/vip.js?v=20261105b"></script>
+<script src="/vip/vip.js?v=20261108"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  function show(unlocked) { $('gate').hidden = unlocked; $('area').hidden = !unlocked; }
-  if (!MMMVip.supported()) { $('nosupport').hidden = false; return; }
+  var PROOF = 'https://www.maxmaserati.com/vip/proof/';
+  var POST = 'We read 171 funded-trader interviews and tested 57 of their strategies on NQ, ES and gold.\n\nOnly 4 of their 48 headline rules made money every year. The big payouts come from how they run accounts.\n\nFree study by @MaxMaserati #MMMTrading';
+  var shareUrl = 'https://x.com/intent/post?text=' + encodeURIComponent(POST) + '&url=' + encodeURIComponent(PROOF);
+  document.querySelectorAll('.share-x').forEach(function (a) { a.href = shareUrl; });
+
+  /* ---------- access ---------- */
+  function show(unlocked) { $('gate').hidden = unlocked; $('area').hidden = !unlocked; $('openEarn').hidden = unlocked; if (unlocked && !justEarned) $('earnPanel').hidden = true; }
+  var justEarned = false;
+  function openPanel(o) { $('earnPanel').hidden = !o; $('openEarn').setAttribute('aria-expanded', String(o)); if (o) $('earnPanel').scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  $('openEarn').addEventListener('click', function () { openPanel(true); });
+  $('closeEarn').addEventListener('click', function () { openPanel(false); });
+  if (location.hash === '#earn' || location.hash === '#code') openPanel(true);
+  if (!window.MMMVip || !MMMVip.supported()) { $('nosupport').hidden = false; if (!window.MMMVip) $('nosupport').textContent = 'The V.I.P area could not load. Refresh the page.'; $('openEarn').hidden = true; return; }
   show(MMMVip.hasKey());
   document.addEventListener('mmm:vip', function () { if (MMMVip.hasKey()) show(true); });
-  if (MMMVip.hasKey()) MMMVip.recheck().then(function (ok) { if (!ok) { show(false); $('msg').textContent = 'Your V.I.P access was switched off. Contact Max.'; $('msg').className += ' text-red-400'; } });
+  if (MMMVip.hasKey()) MMMVip.recheck().then(function (ok) { if (!ok) { show(false); $('msg').textContent = 'Your V.I.P access was switched off. Contact Max.'; $('msg').className = 'text-sm text-center min-h-[1.25rem] msg-bad'; } });
   $('gateForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var code = $('code').value, go = $('go'), msg = $('msg');
-    go.disabled = true; go.textContent = 'Checking…'; msg.textContent = ''; msg.className = 'text-sm text-center min-h-[1.25rem]';
-    MMMVip.unlock(code).then(function (ok) {
-      if (ok === true) { show(true); $('code').value = ''; }
-      else if (ok === 'stale') { msg.textContent = 'Your code is real but needs a quick update from Max. Try again in a few minutes.'; msg.className += ' text-yellow-400'; }
-      else { msg.textContent = 'That code did not work. Check it and try again.'; msg.className += ' text-red-400'; }
-    }).catch(function () {
-      msg.textContent = 'Could not reach the V.I.P area. Check your connection and try again.'; msg.className += ' text-red-400';
-    }).finally(function () { go.disabled = false; go.textContent = 'Unlock V.I.P'; });
+    var go = $('go'), msg = $('msg');
+    go.disabled = true; go.textContent = 'Checking…'; msg.textContent = '';
+    MMMVip.unlock($('code-in').value).then(function (ok) {
+      if (ok === true) { show(true); $('code-in').value = ''; }
+      else if (ok === 'stale') { msg.textContent = 'Your code is real but needs a quick update from Max. Try again in a few minutes.'; msg.className = 'text-sm text-center msg-bad'; }
+      else { msg.textContent = 'That code did not work. Check it and try again.'; msg.className = 'text-sm text-center msg-bad'; }
+    }).catch(function () { msg.textContent = 'Could not reach the V.I.P area. Check your connection and try again.'; msg.className = 'text-sm text-center msg-bad'; })
+      .finally(function () { go.disabled = false; go.textContent = 'Unlock V.I.P'; });
   });
-  $('lockBtn').addEventListener('click', function () { MMMVip.lock(); show(false); $('code').focus(); });
+  $('lockBtn').addEventListener('click', function () { MMMVip.lock(); show(false); });
+
+  /* ---------- the 5 steps (saved on this device) ---------- */
+  var KEY = 'mmmEarnSteps', S = {};
+  try { S = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { S = {}; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+  function done(n) { return !!S['s' + n]; }
+  function say(el, t, ok) { el.textContent = t; el.className = 'text-sm min-h-[1.2rem] ' + (ok ? 'msg-ok' : 'msg-bad'); }
+  function draw() {
+    var open = 1; while (open <= 5 && done(open)) open++;
+    document.querySelectorAll('#steps .step').forEach(function (li) {
+      var n = +li.dataset.s, st = n < open ? 'done' : n === open ? 'open' : 'locked';
+      if (n === 6) st = open > 5 ? 'open' : 'locked';
+      li.dataset.state = st;
+      li.querySelectorAll('input,button,a').forEach(function (x) { if (st === 'locked') { x.setAttribute('tabindex', '-1'); x.style.pointerEvents = 'none'; } else { x.removeAttribute('tabindex'); x.style.pointerEvents = ''; } });
+    });
+    if (S.s1) $('xUrl').value = S.s1.url;
+    if (S.s2) document.querySelectorAll('#tvInputs input').forEach(function (x, i) { x.value = S.s2[i] || ''; });
+  }
+
+  // step 1: the post must be public and link the study (X's public embed service is the check)
+  var XRE = /^https?:\/\/(?:www\.|mobile\.)?(?:x|twitter)\.com\/([A-Za-z0-9_]{1,15})\/status(?:es)?\/(\d{5,25})/i;
+  function oembed(url) {
+    return new Promise(function (res) {
+      var cb = '__mmmOE' + Date.now(), sc = document.createElement('script'), t = setTimeout(function () { fin(null); }, 9000);
+      function fin(v) { clearTimeout(t); try { delete window[cb]; } catch (e) { window[cb] = undefined; } sc.remove(); res(v); }
+      window[cb] = function (j) { fin(j || {}); };
+      sc.onerror = function () { fin(null); };
+      sc.src = 'https://publish.twitter.com/oembed?omit_script=true&dnt=true&url=' + encodeURIComponent(url.replace(/\/\/(www\.|mobile\.)?x\.com/i, '//twitter.com')) + '&callback=' + cb;
+      document.head.appendChild(sc);
+    });
+  }
+  $('xCheck').addEventListener('click', function () {
+    var u = $('xUrl').value.trim(), m = XRE.exec(u), b = $('xCheck');
+    if (!m) { say($('xMsg'), 'Paste the link to your post. It looks like https://x.com/yourname/status/123…', false); return; }
+    b.disabled = true; b.textContent = 'Checking…';
+    oembed(u).then(function (j) {
+      if (j && j.html) {
+        var h = String(j.html).toLowerCase();
+        if (h.indexOf('maxmaserati') >= 0 || h.indexOf('mmmtrading') >= 0) { S.s1 = { url: u, by: m[1], how: 'checked' }; save(); say($('xMsg'), 'Post found. Thank you for sharing!', true); draw(); }
+        else say($('xMsg'), 'We found your post, but it does not link the study. Use the "Post on X" button so the link is in it.', false);
+      } else if (j === null) { S.s1 = { url: u, by: m[1], how: 'format' }; save(); say($('xMsg'), 'Saved. (X did not answer our check right now, so we kept your link.)', true); draw(); }
+      else say($('xMsg'), 'We could not see that post. Make sure your account is public and the link is right.', false);
+    }).finally(function () { b.disabled = false; b.textContent = 'Check my post'; });
+  });
+
+  // step 2: 5 different @MaxMaserati scripts
+  var TVRE = /^https?:\/\/(?:[a-z]{2,3}\.)?tradingview\.com\/script\/([A-Za-z0-9]{6,12})-([^\s?#]*)/i;
+  for (var i = 0; i < 5; i++) { var x = document.createElement('input'); x.className = 'in'; x.type = 'url'; x.placeholder = 'Indicator ' + (i + 1) + ': https://www.tradingview.com/script/…'; $('tvInputs').appendChild(x); }
+  $('tvCheck').addEventListener('click', function () {
+    var vals = [].map.call(document.querySelectorAll('#tvInputs input'), function (x) { return x.value.trim(); }), ids = {}, bad = 0;
+    vals.forEach(function (v) { var m = TVRE.exec(v); if (!m || !/maxmaserati/i.test(m[2])) { bad++; return; } ids[m[1]] = 1; });
+    if (bad) { say($('tvMsg'), bad + ' link' + (bad > 1 ? 's are' : ' is') + ' not an @MaxMaserati indicator. Copy the address from the indicator page.', false); return; }
+    if (Object.keys(ids).length < 5) { say($('tvMsg'), 'Use 5 different indicators.', false); return; }
+    S.s2 = vals; save(); say($('tvMsg'), '5 indicators saved. Thank you for the boosts!', true); draw();
+  });
+
+  // steps 3-5: open the page, spend a few seconds there, come back
+  var away = null;
+  document.querySelectorAll('a.away').forEach(function (a) { a.addEventListener('click', function () { away = { n: +a.dataset.step, t: Date.now(), el: a.parentNode.querySelector('.awaymsg') }; }); });
+  function back() {
+    if (!away || document.visibilityState === 'hidden') return;
+    var a = away; away = null;
+    if (Date.now() - a.t >= 8000) { S['s' + a.n] = Date.now(); save(); say(a.el, 'Done. Thank you!', true); draw(); }
+    else say(a.el, 'That was quick. Finish it on the page that opened, then come back.', false);
+  }
+  document.addEventListener('visibilitychange', back); window.addEventListener('focus', back);
+
+  // the code
+  $('earnForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    for (var n = 1; n <= 5; n++) if (!done(n)) { say($('earnMsg'), 'Finish step ' + n + ' first.', false); return; }
+    var b = $('earnGo'); b.disabled = true; b.textContent = 'Making your code…';
+    MMMVip.earnClaim($('earnEmail').value).then(function (r) {
+      if (r.ok) { $('earnCode').textContent = r.code; $('earnDone').hidden = false; $('earnForm').hidden = true; say($('earnMsg'), 'Welcome to V.I.P!', true); $('myCode').textContent = 'Your code: ' + r.code; justEarned = true; setTimeout(function () { show(true); }, 50); }
+      else if (r.error === 'email') say($('earnMsg'), 'Check your email address.', false);
+      else if (r.error === 'taken') { say($('earnMsg'), 'This email already has a V.I.P code. Type it below.', false); $('code').open = true; }
+      else say($('earnMsg'), 'Free sign-up is paused right now. Try again soon, or ask Max for a code.', false);
+    }).catch(function () { say($('earnMsg'), 'Could not reach the V.I.P area. Check your connection and try again.', false); })
+      .finally(function () { b.disabled = false; b.textContent = 'Get my V.I.P code'; });
+  });
+  draw();
 })();
 </script>
 </body>

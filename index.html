@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>MMM Trading | Max Maserati Model</title>
-<meta name="description" content="MMM - the Max Maserati Model. Order-flow education, the MMM Pro c, s and x indicators, a prop-firm journal and free daily gamma levels and news calendar for ES and NQ futures traders.">
+<meta name="description" content="MMM - the Max Maserati Model. Order-flow education, the MMM Pro c, s and x indicators, MMM Pro Edge (5 tested strategies), a prop-firm journal and free daily gamma levels and news calendar for ES and NQ futures traders.">
 <link rel="canonical" href="https://www.maxmaserati.com/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MMM Trading">
@@ -13,14 +13,13 @@
 <meta property="og:url" content="https://www.maxmaserati.com/">
 <meta property="og:image" content="https://www.maxmaserati.com/mmm-logo-lockup.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Max Maserati Trading University","alternateName":"MMM Trading","url":"https://www.maxmaserati.com/","logo":"https://www.maxmaserati.com/logo-icon-512.png","email":"infotrade@maxmaserati.com"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Max Maserati Trading","alternateName":"MMM Trading","url":"https://www.maxmaserati.com/","logo":"https://www.maxmaserati.com/logo-icon-512.png","email":"infotrade@maxmaserati.com"}</script>
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" href="./favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
 <link rel="apple-touch-icon" href="./logo-icon-180-opaque.png">
 <meta name="theme-color" content="#0a0a0a">
-<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -44,6 +43,7 @@
   .teal-text { background-image: linear-gradient(90deg, var(--mmm-tiffany), var(--mmm-tiffany-light)); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .crown-badge { background: var(--mmm-black); border: 2px solid var(--mmm-tiffany); }
 </style>
+<link rel="stylesheet" href="/assets/tw.css?v=20261108">
 </head>
 <body class="text-white">
 
@@ -109,6 +109,39 @@
     <div class="text-center mt-10">
       <a href="./indicators/" class="inline-block font-bold text-black px-7 py-3.5 rounded-xl transition hover:brightness-110" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">How the MMM indicators read order flow</a>
     </div>
+  </div>
+</section>
+
+<section id="edge" class="border-b border-white/10" style="background:linear-gradient(180deg,hsla(45,100%,55%,0.04),#0a0a0a);">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24 grid gap-6 lg:grid-cols-2">
+    <article class="card-hover bg-white/[0.03] border rounded-2xl p-7 flex flex-col" style="border-color:hsla(45,100%,55%,0.3)">
+      <div class="text-xs font-bold tracking-widest uppercase" style="color:var(--mmm-gold-light)">Inside the MMM PRO package</div>
+      <h2 class="mt-3 text-3xl font-extrabold"><span class="gold-text">MMM Pro Edge</span></h2>
+      <p class="mt-3 text-gray-400 leading-relaxed">5 strategies in one TradingView indicator, each one tested on every NQ / MNQ trade from Dec 2022 to Oct 2026. A strategy only made it in if it made money in both test periods with a t-score per day of 3 or more (the edge is very unlikely to be luck), without tuning on the new data.</p>
+      <div class="mt-6 grid grid-cols-3 gap-3 text-center">
+        <div class="rounded-xl border border-white/10 p-3"><div class="num text-2xl font-extrabold" style="color:var(--mmm-gold-light)">5</div><div class="text-xs text-gray-400 mt-1">tested strategies</div></div>
+        <div class="rounded-xl border border-white/10 p-3"><div class="num text-2xl font-extrabold" style="color:var(--mmm-gold-light)">995</div><div class="text-xs text-gray-400 mt-1">trading days tested</div></div>
+        <div class="rounded-xl border border-white/10 p-3"><div class="num text-2xl font-extrabold" style="color:var(--mmm-gold-light)">1</div><div class="text-xs text-gray-400 mt-1">trade at a time, with a daily rule</div></div>
+      </div>
+      <div class="mt-auto pt-7 flex flex-wrap gap-3">
+        <a href="./strategies/" class="inline-block font-bold text-black px-6 py-3 rounded-xl transition hover:brightness-110" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">See the 5 strategies</a>
+        <a href="./whop/" class="inline-block font-bold px-6 py-3 rounded-xl border border-white/20 hover:border-white/40 transition">Get MMM PRO</a>
+      </div>
+    </article>
+    <article class="card-hover bg-white/[0.03] border border-white/10 rounded-2xl p-7 flex flex-col">
+      <div class="text-xs font-bold tracking-widest uppercase" style="color:var(--mmm-gold-light)">MMM V.I.P · the backtested study</div>
+      <h2 class="mt-3 text-3xl font-extrabold">We backtested the traders who get paid millions.</h2>
+      <p class="mt-3 text-gray-400 leading-relaxed">171 interviews of futures prop traders from 6 YouTube channels, 57 of their strategies coded from their own words and backtested year by year on NQ, ES and gold. Only 4 of their 48 headline rules made money every year. Their real edge is how they run their accounts, and V.I.P turns that into a plan for yours.</p>
+      <div class="mt-6 grid grid-cols-3 gap-3 text-center">
+        <div class="rounded-xl border border-white/10 p-3"><div class="num text-2xl font-extrabold" style="color:var(--mmm-gold-light)">171</div><div class="text-xs text-gray-400 mt-1">interviews</div></div>
+        <div class="rounded-xl border border-white/10 p-3"><div class="num text-2xl font-extrabold" style="color:var(--mmm-gold-light)">57</div><div class="text-xs text-gray-400 mt-1">strategies backtested</div></div>
+        <div class="rounded-xl border border-white/10 p-3"><div class="num text-2xl font-extrabold text-green-400">4</div><div class="text-xs text-gray-400 mt-1">of 48 rules made money every year</div></div>
+      </div>
+      <div class="mt-auto pt-7 flex flex-wrap gap-3">
+        <a href="./vip/proof/" class="inline-block font-bold text-black px-6 py-3 rounded-xl transition hover:brightness-110" style="background:linear-gradient(90deg, var(--mmm-gold), var(--mmm-gold-light));">Read the backtested study</a>
+        <a href="./vip/" class="inline-block font-bold px-6 py-3 rounded-xl border border-white/20 hover:border-white/40 transition">Enter V.I.P</a>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -262,6 +295,23 @@
   </div>
 </section>
 
+
+<!-- questions (also read by search engines and AI assistants) -->
+<style>
+.mmm-faq{max-width:72rem;margin:0 auto;padding:3.5rem max(1.25rem,env(safe-area-inset-right,0px)) 4rem max(1.25rem,env(safe-area-inset-left,0px));color:inherit;font-family:Inter,system-ui,sans-serif}
+.mmm-faq .ey{font:700 .75rem/1 Inter,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mmm-gold-light,#f2cf5b)}
+.mmm-faq h2{margin:.5rem 0 1rem;font:800 clamp(1.6rem,3vw,2rem)/1.15 Inter,system-ui,sans-serif;color:#fff}
+.mmm-faq .qs{max-width:48rem}
+.mmm-faq details{border-top:1px solid rgba(255,255,255,.1);padding:.9rem 0}
+.mmm-faq summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:1rem;color:#fff}
+.mmm-faq summary::-webkit-details-marker{display:none}
+.mmm-faq summary::after{content:"+";color:var(--mmm-gold-light,#f2cf5b);font-weight:800}
+.mmm-faq details[open] summary::after{content:"–"}
+.mmm-faq p{margin:.5rem 0 0;color:#a7aeb6;line-height:1.65}
+.mmm-faq a{color:var(--mmm-gold-light,#f2cf5b)}
+</style>
+<section class="mmm-faq" aria-labelledby="faq-h"><div class="ey">Questions</div><h2 id="faq-h">What traders ask about MMM</h2><div class="qs"><details><summary>What is MMM Trading?</summary><p>MMM is the Max Maserati Model: an order-flow method for ES and NQ futures. It comes with TradingView indicators, a free interactive course, a prop-firm journal, and free daily gamma levels and a news calendar.</p></details><details><summary>Who is MMM for?</summary><p>Futures traders, mostly prop-firm traders on ES, NQ and their micros (MES, MNQ) who want clear rules and want to stay funded, not just get funded.</p></details><details><summary>What does &quot;order flow&quot; mean in MMM?</summary><p>Reading who is in control, buyers or sellers, from where each candle closes. A wick is a test; a close past a level is a vote. The MMM indicators mark where control changed hands (flips), where it kept going (continuations) and the zones the winners defend.</p></details><details><summary>Is the MMM Mastery Course free?</summary><p>Yes. It is free and interactive: 11 phases from reading one candle to a full entry checklist, with a quiz at the end of each phase and chart homework. You need a free account to save your progress.</p></details><details><summary>What does the MMM Pro Journal do?</summary><p>It tracks every prop account around a buffer you set and lock once: your risk per trade, a daily plan and mental check, a payout tracker, a discipline score and trade import from Tradovate, NinjaTrader, TopstepX, ProjectX and more.</p></details><details><summary>Are the MMM strategies tested?</summary><p>Yes. Every strategy we show is backtested after costs on NQ / MNQ from Dec 2022 to Oct 2026, over all the data and year by year. See the <a href="/backtests/">backtests</a> and the <a href="/strategies/">strategy book</a>.</p></details><details><summary>Is this financial advice?</summary><p>No. MMM is education and research. Futures trading carries a high risk of loss, and past results do not promise future results.</p></details></div></section>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is MMM Trading?", "acceptedAnswer": {"@type": "Answer", "text": "MMM is the Max Maserati Model: an order-flow method for ES and NQ futures. It comes with TradingView indicators, a free interactive course, a prop-firm journal, and free daily gamma levels and a news calendar."}}, {"@type": "Question", "name": "Who is MMM for?", "acceptedAnswer": {"@type": "Answer", "text": "Futures traders, mostly prop-firm traders on ES, NQ and their micros (MES, MNQ) who want clear rules and want to stay funded, not just get funded."}}, {"@type": "Question", "name": "What does \"order flow\" mean in MMM?", "acceptedAnswer": {"@type": "Answer", "text": "Reading who is in control, buyers or sellers, from where each candle closes. A wick is a test; a close past a level is a vote. The MMM indicators mark where control changed hands (flips), where it kept going (continuations) and the zones the winners defend."}}, {"@type": "Question", "name": "Is the MMM Mastery Course free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It is free and interactive: 11 phases from reading one candle to a full entry checklist, with a quiz at the end of each phase and chart homework. You need a free account to save your progress."}}, {"@type": "Question", "name": "What does the MMM Pro Journal do?", "acceptedAnswer": {"@type": "Answer", "text": "It tracks every prop account around a buffer you set and lock once: your risk per trade, a daily plan and mental check, a payout tracker, a discipline score and trade import from Tradovate, NinjaTrader, TopstepX, ProjectX and more."}}, {"@type": "Question", "name": "Are the MMM strategies tested?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Every strategy we show is backtested after costs on NQ / MNQ from Dec 2022 to Oct 2026, over all the data and year by year. See the backtests and the strategy book."}}, {"@type": "Question", "name": "Is this financial advice?", "acceptedAnswer": {"@type": "Answer", "text": "No. MMM is education and research. Futures trading carries a high risk of loss, and past results do not promise future results."}}]}</script>
 <div id="mmm-footer"></div>
 
 <script src="/assets/nav.js"></script>

@@ -17,7 +17,6 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
 <meta name="theme-color" content="#0a0a0a">
-<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -41,6 +40,7 @@
   .step { flex: none; width: 1.5rem; height: 1.5rem; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: hsla(45,100%,55%,.12); border: 1px solid hsla(45,100%,55%,.3); color: var(--mmm-gold-light); font-size: .75rem; font-weight: 700; margin-top: 1px; }
   .feat { border-left: 2px solid hsla(45,100%,55%,.35); padding-left: .85rem; }
 </style>
+<link rel="stylesheet" href="/assets/tw.css?v=20261108">
 </head>
 <body class="text-white">
 <div id="mmm-header"></div>
@@ -127,6 +127,23 @@
   </div>
   <p class="text-xs text-gray-500 mt-6">Index prices (SPX / NDX); the indicator converts them to futures. CBOE delayed data, naive open-interest model, may differ from other providers. History: <a id="g-hist" href="#" class="underline hover:text-white">gex_history.csv</a></p>
 </main>
+
+<!-- questions (also read by search engines and AI assistants) -->
+<style>
+.mmm-faq{max-width:72rem;margin:0 auto;padding:3.5rem max(1.25rem,env(safe-area-inset-right,0px)) 4rem max(1.25rem,env(safe-area-inset-left,0px));color:inherit;font-family:Inter,system-ui,sans-serif}
+.mmm-faq .ey{font:700 .75rem/1 Inter,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mmm-gold-light,#f2cf5b)}
+.mmm-faq h2{margin:.5rem 0 1rem;font:800 clamp(1.6rem,3vw,2rem)/1.15 Inter,system-ui,sans-serif;color:#fff}
+.mmm-faq .qs{max-width:48rem}
+.mmm-faq details{border-top:1px solid rgba(255,255,255,.1);padding:.9rem 0}
+.mmm-faq summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:1rem;color:#fff}
+.mmm-faq summary::-webkit-details-marker{display:none}
+.mmm-faq summary::after{content:"+";color:var(--mmm-gold-light,#f2cf5b);font-weight:800}
+.mmm-faq details[open] summary::after{content:"–"}
+.mmm-faq p{margin:.5rem 0 0;color:#a7aeb6;line-height:1.65}
+.mmm-faq a{color:var(--mmm-gold-light,#f2cf5b)}
+</style>
+<section class="mmm-faq" aria-labelledby="faq-h"><div class="ey">Questions</div><h2 id="faq-h">Questions about the gamma levels</h2><div class="qs"><details><summary>What are gamma levels?</summary><p>Levels where options dealers hedge: the call wall above price (often slows rallies), the put wall below price (often a floor) and zero gamma / the GEX flip, where moves change from calmer to faster.</p></details><details><summary>How often are they updated?</summary><p>Every trading morning. Copy the block for NQ / MNQ or ES / MES and paste it into the indicator.</p></details><details><summary>Are they real-time?</summary><p>No. They are educational levels modelled from delayed open-interest data.</p></details><details><summary>Which indicator uses them?</summary><p>Gamma Walls and Institutional Bias @MaxMaserati on TradingView: paste the block into Paste Daily Block.</p></details><details><summary>Are the gamma signals part of the tested MMM strategies?</summary><p>No. Watch them on your own chart before you trade with them.</p></details></div></section>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What are gamma levels?", "acceptedAnswer": {"@type": "Answer", "text": "Levels where options dealers hedge: the call wall above price (often slows rallies), the put wall below price (often a floor) and zero gamma / the GEX flip, where moves change from calmer to faster."}}, {"@type": "Question", "name": "How often are they updated?", "acceptedAnswer": {"@type": "Answer", "text": "Every trading morning. Copy the block for NQ / MNQ or ES / MES and paste it into the indicator."}}, {"@type": "Question", "name": "Are they real-time?", "acceptedAnswer": {"@type": "Answer", "text": "No. They are educational levels modelled from delayed open-interest data."}}, {"@type": "Question", "name": "Which indicator uses them?", "acceptedAnswer": {"@type": "Answer", "text": "Gamma Walls and Institutional Bias @MaxMaserati on TradingView: paste the block into Paste Daily Block."}}, {"@type": "Question", "name": "Are the gamma signals part of the tested MMM strategies?", "acceptedAnswer": {"@type": "Answer", "text": "No. Watch them on your own chart before you trade with them."}}]}</script>
 <div id="mmm-footer"></div>
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>

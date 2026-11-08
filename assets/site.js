@@ -163,7 +163,7 @@
       '<footer class="border-t border-white/10 bg-black/40 text-sm text-gray-500">' +
       '<div class="max-w-6xl mx-auto px-5 sm:px-8 pt-12 pb-8 grid gap-10 sm:grid-cols-2 lg:grid-cols-5">' +
       '<div class="lg:col-span-2"><div class="flex items-center gap-2.5 mb-3"><div class="crown-badge h-8 w-8 rounded-lg flex items-center justify-center">' + CROWN.replace('h-6 w-6', 'h-4 w-4') + '</div>' +
-      '<span class="font-bold text-gray-200">Max Maserati Trading University</span></div>' +
+      '<span class="font-bold text-gray-200">Max Maserati Trading</span></div>' +
       '<p class="leading-relaxed max-w-sm">Order-flow education, the MMM Pro indicators and a prop-firm journal for ES and NQ futures traders.</p>' +
       '<p class="mt-4"><a href="mailto:infotrade@maxmaserati.com" class="hover:text-white transition">infotrade@maxmaserati.com</a></p></div>' +
       col('MMM', [['MMM Pro Indicators', '/indicators/'], ['Backtests & Strategies', '/backtests/'], ['Free Course', '/journal/?course=1'], ['MMM Pro Journal', '/journal/'], ['Pricing', '/whop/']]) +
@@ -174,7 +174,7 @@
       '<div class="border-t border-white/10 pt-6 text-xs leading-relaxed text-gray-500 space-y-3">' +
       '<p><b class="text-gray-400">Risk disclosure.</b> Futures and options trading involves substantial risk of loss and is not suitable for every investor. You can lose more than your initial deposit. Only risk capital should be used. Everything on this website, in the course, the indicators and the journal is for education only. It is not financial, investment or trading advice and not a recommendation to buy or sell anything.</p>' +
       '<p><b class="text-gray-400">Hypothetical results.</b> Hypothetical or simulated performance results have inherent limits. They are prepared with hindsight, do not represent actual trading and do not account for slippage, fees or liquidity. Past performance, real or simulated, is not a guarantee of future results.</p>' +
-      '<div class="flex flex-wrap items-center justify-between gap-3 pt-2"><span>&copy; ' + year + ' Max Maserati Trading University. All rights reserved.</span>' +
+      '<div class="flex flex-wrap items-center justify-between gap-3 pt-2"><span>&copy; ' + year + ' Max Maserati Trading. All rights reserved.</span>' +
       '<span class="flex flex-wrap gap-4"><a href="/legal/#terms" class="hover:text-white transition">Terms of Use</a><a href="/legal/#risk" class="hover:text-white transition">Risk Disclosure</a><a href="/legal/#privacy" class="hover:text-white transition">Privacy</a></span></div>' +
       '</div></div></footer>';
   }

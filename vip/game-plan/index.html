@@ -10,7 +10,6 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
 <meta name="theme-color" content="#0a0a0a">
-<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -42,6 +41,7 @@
   #jm .msg { margin-top: 10px; min-height: 1.2em; font-size: 13px; }
   #jm .ok { color: hsl(152,70%,55%); } #jm .bad { color: #ff7b7b; } #jm .warn { color: hsl(45,100%,62%); }
 </style>
+<link rel="stylesheet" href="/assets/tw.css?v=20261108">
 </head>
 <body class="text-white">
 
@@ -60,6 +60,7 @@
 (function () {
   var state = document.getElementById('state'), frame = document.getElementById('app');
   function fail(html) { state.innerHTML = '<div class="box">' + html + '</div>'; }
+  if (!window.MMMVip) return fail('<p>The V.I.P area could not load. Refresh the page.</p><a class="btn-cta" href="/vip/">Back to V.I.P</a>');
   if (!MMMVip.supported()) return fail('<p>This browser is too old to open the V.I.P area. Please update Chrome, Safari, Edge or Firefox.</p>');
   MMMVip.ready().then(function (has) { if (!has) return null; return MMMVip.recheck(); }).then(function (ok) { if (ok === null) return null; if (!ok) throw new Error('revoked'); return MMMVip.open('/vip/game-plan/payload.json'); }).then(function (html) {
     if (html == null) { location.replace('/vip/'); return; }

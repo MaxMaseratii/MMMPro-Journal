@@ -13,4 +13,7 @@
   <url><loc>https://www.maxmaserati.com/whop/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.maxmaserati.com/diagnostic/</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.maxmaserati.com/legal/</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://www.maxmaserati.com/vip/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.maxmaserati.com/vip/proof/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.maxmaserati.com/journal/course/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
