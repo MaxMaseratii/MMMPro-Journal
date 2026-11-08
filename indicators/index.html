@@ -470,6 +470,23 @@ table.cmp{width:100%;border-collapse:collapse;min-width:1040px;font-size:14.5px}
 
 <div class="trybar" id="trybar" role="complementary" aria-label="Try the indicators"><span>See it on your chart</span><a href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="bar">Try it for free</a><button type="button" id="trybar-x" aria-label="Close">×</button></div>
 
+
+<!-- questions (also read by search engines and AI assistants) -->
+<style>
+.mmm-faq{max-width:72rem;margin:0 auto;padding:3.5rem max(1.25rem,env(safe-area-inset-right,0px)) 4rem max(1.25rem,env(safe-area-inset-left,0px));color:inherit;font-family:Inter,system-ui,sans-serif}
+.mmm-faq .ey{font:700 .75rem/1 Inter,system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--mmm-gold-light,#f2cf5b)}
+.mmm-faq h2{margin:.5rem 0 1rem;font:800 clamp(1.6rem,3vw,2rem)/1.15 Inter,system-ui,sans-serif;color:#fff}
+.mmm-faq .qs{max-width:48rem}
+.mmm-faq details{border-top:1px solid rgba(255,255,255,.1);padding:.9rem 0}
+.mmm-faq summary{cursor:pointer;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:1rem;color:#fff}
+.mmm-faq summary::-webkit-details-marker{display:none}
+.mmm-faq summary::after{content:"+";color:var(--mmm-gold-light,#f2cf5b);font-weight:800}
+.mmm-faq details[open] summary::after{content:"–"}
+.mmm-faq p{margin:.5rem 0 0;color:#a7aeb6;line-height:1.65}
+.mmm-faq a{color:var(--mmm-gold-light,#f2cf5b)}
+</style>
+<section class="mmm-faq" aria-labelledby="faq-h"><div class="ey">Questions</div><h2 id="faq-h">Questions about the MMM indicators</h2><div class="qs"><details><summary>Do the MMM indicators repaint?</summary><p>No. They work on closed candles only, so what you see on past candles is what you would have seen live.</p></details><details><summary>Which markets and timeframes do they work on?</summary><p>They are built and tested on ES and NQ futures (and their micros), from the 1-minute chart to the daily. A higher timeframe can be shown inside your chart.</p></details><details><summary>Which indicator should I start with?</summary><p>MMM Candle Bias Pro. It reads every closed candle (16 candle types, each with a side, a target and a protected end). Every other MMM indicator is built on this reading.</p></details><details><summary>Can I try them before I pay?</summary><p>Yes. You can start for free on Whop, put them on your own chart and judge for yourself.</p></details><details><summary>How do I get access on TradingView?</summary><p>The indicators are invite-only on TradingView. Access is handled through <a href="/whop/">Whop</a>: you join there and link your TradingView username.</p></details><details><summary>Are the signals backtested?</summary><p>Yes. The <a href="/backtests/">backtests</a> show what was tested, what works and what does not, after costs, on NQ / MNQ from Dec 2022 to Oct 2026.</p></details></div></section>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Do the MMM indicators repaint?", "acceptedAnswer": {"@type": "Answer", "text": "No. They work on closed candles only, so what you see on past candles is what you would have seen live."}}, {"@type": "Question", "name": "Which markets and timeframes do they work on?", "acceptedAnswer": {"@type": "Answer", "text": "They are built and tested on ES and NQ futures (and their micros), from the 1-minute chart to the daily. A higher timeframe can be shown inside your chart."}}, {"@type": "Question", "name": "Which indicator should I start with?", "acceptedAnswer": {"@type": "Answer", "text": "MMM Candle Bias Pro. It reads every closed candle (16 candle types, each with a side, a target and a protected end). Every other MMM indicator is built on this reading."}}, {"@type": "Question", "name": "Can I try them before I pay?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. You can start for free on Whop, put them on your own chart and judge for yourself."}}, {"@type": "Question", "name": "How do I get access on TradingView?", "acceptedAnswer": {"@type": "Answer", "text": "The indicators are invite-only on TradingView. Access is handled through Whop: you join there and link your TradingView username."}}, {"@type": "Question", "name": "Are the signals backtested?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. The backtests show what was tested, what works and what does not, after costs, on NQ / MNQ from Dec 2022 to Oct 2026."}}]}</script>
 <div id="mmm-footer"></div>
 <script>
 (function () {
