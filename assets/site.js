@@ -167,7 +167,7 @@
       '<p class="leading-relaxed max-w-sm">Order-flow education, the MMM Pro indicators and a prop-firm journal for ES and NQ futures traders.</p>' +
       '<p class="mt-4"><a href="mailto:infotrade@maxmaserati.com" class="hover:text-white transition">infotrade@maxmaserati.com</a></p></div>' +
       col('MMM', [['MMM Pro Indicators', '/indicators/'], ['Backtests & Strategies', '/backtests/'], ['Free Course', '/journal/?course=1'], ['MMM Pro Journal', '/journal/'], ['Pricing', '/whop/']]) +
-      col('Free tools', [['Gamma Levels', '/gamma/'], ['News Calendar', '/news/'], ['Trading Discipline Test', '/diagnostic/']]) +
+      col('Free tools', [['Gamma Levels', '/gamma/'], ['News Calendar', '/news/'], ['Trading Discipline Test', '/diagnostic/'], ['Get TradingView', 'https://www.tradingview.com/MaxMaseraticom?aff_id=132997']]) +
       col('Watch live', SOCIAL) +
       '</div>' +
       '<div class="max-w-6xl mx-auto px-5 sm:px-8 pb-10">' +
