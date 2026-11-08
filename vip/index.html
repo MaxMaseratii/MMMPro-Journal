@@ -17,7 +17,6 @@
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="apple-touch-icon" href="/logo-icon-180-opaque.png">
 <meta name="theme-color" content="#0a0a0a">
-<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -25,7 +24,7 @@
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"What is MMM V.I.P?","acceptedAnswer":{"@type":"Answer","text":"Free members-only tools for futures prop traders: the Game Plan Builder (tests your prop account rules on every MMM Pro Edge trade from Dec 2022 to Oct 2026) and the Prop Scale Planner (how many accounts to run, how to copy them and how much money you need)."}},
 {"@type":"Question","name":"How do MMM users get V.I.P access?","acceptedAnswer":{"@type":"Answer","text":"MMM users get V.I.P access free by supporting the work in 5 steps on maxmaserati.com/vip/: share the backtested study on X, boost 5 MMM indicators on TradingView, follow on TradingView, follow on X and subscribe on YouTube. Then they type their email and get a personal code on screen."}},
-{"@type":"Question","name":"What is the backtested study?","acceptedAnswer":{"@type":"Answer","text":"We studied 171 interviews of futures prop traders who claim $250k to $5M in payouts, from 6 YouTube channels (Chart Fanatics, Titans of Tomorrow, Words of Rizdom, Speculators, Desire To Trade, Chat With Traders). We coded 57 of their strategies from their own words and backtested them year by year on NQ, ES and gold. Only 4 made money year after year. Their real edge is how they run their accounts."}},
+{"@type":"Question","name":"What is the backtested study?","acceptedAnswer":{"@type":"Answer","text":"We studied 171 interviews of futures prop traders who claim $250k to $5M in payouts, from 6 YouTube channels (Chart Fanatics, Titans of Tomorrow, Words of Rizdom, Speculators, Desire To Trade, Chat With Traders). We coded 57 of their strategies from their own words and backtested them year by year on NQ, ES and gold. Only 4 of their 48 headline rules made money year after year. Their real edge is how they run their accounts."}},
 {"@type":"Question","name":"Where do the numbers come from?","acceptedAnswer":{"@type":"Answer","text":"From one master trade file: every MMM Pro Edge trade on NQ and MNQ from Dec 26 2022 to Oct 16 2026, with real entry and exit times. A strategy is only kept if it made money in both test periods with a t-score per day of 3 or more, without tuning on the new data."}},
 {"@type":"Question","name":"Is this financial advice?","acceptedAnswer":{"@type":"Answer","text":"No. These are research tools built on backtests. Past results do not promise future results, and real trading is usually worse than a backtest."}}]}
 </script>
@@ -87,6 +86,7 @@
   details.faq summary::after { color: var(--g2); }
   [hidden] { display: none !important; }
 </style>
+<link rel="stylesheet" href="/assets/tw.css?v=20261108">
 </head>
 <body class="text-white">
 
@@ -193,7 +193,7 @@
       <div class="eyebrow">The study behind V.I.P</div>
       <h2 class="mt-2 text-3xl sm:text-4xl font-extrabold leading-tight">We backtested the strategies of the traders who get paid millions.</h2>
       <p class="mt-4 text-gray-300 leading-relaxed">We studied <b>171 interviews</b> of futures prop traders who claim <b>$250k to $5M</b> in payouts, from 6 popular YouTube channels. We wrote down their rules in their own words, coded <b>57 of their strategies</b> and backtested each one year by year on NQ, ES and gold.</p>
-      <p class="mt-3 text-gray-300 leading-relaxed"><b>Only 4 made money year after year.</b> Yet their payouts are real. Their edge is mostly how they run their accounts: many accounts, big risk to pass, small risk once funded, payouts as soon as the rules allow. V.I.P turns that method into numbers for your own account.</p>
+      <p class="mt-3 text-gray-300 leading-relaxed"><b>Only 4 of their 48 headline rules made money year after year.</b> Yet their payouts are real. Their edge is mostly how they run their accounts: many accounts, big risk to pass, small risk once funded, payouts as soon as the rules allow. V.I.P turns that method into numbers for your own account.</p>
       <div class="mt-5 flex flex-wrap gap-2"><span class="chan">Chart Fanatics</span><span class="chan">Titans of Tomorrow</span><span class="chan">Words of Rizdom</span><span class="chan">Speculators</span><span class="chan">Desire To Trade</span><span class="chan">Chat With Traders</span></div>
       <div class="mt-7 flex flex-wrap gap-3"><a href="/vip/proof/" class="btn-gold">Read the backtested study</a><a class="btn-out share-x" href="#" target="_blank" rel="noopener">Share it on X</a></div>
     </div>
@@ -201,7 +201,7 @@
       <div class="stat"><b>171</b><span>trader interviews studied</span></div>
       <div class="stat"><b>6</b><span>YouTube channels</span></div>
       <div class="stat"><b>57</b><span>strategies coded from their own words and backtested</span></div>
-      <div class="stat"><b style="color:var(--hope)">4</b><span>made money year after year</span></div>
+      <div class="stat"><b style="color:var(--hope)">4</b><span>of 48 headline rules made money year after year</span></div>
       <p class="col-span-2 text-xs text-gray-500">NQ, ES and gold, Dec 2022 – Nov 2026, every year judged on its own, with a random twin for every trade (same trade, random time).</p>
     </div>
   </div>
@@ -227,7 +227,7 @@
     <article class="tool card lux-card p-6 grid gap-4 content-start">
       <div class="flex items-center justify-between gap-3"><h3 class="text-xl font-extrabold">The traders' strategies, backtested</h3><span class="badge-open">OPEN</span></div>
       <p class="text-gray-400">Trader by trader: what they claim, the rules they gave in their own words, and what those rules did in our backtest, year by year.</p>
-      <div class="peek"><div><b>171</b><span>interviews</span></div><div><b>57</b><span>strategies tested</span></div><div><b style="color:var(--hope)">4</b><span>made money every year</span></div></div>
+      <div class="peek"><div><b>171</b><span>interviews</span></div><div><b>57</b><span>strategies tested</span></div><div><b style="color:var(--hope)">4</b><span>of 48 rules made money every year</span></div></div>
       <a href="/vip/proof/" class="btn-out text-sm justify-self-start">Read the backtested study</a>
     </article>
   </div>
@@ -239,10 +239,10 @@
   <h2 class="mt-2 text-3xl font-extrabold">What traders ask before they join</h2>
   <div class="mt-4 max-w-3xl">
     <details class="faq"><summary>How do MMM users get V.I.P access?</summary><p>Support the work in 5 steps: share the backtested study on X, boost 5 MMM indicators on TradingView, follow on TradingView, follow on X and subscribe on YouTube. Then type your email and your personal code shows on screen. You can also get a code from Max directly.</p></details>
-    <details class="faq"><summary>What is the backtested study?</summary><p>We studied 171 interviews of futures prop traders who claim $250k to $5M in payouts, from Chart Fanatics, Titans of Tomorrow, Words of Rizdom, Speculators, Desire To Trade and Chat With Traders. We coded 57 of their strategies from their own words and backtested them year by year on NQ, ES and gold. Only 4 made money year after year: their payouts come mostly from how they run their accounts.</p></details>
+    <details class="faq"><summary>What is the backtested study?</summary><p>We studied 171 interviews of futures prop traders who claim $250k to $5M in payouts, from Chart Fanatics, Titans of Tomorrow, Words of Rizdom, Speculators, Desire To Trade and Chat With Traders. We coded 57 of their strategies from their own words and backtested them year by year on NQ, ES and gold. Only 4 of their 48 headline rules made money year after year: their payouts come mostly from how they run their accounts.</p></details>
     <details class="faq"><summary>Where do the V.I.P numbers come from?</summary><p>One master trade file: every MMM Pro Edge trade on NQ and MNQ from Dec 26 2022 to Oct 16 2026, with real entry and exit times. A strategy is kept only if it made money in both test periods with a t-score per day of 3 or more, without tuning on the new data.</p></details>
     <details class="faq"><summary>Which prop accounts does it work for?</summary><p>EOD trailing and static drawdown accounts. Type your firm's real rules: drawdown, target, daily limit, payout rules. Intraday (unrealized) trailing drawdown is not tested and the tools tell you to avoid it.</p></details>
-    <details class="faq"><summary>Do I need MMM Pro Edge?</summary><p>The Game Plan Builder plans around MMM Pro Edge's 5 strategies. In the Prop Scale Planner you can also type your own strategy's stats or paste your own trades.</p></details>
+    <details class="faq"><summary>Do I need MMM Pro Edge?</summary><p>MMM Pro Edge comes inside the <a href="/whop/" class="gold">MMM PRO package</a>. The Game Plan Builder plans around its 5 strategies. In the Prop Scale Planner you can also type your own strategy's stats or paste your own trades.</p></details>
     <details class="faq"><summary>What are the limits?</summary><p>It is a backtest. Real trading is usually worse: slippage, missed trades, nerves. The planner cuts the edge a little on purpose, and every page says how the test works. It is research, not financial advice.</p></details>
     <details class="faq"><summary>Can I lose access?</summary><p>Codes can be switched off if they are shared in public. One code per email, and it works on all your devices: open "Already a V.I.P member?" under Free V.I.P access.</p></details>
   </div>
@@ -257,7 +257,7 @@
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var PROOF = 'https://www.maxmaserati.com/vip/proof/';
-  var POST = 'We read 171 funded-trader interviews and tested 57 of their strategies year by year on NQ, ES and gold.\n\nOnly 4 made money every year. The big payouts come from how they run their accounts.\n\nThe full study, free, by @MaxMaserati #MMMTrading';
+  var POST = 'We read 171 funded-trader interviews and tested 57 of their strategies on NQ, ES and gold.\n\nOnly 4 of their 48 headline rules made money every year. The big payouts come from how they run accounts.\n\nFree study by @MaxMaserati #MMMTrading';
   var shareUrl = 'https://x.com/intent/post?text=' + encodeURIComponent(POST) + '&url=' + encodeURIComponent(PROOF);
   document.querySelectorAll('.share-x').forEach(function (a) { a.href = shareUrl; });
 
@@ -268,7 +268,7 @@
   $('openEarn').addEventListener('click', function () { openPanel(true); });
   $('closeEarn').addEventListener('click', function () { openPanel(false); });
   if (location.hash === '#earn' || location.hash === '#code') openPanel(true);
-  if (!MMMVip.supported()) { $('nosupport').hidden = false; $('openEarn').hidden = true; return; }
+  if (!window.MMMVip || !MMMVip.supported()) { $('nosupport').hidden = false; if (!window.MMMVip) $('nosupport').textContent = 'The V.I.P area could not load. Refresh the page.'; $('openEarn').hidden = true; return; }
   show(MMMVip.hasKey());
   document.addEventListener('mmm:vip', function () { if (MMMVip.hasKey()) show(true); });
   if (MMMVip.hasKey()) MMMVip.recheck().then(function (ok) { if (!ok) { show(false); $('msg').textContent = 'Your V.I.P access was switched off. Contact Max.'; $('msg').className = 'text-sm text-center min-h-[1.25rem] msg-bad'; } });
