@@ -514,9 +514,9 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
   function usd(v) { v = v * K(); return (v < 0 ? '−' : '+') + '$' + Math.abs(Math.round(v)).toLocaleString('en-US'); }
   function id(c) { return 's-' + c.replace(/\./g, '-'); }
   var TEST = { pass: '✔ WORKS', fail: '✖ NO', unsure: '~ MAYBE' };
-  var FULL = { 'MMM PRO c': 'Candle OrderFlow', 'MMM PRO x': 'Expander Block OrderFlow', 'MMM PRO s': 'Swing OrderFlow', 'MMM PRO FVA': 'Fair Value Area OrderFlow', 'MMM PRO XCS (x + c + s)': 'all engines in one', 'MMPD Lite': 'Premium / discount oscillator' };
+  var FULL = { 'MMM PRO c': 'Candle OrderFlow', 'MMM PRO x': 'Expander Block OrderFlow', 'MMM PRO s': 'Swing OrderFlow', 'MMM PRO FVA': 'Fair Value Area OrderFlow', 'MMM PRO XCS (x + c + s)': 'all engines in one', 'MMPD Lite': 'Premium / discount oscillator', 'DC Take Over Ride': 'winner-line take overs with a 4h / 1h filter' };
   // one short line per tool, shown under the filters when a tool is picked
-  var IND_DESC = { 'MMPD Lite': 'Premium / discount oscillator: ▲▼ arrows, red / green backgrounds and the colour of each MMPD candle.' };
+  var IND_DESC = { 'MMPD Lite': 'Premium / discount oscillator: ▲▼ arrows, red / green backgrounds and the colour of each MMPD candle.', 'DC Take Over Ride': 'Standalone indicator: winner line, DC / OC lines and take overs on 15m, filtered by the 4h and 1h winner lines. Built on the Aggressive Demand Urgency Flip engine.' };
   var YEARS = ['2023', '2024', '2025', '2026'];
   function stl(s) { return s.status === 'trade' ? 'Trade · in Pro Edge' : s.status === 'test' ? 'Backtest first' : s.status === 'watch' ? 'Watch' : 'Weak · no edge over all the data'; }
   function yrTxt(s) { return (s.verdict === 'NO' ? 'NO' : s.verdict) + ' · ' + (s.green || 0) + ' of ' + (s.counted || 4) + ' years green'; }
