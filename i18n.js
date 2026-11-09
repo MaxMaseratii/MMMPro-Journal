@@ -262,6 +262,7 @@ function mmmApplyLang(lang, root) {
     __mmmBusy = false;
   }
 }
+var MMM_I18N_V = '20261109';
 function mmmLoadDict(lang) {
   if (lang === 'en') return Promise.resolve();
   if (MMM_DICT_LOADED[lang]) return MMM_DICT_LOADED[lang];
@@ -271,7 +272,9 @@ function mmmLoadDict(lang) {
       .then(function (j) { for (var k in j) MMM_DICT[lang][k] = j[k]; });
   }
   var B = (window.MMM_I18N_BASE || '') + '/i18n/';   // pages drawn in a blob frame (V.I.P tools) pass the site origin
-  MMM_DICT_LOADED[lang] = Promise.all([get(B + lang + '/common.json'), get(B + lang + '/' + mmmPageKey() + '.json')]);
+  // ?v= changes when the dictionaries change, so browsers never keep an old copy (force-cache would)
+  var V = '?v=' + MMM_I18N_V;
+  MMM_DICT_LOADED[lang] = Promise.all([get(B + lang + '/common.json' + V), get(B + lang + '/' + mmmPageKey() + '.json' + V)]);
   return MMM_DICT_LOADED[lang];
 }
 function mmmSyncSelects(lang) {
