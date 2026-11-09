@@ -33,9 +33,9 @@
   // Max's channels (handle @MaxMaserati)
   var SOCIAL = [
     ['Twitch', 'https://www.twitch.tv/maxmaserati'],
-    ['YouTube', 'https://www.youtube.com/@MaxMaserati'],
+    ['YouTube', 'https://www.youtube.com/@MaxMaseratiModel'],
     ['TikTok', 'https://www.tiktok.com/@maxmaserati'],
-    ['X', 'https://x.com/MaxMaserati'],
+    ['X', 'https://x.com/Emaxmaserati'],
     ['Facebook', 'https://www.facebook.com/MaxMaserati']
   ];
   var CROWN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="var(--mmm-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7Zm3 15h14"/></svg>';
