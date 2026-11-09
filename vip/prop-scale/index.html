@@ -51,7 +51,11 @@
     // links between the two V.I.P pages are written as /vip/... : point them at this site and open them in the main window
     html = html.split('href="/vip/').join('target="_top" href="' + location.origin + '/vip/');
     html = html.split("href='/vip/").join("target='_top' href='" + location.origin + "/vip/");
-    frame.src = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    // the site's translations run inside the planner too (dictionary: /i18n/<lang>/planner.json + common.json)
+    var o = location.origin;
+    var doc = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="mmm-page" content="planner"><style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>' + html +
+      '<scr' + 'ipt>window.MMM_I18N_BASE=' + JSON.stringify(o) + ';</scr' + 'ipt><scr' + 'ipt src="' + o + '/i18n.js"></scr' + 'ipt></body></html>';
+    frame.src = URL.createObjectURL(new Blob([doc], { type: 'text/html' }));
     frame.onload = function () { state.hidden = true; frame.hidden = false; };
     frame.hidden = false;
   }).catch(function (e) {
