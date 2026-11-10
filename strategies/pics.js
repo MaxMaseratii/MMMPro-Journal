@@ -307,6 +307,24 @@
     return sc;
   };
 
+  // DC Take Over Ride: 15m buyers take over the sellers DC, inside a 4h up trend with a 1h pullback
+  B.dcride = function (spec) {
+    var sc = { c: [], zones: [], lines: [], marks: [], notes: [] };
+    [K(80, 82, 72, 74), K(74, 76, 64, 66), K(66, 68, 56, 58), K(58, 61, 50, 52), K(52, 57, 48, 56), K(56, 60, 54, 55)].forEach(function (k) { sc.c.push(k); });
+    sc.c.push(K(55, 70, 54, 69, 'BuBC'));
+    [K(69, 76, 67, 75), K(75, 81, 73, 74), K(74, 83, 73, 82), K(82, 89, 80, 88)].forEach(function (k) { sc.c.push(k); });
+    sc.lines.push({ y: 64, x0: -0.5, x1: 6, cls: 'lvl', label: 'sellers DC' });
+    sc.lines.push({ y: 48, x0: 4, cls: 'lim', label: 'buyers DC = exit' });
+    sc.marks.push({ x: 4, y: 48, t: 'touch', label: 'buyers take the winner line', side: -1 });
+    sc.marks.push({ x: 6, y: 70, t: 'tag', label: 'take over: BuBC above sellers DC', side: 1 });
+    sc.marks.push({ x: 6, y: 69, t: 'fill', label: 'buy at its close', side: -1 });
+    addRisk(sc, 69, 6.4, spec, 48);
+    sc.notes.push({ x: 0.2, y: 93, text: '4h winner line: buyers ✓', f: 1, box: 1 });
+    sc.notes.push({ x: 0.2, y: 93, text: '1h winner line: still sellers = pullback (A+)', f: 1, box: 1 });
+    sc.notes.push({ x: 0, y: 8, text: 'exit: first BeBC close below the buyers DC' });
+    return sc;
+  };
+
   /* ---------- renderer ---------- */
   var W = 600, RM = 152, LM = 12;
   function render(spec, dir, filt) {
