@@ -21,13 +21,15 @@
   // The menu lives in /assets/nav.js (shared with the app pages). Fallback copy below.
   var NAV = window.MMM_NAV || [
     ['Indicators', '/indicators/'],
-    ['Strategies', '/strategies/'],
-    ['Backtests', '/backtests/'],
+    ['Strategies', [
+      ['Strategy Book', '/strategies/', 'Every MMM strategy, tested and ranked'],
+      ['Backtests', '/backtests/', 'Full backtest results, market by market']
+    ]],
+    ['Prop Firms', '/prop-firms/'],
     ['Free MMM Mastery & Tools', [
       ['Free MMM Mastery Course', '/journal/?course=1', 'The full MMM method, free'],
       ['Trading Test', '/diagnostic/', 'Check your trading discipline'],
-      ['Gamma & News', '/gamma/', 'Daily gamma levels and news calendar'],
-      ['Prop Firm Comparison', '/prop-firms/', 'One-pay prop plans, side by side']
+      ['Gamma & News', '/gamma/', 'Daily gamma levels and news calendar']
     ]],
     ['V.I.P', '/vip/']
   ];

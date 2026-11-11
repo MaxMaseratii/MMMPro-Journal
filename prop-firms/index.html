@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Prop Firm Comparison · One-pay futures prop plans, side by side | MMM Trading</title>
-<meta name="description" content="Every futures prop plan you pay for once: no activation fee and an end-of-day or static drawdown in both the evaluation and the funded account. Price, drawdown, target, daily loss and payout rules, size by size.">
+<meta name="description" content="Every futures prop plan you pay for once, side by side: price, drawdown, how fast you get paid, funded consistency, trade copier rules, banned countries and Trustpilot stars.">
 <link rel="canonical" href="https://www.maxmaserati.com/prop-firms/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MMM Trading">
@@ -23,7 +23,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* Prop Firm Comparison · same trading-terminal sheet as the MMM Strategy Book.
-   Data: prop_plans.json in the MMM Marketing Hub repo (one source), with a local copy as a fallback. */
+   Data: /prop-firms/plans.json (plans + firms: Trustpilot, copier rules, banned countries, payout speed, affiliate slots). */
 :root{
   --bg:#07080a;--panel:#0f1114;--panel2:#0b0d10;--row:#14171b;--row2:#101317;--line:#252a31;--line2:#323942;
   --fg:#d9dde3;--mute:#8f97a1;--faint:#5f6873;--gold:#e1b31a;--gold2:#f2cf5b;--teal:#4fd1c5;
@@ -190,6 +190,75 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
 .band p{margin:0;max-width:70ch;color:#c9d0d6;font-size:15px;line-height:1.55}
 .disc{margin:26px 0 40px;padding:12px 14px;border:1px solid var(--line);font-size:13px;line-height:1.55;color:var(--mute)}
 .loading{color:var(--mute);font:13px var(--mono);padding:24px 0}
+
+/* payouts, copier, countries, Trustpilot */
+.desk{max-width:1440px}
+table.led{min-width:1180px}
+.firm .frow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin-top:5px}
+.stars{display:inline-flex;align-items:center;gap:5px;font:12px var(--mono);color:var(--mute);text-decoration:none;white-space:nowrap}
+a.stars:hover{color:var(--fg)}
+.st{position:relative;display:inline-block;font:14px/1 system-ui,'Segoe UI Symbol',sans-serif;letter-spacing:1px;color:#3a4048}
+.st i{position:absolute;left:0;top:0;overflow:hidden;white-space:nowrap;color:#00b67a;font-style:normal}
+.stars b{color:var(--fg);font-weight:600;display:inline}
+.stars.x{color:var(--dn);font:600 11px/1.2 var(--display);letter-spacing:.05em;text-transform:uppercase}
+.stars.x.none{color:var(--faint)}
+.tag.cy{color:var(--up);border-color:rgba(61,220,151,.45)}
+.tag.cl{color:var(--mix);border-color:rgba(242,201,76,.45)}
+.tag.ca{color:var(--teal);border-color:rgba(79,209,197,.45)}
+.tag.cn{color:var(--dn);border-color:rgba(255,92,108,.45)}
+.tag.cu{color:var(--faint)}
+.tag.bn{color:var(--dn);border-color:rgba(255,92,108,.45)}
+.pd{display:inline-block;font:700 13px/1 var(--display);letter-spacing:.05em;text-transform:uppercase;padding:5px 7px;border:1px solid var(--line2);color:var(--mute);white-space:nowrap}
+.pd.p1{background:var(--up);border-color:var(--up);color:#06110c}
+.pd.p3{color:var(--up);border-color:rgba(61,220,151,.5)}
+.pd.p5{color:var(--fg)}
+.pd.p14{color:var(--dn);border-color:rgba(255,92,108,.4)}
+.cs{font:600 13px var(--mono)}
+.cs.c0{color:var(--up)}.cs.c35{color:var(--mix)}.cs.c50{color:#ff9f5a}
+.cnote{display:none;margin:0 0 12px;padding:10px 14px;border:1px solid rgba(79,209,197,.4);background:rgba(79,209,197,.06);font-size:14px;line-height:1.5;color:#cfd5da}
+.cnote.on{display:block}
+.cnote b{color:var(--fg)}
+.fbar select#f-country{max-width:190px}
+.drow{grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr)}
+.drow h4{margin:0 0 8px;font:700 14px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--gold)}
+.drow .blk+.blk{margin-top:14px}
+.drow details summary{cursor:pointer;color:var(--teal);font:600 12.5px var(--display);letter-spacing:.06em;text-transform:uppercase}
+.drow .clist{margin:8px 0 0;font-size:13px;line-height:1.6;color:var(--mute)}
+.drow .clist mark{background:var(--dn);color:#fff;padding:0 3px}
+.go{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.go .code{font:600 13px var(--mono);color:var(--gold2);border:1px dashed rgba(225,179,26,.6);padding:7px 10px}
+@media (max-width:1100px){.drow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media (max-width:760px){.drow{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:700px){table.led{min-width:0}.led .frow{margin-top:6px}}
+/* payout ladder */
+.ladder{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.lane{background:var(--panel);padding:12px 12px 14px;min-width:0}
+.lane h3{margin:0 0 2px;font:700 22px/1.1 var(--display);letter-spacing:.04em;text-transform:uppercase}
+.lane p{margin:0 0 10px;font-size:12.5px;color:var(--mute);line-height:1.4}
+.lane.l1 h3{color:var(--up)}.lane.l3 h3{color:var(--teal)}.lane.l5 h3{color:var(--fg)}.lane.l14 h3{color:var(--dn)}.lane.l0 h3{color:var(--mute)}
+.chipl{display:grid;gap:6px}
+.chipl button{all:unset;cursor:pointer;display:block;padding:7px 9px;border:1px solid var(--line2);background:var(--panel2);font-size:13px;line-height:1.3}
+.chipl button:hover{border-color:var(--gold)}
+.chipl button b{display:block;color:var(--fg);font-weight:600}
+.chipl button small{color:var(--mute)}
+@media (max-width:1000px){.ladder{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.ladder{grid-template-columns:minmax(0,1fr)}}
+/* copier groups */
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:12px;align-items:start}
+@media (max-width:480px){.groups{grid-template-columns:minmax(0,1fr)}.grp td:nth-child(3){display:none}.grp td{padding:7px 6px}}
+.grp{border:1px solid var(--line);background:var(--panel);min-width:0}
+.grp .gh{padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+.grp h3{margin:0;font:700 20px/1.1 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--fg)}
+.grp .gh p{margin:6px 0 0;font-size:13.5px;line-height:1.5;color:#c9d0d6}
+.grp .gh .k{display:inline-block;margin-top:8px;font:600 12px var(--mono);color:var(--gold2)}
+.grp table{width:100%;border-collapse:collapse;font-size:13px}
+.grp td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.grp td:first-child{padding-left:16px}
+.grp td small{display:block;color:var(--mute);font-size:12px;line-height:1.35}
+.grp.no h3{color:var(--dn)}
+.tips{margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.tips div{background:var(--panel2);padding:12px 14px;font-size:13.5px;line-height:1.5;color:#c9d0d6}
+.tips b{display:block;font:700 14px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
 </style>
 <link rel="stylesheet" href="/assets/tw.css?v=20261108">
 </head>
@@ -201,11 +270,12 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
     <div>
       <div class="eyebrow"><i aria-hidden="true"></i><span>Prop firm research · checked</span> <span id="chk" translate="no"></span></div>
       <h1>Prop firm comparison</h1>
-      <p class="lede">Every futures prop plan you pay for once: no activation fee, and an end-of-day or static drawdown in both the evaluation and the funded account. Every account size side by side, so you can see what you really get for your money.</p>
+      <p class="lede">Every futures prop plan you pay for once: no activation fee, and an end-of-day or static drawdown in both the evaluation and the funded account. Every account size side by side, with how fast you get paid, the funded consistency rule, copier rules, banned countries and Trustpilot stars.</p>
       <p class="facts" id="facts">Loading the plans…</p>
       <div class="acts">
         <a class="btn-try" href="#compare">Compare every size ↓</a>
-        <a class="btn-ghost" href="#firms">Firm by firm</a>
+        <a class="btn-ghost" href="#speed">Fastest payouts</a>
+        <a class="btn-ghost" href="#copier">Copier groups</a>
         <a class="btn-ghost" href="/vip/">Plan your accounts · V.I.P</a>
       </div>
     </div>
@@ -220,12 +290,14 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
 
 <div class="fbar" id="filters" role="region" aria-label="Filters">
   <div class="desk">
+    <label><span>Your country</span><select id="f-country"><option value="">Any country</option></select></label>
     <label class="q"><span>Search firm or plan</span><input type="search" id="f-q" placeholder="e.g. Tradeify"></label>
     <div class="fl" role="group" aria-label="Account size"><span>Account size</span><span class="chips" id="f-size"></span></div>
     <label><span>Drawdown</span><select id="f-dd"><option value="all">EOD or static</option><option value="EOD">EOD only</option><option value="Static">Static only</option></select></label>
     <label><span>Plan type</span><select id="f-kind"><option value="all">All plan types</option><option value="Evaluation">Evaluation</option><option value="Instant funded">Instant funded</option></select></label>
-    <label><span>Sort by</span><select id="f-sort"><option value="per1k">$ per $1K drawdown</option><option value="price">Price, low to high</option><option value="dd">Drawdown, high to low</option><option value="ratio">Target ÷ drawdown</option><option value="size">Account size</option><option value="firm">Firm A–Z</option></select></label>
+    <label><span>Sort by</span><select id="f-sort"><option value="per1k">$ per $1K drawdown</option><option value="pay">Fastest first payout</option><option value="tp">Trustpilot stars</option><option value="cons">Funded consistency, lowest</option><option value="price">Price, low to high</option><option value="dd">Drawdown, high to low</option><option value="ratio">Target ÷ drawdown</option><option value="size">Account size</option><option value="firm">Firm A–Z</option></select></label>
     <label><span>Max price $</span><input type="number" id="f-max" min="0" step="10" placeholder="any"></label>
+    <label class="tg"><input type="checkbox" id="f-cp"> <span>Copier OK only</span></label>
     <label class="tg"><input type="checkbox" id="f-ver"> <span>Fully checked only</span></label>
     <label class="tg"><input type="checkbox" id="f-mo"> <span>Show monthly-billed plans</span></label>
     <span class="count" id="count"></span>
@@ -235,27 +307,49 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
 <main>
   <section class="sec" id="compare">
     <div class="desk">
-      <div class="sh"><div><h2>Every account size, side by side</h2><p>One row per account size. Tap a row to see the plan's rules. <b>$ per $1K drawdown</b> = price ÷ drawdown × 1,000: lower means more room for your money. <b>Target ÷ drawdown</b> = how many drawdowns of profit you need to pass: lower is easier. Prices are list prices; promos change every week.</p></div></div>
+      <div class="sh"><div><h2>Every account size, side by side</h2><p>One row per account size. Tap a row for the plan's rules, payout details, banned countries and the link to the firm. <b>$ per $1K drawdown</b> = price ÷ drawdown × 1,000: lower means more room for your money. <b>1st payout</b> = the fewest funded trading days before you can ask for your first payout. <b>Funded consistency</b> = your best day must stay under this % of your total profit to get paid.</p></div></div>
+      <div class="cnote" id="cnote"></div>
       <div class="lw"><table class="led" id="led" aria-label="Prop plans by account size">
         <thead><tr>
-          <th class="l" data-k="firm"><button type="button">Firm · plan</button></th>
+          <th class="l" data-k="firm"><button type="button">Firm · plan · Trustpilot</button></th>
           <th data-k="size"><button type="button">Size</button></th>
           <th data-k="price"><button type="button">Price</button></th>
           <th data-k="dd"><button type="button">Drawdown</button></th>
           <th data-k="per1k" style="min-width:150px"><button type="button">$ per $1K drawdown</button></th>
           <th data-k="target"><button type="button">Target</button></th>
-          <th data-k="ratio" style="width:90px"><button type="button">Target ÷ drawdown</button></th>
           <th class="l">Daily loss limit</th>
-          <th class="l" style="min-width:180px">Type · check</th>
+          <th data-k="pay"><button type="button">1st payout</button></th>
+          <th data-k="cons"><button type="button">Funded consistency</button></th>
+          <th class="l" data-k="copy"><button type="button">Copier</button></th>
         </tr></thead>
-        <tbody><tr><td colspan="9" class="l loading">Loading the plans…</td></tr></tbody>
+        <tbody><tr><td colspan="10" class="l loading">Loading the plans…</td></tr></tbody>
       </table></div>
+    </div>
+  </section>
+
+  <section class="sec" id="speed">
+    <div class="desk">
+      <div class="sh"><div><h2>How fast you get paid</h2><p>Each plan sorted by the fewest funded trading days before your first payout request. Money then takes the firm's processing time to arrive (shown when you open a row). Tap a plan to see it in the table.</p></div></div>
+      <div class="ladder" id="ladder"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="copier">
+    <div class="desk">
+      <div class="sh"><div><h2>Copier groups: trade these together</h2><p>A trade copier sends one trade to many accounts. It only works well when every account has the same payout rule. These groups put together the plans that let you copy your own accounts and share the same funded consistency rule.</p></div></div>
+      <div class="groups" id="groups"></div>
+      <div class="tips">
+        <div><b>Copy inside one group</b>Mix a 50% plan with a 35% plan and one big day can block the 35% payout. Stay in one group.</div>
+        <div><b>Smallest account leads</b>Make the account with the smallest drawdown the leader. Size the others by drawdown, not by account size.</div>
+        <div><b>Same direction only</b>Every firm here bans hedging between your own accounts. Never copy one account long and another short.</div>
+        <div><b>Your accounts only</b>Copying someone else, a signal group or another person's account breaks the rules at every firm.</div>
+      </div>
     </div>
   </section>
 
   <section class="sec" id="firms">
     <div class="desk">
-      <div class="sh"><div><h2>Firm by firm</h2><p>Each plan's drawdown, consistency and payout rules in one card. Same filters as the table above.</p></div></div>
+      <div class="sh"><div><h2>Firm by firm</h2><p>Each plan's drawdown, consistency, payout and copier rules in one card. Same filters as the table above.</p></div></div>
       <div class="cards" id="cards"></div>
     </div>
   </section>
@@ -270,6 +364,9 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
           <dt>Activation fee</dt><dd>A second payment when you pass, before you can trade funded. Left off this list.</dd>
           <dt>Consistency rule</dt><dd>No single day may be more than a set % of your total profit (for example 40%).</dd>
           <dt>Daily loss limit</dt><dd>Soft or pause = your day stops. Hard = the account fails.</dd>
+          <dt>1st payout</dt><dd>The fewest funded trading days before you can ask for money. Day 1 = you can ask after your first funded day.</dd>
+          <dt>Trade copier</dt><dd>Software that copies one trade to all your accounts at once.</dd>
+          <dt>Trustpilot hidden</dt><dd>Trustpilot hides a firm's score when it finds fake or rule-breaking reviews. Read the reviews with care.</dd>
         </dl></div>
         <div class="box"><h3>How to read this</h3><ul id="cav" translate="no"></ul></div>
       </div>
@@ -279,10 +376,10 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
 
   <div class="desk">
     <div class="band">
-      <div><h2>Found your account? Plan how to grow it.</h2><p>The V.I.P Prop Scale Planner and Game Plan Builder test your strategy on your firm's exact rules: your chance to pass, your chance to get paid, and how many accounts your income goal takes.</p></div>
+      <div><h2>Found your account? Plan how to grow it.</h2><p>The V.I.P Game Plan Builder now fills in your firm's evaluation and funded rules from this list. Then it tests your strategy on them: your chance to pass, your chance to get paid, and how many accounts your income goal takes.</p></div>
       <a class="btn-try" href="/vip/">Open the V.I.P tools →</a>
     </div>
-    <p class="disc" id="disc">Not affiliated with any prop firm. Education only, not financial advice. Prices, sizes and rules change often: confirm every rule on the firm's own page at checkout.</p>
+    <p class="disc" id="disc">Not affiliated with any prop firm. Education only, not financial advice. Prices, sizes, payout rules and country lists change often: confirm every rule on the firm's own page at checkout. Some facts come from third-party sites and are marked as such.</p>
   </div>
 </main>
 
@@ -290,21 +387,32 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
 <script>
 (function () {
   'use strict';
-  var SRC = ['https://maxmaseratii.github.io/dashboard-analytics-CRM/prop_plans.json', '/prop-firms/plans.json'];
+  var SRC = ['/prop-firms/plans.json'];
   var $ = function (s) { return document.querySelector(s); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
   var money = function (n) { return '$' + Number(n).toLocaleString('en-US', { maximumFractionDigits: n % 1 ? 2 : 0 }); };
+  var NO = function (s) { return '<span translate="no">' + esc(s) + '</span>'; };
   var NS = '<span class="ns">Not stated</span>';
+  var H = '<i hidden></i>'; // a second child, so the translator takes the label inside on its own
   var LB = function (t) { return '<div class="lb">' + t + '</div>'; };
   var CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3ddc97" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
   var SIZES = [['all', 'All'], ['small', '< 25K'], ['25', '25K'], ['50', '50K'], ['100', '100K'], ['150', '150K'], ['250', '250K+']];
-  var F = { q: '', size: 'all', dd: 'all', kind: 'all', max: '', ver: false, mo: false, sort: 'per1k', open: '' };
+  var CP = { yes: ['cy', '✓ Yes'], limited: ['cl', 'Limited'], approval: ['ca', 'Ask first'], unknown: ['cu', 'Not published'], no: ['cn', '✗ No'] };
+  var CPR = { yes: 0, limited: 1, approval: 2, unknown: 3, no: 4 };
+  var F = { q: '', size: 'all', dd: 'all', kind: 'all', max: '', ver: false, mo: false, cp: false, country: '', sort: 'per1k', open: '' };
   var D = null, ROWS = [];
   try { var sv = JSON.parse(localStorage.getItem('mmm-propfirms') || 'null'); if (sv) Object.keys(F).forEach(function (k) { if (sv[k] != null && k !== 'open' && k !== 'q') F[k] = sv[k]; }); } catch (e) {}
   function save() { try { localStorage.setItem('mmm-propfirms', JSON.stringify(F)); } catch (e) {} }
 
+  function FM(p) { return (D.firms && D.firms[p.firm]) || { tp: {}, copy: { s: 'unknown', note: '' }, banned: null, aff: {} }; }
   function per1k(z) { return z.list != null && z.dd ? z.list / z.dd * 1000 : null; }
   function ratio(z) { return z.target != null && z.dd ? z.target / z.dd : null; }
+  function cstat(p) { // country status for the chosen country
+    if (!F.country) return '';
+    var b = FM(p).banned;
+    if (!b) return 'unk';
+    return b.indexOf(F.country) >= 0 ? 'ban' : 'ok';
+  }
   function sizeOk(z) {
     var s = F.size, m = F.max === '' ? null : Number(F.max);
     if (s === 'small' && !(z.k < 25)) return false;
@@ -314,12 +422,34 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
     return true;
   }
   function planOk(p) {
-    var t = F.q.trim().toLowerCase();
+    var t = F.q.trim().toLowerCase(), c = FM(p).copy.s;
     return (F.mo || p.billing !== 'Monthly') && (F.dd === 'all' || p.dd === F.dd) && (F.kind === 'all' || p.kind === F.kind) &&
-      (!F.ver || p.status === 'Verified') && (!t || (p.firm + ' ' + p.plan).toLowerCase().indexOf(t) >= 0);
+      (!F.ver || p.status === 'Verified') && (!F.cp || c === 'yes' || c === 'limited') && cstat(p) !== 'ban' &&
+      (!t || (p.firm + ' ' + p.plan).toLowerCase().indexOf(t) >= 0);
   }
   function verTag(p, s) { return p.status === 'Verified' ? '<span class="tag ok">' + (s ? '✓ Checked' : 'Checked') + '</span>' : '<span class="tag pa">' + (s ? 'Partly' : 'Partly checked') + '</span>'; }
   function typeTags(p, s) { return '<span class="tag">' + esc(p.dd) + '</span> <span class="tag">' + (p.kind === 'Evaluation' ? (s ? 'Eval' : 'Evaluation') : (s ? 'Instant' : 'Instant funded')) + '</span>' + (p.billing === 'Monthly' ? ' <span class="tag mo">Monthly</span>' : ''); }
+  function stars(f, full) {
+    var t = f.tp || {};
+    if (!t.url) return '<span class="stars x none">No Trustpilot page</span>' + H;
+    if (t.score == null) return '<a class="stars x" href="' + esc(t.url) + '" target="_blank" rel="noopener nofollow">Trustpilot rating hidden</a>' + H;
+    var w = Math.round(t.score / 5 * 100);
+    return '<a class="stars" href="' + esc(t.url) + '" target="_blank" rel="noopener nofollow" title="Trustpilot"><span class="st" aria-hidden="true">★★★★★<i style="width:' + w + '%">★★★★★</i></span><b translate="no">' + t.score.toFixed(1) + '</b>' +
+      (full ? ' <span translate="no">(' + Number(t.n).toLocaleString('en-US') + ')</span>' : '') + '</a>';
+  }
+  function payBadge(p) {
+    var d = p.payDays;
+    if (d == null) return '<span class="pd">On request</span>';
+    var c = d <= 1 ? 'p1' : d <= 3 ? 'p3' : d <= 6 ? 'p5' : 'p14';
+    return d <= 1 ? '<span class="pd p1">Day 1</span>' : '<span class="pd ' + c + '">' + d + ' days</span>';
+  }
+  function consCell(p) {
+    var c = p.fCons;
+    if (c == null) return NS;
+    if (c === 0) return '<span class="cs c0">None</span>';
+    return '<span class="cs ' + (c <= 35 ? 'c35' : c >= 50 ? 'c50' : '') + '">' + c + '%</span>';
+  }
+  function cpTag(f) { var c = CP[f.copy.s] || CP.unknown; return '<span class="tag ' + c[0] + '">' + c[1] + '</span>'; }
 
   function header() {
     var one = D.plans.filter(function (p) { return p.billing !== 'Monthly'; });
@@ -328,34 +458,55 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
     $('#chk').textContent = D.verified_label;
     $('#facts').innerHTML = '<b>' + one.length + '</b> one-pay plans · <b>' + Object.keys(firms).length + '</b> firms · <b>' + nSz + '</b> account sizes · ' + (D.plans.length - one.length) + ' monthly-billed plans behind a switch.';
     $('#crit').innerHTML = D.criteria.map(function (c) { return '<li>' + CHECK + '<span>' + esc(c) + '</span></li>'; }).join('');
-    // tiles (one-pay plans only)
     var all = []; one.forEach(function (p) { p.sizes.forEach(function (z) { all.push({ p: p, z: z }); }); });
     var c50 = all.filter(function (r) { return r.z.k === 50 && r.z.list != null; }).sort(function (a, b) { return a.z.list - b.z.list; })[0];
     var bv = all.filter(function (r) { return per1k(r.z) != null; }).sort(function (a, b) { return per1k(a.z) - per1k(b.z); })[0];
-    var noDll = one.filter(function (p) { return p.sizes.every(function (z) { return /^none$/i.test(z.dll); }); }).length;
-    var ver = one.filter(function (p) { return p.status === 'Verified'; }).length;
+    var d1 = one.filter(function (p) { return p.payDays === 1; });
+    var fn = Object.keys(firms), cpOk = fn.filter(function (n) { var s = D.firms[n].copy.s; return s === 'yes' || s === 'limited'; }).length;
     var T = [
       ['Cheapest 50K', c50 ? money(c50.z.list) : '—', c50 ? c50.p.firm + ' · ' + c50.p.plan : '', true, 1],
       ['Most drawdown for $1', bv ? money(Math.round(per1k(bv.z))) + ' / $1K' : '—', bv ? bv.p.firm + ' · ' + bv.p.plan + ' · ' + bv.z.k + 'K' : '', true, 1, 1],
-      ['No daily loss limit', noDll + ' plans', 'every size without a daily limit', false],
-      ['Fully checked', ver + ' of ' + one.length, 'rules read on the firm\'s own pages', false]];
+      ['Paid from day 1', d1.length + ' plans', d1.map(function (p) { return p.firm.replace(/ \(.*\)/, ''); }).filter(function (v, i, a) { return a.indexOf(v) === i; }).join(' · '), true, 1],
+      ['Copier friendly', cpOk + ' of ' + fn.length + ' firms', 'let you copy your own accounts', false]];
     $('#kpis').innerHTML = T.map(function (t) { return '<div class="kpi"><div class="k">' + t[0] + '</div><div class="v' + (t[3] ? ' g' : '') + '"' + (t[5] ? ' translate="no"' : '') + '>' + esc(t[1]) + '</div><div class="s"' + (t[4] ? ' translate="no"' : '') + '>' + esc(t[2]) + '</div></div>'; }).join('');
     $('#cav').innerHTML = D.caveats.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('');
     $('#exc').innerHTML = D.excluded.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('');
+    $('#f-country').insertAdjacentHTML('beforeend', D.countries.map(function (c) { return '<option value="' + esc(c) + '" translate="no">' + esc(c) + '</option>'; }).join(''));
   }
 
-  function detail(p, k) {
-    var sz = p.sizes.slice().sort(function (a, b) { return a.k - b.k; });
-    return '<div class="drow"><div><dl>' +
+  function detail(p, k, compact) {
+    var f = FM(p), sz = p.sizes.slice().sort(function (a, b) { return a.k - b.k; });
+    var ban = f.banned, cs = cstat(p);
+    var blk1 = '<div><div class="blk"><h4>Rules</h4><dl>' +
       '<dt>Drawdown</dt><dd translate="no">' + esc(p.ddNote) + '</dd>' +
       '<dt>Consistency</dt><dd translate="no">' + esc(p.consistency) + '</dd>' +
-      '<dt>Payouts</dt><dd translate="no">' + esc(p.payout) + '</dd>' +
       '<dt>Max accounts</dt><dd translate="no">' + esc(p.maxAcc) + '</dd>' +
-      '<dt>Notes</dt><dd translate="no">' + esc(p.notes) + '</dd></dl>' +
-      '<p class="src"><span>Source:</span> <a translate="no" href="' + esc(p.src) + '" target="_blank" rel="noopener nofollow">' + esc(p.src) + '</a> · <span>' + (p.status === 'Verified' ? 'checked' : 'partly checked') + '</span> <span translate="no">' + esc(D.verified_label) + '</span></p></div>' +
-      '<div class="mw"><table class="mini"><thead><tr><th>Size</th><th>Price</th><th>Drawdown</th><th>Target</th><th>Daily loss</th></tr></thead><tbody>' +
+      '<dt>Notes</dt><dd translate="no">' + esc(p.notes) + '</dd></dl></div>' +
+      '<div class="blk mw"><table class="mini"><thead><tr><th>Size</th><th>Price</th><th>Drawdown</th><th>Target</th><th>Daily loss</th></tr></thead><tbody>' +
       sz.map(function (z) { return '<tr' + (z.k === k ? ' class="on"' : '') + '><td>' + z.k + 'K</td><td>' + (z.list != null ? money(z.list) : '—') + '</td><td>' + (z.dd != null ? money(z.dd) : '—') + '</td><td>' + (z.target != null ? money(z.target) : '—') + '</td><td translate="no">' + esc(z.dll) + '</td></tr>'; }).join('') +
       '</tbody></table></div></div>';
+    var blk2 = '<div><div class="blk"><h4>Getting paid</h4><dl>' +
+      '<dt>1st payout</dt><dd>' + payBadge(p) + H + '</dd>' +
+      '<dt>Payout rule</dt><dd translate="no">' + esc(p.payout) + '</dd>' +
+      (p.payNote ? '<dt>Speed</dt><dd translate="no">' + esc(p.payNote) + '</dd>' : '') +
+      '<dt>Processing</dt><dd>' + (f.proc ? NO(f.proc) : NS + H) + '</dd>' +
+      '<dt>Funded consistency</dt><dd>' + consCell(p) + H + '</dd></dl></div>' +
+      '<div class="blk"><h4>Trade copier</h4><p style="margin:0">' + cpTag(f) + ' ' + NO(f.copy.note) + '</p></div></div>';
+    var blk3 = '<div><div class="blk"><h4>Trustpilot</h4><p style="margin:0">' + stars(f, 1) + (f.tp && f.tp.note && f.tp.note !== 'hidden' && f.tp.note !== 'none' ? ' <small class="ns" translate="no">' + esc(f.tp.note) + '</small>' : '') + '</p></div>' +
+      '<div class="blk"><h4>Banned countries</h4>' +
+      (ban ? '<p style="margin:0">' + (cs === 'ok' ? '<span class="tag ok">✓ ' + NO(F.country) + '</span> ' : '') + '<span translate="no">' + ban.length + '</span> <span>countries banned.</span></p>' +
+        '<details><summary>See the list</summary><p class="clist" translate="no">' + ban.map(function (c) { return c === F.country ? '<mark>' + esc(c) + '</mark>' : esc(c); }).join(' · ') + '</p></details>' +
+        (f.bannedSrc ? '<p class="clist" style="margin-top:4px"><span>Source:</span> ' + NO(f.bannedSrc) + '</p>' : '')
+        : '<p style="margin:0">' + (f.bannedNote ? NO(f.bannedNote) : NS) + '</p>' + (F.country ? '<p class="clist"><span class="tag pa">Ask the firm about your country</span>' + H + '</p>' : '')) +
+      '</div>' + goLinks(p, f) +
+      '<p class="src"><span>Source:</span> <a translate="no" href="' + esc(p.src) + '" target="_blank" rel="noopener nofollow">' + esc(p.src) + '</a> · <span>' + (p.status === 'Verified' ? 'checked' : 'partly checked') + '</span> <span translate="no">' + esc(D.verified_label) + '</span></p></div>';
+    return '<div class="drow"' + (compact ? ' style="padding:0;grid-template-columns:minmax(0,1fr)"' : '') + '>' + blk1 + blk2 + blk3 + '</div>';
+  }
+  function goLinks(p, f) {
+    var a = f.aff || {}, code = a.code || '';
+    var url = a.url || p.src;
+    return '<div class="go"><a class="btn-try" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url ? ' sponsored' : ' nofollow') + '">' + (a.url ? 'Get this account →' : 'Visit the firm →') + '</a>' + H +
+      (code ? '<span class="code"><span>Code</span> ' + NO(code) + '</span>' : '') + '</div>';
   }
 
   function paint() {
@@ -366,7 +517,11 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
       firm: function (r) { return (r.p.firm + ' ' + r.p.plan).toLowerCase(); }, size: function (r) { return r.z.k; },
       price: function (r) { return r.z.list == null ? big : r.z.list; }, dd: function (r) { return r.z.dd == null ? -1 : -r.z.dd; },
       per1k: function (r) { var v = per1k(r.z); return v == null ? big : v; }, target: function (r) { return r.z.target == null ? big : r.z.target; },
-      ratio: function (r) { var v = ratio(r.z); return v == null ? big : v; } }[F.sort];
+      ratio: function (r) { var v = ratio(r.z); return v == null ? big : v; },
+      pay: function (r) { return r.p.payDays == null ? big : r.p.payDays * 1e6 + (per1k(r.z) || 0); },
+      cons: function (r) { return r.p.fCons == null ? big : r.p.fCons * 1e6 + (per1k(r.z) || 0); },
+      tp: function (r) { var t = FM(r.p).tp; return t.score == null ? big : -t.score * 1e9 - (t.n || 0); },
+      copy: function (r) { return CPR[FM(r.p).copy.s] * 1e6 + (per1k(r.z) || 0); } }[F.sort];
     ROWS.sort(function (a, b) { var x = key(a), y = key(b); return x < y ? -1 : x > y ? 1 : a.z.k - b.z.k; });
     var vals = ROWS.map(function (r) { return per1k(r.z); }).filter(function (v) { return v != null; }).sort(function (a, b) { return a - b; });
     var best = vals.slice(0, 3), mx = vals.length ? vals[vals.length - 1] : 1, mn = vals.length ? vals[0] : 0;
@@ -374,30 +529,77 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
     document.querySelectorAll('#led th[data-k]').forEach(function (th) { if (th.dataset.k === F.sort) th.setAttribute('aria-sort', 'ascending'); else th.removeAttribute('aria-sort'); });
     var firms = {}; plans.forEach(function (p) { if (p.sizes.some(sizeOk)) firms[p.firm] = 1; });
     $('#count').textContent = ROWS.length + ' sizes · ' + Object.keys(firms).length + ' firms';
+    // country note
+    var cn = $('#cnote');
+    if (F.country) {
+      var fall = {}; D.plans.forEach(function (p) { if (F.mo || p.billing !== 'Monthly') fall[p.firm] = p; });
+      var nb = 0, nu = 0; Object.keys(fall).forEach(function (n) { var s = cstat(fall[n]); if (s === 'ban') nb++; else if (s === 'unk') nu++; });
+      cn.innerHTML = '<span><b>Your country:</b></span> ' + NO(F.country) + ' · <span><b>' + nb + '</b> firms hidden because they do not accept traders from there.</span> <span><b>' + nu + '</b> firms do not publish a full list: they show a yellow tag, ask them first.</span>';
+      cn.classList.add('on');
+    } else { cn.classList.remove('on'); cn.innerHTML = ''; }
     $('#led tbody').innerHTML = ROWS.length ? ROWS.map(function (r) {
-      var p = r.p, z = r.z, v = per1k(z), rt = ratio(z), open = F.open === r.id;
+      var p = r.p, z = r.z, f = FM(p), v = per1k(z), rt = ratio(z), open = F.open === r.id, cs = cstat(p);
       var w = v == null ? 0 : Math.max(6, Math.round((1 - (v - mn) / Math.max(1e-9, mx - mn)) * 100));
       return '<tr class="r' + (open ? ' open' : '') + '" data-id="' + esc(r.id) + '" tabindex="0" aria-expanded="' + open + '">' +
-        '<td class="l firm" translate="no"><b>' + esc(p.firm) + '</b><small>' + esc(p.plan) + '</small></td>' +
+        '<td class="l firm"><b translate="no">' + esc(p.firm) + '</b><small translate="no">' + esc(p.plan) + '</small><span class="frow">' + stars(f) + '</span><span class="frow">' + typeTags(p, 1) + ' ' + verTag(p, 1) + (cs === 'unk' ? ' <span class="tag pa">Country list not published</span>' : '') + '</span></td>' +
         '<td>' + LB('Size') + '<span>' + z.k + 'K</span></td>' +
         '<td class="price">' + LB('Price') + (z.list != null ? '<b>' + money(z.list) + '</b>' : NS) + (z.promo ? '<span class="sub" translate="no">' + esc(z.promo) + '</span>' : '') + '</td>' +
         '<td>' + LB('Drawdown') + (z.dd != null ? money(z.dd) : NS) + '</td>' +
         '<td>' + LB('$ per $1K drawdown') + (v != null ? '<span class="valbar" translate="no"><span>' + money(Math.round(v)) + '</span><i><span style="width:' + w + '%"></span></i></span>' + (best.indexOf(v) >= 0 ? '<span class="bv">Best value</span>' : '') : '<span class="ns">—</span>') + '</td>' +
-        '<td>' + LB('Target') + (z.target != null ? money(z.target) : NS) + '</td>' +
-        '<td>' + LB('Target ÷ drawdown') + (rt != null ? rt.toFixed(1) + '×' : '<span class="ns">—</span>') + '</td>' +
+        '<td>' + LB('Target') + (z.target != null ? money(z.target) + (rt != null ? '<span class="sub" translate="no">' + rt.toFixed(1) + '× DD</span>' : '') : NS) + '</td>' +
         '<td class="l dl">' + LB('Daily loss limit') + (/not stated/i.test(z.dll) ? NS : /^none$/i.test(z.dll) ? '<span>None</span>' : '<span translate="no">' + esc(z.dll) + '</span>') + '</td>' +
-        '<td class="l wide">' + LB('Type · check') + typeTags(p, 1) + ' ' + verTag(p, 1) + '</td></tr>' +
-        (open ? '<tr class="d"><td colspan="9">' + detail(p, z.k) + '</td></tr>' : '');
-    }).join('') : '<tr><td colspan="9" class="empty">No account size matches these filters. Clear a filter or raise the max price.</td></tr>';
-    $('#cards').innerHTML = plans.filter(function (p) { return p.sizes.some(sizeOk); }).map(function (p) {
-      var sz = p.sizes.slice().sort(function (a, b) { return a.k - b.k; });
+        '<td>' + LB('1st payout') + payBadge(p) + '</td>' +
+        '<td>' + LB('Funded consistency') + consCell(p) + '</td>' +
+        '<td class="l">' + LB('Copier') + cpTag(f) + '</td></tr>' +
+        (open ? '<tr class="d"><td colspan="10">' + detail(p, z.k) + '</td></tr>' : '');
+    }).join('') : '<tr><td colspan="10" class="empty">No account size matches these filters. Clear a filter or raise the max price.</td></tr>';
+
+    var shown = plans.filter(function (p) { return p.sizes.some(sizeOk); });
+    // payout ladder
+    var L = [['l1', 'Day 1', 'Ask after your first funded day', function (d) { return d != null && d <= 1; }],
+      ['l3', '2–3 days', 'A few funded days first', function (d) { return d != null && d > 1 && d <= 3; }],
+      ['l5', '5–6 days', 'About one trading week', function (d) { return d != null && d > 3 && d <= 6; }],
+      ['l14', '14 days', 'Two weeks or more', function (d) { return d != null && d > 6; }],
+      ['l0', 'On request', 'When the profit goal is met, or not stated', function (d) { return d == null; }]];
+    $('#ladder').innerHTML = L.map(function (l) {
+      var ps = shown.filter(function (p) { return l[3](p.payDays); }).sort(function (a, b) { return (b.fCons === 0) - (a.fCons === 0) || ((FM(b).tp.score || 0) - (FM(a).tp.score || 0)); });
+      return '<div class="lane ' + l[0] + '"><h3>' + l[1] + '</h3><p>' + l[2] + '</p><div class="chipl">' + (ps.map(function (p) {
+        var f = FM(p);
+        return '<button type="button" data-q="' + esc(p.firm) + '"><b translate="no">' + esc(p.firm) + '</b><small translate="no">' + esc(p.plan) + '</small> ' + (f.tp.score != null ? '<small translate="no"> · ★ ' + f.tp.score.toFixed(1) + '</small>' : '') + '</button>';
+      }).join('') || '<small class="ns">None with these filters</small>' + H) + '</div></div>';
+    }).join('');
+    // copier groups
+    var G = [[0, 'No funded consistency', 'No best-day cap once funded. A big day is fine, so trade the same size on all of them.', 'Easiest to copy'],
+      [20, '20% rule', 'Best day under 20% of total profit: plan on about 5 green days of the same size before each payout.', 'Instant funded'],
+      [35, '35% rule', 'Best day under 35% of total profit: plan on about 3 green days of the same size before each payout.', 'Tight'],
+      [40, '40% rule', 'Best day under 40% of total profit: plan on about 3 green days of the same size before each payout.', 'Most common'],
+      [50, '50% rule', 'Best day under 50% of total profit: plan on about 2 green days of the same size before each payout.', 'Easy'],
+      [null, 'Rule not stated', 'The firm does not publish a funded consistency rule for this plan. Ask before you copy it with others.', 'Check first']];
+    var canCopy = function (p) { var s = FM(p).copy.s; return s === 'yes' || s === 'limited'; };
+    var grp = G.map(function (g) {
+      var ps = shown.filter(function (p) { return canCopy(p) && p.fCons === g[0]; }).sort(function (a, b) { return (a.payDays == null ? 99 : a.payDays) - (b.payDays == null ? 99 : b.payDays); });
+      if (!ps.length) return '';
+      return '<div class="grp"><div class="gh"><h3>' + g[1] + '</h3><p>' + g[2] + '</p><span class="k"><span translate="no">' + ps.length + '</span> <span>plans</span> · <span>' + g[3] + '</span></span></div><table>' +
+        ps.map(function (p) {
+          var f = FM(p), noDll = p.sizes.every(function (z) { return /^none$/i.test(z.dll); });
+          return '<tr><td><b translate="no">' + esc(p.firm) + '</b><small translate="no">' + esc(p.plan) + '</small></td><td>' + payBadge(p) + H + '</td><td><span class="tag">' + esc(p.dd) + '</span>' + (noDll ? ' <span class="tag ok">No daily limit</span>' : H) + '</td><td>' + cpTag(f) + (f.copy.s === 'limited' ? '<small translate="no">' + esc(f.copy.note) + '</small>' : H) + '</td></tr>';
+        }).join('') + '</table></div>';
+    }).join('');
+    var nc = shown.filter(function (p) { return !canCopy(p); });
+    if (nc.length) grp += '<div class="grp no"><div class="gh"><h3>Do not copy, or ask first</h3><p>These firms ban copying, need approval first, or do not publish their copier rules.</p></div><table>' +
+      nc.map(function (p) { var f = FM(p); return '<tr><td><b translate="no">' + esc(p.firm) + '</b><small translate="no">' + esc(p.plan) + '</small></td><td>' + cpTag(f) + '<small translate="no">' + esc(f.copy.note) + '</small></td></tr>'; }).join('') + '</table></div>';
+    $('#groups').innerHTML = grp || '<p class="empty">No plan matches these filters.</p>';
+    // cards
+    $('#cards').innerHTML = shown.map(function (p) {
+      var f = FM(p), sz = p.sizes.slice().sort(function (a, b) { return a.k - b.k; });
       var pr = sz.filter(function (z) { return z.list != null; }).map(function (z) { return z.list; });
       var dd = sz.filter(function (z) { return z.dd != null; }).map(function (z) { return z.dd; });
       var range = function (a) { return a.length ? (Math.min.apply(0, a) === Math.max.apply(0, a) ? money(a[0]) : money(Math.min.apply(0, a)) + '–' + money(Math.max.apply(0, a))) : '—'; };
-      return '<article class="card"><div class="top"><h3 translate="no">' + esc(p.firm) + '</h3><p class="pl" translate="no">' + esc(p.plan) + '</p><div class="tags">' + typeTags(p) + ' ' + verTag(p) + '</div></div>' +
+      return '<article class="card"><div class="top"><h3 translate="no">' + esc(p.firm) + '</h3><p class="pl" translate="no">' + esc(p.plan) + '</p><div class="tags" style="margin-bottom:6px">' + stars(f, 1) + '</div><div class="tags">' + typeTags(p) + ' ' + verTag(p) + '</div></div>' +
         '<div class="facts"><div><div class="k">Sizes</div><div class="v" translate="no">' + sz.map(function (z) { return z.k; }).join(' · ') + 'K</div></div><div><div class="k">Price</div><div class="v" translate="no">' + range(pr) + '</div></div><div><div class="k">Drawdown</div><div class="v" translate="no">' + range(dd) + '</div></div></div>' +
-        '<div class="body"><p><b>Consistency:</b> <span translate="no">' + esc(p.consistency) + '</span></p><p><b>Payouts:</b> <span translate="no">' + esc(p.payout) + '</span></p><p><b>Max accounts:</b> <span translate="no">' + esc(p.maxAcc) + '</span></p></div>' +
-        '<details><summary>All sizes and notes</summary><div class="in">' + detail(p, -1).replace('class="drow"', 'class="drow" style="padding:0;grid-template-columns:minmax(0,1fr)"') + '</div></details></article>';
+        '<div class="facts"><div><div class="k">1st payout</div><div class="v">' + payBadge(p) + H + '</div></div><div><div class="k">Funded consistency</div><div class="v">' + consCell(p) + H + '</div></div><div><div class="k">Copier</div><div class="v">' + cpTag(f) + H + '</div></div></div>' +
+        '<div class="body"><p><b>Payouts:</b> <span translate="no">' + esc(p.payout) + '</span></p><p><b>Max accounts:</b> <span translate="no">' + esc(p.maxAcc) + '</span></p></div>' +
+        '<details><summary>All sizes, payout and country details</summary><div class="in">' + detail(p, -1, 1) + '</div></details></article>';
     }).join('') || '<p class="empty">No plan matches these filters.</p>';
     save();
   }
@@ -406,17 +608,21 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
     $('#f-size').innerHTML = SIZES.map(function (s) { return '<button type="button" data-v="' + s[0] + '" aria-pressed="' + (F.size === s[0]) + '">' + s[1] + '</button>'; }).join('');
     $('#f-size').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; F.size = b.dataset.v; $('#f-size').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); paint(); });
     $('#f-q').addEventListener('input', function (e) { F.q = e.target.value; paint(); });
+    if (F.country && D.countries.indexOf(F.country) < 0) F.country = '';
+    $('#f-country').value = F.country; $('#f-country').addEventListener('change', function (e) { F.country = e.target.value; F.open = ''; paint(); });
     $('#f-dd').value = F.dd; $('#f-dd').addEventListener('change', function (e) { F.dd = e.target.value; paint(); });
     $('#f-sort').value = F.sort; $('#f-sort').addEventListener('change', function (e) { F.sort = e.target.value; paint(); });
     $('#f-kind').value = F.kind; $('#f-kind').addEventListener('change', function (e) { F.kind = e.target.value; paint(); });
     $('#f-max').value = F.max; $('#f-max').addEventListener('input', function (e) { F.max = e.target.value; paint(); });
+    $('#f-cp').checked = F.cp; $('#f-cp').addEventListener('change', function (e) { F.cp = e.target.checked; paint(); });
     $('#f-ver').checked = F.ver; $('#f-ver').addEventListener('change', function (e) { F.ver = e.target.checked; paint(); });
     $('#f-mo').checked = F.mo; $('#f-mo').addEventListener('change', function (e) { F.mo = e.target.checked; paint(); });
     document.querySelectorAll('#led th[data-k] button').forEach(function (b) { b.addEventListener('click', function () { F.sort = b.parentNode.dataset.k; paint(); }); });
     var tb = $('#led tbody');
     var tog = function (tr) { if (!tr || !tr.dataset.id) return; F.open = F.open === tr.dataset.id ? '' : tr.dataset.id; paint(); };
-    tb.addEventListener('click', function (e) { if (e.target.closest('a')) return; tog(e.target.closest('tr.r')); });
-    tb.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tog(e.target.closest('tr.r')); } });
+    tb.addEventListener('click', function (e) { if (e.target.closest('a,summary,details')) return; tog(e.target.closest('tr.r')); });
+    tb.addEventListener('keydown', function (e) { if (e.target.closest('tr.r') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); tog(e.target.closest('tr.r')); } });
+    $('#ladder').addEventListener('click', function (e) { var b = e.target.closest('button[data-q]'); if (!b) return; F.q = b.dataset.q; $('#f-q').value = F.q; F.sort = 'pay'; paint(); $('#compare').scrollIntoView({ behavior: 'smooth' }); });
   }
 
   function load(i) {
@@ -424,7 +630,7 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
       .catch(function (e) { if (i + 1 < SRC.length) return load(i + 1); throw e; });
   }
   load(0).then(function (d) { D = d; header(); wire(); paint(); })
-    .catch(function () { $('#led tbody').innerHTML = '<tr><td colspan="9" class="empty">The plans could not load. Reload the page to try again.</td></tr>'; $('#facts').textContent = ''; });
+    .catch(function () { $('#led tbody').innerHTML = '<tr><td colspan="10" class="empty">The plans could not load. Reload the page to try again.</td></tr>'; $('#facts').textContent = ''; });
 })();
 </script>
 <script src="/assets/nav.js"></script>
