@@ -1,0 +1,1571 @@
+{
+ "title": "One-Pay Futures Prop Plans",
+ "summary": "Only plans with no activation fee and an end-of-day or static drawdown in both the evaluation and the funded account. One row per account size, lowest to highest.",
+ "verified": "2026-11-11",
+ "verified_label": "11 Nov 2026 (London time)",
+ "criteria": [
+  "No activation fee",
+  "One-time payment (monthly-billed plans hidden behind a toggle)",
+  "EOD or static drawdown in both evaluation and funded stage"
+ ],
+ "caveats": [
+  "EOD means the floor only moves up on the closing balance, but every firm still enforces it in real time, so an open loss that touches the floor fails the account.",
+  "Sizes, prices and rules change often: confirm at checkout.",
+  "Partially verified rows use a third-party read of the firm's site for some figures (e.g. Apex prices from PropBench, LucidFlex per-size figures from third-party reads of lucidtrading.com).",
+  "Shark prices shown may include a promo, plus a 5% checkout fee.",
+  "PropEd and Blue Guardian billing type was not labelled on their pages.",
+  "Rev One: one third-party says it shut in Aug 2026, but its site was live and selling on 11 Nov.",
+  "'Not stated' means the firm's page did not show the figure; nothing was estimated."
+ ],
+ "plans": [
+  {
+   "id": "apex-eod-naf",
+   "firm": "Apex Trader Funding",
+   "plan": "EOD Trail (No Activation Fee)",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "EOD trailing in eval and PA (calculated at close, enforced intraday). Only the No-Activation-Fee EOD version qualifies; Intraday Trail and the standard EOD (with $109–$159 activation) do not.",
+   "consistency": "None in eval; 50% on PA payouts",
+   "payout": "5 trading days between payouts; min $500; cap per request $1,000 / $1,500 / $2,000 / $2,500; 100% to trader",
+   "maxAcc": "20",
+   "notes": "Daily loss limit pauses the day (not a breach); funded DLL $500 / $1,000 / $1,750 / $2,500. List prices are inflated and usually sold ~90% off; promo seen 15 Sep: $99 / $119 / $159 / $249. Prices from PropBench; rules from Apex help centre.",
+   "src": "https://apextraderfunding.com/help-center/eod-trailing-drawdown-accounts/eod-performance-accounts-pa/",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 1090,
+     "promo": "$99 (15 Sep code)",
+     "dd": 1000,
+     "target": 1500,
+     "dll": "$500 (pause)"
+    },
+    {
+     "k": 50,
+     "list": 1190,
+     "promo": "$119 (15 Sep code)",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "$1,000 (pause)"
+    },
+    {
+     "k": 100,
+     "list": 1590,
+     "promo": "$159 (15 Sep code)",
+     "dd": 3000,
+     "target": 6000,
+     "dll": "$1,500 (pause)"
+    },
+    {
+     "k": 150,
+     "list": 2490,
+     "promo": "$249 (15 Sep code)",
+     "dd": 4000,
+     "target": 9000,
+     "dll": "$2,000 (pause)"
+    }
+   ]
+  },
+  {
+   "id": "tradeify-growth",
+   "firm": "Tradeify",
+   "plan": "Growth",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing in eval and funded; floor moves only on closing balance but is enforced in real time.",
+   "consistency": "None in eval; 35% on funded payouts",
+   "payout": "Every 5 days",
+   "maxAcc": "5 funded",
+   "notes": "Has a soft daily loss limit. Pass in 1 day.",
+   "src": "https://help.tradeify.co/en/articles/14369021-tradeify-pricing-reference",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 99,
+     "promo": "40% off codes common",
+     "dd": 1000,
+     "target": 1500,
+     "dll": "$600 (soft)"
+    },
+    {
+     "k": 50,
+     "list": 145,
+     "promo": "",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "$1,250 (soft)"
+    },
+    {
+     "k": 100,
+     "list": 255,
+     "promo": "",
+     "dd": 3500,
+     "target": 6000,
+     "dll": "$2,500 (soft)"
+    },
+    {
+     "k": 150,
+     "list": 369,
+     "promo": "",
+     "dd": 5000,
+     "target": 9000,
+     "dll": "$3,750 (soft)"
+    }
+   ]
+  },
+  {
+   "id": "tradeify-select",
+   "firm": "Tradeify",
+   "plan": "Select",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "EOD trailing in eval and funded (real-time touch rule since 21 Oct 2026).",
+   "consistency": "40% in eval (50% add-on); none funded",
+   "payout": "Daily or every 5 days (choose after passing)",
+   "maxAcc": "5",
+   "notes": "No daily loss limit in eval. Site showed $111 / $181 / $251 (50K/100K/150K) and 25K N/A on 11 Nov; list prices from Capital Critic (2 Nov).",
+   "src": "https://tradeify.co/select-plan",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 109,
+     "promo": "N/A on site 11 Nov",
+     "dd": 1000,
+     "target": 1500,
+     "dll": "None"
+    },
+    {
+     "k": 50,
+     "list": 165,
+     "promo": "$111 shown 11 Nov",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "None"
+    },
+    {
+     "k": 100,
+     "list": 265,
+     "promo": "$181 shown 11 Nov",
+     "dd": 3000,
+     "target": 6000,
+     "dll": "None"
+    },
+    {
+     "k": 150,
+     "list": 369,
+     "promo": "$251 shown 11 Nov",
+     "dd": 4500,
+     "target": 9000,
+     "dll": "None"
+    }
+   ]
+  },
+  {
+   "id": "tradeify-lightning",
+   "firm": "Tradeify",
+   "plan": "Lightning Funded",
+   "kind": "Instant funded",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing; no evaluation.",
+   "consistency": "Progressive on payouts: 20% → 25% → 30%",
+   "payout": "On request once consistency and profit goal met",
+   "maxAcc": "5",
+   "notes": "No resets. No profit target to pass (instant funding).",
+   "src": "https://help.tradeify.co/en/articles/10495938-lightning-funded-accounts",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 345,
+     "promo": "",
+     "dd": 1000,
+     "target": null,
+     "dll": "None"
+    },
+    {
+     "k": 50,
+     "list": 492,
+     "promo": "",
+     "dd": 2000,
+     "target": null,
+     "dll": "$1,250 (soft)"
+    },
+    {
+     "k": 100,
+     "list": 660,
+     "promo": "",
+     "dd": 4000,
+     "target": null,
+     "dll": "$2,500 (soft)"
+    },
+    {
+     "k": 150,
+     "list": 796,
+     "promo": "",
+     "dd": 5250,
+     "target": null,
+     "dll": "$3,000 (soft)"
+    }
+   ]
+  },
+  {
+   "id": "mffu-builder",
+   "firm": "MyFundedFutures",
+   "plan": "Builder",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing in eval and funded.",
+   "consistency": "50% on payouts",
+   "payout": "Every 48 hours; 80/20 split; min $500",
+   "maxAcc": "1 Builder account per user",
+   "notes": "Session pauses at $1,000 down (no hard breach). Page lists $25K and $50K; only the 50K price is shown.",
+   "src": "https://myfundedfutures.com/plans/builder",
+   "sizes": [
+    {
+     "k": 25,
+     "list": null,
+     "promo": "Not stated",
+     "dd": 1500,
+     "target": null,
+     "dll": "Pause $1,000 (50K stated)"
+    },
+    {
+     "k": 50,
+     "list": 153,
+     "promo": "$92 shown 11 Nov",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "Pause $1,000"
+    }
+   ]
+  },
+  {
+   "id": "mffu-pro",
+   "firm": "MyFundedFutures",
+   "plan": "Pro",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing in eval and funded.",
+   "consistency": "50% in eval; none funded",
+   "payout": "Every 14 days; up to $100,000 per payout; min $1,000; 80/20",
+   "maxAcc": "Not stated",
+   "notes": "No funded daily loss limit. Live seat after 3 consecutive payouts. Only 50K price shown on pages read. Rapid excluded (intraday trailing).",
+   "src": "https://myfundedfutures.com/plans/pro",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 265,
+     "promo": "$159 shown 11 Nov",
+     "dd": null,
+     "target": 3000,
+     "dll": "None funded"
+    }
+   ]
+  },
+  {
+   "id": "lucid-flex",
+   "firm": "Lucid Trading",
+   "plan": "LucidFlex",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "EOD trailing in eval and funded; locks at start + $100 (locks immediately on a payout request).",
+   "consistency": "40% in eval (50% add-on); none funded",
+   "payout": "After 5 profitable days ($100–$250/day by size); cap 50% of profit up to $1,000 / $2,000 / $2,500 / $3,000; min $500; 5 payouts then live review",
+   "maxAcc": "5 funded per household",
+   "notes": "Daily loss limit optional at checkout. Lucid confirms one-time fee and no activation; per-size figures from third-party reads of lucidtrading.com (6–10 Nov).",
+   "src": "https://support.lucidtrading.com/en/articles/12945790-lucidflex-evaluation-account",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 65,
+     "promo": "$45.50 with 30% code",
+     "dd": 1000,
+     "target": 1250,
+     "dll": "Optional $600"
+    },
+    {
+     "k": 50,
+     "list": 115,
+     "promo": "$80.50 with 30% code",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "Optional $1,200"
+    },
+    {
+     "k": 100,
+     "list": 215,
+     "promo": "$150.50 with 30% code",
+     "dd": 3000,
+     "target": 6000,
+     "dll": "Optional $1,800"
+    },
+    {
+     "k": 150,
+     "list": 323,
+     "promo": "$226.10 with 30% code",
+     "dd": 4500,
+     "target": 9000,
+     "dll": "Optional $2,700"
+    }
+   ]
+  },
+  {
+   "id": "fn-flex",
+   "firm": "FundedNext Futures",
+   "plan": "Flex",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD max loss limit in challenge and funded.",
+   "consistency": "40% in challenge; none funded",
+   "payout": "Every 5 days; 95% split; min $250",
+   "maxAcc": "5",
+   "notes": "No daily loss limit, no buffer. Per-size target and drawdown not clearly labelled on the page read.",
+   "src": "https://fundednext.com/futures",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 141.99,
+     "promo": "$74.99 (47% off)",
+     "dd": null,
+     "target": null,
+     "dll": "None"
+    },
+    {
+     "k": 100,
+     "list": 273.99,
+     "promo": "$144.99",
+     "dd": null,
+     "target": null,
+     "dll": "None"
+    },
+    {
+     "k": 150,
+     "list": 490.99,
+     "promo": "$259.99",
+     "dd": null,
+     "target": null,
+     "dll": "None"
+    }
+   ]
+  },
+  {
+   "id": "ffn-max",
+   "firm": "Funded Futures Network",
+   "plan": "MAX Standard",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD in eval and funded; funded locks at start + $100.",
+   "consistency": "40% in eval and funded",
+   "payout": "Same day; min $500; cap $1,000 (payouts 1–3), $1,250 after; 80% sim / 90% live",
+   "maxAcc": "5 sim funded",
+   "notes": "50K has a $1,250 daily loss limit; other sizes' rules not shown on the page read. 70% off with code NEXUS on 11 Nov.",
+   "src": "https://fundedfuturesnetwork.com/",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 148,
+     "promo": "$44.40",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 50,
+     "list": 178,
+     "promo": "$53.40",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "$1,250"
+    },
+    {
+     "k": 100,
+     "list": 348,
+     "promo": "$104.40",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 150,
+     "list": 408,
+     "promo": "$122.40",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 250,
+     "list": 658,
+     "promo": "$197.40",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "topone-elite-daily",
+   "firm": "Top One Futures",
+   "plan": "Elite Daily",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD in eval and funded. Funded drawdown is smaller on 100K ($2,500) and 150K ($3,500).",
+   "consistency": "40% in eval; none funded",
+   "payout": "Daily; 90/10",
+   "maxAcc": "3 eval / 5 funded (as shown)",
+   "notes": "A monthly option is also offered; the one-time fee is the qualifying option. Elite Access excluded ($139–$359 activation).",
+   "src": "https://www.toponefutures.com/",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 178,
+     "promo": "$80 (55% off)",
+     "dd": 1000,
+     "target": 1500,
+     "dll": "$500"
+    },
+    {
+     "k": 50,
+     "list": 218,
+     "promo": "$98",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "$1,000"
+    },
+    {
+     "k": 100,
+     "list": 398,
+     "promo": "$179",
+     "dd": 3000,
+     "target": 6000,
+     "dll": "$1,250"
+    },
+    {
+     "k": 150,
+     "list": 549,
+     "promo": "$247",
+     "dd": 4500,
+     "target": 9000,
+     "dll": "$1,750 (funded $1,850)"
+    }
+   ]
+  },
+  {
+   "id": "futureify-flex",
+   "firm": "Futureify (FXIFY Futures)",
+   "plan": "Flex",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing; locks at start after a payout.",
+   "consistency": "50% in eval; 40% funded",
+   "payout": "Every 5 winning days ($150/$200/$250); 50% of profit capped $2,000 / $2,500 / $3,000; min $500 / $1,000 / $1,500",
+   "maxAcc": "5",
+   "notes": "30-day evaluation (extendable). Direct (instant) not included: activation not confirmed.",
+   "src": "https://futureify.com/",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 179,
+     "promo": "$107.40 (40% off)",
+     "dd": 1750,
+     "target": 3000,
+     "dll": "$1,000"
+    },
+    {
+     "k": 100,
+     "list": 299,
+     "promo": "$179.40",
+     "dd": 3250,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 150,
+     "list": 449,
+     "promo": "$269.40",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "bg-standard",
+   "firm": "Blue Guardian Futures",
+   "plan": "Standard",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "EOD trailing in eval and funded; floor locks start + $100 after a withdrawal; daily loss is a soft breach.",
+   "consistency": "None in challenge; 40% funded",
+   "payout": "On-demand, weekly or bi-weekly by plan/add-ons; 90/10",
+   "maxAcc": "5 ($750K combined)",
+   "notes": "Billing not labelled on the page read (listed as one-time elsewhere). 100K price shown may be a promo.",
+   "src": "https://blueguardian.com/futures",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 209,
+     "promo": "$157 shown 11 Nov",
+     "dd": null,
+     "target": null,
+     "dll": "Soft"
+    },
+    {
+     "k": 100,
+     "list": null,
+     "promo": "$248 shown 11 Nov",
+     "dd": 3500,
+     "target": null,
+     "dll": "Soft"
+    }
+   ]
+  },
+  {
+   "id": "aqua-flex",
+   "firm": "Aqua Futures (AquaFunded)",
+   "plan": "Futures Flex",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD.",
+   "consistency": "50% in challenge; none funded",
+   "payout": "After 5 winning days of $200; 3 rewards then account closes; min $500; 3% processing fee",
+   "maxAcc": "1 funded trades at a time (unlimited queued)",
+   "notes": "Only the 50K price was readable.",
+   "src": "https://www.aquafunded.com/futures",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 156,
+     "promo": "$117 shown 11 Nov",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "fe-elite",
+   "firm": "FuturesElite",
+   "plan": "Elite",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing in eval and funded; locks $100 above start (50K–150K). Nitro excluded (intraday when funded).",
+   "consistency": "40% or 50% in eval (chosen); none funded",
+   "payout": "After 6 profitable days per cycle; min $500; 90%",
+   "maxAcc": "5",
+   "notes": "Profit targets not shown on the page read.",
+   "src": "https://app.futureselite.com/website/choose-plan?transparent=true&version=v2",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 99,
+     "promo": "$69.30",
+     "dd": 1000,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 50,
+     "list": 160,
+     "promo": "$112",
+     "dd": 2000,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 100,
+     "list": 306,
+     "promo": "$214.20",
+     "dd": 3000,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 150,
+     "list": 368,
+     "promo": "$257.60",
+     "dd": 4500,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "swiss-packpro",
+   "firm": "Swiss Firmup",
+   "plan": "Pack Pro",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing on realised profit; stops at start balance.",
+   "consistency": "50% in eval; 40% on funded payouts",
+   "payout": "After 5 profitable days ($200/day on 50K); 50% of profit capped $2,000 (50K); min $200; 90/10",
+   "maxAcc": "5 funded",
+   "notes": "Activation included in the one payment (Classic plan charges $99, excluded).",
+   "src": "https://swissfirmup.com/",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 119,
+     "promo": "",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "None"
+    },
+    {
+     "k": 100,
+     "list": 159,
+     "promo": "",
+     "dd": 2500,
+     "target": 5000,
+     "dll": "None"
+    }
+   ]
+  },
+  {
+   "id": "revone-flex",
+   "firm": "Rev One Trading",
+   "plan": "Flex",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing in challenge (4%) and funded (8% max loss).",
+   "consistency": "50% in challenge; none funded",
+   "payout": "After 5 profitable days; cap 50% of profit up to $1,000–$3,000; min $500; split up to 90% by score",
+   "maxAcc": "10 active / 5 funded",
+   "notes": "One third-party says it shut in Aug 2026, but its site was live and selling on 11 Nov.",
+   "src": "https://revonetrading.com/",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 90,
+     "promo": "",
+     "dd": 1000,
+     "target": 1250,
+     "dll": "None"
+    },
+    {
+     "k": 50,
+     "list": 125,
+     "promo": "",
+     "dd": 2000,
+     "target": 2500,
+     "dll": "None"
+    },
+    {
+     "k": 100,
+     "list": 205,
+     "promo": "",
+     "dd": 4000,
+     "target": 5000,
+     "dll": "None"
+    },
+    {
+     "k": 150,
+     "list": 390,
+     "promo": "",
+     "dd": 6000,
+     "target": 7500,
+     "dll": "None"
+    }
+   ]
+  },
+  {
+   "id": "shark-flash",
+   "firm": "Shark Futures",
+   "plan": "FLASH",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "EOD trailing; locks at start + $100.",
+   "consistency": "Not stated",
+   "payout": "Every 3 days; min $500; 90/10",
+   "maxAcc": "5 funded",
+   "notes": "Prices are those shown on 11 Nov and may include a promo; a 5% checkout fee applies. LITE ($67–$177 activation) and Instant PRO (intraday enforced) excluded.",
+   "src": "https://help.sharkfutures.com/en/articles/17326683-flash-account",
+   "sizes": [
+    {
+     "k": 25,
+     "list": null,
+     "promo": "$65.60 shown",
+     "dd": 1000,
+     "target": 1500,
+     "dll": "$600"
+    },
+    {
+     "k": 50,
+     "list": null,
+     "promo": "$110.40 shown",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "$1,200"
+    },
+    {
+     "k": 100,
+     "list": null,
+     "promo": "$175.40 shown",
+     "dd": 3000,
+     "target": 6000,
+     "dll": "$1,800"
+    },
+    {
+     "k": 150,
+     "list": null,
+     "promo": "$240.50 shown",
+     "dd": 4500,
+     "target": 9000,
+     "dll": "$2,700"
+    }
+   ]
+  },
+  {
+   "id": "shark-pace",
+   "firm": "Shark Futures",
+   "plan": "PACE",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "EOD trailing; locks at start + $100.",
+   "consistency": "Not stated",
+   "payout": "After 5 winning days; min $500",
+   "maxAcc": "5 funded",
+   "notes": "Pass in 3 days. Prices not shown on pages read.",
+   "src": "https://help.sharkfutures.com/en/articles/17326674-pace-account",
+   "sizes": [
+    {
+     "k": 25,
+     "list": null,
+     "promo": "Not stated",
+     "dd": 1000,
+     "target": 1500,
+     "dll": "$600"
+    },
+    {
+     "k": 50,
+     "list": null,
+     "promo": "Not stated",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "$1,200"
+    },
+    {
+     "k": 100,
+     "list": null,
+     "promo": "Not stated",
+     "dd": 3000,
+     "target": 6000,
+     "dll": "$1,700"
+    },
+    {
+     "k": 150,
+     "list": null,
+     "promo": "Not stated",
+     "dd": 4500,
+     "target": 9000,
+     "dll": "$3,000"
+    }
+   ]
+  },
+  {
+   "id": "tx3-core",
+   "firm": "TX3 Futures",
+   "plan": "Core",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing in eval and funded.",
+   "consistency": "None in eval; 40% funded",
+   "payout": "After 3 winning days of $150+; cap $2,500 / $3,500 / $4,000; min $100; 90%",
+   "maxAcc": "6 funded",
+   "notes": "Eval daily drawdown is a soft limit; funded daily loss 2.5%. 50% off with BF50 on 11 Nov.",
+   "src": "https://www.tx3futures.com/en/tx3-core",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 214,
+     "promo": "$107",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "$1,000 eval; 2.5% funded"
+    },
+    {
+     "k": 100,
+     "list": 354,
+     "promo": "$177",
+     "dd": 3000,
+     "target": 6000,
+     "dll": "$1,500 eval; 2.5% funded"
+    },
+    {
+     "k": 150,
+     "list": 514,
+     "promo": "$257",
+     "dd": 4500,
+     "target": 9000,
+     "dll": "$2,000 eval; 2.5% funded"
+    }
+   ]
+  },
+  {
+   "id": "iq-flex",
+   "firm": "IQ Capital",
+   "plan": "Flex / One-Day-Pass",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "EOD trailing shown on the plan card; funded drawdown mode not separately stated.",
+   "consistency": "None",
+   "payout": "Not stated",
+   "maxAcc": "5",
+   "notes": "Daily loss limit can be switched off for +$30. Core excluded ($129 activation). Black Friday 85% off.",
+   "src": "https://www.iqcapital.io/futures",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 927,
+     "promo": "$139 (85% off)",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "$1,300 (can turn off)"
+    },
+    {
+     "k": 100,
+     "list": 1500,
+     "promo": "$225",
+     "dd": 3000,
+     "target": 6000,
+     "dll": "$1,800 (can turn off)"
+    }
+   ]
+  },
+  {
+   "id": "phidias-e2l",
+   "firm": "Phidias Propfirm",
+   "plan": "Express to Live (one-time payment)",
+   "kind": "Evaluation",
+   "dd": "Static",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "Static drawdown (never trails). First payout converts to a LIVE account.",
+   "consistency": "None in eval",
+   "payout": "First payout is a bonus payout (80/20), then LIVE",
+   "maxAcc": "15 funded (all Phidias types)",
+   "notes": "Only the one-time-payment path waives the $149 activation. 50K and 150K one-time prices not shown on pages read.",
+   "src": "https://phidiaspropfirm.com/accounts",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 277,
+     "promo": "$55 (80% off)",
+     "dd": 500,
+     "target": 1500,
+     "dll": "None"
+    },
+    {
+     "k": 100,
+     "list": 900,
+     "promo": "$180",
+     "dd": null,
+     "target": null,
+     "dll": "None"
+    }
+   ]
+  },
+  {
+   "id": "e8-signature",
+   "firm": "E8 Futures",
+   "plan": "E8 Signature",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "EOD dynamic drawdown in challenge and performance; locks at initial balance.",
+   "consistency": "35% best-day rule for payouts",
+   "payout": "First payout in as little as 3 days; 80%; min $100",
+   "maxAcc": "5 × 50K or 3 × 100K/150K",
+   "notes": "Daily pause $2,000 on 100K. 50K price not shown on pages read.",
+   "src": "https://e8futures.com/",
+   "sizes": [
+    {
+     "k": 50,
+     "list": null,
+     "promo": "Not stated",
+     "dd": 2000,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 100,
+     "list": 280,
+     "promo": "$210 with code E8",
+     "dd": 3000,
+     "target": 6000,
+     "dll": "$2,000 pause"
+    }
+   ]
+  },
+  {
+   "id": "fh-zero1",
+   "firm": "FundedHero Futures",
+   "plan": "Hero ZERO 1-Step",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing on all plans.",
+   "consistency": "50% at payout",
+   "payout": "3-day payout cycle after winning days; paid within 2 business days",
+   "maxAcc": "10 active / 5 funded",
+   "notes": "Drawdown and target per size not stated on pages read.",
+   "src": "https://fundedherofutures.com",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 199,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 50,
+     "list": 299,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 100,
+     "list": 499,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "fh-zero2",
+   "firm": "FundedHero Futures",
+   "plan": "Hero ZERO 2-Step",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing on all plans.",
+   "consistency": "None",
+   "payout": "3-day payout cycle; split 85/90/95% (1st/2nd/3rd)",
+   "maxAcc": "10 active / 5 funded",
+   "notes": "Two phases.",
+   "src": "https://fundedherofutures.com",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 189,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 100,
+     "list": 269,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "fh-x",
+   "firm": "FundedHero Futures",
+   "plan": "Hero X 1-Step",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing on all plans.",
+   "consistency": "50% in eval only",
+   "payout": "3-day payout cycle; 90%",
+   "maxAcc": "10 active / 5 funded",
+   "notes": "Hero ONE excluded ($99–$149 activation).",
+   "src": "https://fundedherofutures.com",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 159,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 50,
+     "list": 279,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 100,
+     "list": 535,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "fh-live",
+   "firm": "FundedHero Futures",
+   "plan": "Hero Live (instant)",
+   "kind": "Instant funded",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing.",
+   "consistency": "20% on every payout",
+   "payout": "3-day payout cycle; 90%",
+   "maxAcc": "10 active / 5 funded",
+   "notes": "No evaluation.",
+   "src": "https://fundedherofutures.com",
+   "sizes": [
+    {
+     "k": 10,
+     "list": 350,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 25,
+     "list": 600,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 50,
+     "list": 849,
+     "promo": "",
+     "dd": 2000,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 75,
+     "list": 998,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 100,
+     "list": 1300,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "traders-launch",
+   "firm": "Traders Launch",
+   "plan": "Futures 100K",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "EOD; locks at starting balance.",
+   "consistency": "Not stated",
+   "payout": "Daily requests when eligible (third-party)",
+   "maxAcc": "Not stated",
+   "notes": "No 50K offered. Split 60% or 80% chosen at purchase.",
+   "src": "https://traderslaunch.com/pricing",
+   "sizes": [
+    {
+     "k": 100,
+     "list": 159,
+     "promo": "",
+     "dd": 1000,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "the5ers",
+   "firm": "The5ers Futures",
+   "plan": "Day Trade",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "EOD, 4% max loss in eval and Pro stage.",
+   "consistency": "40% per position",
+   "payout": "First 14 days after Pro activation, then bi-weekly; 80/20",
+   "maxAcc": "5 (25K/50K)",
+   "notes": "Only the 25K price was readable.",
+   "src": "https://the5ers.com/futures/",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 59,
+     "promo": "",
+     "dd": 1000,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "proped-std",
+   "firm": "PropEd Capital",
+   "plan": "Standard Eval",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "EOD in eval and funded.",
+   "consistency": "Best day ≤40% (both phases)",
+   "payout": "Every 14 days (7 with add-on); min $500; 80%",
+   "maxAcc": "5 funded",
+   "notes": "Billing type not labelled on the plans page; treat one-time as unconfirmed.",
+   "src": "https://propedcapital.com/plans",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 109,
+     "promo": "",
+     "dd": 1000,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 50,
+     "list": 175,
+     "promo": "",
+     "dd": 2000,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 100,
+     "list": 285,
+     "promo": "",
+     "dd": 4000,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 150,
+     "list": 365,
+     "promo": "",
+     "dd": 6000,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "proped-truerisk",
+   "firm": "PropEd Capital",
+   "plan": "TrueRisk Eval (static)",
+   "kind": "Evaluation",
+   "dd": "Static",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "Static: the drawdown equals the whole account size.",
+   "consistency": "None in eval; 40% funded",
+   "payout": "Every 14 days",
+   "maxAcc": "5 funded",
+   "notes": "Tiny real-risk accounts; billing type not labelled.",
+   "src": "https://propedcapital.com/plans",
+   "sizes": [
+    {
+     "k": 1.25,
+     "list": 249,
+     "promo": "",
+     "dd": 1250,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 2.5,
+     "list": 449,
+     "promo": "",
+     "dd": 2500,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 5,
+     "list": 899,
+     "promo": "",
+     "dd": 5000,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 10,
+     "list": 1499,
+     "promo": "",
+     "dd": 10000,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "alpha-std",
+   "firm": "Alpha Futures",
+   "plan": "Standard",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "EOD trailing on every plan; stops at start balance.",
+   "consistency": "40% for withdrawals",
+   "payout": "Every 5 winning days of $200+ (up to 4×/month); min $500; 90%",
+   "maxAcc": "5",
+   "notes": "Monthly subscription until passed.",
+   "src": "https://alpha-futures.com/",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 129,
+     "promo": "",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "None"
+    },
+    {
+     "k": 100,
+     "list": 239,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 150,
+     "list": 349,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "alpha-adv",
+   "firm": "Alpha Futures",
+   "plan": "Advanced",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "EOD trailing; stops at start balance.",
+   "consistency": "None",
+   "payout": "Min $1,000; 90%",
+   "maxAcc": "3",
+   "notes": "Monthly.",
+   "src": "https://alpha-futures.com/",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 209,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 100,
+     "list": 349,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 150,
+     "list": 489,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "alpha-zero",
+   "firm": "Alpha Futures",
+   "plan": "Zero",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "EOD trailing; stops at start balance.",
+   "consistency": "40% for withdrawals",
+   "payout": "Min $200; 90%",
+   "maxAcc": "5",
+   "notes": "Monthly.",
+   "src": "https://alpha-futures.com/product/zero",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 89,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 100,
+     "list": 279,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "topstep-naf",
+   "firm": "Topstep",
+   "plan": "Combine (No Activation Fee path)",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "EOD trailing; XFA locks at $0 start.",
+   "consistency": "55% Combine target",
+   "payout": "After 5 winning days of $150+; min $125; 90/10",
+   "maxAcc": "5 XFA",
+   "notes": "Standard path ($149 activation) excluded.",
+   "src": "https://www.topstep.com/topstep-prop",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 95,
+     "promo": "$85/mo shown",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "$1,000"
+    }
+   ]
+  },
+  {
+   "id": "hola-1step",
+   "firm": "Hola Prime Futures",
+   "plan": "1-Step Prime",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "EOD trailing 4% (3% on 100K/150K); locks at start.",
+   "consistency": "40% challenge; best day <35% funded",
+   "payout": "Weekly after 5 profitable days; min $500; 90%",
+   "maxAcc": "5",
+   "notes": "Monthly until passed.",
+   "src": "https://holaprime.com/futures/",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 159,
+     "promo": "",
+     "dd": 2000,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "blueberry-ascent",
+   "firm": "Blueberry Futures",
+   "plan": "Ascent",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "EOD trailing (closed balance). Accelerated excluded (intraday).",
+   "consistency": "None in eval; 35% funded",
+   "payout": "After 5 profitable days ($200+); 90%",
+   "maxAcc": "3 funded",
+   "notes": "Monthly.",
+   "src": "https://help.blueberryfutures.com/en/articles/11196037-what-are-your-prices-for-evaluations",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 139,
+     "promo": "$55.60 shown",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 50,
+     "list": 245,
+     "promo": "$98",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 100,
+     "list": 368,
+     "promo": "$147.21",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 150,
+     "list": 607,
+     "promo": "",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "funderpro-beg",
+   "firm": "FunderPro Futures",
+   "plan": "Beginner",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "EOD trailing; stops at start, locks after first reward.",
+   "consistency": "40% challenge; 50% funded",
+   "payout": "After 5 profitable days of $100+; 80%",
+   "maxAcc": "5 funded",
+   "notes": "Monthly. Mid-Level and Professional excluded (activation).",
+   "src": "https://support.funderprofutures.com/en/articles/709491-everything-you-need-to-know-about-the-beginner-challenge",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 79,
+     "promo": "",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "uprofit-soft",
+   "firm": "UProfit",
+   "plan": "Day Soft",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Partially verified",
+   "ddNote": "EOD trailing; stops at start.",
+   "consistency": "50% eval; 40% for payouts",
+   "payout": "After 3 profit days; cap 3% of account per request; max 6 withdrawals",
+   "maxAcc": "1 Funded Live",
+   "notes": "Monthly.",
+   "src": "https://uprofit.com/",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 130,
+     "promo": "$78 shown",
+     "dd": 2000,
+     "target": null,
+     "dll": "Not stated"
+    },
+    {
+     "k": 100,
+     "list": null,
+     "promo": "Not stated",
+     "dd": null,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  },
+  {
+   "id": "phoenix-classic",
+   "firm": "Phoenix Trader Funding",
+   "plan": "Classic Growth",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "EOD trailing in challenge; static once live.",
+   "consistency": "50% challenge; none funded",
+   "payout": "Weekly, 5 winning days between payouts; min $75; 90%",
+   "maxAcc": "3–5 pre-funded",
+   "notes": "Monthly.",
+   "src": "https://phoenixtraderfunding.com/classic-accounts",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 128,
+     "promo": "$89.60 shown",
+     "dd": 2000,
+     "target": null,
+     "dll": "Not stated"
+    }
+   ]
+  }
+ ],
+ "excluded": [
+  "Bulenox: $143–$498 activation fee; Option 1 is intraday trailing.",
+  "Topstep Standard path: $149 activation (the no-activation path is monthly, behind the toggle).",
+  "Take Profit Trader: PRO funded account is intraday trailing, plus $130 PRO fee.",
+  "MyFundedFutures Rapid: intraday trailing.",
+  "Apex Intraday Trail (all) and EOD Trail standard: intraday drawdown or $109–$159 activation.",
+  "TradeDay: Quick Pay funded is always intraday; also monthly.",
+  "Goat Funded Futures: Daily Payouts and Instant Classic are intraday when funded; EOD and Flex prices/activation not confirmed on pages read.",
+  "Blueberry Accelerated and Funded Futures Family Velocity: intraday trailing.",
+  "Shark LITE, Top One Elite Access, FundedHero Hero ONE, IQ Capital Core, Swiss Firmup Classic, Futureify Direct: activation fee or activation not confirmed.",
+  "Earn2Trade, Elite Trader Funding, Legends, Leeloo, Purdia, BluSky, Legacy Funded, Lvlup, DayTraders: activation fee.",
+  "Winbance (LiveX activation wording conflicts), Savius and Nextproptrader (no prices shown), 18th Street (activation not stated): not confirmed.",
+  "Closed or not selling: FundingTicks, TickTick Trader, YRM Prop. Maven has no futures program."
+ ]
+}
