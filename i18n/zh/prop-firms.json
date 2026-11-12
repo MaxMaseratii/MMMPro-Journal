@@ -187,5 +187,16 @@
 "Today's offers": "今日优惠",
 "Checked every morning ·": "每天早上核对 ·",
 "Price after today's offer": "今日优惠后价格",
-"{0}% off today": "今日 {0}% 折扣"
+"{0}% off today": "今日 {0}% 折扣",
+"Platform": "平台",
+"Any platform": "任何平台",
+"Firm profile": "公司简介",
+"Platforms": "平台",
+"Platforms:": "平台：",
+"Payout methods": "出金方式",
+"Programs": "计划",
+"Based in": "所在地",
+"Founded": "成立",
+"Max allocation": "最高配额",
+"(third-party, check on the firm's site)": "（第三方信息，请在公司网站核实）"
 }

@@ -187,5 +187,16 @@
 "Today's offers": "Offres du jour",
 "Checked every morning ·": "Vérifié chaque matin ·",
 "Price after today's offer": "Prix après l'offre du jour",
-"{0}% off today": "-{0} % aujourd'hui"
+"{0}% off today": "-{0} % aujourd'hui",
+"Platform": "Plateforme",
+"Any platform": "Toutes les plateformes",
+"Firm profile": "Profil de la firm",
+"Platforms": "Plateformes",
+"Platforms:": "Plateformes :",
+"Payout methods": "Moyens de paiement",
+"Programs": "Programmes",
+"Based in": "Basée à",
+"Founded": "Fondée",
+"Max allocation": "Allocation max",
+"(third-party, check on the firm's site)": "(source tierce, vérifiez sur le site de la firm)"
 }

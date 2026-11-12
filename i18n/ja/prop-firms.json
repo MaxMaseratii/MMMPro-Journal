@@ -187,5 +187,16 @@
 "Today's offers": "本日のオファー",
 "Checked every morning ·": "毎朝チェック ·",
 "Price after today's offer": "本日のオファー後の価格",
-"{0}% off today": "本日{0}%オフ"
+"{0}% off today": "本日{0}%オフ",
+"Platform": "プラットフォーム",
+"Any platform": "すべてのプラットフォーム",
+"Firm profile": "会社プロフィール",
+"Platforms": "プラットフォーム",
+"Platforms:": "プラットフォーム：",
+"Payout methods": "出金方法",
+"Programs": "プログラム",
+"Based in": "所在地",
+"Founded": "設立",
+"Max allocation": "最大割当額",
+"(third-party, check on the firm's site)": "（第三者情報、会社サイトで確認を）"
 }
