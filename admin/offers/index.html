@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Offers Inbox · Admin | MMM Trading</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="mmm-page" content="admin">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<meta name="theme-color" content="#07080a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Private: Max pastes Grok's daily X/Twitter offers here. The morning task reads them, checks them, and publishes to /prop-firms/. */
+:root{--bg:#07080a;--panel:#0f1114;--panel2:#0b0d10;--line:#252a31;--line2:#323942;--fg:#d9dde3;--mute:#8f97a1;--faint:#5f6873;--gold:#e1b31a;--gold2:#f2cf5b;--teal:#4fd1c5;--up:#3ddc97;--dn:#ff5c6c;
+  --display:'Barlow Condensed','Arial Narrow',sans-serif;--body:'Barlow',system-ui,sans-serif;--mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;color-scheme:dark}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:15px;margin:0;-webkit-font-smoothing:antialiased}
+.desk{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:34px 50px}
+h1{font:700 clamp(32px,4vw,48px)/1 var(--display);text-transform:uppercase;letter-spacing:.03em;color:var(--gold);margin:0 0 8px}
+h2{font:700 21px var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--gold);margin:0 0 8px}
+p{line-height:1.55}
+.lede{color:#c9d0d6;max-width:72ch;margin:0 0 22px}
+.box{border:1px solid var(--line);background:var(--panel);padding:16px 18px;margin-bottom:14px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:14px}
+.steps div{background:var(--panel);padding:12px 14px;font-size:14px;line-height:1.5;color:#c9d0d6}
+.steps b{display:block;font:700 15px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--gold2);margin-bottom:3px}
+@media (max-width:760px){.steps{grid-template-columns:minmax(0,1fr)}}
+pre{white-space:pre-wrap;background:var(--panel2);border:1px solid var(--line2);padding:12px;font:13px/1.5 var(--mono);color:#cfd5da;margin:0 0 10px}
+textarea{width:100%;box-sizing:border-box;min-height:220px;background:var(--panel2);color:var(--fg);border:1px solid var(--line2);padding:12px;font:13.5px/1.5 var(--mono);resize:vertical}
+.btn{display:inline-flex;align-items:center;gap:6px;font:700 15px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:11px 14px;border:1px solid var(--line2);background:transparent;color:var(--fg);cursor:pointer;text-decoration:none}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#0b0b0b}
+.btn[disabled]{opacity:.5;cursor:wait}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+.msg{font-size:14px;color:var(--mute)}.msg.ok{color:var(--up)}.msg.bad{color:var(--dn)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{font:600 12px var(--display);letter-spacing:.07em;text-transform:uppercase;color:var(--mute);text-align:left;padding:7px 8px;border-bottom:1px solid var(--line2)}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.t{font:12.5px/1.45 var(--mono);color:#c9d0d6;white-space:pre-wrap;max-width:560px;overflow-wrap:anywhere}
+.tw{overflow-x:auto}
+.tag{display:inline-block;font:600 11px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:4px 6px;border:1px solid var(--line2);white-space:nowrap}
+.tag.ok{color:var(--up);border-color:rgba(61,220,151,.45)}.tag.wait{color:var(--gold2);border-color:rgba(225,179,26,.5)}
+.gate{max-width:560px;margin:40px auto;border:1px solid var(--line2);background:var(--panel);padding:22px}
+</style>
+<link rel="stylesheet" href="/assets/tw.css?v=20261108">
+</head>
+<body>
+<div id="mmm-header"></div>
+<main class="desk" translate="no">
+  <h1>Offers inbox</h1>
+  <p class="lede">Private page. Paste what Grok finds on X each morning. The morning task reads this inbox, checks each offer on the firm's own site, and puts the good ones live on <a href="/prop-firms/" style="color:var(--teal)">/prop-firms/</a>. Nothing you paste goes live without that check.</p>
+  <div id="gate"></div>
+  <div id="app" hidden>
+    <div class="steps">
+      <div><b>1 · Ask Grok</b>Copy the prompt below into Grok once a day (or make it a Grok scheduled task).</div>
+      <div><b>2 · Paste here</b>Paste Grok's whole answer in the box and press Save. Messy text is fine.</div>
+      <div><b>3 · Done</b>The morning task picks it up, checks it and publishes. The list below shows what is waiting and what is done.</div>
+    </div>
+    <div class="box">
+      <h2>Prompt for Grok</h2>
+      <pre id="prompt"></pre>
+      <div class="row"><button class="btn" type="button" id="cpPrompt">Copy prompt</button><span class="msg" id="cpMsg"></span></div>
+    </div>
+    <div class="box">
+      <h2>Paste Grok's answer</h2>
+      <textarea id="txt" maxlength="20000" placeholder="Paste here…"></textarea>
+      <div class="row"><button class="btn gold" type="button" id="save">Save to inbox</button><span class="msg" id="msg"></span></div>
+    </div>
+    <div class="box">
+      <h2>Inbox</h2>
+      <div class="tw"><table><thead><tr><th>Saved</th><th>Status</th><th>Text</th></tr></thead><tbody id="list"><tr><td colspan="3" class="msg">Loading…</td></tr></tbody></table></div>
+    </div>
+    <div class="box">
+      <h2>Live offers now</h2>
+      <p class="msg" id="liveInfo"></p>
+      <div class="tw"><table><thead><tr><th>Firm</th><th>Offer</th><th>Code</th><th>Ends</th><th>Source</th></tr></thead><tbody id="live"></tbody></table></div>
+    </div>
+  </div>
+</main>
+<div id="mmm-footer"></div>
+<script>
+(function () {
+  'use strict';
+  var KEY = 'AIzaSyDcrEEhcY6kHLQxZ7RQ37KmAcCDPgol0gg'; // public web key (same as the rest of the site)
+  var FS = 'https://firestore.googleapis.com/v1/projects/mmm-pro-journal/databases/(default)/documents';
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var USER = null, FIRMS = [], DONE = {};
+  var PROMPT = 'Search X (Twitter) for posts from the last 24 hours by the official accounts of these futures prop firms, and by their founders:\n{FIRMS}\n\n' +
+    'List every discount code, sale, price drop, free reset or payout promo they posted. One line per offer, in this exact format:\n' +
+    'Firm | Offer (e.g. 40% off all evaluations) | Code | Ends (date or "not stated") | Link to the X post\n\n' +
+    'Only include offers posted by the firm itself. Do not guess codes. If a firm posted nothing new, skip it. End with the line: CHECKED <today\'s date>.';
+
+  function gate(h) { $('gate').innerHTML = h ? '<div class="gate">' + h + '</div>' : ''; $('app').hidden = !!h; }
+  function fmt(t) { var d = new Date(t); return isNaN(d) ? '' : d.toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); }
+
+  function loadPlans() {
+    return fetch('/prop-firms/plans.json?v=' + Date.now()).then(function (r) { return r.json(); }).then(function (d) {
+      FIRMS = Object.keys(d.firms || {}).sort();
+      $('prompt').textContent = PROMPT.replace('{FIRMS}', FIRMS.join(', '));
+    }).catch(function () { $('prompt').textContent = PROMPT.replace('{FIRMS}', '(list could not load)'); });
+  }
+  function loadOffers() {
+    return fetch('/prop-firms/offers.json?v=' + Date.now()).then(function (r) { if (!r.ok) throw 0; return r.json(); }).then(function (o) {
+      DONE = {}; (o.inboxDone || []).forEach(function (id) { DONE[id] = 1; });
+      var L = o.offers || [];
+      $('liveInfo').textContent = 'Last morning check: ' + (o.updated_label || o.updated || 'not yet') + ' · ' + L.length + ' offers live.';
+      $('live').innerHTML = L.length ? L.map(function (x) {
+        return '<tr><td>' + esc(x.firm) + '</td><td>' + esc(x.text) + '</td><td><b>' + esc(x.code || '—') + '</b></td><td>' + esc(x.ends || 'not stated') + '</td><td>' + (x.src ? '<a href="' + esc(x.src) + '" target="_blank" rel="noopener nofollow" style="color:var(--teal)">' + esc(x.via || 'link') + '</a>' : esc(x.via || '')) + '</td></tr>';
+      }).join('') : '<tr><td colspan="5" class="msg">No offers live yet.</td></tr>';
+    }).catch(function () { $('liveInfo').textContent = 'No morning check has run yet.'; $('live').innerHTML = ''; });
+  }
+  function loadInbox() {
+    return fetch(FS + '/propOffers?pageSize=30&orderBy=created%20desc&key=' + KEY).then(function (r) { return r.json(); }).then(function (j) {
+      if (j.error) throw j.error;
+      var docs = j.documents || [];
+      $('list').innerHTML = docs.length ? docs.map(function (d) {
+        var id = d.name.split('/').pop(), f = d.fields || {}, t = (f.text && f.text.stringValue) || '';
+        return '<tr><td>' + esc(fmt(f.created && f.created.timestampValue)) + '</td><td>' + (DONE[id] ? '<span class="tag ok">Done</span>' : '<span class="tag wait">Waiting for the morning check</span>') + '</td><td class="t">' + esc(t.length > 900 ? t.slice(0, 900) + '…' : t) + '</td></tr>';
+      }).join('') : '<tr><td colspan="3" class="msg">Empty. Paste Grok\'s first answer above.</td></tr>';
+    }).catch(function (e) {
+      $('list').innerHTML = '<tr><td colspan="3" class="msg bad">Could not read the inbox. If this is new, paste the "prop offers inbox" rules (tools/vip-firestore.rules) into Firebase → Firestore → Rules.</td></tr>';
+    });
+  }
+  function save() {
+    var t = $('txt').value.trim(), b = $('save');
+    if (t.length < 10) { $('msg').className = 'msg bad'; $('msg').textContent = 'Paste Grok\'s answer first.'; return; }
+    b.disabled = true; $('msg').className = 'msg'; $('msg').textContent = 'Saving…';
+    USER.getIdToken().then(function (tok) {
+      return fetch(FS + '/propOffers?key=' + KEY, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok },
+        body: JSON.stringify({ fields: { text: { stringValue: t.slice(0, 20000) }, created: { timestampValue: new Date().toISOString() } } }) });
+    }).then(function (r) {
+      if (r.status === 403) throw new Error('Only the admin login can save here (or the Firestore rules are not pasted yet).');
+      if (!r.ok) throw new Error('Could not save (' + r.status + '). Try again.');
+      $('txt').value = ''; $('msg').className = 'msg ok'; $('msg').textContent = 'Saved. The morning task will check it.'; return loadInbox();
+    }).catch(function (e) { $('msg').className = 'msg bad'; $('msg').textContent = e.message || 'Could not save.'; })
+      .finally(function () { b.disabled = false; });
+  }
+  $('save').addEventListener('click', save);
+  $('cpPrompt').addEventListener('click', function () {
+    var t = $('prompt').textContent;
+    (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { $('cpMsg').textContent = 'Copied.'; })
+      .catch(function () { var r = document.createRange(); r.selectNodeContents($('prompt')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); $('cpMsg').textContent = 'Selected: press Ctrl/Cmd + C.'; });
+  });
+  document.addEventListener('click', function (e) { if (e.target.id === 'b-login') window.MMM.openAuth('login'); });
+  document.addEventListener('mmm:auth', function (e) {
+    USER = e.detail || null;
+    if (!USER) return gate('<h2>Log in</h2><p>This page is private. Log in with your admin email.</p><button class="btn gold" type="button" id="b-login">Log in</button>');
+    gate(''); loadPlans(); loadOffers().then(loadInbox);
+  });
+  gate('<h2>Loading…</h2><p>Checking who is logged in.</p>');
+})();
+</script>
+<script src="/assets/nav.js"></script>
+<script src="/assets/site.js"></script>
+</body>
+</html>

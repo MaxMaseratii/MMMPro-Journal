@@ -36,4 +36,13 @@
       allow create: if request.resource.data.keys().hasOnly(['code'])
         && getAfter(/databases/$(database)/documents/vipCodes/$(request.resource.data.code)).data.email == e;
     }
+    // ===================== MMM prop offers inbox =====================
+    // propOffers/{id}  text Max pastes from Grok each morning (public offers seen on X). Anyone can read it
+    // (the morning task reads it without a login); only the admin login can add, change or delete.
+    match /propOffers/{id} {
+      allow get, list: if true;
+      allow create: if vipAdmin() && request.resource.data.keys().hasOnly(['text', 'created'])
+        && request.resource.data.text is string && request.resource.data.text.size() <= 20000;
+      allow update, delete: if vipAdmin();
+    }
     // ===================== end MMM V.I.P =====================

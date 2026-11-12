@@ -183,5 +183,9 @@
 "<b>{0}</b> firms do not publish a full list: they show a yellow tag, ask them first.": "<b>{0}</b> 家公司未公布完整列表：它们带黄色标签，请先询问。",
 "Country list not published": "国家列表未公布",
 "Ask the firm about your country": "向公司询问你的国家",
-"None with these filters": "这些筛选下没有"
+"None with these filters": "这些筛选下没有",
+"Today's offers": "今日优惠",
+"Checked every morning ·": "每天早上核对 ·",
+"Price after today's offer": "今日优惠后价格",
+"{0}% off today": "今日 {0}% 折扣"
 }

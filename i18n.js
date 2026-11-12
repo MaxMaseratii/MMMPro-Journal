@@ -262,7 +262,7 @@ function mmmApplyLang(lang, root) {
     __mmmBusy = false;
   }
 }
-var MMM_I18N_V = '20261112a';
+var MMM_I18N_V = '20261112b';
 function mmmLoadDict(lang) {
   if (lang === 'en') return Promise.resolve();
   if (MMM_DICT_LOADED[lang]) return MMM_DICT_LOADED[lang];
