@@ -3756,6 +3756,11 @@
     "src": "PropFirmMap",
     "srcUrl": "https://www.propfirmmap.com/firms/apextraderfunding",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://apextraderfunding.com",
+    "src": "/prop-firms/logos/apex-trader-funding.png",
+    "bg": "dark"
    }
   },
   "Tradeify": {
@@ -3867,6 +3872,11 @@
     "src": "FundedTrading",
     "srcUrl": "https://fundedtrading.com/propfirm/tradeify/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://tradeify.co",
+    "src": "/prop-firms/logos/tradeify.png",
+    "bg": "dark"
    }
   },
   "MyFundedFutures": {
@@ -4002,6 +4012,11 @@
     "src": "FundedTrading",
     "srcUrl": "https://fundedtrading.com/propfirm/my-funded-futures/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://myfundedfutures.com",
+    "src": "/prop-firms/logos/myfundedfutures.png",
+    "bg": "dark"
    }
   },
   "Lucid Trading": {
@@ -4128,6 +4143,11 @@
     "src": "FundedTrading",
     "srcUrl": "https://fundedtrading.com/propfirm/lucid/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://lucidtrading.com",
+    "src": "/prop-firms/logos/lucid-trading.png",
+    "bg": "dark"
    }
   },
   "FundedNext Futures": {
@@ -4222,6 +4242,11 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/fundednextfutures",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://fundednext.com",
+    "src": "/prop-firms/logos/fundednext-futures.png",
+    "bg": "dark"
    }
   },
   "Funded Futures Network": {
@@ -4287,6 +4312,11 @@
     "src": "FundedTrading",
     "srcUrl": "https://fundedtrading.com/propfirm/funded-futures-network/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://fundedfuturesnetwork.com",
+    "src": "/prop-firms/logos/funded-futures-network.png",
+    "bg": "dark"
    }
   },
   "Top One Futures": {
@@ -4409,6 +4439,11 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/toponefutures",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://toponefutures.com",
+    "src": "/prop-firms/logos/top-one-futures.png",
+    "bg": "dark"
    }
   },
   "Futureify (FXIFY Futures)": {
@@ -4528,6 +4563,11 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/fxifyfutures/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://futureify.com",
+    "src": "/prop-firms/logos/futureify-fxify-futures.png",
+    "bg": "dark"
    }
   },
   "Blue Guardian Futures": {
@@ -4647,6 +4687,11 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/blueguardianfutures",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://blueguardian.com",
+    "src": "/prop-firms/logos/blue-guardian-futures.png",
+    "bg": "dark"
    }
   },
   "Aqua Futures (AquaFunded)": {
@@ -4762,6 +4807,11 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/aquafutures/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://aquafunded.com",
+    "src": "/prop-firms/logos/aqua-futures-aquafunded.png",
+    "bg": "dark"
    }
   },
   "FuturesElite": {
@@ -4808,6 +4858,11 @@
     "src": "FundedTrading",
     "srcUrl": "https://fundedtrading.com/propfirm/futures-elite/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://futureselite.com",
+    "src": "/prop-firms/logos/futureselite.png",
+    "bg": "dark"
    }
   },
   "Swiss Firmup": {
@@ -4850,6 +4905,11 @@
     "src": "FundedTrading",
     "srcUrl": "https://fundedtrading.com/propfirm/swiss-firmup/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://swissfirmup.com",
+    "src": "/prop-firms/logos/swiss-firmup.png",
+    "bg": "dark"
    }
   },
   "Rev One Trading": {
@@ -4886,6 +4946,11 @@
     "src": "FundedTrading",
     "srcUrl": "https://fundedtrading.com/propfirm/rev-one-trading/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://revonetrading.com",
+    "src": "/prop-firms/logos/rev-one-trading.png",
+    "bg": "dark"
    }
   },
   "Shark Futures": {
@@ -4928,6 +4993,11 @@
     "src": "PropFirmMap",
     "srcUrl": "https://propfirmmap.com/firms/sharkfutures",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://sharkfutures.com",
+    "src": "/prop-firms/logos/shark-futures.png",
+    "bg": "dark"
    }
   },
   "TX3 Futures": {
@@ -4963,6 +5033,11 @@
     "src": "PropFirmMap",
     "srcUrl": "https://propfirmmap.com/firms/tx3futures",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://tx3futures.com",
+    "src": "/prop-firms/logos/tx3-futures.png",
+    "bg": "dark"
    }
   },
   "IQ Capital": {
@@ -5031,6 +5106,9 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/iqcapitalfutures/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://iqcapital.io"
    }
   },
   "Phidias Propfirm": {
@@ -5131,6 +5209,11 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/phidias",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://phidiaspropfirm.com",
+    "src": "/prop-firms/logos/phidias-propfirm.png",
+    "bg": "dark"
    }
   },
   "E8 Futures": {
@@ -5246,6 +5329,11 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/e8futures/comparisons",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://e8futures.com",
+    "src": "/prop-firms/logos/e8-futures.png",
+    "bg": "dark"
    }
   },
   "FundedHero Futures": {
@@ -5289,6 +5377,11 @@
     "src": "PropFirmMap",
     "srcUrl": "https://propfirmmap.com/firms/fundedhero",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://fundedherofutures.com",
+    "src": "/prop-firms/logos/fundedhero-futures.png",
+    "bg": "dark"
    }
   },
   "Traders Launch": {
@@ -5344,6 +5437,11 @@
     "src": "TheTrustedProp",
     "srcUrl": "https://thetrustedprop.com/prop-firms/traders-launch",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://traderslaunch.com",
+    "src": "/prop-firms/logos/traders-launch.png",
+    "bg": "dark"
    }
   },
   "The5ers Futures": {
@@ -5412,6 +5510,11 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/the5ersfutures",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://the5ers.com",
+    "src": "/prop-firms/logos/the5ers-futures.png",
+    "bg": "light"
    }
   },
   "PropEd Capital": {
@@ -5450,6 +5553,11 @@
     "src": "FundedTrading",
     "srcUrl": "https://fundedtrading.com/?p=17873",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://propedcapital.com",
+    "src": "/prop-firms/logos/proped-capital.png",
+    "bg": "dark"
    }
   },
   "Alpha Futures": {
@@ -5559,6 +5667,11 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/alphafutures",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://alpha-futures.com",
+    "src": "/prop-firms/logos/alpha-futures.png",
+    "bg": "dark"
    }
   },
   "Topstep": {
@@ -5633,6 +5746,11 @@
     "src": "FundedTrading",
     "srcUrl": "https://fundedtrading.com/propfirm/topstep/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://www.topstep.com",
+    "src": "/prop-firms/logos/topstep.png",
+    "bg": "dark"
    }
   },
   "Hola Prime Futures": {
@@ -5675,6 +5793,11 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/holaprimefutures/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://holaprime.com",
+    "src": "/prop-firms/logos/hola-prime-futures.png",
+    "bg": "dark"
    }
   },
   "Blueberry Futures": {
@@ -5728,6 +5851,11 @@
     "src": "PropFirmMap",
     "srcUrl": "https://propfirmmap.com/firms/blueberryfutures",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://blueberryfutures.com",
+    "src": "/prop-firms/logos/blueberry-futures.png",
+    "bg": "dark"
    }
   },
   "FunderPro Futures": {
@@ -5771,6 +5899,11 @@
     "src": "FundedTrading",
     "srcUrl": "https://fundedtrading.com/propfirm/funderpro-futures/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://funderpro.com",
+    "src": "/prop-firms/logos/funderpro-futures.png",
+    "bg": "dark"
    }
   },
   "UProfit": {
@@ -5808,6 +5941,11 @@
     "src": "PropFirmMap",
     "srcUrl": "https://propfirmmap.com/firms/uprofit",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://uprofit.com",
+    "src": "/prop-firms/logos/uprofit.png",
+    "bg": "dark"
    }
   },
   "Phoenix Trader Funding": {
@@ -5888,6 +6026,11 @@
     "src": "TheGodfunded",
     "srcUrl": "https://thegodfunded.com/en/firms/phoenixtraderfunding/",
     "checked": "2026-11-12"
+   },
+   "logo": {
+    "site": "https://phoenixtraderfunding.com",
+    "src": "/prop-firms/logos/phoenix-trader-funding.png",
+    "bg": "dark"
    }
   }
  },
