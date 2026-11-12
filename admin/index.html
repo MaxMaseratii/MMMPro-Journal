@@ -115,6 +115,10 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
 .crm{display:grid;gap:10px}
 .crm .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;color:var(--mute);font-size:13.5px}
 .crm iframe{width:100%;height:calc(100vh - 230px);min-height:620px;border:1px solid var(--rule2);border-radius:6px;background:var(--sheet);display:block}
+.crm details.offers{border:1px solid hsla(45,100%,55%,.45);border-radius:6px;background:var(--sheet)}
+.crm details.offers summary{cursor:pointer;padding:12px 14px;font-weight:700;color:var(--gold)}
+.crm details.offers summary small{color:var(--mute);font-weight:500;margin-left:6px}
+.crm iframe#offFrame{height:900px;min-height:0;border:0;border-top:1px solid var(--rule2);border-radius:0 0 6px 6px}
 </style>
 </head>
 <body>
@@ -167,6 +171,7 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
     <div class="tw"><table><thead><tr><th>When</th><th>Email</th><th>Code</th><th>For</th><th></th><th>Status</th><th></th></tr></thead><tbody id="vipCodes"></tbody></table></div>
   </section>
   <section class="crm" id="crm" hidden>
+    <details class="offers" id="offBox" open><summary>Prop firm offers inbox (Grok) <small>Paste Grok's answer here every morning · the 06:33 check publishes them to /prop-firms/</small></summary><iframe id="offFrame" title="Prop firm offers inbox"></iframe></details>
     <div class="bar"><span>Marketing, CRM and revenue dashboard.</span><a class="btn" href="https://maxmaseratii.github.io/dashboard-analytics-CRM/#crm" target="_blank" rel="noopener">Open in a new tab</a></div>
     <iframe id="crmFrame" title="MMM Marketing Hub CRM" loading="lazy" referrerpolicy="no-referrer"></iframe>
   </section>
@@ -547,7 +552,7 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
 /* admin tabs: Members · V.I.P · CRM (they show once the admin login is confirmed) */
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], crm: ['CRM', 'Marketing, CRM and revenue.'] };
+  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], crm: ['CRM', 'Prop firm offers inbox, marketing, CRM and revenue.'] };
   var SUB = $('sub').textContent;
   function pick(t, push) {
     if (!TABS[t]) t = 'members';
@@ -556,6 +561,7 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
     document.querySelector('.head h1').textContent = TABS[t][0];
     $('sub').textContent = t === 'members' ? SUB : TABS[t][1];
     if (t === 'crm' && !$('crmFrame').src) $('crmFrame').src = 'https://maxmaseratii.github.io/dashboard-analytics-CRM/#crm';
+    if (t === 'crm' && !$('offFrame').src) $('offFrame').src = '/admin/offers/?embed=1';
     if (push) { try { history.replaceState(null, '', t === 'members' ? location.pathname : '#' + t); } catch (e) {} }
   }
   function admin() { return !$('board').hidden || !$('vip').hidden; }

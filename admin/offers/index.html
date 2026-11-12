@@ -42,12 +42,15 @@ td.t{font:12.5px/1.45 var(--mono);color:#c9d0d6;white-space:pre-wrap;max-width:5
 .tw{overflow-x:auto}
 .tag{display:inline-block;font:600 11px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:4px 6px;border:1px solid var(--line2);white-space:nowrap}
 .tag.ok{color:var(--up);border-color:rgba(61,220,151,.45)}.tag.wait{color:var(--gold2);border-color:rgba(225,179,26,.5)}
+.embed .desk{padding-block:14px 20px}.embed h1{font-size:30px}
 .gate{max-width:560px;margin:40px auto;border:1px solid var(--line2);background:var(--panel);padding:22px}
 </style>
 <link rel="stylesheet" href="/assets/tw.css?v=20261108">
 </head>
 <body>
 <div id="mmm-header"></div>
+<script>/* ?embed=1: shown inside the admin CRM tab, so no site header/footer */
+if (/[?&]embed=1/.test(location.search)) { document.documentElement.className += ' embed'; var h = document.getElementById('mmm-header'); if (h) h.remove(); }</script>
 <main class="desk" translate="no">
   <h1>Offers inbox</h1>
   <p class="lede">Private page. Paste what Grok finds on X each morning. The morning task reads this inbox, checks each offer on the firm's own site, and puts the good ones live on <a href="/prop-firms/" style="color:var(--teal)">/prop-firms/</a>. Nothing you paste goes live without that check.</p>
@@ -80,6 +83,7 @@ td.t{font:12.5px/1.45 var(--mono);color:#c9d0d6;white-space:pre-wrap;max-width:5
   </div>
 </main>
 <div id="mmm-footer"></div>
+<script>if (/[?&]embed=1/.test(location.search)) { var f = document.getElementById('mmm-footer'); if (f) f.remove(); }</script>
 <script>
 (function () {
   'use strict';
