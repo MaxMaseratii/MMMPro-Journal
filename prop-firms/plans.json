@@ -3738,6 +3738,24 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "Rithmic",
+     "WealthCharts"
+    ],
+    "payout": [],
+    "programs": [
+     "EOD Trail",
+     "Intraday Trail"
+    ],
+    "hq": "United States",
+    "founded": null,
+    "maxAlloc": "20 funded accounts",
+    "src": "PropFirmMap",
+    "srcUrl": "https://www.propfirmmap.com/firms/apextraderfunding",
+    "checked": "2026-11-12"
    }
   },
   "Tradeify": {
@@ -3822,6 +3840,33 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "NinjaTrader",
+     "TradingView",
+     "Rithmic",
+     "Quantower",
+     "Sierra Chart",
+     "WealthCharts",
+     "Tradesea"
+    ],
+    "payout": [
+     "Rise",
+     "Plane"
+    ],
+    "programs": [
+     "Lightning",
+     "Growth",
+     "Select"
+    ],
+    "hq": "United States",
+    "founded": "2024",
+    "maxAlloc": null,
+    "src": "FundedTrading",
+    "srcUrl": "https://fundedtrading.com/propfirm/tradeify/",
+    "checked": "2026-11-12"
    }
   },
   "MyFundedFutures": {
@@ -3932,6 +3977,31 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "NinjaTrader",
+     "TradingView",
+     "Quantower",
+     "Volumetrica",
+     "R|Trader Pro"
+    ],
+    "payout": [
+     "Rise",
+     "Wise"
+    ],
+    "programs": [
+     "Builder",
+     "Rapid",
+     "Pro"
+    ],
+    "hq": "United States",
+    "founded": "2023",
+    "maxAlloc": null,
+    "src": "FundedTrading",
+    "srcUrl": "https://fundedtrading.com/propfirm/my-funded-futures/",
+    "checked": "2026-11-12"
    }
   },
   "Lucid Trading": {
@@ -4029,6 +4099,35 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "Rithmic",
+     "NinjaTrader",
+     "TradingView",
+     "Quantower",
+     "Sierra Chart",
+     "MotiveWave",
+     "Bookmap"
+    ],
+    "payout": [
+     "Bank transfer",
+     "PayPal",
+     "Crypto"
+    ],
+    "programs": [
+     "LucidPro",
+     "LucidFlex",
+     "LucidDaily",
+     "LucidDirect"
+    ],
+    "hq": "United States",
+    "founded": "2025",
+    "maxAlloc": null,
+    "src": "FundedTrading",
+    "srcUrl": "https://fundedtrading.com/propfirm/lucid/",
+    "checked": "2026-11-12"
    }
   },
   "FundedNext Futures": {
@@ -4099,6 +4198,30 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "NinjaTrader",
+     "TradingView"
+    ],
+    "payout": [
+     "Rise",
+     "Crypto",
+     "Bank transfer"
+    ],
+    "programs": [
+     "Legacy",
+     "Flex",
+     "Rapid",
+     "Bolt"
+    ],
+    "hq": "United Arab Emirates",
+    "founded": "2022",
+    "maxAlloc": "$750K",
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/fundednextfutures",
+    "checked": "2026-11-12"
    }
   },
   "Funded Futures Network": {
@@ -4143,6 +4266,27 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "NinjaTrader",
+     "Rithmic"
+    ],
+    "payout": [
+     "Bank transfer",
+     "ACH",
+     "PayPal"
+    ],
+    "programs": [
+     "MAX Standard",
+     "STEADY"
+    ],
+    "hq": "United States",
+    "founded": "2022",
+    "maxAlloc": null,
+    "src": "FundedTrading",
+    "srcUrl": "https://fundedtrading.com/propfirm/funded-futures-network/",
+    "checked": "2026-11-12"
    }
   },
   "Top One Futures": {
@@ -4235,6 +4379,36 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Project X",
+     "Tradovate",
+     "NinjaTrader",
+     "TradingView",
+     "Quantower",
+     "WealthCharts"
+    ],
+    "payout": [
+     "Rise",
+     "Crypto",
+     "Transfer"
+    ],
+    "programs": [
+     "Elite",
+     "Elite Daily",
+     "Elite ACCESS",
+     "Instant Sim Funded",
+     "S2F Sim Pro",
+     "IGNITE",
+     "X-ULTRA"
+    ],
+    "hq": "United States",
+    "founded": "2024",
+    "maxAlloc": null,
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/toponefutures",
+    "checked": "2026-11-12"
    }
   },
   "Futureify (FXIFY Futures)": {
@@ -4334,6 +4508,26 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "NinjaTrader",
+     "TradingView"
+    ],
+    "payout": [
+     "Rise"
+    ],
+    "programs": [
+     "Flex",
+     "Direct"
+    ],
+    "hq": "Ireland",
+    "founded": "2024",
+    "maxAlloc": null,
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/fxifyfutures/",
+    "checked": "2026-11-12"
    }
   },
   "Blue Guardian Futures": {
@@ -4429,6 +4623,30 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "Project X",
+     "Volumetrica",
+     "DeepCharts"
+    ],
+    "payout": [
+     "Bank transfer",
+     "Crypto"
+    ],
+    "programs": [
+     "Standard",
+     "Reserve",
+     "Express",
+     "Direct"
+    ],
+    "hq": "United Arab Emirates",
+    "founded": "2021",
+    "maxAlloc": null,
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/blueguardianfutures",
+    "checked": "2026-11-12"
    }
   },
   "Aqua Futures (AquaFunded)": {
@@ -4522,6 +4740,28 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "DeepCharts"
+    ],
+    "payout": [
+     "Rise",
+     "Crypto"
+    ],
+    "programs": [
+     "Standard",
+     "Flex",
+     "Daily",
+     "Instant"
+    ],
+    "hq": "United Arab Emirates",
+    "founded": "2023",
+    "maxAlloc": "$450K",
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/aquafutures/",
+    "checked": "2026-11-12"
    }
   },
   "FuturesElite": {
@@ -4542,6 +4782,32 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "NinjaTrader",
+     "Quantower",
+     "ATAS",
+     "WealthCharts",
+     "DeepCharts"
+    ],
+    "payout": [
+     "Rise",
+     "Crypto"
+    ],
+    "programs": [
+     "Elite",
+     "Nitro",
+     "Prime",
+     "Instant"
+    ],
+    "hq": "Italy",
+    "founded": "2024",
+    "maxAlloc": null,
+    "src": "FundedTrading",
+    "srcUrl": "https://fundedtrading.com/propfirm/futures-elite/",
+    "checked": "2026-11-12"
    }
   },
   "Swiss Firmup": {
@@ -4562,6 +4828,28 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Rithmic",
+     "R|Trader Pro",
+     "Sierra Chart",
+     "ATAS",
+     "Volumetrica"
+    ],
+    "payout": [
+     "Rise"
+    ],
+    "programs": [
+     "Classic",
+     "Pro"
+    ],
+    "hq": "Switzerland",
+    "founded": "2025",
+    "maxAlloc": null,
+    "src": "FundedTrading",
+    "srcUrl": "https://fundedtrading.com/propfirm/swiss-firmup/",
+    "checked": "2026-11-12"
    }
   },
   "Rev One Trading": {
@@ -4582,6 +4870,22 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Black Arrow"
+    ],
+    "payout": [
+     "Bank transfer",
+     "Crypto"
+    ],
+    "programs": null,
+    "hq": "United States",
+    "founded": "2026",
+    "maxAlloc": null,
+    "src": "FundedTrading",
+    "srcUrl": "https://fundedtrading.com/propfirm/rev-one-trading/",
+    "checked": "2026-11-12"
    }
   },
   "Shark Futures": {
@@ -4602,6 +4906,28 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Volumetrica",
+     "Quantower",
+     "ATAS"
+    ],
+    "payout": [
+     "Rise"
+    ],
+    "programs": [
+     "PACE",
+     "FLASH",
+     "LITE",
+     "Instant PRO"
+    ],
+    "hq": "Lithuania",
+    "founded": "2026",
+    "maxAlloc": null,
+    "src": "PropFirmMap",
+    "srcUrl": "https://propfirmmap.com/firms/sharkfutures",
+    "checked": "2026-11-12"
    }
   },
   "TX3 Futures": {
@@ -4622,6 +4948,21 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "NinjaTrader",
+     "TradingView"
+    ],
+    "payout": [],
+    "programs": null,
+    "hq": "United Arab Emirates",
+    "founded": null,
+    "maxAlloc": null,
+    "src": "PropFirmMap",
+    "srcUrl": "https://propfirmmap.com/firms/tx3futures",
+    "checked": "2026-11-12"
    }
   },
   "IQ Capital": {
@@ -4663,6 +5004,33 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "NinjaTrader",
+     "TradingView",
+     "Quantower",
+     "ATAS",
+     "DeepCharts"
+    ],
+    "payout": [
+     "Bank transfer",
+     "Crypto"
+    ],
+    "programs": [
+     "Core",
+     "Rapid",
+     "Instant",
+     "Flex",
+     "Elite"
+    ],
+    "hq": "Saint Lucia",
+    "founded": null,
+    "maxAlloc": "$1M (10 Core accounts)",
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/iqcapitalfutures/",
+    "checked": "2026-11-12"
    }
   },
   "Phidias Propfirm": {
@@ -4737,6 +5105,32 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Rithmic",
+     "Tradovate",
+     "NinjaTrader",
+     "TradingView",
+     "Quantower",
+     "Sierra Chart"
+    ],
+    "payout": [
+     "Rise",
+     "Bank transfer",
+     "Crypto"
+    ],
+    "programs": [
+     "Express to Live",
+     "Fundamental",
+     "Premium"
+    ],
+    "hq": "Gibraltar",
+    "founded": "2023",
+    "maxAlloc": "$600K",
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/phidias",
+    "checked": "2026-11-12"
    }
   },
   "E8 Futures": {
@@ -4839,6 +5233,19 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate"
+    ],
+    "payout": [],
+    "programs": null,
+    "hq": "United States",
+    "founded": "2021",
+    "maxAlloc": null,
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/e8futures/comparisons",
+    "checked": "2026-11-12"
    }
   },
   "FundedHero Futures": {
@@ -4859,6 +5266,29 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "TradingView",
+     "NinjaTrader",
+     "Volumetrica"
+    ],
+    "payout": [
+     "Rise",
+     "Crypto"
+    ],
+    "programs": [
+     "Hero ZERO",
+     "Hero ONE",
+     "Hero X",
+     "Hero Live"
+    ],
+    "hq": "United States",
+    "founded": null,
+    "maxAlloc": null,
+    "src": "PropFirmMap",
+    "srcUrl": "https://propfirmmap.com/firms/fundedhero",
+    "checked": "2026-11-12"
    }
   },
   "Traders Launch": {
@@ -4896,6 +5326,24 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "NinjaTrader",
+     "Interactive Brokers",
+     "T3 Global"
+    ],
+    "payout": [
+     "Bank wire",
+     "Crypto"
+    ],
+    "programs": null,
+    "hq": "United States",
+    "founded": "2024",
+    "maxAlloc": null,
+    "src": "TheTrustedProp",
+    "srcUrl": "https://thetrustedprop.com/prop-firms/traders-launch",
+    "checked": "2026-11-12"
    }
   },
   "The5ers Futures": {
@@ -4944,6 +5392,26 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Black Arrow"
+    ],
+    "payout": [
+     "Rise",
+     "Crypto",
+     "Transfer"
+    ],
+    "programs": [
+     "Day Trade",
+     "Swing"
+    ],
+    "hq": "Israel",
+    "founded": "2016",
+    "maxAlloc": "$500K",
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/the5ersfutures",
+    "checked": "2026-11-12"
    }
   },
   "PropEd Capital": {
@@ -4964,6 +5432,24 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "DXFuture"
+    ],
+    "payout": [
+     "Wise"
+    ],
+    "programs": [
+     "Standard",
+     "TrueRisk"
+    ],
+    "hq": "United States",
+    "founded": null,
+    "maxAlloc": null,
+    "src": "FundedTrading",
+    "srcUrl": "https://fundedtrading.com/?p=17873",
+    "checked": "2026-11-12"
    }
   },
   "Alpha Futures": {
@@ -5046,6 +5532,33 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "AlphaTrader",
+     "WealthCharts",
+     "Quantower",
+     "DeepCharts",
+     "TradingView"
+    ],
+    "payout": [
+     "ACH",
+     "Wire",
+     "Wise",
+     "Rise"
+    ],
+    "programs": [
+     "Standard",
+     "Advanced",
+     "Zero",
+     "Direct"
+    ],
+    "hq": "United Kingdom",
+    "founded": "2023",
+    "maxAlloc": null,
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/alphafutures",
+    "checked": "2026-11-12"
    }
   },
   "Topstep": {
@@ -5100,6 +5613,26 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "TopstepX"
+    ],
+    "payout": [
+     "ACH",
+     "Wire",
+     "Wise",
+     "Aeropay"
+    ],
+    "programs": [
+     "Trading Combine"
+    ],
+    "hq": "United States",
+    "founded": "2012",
+    "maxAlloc": null,
+    "src": "FundedTrading",
+    "srcUrl": "https://fundedtrading.com/propfirm/topstep/",
+    "checked": "2026-11-12"
    }
   },
   "Hola Prime Futures": {
@@ -5120,6 +5653,28 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "NinjaTrader",
+     "Tradovate",
+     "WealthCharts"
+    ],
+    "payout": [
+     "Crypto",
+     "Bank wire",
+     "Rise"
+    ],
+    "programs": [
+     "1-Step Prime",
+     "Direct"
+    ],
+    "hq": "Hong Kong",
+    "founded": "2024",
+    "maxAlloc": "$500K",
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/holaprimefutures/",
+    "checked": "2026-11-12"
    }
   },
   "Blueberry Futures": {
@@ -5154,6 +5709,25 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Black Arrow"
+    ],
+    "payout": [
+     "Crypto (USDT)",
+     "Rise"
+    ],
+    "programs": [
+     "Ascent",
+     "Accelerated"
+    ],
+    "hq": "Cayman Islands",
+    "founded": "2025",
+    "maxAlloc": null,
+    "src": "PropFirmMap",
+    "srcUrl": "https://propfirmmap.com/firms/blueberryfutures",
+    "checked": "2026-11-12"
    }
   },
   "FunderPro Futures": {
@@ -5174,6 +5748,29 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "DeepCharts",
+     "ATAS",
+     "Quantower",
+     "Rithmic"
+    ],
+    "payout": [
+     "Rise",
+     "Crypto"
+    ],
+    "programs": [
+     "Beginner",
+     "Mid-Level",
+     "Professional"
+    ],
+    "hq": "Malta",
+    "founded": "2025",
+    "maxAlloc": null,
+    "src": "FundedTrading",
+    "srcUrl": "https://fundedtrading.com/propfirm/funderpro-futures/",
+    "checked": "2026-11-12"
    }
   },
   "UProfit": {
@@ -5194,6 +5791,23 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "Tradovate",
+     "TradingView"
+    ],
+    "payout": [],
+    "programs": [
+     "Uprofit One",
+     "Uprofit Day"
+    ],
+    "hq": "United States",
+    "founded": "2019",
+    "maxAlloc": null,
+    "src": "PropFirmMap",
+    "srcUrl": "https://propfirmmap.com/firms/uprofit",
+    "checked": "2026-11-12"
    }
   },
   "Phoenix Trader Funding": {
@@ -5245,6 +5859,35 @@
    "aff": {
     "url": "",
     "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "NinjaTrader",
+     "Tradovate",
+     "TradingView",
+     "Quantower",
+     "ATAS",
+     "Sierra Chart",
+     "Bookmap"
+    ],
+    "payout": [
+     "Payoneer",
+     "Wise",
+     "PayPal",
+     "Rise"
+    ],
+    "programs": [
+     "Classic",
+     "Daily",
+     "Spark",
+     "Merit"
+    ],
+    "hq": "France",
+    "founded": "2023",
+    "maxAlloc": "$700K",
+    "src": "TheGodfunded",
+    "srcUrl": "https://thegodfunded.com/en/firms/phoenixtraderfunding/",
+    "checked": "2026-11-12"
    }
   }
  },
@@ -5459,5 +6102,28 @@
   "Yemen",
   "Zambia",
   "Zimbabwe"
+ ],
+ "platforms": [
+  "AlphaTrader",
+  "ATAS",
+  "Black Arrow",
+  "Bookmap",
+  "DeepCharts",
+  "DXFuture",
+  "Interactive Brokers",
+  "MotiveWave",
+  "NinjaTrader",
+  "Project X",
+  "Quantower",
+  "Rithmic",
+  "R|Trader Pro",
+  "Sierra Chart",
+  "T3 Global",
+  "TopstepX",
+  "Tradesea",
+  "TradingView",
+  "Tradovate",
+  "Volumetrica",
+  "WealthCharts"
  ]
 }

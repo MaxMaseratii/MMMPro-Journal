@@ -183,5 +183,20 @@
 "<b>{0}</b> firms do not publish a full list: they show a yellow tag, ask them first.": "<b>{0}</b> konpayi pa pibliye yon lis konplè: yo gen yon etikèt jòn, mande yo anvan.",
 "Country list not published": "Lis peyi pa pibliye",
 "Ask the firm about your country": "Mande konpayi a pou peyi w",
-"None with these filters": "Okenn ak filt sa yo"
+"None with these filters": "Okenn ak filt sa yo",
+"Today's offers": "Òf jodi a",
+"Checked every morning ·": "Tcheke chak maten ·",
+"Price after today's offer": "Pri apre òf jodi a",
+"{0}% off today": "{0}% rabè jodi a",
+"Platform": "Platfòm",
+"Any platform": "Nenpòt platfòm",
+"Firm profile": "Pwofil konpayi",
+"Platforms": "Platfòm",
+"Platforms:": "Platfòm:",
+"Payout methods": "Fason peman",
+"Programs": "Pwogram",
+"Based in": "Baze nan",
+"Founded": "Fonde",
+"Max allocation": "Alokasyon maksimòm",
+"(third-party, check on the firm's site)": "(sous lòt moun, tcheke sou sit konpayi a)"
 }

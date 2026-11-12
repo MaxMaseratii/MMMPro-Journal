@@ -183,5 +183,20 @@
 "<b>{0}</b> firms do not publish a full list: they show a yellow tag, ask them first.": "<b>{0}</b> firmas no publican una lista completa: tienen una etiqueta amarilla, pregúntales antes.",
 "Country list not published": "Lista de países no publicada",
 "Ask the firm about your country": "Pregunta a la firma por tu país",
-"None with these filters": "Ninguno con estos filtros"
+"None with these filters": "Ninguno con estos filtros",
+"Today's offers": "Ofertas de hoy",
+"Checked every morning ·": "Revisado cada mañana ·",
+"Price after today's offer": "Precio con la oferta de hoy",
+"{0}% off today": "{0}% de descuento hoy",
+"Platform": "Plataforma",
+"Any platform": "Cualquier plataforma",
+"Firm profile": "Perfil de la firma",
+"Platforms": "Plataformas",
+"Platforms:": "Plataformas:",
+"Payout methods": "Métodos de pago",
+"Programs": "Programas",
+"Based in": "Con sede en",
+"Founded": "Fundada",
+"Max allocation": "Asignación máx.",
+"(third-party, check on the firm's site)": "(fuente externa, revisa en el sitio de la firma)"
 }

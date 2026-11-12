@@ -183,5 +183,20 @@
 "<b>{0}</b> firms do not publish a full list: they show a yellow tag, ask them first.": "<b>{0}</b>社は完全なリストを公開していません：黄色のタグが付いているので、まず確認を。",
 "Country list not published": "国リスト非公開",
 "Ask the firm about your country": "あなたの国について会社に確認を",
-"None with these filters": "この条件では該当なし"
+"None with these filters": "この条件では該当なし",
+"Today's offers": "本日のオファー",
+"Checked every morning ·": "毎朝チェック ·",
+"Price after today's offer": "本日のオファー後の価格",
+"{0}% off today": "本日{0}%オフ",
+"Platform": "プラットフォーム",
+"Any platform": "すべてのプラットフォーム",
+"Firm profile": "会社プロフィール",
+"Platforms": "プラットフォーム",
+"Platforms:": "プラットフォーム：",
+"Payout methods": "出金方法",
+"Programs": "プログラム",
+"Based in": "所在地",
+"Founded": "設立",
+"Max allocation": "最大割当額",
+"(third-party, check on the firm's site)": "（第三者情報、会社サイトで確認を）"
 }
