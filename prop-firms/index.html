@@ -188,6 +188,9 @@ table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--m
 .band{margin-top:34px;border:1px solid rgba(225,179,26,.45);background:linear-gradient(110deg,rgba(225,179,26,.10),rgba(79,209,197,.05) 60%,transparent);padding:22px 24px;display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;justify-content:space-between}
 .band h2{margin:0 0 6px;font:700 clamp(22px,2.4vw,30px)/1.1 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--gold)}
 .band p{margin:0;max-width:70ch;color:#c9d0d6;font-size:15px;line-height:1.55}
+.affnote{margin:-4px 0 14px;font-size:12.5px;color:var(--mute)}
+#discAff{margin-bottom:0}
+#discAff~.disc{margin-top:8px}
 .disc{margin:26px 0 40px;padding:12px 14px;border:1px solid var(--line);font-size:13px;line-height:1.55;color:var(--mute)}
 .loading{color:var(--mute);font:13px var(--mono);padding:24px 0}
 
@@ -285,6 +288,7 @@ a.stars:hover{color:var(--fg)}
       <h1>Prop firm comparison</h1>
       <p class="lede">Every futures prop plan you pay for once: no activation fee, and an end-of-day or static drawdown in both the evaluation and the funded account. Every account size side by side, with how fast you get paid, the funded consistency rule, copier rules, banned countries and Trustpilot stars.</p>
       <p class="facts" id="facts">Loading the plans…</p>
+      <p class="affnote" id="affTop" hidden>Some links are affiliate links: MMM may earn a commission, at no extra cost to you.</p>
       <div class="acts">
         <a class="btn-try" href="#compare">Compare every size ↓</a>
         <a class="btn-ghost" href="#speed">Fastest payouts</a>
@@ -393,7 +397,9 @@ a.stars:hover{color:var(--fg)}
       <div><h2>Found your account? Plan how to grow it.</h2><p>The V.I.P Game Plan Builder now fills in your firm's evaluation and funded rules from this list. Then it tests your strategy on them: your chance to pass, your chance to get paid, and how many accounts your income goal takes.</p></div>
       <a class="btn-try" href="/vip/">Open the V.I.P tools →</a>
     </div>
+    <p class="disc" id="discAff" hidden>Some links on this page are affiliate links: if you buy through them, MMM may earn a commission at no extra cost to you. Every firm is listed and ranked by the same rules, paid or not.</p>
     <p class="disc" id="disc">Not affiliated with any prop firm. Education only, not financial advice. Prices, sizes, payout rules and country lists change often: confirm every rule on the firm's own page at checkout. Some facts come from third-party sites and are marked as such.</p>
+    <p class="disc" id="disc2" hidden>Education only, not financial advice. Prices, sizes, payout rules and country lists change often: confirm every rule on the firm's own page at checkout. Some facts come from third-party sites and are marked as such.</p>
   </div>
 </main>
 
@@ -553,7 +559,7 @@ a.stars:hover{color:var(--fg)}
     var url = a.url || p.src;
     var ol = offers(p).map(function (o) { return '<span class="code">' + NO(o.text) + (o.code ? ' ' + cpyBtn(o.code) : '') + (o.ends ? ' <small class="ns" translate="no">→ ' + esc(o.ends) + '</small>' : '') + '</span>'; }).join('');
     return (ol ? '<div class="go">' + ol + H + '</div>' : '') + '<div class="go"><a class="btn-try" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url ? ' sponsored' : ' nofollow') + '">' + (a.url ? 'Get this account →' : 'Visit the firm →') + '</a>' + H +
-      (code ? '<span class="code"><span>Code</span> ' + NO(code) + '</span>' : '') + '</div>';
+      (code ? '<span class="code"><span>Code</span> ' + cpyBtn(code) + '</span>' : '') + '</div>';
   }
 
   function paint() {
@@ -684,7 +690,24 @@ a.stars:hover{color:var(--fg)}
       .catch(function (e) { if (i + 1 < SRC.length) return load(i + 1); throw e; });
   }
   var offLoad = fetch('/prop-firms/offers.json?v=' + Math.floor(Date.now() / 600000)).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
-  Promise.all([load(0), offLoad]).then(function (a) { D = a[0]; OF = a[1]; header(); wire(); paint(); })
+  // Max's affiliate links and codes, set live from /admin/affiliates/ (Firestore propAff, public read). Never waits more than 3s.
+  var affLoad = Promise.race([
+    fetch('https://firestore.googleapis.com/v1/projects/mmm-pro-journal/databases/(default)/documents/propAff?pageSize=100&key=AIzaSyDcrEEhcY6kHLQxZ7RQ37KmAcCDPgol0gg')
+      .then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+    new Promise(function (res) { setTimeout(function () { res(null); }, 3000); })]);
+  function mergeAff(j) {
+    var on = false;
+    ((j && j.documents) || []).forEach(function (d) {
+      var f = d.fields || {}, sv = function (k) { return (f[k] && f[k].stringValue) || ''; };
+      var fm = D.firms && D.firms[sv('firm')]; if (!fm) return;
+      var a = {}, u = sv('url').trim(), c = sv('code').trim();
+      if (/^https:\/\/[^\s"'<>]+$/.test(u) && u.length <= 500) a.url = u;
+      if (/^[A-Za-z0-9_-]{1,40}$/.test(c)) a.code = c;
+      if (a.url || a.code) { fm.aff = a; on = true; }
+    });
+    if (on) { $('#discAff').hidden = false; $('#affTop').hidden = false; $('#disc').hidden = true; $('#disc2').hidden = false; }
+  }
+  Promise.all([load(0), offLoad, affLoad]).then(function (a) { D = a[0]; OF = a[1]; mergeAff(a[2]); header(); wire(); paint(); })
     .catch(function () { $('#led tbody').innerHTML = '<tr><td colspan="10" class="empty">The plans could not load. Reload the page to try again.</td></tr>'; $('#facts').textContent = ''; });
 })();
 </script>

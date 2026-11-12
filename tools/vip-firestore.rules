@@ -45,4 +45,20 @@
         && request.resource.data.text is string && request.resource.data.text.size() <= 20000;
       allow update, delete: if vipAdmin();
     }
+    // ===================== MMM prop affiliates =====================
+    // propAff/{firm}       Max's affiliate link + code for one firm. Anyone can read it (/prop-firms/ shows it); only the admin login can change it.
+    // propAffTrack/{firm}  Max's private status + note for each program. Admin only.
+    match /propAff/{id} {
+      allow get, list: if true;
+      allow create, update: if vipAdmin()
+        && request.resource.data.keys().hasOnly(['firm', 'url', 'code', 'updated'])
+        && request.resource.data.firm is string && request.resource.data.firm.size() <= 80
+        && request.resource.data.url is string && request.resource.data.url.size() <= 500
+        && (request.resource.data.url == '' || request.resource.data.url.matches('https://[^ "<>]+'))
+        && request.resource.data.code is string && request.resource.data.code.matches('[A-Za-z0-9_-]{0,40}');
+      allow delete: if vipAdmin();
+    }
+    match /propAffTrack/{id} {
+      allow read, write: if vipAdmin();
+    }
     // ===================== end MMM V.I.P =====================
