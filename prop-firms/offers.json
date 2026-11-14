@@ -1,7 +1,29 @@
 {
-  "updated": "2026-11-14T06:40:25Z",
-  "updated_label": "14 Nov 2026, 06:40 London",
+  "updated": "2026-11-14T11:22:15Z",
+  "updated_label": "14 Nov 2026, 11:22 London",
   "offers": [
+    {
+      "firm": "Apex Trader Funding",
+      "plans": [],
+      "code": null,
+      "pct": 90,
+      "text": "90% off any size evaluation (Milestone Celebration Sale)",
+      "ends": null,
+      "src": "https://x.com/ApexTradeFund/status/2121252212311458226",
+      "via": "x",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "Traders Launch",
+      "plans": [],
+      "code": "TL20",
+      "pct": null,
+      "text": "Discount on all accounts with code TL20 (amount not stated)",
+      "ends": null,
+      "src": "https://x.com/TradersLaunch/status/2121329868717584603",
+      "via": "x",
+      "checked": "2026-11-14"
+    },
     {
       "firm": "IQ Capital",
       "plans": [],
@@ -18,11 +40,14 @@
       "plans": [],
       "code": "HONOR85",
       "pct": null,
-      "text": "85% off every 150K account (Express to Live $168.45, Premium $168.45, Fundamental $129.45)",
+      "text": "150K Express to Live and Premium for $168.45 (85% off)",
       "ends": null,
-      "src": "https://x.com/PhidiasPropfirm/status/2120977576264900959",
+      "src": "https://x.com/PhidiasPropfirm/status/2121339918744002965",
       "via": "x",
-      "checked": "2026-11-13"
+      "checked": "2026-11-14",
+      "sizes": [
+        150
+      ]
     },
     {
       "firm": "FunderPro Futures",
@@ -31,17 +56,19 @@
       "pct": 25,
       "text": "25% off every challenge (Black Friday early access)",
       "ends": "2026-11-15",
-      "src": "https://x.com/FunderPro/status/2120917044942016745",
+      "src": "https://x.com/FunderPro/status/2121234133334536590",
       "via": "x",
-      "checked": "2026-11-13"
+      "checked": "2026-11-14"
     }
   ],
   "inboxDone": [
+    "grok:2026-11-14.md",
     "grok:2026-11-13.md",
     "grok:2026-11-12.md",
     "grok:2026-11-11.md"
   ],
   "log": [
+    "2026-11-14 (2nd run): 5 live · added Apex 90% off evals, Traders Launch TL20 (official X via Grok) · Phidias HONOR85 now 150K only · skipped Apex Legacy deals, Tradeify Miami plan (not in our list), Phoenix Cup reset (not a discount)",
     "2026-11-14: 3 live · no change (IQ Capital 85%, Phidias HONOR85 150K, FunderPro EARLYBF25 till 15 Nov) · Grok 13 Nov file re-confirmed them on official X · firm sites unreadable (web fetch blocked) · web search found only affiliate codes · Grok file for today missing · inbox empty",
     "2026-11-13: 3 live · added IQ Capital 85%, Phidias HONOR85 (150K), FunderPro 25% EARLYBF25 (from official X posts via Grok) · firm sites unreadable (web fetch blocked) · Grok file for today missing · inbox empty",
     "2026-11-12: 0 live · firm sites could not be read this run (web fetch blocked) · Grok file for today missing · Grok 11 Nov leads (FunderPro, IQ Capital, Phidias) not confirmed, left for next run"

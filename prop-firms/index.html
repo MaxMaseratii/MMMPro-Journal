@@ -91,7 +91,7 @@ a{color:inherit}
 .sh p{margin:6px 0 0;color:var(--mute);font-size:14.5px;max-width:84ch;line-height:1.5}
 
 /* ledger */
-.lw{overflow:auto;border:1px solid var(--line);max-height:78vh}
+.lw{overflow-x:auto;overflow-y:visible;border:1px solid var(--line)}
 table.led{width:100%;border-collapse:collapse;min-width:1060px;font:13px var(--mono);font-variant-numeric:tabular-nums}
 .led th{position:sticky;top:0;z-index:2;background:#000;font:600 13px/1.2 var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--gold);text-align:right;padding:9px 10px;border-bottom:1px solid var(--line2);white-space:normal;vertical-align:bottom}
 .led th button{all:unset;cursor:pointer}.led th button:hover{color:var(--gold2)}
@@ -242,6 +242,42 @@ a.stars:hover{color:var(--fg)}
 @media (max-width:1100px){.drow{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
 @media (max-width:760px){.drow{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:700px){table.led{min-width:0}.led .frow{margin-top:6px}}
+
+/* pick a size */
+.sz{padding-block:30px 8px;scroll-margin-top:calc(var(--hh,68px) + 8px)}
+.sztabs{position:sticky;top:var(--hh,68px);z-index:31;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:10px 0;background:rgba(7,8,10,.96);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);margin-bottom:16px}
+.sztabs::-webkit-scrollbar{display:none}
+.sztabs button{flex:none;all:unset;box-sizing:border-box;cursor:pointer;min-width:84px;text-align:center;padding:9px 14px;border:1px solid var(--line2);background:var(--panel2);font:700 18px/1 var(--display);letter-spacing:.05em;color:var(--fg)}
+.sztabs button small{display:block;font:500 11px/1.2 var(--mono);color:var(--mute);margin-top:4px;letter-spacing:0}
+.sztabs button:hover{border-color:var(--gold)}
+.sztabs button[aria-selected=true]{background:var(--gold);border-color:var(--gold);color:#0b0b0b}
+.sztabs button[aria-selected=true] small{color:#3a3000}
+.szhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:6px 16px;margin-bottom:12px}
+.szhead p{margin:0;color:var(--mute);font-size:14px}
+.szgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;overflow-anchor:none}
+.ac{display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);background:var(--panel);padding:14px;min-width:0;position:relative}
+.ac.deal{border-color:rgba(225,179,26,.55);background:linear-gradient(160deg,rgba(225,179,26,.08),var(--panel) 55%)}
+.ac .rk{position:absolute;top:10px;right:12px;font:600 12px var(--mono);color:var(--faint)}
+.ac h3{margin:0;font:700 19px/1.1 var(--display);letter-spacing:.03em;color:var(--fg)}
+.ac .pl{margin:2px 0 0;color:var(--mute);font-size:13px}
+.ac .pr{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
+.ac .now{font:700 32px/1 var(--display);color:var(--gold);letter-spacing:.02em}
+.ac .was{font:15px var(--mono);color:var(--faint);text-decoration:line-through}
+.ac .off{font:700 13px var(--mono);color:#0b0b0b;background:var(--up);padding:3px 6px}
+.ac .pn{font:12px/1.4 var(--mono);color:var(--mute);width:100%}
+.ac .mx{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.ac .mx div{background:var(--panel2);padding:7px 8px;min-width:0}
+.ac .mx .k{font:600 10.5px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.ac .mx .v{font:600 14px var(--mono);color:var(--fg);margin-top:2px;overflow-wrap:anywhere}
+.ac .codes{display:flex;flex-wrap:wrap;gap:6px}
+.chipc{display:inline-flex;align-items:center;gap:6px;border:1px dashed rgba(225,179,26,.6);padding:5px 8px;font:12.5px var(--mono);color:var(--gold2);min-width:0}
+.chipc.mine{border-color:rgba(79,209,197,.7);color:var(--teal)}
+.chipc .cpy{min-width:64px;text-align:center}
+.ac .buy{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--gold);color:#0b0b0b;text-decoration:none;font:700 17px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:12px 14px;margin-top:auto}
+.ac .buy:hover{background:var(--gold2)}
+.ac .lk{font:11.5px var(--mono);color:var(--faint);margin:-4px 0 0;text-align:center}
+.ac .more{all:unset;cursor:pointer;font:600 13px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--teal);text-align:center}
+@media (max-width:700px){.szgrid{grid-template-columns:minmax(0,1fr)}.ac .now{font-size:28px}}
 /* offers */
 .offers{margin-top:14px;border:1px solid rgba(225,179,26,.45);background:linear-gradient(110deg,rgba(225,179,26,.09),transparent 70%);padding:12px 14px}
 .offers .oh{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 14px;align-items:baseline;margin-bottom:8px}
@@ -252,7 +288,7 @@ a.stars:hover{color:var(--fg)}
 .oc b{color:var(--fg);font-weight:600}
 .oc .pc{font:700 15px var(--display);color:var(--gold2);letter-spacing:.04em}
 .oc small{color:var(--mute)}
-.cpy{all:unset;cursor:pointer;font:600 12.5px var(--mono);color:#0b0b0b;background:var(--gold);padding:4px 7px}
+.cpy{all:unset;box-sizing:border-box;display:inline-block;text-align:center;cursor:pointer;font:600 12.5px var(--mono);color:#0b0b0b;background:var(--gold);padding:4px 7px}
 .cpy:hover{background:var(--gold2)}
 .tag.of{color:#0b0b0b;background:var(--gold);border-color:var(--gold)}
 /* payout ladder */
@@ -312,6 +348,14 @@ a.stars:hover{color:var(--fg)}
     </aside>
   </div>
   <div class="desk" style="padding-bottom:30px"><div class="kpis" id="kpis" style="margin-top:0"></div><div class="offers" id="offers" hidden></div></div>
+</section>
+
+<section class="sz" id="sizes" aria-labelledby="sz-h">
+  <div class="desk">
+    <div class="szhead"><div><h2 id="sz-h" style="font:700 clamp(24px,2.6vw,32px)/1.1 var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--gold);margin:0">Pick your account size</h2><p>Cheapest first, after today's offer. Each button opens that exact account on the firm's site.</p></div><p id="sz-n" class="num"></p></div>
+    <div class="sztabs" id="sztabs" role="tablist" aria-label="Account size"></div>
+    <div class="szgrid" id="szgrid" role="tabpanel"></div>
+  </div>
 </section>
 
 <div class="fbar" id="filters" role="region" aria-label="Filters">
@@ -429,7 +473,8 @@ a.stars:hover{color:var(--fg)}
   var CP = { yes: ['cy', '✓ Yes'], limited: ['cl', 'Limited'], approval: ['ca', 'Ask first'], unknown: ['cu', 'Not published'], no: ['cn', '✗ No'] };
   var CPR = { yes: 0, limited: 1, approval: 2, unknown: 3, no: 4 };
   var F = { q: '', size: 'all', dd: 'all', kind: 'all', max: '', ver: false, mo: false, cp: false, country: '', plat: '', sort: 'per1k', open: '' };
-  var D = null, ROWS = [], OF = null, TODAY = new Date().toISOString().slice(0, 10);
+  var D = null, ROWS = [], OF = null, LK = {}, TAB = '25', TODAY = new Date().toISOString().slice(0, 10);
+  try { TAB = localStorage.getItem('mmm-propfirms-tab') || '25'; } catch (e) {}
   try { var sv = JSON.parse(localStorage.getItem('mmm-propfirms') || 'null'); if (sv) Object.keys(F).forEach(function (k) { if (sv[k] != null && k !== 'open' && k !== 'q') F[k] = sv[k]; }); } catch (e) {}
   function save() { try { localStorage.setItem('mmm-propfirms', JSON.stringify(F)); } catch (e) {} }
 
@@ -440,12 +485,22 @@ a.stars:hover{color:var(--fg)}
     if (!g.src) return '<span class="' + c + ' mono" aria-hidden="true" translate="no">' + esc(firm.replace(/\(.*\)/, '').split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase()) + '</span>';
     return '<span class="' + c + (g.bg === 'light' ? ' lt' : '') + '" aria-hidden="true"><img src="' + esc(g.src) + '" alt="" loading="lazy" decoding="async" width="44" height="44"></span>';
   }
-  function offers(p) { // live offers for this plan (from the morning check)
+  function offers(p, k) { // live offers for this plan (from the morning check); k = size in K, optional
     if (!OF || !OF.offers) return [];
-    return OF.offers.filter(function (o) { return o.firm === p.firm && (!o.plans || !o.plans.length || o.plans.indexOf(p.id) >= 0) && (!o.ends || o.ends >= TODAY); });
+    return OF.offers.filter(function (o) { return o.firm === p.firm && (!o.plans || !o.plans.length || o.plans.indexOf(p.id) >= 0) && (!o.ends || o.ends >= TODAY) &&
+      (k == null || !o.sizes || !o.sizes.length || o.sizes.indexOf(k) >= 0); });
   }
-  function bestPct(p) { return offers(p).reduce(function (m, o) { return o.pct > m ? o.pct : m; }, 0); }
-  function net(p, z) { var b = bestPct(p); return z.list == null ? null : Math.round(z.list * (1 - b / 100) * 100) / 100; }
+  function bestPct(p, k) { return offers(p, k).reduce(function (m, o) { return o.pct > m ? o.pct : m; }, 0); }
+  function deal(p, z) { // best price today for one size: {now, off, o}
+    var best = null;
+    offers(p, z.k).forEach(function (o) {
+      var v = o.prices && o.prices[String(z.k)] != null ? Number(o.prices[String(z.k)]) : (o.pct && z.list != null ? Math.round(z.list * (1 - o.pct / 100) * 100) / 100 : null);
+      if (v != null && (!best || v < best.now)) best = { now: v, o: o, off: z.list ? Math.round((1 - v / z.list) * 100) : o.pct };
+    });
+    return best;
+  }
+  function net(p, z) { var d = deal(p, z); return d ? d.now : z.list; }
+  function sizeUrl(p, z) { var l = (LK[p.id] || {})[String(z.k)]; return /^https:\/\//.test(l || '') ? l : (z.url || ''); }
   function cpyBtn(code) { return '<button type="button" class="cpy" data-code="' + esc(code) + '" translate="no">' + esc(code) + '</button>'; }
   function per1k(z) { return z.list != null && z.dd ? z.list / z.dd * 1000 : null; }
   function ratio(z) { return z.target != null && z.dd ? z.target / z.dd : null; }
@@ -553,7 +608,7 @@ a.stars:hover{color:var(--fg)}
         '<details><summary>See the list</summary><p class="clist" translate="no">' + ban.map(function (c) { return c === F.country ? '<mark>' + esc(c) + '</mark>' : esc(c); }).join(' · ') + '</p></details>' +
         (f.bannedSrc ? '<p class="clist" style="margin-top:4px"><span>Source:</span> ' + NO(f.bannedSrc) + '</p>' : '')
         : '<p style="margin:0">' + (f.bannedNote ? NO(f.bannedNote) : NS) + '</p>' + (F.country ? '<p class="clist"><span class="tag pa">Ask the firm about your country</span>' + H + '</p>' : '')) +
-      '</div>' + goLinks(p, f) +
+      '</div>' + goLinks(p, f, k) +
       '<p class="src"><span>Source:</span> <a translate="no" href="' + esc(p.src) + '" target="_blank" rel="noopener nofollow">' + esc(p.src) + '</a> · <span>' + (p.status === 'Verified' ? 'checked' : 'partly checked') + '</span> <span translate="no">' + esc(D.verified_label) + '</span></p></div>';
     return '<div class="drow"' + (compact ? ' style="padding:0;grid-template-columns:minmax(0,1fr)"' : '') + '>' + blk1 + blk2 + blk3 + '</div>';
   }
@@ -569,15 +624,57 @@ a.stars:hover{color:var(--fg)}
       (r.maxAlloc ? '<dt>Max allocation</dt><dd>' + NO(r.maxAlloc) + '</dd>' : '') +
       '</dl><p class="clist" style="margin-top:4px"><span>Source:</span> <a translate="no" href="' + esc(r.srcUrl) + '" target="_blank" rel="noopener nofollow">' + esc(r.src) + '</a> <span>(third-party, check on the firm\'s site)</span></p></div>';
   }
-  function goLinks(p, f) {
-    var a = f.aff || {}, code = a.code || '';
-    var url = a.url || p.src;
+  function goLinks(p, f, k) {
+    var a = f.aff || {}, code = a.code || '', zz = p.sizes.filter(function (z) { return z.k === k; })[0], su = zz ? sizeUrl(p, zz) : '';
+    var url = su || a.url || p.src;
     var ol = offers(p).map(function (o) { return '<span class="code">' + NO(o.text) + (o.code ? ' ' + cpyBtn(o.code) : '') + (o.ends ? ' <small class="ns" translate="no">→ ' + esc(o.ends) + '</small>' : '') + '</span>'; }).join('');
-    return (ol ? '<div class="go">' + ol + H + '</div>' : '') + '<div class="go"><a class="btn-try" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url ? ' sponsored' : ' nofollow') + '">' + (a.url ? 'Get this account →' : 'Visit the firm →') + '</a>' + H +
-      (code ? '<span class="code"><span>Code</span> ' + cpyBtn(code) + '</span>' : '') + '</div>';
+    return (ol ? '<div class="go">' + ol + H + '</div>' : '') + '<div class="go"><a class="btn-try" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url ? ' sponsored' : ' nofollow') + '">' + (su ? 'Open this ' + k + 'K account →' : a.url ? 'Get this account →' : 'Visit the firm →') + '</a>' + H +
+      (code ? '<span class="code"><span>MMM code</span> ' + cpyBtn(code) + '</span>' : '') + '</div>';
+  }
+
+  var TABS = [['small', 'Under 25K', function (k) { return k < 25; }], ['25', '25K'], ['50', '50K'], ['75', '75K'], ['100', '100K'], ['150', '150K'], ['250', '250K+', function (k) { return k >= 250; }]];
+  function tabFn(t) { return t[2] || function (k) { return k === Number(t[0]); }; }
+  function sizeCards() {
+    var plans = D.plans.filter(planOk), cnt = {};
+    TABS.forEach(function (t) { cnt[t[0]] = 0; plans.forEach(function (p) { p.sizes.forEach(function (z) { if (tabFn(t)(z.k)) cnt[t[0]]++; }); }); });
+    var tabs = TABS.filter(function (t) { return cnt[t[0]]; });
+    if (!tabs.some(function (t) { return t[0] === TAB; })) TAB = (tabs.filter(function (t) { return t[0] === '25'; })[0] || tabs[0] || ['25'])[0];
+    $('#sztabs').innerHTML = tabs.map(function (t) { return '<button type="button" role="tab" data-t="' + t[0] + '" aria-selected="' + (t[0] === TAB) + '">' + t[1] + '<small>' + cnt[t[0]] + ' accounts</small></button>'; }).join('');
+    var fn = tabFn(TABS.filter(function (t) { return t[0] === TAB; })[0] || TABS[1]), R = [];
+    plans.forEach(function (p) { p.sizes.forEach(function (z) { if (fn(z.k)) R.push({ p: p, z: z, d: deal(p, z) }); }); });
+    R.sort(function (a, b) { var x = a.d ? a.d.now : a.z.list, y = b.d ? b.d.now : b.z.list; return (x == null ? 1e9 : x) - (y == null ? 1e9 : y) || a.z.k - b.z.k; });
+    $('#sz-n').textContent = R.length + ' accounts · ' + R.filter(function (r) { return r.d; }).length + ' on sale today';
+    $('#szgrid').innerHTML = R.map(function (r, i) {
+      var p = r.p, z = r.z, d = r.d, f = FM(p), a = f.aff || {}, su = sizeUrl(p, z), url = su || a.url || p.src, v = per1k(z);
+      var price = d ? '<span class="now num">' + money(d.now) + '</span>' + (z.list != null ? '<span class="was num">' + money(z.list) + '</span>' : '') + (d.off ? '<span class="off">-' + d.off + '%</span>' : '')
+        : (z.list != null ? '<span class="now num">' + money(z.list) + '</span>' : '<span class="now">—</span>');
+      var note = d ? '<span class="pn" translate="no">' + esc(d.o.text) + (d.o.ends ? ' · ends ' + esc(d.o.ends) : '') + '</span>'
+        : (offers(p, z.k).length ? '<span class="pn" translate="no">' + esc(offers(p, z.k)[0].text) + '</span>' : z.promo ? '<span class="pn" translate="no">Often sold lower: ' + esc(z.promo) + '</span>' : '');
+      var codes = offers(p, z.k).filter(function (o) { return o.code; }).map(function (o) { return '<span class="chipc"><span>Firm code</span> ' + cpyBtn(o.code) + '</span>'; });
+      if (a.code && codes.join('').indexOf('data-code="' + esc(a.code) + '"') < 0) codes.push('<span class="chipc mine"><span>MMM code</span> ' + cpyBtn(a.code) + '</span>');
+      return '<article class="ac' + (d ? ' deal' : '') + '"><span class="rk num">#' + (i + 1) + '</span>' +
+        '<div class="fn">' + LG(p.firm, 'l') + '<span><h3 translate="no">' + esc(p.firm) + '</h3><p class="pl"><span translate="no">' + esc(p.plan) + '</span> · <b style="color:var(--fg)">' + z.k + 'K</b></p></span></div>' +
+        '<div class="pr">' + price + note + '</div>' +
+        '<div class="mx"><div><div class="k">Drawdown</div><div class="v">' + (z.dd != null ? money(z.dd) : '—') + ' <small class="ns">' + esc(p.dd) + '</small></div></div><div><div class="k">Target</div><div class="v">' + (z.target != null ? money(z.target) : '—') + '</div></div><div><div class="k">1st payout</div><div class="v">' + payBadge(p) + '</div></div></div>' +
+        '<div class="tags">' + stars(f) + ' ' + cpTag(f) + ' <span class="tag">' + (p.kind === 'Evaluation' ? 'Evaluation' : 'Instant') + '</span>' + (p.billing === 'Monthly' ? ' <span class="tag mo">Monthly</span>' : '') + '</div>' +
+        (codes.length ? '<div class="codes">' + codes.join('') + '</div>' : '') +
+        '<a class="buy" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url && !su ? ' sponsored' : ' nofollow') + '">Open ' + esc(p.firm.replace(/ \(.*\)/, '')) + ' ' + z.k + 'K →</a>' +
+        '<p class="lk">' + (su ? 'Direct link to this ' + z.k + 'K account' : 'Opens the plan page: pick ' + z.k + 'K there') + '</p>' +
+        '<button type="button" class="more" data-row="' + esc(p.id + '|' + z.k) + '">Full rules ↓</button></article>';
+    }).join('') || '<p class="empty">No account matches your filters.</p>';
+  }
+
+  // keep the thing you clicked in the same place on screen after the page redraws
+  function steady(el, fn) {
+    var key = el && (el.dataset.id || el.dataset.k || el.dataset.t), sel = el && el.dataset.id ? '[data-id="' + key + '"]' : el && el.dataset.k ? 'th[data-k="' + key + '"]' : el && el.dataset.t ? '[data-t="' + key + '"]' : null;
+    var y = el ? el.getBoundingClientRect().top : null;
+    fn();
+    if (sel == null || y == null) return;
+    var n = document.querySelector(sel); if (n) { var dy = n.getBoundingClientRect().top - y; if (Math.abs(dy) > 1) window.scrollBy(0, dy); }
   }
 
   function paint() {
+    sizeCards();
     var plans = D.plans.filter(planOk);
     ROWS = [];
     plans.forEach(function (p) { p.sizes.forEach(function (z) { if (sizeOk(z)) ROWS.push({ p: p, z: z, id: p.id + '|' + z.k }); }); });
@@ -609,9 +706,9 @@ a.stars:hover{color:var(--fg)}
       var p = r.p, z = r.z, f = FM(p), v = per1k(z), rt = ratio(z), open = F.open === r.id, cs = cstat(p);
       var w = v == null ? 0 : Math.max(6, Math.round((1 - (v - mn) / Math.max(1e-9, mx - mn)) * 100));
       return '<tr class="r' + (open ? ' open' : '') + '" data-id="' + esc(r.id) + '" tabindex="0" aria-expanded="' + open + '">' +
-        '<td class="l firm"><div class="fn">' + LG(p.firm) + '<span><b translate="no">' + esc(p.firm) + '</b><small translate="no">' + esc(p.plan) + '</small></span></div><span class="frow">' + stars(f) + '</span><span class="frow">' + typeTags(p, 1) + ' ' + verTag(p, 1) + (cs === 'unk' ? ' <span class="tag pa">Country list not published</span>' : '') + (bestPct(p) ? ' <span class="tag of">' + bestPct(p) + '% off today</span>' : '') + '</span></td>' +
+        '<td class="l firm"><div class="fn">' + LG(p.firm) + '<span><b translate="no">' + esc(p.firm) + '</b><small translate="no">' + esc(p.plan) + '</small></span></div><span class="frow">' + stars(f) + '</span><span class="frow">' + typeTags(p, 1) + ' ' + verTag(p, 1) + (cs === 'unk' ? ' <span class="tag pa">Country list not published</span>' : '') + (deal(p, z) ? ' <span class="tag of">' + deal(p, z).off + '% off today</span>' : '') + '</span></td>' +
         '<td>' + LB('Size') + '<span>' + z.k + 'K</span></td>' +
-        '<td class="price">' + LB('Price') + (z.list != null ? '<b>' + money(z.list) + '</b>' : NS) + (bestPct(p) && z.list != null ? '<span class="sub" translate="no" style="color:var(--gold2)">≈ ' + money(net(p, z)) + ' · ' + bestPct(p) + '% off</span>' : z.promo ? '<span class="sub" translate="no">' + esc(z.promo) + '</span>' : '') + '</td>' +
+        '<td class="price">' + LB('Price') + (z.list != null ? '<b>' + money(z.list) + '</b>' : NS) + (deal(p, z) && z.list != null ? '<span class="sub" translate="no" style="color:var(--gold2)">' + money(deal(p, z).now) + ' today · -' + deal(p, z).off + '%</span>' : z.promo ? '<span class="sub" translate="no">' + esc(z.promo) + '</span>' : '') + '</td>' +
         '<td>' + LB('Drawdown') + (z.dd != null ? money(z.dd) : NS) + '</td>' +
         '<td>' + LB('$ per $1K drawdown') + (v != null ? '<span class="valbar" translate="no"><span>' + money(Math.round(v)) + '</span><i><span style="width:' + w + '%"></span></i></span>' + (best.indexOf(v) >= 0 ? '<span class="bv">Best value</span>' : '') : '<span class="ns">—</span>') + '</td>' +
         '<td>' + LB('Target') + (z.target != null ? money(z.target) + (rt != null ? '<span class="sub" translate="no">' + rt.toFixed(1) + '× DD</span>' : '') : NS) + '</td>' +
@@ -687,9 +784,11 @@ a.stars:hover{color:var(--fg)}
     $('#f-cp').checked = F.cp; $('#f-cp').addEventListener('change', function (e) { F.cp = e.target.checked; paint(); });
     $('#f-ver').checked = F.ver; $('#f-ver').addEventListener('change', function (e) { F.ver = e.target.checked; paint(); });
     $('#f-mo').checked = F.mo; $('#f-mo').addEventListener('change', function (e) { F.mo = e.target.checked; paint(); });
-    document.querySelectorAll('#led th[data-k] button').forEach(function (b) { b.addEventListener('click', function () { F.sort = b.parentNode.dataset.k; paint(); }); });
+    document.querySelectorAll('#led th[data-k] button').forEach(function (b) { b.addEventListener('click', function () { steady(b.parentNode, function () { F.sort = b.parentNode.dataset.k; paint(); }); }); });
+    $('#sztabs').addEventListener('click', function (e) { var b = e.target.closest('button[data-t]'); if (!b) return; TAB = b.dataset.t; try { localStorage.setItem('mmm-propfirms-tab', TAB); } catch (x) {} steady(b, sizeCards); var g = $('#sizes'); if (g.getBoundingClientRect().top < 0) g.scrollIntoView(); });
+    $('#szgrid').addEventListener('click', function (e) { var b = e.target.closest('button.more'); if (!b) return; F.open = b.dataset.row; F.q = ''; $('#f-q').value = ''; var k = b.dataset.row.split('|')[1]; if (F.size !== 'all' && F.size !== k) { F.size = 'all'; $('#f-size').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.v === 'all'); }); } paint(); var tr = document.querySelector('#led tr[data-id="' + b.dataset.row + '"]'); if (tr) tr.scrollIntoView({ block: 'start' }); });
     var tb = $('#led tbody');
-    var tog = function (tr) { if (!tr || !tr.dataset.id) return; F.open = F.open === tr.dataset.id ? '' : tr.dataset.id; paint(); };
+    var tog = function (tr) { if (!tr || !tr.dataset.id) return; steady(tr, function () { F.open = F.open === tr.dataset.id ? '' : tr.dataset.id; paint(); }); };
     tb.addEventListener('click', function (e) { if (e.target.closest('a,summary,details')) return; tog(e.target.closest('tr.r')); });
     tb.addEventListener('keydown', function (e) { if (e.target.closest('tr.r') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); tog(e.target.closest('tr.r')); } });
     $('#ladder').addEventListener('click', function (e) { var b = e.target.closest('button[data-q]'); if (!b) return; F.q = b.dataset.q; $('#f-q').value = F.q; F.sort = 'pay'; paint(); $('#compare').scrollIntoView({ behavior: 'smooth' }); });
@@ -697,13 +796,14 @@ a.stars:hover{color:var(--fg)}
 
   document.addEventListener('click', function (e) {
     var b = e.target.closest('.cpy'); if (!b) return; e.stopPropagation();
-    var c = b.dataset.code, done = function () { var t = b.textContent; b.textContent = '✓ copied'; setTimeout(function () { b.textContent = t; }, 1400); };
+    var c = b.dataset.code, done = function () { var t = b.textContent; b.style.minWidth = b.offsetWidth + 'px'; b.textContent = '✓ copied'; setTimeout(function () { b.textContent = t; }, 1400); };
     (navigator.clipboard ? navigator.clipboard.writeText(c) : Promise.reject()).then(done).catch(function () { var r = document.createRange(); r.selectNodeContents(b); var s = getSelection(); s.removeAllRanges(); s.addRange(r); });
   }, true);
   function load(i) {
     return fetch(SRC[i] + '?v=' + Math.floor(Date.now() / 3600000)).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .catch(function (e) { if (i + 1 < SRC.length) return load(i + 1); throw e; });
   }
+  var lkLoad = fetch('/prop-firms/links.json?v=' + Math.floor(Date.now() / 600000)).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
   var offLoad = fetch('/prop-firms/offers.json?v=' + Math.floor(Date.now() / 600000)).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
   // Max's affiliate links and codes, set live from /admin/affiliates/ (Firestore propAff, public read). Never waits more than 3s.
   var affLoad = Promise.race([
@@ -722,7 +822,7 @@ a.stars:hover{color:var(--fg)}
     });
     if (on) { $('#discAff').hidden = false; $('#affTop').hidden = false; $('#disc').hidden = true; $('#disc2').hidden = false; }
   }
-  Promise.all([load(0), offLoad, affLoad]).then(function (a) { D = a[0]; OF = a[1]; mergeAff(a[2]); header(); wire(); paint(); })
+  Promise.all([load(0), offLoad, affLoad, lkLoad]).then(function (a) { D = a[0]; OF = a[1]; LK = (a[3] && a[3].links) || {}; mergeAff(a[2]); header(); wire(); paint(); })
     .catch(function () { $('#led tbody').innerHTML = '<tr><td colspan="10" class="empty">The plans could not load. Reload the page to try again.</td></tr>'; $('#facts').textContent = ''; });
 })();
 </script>

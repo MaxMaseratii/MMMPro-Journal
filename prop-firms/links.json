@@ -1,0 +1,5 @@
+{
+  "updated": null,
+  "note": "Direct buy link for each account size: {plan id: {size in K: url}}. Filled by the daily offers check from prop-firms/scan/latest.json.",
+  "links": {}
+}
