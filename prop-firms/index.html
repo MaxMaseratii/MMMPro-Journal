@@ -276,6 +276,15 @@ a.stars:hover{color:var(--fg)}
 .ac .buy{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--gold);color:#0b0b0b;text-decoration:none;font:700 17px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;padding:12px 14px;margin-top:auto}
 .ac .buy:hover{background:var(--gold2)}
 .ac .lk{font:11.5px var(--mono);color:var(--faint);margin:-4px 0 0;text-align:center}
+.rd{width:min(1100px,calc(100vw - 24px));max-height:calc(100vh - 40px);padding:0;border:1px solid var(--line2);background:var(--panel);color:var(--fg)}
+.rd::backdrop{background:rgba(0,0,0,.72)}
+.rd .rh{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;justify-content:space-between;padding:12px 16px;background:#000;border-bottom:1px solid var(--line)}
+.rd .rh h3{margin:0;font:700 20px/1.1 var(--display);letter-spacing:.04em;text-transform:uppercase;color:var(--gold)}
+.rd .rh small{display:block;color:var(--mute);font:13px var(--body);text-transform:none;letter-spacing:0;margin-top:2px}
+.rd .x{all:unset;cursor:pointer;font:700 15px var(--display);letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line2);padding:8px 12px;color:var(--fg)}
+.rd .x:hover{border-color:var(--gold);color:var(--gold)}
+.rd .rb{padding:14px 16px}
+body.rd-open{overflow:hidden}
 .ac .more{all:unset;cursor:pointer;font:600 13px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--teal);text-align:center}
 @media (max-width:700px){.szgrid{grid-template-columns:minmax(0,1fr)}.ac .now{font-size:28px}}
 /* offers */
@@ -660,7 +669,7 @@ a.stars:hover{color:var(--fg)}
         (codes.length ? '<div class="codes">' + codes.join('') + '</div>' : '') +
         '<a class="buy" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url && !su ? ' sponsored' : ' nofollow') + '">Open this ' + z.k + 'K account →</a>' +
         '<p class="lk">' + (su ? 'Direct link to this ' + z.k + 'K account' : 'Opens the plan page: pick ' + z.k + 'K there') + '</p>' +
-        '<button type="button" class="more" data-row="' + esc(p.id + '|' + z.k) + '">Full rules ↓</button></article>';
+        '<button type="button" class="more" data-row="' + esc(p.id + '|' + z.k) + '">See full rules</button></article>';
     }).join('') || '<p class="empty">No account matches your filters.</p>';
   }
 
@@ -671,6 +680,19 @@ a.stars:hover{color:var(--fg)}
     fn();
     if (sel == null || y == null) return;
     var n = document.querySelector(sel); if (n) { var dy = n.getBoundingClientRect().top - y; if (Math.abs(dy) > 1) window.scrollBy(0, dy); }
+  }
+
+  // full rules in a window over the page: the page itself does not move
+  function showRules(row, from) {
+    var id = row.split('|')[0], k = Number(row.split('|')[1]), p = D.plans.filter(function (x) { return x.id === id; })[0]; if (!p) return;
+    var d = $('#rd'); if (!d) { document.body.insertAdjacentHTML('beforeend', '<dialog class="rd" id="rd" aria-labelledby="rd-h"></dialog>'); d = $('#rd');
+      d.addEventListener('click', function (e) { if (e.target === d || e.target.closest('.x')) d.close(); });
+      d.addEventListener('close', function () { document.body.classList.remove('rd-open'); if (d._from) d._from.focus({ preventScroll: true }); }); }
+    d._from = from;
+    d.innerHTML = '<div class="rh"><div class="fn">' + LG(p.firm) + '<span><h3 id="rd-h" translate="no">' + esc(p.firm) + ' · ' + k + 'K</h3><small translate="no">' + esc(p.plan) + '</small></span></div><button type="button" class="x" aria-label="Close">Close ✕</button></div><div class="rb">' + detail(p, k) + '</div>';
+    document.body.classList.add('rd-open');
+    if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+    d.scrollTop = 0;
   }
 
   function paint() {
@@ -786,7 +808,7 @@ a.stars:hover{color:var(--fg)}
     $('#f-mo').checked = F.mo; $('#f-mo').addEventListener('change', function (e) { F.mo = e.target.checked; paint(); });
     document.querySelectorAll('#led th[data-k] button').forEach(function (b) { b.addEventListener('click', function () { steady(b.parentNode, function () { F.sort = b.parentNode.dataset.k; paint(); }); }); });
     $('#sztabs').addEventListener('click', function (e) { var b = e.target.closest('button[data-t]'); if (!b) return; TAB = b.dataset.t; try { localStorage.setItem('mmm-propfirms-tab', TAB); } catch (x) {} steady(b, sizeCards); var g = $('#sizes'); if (g.getBoundingClientRect().top < 0) g.scrollIntoView(); });
-    $('#szgrid').addEventListener('click', function (e) { var b = e.target.closest('button.more'); if (!b) return; F.open = b.dataset.row; F.q = ''; $('#f-q').value = ''; var k = b.dataset.row.split('|')[1]; if (F.size !== 'all' && F.size !== k) { F.size = 'all'; $('#f-size').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.dataset.v === 'all'); }); } paint(); var tr = document.querySelector('#led tr[data-id="' + b.dataset.row + '"]'); if (tr) tr.scrollIntoView({ block: 'start' }); });
+    $('#szgrid').addEventListener('click', function (e) { var b = e.target.closest('button.more'); if (!b) return; showRules(b.dataset.row, b); });
     var tb = $('#led tbody');
     var tog = function (tr) { if (!tr || !tr.dataset.id) return; steady(tr, function () { F.open = F.open === tr.dataset.id ? '' : tr.dataset.id; paint(); }); };
     tb.addEventListener('click', function (e) { if (e.target.closest('a,summary,details')) return; tog(e.target.closest('tr.r')); });
