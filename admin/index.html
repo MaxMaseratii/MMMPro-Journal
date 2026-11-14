@@ -81,6 +81,46 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
 .note{color:var(--faint);font-size:12.5px;line-height:1.6;margin:18px 0 40px;max-width:90ch}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--gold);color:#111;font-weight:700;font-size:14px;padding:10px 16px;border-radius:6px;z-index:70}
 @media (max-width:1000px){.panels{grid-template-columns:minmax(0,1fr)}}
+/* charts v2 */
+.kpi .d{display:inline-block;font:600 11.5px var(--mono);margin-left:6px;vertical-align:middle}
+.kpi .d.up{color:var(--win)}.kpi .d.dn{color:var(--loss)}.kpi .d.eq{color:var(--faint)}
+.kpi .sp{display:block;margin-top:8px;height:26px}
+.kpi .sp svg{display:block;width:100%;height:26px}
+.row2{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;margin-top:16px}
+@media (max-width:1000px){.row2{grid-template-columns:minmax(0,1fr)}}
+.panel .ph{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+.panel .ph h2{margin:0}
+.panel .ph small{color:var(--mute);font-size:12.5px}
+.seg{display:inline-flex;border:1px solid var(--rule2);border-radius:4px;overflow:hidden}
+.seg button{font:600 12px var(--sans);background:none;color:var(--mute);border:0;padding:6px 10px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--sheet2);color:var(--ink)}
+.ch{position:relative}
+.ch svg{display:block;width:100%;height:auto;overflow:visible}
+.ch .ax{fill:var(--faint);font:11px var(--mono)}
+.ch .gl{stroke:var(--rule);stroke-width:1}
+.ch .hit{fill:transparent;cursor:crosshair}
+.ch .hit:hover{fill:rgba(255,255,255,.04)}
+.ch h3{margin:16px 0 4px}
+.tip{position:fixed;z-index:90;pointer-events:none;background:#05080a;border:1px solid var(--rule2);border-radius:6px;padding:7px 9px;font:12.5px/1.4 var(--sans);color:var(--ink);box-shadow:0 8px 24px rgba(0,0,0,.5);max-width:260px;white-space:nowrap}
+.tip b{font-family:var(--mono)}
+.tip small{display:block;color:var(--mute)}
+.fun{display:grid;gap:10px;margin-top:4px}
+.fun .st{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;font-size:13px}
+.fun .st .tr{grid-column:1/-1;height:26px;background:var(--sheet2);border-radius:4px;overflow:hidden;position:relative}
+.fun .st .tr i{position:absolute;inset:0 auto 0 0;border-radius:0 4px 4px 0;background:var(--teal);opacity:.8}
+.fun .st:first-child .tr i{background:var(--gold)}
+.fun .st b{font:600 14px var(--mono)}
+.fun .st span.p{color:var(--mute);font:12px var(--mono)}
+.fun .drop{font-size:12px;color:var(--faint);margin:-4px 0 0 2px}
+.stack{display:flex;height:22px;gap:2px;margin:6px 0 8px}
+.stack i{display:block;height:100%;min-width:3px}
+.stack i:first-child{border-radius:4px 0 0 4px}.stack i:last-child{border-radius:0 4px 4px 0}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--mute)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.legend b{color:var(--ink);font:600 12.5px var(--mono)}
+.bar .lbl i{border-radius:0 3px 3px 0;background:hsla(180,70%,55%,.2)}
+
 .vip{border:1px solid rgba(245,197,24,.45);background:linear-gradient(180deg,rgba(245,197,24,.07),var(--sheet));padding:18px 20px;margin-top:22px}
 .vip h2{font-family:var(--serif);font-size:20px;margin:0 0 4px;color:var(--gold)}
 .vip .sub{color:var(--mute);font-size:13.5px;margin:0 0 14px}
@@ -100,7 +140,7 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
 .vip th{font:600 11px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
 .vip .tw{overflow-x:auto;margin-top:10px}
 .vip .ok{color:var(--win)}.vip .no{color:var(--loss)}.vip .dim{color:var(--faint)}
-.vip [hidden],.crm[hidden],.atabs[hidden]{display:none!important}
+.vip [hidden],.crm[hidden],.prop[hidden],.atabs[hidden]{display:none!important}
 .vip .master{border-style:solid;background:rgba(245,197,24,.06);margin:0 0 16px}
 .vip .master .big{font-size:18px;letter-spacing:.04em}
 /* admin tabs: Members · V.I.P · CRM */
@@ -108,18 +148,20 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
 .atabs button{font:600 14px var(--sans);background:none;color:var(--mute);border:0;border-bottom:3px solid transparent;padding:9px 14px;cursor:pointer}
 .atabs button[aria-selected=true]{color:var(--gold);border-bottom-color:var(--gold)}
 .atabs button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-main[data-tab=members] #vip,main[data-tab=members] #crm,
-main[data-tab=vip] #board,main[data-tab=vip] #gate,main[data-tab=vip] #acts,main[data-tab=vip] #crm,
-main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main[data-tab=crm] #vip{display:none!important}
+main[data-tab=members] #vip,main[data-tab=members] #crm,main[data-tab=members] #prop,
+main[data-tab=vip] #board,main[data-tab=vip] #gate,main[data-tab=vip] #acts,main[data-tab=vip] #crm,main[data-tab=vip] #prop,
+main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main[data-tab=crm] #vip,main[data-tab=crm] #prop,
+main[data-tab=prop] #board,main[data-tab=prop] #gate,main[data-tab=prop] #acts,main[data-tab=prop] #vip,main[data-tab=prop] #crm{display:none!important}
 .vip{margin-top:0}
 .crm{display:grid;gap:10px}
 .crm .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;color:var(--mute);font-size:13.5px}
 .crm iframe{width:100%;height:calc(100vh - 230px);min-height:620px;border:1px solid var(--rule2);border-radius:6px;background:var(--sheet);display:block}
-.crm details.offers{border:1px solid hsla(45,100%,55%,.45);border-radius:6px;background:var(--sheet)}
-.crm details.offers summary{cursor:pointer;padding:12px 14px;font-weight:700;color:var(--gold)}
-.crm details.offers summary small{color:var(--mute);font-weight:500;margin-left:6px}
-.crm iframe#affFrame{height:1400px;min-height:0;border:0;border-top:1px solid var(--rule2);border-radius:0 0 6px 6px}
-.crm iframe#offFrame{height:900px;min-height:0;border:0;border-top:1px solid var(--rule2);border-radius:0 0 6px 6px}
+.prop details.offers,.crm details.offers{border:1px solid hsla(45,100%,55%,.45);border-radius:6px;background:var(--sheet)}
+.prop details.offers summary,.crm details.offers summary{cursor:pointer;padding:12px 14px;font-weight:700;color:var(--gold)}
+.prop details.offers summary small,.crm details.offers summary small{color:var(--mute);font-weight:500;margin-left:6px}
+.prop iframe{width:100%;display:block;background:var(--sheet)}
+.prop iframe#affFrame{height:1400px;min-height:0;border:0;border-top:1px solid var(--rule2);border-radius:0 0 6px 6px}
+.prop iframe#offFrame{height:900px;min-height:0;border:0;border-top:1px solid var(--rule2);border-radius:0 0 6px 6px}
 </style>
 </head>
 <body>
@@ -139,6 +181,7 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
   <nav class="atabs" id="atabs" role="tablist" aria-label="Admin sections" hidden>
     <button type="button" role="tab" data-tab="members" aria-selected="true">Members</button>
     <button type="button" role="tab" data-tab="vip" aria-selected="false">V.I.P</button>
+    <button type="button" role="tab" data-tab="prop" aria-selected="false">Prop firms</button>
     <button type="button" role="tab" data-tab="crm" aria-selected="false">CRM</button>
   </nav>
   <section class="vip" id="vip" hidden>
@@ -172,18 +215,31 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
     <div class="tw"><table><thead><tr><th>When</th><th>Email</th><th>Code</th><th>For</th><th></th><th>Status</th><th></th></tr></thead><tbody id="vipCodes"></tbody></table></div>
   </section>
   <section class="crm" id="crm" hidden>
-    <details class="offers" id="offBox" open><summary>Prop firm offers inbox (Grok) <small>Paste Grok's answer here every morning · the 06:33 check publishes them to /prop-firms/</small></summary><iframe id="offFrame" title="Prop firm offers inbox"></iframe></details>
-    <details class="offers" id="affBox"><summary>Prop firm affiliates <small>Your commission links and codes · paste them here and every button on /prop-firms/ uses them at once</small></summary><iframe id="affFrame" title="Prop firm affiliates"></iframe></details>
     <div class="bar"><span>Marketing, CRM and revenue dashboard.</span><a class="btn" href="https://maxmaseratii.github.io/dashboard-analytics-CRM/#crm" target="_blank" rel="noopener">Open in a new tab</a></div>
     <iframe id="crmFrame" title="MMM Marketing Hub CRM" loading="lazy" referrerpolicy="no-referrer"></iframe>
+  </section>
+  <section class="prop" id="prop" hidden>
+    <div id="pd"></div>
+    <details class="offers" id="offBox"><summary>Offers inbox <small>Paste an offer by hand · the 06:33 check publishes it to /prop-firms/</small></summary><iframe id="offFrame" title="Prop firm offers inbox"></iframe></details>
+    <details class="offers" id="affBox"><summary>Your affiliate links and codes <small>Paste them here: every button on /prop-firms/ uses them at once</small></summary><iframe id="affFrame" title="Prop firm affiliates"></iframe></details>
   </section>
   <div id="gate"></div>
   <div id="board" hidden>
     <div class="kpis" id="kpis"></div>
-    <div class="panels">
+    <div class="row2">
+      <section class="panel"><div class="ph"><h2>Growth</h2><span class="seg" id="rng"><button type="button" data-d="30">30 days</button><button type="button" data-d="60" aria-pressed="true">60 days</button><button type="button" data-d="180">6 months</button></span></div>
+        <div class="ch" id="p-total"></div>
+        <div class="ch"><h3>New sign-ups per day <small style="text-transform:none;letter-spacing:0;color:var(--faint);font-weight:500">· line = 7-day average</small></h3><div id="p-sign"></div></div>
+        <div class="ch"><h3>Last seen per day <small style="text-transform:none;letter-spacing:0;color:var(--faint);font-weight:500">· each person counted on their latest visit</small></h3><div id="p-login"></div></div>
+      </section>
+      <section class="panel"><div class="ph"><h2>Tests and return visits</h2><small>real accounts</small></div><div class="fun" id="p-fun"></div>
+        <h3 style="margin-top:22px">Devices</h3><div id="p-dev"></div>
+        <h3>System</h3><div class="bars" id="p-os"></div><h3>Browser</h3><div class="bars" id="p-br"></div></section>
+    </div>
+    <div class="panels" style="grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr)">
       <section class="panel"><h2>Countries</h2><div class="bars" id="p-cty"></div><div class="more" id="p-cty-m"></div></section>
-      <section class="panel"><h2>Devices</h2><div class="bars" id="p-dev"></div><h3>System</h3><div class="bars" id="p-os"></div><h3>Browser</h3><div class="bars" id="p-br"></div></section>
-      <section class="panel chart"><h2>Sign-ups, last 60 days</h2><div id="p-sign"></div><h3>Logins, last 60 days</h3><div id="p-login"></div></section>
+      <section class="panel"><h2>Language</h2><div class="bars" id="p-lang"></div></section>
+      <section class="panel"><h2>How they sign in</h2><div class="bars" id="p-sin"></div></section>
     </div>
     <div class="tools">
       <input type="search" id="q" placeholder="Search name, email, country…" aria-label="Search">
@@ -295,61 +351,107 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
     });
   }
 
-  /* ---------- KPIs + panels (real accounts only) ---------- */
+  /* ---------- KPIs + charts (real accounts only) ---------- */
+  var RANGE = 60, C = { gold: '#e0ad1a', teal: '#2aa9a9', amber: '#c08a12', violet: '#8f6fe0' };
+  function dayStart() { var d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime(); }
+  function perDay(times, days) { var t0 = dayStart() - (days - 1) * DAY, b = new Array(days).fill(0); times.forEach(function (t) { if (t >= t0) { var i = Math.floor((t - t0) / DAY); if (i >= 0 && i < days) b[i]++; } }); return { t0: t0, b: b }; }
+  function dl(t) { return new Date(t).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
+  function delta(a, b) { if (!b && !a) return '<span class="d eq">=</span>'; if (!b) return '<span class="d up">new</span>'; var p = Math.round((a - b) / b * 100); return '<span class="d ' + (p > 0 ? 'up' : p < 0 ? 'dn' : 'eq') + '">' + (p > 0 ? '▲ ' : p < 0 ? '▼ ' : '') + Math.abs(p) + '%</span>'; }
+  function spark(b, color) { var W = 120, H = 26, mx = Math.max(1, Math.max.apply(null, b)), n = b.length; var pts = b.map(function (v, i) { return (i / (n - 1) * W).toFixed(1) + ',' + (H - 2 - v / mx * (H - 4)).toFixed(1); }).join(' ');
+    return '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none" aria-hidden="true"><polyline points="' + pts + '" fill="none" stroke="' + color + '" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>'; }
   function kpis(L) {
     var now = Date.now(), n = L.length || 1;
     var c = function (f) { return L.filter(f).length; };
-    var seenDev = L.filter(function (r) { return r.dev; });
-    var mob = seenDev.filter(function (r) { return r.devType !== 'desktop'; }).length;
+    var inWin = function (k, a, b) { return c(function (r) { return r[k] && now - r[k] < a * DAY && now - r[k] >= b * DAY; }); };
+    var seenDev = L.filter(function (r) { return r.dev; }), mob = seenDev.filter(function (r) { return r.devType !== 'desktop'; }).length;
+    var sg = perDay(L.map(function (r) { return r.reg; }), 30).b, lg = perDay(L.map(function (r) { return r.login; }), 30).b;
+    var n7 = inWin('reg', 7, 0), p7 = inWin('reg', 14, 7), a7 = inWin('login', 7, 0), pa7 = inWin('login', 14, 7);
     var K = [
-      [L.length, 'Accounts', 'test accounts not counted'],
-      [c(function (r) { return now - r.reg < 7 * DAY; }), 'New in 7 days', c(function (r) { return now - r.reg < 30 * DAY; }) + ' in 30 days'],
-      [c(function (r) { return r.login && now - r.login < 7 * DAY; }), 'Active in 7 days', c(function (r) { return r.login && now - r.login < 30 * DAY; }) + ' in 30 days'],
-      [Object.keys(L.reduce(function (o, r) { if (r.cc) o[r.cc] = 1; return o; }, {})).length, 'Countries', c(function (r) { return r.csrc === 'chosen'; }) + ' picked it themselves'],
-      [seenDev.length ? Math.round(mob / seenDev.length * 100) + '%' : '–', 'On phone or tablet', seenDev.length + ' devices seen so far'],
-      [c(function (r) { return r.dt; }), 'Took the Discipline Test', Math.round(c(function (r) { return r.dt; }) / n * 100) + '% of accounts'],
-      [c(function (r) { return r.tt; }), 'Took the Trading Test', Math.round(c(function (r) { return r.tt; }) / n * 100) + '% of accounts'],
-      [c(function (r) { return !r.dt && !r.tt; }), 'Took no test yet', 'people to nudge']
+      [L.length, 'Accounts', c(function (r) { return now - r.reg < 30 * DAY; }) + ' joined in 30 days', '', ''],
+      [n7, 'New in 7 days', 'vs ' + p7 + ' the 7 days before', delta(n7, p7), spark(sg, C.gold)],
+      [a7, 'Active in 7 days', 'vs ' + pa7 + ' the 7 days before', delta(a7, pa7), spark(lg, C.teal)],
+      [Object.keys(L.reduce(function (o, r) { if (r.cc) o[r.cc] = 1; return o; }, {})).length, 'Countries', c(function (r) { return r.csrc === 'chosen'; }) + ' picked it themselves', '', ''],
+      [seenDev.length ? Math.round(mob / seenDev.length * 100) + '%' : '–', 'On phone or tablet', seenDev.length + ' devices seen so far', '', ''],
+      [Math.round(c(function (r) { return r.dt || r.tt; }) / n * 100) + '%', 'Took a test', c(function (r) { return !r.dt && !r.tt; }) + ' people still to nudge', '', '']
     ];
-    $('kpis').innerHTML = K.map(function (k) { return '<div class="kpi"><b>' + k[0] + '</b><span>' + esc(k[1]) + '<br><small>' + esc(k[2]) + '</small></span></div>'; }).join('');
+    $('kpis').innerHTML = K.map(function (k) { return '<div class="kpi"><b>' + k[0] + k[3] + '</b><span>' + esc(k[1]) + '<br><small>' + esc(k[2]) + '</small></span>' + (k[4] ? '<span class="sp">' + k[4] + '</span>' : '') + '</div>'; }).join('');
   }
   function bars(el, pairs, total, max) {
     pairs.sort(function (a, b) { return b[1] - a[1]; });
     var top = pairs.slice(0, max || 8), big = top.length ? top[0][1] : 1;
     $(el).innerHTML = top.length ? top.map(function (p) {
-      return '<div class="bar"><span class="lbl"><i style="width:' + (p[1] / big * 100).toFixed(1) + '%"></i><em>' + p[0] + '</em></span><span class="n">' + p[1] + '</span><span class="p">' + Math.round(p[1] / (total || 1) * 100) + '%</span></div>';
+      return '<div class="bar" data-tip="' + esc(String(p[0]).replace(/<[^>]+>/g, '')) + '|' + p[1] + ' people · ' + Math.round(p[1] / (total || 1) * 100) + '%"><span class="lbl"><i style="width:' + (p[1] / big * 100).toFixed(1) + '%"></i><em>' + p[0] + '</em></span><span class="n">' + p[1] + '</span><span class="p">' + Math.round(p[1] / (total || 1) * 100) + '%</span></div>';
     }).join('') : '<p class="more">Nothing yet. Shows up as traders visit while logged in.</p>';
     return pairs.length - top.length;
   }
   function count(L, f) { var o = {}; L.forEach(function (r) { var k = f(r); if (k) o[k] = (o[k] || 0) + 1; }); return Object.keys(o).map(function (k) { return [k, o[k]]; }); }
+  // y scale with round ticks
+  function ticks(mx) { var st = [1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 5000]; var s = st.filter(function (x) { return mx / x <= 4; })[0] || Math.ceil(mx / 4); var top = Math.max(s, Math.ceil(mx / s) * s), o = []; for (var v = 0; v <= top; v += s) o.push(v); return o; }
+  function frame(W, H, T, padL) { var s = ''; T.forEach(function (v) { var y = H - v / T[T.length - 1] * (H - 6); s += '<line class="gl" x1="' + padL + '" x2="' + W + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/><text class="ax" x="' + (padL - 6) + '" y="' + (y + 3.5).toFixed(1) + '" text-anchor="end">' + v + '</text>'; }); return s; }
+  function xlabels(W, H, padL, t0, days) { var s = '', n = days > 90 ? 6 : 5; for (var k = 0; k < n; k++) { var i = Math.round(k * (days - 1) / (n - 1)), x = padL + (i + .5) * (W - padL) / days; s += '<text class="ax" x="' + x.toFixed(1) + '" y="' + (H + 15) + '" text-anchor="' + (k === 0 ? 'start' : k === n - 1 ? 'end' : 'middle') + '">' + (k === n - 1 ? 'today' : dl(t0 + i * DAY)) + '</text>'; } return s; }
+  function barChart(times, color, days, avg, what) {
+    var d = perDay(times, days), b = d.b, W = 640, H = 92, padL = 30, T = ticks(Math.max(1, Math.max.apply(null, b))), top = T[T.length - 1], bw = (W - padL) / days;
+    var s = '<svg viewBox="0 0 ' + W + ' ' + (H + 20) + '" role="img" aria-label="' + what + ' per day">' + frame(W, H, T, padL);
+    b.forEach(function (v, i) { var h = v / top * (H - 6), x = padL + i * bw + Math.min(1, bw * .15); if (v) s += '<path d="M' + x.toFixed(1) + ',' + H + 'v' + (-Math.max(0, h - 2)).toFixed(1) + 'q0,-2 2,-2h' + Math.max(0, bw - Math.min(2, bw * .3) - 4).toFixed(1) + 'q2,0 2,2v' + Math.max(0, h - 2).toFixed(1) + 'z" fill="' + color + '"/>'; });
+    if (avg) { var pts = b.map(function (v, i) { var a = b.slice(Math.max(0, i - 6), i + 1); var m = a.reduce(function (x, y) { return x + y; }, 0) / a.length; return (padL + (i + .5) * bw).toFixed(1) + ',' + (H - m / top * (H - 6)).toFixed(1); }); s += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#e8eef1" stroke-width="2" stroke-linejoin="round" opacity=".85"/>'; }
+    b.forEach(function (v, i) { var a = b.slice(Math.max(0, i - 6), i + 1), m = a.reduce(function (x, y) { return x + y; }, 0) / a.length; s += '<rect class="hit" x="' + (padL + i * bw).toFixed(1) + '" y="0" width="' + bw.toFixed(1) + '" height="' + H + '" data-tip="' + dl(d.t0 + i * DAY) + '|' + v + ' ' + what + (avg ? ' · 7-day avg ' + m.toFixed(1) : '') + '"/>'; });
+    return s + '<line x1="' + padL + '" x2="' + W + '" y1="' + H + '" y2="' + H + '" stroke="var(--rule2)"/>' + xlabels(W, H, padL, d.t0, days) + '</svg>';
+  }
+  function totalChart(L, days) {
+    var d = perDay(L.map(function (r) { return r.reg; }), days), before = L.filter(function (r) { return r.reg && r.reg < d.t0; }).length, run = before, cum = d.b.map(function (v) { return run += v; });
+    var W = 640, H = 120, padL = 30, hi = Math.max(before + 1, cum[cum.length - 1]), st0 = ticks(Math.max(1, hi - before)), stp = st0[1] || 1, lo = Math.floor(before / stp) * stp, T = ticks(hi - lo), span = T[T.length - 1], bw = (W - padL) / days;
+    var y = function (v) { return H - (v - lo) / span * (H - 6); };
+    var s = '<div class="ph" style="margin-top:4px"><small>Total accounts: <b style="color:var(--ink);font-family:var(--mono)">' + cum[cum.length - 1] + '</b> · +' + (cum[cum.length - 1] - before) + ' in ' + days + ' days</small></div>';
+    s += '<svg viewBox="0 0 ' + W + ' ' + (H + 20) + '" role="img" aria-label="Total accounts over time">';
+    T.forEach(function (v) { var yy = H - v / span * (H - 6); s += '<line class="gl" x1="' + padL + '" x2="' + W + '" y1="' + yy.toFixed(1) + '" y2="' + yy.toFixed(1) + '"/><text class="ax" x="' + (padL - 6) + '" y="' + (yy + 3.5).toFixed(1) + '" text-anchor="end">' + (lo + v) + '</text>'; });
+    var pts = cum.map(function (v, i) { return (padL + (i + .5) * bw).toFixed(1) + ',' + y(v).toFixed(1); });
+    s += '<polygon points="' + (padL + .5 * bw).toFixed(1) + ',' + H + ' ' + pts.join(' ') + ' ' + (padL + (days - .5) * bw).toFixed(1) + ',' + H + '" fill="' + C.gold + '" opacity=".12"/>';
+    s += '<polyline points="' + pts.join(' ') + '" fill="none" stroke="' + C.gold + '" stroke-width="2" stroke-linejoin="round"/>';
+    var last = pts[pts.length - 1].split(','); s += '<circle cx="' + last[0] + '" cy="' + last[1] + '" r="4" fill="' + C.gold + '" stroke="var(--sheet)" stroke-width="2"/>';
+    cum.forEach(function (v, i) { s += '<rect class="hit" x="' + (padL + i * bw).toFixed(1) + '" y="0" width="' + bw.toFixed(1) + '" height="' + H + '" data-tip="' + dl(d.t0 + i * DAY) + '|' + v + ' accounts' + (d.b[i] ? ' · +' + d.b[i] + ' that day' : '') + '"/>'; });
+    return s + xlabels(W, H, padL, d.t0, days) + '</svg>';
+  }
+  function funnel(L) {
+    var now = Date.now(), n = L.length, c = function (f) { return L.filter(f).length; };
+    var S = [['Accounts', n], ['Took at least one test', c(function (r) { return r.dt || r.tt; })], ['Took both tests', c(function (r) { return r.dt && r.tt; })]];
+    var back = c(function (r) { return r.login && now - r.login < 30 * DAY; });
+    $('p-fun').innerHTML = S.map(function (st, i) { var p = n ? st[1] / n * 100 : 0; return (i ? '<div class="drop">↓ ' + (S[i - 1][1] ? Math.round(st[1] / S[i - 1][1] * 100) : 0) + '% of the step above</div>' : '') +
+      '<div class="st" data-tip="' + st[0] + '|' + st[1] + ' people · ' + Math.round(p) + '% of all accounts"><span>' + st[0] + '</span><span><b>' + st[1] + '</b> <span class="p">' + Math.round(p) + '%</span></span><span class="tr"><i style="width:' + Math.max(p, st[1] ? 1 : 0).toFixed(1) + '%"></i></span></div>'; }).join('') + '<div class="st" style="margin-top:14px" data-tip="Came back in the last 30 days|' + back + ' people · ' + Math.round(back / (n || 1) * 100) + '% of all accounts"><span>Came back in the last 30 days</span><span><b>' + back + '</b> <span class="p">' + Math.round(back / (n || 1) * 100) + '%</span></span><span class="tr"><i style="width:' + (back / (n || 1) * 100).toFixed(1) + '%;background:#8f6fe0"></i></span></div>';
+  }
+  function devices(D) {
+    var o = { mobile: 0, tablet: 0, desktop: 0 }; D.forEach(function (r) { if (o[r.devType] !== undefined) o[r.devType]++; });
+    var K = [['desktop', 'Desktop', C.teal], ['mobile', 'Phone', C.amber], ['tablet', 'Tablet', C.violet]], tot = D.length || 1;
+    $('p-dev').innerHTML = D.length ? '<div class="stack">' + K.filter(function (k) { return o[k[0]]; }).map(function (k) { return '<i style="flex:' + o[k[0]] + ';background:' + k[2] + '" data-tip="' + k[1] + '|' + o[k[0]] + ' people · ' + Math.round(o[k[0]] / tot * 100) + '%"></i>'; }).join('') + '</div><div class="legend">' +
+      K.map(function (k) { return '<span><i style="background:' + k[2] + '"></i>' + k[1] + ' <b>' + Math.round(o[k[0]] / tot * 100) + '%</b></span>'; }).join('') + '</div>' : '<p class="more">Nothing yet. Shows up as traders visit while logged in.</p>';
+  }
   function panels(L) {
     var withC = L.filter(function (r) { return r.cc; });
-    var rest = bars('p-cty', count(withC, function (r) { return r.cc; }).map(function (p) { return [flag(p[0]) + ' ' + esc(cname(p[0])), p[1]]; }), L.length, 10);
+    var rest = bars('p-cty', count(withC, function (r) { return r.cc; }).map(function (p) { return [flag(p[0]) + ' ' + esc(cname(p[0])), p[1]]; }), L.length, 12);
     var unk = L.length - withC.length;
     $('p-cty-m').textContent = (rest > 0 ? rest + ' more countries · ' : '') + (unk ? unk + ' not known yet' : 'all known');
     var D = L.filter(function (r) { return r.dev; });
-    bars('p-dev', count(D, function (r) { return r.devType.charAt(0).toUpperCase() + r.devType.slice(1); }), D.length, 3);
-    bars('p-os', count(D, function (r) { return esc(r.os); }), D.length, 6);
-    bars('p-br', count(D, function (r) { return esc(r.br); }), D.length, 6);
-    $('p-sign').innerHTML = daily(L.map(function (r) { return r.reg; }), 'var(--gold)');
-    $('p-login').innerHTML = daily(L.map(function (r) { return r.login; }), 'var(--teal)');
+    devices(D);
+    bars('p-os', count(D, function (r) { return esc(r.os); }), D.length, 5);
+    bars('p-br', count(D, function (r) { return esc(r.br); }), D.length, 5);
+    bars('p-lang', count(L, function (r) { return r.lang ? esc(r.lang.toUpperCase()) : ''; }), L.length, 8);
+    bars('p-sin', count(L, function (r) { return esc(r.signin || (r.acct === 'test only' ? 'No account (test only)' : '')); }), L.length, 6);
+    funnel(L);
+    $('p-total').innerHTML = totalChart(L, RANGE);
+    $('p-sign').innerHTML = barChart(L.map(function (r) { return r.reg; }), C.gold, RANGE, true, 'sign-ups');
+    $('p-login').innerHTML = barChart(L.map(function (r) { return r.login; }), C.teal, RANGE, false, 'last seen');
   }
-  function daily(times, color) {
-    var days = 60, start = new Date(); start.setHours(0, 0, 0, 0); var t0 = start.getTime() - (days - 1) * DAY;
-    var b = new Array(days).fill(0);
-    times.forEach(function (t) { if (t >= t0) { var i = Math.floor((t - t0) / DAY); if (i >= 0 && i < days) b[i]++; } });
-    var max = Math.max(1, Math.max.apply(null, b)), W = 600, H = 120, bw = W / days;
-    var s = '<svg viewBox="0 0 ' + W + ' ' + (H + 18) + '" role="img" aria-label="Per day, last 60 days">';
-    s += '<line x1="0" y1="' + H + '" x2="' + W + '" y2="' + H + '" stroke="var(--rule2)"/>';
-    b.forEach(function (v, i) {
-      var h = v / max * (H - 14); var d = new Date(t0 + i * DAY);
-      s += '<rect x="' + (i * bw + 1).toFixed(1) + '" y="' + (H - h).toFixed(1) + '" width="' + (bw - 2).toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + color + '" opacity=".85"><title>' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ': ' + v + '</title></rect>';
+  $('rng').addEventListener('click', function (e) { var b = e.target.closest('button[data-d]'); if (!b) return; RANGE = +b.dataset.d; [].forEach.call($('rng').children, function (x) { x.setAttribute('aria-pressed', x === b); }); render(); });
+  // one hover tooltip for every chart on the page: data-tip="title|detail"
+  (function () {
+    var tip = document.createElement('div'); tip.className = 'tip'; tip.hidden = true; document.body.appendChild(tip);
+    document.addEventListener('mousemove', function (e) {
+      var el = e.target.closest && e.target.closest('[data-tip]'); if (!el) { tip.hidden = true; return; }
+      var t = el.getAttribute('data-tip').split('|'); tip.innerHTML = '<small>' + esc(t[0]) + '</small><b>' + esc(t[1] || '') + '</b>'; tip.hidden = false;
+      var x = e.clientX + 14, y = e.clientY + 14, r = tip.getBoundingClientRect(); if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 14; if (y + r.height > innerHeight - 8) y = e.clientY - r.height - 14;
+      tip.style.left = x + 'px'; tip.style.top = y + 'px';
     });
-    s += '<text class="ax" x="0" y="' + (H + 14) + '">' + new Date(t0).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + '</text>';
-    s += '<text class="ax" x="' + W + '" y="' + (H + 14) + '" text-anchor="end">today</text>';
-    s += '<text class="ax" x="2" y="10">max ' + max + ' a day</text></svg>';
-    return s;
-  }
+    document.addEventListener('scroll', function () { tip.hidden = true; }, true);
+  })();
 
   /* ---------- table ---------- */
   var COLS = [
@@ -554,7 +656,7 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
 /* admin tabs: Members · V.I.P · CRM (they show once the admin login is confirmed) */
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], crm: ['CRM', 'Prop firm offers inbox, marketing, CRM and revenue.'] };
+  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], prop: ['Prop firms', 'Live offers, direct links, your affiliate links and the daily checks for /prop-firms/.'], crm: ['CRM', 'Marketing, CRM and revenue.'] };
   var SUB = $('sub').textContent;
   function pick(t, push) {
     if (!TABS[t]) t = 'members';
@@ -563,16 +665,17 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
     document.querySelector('.head h1').textContent = TABS[t][0];
     $('sub').textContent = t === 'members' ? SUB : TABS[t][1];
     if (t === 'crm' && !$('crmFrame').src) $('crmFrame').src = 'https://maxmaseratii.github.io/dashboard-analytics-CRM/#crm';
-    if (t === 'crm' && !$('offFrame').src) $('offFrame').src = '/admin/offers/?embed=1';
-    if (t === 'crm' && $('affBox').open && !$('affFrame').src) $('affFrame').src = '/admin/affiliates/?embed=1';
+    if (t === 'prop') { if (window.MMMPropDash) window.MMMPropDash(); if ($('offBox').open && !$('offFrame').src) $('offFrame').src = '/admin/offers/?embed=1'; if ($('affBox').open && !$('affFrame').src) $('affFrame').src = '/admin/affiliates/?embed=1'; }
     if (push) { try { history.replaceState(null, '', t === 'members' ? location.pathname : '#' + t); } catch (e) {} }
   }
   $('affBox').addEventListener('toggle', function () { if ($('affBox').open && !$('affFrame').src) $('affFrame').src = '/admin/affiliates/?embed=1'; });
+  $('offBox').addEventListener('toggle', function () { if ($('offBox').open && !$('offFrame').src) $('offFrame').src = '/admin/offers/?embed=1'; });
   function admin() { return !$('board').hidden || !$('vip').hidden; }
   function sync() {
     var ok = admin(), was = tabs.hidden;
     if (tabs.hidden === ok) tabs.hidden = !ok;
     if ($('crm').hidden === ok) $('crm').hidden = !ok;
+    if ($('prop').hidden === ok) $('prop').hidden = !ok;
     if (!ok && main.dataset.tab !== 'members') pick('members');
     if (was && ok) pick((location.hash || '').slice(1));
   }
@@ -583,6 +686,7 @@ main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main
   pick('members'); sync();
 })();
 </script>
+<script src="/admin/prop.js?v=20261114"></script>
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 </body>
