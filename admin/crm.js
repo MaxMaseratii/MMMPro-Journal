@@ -42,7 +42,19 @@
     '.lc{display:grid;grid-template-columns:96px minmax(0,1fr) 90px;gap:8px;align-items:center;font-size:13px;padding:5px 0;border-bottom:1px solid var(--rule)}',
     '.lc .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lc .dv{position:relative;height:14px}.lc .dv:before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--rule2)}',
     '.lc .dv i{position:absolute;top:0;height:14px}.lc .n{text-align:right;font-family:var(--mono)}',
-    '.chips2{display:flex;gap:6px;flex-wrap:wrap}'
+    '.chips2{display:flex;gap:6px;flex-wrap:wrap}',
+    '.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:12px}',
+    '.pc2{border:1px solid var(--rule);background:var(--sheet2);display:flex;flex-direction:column;min-width:0}',
+    '.pc2 .med{position:relative;aspect-ratio:9/16;background:#000;overflow:hidden}.pc2 .med img{width:100%;height:100%;object-fit:cover;display:block;opacity:.9}',
+    '.pc2 .med button{all:unset;cursor:pointer;position:absolute;inset:0;display:grid;place-items:center}.pc2 .med button span{width:58px;height:58px;border-radius:50%;background:rgba(0,0,0,.65);border:2px solid #fff;display:grid;place-items:center;color:#fff;font-size:22px}',
+    '.pc2 .med button:hover span{background:var(--gold);color:#111;border-color:var(--gold)}',
+    '.pc2 .med iframe,.pc2 .med video{width:100%;height:100%;border:0;display:block;background:#000}',
+    '.pc2 .med .none{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:16px;color:var(--faint);font-size:13px;line-height:1.5;background:repeating-linear-gradient(135deg,#0d1317 0 10px,#10171c 10px 20px)}',
+    '.pc2 .bd{padding:10px 12px;display:grid;gap:6px;font-size:13px}.pc2 .bd b{font-size:13.5px;line-height:1.35}.pc2 .bd small{color:var(--mute)}',
+    '.pc2 .soc{display:grid;gap:4px;border-top:1px solid var(--rule);padding:8px 12px 10px}',
+    '.pc2 .soc a,.pc2 .soc span.x{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center;text-decoration:none;color:var(--ink);font-size:12.5px;padding:3px 0}',
+    '.pc2 .soc a:hover{color:var(--teal)}.pc2 .soc i{width:8px;height:8px;border-radius:2px;display:inline-block}.pc2 .soc em{font-style:normal;font-family:var(--mono);color:var(--mute)}',
+    '.pc2 .soc span.x{color:var(--faint)}'
   ].join('');
 
   function load() {
@@ -182,6 +194,45 @@
     return s + '<line x1="' + padL + '" x2="' + W + '" y1="' + Ht + '" y2="' + Ht + '" stroke="var(--rule2)"/></svg>';
   }
 
+  /* ---------- posts with previews ---------- */
+  function ytId(u) { var m = u && /(?:shorts\/|v=|youtu\.be\/|embed\/)([\w-]{6,})/.exec(u); return m ? m[1] : null; }
+  function postCard(p) {
+    var id = ytId(p.youtube), med;
+    if (p.video) med = '<video controls preload="metadata" playsinline src="' + esc(p.video) + '"></video>';
+    else if (id) med = '<img src="https://i.ytimg.com/vi/' + id + '/hqdefault.jpg" alt="" loading="lazy"><button type="button" data-yt="' + id + '" aria-label="Play ' + esc(p.title) + '"><span>▶</span></button>';
+    else if (p.facebook && /\/(reel|videos?)\//.test(p.facebook)) med = '<div class="none">Facebook video</div><button type="button" data-fb="' + esc(p.facebook) + '" aria-label="Play ' + esc(p.title) + '"><span>▶</span></button>';
+    else med = '<div class="none">' + (/publish/i.test(p.status) ? 'No video preview (image or text post)' : 'No preview yet.<br>Mini Max adds the video file here when it is rendered.') + '</div>';
+    var soc = [['YouTube', p.youtube, p.yt_views, 'views'], ['X', p.x, p.x_impr, 'impressions'], ['Facebook', p.facebook, p.fb_impr, 'impressions']].map(function (c) {
+      var inner = '<i style="background:' + CH[c[0]] + '"></i><span>' + c[0] + '</span><em>' + (c[2] != null ? num(c[2]) + ' ' + c[3] : c[1] ? 'open ↗' : '') + '</em>';
+      return c[1] ? '<a href="' + esc(c[1]) + '" target="_blank" rel="noopener">' + inner + '</a>' : '<span class="x">' + inner.replace(/<em>.*<\/em>/, '<em>not posted</em>') + '</span>';
+    }).join('');
+    return '<article class="pc2"><div class="med">' + med + '</div><div class="bd"><b>' + esc(p.title) + '</b><small>' + esc(p.when) + ' London · ' + pill(p.status, /publish/i.test(p.status) ? 'ok' : 'warn') + (p.likes != null ? ' · ' + num(p.likes) + ' likes' + (p.comments ? ', ' + num(p.comments) + ' comments' : '') : '') + '</small></div><div class="soc">' + soc + '</div></article>';
+  }
+  function planCard(r) {
+    var med = r[6] ? '<video controls preload="metadata" playsinline src="' + esc(r[6]) + '"></video>' : '<div class="none">' + esc(r[2]) + '<br>No video yet</div>';
+    return '<article class="pc2"><div class="med">' + med + '</div><div class="bd"><b>' + esc(r[3]) + '</b><small>' + esc(r[0]) + ' ' + esc(r[1]) + ' London · ' + pill(r[2], 'neu') + '</small></div><div class="soc"><span class="x" style="color:var(--mute)"><i style="background:var(--rule2)"></i><span>Goes to</span><em>' + esc(r[4]) + '</em></span></div></article>';
+  }
+  var POSTS = { d: null, tab: 'pub', n: 12 };
+  function postsSection(d) {
+    POSTS.d = d;
+    var all = d.posts || [], pub = all.filter(function (p) { return /publish/i.test(p.status); }), up = all.filter(function (p) { return !/publish/i.test(p.status); }), plan = (d.batch || {}).rows || [];
+    return '<section class="panel" id="cPosts"><div class="ph"><h2>Posts</h2><span class="seg" id="pTabs"><button type="button" data-t="pub" aria-pressed="true">Published (' + pub.length + ')</button><button type="button" data-t="up">Scheduled (' + up.length + ')</button><button type="button" data-t="plan">Next week\'s plan (' + plan.length + ')</button></span></div>' +
+      '<p class="more" style="margin:0">Newest first. Press ▶ to watch the video here. Every link opens the post on that network.</p><div class="pg" id="pGrid"></div><div style="text-align:center;margin-top:12px"><button class="btn" type="button" id="pMore">Show more</button></div></section>';
+  }
+  function drawPosts() {
+    var d = POSTS.d, all = d.posts || [], L, card;
+    if (POSTS.tab === 'plan') { L = (d.batch || {}).rows || []; card = planCard; }
+    else { L = all.filter(function (p) { return POSTS.tab === 'pub' ? /publish/i.test(p.status) : !/publish/i.test(p.status); }); if (POSTS.tab === 'pub') L = L.slice().reverse(); card = postCard; }
+    $('pGrid').innerHTML = L.slice(0, POSTS.n).map(card).join('') || '<p class="more">Nothing here yet.</p>';
+    $('pMore').hidden = L.length <= POSTS.n; $('pMore').textContent = 'Show more (' + (L.length - POSTS.n) + ' left)';
+  }
+  function wirePosts() {
+    if (!$('cPosts')) return; drawPosts();
+    $('pTabs').addEventListener('click', function (e) { var b = e.target.closest('button[data-t]'); if (!b) return; [].forEach.call($('pTabs').children, function (x) { x.setAttribute('aria-pressed', x === b); }); POSTS.tab = b.dataset.t; POSTS.n = 12; drawPosts(); });
+    $('pMore').addEventListener('click', function () { POSTS.n += 12; drawPosts(); });
+    $('pGrid').addEventListener('click', function (e) { var f = e.target.closest('button[data-fb]'); if (f) { f.parentNode.innerHTML = '<iframe src="https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(f.dataset.fb) + '&show_text=false&autoplay=true" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="Video"></iframe>'; return; } var b = e.target.closest('button[data-yt]'); if (!b) return; b.parentNode.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + b.dataset.yt + '?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="Video"></iframe>'; });
+  }
+
   /* ---------- MAIN CRM TAB ---------- */
   function crm(el, d) {
     var rev = d.revenue || {}, tw = rev.this_week || {}, lw = rev.last_week || {}, m = mrr(d), paid = pipe(d, /^Paid active/i), reach = card(d, /^Reach/i), fol = card(d, /^Followers/i), vis = sb(d, /Whop page visits/i), best = card(d, /^Best post/i);
@@ -207,10 +258,7 @@
     h += '<section class="panel"><div class="ph"><h2>Content reach, last 30 posts</h2><small>' + (best ? 'Best: ' + esc(best.value) + ' · ' + esc(best.sub) : '') + '</small></div>' +
       '<div class="legend" style="margin-bottom:6px">' + chs.map(function (c) { return '<span><i style="background:' + (CH[c.name] || '#5f6e77') + '"></i>' + esc(c.name) + ' <b>' + num(c.value) + '</b> ' + esc(c.meta) + ' (' + Math.round(c.value / (tot || 1) * 100) + '%)</span>'; }).join('') +
       '<span>· ' + num(e.likes) + ' likes · ' + num(e.comments) + ' comments · ' + num(e.clicks) + ' link clicks</span></div><div class="ch">' + postsChart(d.posts || []) + '</div>' +
-      '<details style="margin-top:10px"><summary style="cursor:pointer;color:var(--teal);font-size:13px">See every post as a table</summary><div class="tw" style="margin-top:8px"><table class="t"><thead><tr><th>When</th><th>Post</th><th>Status</th><th style="text-align:right">YouTube</th><th style="text-align:right">X</th><th style="text-align:right">Facebook</th><th style="text-align:right">Likes</th></tr></thead><tbody>' +
-      (d.posts || []).slice().reverse().map(function (p) { var lk = function (u, t) { return u ? '<a href="' + esc(u) + '" target="_blank" rel="noopener">' + t + '</a>' : ''; };
-        return '<tr><td class="n" style="text-align:left">' + esc(p.when) + '</td><td>' + esc(p.title) + ' <span style="font-size:12px">' + [lk(p.youtube, 'YT'), lk(p.x, 'X'), lk(p.facebook, 'FB')].filter(Boolean).join(' · ') + '</span></td><td>' + pill(p.status, /publish/i.test(p.status) ? 'ok' : 'neu') + '</td><td class="n">' + num(p.yt_views) + '</td><td class="n">' + num(p.x_impr) + '</td><td class="n">' + num(p.fb_impr) + '</td><td class="n">' + num(p.likes) + '</td></tr>'; }).join('') +
-      '</tbody></table></div></details></section>';
+      '</section>' + postsSection(d);
     // plan
     var b = d.batch || {};
     if ((b.rows || []).length) h += '<details class="box"><summary><h2>Content plan</h2>' + pill(b.status && /await/i.test(b.status) ? 'Awaiting approval' : 'Plan', /await/i.test(b.status || '') ? 'warn' : 'neu') + '<small>' + b.rows.length + ' posts · ' + esc(b.status || '') + '</small></summary><div class="in"><p style="margin:0 0 10px;color:#c3cdd2;font-size:13.5px;line-height:1.5">' + esc(b.goals || '') + '</p><div class="tw"><table class="t"><thead><tr><th>Day</th><th>Time</th><th>Type</th><th>Post</th><th>Where</th></tr></thead><tbody>' +
@@ -226,6 +274,6 @@
     if (bt && bt.rows) h += '<details class="box"><summary><h2>Study claims check</h2><small>' + esc(bt.caption || '') + '</small></summary><div class="in"><table class="t"><thead><tr><th>Claim</th><th>Study</th><th>Recomputed</th><th></th></tr></thead><tbody>' + bt.rows.map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td class="n">' + esc(r[1]) + '</td><td class="n">' + esc(r[2]) + '</td><td>' + pill(r[3], /confirm/i.test(r[3]) ? 'ok' : 'warn') + '</td></tr>'; }).join('') + '</tbody></table><p class="more">' + esc(bt.note || '') + '</p></div></details>';
     h += '<p class="note" style="margin:0 0 30px">' + esc(d.footer || '') + '</p>';
     el.innerHTML = '<div class="cx">' + h + '</div>';
-    clampWire(el);
+    clampWire(el); wirePosts();
   }
 })();
