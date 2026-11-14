@@ -352,7 +352,7 @@ a.stars:hover{color:var(--fg)}
 
 <section class="sz" id="sizes" aria-labelledby="sz-h">
   <div class="desk">
-    <div class="szhead"><div><h2 id="sz-h" style="font:700 clamp(24px,2.6vw,32px)/1.1 var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--gold);margin:0">Pick your account size</h2><p>Cheapest first, after today's offer. Each button opens that exact account on the firm's site.</p></div><p id="sz-n" class="num"></p></div>
+    <div class="szhead"><div><h2 id="sz-h" style="font:700 clamp(24px,2.6vw,32px)/1.1 var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--gold);margin:0">Pick your account size</h2><p>Every account on our list, cheapest first after today's offer. <b style="color:var(--fg)">Only EOD or static drawdown accounts</b> (evaluation and funded), one-time payment, no activation fee. Intraday trailing drawdown accounts are not on this page.</p></div><p id="sz-n" class="num"></p></div>
     <div class="sztabs" id="sztabs" role="tablist" aria-label="Account size"></div>
     <div class="szgrid" id="szgrid" role="tabpanel"></div>
   </div>
@@ -635,11 +635,11 @@ a.stars:hover{color:var(--fg)}
   var TABS = [['small', 'Under 25K', function (k) { return k < 25; }], ['25', '25K'], ['50', '50K'], ['75', '75K'], ['100', '100K'], ['150', '150K'], ['250', '250K+', function (k) { return k >= 250; }]];
   function tabFn(t) { return t[2] || function (k) { return k === Number(t[0]); }; }
   function sizeCards() {
-    var plans = D.plans.filter(planOk), cnt = {};
+    var plans = D.plans.filter(function (p) { return F.mo || p.billing !== 'Monthly'; }), cnt = {}; // every account on the list: the filters below only change the big table
     TABS.forEach(function (t) { cnt[t[0]] = 0; plans.forEach(function (p) { p.sizes.forEach(function (z) { if (tabFn(t)(z.k)) cnt[t[0]]++; }); }); });
     var tabs = TABS.filter(function (t) { return cnt[t[0]]; });
     if (!tabs.some(function (t) { return t[0] === TAB; })) TAB = (tabs.filter(function (t) { return t[0] === '25'; })[0] || tabs[0] || ['25'])[0];
-    $('#sztabs').innerHTML = tabs.map(function (t) { return '<button type="button" role="tab" data-t="' + t[0] + '" aria-selected="' + (t[0] === TAB) + '">' + t[1] + '<small>' + cnt[t[0]] + ' accounts</small></button>'; }).join('');
+    $('#sztabs').innerHTML = tabs.map(function (t) { return '<button type="button" role="tab" data-t="' + t[0] + '" aria-selected="' + (t[0] === TAB) + '">' + t[1] + '<small>' + cnt[t[0]] + (cnt[t[0]] === 1 ? ' account' : ' accounts') + '</small></button>'; }).join('');
     var fn = tabFn(TABS.filter(function (t) { return t[0] === TAB; })[0] || TABS[1]), R = [];
     plans.forEach(function (p) { p.sizes.forEach(function (z) { if (fn(z.k)) R.push({ p: p, z: z, d: deal(p, z) }); }); });
     R.sort(function (a, b) { var x = a.d ? a.d.now : a.z.list, y = b.d ? b.d.now : b.z.list; return (x == null ? 1e9 : x) - (y == null ? 1e9 : y) || a.z.k - b.z.k; });
