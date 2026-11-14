@@ -148,10 +148,9 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
 .atabs button{font:600 14px var(--sans);background:none;color:var(--mute);border:0;border-bottom:3px solid transparent;padding:9px 14px;cursor:pointer}
 .atabs button[aria-selected=true]{color:var(--gold);border-bottom-color:var(--gold)}
 .atabs button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-main[data-tab=members] #vip,main[data-tab=members] #crm,main[data-tab=members] #prop,
-main[data-tab=vip] #board,main[data-tab=vip] #gate,main[data-tab=vip] #acts,main[data-tab=vip] #crm,main[data-tab=vip] #prop,
-main[data-tab=crm] #board,main[data-tab=crm] #gate,main[data-tab=crm] #acts,main[data-tab=crm] #vip,main[data-tab=crm] #prop,
-main[data-tab=prop] #board,main[data-tab=prop] #gate,main[data-tab=prop] #acts,main[data-tab=prop] #vip,main[data-tab=prop] #crm{display:none!important}
+main:not([data-tab=members]) #board,main:not([data-tab=members]) #gate,main:not([data-tab=members]) #acts,
+main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=prop]) #prop,main:not([data-tab=whop]) #whop{display:none!important}
+.whop[hidden]{display:none!important}
 .vip{margin-top:0}
 .crm{display:grid;gap:10px}
 .crm .bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;color:var(--mute);font-size:13.5px}
@@ -180,9 +179,10 @@ main[data-tab=prop] #board,main[data-tab=prop] #gate,main[data-tab=prop] #acts,m
   </div>
   <nav class="atabs" id="atabs" role="tablist" aria-label="Admin sections" hidden>
     <button type="button" role="tab" data-tab="members" aria-selected="true">Members</button>
+    <button type="button" role="tab" data-tab="whop" aria-selected="false">Whop</button>
+    <button type="button" role="tab" data-tab="crm" aria-selected="false">CRM</button>
     <button type="button" role="tab" data-tab="vip" aria-selected="false">V.I.P</button>
     <button type="button" role="tab" data-tab="prop" aria-selected="false">Prop firms</button>
-    <button type="button" role="tab" data-tab="crm" aria-selected="false">CRM</button>
   </nav>
   <section class="vip" id="vip" hidden>
     <div class="out master" id="vmBox">
@@ -214,10 +214,8 @@ main[data-tab=prop] #board,main[data-tab=prop] #gate,main[data-tab=prop] #acts,m
     <div class="row" style="margin-top:16px"><b>V.I.P codes</b></div>
     <div class="tw"><table><thead><tr><th>When</th><th>Email</th><th>Code</th><th>For</th><th></th><th>Status</th><th></th></tr></thead><tbody id="vipCodes"></tbody></table></div>
   </section>
-  <section class="crm" id="crm" hidden>
-    <div class="bar"><span>Marketing, CRM and revenue dashboard.</span><a class="btn" href="https://maxmaseratii.github.io/dashboard-analytics-CRM/#crm" target="_blank" rel="noopener">Open in a new tab</a></div>
-    <iframe id="crmFrame" title="MMM Marketing Hub CRM" loading="lazy" referrerpolicy="no-referrer"></iframe>
-  </section>
+  <section class="whop" id="whop" hidden><div id="wx"></div></section>
+  <section class="crm" id="crm" hidden><div id="cx"></div></section>
   <section class="prop" id="prop" hidden>
     <div id="pd"></div>
     <details class="offers" id="offBox"><summary>Offers inbox <small>Paste an offer by hand · the 06:33 check publishes it to /prop-firms/</small></summary><iframe id="offFrame" title="Prop firm offers inbox"></iframe></details>
@@ -656,7 +654,7 @@ main[data-tab=prop] #board,main[data-tab=prop] #gate,main[data-tab=prop] #acts,m
 /* admin tabs: Members · V.I.P · CRM (they show once the admin login is confirmed) */
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], prop: ['Prop firms', 'Live offers, direct links, your affiliate links and the daily checks for /prop-firms/.'], crm: ['CRM', 'Marketing, CRM and revenue.'] };
+  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], whop: ['Whop', 'Members, money and store visits on Whop, and what your indicator launches do to them.'], crm: ['CRM', 'Everything in one place: money, targets, content and what needs you.'], prop: ['Prop firms', 'Money and link clicks from /prop-firms/, then offers, direct links and the daily checks.'] };
   var SUB = $('sub').textContent;
   function pick(t, push) {
     if (!TABS[t]) t = 'members';
@@ -664,7 +662,7 @@ main[data-tab=prop] #board,main[data-tab=prop] #gate,main[data-tab=prop] #acts,m
     [].forEach.call(tabs.querySelectorAll('[data-tab]'), function (b) { b.setAttribute('aria-selected', b.dataset.tab === t); });
     document.querySelector('.head h1').textContent = TABS[t][0];
     $('sub').textContent = t === 'members' ? SUB : TABS[t][1];
-    if (t === 'crm' && !$('crmFrame').src) $('crmFrame').src = 'https://maxmaseratii.github.io/dashboard-analytics-CRM/#crm';
+    if ((t === 'crm' || t === 'whop') && window.MMMCrm) window.MMMCrm(t);
     if (t === 'prop') { if (window.MMMPropDash) window.MMMPropDash(); if ($('offBox').open && !$('offFrame').src) $('offFrame').src = '/admin/offers/?embed=1'; if ($('affBox').open && !$('affFrame').src) $('affFrame').src = '/admin/affiliates/?embed=1'; }
     if (push) { try { history.replaceState(null, '', t === 'members' ? location.pathname : '#' + t); } catch (e) {} }
   }
@@ -676,6 +674,7 @@ main[data-tab=prop] #board,main[data-tab=prop] #gate,main[data-tab=prop] #acts,m
     if (tabs.hidden === ok) tabs.hidden = !ok;
     if ($('crm').hidden === ok) $('crm').hidden = !ok;
     if ($('prop').hidden === ok) $('prop').hidden = !ok;
+    if ($('whop').hidden === ok) $('whop').hidden = !ok;
     if (!ok && main.dataset.tab !== 'members') pick('members');
     if (was && ok) pick((location.hash || '').slice(1));
   }
@@ -686,7 +685,8 @@ main[data-tab=prop] #board,main[data-tab=prop] #gate,main[data-tab=prop] #acts,m
   pick('members'); sync();
 })();
 </script>
-<script src="/admin/prop.js?v=20261114"></script>
+<script src="/admin/crm.js?v=20261114"></script>
+<script src="/admin/prop.js?v=20261114b"></script>
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 </body>

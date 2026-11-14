@@ -61,4 +61,17 @@
     match /propAffTrack/{id} {
       allow read, write: if vipAdmin();
     }
+    // ===================== MMM prop clicks + money =====================
+    // propClicks/{day__plan__size__b|c}  n = how many clicks on a buy button (b) or code copy (c) on /prop-firms/ that day.
+    // Anyone can add exactly 1 (no personal data is stored); only the admin login can read or delete.
+    match /propClicks/{id} {
+      allow get, list, delete: if vipAdmin();
+      allow create: if id.matches('20[0-9]{2}-[0-9]{2}-[0-9]{2}__[a-z0-9-]{1,40}__[0-9.]{1,6}__[bc]')
+        && request.resource.data.keys().hasOnly(['n']) && request.resource.data.n == 1;
+      allow update: if request.resource.data.keys().hasOnly(['n']) && request.resource.data.n == resource.data.n + 1;
+    }
+    // propEarn/{id}  affiliate money Max received (date, firm, usd, note). Admin only.
+    match /propEarn/{id} {
+      allow read, write: if vipAdmin();
+    }
     // ===================== end MMM V.I.P =====================

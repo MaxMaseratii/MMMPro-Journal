@@ -589,7 +589,7 @@ body.rd-open{overflow:hidden}
     box.hidden = false;
     box.innerHTML = '<div class="oh"><h2>Today\'s offers</h2><small><span>Checked every morning ·</span> <span translate="no">' + esc(OF.updated_label || '') + '</span></small></div><div class="ol">' +
       L.map(function (o) {
-        return '<div class="oc">' + LG(o.firm, 's') + '<b translate="no">' + esc(o.firm) + '</b>' + (o.pct ? '<span class="pc" translate="no">' + o.pct + '%</span>' : '') + '<small translate="no">' + esc(o.text) + (o.ends ? ' · → ' + esc(o.ends) : '') + '</small>' + (o.code ? cpyBtn(o.code) : H) + '</div>';
+        return '<div class="oc" data-pk="x-' + esc(o.firm.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 38)) + '|0">' + LG(o.firm, 's') + '<b translate="no">' + esc(o.firm) + '</b>' + (o.pct ? '<span class="pc" translate="no">' + o.pct + '%</span>' : '') + '<small translate="no">' + esc(o.text) + (o.ends ? ' · → ' + esc(o.ends) : '') + '</small>' + (o.code ? cpyBtn(o.code) : H) + '</div>';
       }).join('') + '</div>';
   }
   function detail(p, k, compact) {
@@ -637,8 +637,8 @@ body.rd-open{overflow:hidden}
     var a = f.aff || {}, code = a.code || '', zz = p.sizes.filter(function (z) { return z.k === k; })[0], su = zz ? sizeUrl(p, zz) : '';
     var url = su || a.url || p.src;
     var ol = offers(p).map(function (o) { return '<span class="code">' + NO(o.text) + (o.code ? ' ' + cpyBtn(o.code) : '') + (o.ends ? ' <small class="ns" translate="no">→ ' + esc(o.ends) + '</small>' : '') + '</span>'; }).join('');
-    return (ol ? '<div class="go">' + ol + H + '</div>' : '') + '<div class="go"><a class="btn-try" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url ? ' sponsored' : ' nofollow') + '">' + (su ? 'Open this ' + k + 'K account →' : a.url ? 'Get this account →' : 'Visit the firm →') + '</a>' + H +
-      (code ? '<span class="code"><span>MMM code</span> ' + cpyBtn(code) + '</span>' : '') + '</div>';
+    return '<div data-pk="' + esc(p.id + '|' + (k > 0 ? k : 0)) + '">' + (ol ? '<div class="go">' + ol + H + '</div>' : '') + '<div class="go"><a class="btn-try" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url ? ' sponsored' : ' nofollow') + '">' + (su ? 'Open this ' + k + 'K account →' : a.url ? 'Get this account →' : 'Visit the firm →') + '</a>' + H +
+      (code ? '<span class="code"><span>MMM code</span> ' + cpyBtn(code) + '</span>' : '') + '</div>' + '</div>';
   }
 
   var TABS = [['small', 'Under 25K', function (k) { return k < 25; }], ['25', '25K'], ['50', '50K'], ['75', '75K'], ['100', '100K'], ['150', '150K'], ['250', '250K+', function (k) { return k >= 250; }]];
@@ -661,7 +661,7 @@ body.rd-open{overflow:hidden}
         : (offers(p, z.k).length ? '<span class="pn" translate="no">' + esc(offers(p, z.k)[0].text) + '</span>' : z.promo ? '<span class="pn" translate="no">Often sold lower: ' + esc(z.promo) + '</span>' : '');
       var codes = offers(p, z.k).filter(function (o) { return o.code; }).map(function (o) { return '<span class="chipc"><span>Firm code</span> ' + cpyBtn(o.code) + '</span>'; });
       if (a.code && codes.join('').indexOf('data-code="' + esc(a.code) + '"') < 0) codes.push('<span class="chipc mine"><span>MMM code</span> ' + cpyBtn(a.code) + '</span>');
-      return '<article class="ac' + (d ? ' deal' : '') + '"><span class="rk num">#' + (i + 1) + '</span>' +
+      return '<article class="ac' + (d ? ' deal' : '') + '" data-pk="' + esc(p.id + '|' + z.k) + '"><span class="rk num">#' + (i + 1) + '</span>' +
         '<div class="fn">' + LG(p.firm, 'l') + '<span><h3 translate="no">' + esc(p.firm) + '</h3><p class="pl"><span translate="no">' + esc(p.plan) + '</span> · <b style="color:var(--fg)">' + z.k + 'K</b></p></span></div>' +
         '<div class="pr">' + price + note + '</div>' +
         '<div class="mx"><div><div class="k">Drawdown</div><div class="v">' + (z.dd != null ? money(z.dd) : '—') + ' <small class="ns">' + esc(p.dd) + '</small></div></div><div><div class="k">Target</div><div class="v">' + (z.target != null ? money(z.target) : '—') + '</div></div><div><div class="k">1st payout</div><div class="v">' + payBadge(p) + '</div></div></div>' +
@@ -816,8 +816,17 @@ body.rd-open{overflow:hidden}
     $('#ladder').addEventListener('click', function (e) { var b = e.target.closest('button[data-q]'); if (!b) return; F.q = b.dataset.q; $('#f-q').value = F.q; F.sort = 'pay'; paint(); $('#compare').scrollIntoView({ behavior: 'smooth' }); });
   }
 
+  // count clicks on buy buttons and code copies (only a number per account per day: no cookie, no personal data)
+  function track(el, t) {
+    var c = el.closest('[data-pk]'); if (!c) return;
+    var pk = c.getAttribute('data-pk').split('|'), day = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/London' });
+    var id = day + '__' + pk[0] + '__' + pk[1] + '__' + t; if (!/^20\d\d-\d\d-\d\d__[a-z0-9-]{1,40}__[0-9.]{1,6}__[bc]$/.test(id)) return;
+    try { fetch('https://firestore.googleapis.com/v1/projects/mmm-pro-journal/databases/(default)/documents:commit?key=AIzaSyDcrEEhcY6kHLQxZ7RQ37KmAcCDPgol0gg', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ writes: [{ transform: { document: 'projects/mmm-pro-journal/databases/(default)/documents/propClicks/' + id, fieldTransforms: [{ fieldPath: 'n', increment: { integerValue: '1' } }] } }] }) }).catch(function () {}); } catch (x) {}
+  }
+  document.addEventListener('click', function (e) { var a = e.target.closest('a.buy, .go a.btn-try'); if (a) track(a, 'b'); }, true);
   document.addEventListener('click', function (e) {
-    var b = e.target.closest('.cpy'); if (!b) return; e.stopPropagation();
+    var b = e.target.closest('.cpy'); if (!b) return; e.stopPropagation(); track(b, 'c');
     var c = b.dataset.code, done = function () { var t = b.textContent; b.style.minWidth = b.offsetWidth + 'px'; b.textContent = '✓ copied'; setTimeout(function () { b.textContent = t; }, 1400); };
     (navigator.clipboard ? navigator.clipboard.writeText(c) : Promise.reject()).then(done).catch(function () { var r = document.createRange(); r.selectNodeContents(b); var s = getSelection(); s.removeAllRanges(); s.addRange(r); });
   }, true);
