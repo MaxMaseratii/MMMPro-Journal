@@ -1,7 +1,18 @@
 {
-  "updated": "2026-11-14T11:22:15Z",
-  "updated_label": "14 Nov 2026, 11:22 London",
+  "updated": "2026-11-14T12:22:50Z",
+  "updated_label": "14 Nov 2026, 12:22 London",
   "offers": [
+    {
+      "firm": "IQ Capital",
+      "plans": [],
+      "code": null,
+      "pct": 85,
+      "text": "85% off everything (Black Friday special)",
+      "ends": null,
+      "src": "https://www.iqcapital.io/",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
     {
       "firm": "Apex Trader Funding",
       "plans": [],
@@ -14,26 +25,205 @@
       "checked": "2026-11-14"
     },
     {
-      "firm": "Traders Launch",
-      "plans": [],
-      "code": "TL20",
-      "pct": null,
-      "text": "Discount on all accounts with code TL20 (amount not stated)",
+      "firm": "Funded Futures Network",
+      "plans": [
+        "ffn-max"
+      ],
+      "code": "NEXUS",
+      "pct": 70,
+      "text": "70% off any Steady or Max account with code NEXUS (or 50% off + buy 1 get 1 free on Max, no code)",
       "ends": null,
-      "src": "https://x.com/TradersLaunch/status/2121329868717584603",
-      "via": "x",
+      "src": "https://fundedfuturesnetwork.com/",
+      "via": "site",
       "checked": "2026-11-14"
     },
     {
-      "firm": "IQ Capital",
+      "firm": "Blueberry Futures",
       "plans": [],
-      "code": null,
-      "pct": 85,
-      "text": "85% off all accounts, from $9 (Black Month special)",
+      "code": "FUTURES60",
+      "pct": 60,
+      "text": "60% off with code FUTURES60",
       "ends": null,
-      "src": "https://x.com/IQCapital_io/status/2121073869578715578",
-      "via": "x",
-      "checked": "2026-11-13"
+      "src": "https://blueberryfutures.com/",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "FundedHero Futures",
+      "plans": [],
+      "code": "HERO",
+      "pct": 60,
+      "text": "Flash sale: 60% off every challenge with code HERO",
+      "ends": null,
+      "src": "https://fundedherofutures.com/",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "Top One Futures",
+      "plans": [
+        "topone-elite-daily"
+      ],
+      "code": "BLACKFRIDAY",
+      "pct": 55,
+      "text": "Black November: 55% off Elite Dailies (up to 60% off, buy 1 get 1 free with code BOGO)",
+      "ends": null,
+      "src": "https://www.toponefutures.com/",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "TX3 Futures",
+      "plans": [],
+      "code": "BF50",
+      "pct": 50,
+      "text": "50% off all accounts with code BF50",
+      "ends": null,
+      "src": "https://www.tx3futures.com/en/tx3-core",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "Alpha Futures",
+      "plans": [
+        "alpha-std",
+        "alpha-adv"
+      ],
+      "code": "ALPHA50",
+      "pct": 50,
+      "text": "50% off Advanced, Standard and Direct with code ALPHA50",
+      "ends": null,
+      "src": "https://alpha-futures.com/",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "Alpha Futures",
+      "plans": [
+        "alpha-zero"
+      ],
+      "code": "ALPHA40",
+      "pct": 40,
+      "text": "40% off Zero with code ALPHA40",
+      "ends": null,
+      "src": "https://alpha-futures.com/product/zero",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "FundedNext Futures",
+      "plans": [],
+      "code": "FNFLEX",
+      "pct": 47,
+      "text": "47% off your first 2 accounts, then 40% off",
+      "ends": null,
+      "src": "https://fundednext.com/futures",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "MyFundedFutures",
+      "plans": [],
+      "code": "CLUB",
+      "pct": 40,
+      "text": "40% off any plan with code CLUB",
+      "ends": null,
+      "src": "https://myfundedfutures.com/",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "Tradeify",
+      "plans": [
+        "tradeify-growth"
+      ],
+      "code": "NOV",
+      "pct": 40,
+      "text": "40% off Growth accounts",
+      "ends": null,
+      "src": "https://tradeify.co/",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "Tradeify",
+      "plans": [
+        "tradeify-select",
+        "tradeify-lightning"
+      ],
+      "code": "NOV",
+      "pct": 30,
+      "text": "30% off with code NOV",
+      "ends": null,
+      "src": "https://tradeify.co/",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "Futureify (FXIFY Futures)",
+      "plans": [],
+      "code": "FUTUREIFY",
+      "pct": 40,
+      "text": "40% off all Flex and Direct challenges",
+      "ends": null,
+      "src": "https://futureify.com/",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "Shark Futures",
+      "plans": [],
+      "code": "BFCM",
+      "pct": 40,
+      "text": "Black Friday: 40% off your first 5 accounts, then 30%, with code BFCM",
+      "ends": null,
+      "src": "https://www.sharkfutures.com/",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "Blue Guardian Futures",
+      "plans": [],
+      "code": "BG25",
+      "pct": 25,
+      "text": "25% off with code BG25 (bigger bundle discounts for more accounts)",
+      "ends": null,
+      "src": "https://blueguardian.com/futures",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "Aqua Futures (AquaFunded)",
+      "plans": [],
+      "code": "HONOR",
+      "pct": 25,
+      "text": "Veterans Day Sale: 25% off",
+      "ends": null,
+      "src": "https://www.aquafunded.com/futures",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "E8 Futures",
+      "plans": [],
+      "code": "E8",
+      "pct": 25,
+      "text": "25% off your first order with code E8",
+      "ends": null,
+      "src": "https://e8futures.com/",
+      "via": "site",
+      "checked": "2026-11-14"
+    },
+    {
+      "firm": "FunderPro Futures",
+      "plans": [],
+      "code": "EARLYBF25",
+      "pct": 25,
+      "text": "Early Black Friday: 25% off every challenge",
+      "ends": "2026-11-15",
+      "src": "https://funderpro.com/",
+      "via": "site",
+      "checked": "2026-11-14"
     },
     {
       "firm": "Phidias Propfirm",
@@ -50,13 +240,13 @@
       ]
     },
     {
-      "firm": "FunderPro Futures",
+      "firm": "Traders Launch",
       "plans": [],
-      "code": "EARLYBF25",
-      "pct": 25,
-      "text": "25% off every challenge (Black Friday early access)",
-      "ends": "2026-11-15",
-      "src": "https://x.com/FunderPro/status/2121234133334536590",
+      "code": "TL20",
+      "pct": null,
+      "text": "Discount on all accounts with code TL20 (amount not stated)",
+      "ends": null,
+      "src": "https://x.com/TradersLaunch/status/2121329868717584603",
       "via": "x",
       "checked": "2026-11-14"
     }
@@ -68,6 +258,7 @@
     "grok:2026-11-11.md"
   ],
   "log": [
+    "2026-11-14 (3rd run): 21 live · first website + YouTube scan worked (29/29 sites read) · added 16 offers seen on firm sites (FFN 70% NEXUS, Blueberry 60%, FundedHero 60%, Top One 55%, TX3 50%, Alpha 50/40%, FundedNext 47%, MFFU 40% CLUB, Tradeify 40/30% NOV, Futureify 40%, Shark 40%, Blue Guardian 25%, Aqua 25%, E8 25%) · IQ 85% now confirmed on site · 12 direct links",
     "2026-11-14 (2nd run): 5 live · added Apex 90% off evals, Traders Launch TL20 (official X via Grok) · Phidias HONOR85 now 150K only · skipped Apex Legacy deals, Tradeify Miami plan (not in our list), Phoenix Cup reset (not a discount)",
     "2026-11-14: 3 live · no change (IQ Capital 85%, Phidias HONOR85 150K, FunderPro EARLYBF25 till 15 Nov) · Grok 13 Nov file re-confirmed them on official X · firm sites unreadable (web fetch blocked) · web search found only affiliate codes · Grok file for today missing · inbox empty",
     "2026-11-13: 3 live · added IQ Capital 85%, Phidias HONOR85 (150K), FunderPro 25% EARLYBF25 (from official X posts via Grok) · firm sites unreadable (web fetch blocked) · Grok file for today missing · inbox empty",

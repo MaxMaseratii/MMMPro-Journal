@@ -1,5 +1,34 @@
 {
-  "updated": null,
+  "updated": "2026-11-14T12:22:50Z",
   "note": "Direct buy link for each account size: {plan id: {size in K: url}}. Filled by the daily offers check from prop-firms/scan/latest.json.",
-  "links": {}
+  "links": {
+    "tradeify-select": {
+      "25": "https://app-f.tradeify.co/accounts/checkout/?plan_id=4f40a37c-c568-46ea-a6d9-7e27c38f4e50"
+    },
+    "mffu-builder": {
+      "50": "https://myfundedfutures.com/challenge?id=84&coupon=CLUB"
+    },
+    "mffu-pro": {
+      "50": "https://myfundedfutures.com/challenge?id=135&coupon=CLUB"
+    },
+    "ffn-max": {
+      "50": "https://fundedfuturesnetwork.com/checkout?plan=50SM&feed=cqg&coupon=NEXUS"
+    },
+    "topone-elite-daily": {
+      "25": "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=25",
+      "50": "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=50",
+      "100": "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=100",
+      "150": "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=150"
+    },
+    "iq-flex": {
+      "50": "https://checkout.iqcapital.io/products?presel=fut-flex-challenge-50k",
+      "100": "https://checkout.iqcapital.io/products?presel=fut-flex-challenge-100k"
+    },
+    "phidias-e2l": {
+      "100": "https://member.phidiaspropfirm.com/signup/NfNKNvbJV?product_id_page-0[]=115-407"
+    },
+    "topstep-naf": {
+      "50": "https://dashboard.topstep.com/checkout/66?origin=cms"
+    }
+  }
 }

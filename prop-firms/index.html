@@ -658,7 +658,7 @@ a.stars:hover{color:var(--fg)}
         '<div class="mx"><div><div class="k">Drawdown</div><div class="v">' + (z.dd != null ? money(z.dd) : '—') + ' <small class="ns">' + esc(p.dd) + '</small></div></div><div><div class="k">Target</div><div class="v">' + (z.target != null ? money(z.target) : '—') + '</div></div><div><div class="k">1st payout</div><div class="v">' + payBadge(p) + '</div></div></div>' +
         '<div class="tags">' + stars(f) + ' ' + cpTag(f) + ' <span class="tag">' + (p.kind === 'Evaluation' ? 'Evaluation' : 'Instant') + '</span>' + (p.billing === 'Monthly' ? ' <span class="tag mo">Monthly</span>' : '') + '</div>' +
         (codes.length ? '<div class="codes">' + codes.join('') + '</div>' : '') +
-        '<a class="buy" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url && !su ? ' sponsored' : ' nofollow') + '">Open ' + esc(p.firm.replace(/ \(.*\)/, '')) + ' ' + z.k + 'K →</a>' +
+        '<a class="buy" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url && !su ? ' sponsored' : ' nofollow') + '">Open this ' + z.k + 'K account →</a>' +
         '<p class="lk">' + (su ? 'Direct link to this ' + z.k + 'K account' : 'Opens the plan page: pick ' + z.k + 'K there') + '</p>' +
         '<button type="button" class="more" data-row="' + esc(p.id + '|' + z.k) + '">Full rules ↓</button></article>';
     }).join('') || '<p class="empty">No account matches your filters.</p>';
