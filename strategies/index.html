@@ -151,6 +151,17 @@ ol.steps li{counter-increment:s;display:grid;grid-template-columns:26px 108px mi
 ol.steps li::before{content:counter(s);font-family:var(--mono);font-size:12px;color:var(--faint);padding-top:2px}
 ol.steps li b{font-family:var(--display);font-weight:600;letter-spacing:.05em;text-transform:uppercase;font-size:13.5px;color:var(--fg);padding-top:1px}
 ol.steps li span{color:#cfd5da}
+.rules{border:1px solid var(--line2);border-radius:10px;padding:10px 12px;display:grid;gap:8px;font-size:13.5px;line-height:1.5}
+.rules .rh{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.rules .rv{font-weight:700;padding:2px 8px;border-radius:999px;font-size:12px}
+.rules .rv.e{color:var(--up);background:var(--g)} .rules .rv.w{color:var(--mix);background:var(--y)} .rules .rv.n{color:var(--dn);background:var(--r)}
+.rules ul{margin:0;padding-left:18px;color:#c3cbd1}
+.rules label{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:600}
+.rules select{background:transparent;color:var(--fg);border:1px solid var(--line2);border-radius:8px;padding:5px 8px;font:inherit}
+.rules select option{background:#11161c}
+.rules dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:6px;margin:0}
+.rules dl div{border:1px solid var(--line2);border-radius:8px;padding:5px 7px} .rules dt{font-size:11px;color:#8b949e} .rules dd{margin:0;font-weight:700}
+.rules .note{color:#8b949e;font-size:12.5px;margin:0}
 .why{display:grid;gap:8px}
 .why p{margin:0;font-size:14px;line-height:1.5;color:#c3cbd1;padding-left:11px;border-left:2px solid var(--line2)}
 .why p b{color:var(--fg);font-weight:600}
@@ -324,7 +335,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     <div class="sh-h">
       <div>
         <h2 id="h-book">The book</h2>
-        <p>Click a strategy to open its rules and its example picture. Core = passed the MMM Testing Standard (inside MMM Pro Edge). Profitable · every year = made money every year, did not pass the Standard yet. Profitable · lower score = made money with a losing year or a lower score: paper-trade it first. The badge gives the year-by-year verdict: ✔ WORKS = it made money in every year, ~ MAYBE = one losing year or a weak t-score.</p>
+        <p>Click a strategy to open its rules and its example picture. Core = passed the MMM Testing Standard (inside MMM Pro Edge). Profitable · every year = made money every year, did not pass the Standard yet. Profitable · lower score = made money with a losing year or a lower score: paper-trade it first. The badge gives the verdict of the MMM Discovery Rules (Nov 15 2026): ✔ WORKS = every year 2023–25 green, t-score 2+, beats random entries, the stop sizes next to it also work and 2026 is not red. ~ MAYBE = it made money but fails one line. Each card shows why, and a <b>Your stop</b> picker with only the stop sizes that passed.</p>
       </div>
       <div class="acts"><a class="btn-ghost" href="/backtests/#words">MMM words · glossary</a><a class="btn-ghost" href="/backtests/ny-open/study/">9:30–11:30 AM study</a><a class="btn-try" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener" data-try="book">Try it for free</a></div>
     </div>
@@ -611,6 +622,27 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       '<div class="picwrap">' + window.MMMPics.render(spec, st.dir, hasF ? st.filt : true) + '</div>' +
       '<p class="piccap">Example drawing of the setup, not a real trade.' + (hasF ? ' Gold = the filter.' : '') + '</p></div>';
   }
+  var SC = null, SP = {};
+  fetch('stop_choices.json').then(function (r) { return r.json(); }).then(function (j) { SC = j; if (D) paint(); }).catch(function () {});
+  function rsg(v, d) { return v == null ? '–' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(d == null ? 2 : d); }
+  function rulesBox(s) {
+    var r = s.rules, c = SC && SC.strategies[s.code];
+    if (!r) return '';
+    var cls = r.verdict === 'WORKS' ? 'e' : r.verdict === 'MAYBE' ? 'w' : r.verdict === 'NO' ? 'n' : 'w';
+    var head = '<div class="rh"><b>Discovery Rules check · Nov 15 2026</b><span class="rv ' + cls + '">' + (r.verdict === 'WORKS' ? (r.level === 'strong' ? '✔ WORKS · t ' + r.t.toFixed(2) + ' (strong)' : '✔ WORKS · t ' + r.t.toFixed(2)) : r.verdict === 'MAYBE' ? '~ MAYBE · t ' + r.t.toFixed(2) : r.verdict === 'NO' ? '✖ NO EDGE' : 'Not judged yet') + '</span></div>';
+    var why = r.fails && r.fails.length ? '<ul>' + r.fails.map(function (x) { return '<li>Fails: ' + esc(x) + '</li>'; }).join('') + '</ul>' : '<p class="note">Every year 2023–25 green, beats random entries, the stop sizes next to it also make money, and 2026 is not red.</p>';
+    if (!c) return '<div class="rules">' + head + why + '</div>';
+    var st = c.stops, k = SP[s.code] || 0; if (k >= st.length) k = 0; var x = st[k];
+    var opt = st.map(function (o, i) { return '<option value="' + i + '"' + (i === k ? ' selected' : '') + '>' + esc(o.label) + (o.choice === 'As tested' ? ' (default · avg ' + Math.round(o.risk) + ' pts)' : (o.choice.indexOf('Fixed') === 0 ? '' : ' · avg ' + Math.round(o.risk) + ' pts') + (o.works3 ? ' · strong' : '')) + (c.best === o.choice ? ' · best at fixed $ risk' : '') + '</option>'; }).join('');
+    var pick = st.length > 1 ? '<label>Your stop <select class="stopsel" data-code="' + esc(s.code) + '" aria-label="Stop size for ' + esc(s.code) + '">' + opt + '</select></label>' : '<p class="note">' + (r.verdict === 'WORKS' || r.verdict === 'MAYBE' ? 'Keep the tested stop: no other stop size passed the rules for this strategy.' : 'No stop size passed the rules for this strategy.') + '</p>';
+    var kp = '<dl>' +
+      '<div><dt>Trades 2022–25</dt><dd>' + x.n + '</dd></div><div><dt>WR</dt><dd>' + x.wr.toFixed(0) + '%</dd></div><div><dt>avg RR</dt><dd class="' + (x.av > 0 ? 'pos' : 'neg') + '">' + rsg(x.av) + '</dd></div><div><dt>t-score</dt><dd>' + x.t.toFixed(2) + '</dd></div>' +
+      '<div><dt>2023 · 24 · 25 (R)</dt><dd>' + rsg(x.y2023, 1) + ' · ' + rsg(x.y2024, 1) + ' · ' + rsg(x.y2025, 1) + '</dd></div><div><dt>2026 (' + x.n26 + ')</dt><dd class="' + (x.av26 > 0 ? 'pos' : x.av26 < 0 ? 'neg' : '') + '">' + rsg(x.av26) + ' RR</dd></div>' +
+      '<div><dt>Random entries</dt><dd>' + rsg(x.twin) + ' RR</dd></div><div><dt>Net ÷ max DD</dt><dd>' + x.netDD.toFixed(1) + '</dd></div><div><dt>Max DD at $200 risk</dt><dd>$' + Math.round(x.dd200).toLocaleString('en-US') + '</dd></div>' +
+      '</dl>';
+    var nt = '<p class="note">Rebuilt test, NQ 1m Dec 2022 – Dec 2025 + MNQ 2026 (81 days), 1 pt cost, stop first. Only the stop changes: the target keeps the same RR, so a bigger stop means a bigger target. At a fixed $ risk, a smaller stop means more contracts, not less risk. ' + (x.choice === 'As tested' ? '' : (x.works3 ? 'This size passed with t 3+.' : 'This size passed with t 2–3.')) + (c.note ? ' ' + esc(c.note) : '') + '</p>';
+    return '<div class="rules" id="rb-' + id(s.code) + '">' + head + why + pick + kp + nt + '</div>';
+  }
   function ticket(s) {
     var a = s.all, cls = s.test === 'pass' ? '' : s.test === 'fail' ? ' fail' : ' unsure', w = wordsOf(s);
     return '<article class="ticket c-' + s.color + (s.status === 'weak' ? ' weak' : '') + '" id="' + id(s.code) + '" aria-labelledby="' + id(s.code) + '-h">' +
@@ -630,6 +662,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
       '<div class="curve">' + curveSVG(s) + '<div class="cap"><span>Running total of every trade, in stops</span><span>Thin line = a new year</span></div></div>' +
       yearTable(s) +
       '<p class="verdict ' + s.color + '"><span>' + verdictText(s) + ' <span class="tst ' + s.test + '">' + TEST[s.test] + '</span></span></p>' +
+      rulesBox(s) +
       '<div class="why"><p><b>Why it works.</b> ' + esc(s.why) + '</p><p class="w"><b>Watch out.</b> ' + esc(s.watch) + '</p></div>' +
       (w.length ? '<div><div class="lab" style="margin-bottom:6px">Words on this card</div><div class="words">' + w.map(function (x) { return '<details><summary translate="no">' + esc(x) + '</summary><p>' + esc(WORDS[x]) + '</p></details>'; }).join('') + '</div></div>' : '') +
       '</div></div></article>';
@@ -733,6 +766,7 @@ dl.gl dd{margin:0;color:var(--mute);font-size:14px;line-height:1.5}
     if (e.target.closest('#more')) { var m = $('#more'); m.setAttribute('aria-expanded', String(m.getAttribute('aria-expanded') !== 'true')); paintLists(); }
   });
   document.addEventListener('change', function (e) {
+    if (e.target.classList && e.target.classList.contains('stopsel')) { var cd = e.target.dataset.code; SP[cd] = +e.target.value; var sx = D.strategies.filter(function (q) { return q.code === cd; })[0]; var el = document.getElementById('rb-' + id(cd)); if (sx && el) { el.outerHTML = rulesBox(sx); var ns = document.querySelector('#rb-' + id(cd) + ' select'); if (ns) ns.focus(); } return; }
     var el = e.target;
     if (el.dataset && el.dataset.f) { F[el.dataset.f] = el.value; paint(); save(); }
     if (el.id === 'f-fail') { F.fail = el.checked ? '1' : ''; paint(); save(); }

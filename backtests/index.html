@@ -836,7 +836,7 @@ G.verdicts=async sc=>{
  if(!cur||cur.id!=='verdicts')return;
  const BKX=Object.fromEntries((BOOK||[]).map(s=>[s.code,s]));
  const vNum=s=>{const a=s.per.all[s.best]||{};const ys=['2023','2024','2025','2026'].map(y=>{const b=(s.per[y]||[])[s.best];return b?`${y} ${R2(b.netR,1)}R`:null}).filter(Boolean).join(' · ');
-   return `All data: ${N0(a.n)} trades · WR ${P0(100*a.wr)} · avg RR ${R2(a.av)} · PF ${F2(a.pf)} · t-score ${R2(a.t,1)} · max drawdown ${T1(a.ddR)}R · Each year: ${ys} · ${s.verdict}${s.counted?` (${s.green} of ${s.counted} years green)`:''}`};
+   return `All data: ${N0(a.n)} trades · WR ${P0(100*a.wr)} · avg RR ${R2(a.av)} · PF ${F2(a.pf)} · t-score ${R2(a.t,1)} · max drawdown ${T1(a.ddR)}R · Each year: ${ys} · ${s.verdict}${s.counted?` (${s.green} of ${s.counted} years green)`:''}${s.rulesCheck?` · Discovery Rules (Nov 15 2026): ${s.rulesCheck.verdict} · t ${R2(s.rulesCheck.t,1)}${s.rulesCheck.fails&&s.rulesCheck.fails.length?' · fails: '+s.rulesCheck.fails.join(', '):''}${s.rulesCheck.best?' · best stop at fixed $ risk: '+s.rulesCheck.best:''}`:''}`};
  const vSt=s=>s.verdict==='WORKS'?'trade':s.verdict==='MAYBE'?'watch':'no';
  const VX=VERD.map(v=>{const m=/^([A-Z]+\.M\d+)\b/.exec(v[2]);const s=m&&BKX[m[1]];return s?[vSt(s),v[1],v[2],v[3],v[4],vNum(s)]:v});
  (BOOK||[]).filter(s=>s.ind==='MPD').forEach(s=>VX.unshift([vSt(s),'mmpd',`${s.code} · ${s.name}`,s.rules.slice(1).join(' '),s.note,vNum(s)]));

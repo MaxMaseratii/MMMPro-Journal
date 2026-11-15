@@ -325,6 +325,24 @@
     return sc;
   };
 
+
+  // DOC.M2 Three Lines: above the 4h line, a pullback touches it, the 5m and 1m lines turn back up → buy the BuBC
+  B.threelines = function (spec) {
+    var sc = { c: [], zones: [], lines: [], marks: [], notes: [] };
+    [K(52, 60, 51, 59), K(59, 66, 58, 65), K(65, 70, 61, 62), K(62, 63, 55, 57), K(57, 58, 49, 53), K(53, 57, 48, 56)].forEach(function (k) { sc.c.push(k); });
+    sc.c.push(K(56, 66, 55, 65, 'BuBC'));
+    [K(65, 72, 64, 71), K(71, 78, 69, 77), K(77, 84, 75, 83)].forEach(function (k) { sc.c.push(k); });
+    sc.lines.push({ y: 50, x0: -0.5, cls: 'lvl', label: '4h line = exit line' });
+    sc.lines.push({ y: 58, x0: 2, x1: 7, cls: 'lim', label: '5m line' });
+    sc.marks.push({ x: 4, y: 49, t: 'touch', label: 'touch of the 4h line, close back above', side: -1 });
+    sc.marks.push({ x: 6, y: 66, t: 'tag', label: 'BuBC above the 4h and 5m lines', side: 1 });
+    sc.marks.push({ x: 6, y: 65, t: 'fill', label: 'buy at its close', side: -1 });
+    addRisk(sc, 65, 6.4, spec, 48);
+    sc.notes.push({ x: 0.2, y: 93, text: 'price above the 4h line (bias)', f: 1, box: 1 });
+    sc.notes.push({ x: 0.2, y: 93, text: '5m and 1m lines green again', f: 1, box: 1 });
+    sc.notes.push({ x: 0, y: 8, text: 'stop 2 ATR · BE at +1.7R · lock +2R at +4R' });
+    return sc;
+  };
   /* ---------- renderer ---------- */
   var W = 600, RM = 152, LM = 12;
   function render(spec, dir, filt) {
