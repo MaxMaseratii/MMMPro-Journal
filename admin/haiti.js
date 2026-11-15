@@ -37,6 +37,7 @@
     '#hx .quote{border-left:3px solid var(--loss);padding:6px 10px;margin:8px 0;background:var(--sheet2);white-space:pre-wrap;font-size:13px}' +
     '#hx .chat{max-height:220px;overflow:auto;background:var(--sheet2);padding:8px 10px;font-size:12.5px;margin:8px 0}#hx .chat div{padding:2px 0}' +
     '#hx .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13px}#hx .kv span{color:var(--mute)}' +
+    '#hx .kmed{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0}#hx .kmed img,#hx .kmed video{width:100%;max-height:220px;object-fit:contain;background:#000;border-radius:4px;display:block}#hx .slot{font-size:12px;color:var(--faint)}' +
     '#hx .warn{border:1px solid rgba(240,179,65,.5);background:rgba(240,179,65,.08);padding:10px 12px;font-size:13px}';
 
   var drawn = false, timer = null;
@@ -149,14 +150,30 @@
     });
   }
 
+  var ID_NAME = { NATIONAL_ID: 'National ID card', PASSPORT: 'Passport', DRIVER_LICENSE: "Driver's license" };
   function loadKyc() {
     return api('GET', '/staff/kyc').then(function (list) {
       $('hpKyc').innerHTML = list.length ? list.map(function (k) {
+        var files = ['FRONT', 'BACK', 'VIDEO'].filter(function (x) { return (k.files || []).indexOf(x) >= 0; });
         return '<div class="item"><div class="t"><b>' + esc(k.full_name) + '</b><span class="dim">' + esc(ago(k.created_at)) + '</span></div>' +
-          '<div class="kv" style="margin:6px 0"><span>Phone</span><b>' + esc(k.phone) + '</b><span>Name on ID</span><b>' + esc(k.name_on_id) + '</b><span>ID photo</span><b>' + esc(k.id_doc_ref) + '</b></div>' +
+          '<div class="kv" style="margin:6px 0"><span>Phone</span><b>' + esc(k.phone) + '</b><span>Name on ID</span><b>' + esc(k.name_on_id) + '</b>' +
+          '<span>ID</span><b>' + esc((ID_NAME[k.id_type] || k.id_type || 'old form') + (k.id_number ? ' · ' + k.id_number : '')) + '</b>' +
+          (k.challenge ? '<span>Must say</span><b>"My name is ' + esc(k.full_name) + '. My phone number is ' + esc(k.phone) + '. My code is ' + esc(k.challenge) + '."</b>' : '') + '</div>' +
           (String(k.name_on_id || '').trim().toLowerCase() !== String(k.full_name || '').trim().toLowerCase() ? '<div class="amb" style="font-size:12.5px">Names do not match exactly. Check carefully.</div>' : '') +
+          (files.length ? '<div class="kmed">' + files.map(function (f) { return '<div><span class="dim">' + { FRONT: 'Front', BACK: 'Back', VIDEO: 'Video' }[f] + '</span><div class="slot" data-kf="' + k.id + '/' + f + '">Loading…</div></div>'; }).join('') + '</div>' : '') +
+          '<p class="more">Check: the face in the video is the face on the ID · they say the right name, phone and code · the ID looks real and not expired.</p>' +
           '<div style="display:flex;gap:8px;margin-top:6px"><button class="btn sm grn" data-kyc="' + k.id + '" data-ok="1" type="button">Approve</button><button class="btn sm red" data-kyc="' + k.id + '" type="button">Reject</button></div></div>';
       }).join('') : '<p class="more">Nobody is waiting.</p>';
+      // load the photos and the video (they need the login token)
+      [].forEach.call($('hpKyc').querySelectorAll('[data-kf]'), function (slot) {
+        var parts = slot.dataset.kf.split('/');
+        fetch(BASE + '/api/staff/kyc/' + parts[0] + '/file/' + parts[1], { headers: { authorization: 'Bearer ' + TOKEN } })
+          .then(function (r) { if (!r.ok) throw new Error(); return r.blob(); })
+          .then(function (b) {
+            var src = URL.createObjectURL(b);
+            slot.innerHTML = parts[1] === 'VIDEO' ? '<video src="' + src + '" controls playsinline></video>' : '<a href="' + src + '" target="_blank" rel="noopener"><img src="' + src + '" alt=""></a>';
+          }).catch(function () { slot.textContent = 'Could not load.'; });
+      });
     });
   }
 
