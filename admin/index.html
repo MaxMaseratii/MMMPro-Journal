@@ -149,7 +149,8 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
 .atabs button[aria-selected=true]{color:var(--gold);border-bottom-color:var(--gold)}
 .atabs button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 main:not([data-tab=members]) #board,main:not([data-tab=members]) #gate,main:not([data-tab=members]) #acts,
-main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=prop]) #prop,main:not([data-tab=whop]) #whop{display:none!important}
+main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=prop]) #prop,main:not([data-tab=whop]) #whop,main:not([data-tab=haiti]) #haiti{display:none!important}
+.haiti[hidden]{display:none!important}
 .whop[hidden]{display:none!important}
 .vip{margin-top:0}
 .crm{display:grid;gap:10px}
@@ -183,6 +184,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
     <button type="button" role="tab" data-tab="crm" aria-selected="false">CRM</button>
     <button type="button" role="tab" data-tab="vip" aria-selected="false">V.I.P</button>
     <button type="button" role="tab" data-tab="prop" aria-selected="false">Prop firms</button>
+    <button type="button" role="tab" data-tab="haiti" aria-selected="false">Haiti P2P</button>
   </nav>
   <section class="vip" id="vip" hidden>
     <div class="out master" id="vmBox">
@@ -216,6 +218,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
   </section>
   <section class="whop" id="whop" hidden><div id="wx"></div></section>
   <section class="crm" id="crm" hidden><div id="cx"></div></section>
+  <section class="haiti" id="haiti" hidden><div id="hx"></div></section>
   <section class="prop" id="prop" hidden>
     <div id="pd"></div>
     <details class="offers" id="offBox"><summary>Offers inbox <small>Paste an offer by hand · the 06:33 check publishes it to /prop-firms/</small></summary><iframe id="offFrame" title="Prop firm offers inbox"></iframe></details>
@@ -654,7 +657,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
 /* admin tabs: Members · V.I.P · CRM (they show once the admin login is confirmed) */
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], whop: ['Whop', 'Members, money and store visits on Whop, and what your indicator launches do to them.'], crm: ['CRM', 'Everything in one place: money, targets, content and what needs you.'], prop: ['Prop firms', 'Money and link clicks from /prop-firms/, then offers, direct links and the daily checks.'] };
+  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], whop: ['Whop', 'Members, money and store visits on Whop, and what your indicator launches do to them.'], crm: ['CRM', 'Everything in one place: money, targets, content and what needs you.'], prop: ['Prop firms', 'Money and link clicks from /prop-firms/, then offers, direct links and the daily checks.'], haiti: ['Haiti P2P', 'The USDT marketplace in Haiti: ID checks, disputes, orders, ads, users and limits.'] };
   var SUB = $('sub').textContent;
   function pick(t, push) {
     if (!TABS[t]) t = 'members';
@@ -663,6 +666,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
     document.querySelector('.head h1').textContent = TABS[t][0];
     $('sub').textContent = t === 'members' ? SUB : TABS[t][1];
     if ((t === 'crm' || t === 'whop') && window.MMMCrm) window.MMMCrm(t);
+    if (t === 'haiti' && window.MMMHaiti) window.MMMHaiti();
     if (t === 'prop') { if (window.MMMPropDash) window.MMMPropDash(); if ($('offBox').open && !$('offFrame').src) $('offFrame').src = '/admin/offers/?embed=1'; if ($('affBox').open && !$('affFrame').src) $('affFrame').src = '/admin/affiliates/?embed=1'; }
     if (push) { try { history.replaceState(null, '', t === 'members' ? location.pathname : '#' + t); } catch (e) {} }
   }
@@ -675,6 +679,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
     if ($('crm').hidden === ok) $('crm').hidden = !ok;
     if ($('prop').hidden === ok) $('prop').hidden = !ok;
     if ($('whop').hidden === ok) $('whop').hidden = !ok;
+    if ($('haiti').hidden === ok) $('haiti').hidden = !ok;
     if (!ok && main.dataset.tab !== 'members') pick('members');
     if (was && ok) pick((location.hash || '').slice(1));
   }
@@ -687,6 +692,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
 </script>
 <script src="/admin/crm.js?v=20261114b"></script>
 <script src="/admin/prop.js?v=20261114b"></script>
+<script src="/admin/haiti.js?v=20261115a"></script>
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 </body>
