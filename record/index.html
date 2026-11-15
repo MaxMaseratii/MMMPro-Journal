@@ -1,0 +1,457 @@
+<!doctype html><html lang="ht"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex"></head><body><title>Anrejistre Vwa Ou</title>
+<style>
+:root{
+  --bg:#f6f4ef; --card:#ffffff; --ink:#16181d; --muted:#6a6f78; --line:#e4e0d6;
+  --accent:#0b3d91; --accent-ink:#ffffff; --rec:#c8102e; --ok:#18794e; --ok-bg:#e6f4ec;
+  --warn-bg:#fff4dc; --warn:#8a5a00; --chip:#f0ede6; --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111317; --card:#1a1d23; --ink:#eef0f3; --muted:#9aa1ad; --line:#2a2e36;
+  --accent:#7fa7ff; --accent-ink:#0d1220; --rec:#ff5a6e; --ok:#5fd39a; --ok-bg:#16301f;
+  --warn-bg:#2e2510; --warn:#f1c063; --chip:#23272e; --shadow:none;
+}}
+:root[data-theme="dark"]{
+  --bg:#111317; --card:#1a1d23; --ink:#eef0f3; --muted:#9aa1ad; --line:#2a2e36;
+  --accent:#7fa7ff; --accent-ink:#0d1220; --rec:#ff5a6e; --ok:#5fd39a; --ok-bg:#16301f;
+  --warn-bg:#2e2510; --warn:#f1c063; --chip:#23272e; --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right)) 120px max(16px,env(safe-area-inset-left))}
+header h1{font-size:28px;line-height:1.15;margin:8px 0 4px;letter-spacing:-.01em}
+header p{margin:0;color:var(--muted)}
+.brand{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.tips{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:20px 0;box-shadow:var(--shadow)}
+.tips h2{font-size:15px;margin:0 0 8px}
+.tips ol{margin:0;padding-left:20px}
+.tips li{margin:4px 0}
+.tips small{color:var(--muted)}
+.banner{border-radius:12px;padding:12px 14px;margin:12px 0;font-size:15px;display:none}
+.banner.show{display:block}
+.banner.warn{background:var(--warn-bg);color:var(--warn)}
+.banner.ok{background:var(--ok-bg);color:var(--ok)}
+h3.sec{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:32px 0 10px;display:flex;justify-content:space-between;gap:12px}
+h3.sec b{color:var(--ink)}
+.line{display:grid;grid-template-columns:40px 1fr;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:10px 0;box-shadow:var(--shadow);transition:border-color .2s}
+.line.saved{border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.line.recording{border-color:var(--rec);box-shadow:0 0 0 3px color-mix(in srgb,var(--rec) 18%,transparent)}
+.num{width:36px;height:36px;border-radius:50%;background:var(--chip);display:grid;place-items:center;font:600 14px ui-monospace,Menlo,monospace;color:var(--muted)}
+.line.saved .num{background:var(--ok-bg);color:var(--ok)}
+.txt{font-size:19px;line-height:1.45;margin:4px 0 12px;font-weight:500}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+button{font:inherit;font-weight:600;border:0;border-radius:999px;padding:10px 16px;cursor:pointer;min-height:44px}
+button:disabled{opacity:.45;cursor:default}
+.b-rec{background:var(--accent);color:var(--accent-ink)}
+.recording .b-rec{background:var(--rec);color:#fff}
+.b-play{background:var(--chip);color:var(--ink)}
+.state{font-size:14px;color:var(--muted)}
+.state.ok{color:var(--ok);font-weight:600}
+.state.err{color:var(--rec);font-weight:600}
+.file{font-size:13px;color:var(--muted);text-decoration:underline;cursor:pointer;margin-left:auto}
+.file input{display:none}
+.nomic .file{font-size:14px;color:var(--accent);font-weight:600;text-decoration:none;background:var(--chip);border-radius:999px;padding:10px 14px;margin-left:0}
+.nomic .b-rec{display:none}
+.live{display:none;align-items:center;gap:10px;margin-top:10px}
+.recording .live{display:flex}
+.meter{flex:1;height:8px;background:var(--chip);border-radius:99px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--rec);transition:width .08s}
+.time{font:600 14px ui-monospace,Menlo,monospace;color:var(--rec);min-width:44px;text-align:right}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--rec);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.25}}
+.bar{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:12px max(16px,env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.bar .in{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.prog{flex:1;height:8px;background:var(--chip);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+.bar .b-rec{min-height:40px;padding:8px 14px;font-size:14px}
+.banner a{color:inherit;font-weight:700}
+.count{font:600 14px ui-monospace,Menlo,monospace;white-space:nowrap}
+@media (max-width:480px){.line{grid-template-columns:1fr}.num{width:30px;height:30px;font-size:13px}.txt{font-size:18px}.file{margin-left:0}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">Haiti P2P · Vwa videyo</div>
+    <h1>Anrejistre vwa ou</h1>
+    <p>2 videyo · 25 liy. Anrejistre yon liy alafwa. Chak liy sove poukont li.</p>
+  </header>
+
+  <section class="tips">
+    <h2>Anvan ou kòmanse</h2>
+    <ol>
+      <li>Chita nan yon chanm trankil: pa gen vantilatè, televizyon oswa machin.</li>
+      <li>Chita 15 a 20 cm de mikwo a (mikwo òdinatè a oswa kas ou).</li>
+      <li>Peze <b>Anrejistre</b>, tann 1 segonn, epi li liy lan tou natirèl, tankou w ap pale ak yon zanmi.</li>
+      <li>Li l jan l ekri a: tèks la parèt sou videyo a.</li>
+      <li>Ou pa renmen l? Peze <b>Refè</b>. Se dènye a ki rete.</li>
+    </ol>
+    <small>Quiet room · sit 15–20 cm from the mic · wait 1 second, then read · re-record any line, only the last take is kept.</small>
+  </section>
+
+  <div id="bMic" class="banner warn"></div>
+  <div id="bStore" class="banner warn"></div>
+  <div id="bDone" class="banner ok"></div>
+
+  <div id="list"></div>
+</div>
+
+<div class="bar"><div class="in">
+  <div class="prog"><i id="progI"></i></div>
+  <div class="count" id="count">0 / 25</div>
+  <button id="dlAll" class="b-rec" hidden>⬇ Telechaje tout</button>
+</div></div>
+
+<script>
+const LINES = {"how":["Kijan Haiti P2P mache","Nou pa janm kenbe goud ou. Nou kadnase kripto a sèlman pandan echanj lan.","Etap 1. Vandè a voye 1,000 USDT soti nan pòtfèy kripto pa li, sou kontra entèlijan platfòm nan.","Se yon pwogram sou blockchain lan ki swiv règ fiks. Vandè a ka retire l nenpòt lè.","Etap 2. Li mete yon piblisite: \"M vann 500 USDT a 140 goud.\"","Nou kadnase 500 USDT sa yo touswit, pou okenn achtè pa janm peye pou kripto ki pa la.","Etap 3. Yon achtè pran 200 USDT. Nou mete 200 sa yo nan yon kadna apa pou kòmand sa a.","Piblisite a rete ak 300 pou lòt achtè. Vandè a pa ka manyen 200 yo pandan kòmand lan louvri.","Etap 4. Achtè a voye 28,000 goud pa MonCash, dirèk bay vandè a. Goud yo pa janm pase nan aplikasyon an.","Etap 5. Achtè a peze \"Mwen voye lajan an\". Vandè a tcheke MonCash li, epi li peze \"Mwen resevwa l\".","Nou dekadnase 200 USDT yo, yo ale nan kont achtè a. Li ka kenbe yo, oswa retire yo nan pòtfèy pa li.","Si achtè a anile, oswa li pa peye atan, 200 yo tounen nan piblisite a.","Si gen diskisyon, ekip nou an gade prèv yo, epi li deside kote 200 yo ale.","Lè vandè a fèmen piblisite a, sa ki rete a tounen disponib nan kont li.","Haiti P2P. Chanje USDT ak goud, san risk."],"why":["Poukisa Haiti P2P?","Ou bezwen achte kripto ann Ayiti? Jodi a, ou mande nan tout gwoup WhatsApp.","Ou voye MonCash anvan. Epi moun nan disparèt. Li pa reponn. Lajan an ale.","Sou Haiti P2P, tout moun verifye: telefòn ak kòd OTP, pyès idantite, ak yon ti videyo.","Nou kadnase kripto vandè a anvan ou peye. Li pa ka repran l.","Nou dekadnase l sèlman lè vandè a konfime li resevwa lajan an.","Si gen pwoblèm, kripto a rete kadnase. Ekip nou an gade prèv yo epi deside.","Pa gen tann lontan. Yon echanj ka fini nan kèk minit.","Mache a montre pi bon pri yo an premye. Ou wè nòt chak moun, ak konbyen echanj yo fè.","Kreye kont ou gratis. Haiti P2P: chanje kripto san risk."]};
+const SECTIONS = [
+  { key: 'how', title: 'Videyo 1 · Kijan li mache' },
+  { key: 'why', title: 'Videyo 2 · Poukisa Haiti P2P' },
+];
+const ALL = [];
+for (const s of SECTIONS) LINES[s.key].forEach((t, i) => ALL.push({ id: s.key + '-' + String(i).padStart(2, '0'), sec: s.key, n: i + 1, text: t }));
+
+let db = null, assets = null;
+const clips = {};          // id -> {asset, mime, ms, at} from the store
+const local = {};          // id -> {url, status, err}
+const cache = {};          // asset id -> object URL
+let cur = null;            // active recording
+let micBlocked = false;
+const player = new Audio();
+let playing = null;
+
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+
+function build() {
+  const list = $('#list');
+  for (const s of SECTIONS) {
+    const h = el('h3', 'sec'); h.append(el('span', null, s.title)); const c = el('b'); c.id = 'sc-' + s.key; h.append(c); list.append(h);
+    for (const L of ALL.filter((x) => x.sec === s.key)) {
+      const a = el('article', 'line'); a.id = 'c-' + L.id;
+      a.append(el('div', 'num', String(L.n)));
+      const body = el('div');
+      body.append(el('p', 'txt', L.text));
+      const row = el('div', 'row');
+      const rec = el('button', 'b-rec', '● Anrejistre'); rec.onclick = () => toggleRec(L.id);
+      const play = el('button', 'b-play', '▶ Koute'); play.hidden = true; play.onclick = () => togglePlay(L.id);
+      const st = el('span', 'state', 'Pa anrejistre');
+      const lab = el('label', 'file'); lab.append('Oswa chwazi yon fichye odyo');
+      const inp = el('input'); inp.type = 'file'; inp.accept = 'audio/*';
+      inp.onchange = () => { const f = inp.files && inp.files[0]; inp.value = ''; if (f) fromFile(L.id, f); };
+      lab.append(inp);
+      row.append(rec, play, st, lab);
+      const live = el('div', 'live'); const dot = el('span', 'dot'); const m = el('div', 'meter'); m.append(el('i')); const t = el('span', 'time', '0:00');
+      live.append(dot, m, t);
+      body.append(row, live);
+      a.append(body);
+      list.append(a);
+    }
+  }
+  ALL.forEach((L) => paint(L.id));
+}
+
+function isSaved(id) { return !!(clips[id] && clips[id].asset); }
+
+function paint(id) {
+  const a = $('#c-' + id); if (!a) return;
+  const lo = local[id] || {};
+  const saved = isSaved(id);
+  const recNow = cur && cur.id === id;
+  a.classList.toggle('saved', saved && lo.status !== 'saving');
+  a.classList.toggle('recording', !!recNow);
+  const rec = $('.b-rec', a), play = $('.b-play', a), st = $('.state', a);
+  rec.textContent = recNow ? '■ Kanpe' : (saved || lo.url) ? '↻ Refè' : '● Anrejistre';
+  rec.disabled = lo.status === 'saving' || (!!cur && !recNow);
+  play.hidden = !(saved || lo.url) || !!recNow;
+  play.textContent = playing === id ? '■ Kanpe' : '▶ Koute';
+  st.className = 'state';
+  if (recNow) st.textContent = 'Pale kounye a…';
+  else if (lo.status === 'saving') st.textContent = 'Ap sove…';
+  else if (lo.status === 'error') { st.textContent = lo.err || 'Pa t sove. Eseye ankò.'; st.classList.add('err'); }
+  else if (lo.status === 'local') { st.textContent = 'Pa sove (depo pa disponib)'; st.classList.add('err'); }
+  else if (saved) { st.textContent = '✓ Sove' + (clips[id].ms ? ' · ' + fmt(clips[id].ms) : ''); st.classList.add('ok'); }
+  else st.textContent = 'Pa anrejistre';
+  progress();
+}
+
+function progress() {
+  const done = ALL.filter((L) => isSaved(L.id)).length;
+  $('#count').textContent = done + ' / ' + ALL.length;
+  $('#progI').style.width = (done / ALL.length * 100) + '%';
+  for (const s of SECTIONS) {
+    const ls = ALL.filter((L) => L.sec === s.key);
+    $('#sc-' + s.key).textContent = ls.filter((L) => isSaved(L.id)).length + ' / ' + ls.length;
+  }
+  const b = $('#bDone');
+  const dl = $('#dlAll'); dl.hidden = !(mode === 'local' && done > 0);
+  if (done === ALL.length) {
+    b.textContent = mode === 'local'
+      ? 'Bravo! Tout 25 liy yo fèt. Klike "Telechaje tout", epi mete fichye a nan chat Claude la. · All done: click "Telechaje tout" and drop the file into the Claude chat.'
+      : 'Bravo! Tout 25 liy yo sove. Retounen nan chat la epi di Claude: "Mwen fini." · All done — tell Claude in the chat.';
+    b.classList.add('show');
+  }
+  else b.classList.remove('show');
+}
+
+const fmt = (ms) => { const s = Math.round(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+
+function pickMime() {
+  const c = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+  if (!window.MediaRecorder) return null;
+  for (const m of c) { try { if (MediaRecorder.isTypeSupported(m)) return m; } catch (e) {} }
+  return '';
+}
+
+const BACKUP = 'https://www.maxmaserati.com/record/';
+function showNoMic(msg) {
+  micBlocked = true;
+  const b = $('#bMic');
+  b.textContent = msg + ' ';
+  if (mode !== 'local') {
+    const a = document.createElement('a'); a.href = BACKUP; a.target = '_blank'; a.rel = 'noopener';
+    a.textContent = 'Louvri anrejistrè a sou maxmaserati.com →';
+    b.append(a);
+  }
+  b.classList.add('show');
+}
+
+async function toggleRec(id) {
+  if (cur && cur.id === id) { stopRec(); return; }
+  if (cur) return;
+  stopPlay();
+  const mime = pickMime();
+  if (mime === null || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showNoMic('Navigatè sa a pa ka anrejistre. Sèvi ak Chrome oswa Edge sou òdinatè a. · This browser can\'t record: use Chrome or Edge.');
+    return;
+  }
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
+  } catch (e) {
+    const denied = e && (e.name === 'NotAllowedError' || e.name === 'SecurityError');
+    showNoMic(denied
+      ? (mode === 'local'
+        ? 'Mikwo a bloke. Klike sou ti kadna a bò adrès sit la, chwazi "Mikwo: Pèmèt", epi rechaje paj la. · Mic blocked: click the lock icon by the address, allow Microphone, reload.'
+        : 'Claude bloke mikwo a nan kat sa a. Anrejistre sou paj sa a pito, ak menm mikwo òdinatè a: · Claude blocks the mic in this card. Use the same recorder on your site:')
+      : 'Nou pa jwenn mikwo. Tcheke mikwo a oswa kas ou konekte. · No microphone found: check it is plugged in.');
+    return;
+  }
+  const opts = { audioBitsPerSecond: 128000 }; if (mime) opts.mimeType = mime;
+  let rec;
+  try { rec = new MediaRecorder(stream, opts); } catch (e) { rec = new MediaRecorder(stream); }
+  const chunks = [];
+  rec.ondataavailable = (ev) => { if (ev.data && ev.data.size) chunks.push(ev.data); };
+  let ctx = null, an = null, raf = 0;
+  try {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const src = ctx.createMediaStreamSource(stream); an = ctx.createAnalyser(); an.fftSize = 512; src.connect(an);
+  } catch (e) {}
+  const t0 = performance.now();
+  cur = { id, rec, stream, ctx, t0 };
+  const a = $('#c-' + id), bar = $('.meter i', a), tm = $('.time', a);
+  const buf = an ? new Uint8Array(an.fftSize) : null;
+  const tick = () => {
+    if (!cur || cur.id !== id) return;
+    const ms = performance.now() - t0; tm.textContent = fmt(ms);
+    if (an) { an.getByteTimeDomainData(buf); let p = 0; for (const v of buf) { const d = (v - 128) / 128; p = Math.max(p, Math.abs(d)); } bar.style.width = Math.min(100, p * 140) + '%'; }
+    if (ms > 90000) { stopRec(); return; }
+    raf = requestAnimationFrame(tick);
+  };
+  rec.onstop = () => {
+    cancelAnimationFrame(raf);
+    stream.getTracks().forEach((t) => t.stop());
+    if (ctx) ctx.close().catch(() => {});
+    const ms = Math.round(performance.now() - t0);
+    cur = null;
+    const blob = new Blob(chunks, { type: (rec.mimeType || mime || 'audio/webm').split(';')[0] });
+    if (blob.size < 2000 || ms < 700) { local[id] = { ...(local[id] || {}), status: 'error', err: 'Twò kout. Eseye ankò.' }; paint(id); ALL.forEach((L) => paint(L.id)); return; }
+    ALL.forEach((L) => paint(L.id));
+    save(id, blob, ms);
+  };
+  rec.start(250);
+  ALL.forEach((L) => paint(L.id));
+  raf = requestAnimationFrame(tick);
+}
+
+function stopRec() { if (cur && cur.rec.state !== 'inactive') cur.rec.stop(); }
+
+async function fromFile(id, f) {
+  if (cur) return;
+  if (!/^audio\/|^video\//.test(f.type || 'audio/') && !/\.(m4a|mp3|wav|aac|ogg|opus|webm|mp4|caf|amr|3gp)$/i.test(f.name)) {
+    local[id] = { status: 'error', err: 'Se pa yon fichye odyo.' }; paint(id); return;
+  }
+  if (f.size > 14 * 1024 * 1024) { local[id] = { status: 'error', err: 'Fichye a twò gwo (maks 14 MB).' }; paint(id); return; }
+  let ms = null;
+  try { ms = await probeMs(f); } catch (e) {}
+  save(id, f, ms, f.type || guessMime(f.name));
+}
+
+function guessMime(n) {
+  const x = (n.split('.').pop() || '').toLowerCase();
+  return { m4a: 'audio/mp4', mp4: 'audio/mp4', mp3: 'audio/mpeg', wav: 'audio/wav', aac: 'audio/aac', ogg: 'audio/ogg', opus: 'audio/ogg', webm: 'audio/webm', caf: 'audio/x-caf', amr: 'audio/amr', '3gp': 'audio/3gpp' }[x] || 'application/octet-stream';
+}
+
+function probeMs(blob) {
+  return new Promise((res, rej) => {
+    const a = new Audio(); const u = URL.createObjectURL(blob);
+    const done = (v) => { URL.revokeObjectURL(u); v == null ? rej() : res(v); };
+    a.preload = 'metadata'; a.onloadedmetadata = () => done(isFinite(a.duration) ? Math.round(a.duration * 1000) : null); a.onerror = () => done(null);
+    setTimeout(() => done(null), 4000); a.src = u;
+  });
+}
+
+function toB64(blob) {
+  return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
+}
+
+async function save(id, blob, ms, mimeOverride) {
+  const mime = mimeOverride || blob.type || 'audio/webm';
+  if (local[id] && local[id].url) URL.revokeObjectURL(local[id].url);
+  local[id] = { url: URL.createObjectURL(blob), status: 'saving' };
+  paint(id);
+  if (mode === 'local') {
+    try {
+      const doc = { mime, ms: ms || null, at: new Date().toISOString(), bytes: blob.size };
+      await idb('put', { id, blob, ...doc });
+      clips[id] = { asset: 'local', ...doc, blob };
+      local[id].status = 'saved'; paint(id); next(id);
+    } catch (e) { local[id].status = 'error'; local[id].err = 'Pa t sove sou òdinatè a. Eseye ankò.'; paint(id); }
+    return;
+  }
+  if (!assets || !db) { local[id].status = 'local'; paint(id); return; }
+  try {
+    const b64 = await toB64(blob);
+    const at = new Date().toISOString();
+    const body = JSON.stringify({ v: 1, id, mime, ms: ms || null, at, b64 });
+    const up = await upload(new Blob([body], { type: 'application/json' }));
+    const old = clips[id] && clips[id].asset;
+    const doc = { asset: up.id, mime, ms: ms || null, at, bytes: blob.size };
+    await db.collection('clips').doc(id).set(doc);
+    clips[id] = doc;
+    if (old && old !== up.id) assets.delete(old).catch(() => {});
+    local[id].status = 'saved';
+    paint(id);
+    next(id);
+  } catch (e) {
+    local[id].status = 'error';
+    local[id].err = errText(e);
+    paint(id);
+  }
+}
+
+async function upload(b) {
+  try { return await assets.upload(b, { type: 'application/json' }); }
+  catch (e) {
+    if (e && e.code === 'store_unavailable') { await new Promise((r) => setTimeout(r, 1500)); return assets.upload(b, { type: 'application/json' }); }
+    throw e;
+  }
+}
+
+function errText(e) {
+  const c = e && e.code;
+  if (c === 'too_large') return 'Twò long. Fè l pi kout.';
+  if (c === 'rate_limited') return 'Tann yon ti moman, epi eseye ankò.';
+  if (c === 'quota_or_state') return 'Depo a plen. Di Claude sa.';
+  if (c === 'not_granted' || c === 'permission_denied') return 'Ou pa gen dwa sove isit la.';
+  return 'Pa t sove. Eseye ankò.';
+}
+
+function next(id) {
+  const i = ALL.findIndex((L) => L.id === id);
+  const n = ALL.slice(i + 1).find((L) => !isSaved(L.id)) || ALL.find((L) => !isSaved(L.id));
+  if (!n) return;
+  const a = $('#c-' + n.id);
+  setTimeout(() => { a.scrollIntoView({ behavior: 'smooth', block: 'center' }); const b = $(micBlocked ? '.file' : '.b-rec', a); if (b && b.focus) b.focus({ preventScroll: true }); }, 400);
+}
+
+async function togglePlay(id) {
+  if (playing === id) { stopPlay(); return; }
+  stopPlay();
+  let url = local[id] && local[id].url;
+  if (!url && isSaved(id) && clips[id].blob) { local[id] = { ...(local[id] || {}), url: URL.createObjectURL(clips[id].blob) }; url = local[id].url; }
+  if (!url && isSaved(id) && !clips[id].blob) {
+    const aid = clips[id].asset;
+    url = cache[aid];
+    if (!url) {
+      const st = $('#c-' + id + ' .state'); st.textContent = 'Ap chaje…';
+      try {
+        const j = await (await fetch('/_blob/' + aid)).json();
+        const bin = atob(j.b64); const u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+        url = cache[aid] = URL.createObjectURL(new Blob([u8], { type: j.mime || 'audio/webm' }));
+      } catch (e) { paint(id); return; }
+    }
+  }
+  if (!url) return;
+  playing = id; player.src = url;
+  player.onended = player.onerror = () => { const p = playing; playing = null; if (p) paint(p); };
+  player.play().catch(() => { playing = null; paint(id); });
+  paint(id);
+}
+
+function stopPlay() { if (!playing) return; const p = playing; playing = null; try { player.pause(); } catch (e) {} paint(p); }
+
+let mode = 'claude';
+const IDB = 'haiti-p2p-vwa';
+function idb(op, val) {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(IDB, 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('clips', { keyPath: 'id' });
+    r.onerror = () => rej(r.error);
+    r.onsuccess = () => {
+      const tx = r.result.transaction('clips', op === 'all' ? 'readonly' : 'readwrite');
+      const s = tx.objectStore('clips');
+      const q = op === 'all' ? s.getAll() : s.put(val);
+      q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error);
+    };
+  });
+}
+
+async function downloadAll() {
+  const btn = $('#dlAll'); btn.disabled = true; btn.textContent = 'Ap prepare…';
+  try {
+    const out = { v: 1, made: new Date().toISOString(), clips: {} };
+    for (const L of ALL) { const c = clips[L.id]; if (c && c.blob) out.clips[L.id] = { mime: c.mime, ms: c.ms, text: L.text, b64: await toB64(c.blob) }; }
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(out)], { type: 'application/json' }));
+    a.download = 'haiti-p2p-vwa-' + Object.keys(out.clips).length + '-liy.json';
+    document.body.append(a); a.click(); a.remove();
+  } finally { btn.disabled = false; btn.textContent = '⬇ Telechaje tout'; }
+}
+$('#dlAll').onclick = downloadAll;
+
+async function startLocal() {
+  mode = 'local';
+  const b = $('#bStore');
+  b.className = 'banner ok show';
+  b.textContent = 'Anrejistreman yo sove sou òdinatè sa a, menm si ou fèmen paj la. Lè w fini, klike "Telechaje tout" anba a, epi mete fichye a nan chat Claude la. · Takes are saved on this computer. When done, click "Telechaje tout" and drop the file into the Claude chat.';
+  try { for (const r of await idb('all')) clips[r.id] = { asset: 'local', mime: r.mime, ms: r.ms, at: r.at, blob: r.blob }; } catch (e) {}
+  ALL.forEach((L) => paint(L.id));
+}
+
+function micPolicyBlocked() {
+  try { const fp = document.permissionsPolicy || document.featurePolicy; return !!(fp && fp.allowsFeature && !fp.allowsFeature('microphone')); } catch (e) { return false; }
+}
+
+build();
+
+(async () => {
+  if (/(^|\.)maxmaserati\.com$/.test(location.hostname) || /[?&]local=1/.test(location.search)) { await startLocal(); return; }
+  if (micPolicyBlocked()) showNoMic('Claude bloke mikwo a nan kat sa a. Anrejistre sou paj sa a pito, ak menm mikwo òdinatè a: · Claude blocks the mic in this card. Use the same recorder on your site:');
+  for (let i = 0; i < 30 && !(window.claude && window.claude.use); i++) await new Promise((r) => setTimeout(r, 100));
+  const use = window.claude && window.claude.use ? window.claude.use.bind(window.claude) : null;
+  if (!use) { storeMsg('Paj sa a dwe louvri nan Claude pou l ka sove. Ouvri lyen an nan claude.ai. · Open this page inside Claude so recordings can be saved.'); return; }
+  const [d, a] = await Promise.all([use('db').catch(() => null), use('assets').catch(() => null)]);
+  db = d; assets = a;
+  if (!db || !assets) { storeMsg('Sove pa disponib isit la. Ouvri paj la nan kont Claude ou (se ou ki mèt li). · Saving is not available in this view: open it in your own Claude account.'); return; }
+  const slow = setTimeout(() => storeMsg('Nou poko ka rive nan depo a. Tcheke entènèt ou. · Can\'t reach storage yet.'), 10000);
+  db.collection('clips').onSnapshot((snap) => {
+    if (!snap.metadata.fromCache) { clearTimeout(slow); $('#bStore').classList.remove('show'); }
+    for (const k of Object.keys(clips)) delete clips[k];
+    for (const doc of snap.docs) { const v = doc.data(); if (v && v.asset) clips[doc.id] = v; }
+    ALL.forEach((L) => paint(L.id));
+  }, () => { clearTimeout(slow); storeMsg('Depo a pa reponn. Rechaje paj la pita. · Storage stopped responding.'); });
+})();
+
+function storeMsg(t) { const b = $('#bStore'); b.textContent = t; b.classList.add('show'); }
+</script>
+</body></html>
