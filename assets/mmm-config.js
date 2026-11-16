@@ -14,3 +14,9 @@ window.MMM_CERT_MAIL_URL = '';
  * but nothing is emailed and the "email me my result" box stays hidden.
  */
 window.MMM_TEST_MAIL_URL = 'https://script.google.com/macros/s/AKfycbxCEhB8tVKIFFIckhz8PyEdd5uOEtCkmtbJAg7wlNJuHOOF6Az4SyqlWDjxqe2qPjeNHQ/exec';
+
+/* MiniMax OS engine (Mail tab on /admin/ + the Claude email connector):
+ * paste the engine's Render address between the quotes, for example
+ * 'https://minimax-os-engine.onrender.com'. Empty = the Mail tab shows a setup note.
+ */
+window.MMM_ENGINE_URL = '';
