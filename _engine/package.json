@@ -1,0 +1,23 @@
+{
+  "name": "max-mail-hub",
+  "version": "1.0.0",
+  "description": "Private MCP connector that joins all of Max's mailboxes for Claude",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "express": "^4.22.3",
+    "imapflow": "^2.12.1",
+    "jose": "^5.10.0",
+    "mailparser": "^3.14.5",
+    "nodemailer": "^10.6.0",
+    "zod": "^4.6.7"
+  },
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  }
+}
