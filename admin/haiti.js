@@ -69,9 +69,9 @@
   // ---------- login ----------
   function loginForm() {
     $('hx').innerHTML = '<div class="login"><h2 style="margin:0 0 6px;font-family:var(--serif)">Haiti P2P owner login</h2>' +
-      '<p class="more">Use your owner phone and your secret 6-digit <code>ADMIN_LOGIN_CODE</code> (set on Render). The login stays in this browser only.</p>' +
+      '<p class="more">Real money: press <b>Send me a code</b>, the code comes to your email. Test mode: use your secret 6-digit <code>ADMIN_LOGIN_CODE</code>. The login stays in this browser only.</p>' +
       '<label for="hpPhone">Owner phone</label><input id="hpPhone" inputmode="tel" placeholder="+509…" value="' + esc(store.get('hp2p_phone') || '') + '">' +
-      '<label for="hpCode">Code</label><input id="hpCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6 digits">' +
+      '<label for="hpCode">Code</label><div style="display:flex;gap:8px"><input id="hpCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6 digits"><button class="btn" id="hpSend" type="button" style="white-space:nowrap">Send me a code</button></div>' +
       '<details style="margin-top:12px"><summary class="more" style="cursor:pointer">Server address</summary><input id="hpApi" value="' + esc(BASE) + '" style="margin-top:6px"></details>' +
       '<div style="margin-top:14px;display:flex;gap:8px"><button class="btn gold" id="hpGo" type="button">Log in</button><a class="btn" href="' + esc(BASE) + '" target="_blank" rel="noopener">Open the app</a></div></div>';
     var go = function () {
@@ -85,6 +85,14 @@
       });
     };
     $('hpGo').onclick = go;
+    $('hpSend').onclick = function () {
+      var phone = $('hpPhone').value.trim();
+      return run($('hpSend'), function () {
+        return api('POST', '/auth/request-code', { phone: phone }).then(function (r) {
+          toast(r.to ? 'Code sent to ' + r.to + '. Check your email (and spam).' : 'Test mode: use your ADMIN_LOGIN_CODE.');
+        });
+      });
+    };
     $('hpCode').onkeydown = function (e) { if (e.key === 'Enter') go(); };
   }
 
@@ -97,6 +105,9 @@
       '<a class="btn sm" href="https://dashboard.render.com" target="_blank" rel="noopener">Render</a>' +
       '<button class="btn sm" id="hpOut" type="button">Log out</button></span></div>' +
       '<div id="hpWarn"></div><div class="kpis" id="hpK"></div>' +
+      '<section class="panel"><div class="ph"><h2>Contract &amp; money on Arbitrum</h2><span class="r" style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn sm gold" id="hpOwnTab" target="_blank" rel="noopener" href="#">Open Owner tools (new tab)</a><button class="btn sm" id="hpOwnShow" type="button">Show Owner tools here</button></span></div>' +
+      '<div class="kv" id="hpChain"><span>Status</span><b class="dim">loading…</b></div>' +
+      '<div id="hpOwnBox" style="display:none;margin-top:14px"><p class="more">Take out fees, pause, or decide a dispute. If your wallet does not open inside this box, use <b>Open Owner tools (new tab)</b>.</p><iframe id="hpOwnFrame" title="Owner tools" allow="clipboard-write" style="width:100%;height:1500px;border:1px solid var(--line,#ddd);border-radius:12px;background:#fff"></iframe></div></section>' +
       '<div class="g2"><section class="panel"><div class="ph"><h2>Completed trades · 30 days</h2><small id="hpCh2"></small></div><div class="chart" id="hpCh"></div><div class="ax" id="hpAx"></div></section>' +
       '<section class="panel"><h2>Server</h2><div class="kv" id="hpSrv"></div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="hpTim" type="button">Run timers now</button><button class="btn sm" id="hpRec" type="button">Check the books (reconcile)</button><a class="btn sm" id="hpOwner" target="_blank" rel="noopener" href="#">Owner tools: contract, fees, pause</a></div><p class="more">Server settings (codes, SMS, escrow) are environment variables. Change them on Render, then it restarts by itself.</p></section></div>' +
       '<div class="g2"><section class="panel"><div class="ph"><h2>ID checks waiting</h2><small id="hpKc"></small></div><div id="hpKyc"></div></section>' +
@@ -107,6 +118,12 @@
       '<div class="g2"><section class="panel"><h2>Limits per tier</h2><div class="tw" id="hpLim"></div></section>' +
       '<section class="panel"><h2>Blocklist</h2><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><select id="hpBk"><option>PHONE</option><option>WALLET</option><option>PAY_ACCOUNT</option><option>NAME</option></select><input id="hpBv" placeholder="Value"><button class="btn sm" id="hpBa" type="button">Block</button></div><div class="tw" id="hpBl"></div></section></div>';
     $('hpOwner').href = BASE + '/owner.html';
+    $('hpOwnTab').href = BASE + '/owner.html';
+    $('hpOwnShow').onclick = function () {
+      var box = $('hpOwnBox'), on = box.style.display === 'none';
+      if (on && !$('hpOwnFrame').src) $('hpOwnFrame').src = BASE + '/owner.html';
+      box.style.display = on ? '' : 'none'; $('hpOwnShow').textContent = on ? 'Hide Owner tools' : 'Show Owner tools here';
+    };
     $('hpRef').onclick = function () { run($('hpRef'), loadAll); };
     $('hpOut').onclick = function () { TOKEN = null; store.set('hp2p_token', null); draw(); };
     $('hpOs').onchange = loadOrders;
@@ -249,8 +266,24 @@
     });
   }
 
+  function loadChain() {
+    return api('GET', '/admin/chain-status').then(function (c) {
+      if (c.mock) { $('hpChain').innerHTML = '<span>Status</span><b><span class="amb">TEST mode: no contract yet. Money is a database ledger.</span></b>'; return; }
+      var short = function (a) { return a ? '<code>' + esc(a.slice(0, 6) + '…' + a.slice(-4)) + '</code>' : '—'; };
+      var fees = Object.keys(c.fees_waiting || {}).map(function (k) { return n2(c.fees_waiting[k]) + ' ' + k; }).join(' · ');
+      $('hpChain').innerHTML = [
+        ['Network', c.chain_id === 42161 ? '<span class="ok">Arbitrum One (REAL money)</span>' : '<span class="amb">Practice network ' + esc(c.chain_id) + '</span>'],
+        ['Contract', (c.explorer ? '<a href="' + esc(c.explorer) + '" target="_blank" rel="noopener">' : '') + short(c.contract) + (c.explorer ? ' ↗</a>' : '')],
+        ['Contract state', c.paused ? '<span class="bad">PAUSED (no new locks)</span>' : '<span class="ok">Running</span>'],
+        ['Fees waiting for you', '<span class="ok">' + esc(fees || '0') + '</span> <span class="dim">(take them out in Owner tools)</span>'],
+        ['App wallet gas (ETH)', (c.app_wallet_low ? '<span class="bad">' : '<span class="ok">') + esc(c.app_wallet_eth) + ' ETH</span>' + (c.app_wallet_low ? ' <span class="bad">LOW: send ETH to ' + short(c.app_wallet) + '</span>' : '') + (c.app_wallet_matches ? '' : ' <span class="bad">key does not match the contract</span>')],
+        ['Owner', short(c.owner)], ['Fee wallet', short(c.fee_wallet)], ['Judge (arbiter)', short(c.arbiter)], ['App wallet', short(c.app_wallet)],
+      ].map(function (r) { return '<span>' + r[0] + '</span><b>' + r[1] + '</b>'; }).join('');
+    }).catch(function (e) { $('hpChain').innerHTML = '<span>Status</span><b><span class="bad">' + esc(e.message) + '</span></b>'; });
+  }
+
   function loadAll() {
-    return Promise.all([loadOverview(), loadKyc(), loadDisputes(), loadOrders(), loadAds(), loadUsers(), loadLimits(), loadBlock()])
+    return Promise.all([loadChain(), loadOverview(), loadKyc(), loadDisputes(), loadOrders(), loadAds(), loadUsers(), loadLimits(), loadBlock()])
       .catch(function (e) { toast(e.message, true); });
   }
 
