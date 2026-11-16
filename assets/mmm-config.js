@@ -19,4 +19,4 @@ window.MMM_TEST_MAIL_URL = 'https://script.google.com/macros/s/AKfycbxCEhB8tVKIF
  * paste the engine's Render address between the quotes, for example
  * 'https://minimax-os-engine.onrender.com'. Empty = the Mail tab shows a setup note.
  */
-window.MMM_ENGINE_URL = '';
+window.MMM_ENGINE_URL = 'https://minimax-engine.onrender.com';
