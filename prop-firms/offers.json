@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-15T06:34:51Z",
-  "updated_label": "15 Nov 2026, 06:34 London",
+  "updated": "2026-11-16T06:35:11Z",
+  "updated_label": "16 Nov 2026, 06:35 London",
   "offers": [
     {
       "firm": "IQ Capital",
@@ -11,7 +11,7 @@
       "ends": null,
       "src": "https://www.iqcapital.io/",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "Apex Trader Funding",
@@ -35,7 +35,7 @@
       "ends": null,
       "src": "https://fundedfuturesnetwork.com/",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "Blueberry Futures",
@@ -46,7 +46,7 @@
       "ends": null,
       "src": "https://blueberryfutures.com/",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "FundedHero Futures",
@@ -70,7 +70,7 @@
       "ends": null,
       "src": "https://www.toponefutures.com/",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "TX3 Futures",
@@ -81,7 +81,7 @@
       "ends": null,
       "src": "https://www.tx3futures.com/en/tx3-core",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "Alpha Futures",
@@ -95,7 +95,7 @@
       "ends": null,
       "src": "https://alpha-futures.com/",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "Alpha Futures",
@@ -108,7 +108,7 @@
       "ends": null,
       "src": "https://alpha-futures.com/product/zero",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "FundedNext Futures",
@@ -119,7 +119,7 @@
       "ends": null,
       "src": "https://fundednext.com/futures",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "MyFundedFutures",
@@ -130,7 +130,7 @@
       "ends": null,
       "src": "https://myfundedfutures.com/",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "Tradeify",
@@ -143,7 +143,7 @@
       "ends": null,
       "src": "https://tradeify.co/",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "Tradeify",
@@ -157,7 +157,7 @@
       "ends": null,
       "src": "https://tradeify.co/",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "Futureify (FXIFY Futures)",
@@ -168,7 +168,7 @@
       "ends": null,
       "src": "https://futureify.com/",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "Shark Futures",
@@ -179,7 +179,7 @@
       "ends": null,
       "src": "https://www.sharkfutures.com/",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "Blue Guardian Futures",
@@ -190,7 +190,7 @@
       "ends": null,
       "src": "https://blueguardian.com/futures",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "Aqua Futures (AquaFunded)",
@@ -201,7 +201,7 @@
       "ends": null,
       "src": "https://www.aquafunded.com/futures",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "E8 Futures",
@@ -212,32 +212,18 @@
       "ends": null,
       "src": "https://e8futures.com/",
       "via": "site",
-      "checked": "2026-11-14"
-    },
-    {
-      "firm": "FunderPro Futures",
-      "plans": [],
-      "code": "EARLYBF25",
-      "pct": 25,
-      "text": "Early Black Friday: 25% off every challenge",
-      "ends": "2026-11-15",
-      "src": "https://funderpro.com/",
-      "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-15"
     },
     {
       "firm": "Phidias Propfirm",
       "plans": [],
       "code": "HONOR85",
       "pct": null,
-      "text": "150K Express to Live and Premium for $168.45 (85% off)",
-      "ends": null,
-      "src": "https://x.com/PhidiasPropfirm/status/2121339918744002965",
+      "text": "85% off 150K one-time accounts with code HONOR85 (150K Express to Live $168.45, 150K Premium and Fundamental $129.45); up to 80% off other accounts",
+      "ends": "2026-11-24",
+      "src": "https://x.com/PhidiasPropfirm/status/2121635125624443082",
       "via": "x",
-      "checked": "2026-11-14",
-      "sizes": [
-        150
-      ]
+      "checked": "2026-11-15"
     },
     {
       "firm": "Traders Launch",
@@ -252,12 +238,14 @@
     }
   ],
   "inboxDone": [
+    "grok:2026-11-15.md",
     "grok:2026-11-14.md",
     "grok:2026-11-13.md",
     "grok:2026-11-12.md",
     "grok:2026-11-11.md"
   ],
   "log": [
+    "2026-11-16: 20 live · removed FunderPro 25% EARLYBF25 (ended 15 Nov) · Phidias HONOR85 updated: 150K one-time 85% off, ends 24 Nov (Grok 15 Nov, official X) · site scan missing for today (used 15 Nov scan, it still shows all other offers) · Grok file for today missing · inbox empty · web search found only affiliate codes · 12 direct links",
     "2026-11-15: 21 live · no change · site scan missing (last scan 14 Nov, today's run not done yet) · Grok file missing · inbox empty · web search found only affiliate codes · kept all offers with old checked date · 12 direct links",
     "2026-11-14 (3rd run): 21 live · first website + YouTube scan worked (29/29 sites read) · added 16 offers seen on firm sites (FFN 70% NEXUS, Blueberry 60%, FundedHero 60%, Top One 55%, TX3 50%, Alpha 50/40%, FundedNext 47%, MFFU 40% CLUB, Tradeify 40/30% NOV, Futureify 40%, Shark 40%, Blue Guardian 25%, Aqua 25%, E8 25%) · IQ 85% now confirmed on site · 12 direct links",
     "2026-11-14 (2nd run): 5 live · added Apex 90% off evals, Traders Launch TL20 (official X via Grok) · Phidias HONOR85 now 150K only · skipped Apex Legacy deals, Tradeify Miami plan (not in our list), Phoenix Cup reset (not a discount)",
