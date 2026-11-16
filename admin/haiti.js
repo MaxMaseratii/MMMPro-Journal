@@ -98,7 +98,7 @@
       '<button class="btn sm" id="hpOut" type="button">Log out</button></span></div>' +
       '<div id="hpWarn"></div><div class="kpis" id="hpK"></div>' +
       '<div class="g2"><section class="panel"><div class="ph"><h2>Completed trades · 30 days</h2><small id="hpCh2"></small></div><div class="chart" id="hpCh"></div><div class="ax" id="hpAx"></div></section>' +
-      '<section class="panel"><h2>Server</h2><div class="kv" id="hpSrv"></div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="hpTim" type="button">Run timers now</button><button class="btn sm" id="hpRec" type="button">Check escrow (reconcile)</button></div><p class="more">Server settings (codes, SMS, escrow) are environment variables. Change them on Render, then it restarts by itself.</p></section></div>' +
+      '<section class="panel"><h2>Server</h2><div class="kv" id="hpSrv"></div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="hpTim" type="button">Run timers now</button><button class="btn sm" id="hpRec" type="button">Check the books (reconcile)</button><a class="btn sm" id="hpOwner" target="_blank" rel="noopener" href="#">Owner tools: contract, fees, pause</a></div><p class="more">Server settings (codes, SMS, escrow) are environment variables. Change them on Render, then it restarts by itself.</p></section></div>' +
       '<div class="g2"><section class="panel"><div class="ph"><h2>ID checks waiting</h2><small id="hpKc"></small></div><div id="hpKyc"></div></section>' +
       '<section class="panel"><div class="ph"><h2>Disputes</h2><small id="hpDc"></small></div><div id="hpDis"></div></section></div>' +
       '<section class="panel"><div class="ph"><h2>Orders</h2><select id="hpOs"><option value="">All</option>' + Object.keys(STATE).map(function (k) { return '<option value="' + k + '">' + STATE[k][0] + '</option>'; }).join('') + '</select></div><div class="tw" id="hpOrd"></div></section>' +
@@ -106,6 +106,7 @@
       '<section class="panel"><div class="ph"><h2>Users</h2><span class="r" style="display:flex;gap:8px"><input id="hpQ" type="search" placeholder="Phone or name"><button class="btn sm" id="hpQs" type="button">Search</button></span></div><div class="tw" id="hpUsr"></div></section>' +
       '<div class="g2"><section class="panel"><h2>Limits per tier</h2><div class="tw" id="hpLim"></div></section>' +
       '<section class="panel"><h2>Blocklist</h2><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"><select id="hpBk"><option>PHONE</option><option>WALLET</option><option>PAY_ACCOUNT</option><option>NAME</option></select><input id="hpBv" placeholder="Value"><button class="btn sm" id="hpBa" type="button">Block</button></div><div class="tw" id="hpBl"></div></section></div>';
+    $('hpOwner').href = BASE + '/owner.html';
     $('hpRef').onclick = function () { run($('hpRef'), loadAll); };
     $('hpOut').onclick = function () { TOKEN = null; store.set('hp2p_token', null); draw(); };
     $('hpOs').onchange = loadOrders;
