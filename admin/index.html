@@ -185,7 +185,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
     <button type="button" role="tab" data-tab="crm" aria-selected="false">CRM</button>
     <button type="button" role="tab" data-tab="vip" aria-selected="false">V.I.P</button>
     <button type="button" role="tab" data-tab="prop" aria-selected="false">Prop firms</button>
-    <button type="button" role="tab" data-tab="haiti" aria-selected="false">Haiti P2P</button>
+    <button type="button" role="tab" data-tab="haiti" aria-selected="false">Ayiti P2P Swap</button>
     <button type="button" role="tab" data-tab="mail" aria-selected="false">Mail</button>
     <button type="button" role="tab" data-tab="strat" aria-selected="false">MMM Personal Strategy</button>
     <button type="button" role="tab" data-tab="size" aria-selected="false">Prop Safe Size</button>
@@ -664,7 +664,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
 /* admin tabs: Members · V.I.P · CRM (they show once the admin login is confirmed) */
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], whop: ['Whop', 'Members, money and store visits on Whop, and what your indicator launches do to them.'], crm: ['CRM', 'Everything in one place: money, targets, content and what needs you.'], prop: ['Prop firms', 'Money and link clicks from /prop-firms/, then offers, direct links and the daily checks.'], haiti: ['Haiti P2P', 'The USDT marketplace in Haiti: ID checks, disputes, orders, ads, users and limits.'], mail: ['Mail', 'Every inbox in one place. Read, clean and unsubscribe, and plug them all into Claude.'], strat: ['MMM Personal Strategy', 'My H4 Plan: the 5 setups, every mix, when to trade, account size, rules, pictures and curves. Final test, Nov 2026.'], size: ['Prop Safe Size', 'How many contracts a prop account can carry. Opens on the MMM H4 Plan.'] };
+  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], whop: ['Whop', 'Members, money and store visits on Whop, and what your indicator launches do to them.'], crm: ['CRM', 'Everything in one place: money, targets, content and what needs you.'], prop: ['Prop firms', 'Money and link clicks from /prop-firms/, then offers, direct links and the daily checks.'], haiti: ['Ayiti P2P Swap', 'The USDT marketplace in Haiti: ID checks, disputes, orders, ads, users and limits.'], mail: ['Mail', 'Every inbox in one place. Read, clean and unsubscribe, and plug them all into Claude.'], strat: ['MMM Personal Strategy', 'My H4 Plan: the 5 setups, every mix, when to trade, account size, rules, pictures and curves. Final test, Nov 2026.'], size: ['Prop Safe Size', 'How many contracts a prop account can carry. Opens on the MMM H4 Plan.'] };
   var SUB = $('sub').textContent;
   function pick(t, push) {
     if (!TABS[t]) t = 'members';
@@ -707,7 +707,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
 </script>
 <script src="/admin/crm.js?v=20261114b"></script>
 <script src="/admin/prop.js?v=20261114b"></script>
-<script src="/admin/haiti.js?v=20261116c"></script>
+<script src="/admin/haiti.js?v=20261116d"></script>
 <script src="/admin/mail.js?v=20261116c"></script>
 <script src="/admin/strategy.js?v=20261116b"></script>
 <script src="/assets/nav.js"></script>
