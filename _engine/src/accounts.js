@@ -7,7 +7,9 @@ export const ACCOUNTS = [
   { id: 'infotrade', email: 'infotrade@maxmaserati.com', kind: 'gmail', secret: 'PW_INFOTRADE' },
   { id: 'bmb', email: 'bmbillionsinvestments@gmail.com', kind: 'gmail', secret: 'PW_BMB' },
   { id: 'misterbme', email: 'misterbme02@gmail.com', kind: 'gmail', secret: 'PW_MISTERBME' },
-  { id: 'hotmail', email: 'misterbme02@hotmail.com', kind: 'outlook' },
+  // Hotmail (misterbme02@hotmail.com) is forwarded into misterbme02@gmail.com, so it is read there.
+  // To connect it directly later: uncomment, then add MS_CLIENT_ID and MS_CLIENT_SECRET.
+  // { id: 'hotmail', email: 'misterbme02@hotmail.com', kind: 'outlook' },
 ];
 
 export const SERVERS = {

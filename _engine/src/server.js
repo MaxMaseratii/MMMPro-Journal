@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 });
 
 const notFound = (_req, res) => res.status(404).type('text/plain').send('Not found');
-app.get('/healthz', (_req, res) => res.type('text/plain').send('ok v2'));
+app.get('/healthz', (_req, res) => res.type('text/plain').send('ok v3'));
 
 // ---------- Claude connector (stateless Streamable HTTP) ----------
 const guard = (req, res, next) => (tokenMatches(req.params.token) ? next() : notFound(req, res));
@@ -107,7 +107,7 @@ const run = (fn) => async (req, res) => {
 
 api.get('/overview', run(async () => {
   const missing = ACCOUNTS.filter((a) => a.secret && !process.env[a.secret]).map((a) => `${a.secret} (app password for ${a.email})`);
-  if (!ms.msConfigured()) missing.push('MS_CLIENT_ID and MS_CLIENT_SECRET (only for Hotmail)');
+  if (ACCOUNTS.some((a) => a.kind === 'outlook') && !ms.msConfigured()) missing.push('MS_CLIENT_ID and MS_CLIENT_SECRET (only for Hotmail)');
   if (!TOKEN_OK) missing.push('HUB_TOKEN (32+ random characters, turns on the Claude connector)');
   return {
     accounts: await mail.listAccounts(),
