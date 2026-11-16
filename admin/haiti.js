@@ -154,8 +154,8 @@
       var s = o.server;
       $('hpSrv').innerHTML = [
         ['Money', s.escrow_mode === 'MOCK' ? '<span class="amb">TEST (fake money)</span>' : '<span class="ok">REAL · ' + esc(s.escrow_mode) + '</span>'],
-        ['SMS codes', s.sms === 'mock' ? '<span class="amb">test (code 000000)</span>' : '<span class="ok">' + esc(s.sms) + '</span>'],
-        ['Example sellers', s.demo ? 'on' : 'off'], ['Escrow network', esc(s.network)],
+        ['Login codes', s.sms === 'mock' ? '<span class="bad">test (code 000000)</span>' : '<span class="ok">' + (s.sms === 'email' ? 'by email (Brevo)' : esc(s.sms)) + '</span>'],
+        ['Escrow network', esc(s.network)],
         ['Owner code', s.owner_code_set ? '<span class="ok">set</span>' : '<span class="bad">NOT SET</span>'],
         ['Version', esc(s.commit || '—')], ['Running since', esc(when(s.started_at)) + ' <span class="dim">(' + ago(s.started_at) + ')</span>'],
       ].map(function (r) { return '<span>' + r[0] + '</span><b>' + r[1] + '</b>'; }).join('');
