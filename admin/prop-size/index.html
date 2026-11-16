@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>MMM Prop Safe Size</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Layout: trading-desk calculator · inputs on the left, the answer + the math on the right, stacks on phones */
+:root{
+  --bg:#eef1f6; --panel:#ffffff; --ink:#141a24; --muted:#5b6677; --line:#d6dce6; --soft:#f5f7fa;
+  --accent:#1f5eff; --safe:#0b9466; --warn:#c77d00; --risk:#d92d46;
+  --safe-bg:#e3f6ee; --warn-bg:#fdf1dc; --risk-bg:#fde6ea;
+  --f-head:"Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-num:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1017; --panel:#131a24; --ink:#e6ebf2; --muted:#8e9aac; --line:#243041; --soft:#18212d;
+  --accent:#6c97ff; --safe:#33d39c; --warn:#ffb54a; --risk:#ff6378;
+  --safe-bg:#0f2b22; --warn-bg:#2e2410; --risk-bg:#33161c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1017; --panel:#131a24; --ink:#e6ebf2; --muted:#8e9aac; --line:#243041; --soft:#18212d;
+  --accent:#6c97ff; --safe:#33d39c; --warn:#ffb54a; --risk:#ff6378;
+  --safe-bg:#0f2b22; --warn-bg:#2e2410; --risk-bg:#33161c; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+body.embed{padding-block:8px 24px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+header h1{font-family:var(--f-head);font-size:clamp(26px,4vw,38px);margin:0;letter-spacing:-.01em;text-wrap:balance}
+header p{margin:6px 0 0;color:var(--muted);max-width:70ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+button{font:inherit;cursor:pointer}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 14px;font-size:13.5px;font-weight:500}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.main{border-color:var(--accent);color:var(--accent);font-weight:600}
+.chip:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+.panel h2{font-family:var(--f-head);font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 12px;font-weight:700}
+form{display:flex;flex-direction:column;gap:18px}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+legend{font-family:var(--f-head);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:8px;padding:0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:500;color:var(--muted);min-width:0}
+input,select{font-family:var(--f-num);font-size:15px;color:var(--ink);background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%;min-width:0}
+.hint{font-size:12px;color:var(--muted);margin:-2px 0 0;line-height:1.4}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.answer{display:flex;flex-wrap:wrap;gap:18px;align-items:center;justify-content:space-between}
+.big{display:flex;align-items:baseline;gap:12px}
+.big .n{font-family:var(--f-head);font-size:clamp(64px,10vw,96px);line-height:.9;font-weight:700}
+.big .u{font-family:var(--f-head);font-size:22px;font-weight:700}
+.status{border-radius:8px;padding:10px 14px;font-weight:600;max-width:52ch}
+.ok{background:var(--safe-bg);color:var(--safe)} .bad{background:var(--risk-bg);color:var(--risk)} .mid{background:var(--warn-bg);color:var(--warn)}
+.limits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+@media (max-width:620px){.limits{grid-template-columns:minmax(0,1fr)}}
+.lim{border:1px solid var(--line);border-radius:8px;padding:12px;background:var(--soft);display:flex;flex-direction:column;gap:6px;min-width:0}
+.lim.win{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.lim .t{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:600}
+.lim .v{font-family:var(--f-head);font-size:30px;font-weight:700}
+.lim .m{font-family:var(--f-num);font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.tag{font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.07em}
+.gauge{margin-top:18px}
+.gauge .bar{position:relative;height:16px;border-radius:999px;background:var(--soft);border:1px solid var(--line);overflow:hidden}
+.gauge .fill{position:absolute;inset:0 auto 0 0;border-radius:999px}
+.gauge .lbl{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:6px;gap:10px;flex-wrap:wrap}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+@media (max-width:860px){.cards{grid-template-columns:minmax(0,1fr)}}
+.math{font-family:var(--f-num);font-size:13.5px;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:10px 12px;overflow-x:auto;white-space:pre;line-height:1.7}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:right;font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+tr.on td{background:var(--soft);color:var(--accent);font-weight:600}
+.tbl{overflow-x:auto}
+ul.rules{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+.foot{color:var(--muted);font-size:12.5px;max-width:90ch}
+p{margin:0}
+.stack{display:flex;flex-direction:column;gap:10px}
+</style></head><body>
+
+<div class="wrap">
+  <header>
+    <h1>MMM Prop Safe Size</h1>
+    <p>How many contracts a prop account can carry for any strategy. It sizes to the worst losing run, not to how sure you feel. Type your numbers, or start from one of the MMM strategies.</p>
+    <div class="presets" role="group" aria-label="Examples">
+      <button class="chip main" type="button" data-p="h4">MMM H4 Plan · my strategy</button>
+      <button class="chip" type="button" data-p="m2">Example: DOC.M2 · Three Lines</button>
+      <button class="chip" type="button" data-p="m1">Example: DOC.M1 + add-on</button>
+      <button class="chip" type="button" data-p="fix">Example: 50 pt stop, 1:2 target</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <form class="panel" id="f" autocomplete="off">
+      <fieldset>
+        <legend>Your prop account</legend>
+        <div class="row">
+          <label for="dd">Drawdown limit $<input id="dd" type="number" min="0" step="100" value="3000"></label>
+          <label for="dll">Daily loss limit $<input id="dll" type="number" min="0" step="100" value="1000"></label>
+        </div>
+        <p class="hint">Daily loss limit 0 = your firm has none.</p>
+        <div class="row">
+          <label for="inst">Contract
+            <select id="inst">
+              <option value="MNQ:2">MNQ · $2 a pt</option><option value="NQ:20">NQ · $20 a pt</option>
+              <option value="MES:5">MES · $5 a pt</option><option value="ES:50">ES · $50 a pt</option>
+              <option value="MGC:10">MGC · $10 a pt</option><option value="GC:100">GC · $100 a pt</option>
+              <option value="MYM:0.5">MYM · $0.50 a pt</option><option value="YM:5">YM · $5 a pt</option>
+              <option value="custom">Custom</option>
+            </select></label>
+          <label for="pv">$ per point<input id="pv" type="number" min="0" step="0.5" value="2"></label>
+        </div>
+        <div class="row">
+          <label for="mine">Contracts I trade<input id="mine" type="number" min="0" step="1" value="1"></label>
+          <label for="buf">Safety buffer (x)<input id="buf" type="number" min="1" step="0.25" value="2"></label>
+        </div>
+        <p class="hint">Buffer 2 = room for a losing run twice as bad as the worst one expected.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Your strategy</legend>
+        <div class="row">
+          <label for="wr">Win rate %<input id="wr" type="number" min="1" max="99" step="1" value="22"></label>
+          <label for="n">Trades to plan for<input id="n" type="number" min="10" step="10" value="500"></label>
+        </div>
+        <div class="row">
+          <label for="stop">Stop (pts)<input id="stop" type="number" min="0.25" step="0.25" value="64"></label>
+          <label for="cost">Cost a trade (pts)<input id="cost" type="number" min="0" step="0.25" value="1"></label>
+        </div>
+        <div class="row">
+          <label for="stops">Stops at risk a trade<input id="stops" type="number" min="1" step="1" value="1"></label>
+          <label for="lday">Most losses in 1 day<input id="lday" type="number" min="1" step="1" value="2"></label>
+        </div>
+        <p class="hint">Stops at risk: 2 if you add a 2nd contract with the same stop (DOC.M1 add-on).</p>
+        <div class="row">
+          <label for="aloss">Avg loss, % of the stop<input id="aloss" type="number" min="1" max="100" step="1" value="100"></label>
+          <label for="awin">Avg win (R)<input id="awin" type="number" min="0" step="0.1" value="3.7"></label>
+        </div>
+        <p class="hint">Avg loss 100% = every loss is a full stop (safest). Cuts and breakeven make it smaller. Avg win in R = average win ÷ stop, used only for the stress test.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Backtest worst drop (optional)</legend>
+        <label for="wdd">Worst drawdown, pts for 1 contract<input id="wdd" type="number" min="0" step="1" value="1322"></label>
+        <p class="hint">The biggest drop from a high in your backtest. 0 = you don't have one. When you have it, it is the best number to size from.</p>
+      </fieldset>
+    </form>
+
+    <div class="stack" style="gap:22px;min-width:0">
+      <section class="panel" aria-live="polite">
+        <h2>Safe size</h2>
+        <div class="answer">
+          <div class="big"><span class="n num" id="outN">0</span><span class="u" id="outU">contracts</span></div>
+          <div class="status" id="outS"></div>
+        </div>
+        <div class="limits" id="lims"></div>
+        <div class="gauge">
+          <div class="bar"><div class="fill" id="gFill"></div></div>
+          <div class="lbl"><span id="gL"></span><span id="gR"></span></div>
+        </div>
+      </section>
+
+      <div class="cards">
+        <section class="panel stack">
+          <h2>The math, with your numbers</h2>
+          <div class="math" id="math"></div>
+          <p class="foot">Always round down. Trade the smallest of the three limits.</p>
+        </section>
+        <section class="panel stack">
+          <h2>Stress test · 3,000 random runs</h2>
+          <div class="tbl"><table id="mc"><thead><tr><th>Size</th><th>Hit the drawdown limit</th><th>Typical worst drop</th></tr></thead><tbody></tbody></table></div>
+          <p class="foot" id="mcNote">Each run plays your trades in a random order with your win rate, avg win and avg loss. The drop is measured from the highest point, like a trailing drawdown.</p>
+        </section>
+      </div>
+
+      <div class="cards">
+        <section class="panel stack">
+          <h2>Longest losing run to expect</h2>
+          <div class="tbl"><table id="lt"><thead><tr><th>Win rate</th><th>250 trades</th><th>500 trades</th><th>1,000 trades</th></tr></thead><tbody></tbody></table></div>
+          <p class="foot">L ≈ ln(trades) ÷ ln(1 ÷ (1 − win rate)). DOC.M2 check: 22% win rate, 458 trades → 25 predicted, 24 real.</p>
+        </section>
+        <section class="panel stack">
+          <h2>Rules that never change</h2>
+          <ul class="rules">
+            <li>Size from the worst case, never from how sure you feel.</li>
+            <li>Pick the size once and stick to it.</li>
+            <li>Never add size after losses to win it back.</li>
+            <li>Never add size after a big win either.</li>
+            <li>Max $ risk a trade = drawdown limit ÷ (2 × longest losing run).</li>
+            <li>The drawdown limit is fuel in the tank. Every loss burns some. Keep enough to drive through the worst losing run twice.</li>
+          </ul>
+        </section>
+      </div>
+      <p class="foot">MMM H4 Plan preset: the final test (892 trades, NQ 2023 – Nov 2025 + MNQ 2026): win rate 56%, average stop 54 pts, average loss 79% of the stop, average win 1.1 R, worst drop 442 pts ($884) on 1 MNQ, the day rules stop you after 2 losses. Research tool, not financial advice. The losing-run formula assumes trades are independent; real markets can cluster losses, which is why the buffer exists.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const ids=["dd","dll","inst","pv","mine","buf","wr","n","stop","cost","stops","lday","aloss","awin","wdd"];
+  const P={
+    h4:{dd:2000,dll:1000,inst:"MNQ:2",pv:2,mine:1,buf:2,wr:56,n:900,stop:54,cost:1,stops:1,lday:2,aloss:79,awin:1.1,wdd:442},
+    m2:{dd:3000,dll:1000,inst:"MNQ:2",pv:2,mine:1,buf:2,wr:22,n:500,stop:64,cost:1,stops:1,lday:2,aloss:43,awin:3.7,wdd:1322},
+    m1:{dd:3000,dll:1000,inst:"MNQ:2",pv:2,mine:1,buf:2,wr:35,n:500,stop:50,cost:1,stops:2,lday:2,aloss:100,awin:1.9,wdd:0},
+    fix:{dd:3000,dll:1000,inst:"MNQ:2",pv:2,mine:1,buf:2,wr:45,n:500,stop:50,cost:1,stops:1,lday:3,aloss:100,awin:2,wdd:0}
+  };
+  const money=v=>"$"+Math.round(v).toLocaleString("en-US");
+  const num=(v,d=0)=>Number(v).toLocaleString("en-US",{maximumFractionDigits:d,minimumFractionDigits:d});
+  const val=id=>{const x=parseFloat($(id).value);return isFinite(x)?x:0};
+  const streak=(p,n)=>p>=1?0:Math.log(Math.max(n,2))/Math.log(1/(1-p));
+
+  function mc(N,p,winR,lossR,stop$,n,D){
+    if(N<=0||winR<=0) return null;
+    let hit=0;const dds=[];let seed=12345;
+    const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+    for(let r=0;r<3000;r++){
+      let eq=0,pk=0,dd=0,dead=false;
+      for(let i=0;i<n;i++){
+        eq+= rnd()<p ? winR*stop$*N : -lossR*stop$*N;
+        if(eq>pk)pk=eq; if(pk-eq>dd)dd=pk-eq;
+        if(!dead && pk-eq>=D){dead=true}
+      }
+      if(dead)hit++; dds.push(dd);
+    }
+    dds.sort((a,b)=>a-b);
+    return {hit:hit/3000,med:dds[1500]};
+  }
+
+  function calc(){
+    const D=val("dd"),DLL=val("dll"),V=val("pv"),mine=Math.max(0,Math.floor(val("mine"))),k=Math.max(1,val("buf"));
+    const p=Math.min(.99,Math.max(.01,val("wr")/100)),n=Math.max(10,val("n"));
+    const stopPts=val("stop")+val("cost"),stops=Math.max(1,Math.floor(val("stops"))),lday=Math.max(1,val("lday"));
+    const lossR=Math.min(1,Math.max(.01,val("aloss")/100)),winR=val("awin"),W=val("wdd");
+    const stop$=stopPts*V*stops;
+    const loss$=stop$*lossR;
+    const L=streak(p,n);
+    const per={};
+    per.B={need:k*L*loss$}; per.B.n=per.B.need>0?Math.floor(D/per.B.need):0;
+    if(W>0){per.A={need:k*W*V}; per.A.n=Math.floor(D/per.A.need);}
+    if(DLL>0){per.C={need:lday*stop$}; per.C.n=Math.floor(DLL/per.C.need);}
+    const keys=Object.keys(per); let win=keys[0];
+    keys.forEach(x=>{if(per[x].n<per[win].n)win=x});
+    const safe=per[win].n;
+    const iv=$("inst").value;const unit=iv==="custom"?"":iv.split(":")[0];
+    $("outN").textContent=safe;
+    $("outU").textContent=(safe===1?"contract":"contracts")+(unit?" · "+unit:"");
+    const name={A:"backtest worst drop",B:"losing-run formula",C:"daily loss limit"};
+    const s=$("outS");
+    if(safe===0){s.className="status bad";s.textContent="Not safe even at 1 contract. The "+name[win]+" needs a "+money(per[win].need)+(win==="C"?" daily limit":" drawdown limit")+" for 1 contract.";}
+    else if(mine>safe){s.className="status bad";s.textContent="You trade "+mine+": too big. Cut to "+safe+". "+mine+" contracts need a "+money(per[win].need*mine)+(win==="C"?" daily limit.":" drawdown limit.");}
+    else if(mine===safe){s.className="status ok";s.textContent="You trade "+mine+": right at the safe size. Stick to it.";}
+    else {s.className="status mid";s.textContent="You trade "+mine+": inside the safe size ("+safe+"). Room to spare.";}
+    const card=(key,title,math)=>{
+      if(!per[key]) return '<div class="lim"><span class="t">'+title+'</span><span class="v">—</span><span class="m">'+math+'</span></div>';
+      return '<div class="lim'+(key===win?' win':'')+'"><span class="t">'+title+'</span><span class="v num">'+per[key].n+'</span><span class="m">1 contract needs '+money(per[key].need)+'</span>'+(key===win?'<span class="tag">limits you</span>':'')+'</div>';
+    };
+    $("lims").innerHTML=card("A","Backtest worst drop","no backtest number")+card("B","Losing run · "+num(L,0)+" in a row","")+card("C","Daily loss limit","no daily limit");
+    const use=mine*L*loss$;
+    const pct=D>0?Math.min(1,use/D):1;
+    const g=$("gFill"); g.style.width=(pct*100)+"%";
+    g.style.background=pct>=1?"var(--risk)":pct>1/k?"var(--warn)":"var(--safe)";
+    $("gL").textContent="At "+mine+": a run of "+num(L,0)+" losses burns "+money(use)+" ("+num(D>0?use/D*100:0,0)+"% of your limit)";
+    $("gR").textContent="Safe zone ≤ "+num(100/k,0)+"%";
+    let m="";
+    m+="1 stop in $       = ("+num(val("stop"),2)+" + "+num(val("cost"),2)+" pts) × $"+num(V,2)+(stops>1?" × "+stops+" stops":"")+" = "+money(stop$)+"\n";
+    m+="avg loss in $     = "+money(stop$)+" × "+num(lossR*100,0)+"% = "+money(loss$)+"\n";
+    m+="longest run L     = ln("+num(n)+") ÷ ln(1 ÷ (1 − "+num(p,2)+")) = "+num(L,1)+"\n\n";
+    if(per.A) m+="A · backtest      = "+money(D)+" ÷ ("+num(k,2)+" × "+num(W)+" pts × $"+num(V,2)+") = "+num(D/per.A.need,2)+" → "+per.A.n+"\n";
+    else m+="A · backtest      = no worst drop typed\n";
+    m+="B · losing run    = "+money(D)+" ÷ ("+num(k,2)+" × "+num(L,1)+" × "+money(loss$)+") = "+num(per.B.need>0?D/per.B.need:0,2)+" → "+per.B.n+"\n";
+    if(per.C) m+="C · daily limit   = "+money(DLL)+" ÷ ("+num(lday)+" × "+money(stop$)+") = "+num(DLL/per.C.need,2)+" → "+per.C.n+"\n";
+    else m+="C · daily limit   = none\n";
+    m+="\nSafe size         = smallest = "+safe+"\n";
+    m+="Max $ risk/trade  = "+money(D)+" ÷ (2 × "+num(L,1)+") = "+money(D/(2*Math.max(L,1)));
+    $("math").textContent=m;
+    const rows=[20,25,30,35,40,45,50,55,60,65];
+    const near=rows.reduce((a,b)=>Math.abs(b-p*100)<Math.abs(a-p*100)?b:a);
+    $("lt").tBodies[0].innerHTML=rows.map(r=>'<tr'+(r===near?' class="on"':'')+'><td>'+r+'%</td><td class="num">'+num(streak(r/100,250),0)+'</td><td class="num">'+num(streak(r/100,500),0)+'</td><td class="num">'+num(streak(r/100,1000),0)+'</td></tr>').join("");
+    const sizes=[...new Set([1,2,3,safe,mine].filter(x=>x>0))].sort((a,b)=>a-b).slice(0,6);
+    const body=$("mc").tBodies[0];
+    if(winR<=0){body.innerHTML='<tr><td colspan="3">Type an avg win (R) to run the stress test.</td></tr>';return;}
+    body.innerHTML=sizes.map(N=>{
+      const r=mc(N,p,winR,lossR,stop$,Math.round(n),D);
+      const h=r.hit*100;
+      const col=h>=20?"var(--risk)":h>=2?"var(--warn)":"var(--safe)";
+      return '<tr'+(N===mine?' class="on"':'')+'><td>'+N+(N===safe?' · safe':'')+(N===mine?' · yours':'')+'</td><td class="num" style="color:'+col+';font-weight:600">'+(h<10?num(h,1):num(h,0))+'%</td><td class="num">'+money(r.med)+'</td></tr>';
+    }).join("");
+    const edge=p*winR-(1-p)*lossR;
+    $("mcNote").textContent="Each run plays "+num(n)+" trades in random order: win "+num(p*100,0)+"% at +"+num(winR,1)+"R, lose at −"+num(lossR,2)+"R. Edge = "+(edge>=0?"+":"")+num(edge,2)+"R a trade"+(edge<=0?" (no edge: every size fails in the end)":"")+". The drop is measured from the highest point, like a trailing drawdown.";
+  }
+  function load(k){const o=P[k];if(!o)return;ids.forEach(i=>{if(o[i]!==undefined)$(i).value=o[i]});calc();}
+  document.querySelectorAll("[data-p]").forEach(b=>b.addEventListener("click",()=>load(b.dataset.p)));
+  $("inst").addEventListener("change",()=>{const v=$("inst").value;if(v!=="custom")$("pv").value=parseFloat(v.split(":")[1]);calc();});
+  $("pv").addEventListener("input",()=>{$("inst").value="custom"});
+  $("f").addEventListener("input",calc);
+  $("f").addEventListener("submit",e=>e.preventDefault());
+  const q=new URLSearchParams(location.search);
+  if(q.get("embed")==="1"){document.body.classList.add("embed");const post=()=>{try{parent.postMessage({mmmPropSize:document.documentElement.scrollHeight},location.origin)}catch(e){}};new ResizeObserver(post).observe(document.body);post();}
+  if(q.get("theme")==="dark"||q.get("theme")==="light")document.documentElement.dataset.theme=q.get("theme");
+  load(P[q.get("p")]?q.get("p"):"h4");
+})();
+</script>
+</body></html>
