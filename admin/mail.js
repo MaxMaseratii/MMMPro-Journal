@@ -37,7 +37,9 @@
     '#mail details.conn summary{cursor:pointer;padding:12px 14px;font-weight:700;color:var(--gold)}#mail details.conn summary small{color:var(--mute);font-weight:500;margin-left:6px}' +
     '#mail details.conn .in{padding:0 14px 14px;font-size:13.5px;color:var(--mute)}' +
     '#mail .url{display:flex;gap:8px;margin:8px 0}#mail .url input{flex:1;min-width:0;background:var(--paper);color:var(--ink);border:1px solid var(--rule2);border-radius:6px;padding:8px;font:12.5px var(--mono)}' +
-    '#mail .err{color:var(--loss);font-size:13.5px}';
+    '#mail .err{color:var(--loss);font-size:13.5px}' +
+    '#mail .views{display:flex;gap:6px;margin-top:12px}#mail .views button[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}' +
+    '#mail iframe.orig{width:100%;height:68vh;border:1px solid var(--rule2);border-radius:6px;background:#fff;margin-top:12px;display:block}';
 
   function user() { return window.MMM && window.MMM.user && window.MMM.user(); }
   function api(path, body) {
@@ -164,7 +166,8 @@
   function open(k) {
     OPEN = k; var p = k.split('|');
     [].forEach.call($('mxList').querySelectorAll('.row'), function (r) { r.classList.toggle('on', r.dataset.k === k); });
-    $('mxRead').innerHTML = '<div class="empty">Opening…</div>';
+    var row = ROWS.filter(function (r) { return key(r) === k; })[0];
+    $('mxRead').innerHTML = row ? '<h3>' + esc(row.subject || '(no subject)') + '</h3><div class="meta">From ' + esc(row.from) + '</div><div class="empty">Opening…</div>' : '<div class="empty">Opening…</div>';
     api('/read?account=' + encodeURIComponent(p[0]) + '&folder=' + encodeURIComponent(p[1]) + '&uid=' + p[2]).then(function (j) {
       var m = j.message;
       $('mxRead').innerHTML = '<h3>' + esc(m.subject || '(no subject)') + '</h3>' +
@@ -173,7 +176,24 @@
         '<button class="btn" type="button" data-one="archive">Archive</button><button class="btn" type="button" data-one="trash">Trash</button>' +
         (m.list_unsubscribe ? '<button class="btn" type="button" data-one="unsub">Unsubscribe</button>' : '') + '</div>' +
         (m.attachments && m.attachments.length ? '<div class="meta" style="margin-top:10px">📎 ' + m.attachments.map(function (a) { return esc(a.name) + (a.size_kb != null ? ' (' + a.size_kb + ' KB)' : ''); }).join(' · ') + '</div>' : '') +
-        '<pre>' + esc(m.body) + '</pre>';
+        (m.html ? '<div class="views"><button class="btn" type="button" data-view="orig" aria-pressed="true">Original</button><button class="btn" type="button" data-view="text" aria-pressed="false">Plain text</button></div>' : '') +
+        '<div id="mxBody"></div>';
+      var show = function (v) {
+        var box = $('mxBody');
+        if (v === 'orig' && m.html) {
+          var f = document.createElement('iframe');
+          f.className = 'orig';
+          f.setAttribute('sandbox', 'allow-popups allow-popups-to-escape-sandbox'); // no scripts, no forms, no access to this page
+          f.setAttribute('referrerpolicy', 'no-referrer');
+          f.srcdoc = '<!doctype html><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="script-src \'none\'; form-action \'none\'"><base target="_blank">' + m.html;
+          box.innerHTML = ''; box.appendChild(f);
+        } else {
+          box.innerHTML = '<pre>' + esc(m.body) + '</pre>';
+        }
+        [].forEach.call($('mxRead').querySelectorAll('[data-view]'), function (b) { b.setAttribute('aria-pressed', b.dataset.view === v); });
+      };
+      show(m.html ? 'orig' : 'text');
+      if (m.html) $('mxRead').querySelector('.views').onclick = function (e) { var b = e.target.closest('[data-view]'); if (b) show(b.dataset.view); };
       $('mxRead').querySelector('.acts').onclick = function (e) {
         var b = e.target.closest('[data-one]'); if (!b) return;
         if (b.dataset.one === 'unsub') return unsub(p);

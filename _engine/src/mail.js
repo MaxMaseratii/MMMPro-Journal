@@ -29,24 +29,72 @@ function withTimeout(promise, ms_, label) {
   return Promise.race([promise, timer]).finally(() => clearTimeout(t));
 }
 
+// One open connection per mailbox, reused for 4 minutes, so each click does not log in again.
+const POOL = new Map(); // account id -> { client, connecting, timer }
+const IDLE_MS = 4 * 60 * 1000;
+
+function dropClient(id) {
+  const e = POOL.get(id);
+  POOL.delete(id);
+  if (e?.timer) clearTimeout(e.timer);
+  if (e?.client) e.client.logout().catch(() => e.client.close());
+}
+
+function touch(id, entry) {
+  clearTimeout(entry.timer);
+  entry.timer = setTimeout(() => { if (POOL.get(id) === entry) dropClient(id); }, IDLE_MS);
+  entry.timer.unref?.();
+}
+
+async function getClient(acc) {
+  const have = POOL.get(acc.id);
+  if (have?.client?.usable) { touch(acc.id, have); return have.client; }
+  if (have?.connecting) return have.connecting;
+  if (have) dropClient(acc.id);
+  const entry = { client: null, connecting: null, timer: null };
+  POOL.set(acc.id, entry);
+  entry.connecting = (async () => {
+    const client = new ImapFlow({
+      ...SERVERS[acc.kind].imap,
+      auth: await imapAuth(acc),
+      logger: false,
+      connectionTimeout: 20000,
+      greetingTimeout: 15000,
+      socketTimeout: 90000,
+    });
+    client.on('error', () => {}); // surfaced through the awaited calls
+    client.on('close', () => { if (POOL.get(acc.id) === entry) POOL.delete(acc.id); });
+    await client.connect();
+    entry.client = client;
+    entry.connecting = null;
+    touch(acc.id, entry);
+    return client;
+  })().catch((err) => {
+    if (POOL.get(acc.id) === entry) POOL.delete(acc.id);
+    throw err;
+  });
+  return entry.connecting;
+}
+
 export async function withImap(acc, fn) {
   const problem = setupProblem(acc);
   if (problem) throw new Error(`${acc.email}: ${problem}`);
-  const client = new ImapFlow({
-    ...SERVERS[acc.kind].imap,
-    auth: await imapAuth(acc),
-    logger: false,
-    connectionTimeout: 20000,
-    greetingTimeout: 15000,
-    socketTimeout: 60000,
-  });
-  client.on('error', () => {}); // handled through the awaited calls
-  const run = async () => {
-    await client.connect();
+  const attempt = async () => {
+    const client = await getClient(acc);
     try {
       return await fn(client);
-    } finally {
-      await client.logout().catch(() => client.close());
+    } catch (e) {
+      if (!client.usable) dropClient(acc.id);
+      throw e;
+    }
+  };
+  const run = async () => {
+    try {
+      return await attempt();
+    } catch (e) {
+      // A reused connection may have been closed by the server: try once more on a fresh one.
+      if (POOL.has(acc.id) || !/closed|ECONNRESET|EPIPE|not usable|Connection not available|NoConnection/i.test(String(e?.message || e?.code))) throw e;
+      return attempt();
     }
   };
   return withTimeout(run(), OP_TIMEOUT, `${acc.email}`);
@@ -218,7 +266,13 @@ async function streamToString(stream) {
 
 const htmlToText = (html) =>
   html
-    .replace(/<(style|script)[\s\S]*?<\/\1>/gi, '')
+    .replace(/<head[\s\S]*?<\/head>/gi, '')
+    .replace(/<(style|script|title)[\s\S]*?<\/\1>/gi, '')
+    .replace(/<(span|div|p|td)[^>]*display\s*:\s*none[^>]*>[\s\S]*?<\/\1>/gi, '')
+    .replace(/<a\b[^>]*href="(https?:[^"]+)"[^>]*>([\s\S]*?)<\/a>/gi, (m, href, inner) => {
+      const label = inner.replace(/<[^>]+>/g, '').trim();
+      return label && !/^https?:/.test(label) && label.length < 60 ? `${label} [${href.length > 120 ? href.slice(0, 120) + '…' : href}]` : label || '';
+    })
     .replace(/<br\s*\/?>|<\/(p|div|tr|li|h\d)>/gi, '\n')
     .replace(/<[^>]+>/g, '')
     .replace(/&nbsp;/g, ' ')
@@ -227,8 +281,21 @@ const htmlToText = (html) =>
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    .replace(/&#(\d+);/g, (m, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (m, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&[a-z]+;/gi, ' ')
+    .replace(/[\u034f\u00ad\u200b-\u200f\u2007\u2060\ufeff]/g, '')
+    .replace(/[ \t\u00a0]+/g, ' ')
+    .replace(/ *\n */g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
+
+function bestText(parsed) {
+  const t = parsed.text || '';
+  const looksHtml = /<(html|body|table|div|!doctype)\b/i.test(t);
+  if (parsed.html && (!t.trim() || looksHtml)) return htmlToText(parsed.html);
+  return looksHtml ? htmlToText(t) : t;
+}
 
 async function fetchMessage(client, uid) {
   const meta = await client.fetchOne(uid, { uid: true, size: true, bodyStructure: true, flags: true }, { uid: true });
@@ -240,7 +307,8 @@ async function fetchMessage(client, uid) {
     return {
       parsed,
       block,
-      text: parsed.text || (parsed.html ? htmlToText(parsed.html) : ''),
+      text: bestText(parsed),
+      html: typeof parsed.html === 'string' ? parsed.html : null,
       attachments: (parsed.attachments || []).map((a) => ({ name: a.filename || '(no name)', type: a.contentType, size_kb: Math.round(a.size / 1024) })),
       flags: meta.flags,
     };
@@ -261,7 +329,7 @@ async function fetchMessage(client, uid) {
   return { parsed, block, text, attachments: [{ name: '(large message: attachments not listed)' }], flags: meta.flags };
 }
 
-export async function readEmail({ account, folder, uid }) {
+export async function readEmail({ account, folder, uid, includeHtml = false }) {
   const acc = getAccount(account);
   return withImap(acc, async (client) => {
     const path = await resolveFolder(client, acc, folder, 'inbox');
@@ -285,6 +353,7 @@ export async function readEmail({ account, folder, uid }) {
         unread: !m.flags?.has('\\Seen'),
         body,
         attachments: m.attachments,
+        ...(includeHtml && m.html && m.html.length < 600000 ? { html: m.html } : {}),
         list_unsubscribe: headerFromBlock(m.block, 'List-Unsubscribe'),
         list_unsubscribe_post: headerFromBlock(m.block, 'List-Unsubscribe-Post'),
       };

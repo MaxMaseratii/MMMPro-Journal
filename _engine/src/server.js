@@ -44,7 +44,7 @@ app.use((req, res, next) => {
 });
 
 const notFound = (_req, res) => res.status(404).type('text/plain').send('Not found');
-app.get('/healthz', (_req, res) => res.type('text/plain').send('ok'));
+app.get('/healthz', (_req, res) => res.type('text/plain').send('ok v2'));
 
 // ---------- Claude connector (stateless Streamable HTTP) ----------
 const guard = (req, res, next) => (tokenMatches(req.params.token) ? next() : notFound(req, res));
@@ -130,7 +130,7 @@ api.get('/search', run(async (req) => {
   };
 }));
 
-api.get('/read', run(async (req) => ({ message: await mail.readEmail({ account: req.query.account, folder: req.query.folder, uid: Number(req.query.uid) }) })));
+api.get('/read', run(async (req) => ({ message: await mail.readEmail({ account: req.query.account, folder: req.query.folder, uid: Number(req.query.uid), includeHtml: true }) })));
 
 const ACTIONS = {
   trash: mail.trashEmails,
