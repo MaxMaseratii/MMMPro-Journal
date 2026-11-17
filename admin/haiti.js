@@ -1,4 +1,4 @@
-/* Admin · Ayiti P2P Swap tab: run the Ayiti P2P Swap marketplace from here.
+/* Admin · Ayiti P2P tab: run the Ayiti P2P marketplace from here.
    Talks to the marketplace API (Render). It has its own owner login: your owner phone + your secret 6-digit ADMIN_LOGIN_CODE.
    The login token is kept only in this browser. Draws the first time the tab opens, refreshes every 60 s while open. */
 (function () {
@@ -68,7 +68,7 @@
 
   // ---------- login ----------
   function loginForm() {
-    $('hx').innerHTML = '<div class="login"><h2 style="margin:0 0 6px;font-family:var(--serif)">Ayiti P2P Swap owner login</h2>' +
+    $('hx').innerHTML = '<div class="login"><h2 style="margin:0 0 6px;font-family:var(--serif)">Ayiti P2P owner login</h2>' +
       '<p class="more">Real money: press <b>Send me a code</b>, the code comes to your email. Test mode: use your secret 6-digit <code>ADMIN_LOGIN_CODE</code>. The login stays in this browser only.</p>' +
       '<label for="hpPhone">Owner phone</label><input id="hpPhone" inputmode="tel" placeholder="+509…" value="' + esc(store.get('hp2p_phone') || '') + '">' +
       '<label for="hpCode">Code</label><div style="display:flex;gap:8px"><input id="hpCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6 digits"><button class="btn" id="hpSend" type="button" style="white-space:nowrap">Send me a code</button></div>' +
