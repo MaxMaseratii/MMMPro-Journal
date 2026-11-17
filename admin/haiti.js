@@ -72,16 +72,18 @@
   // ---------- login ----------
   function loginForm() {
     $('hx').innerHTML = '<div class="login"><h2 style="margin:0 0 6px;font-family:var(--serif)">Ayiti P2P owner login</h2>' +
-      '<p class="more">Press <b>Send me a code</b>. The code comes to your email. The login stays in this browser only.</p>' +
+      '<p class="more">Use your password, or press <b>Send me a code</b> and use the code from your email. The login stays in this browser only.</p>' +
       '<label for="hpPhone">Your phone or email</label><input id="hpPhone" autocomplete="username" placeholder="+44 7415 991172 or you@email.com" value="' + esc(store.get('hp2p_phone') || '') + '">' +
+      '<label for="hpPw">Password</label><input id="hpPw" type="password" autocomplete="current-password" placeholder="Your Ayiti P2P password">' +
+      '<p class="more" style="margin:8px 0 0">No password yet, or forgot it? Use a code:</p>' +
       '<label for="hpCode">Code</label><div style="display:flex;gap:8px"><input id="hpCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6 digits"><button class="btn" id="hpSend" type="button" style="white-space:nowrap">Send me a code</button></div>' +
       '<details style="margin-top:12px"><summary class="more" style="cursor:pointer">Server address</summary><input id="hpApi" value="' + esc(BASE) + '" style="margin-top:6px"></details>' +
       '<div style="margin-top:14px;display:flex;gap:8px"><button class="btn gold" id="hpGo" type="button">Log in</button><a class="btn" href="' + esc(BASE) + '" target="_blank" rel="noopener">Open the app</a></div></div>';
     var go = function () {
-      var phone = $('hpPhone').value.trim(), code = $('hpCode').value.trim(), base = $('hpApi').value.trim().replace(/\/+$/, '');
+      var phone = $('hpPhone').value.trim(), code = $('hpCode').value.trim(), pw = $('hpPw').value, base = $('hpApi').value.trim().replace(/\/+$/, '');
       if (base) { BASE = base; store.set('hp2p_api', base === DEFAULT_API ? null : base); }
       return run($('hpGo'), function () {
-        return api('POST', '/auth/login', { login: phone, code: code }).then(function (r) {
+        return api('POST', '/auth/login', pw && !code ? { login: phone, password: pw } : { login: phone, code: code }).then(function (r) {
           if (!r.user || r.user.role !== 'ADMIN') throw new Error('This account is not the owner account.');
           TOKEN = r.token; store.set('hp2p_token', TOKEN); store.set('hp2p_phone', phone); draw();
         });
@@ -97,6 +99,7 @@
       });
     };
     $('hpCode').onkeydown = function (e) { if (e.key === 'Enter') go(); };
+    $('hpPw').onkeydown = function (e) { if (e.key === 'Enter') go(); };
   }
 
   // ---------- dashboard ----------
@@ -116,6 +119,8 @@
       '<section class="panel"><div class="ph"><h2>Automatic ID check</h2><span class="r" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><label class="more" style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="hpAuto"> Approve clear cases by itself</label><button class="btn sm" id="hpRun" type="button">Check the next ID now</button></span></div>' +
       '<p class="more">Free, on our own server. For every ID it reads the name and number on the card, compares the face on the ID with the face in the video, checks the head turns left and right (a live person, not a photo), and checks the face and ID number are not already on another account. All clear = approved in about a minute. Anything unsure waits for you below, with the reasons. It never rejects anyone by itself.</p>' +
       '<div id="hpAutoList"></div></section>' +
+      '<section class="panel"><div class="ph"><h2>Commercial Sellers</h2><span class="r" style="display:flex;gap:8px;align-items:center"><small id="hpBc"></small><select id="hpBs"><option value="PENDING">Waiting</option><option value="APPROVED">Approved</option><option value="ALL">All</option></select></span></div>' +
+      '<p class="more">Businesses asking for the Commercial Seller badge. Approve = their business name and badge show on the MarketPlace. They get an email either way.</p><div id="hpBiz"></div></section>' +
       '<section class="panel"><div class="ph"><h2>Help messages</h2><span class="r" style="display:flex;gap:8px;align-items:center"><small id="hpHc"></small><select id="hpHs"><option value="OPEN">Waiting</option><option value="ANSWERED">Answered</option><option value="ALL">All</option></select></span></div>' +
       '<p class="more">Questions the help bot could not answer. Your answer shows in the person\'s app and goes to their email.</p><div id="hpHelp"></div></section>' +
       '<div class="g2"><section class="panel"><div class="ph"><h2>ID checks waiting for you</h2><small id="hpKc"></small></div><div id="hpKyc"></div></section>' +
@@ -139,6 +144,7 @@
     $('hpTim').onclick = function () { run($('hpTim'), function () { return api('POST', '/admin/run-timers').then(function (r) { toast('Timers ran: ' + JSON.stringify(r)); loadAll(); }); }); };
     $('hpRec').onclick = function () { run($('hpRec'), function () { return api('GET', '/admin/reconcile').then(function (r) { toast('Reconcile: ' + JSON.stringify(r)); }); }); };
     $('hpHs').onchange = loadHelp;
+    $('hpBs').onchange = loadBiz;
     $('hpAuto').onchange = function () { var on = $('hpAuto').checked; api('POST', '/admin/idcheck', { auto_approve: on }).then(function () { toast(on ? 'Auto-approve is ON.' : 'Auto-approve is OFF: every ID waits for you.'); }, function (e) { toast(e.message, true); $('hpAuto').checked = !on; }); };
     $('hpRun').onclick = function () { run($('hpRun'), function () { return api('POST', '/admin/idcheck/run').then(function (r) { toast(r.done.length ? 'Checked: ' + r.done.map(function (d) { return d.status === 'AUTO_APPROVED' ? 'approved' : 'needs you'; }).join(', ') : 'Nothing waiting for the robot.'); loadKyc(); loadRobot(); loadOverview(); }); }); };
     $('hpBa').onclick = function () { run($('hpBa'), function () { return api('POST', '/admin/blocklist', { kind: $('hpBk').value, value: $('hpBv').value.trim(), reason: 'Admin' }).then(function () { $('hpBv').value = ''; loadBlock(); }); }); };
@@ -196,6 +202,19 @@
     });
   }
 
+  var BIZT = { EXCHANGE: 'Exchange business (kanbis)', SHOP: 'Shop or store', SERVICES: 'Services', OTHER: 'Other' };
+  function loadBiz() {
+    return api('GET', '/admin/business?status=' + $('hpBs').value).then(function (list) {
+      $('hpBc').textContent = list.length + ' shown';
+      $('hpBiz').innerHTML = list.length ? list.map(function (b) {
+        return '<div class="item" id="hb-' + b.id + '"><div class="t"><b>' + esc(b.business_name) + '</b><span class="dim">' + esc(b.business_status) + ' · ' + esc(ago(b.business_at)) + '</span></div>' +
+          '<div class="more">' + esc(b.full_name) + ' · ' + esc(b.phone) + ' · level ' + esc(b.tier) + ' · ' + esc(b.trades) + ' sales done</div>' +
+          '<div class="more">' + esc(BIZT[b.business_type] || b.business_type) + (b.business_reg ? ' · Reg: ' + esc(b.business_reg) : '') + '</div>' +
+          (b.business_note ? '<div class="quote">' + esc(b.business_note) + '</div>' : '') +
+          (b.business_status === 'PENDING' ? '<input placeholder="Reason, if you say no" style="margin-top:6px"><div style="display:flex;gap:8px;margin-top:6px"><button class="btn sm grn" data-bok="' + b.id + '" type="button">Approve</button><button class="btn sm red" data-bno="' + b.id + '" type="button">Say no</button></div>' : '') + '</div>';
+      }).join('') : '<p class="more">Nothing here.</p>';
+    });
+  }
   function loadHelp() {
     return api('GET', '/admin/help?status=' + $('hpHs').value).then(function (list) {
       var open = list.filter(function (t) { return t.status === 'OPEN'; }).length;
@@ -324,7 +343,7 @@
   }
 
   function loadAll() {
-    return Promise.all([loadChain(), loadOverview(), loadHelp(), loadRobot(), loadKyc(), loadDisputes(), loadOrders(), loadAds(), loadUsers(), loadLimits(), loadBlock()])
+    return Promise.all([loadChain(), loadOverview(), loadBiz(), loadHelp(), loadRobot(), loadKyc(), loadDisputes(), loadOrders(), loadAds(), loadUsers(), loadLimits(), loadBlock()])
       .catch(function (e) { toast(e.message, true); });
   }
 
@@ -332,7 +351,8 @@
   function onClick(e) {
     var b = e.target.closest('button,a[data-file],a[data-kview]'); if (!b || !$('hx').contains(b)) return;
     var d = b.dataset;
-    if (d.hrep) { var ta = $('hh-' + d.hrep).querySelector('textarea'); run(b, function () { return api('POST', '/admin/help/' + d.hrep + '/reply', { reply: ta.value }).then(function (r) { toast(r.emailed ? 'Answer sent (app + email).' : 'Answer saved in the app.'); loadHelp(); }); }); }
+    if (d.bok || d.bno) { var bid = d.bok || d.bno, why = $('hb-' + bid).querySelector('input').value; run(b, function () { return api('POST', '/admin/business/' + bid, { approve: !!d.bok, note: why }).then(function () { toast(d.bok ? 'Approved: badge is on.' : 'Answer sent.'); loadBiz(); }); }); }
+    else if (d.hrep) { var ta = $('hh-' + d.hrep).querySelector('textarea'); run(b, function () { return api('POST', '/admin/help/' + d.hrep + '/reply', { reply: ta.value }).then(function (r) { toast(r.emailed ? 'Answer sent (app + email).' : 'Answer saved in the app.'); loadHelp(); }); }); }
     else if (d.hclose) run(b, function () { return api('POST', '/admin/help/' + d.hclose + '/close').then(loadHelp); });
     else if (d.rechk) run(b, function () { return api('POST', '/staff/kyc/' + d.rechk + '/recheck').then(function () { toast('It will be checked again in about a minute.'); loadKyc(); }); });
     else if (d.undo) { if (!sure(b)) return; run(b, function () { return api('POST', '/admin/kyc/' + d.undo + '/undo').then(function () { toast('Undone: the ID is back in your waiting list. Trading level back to 0.'); loadRobot(); loadKyc(); loadOverview(); }); }); }
