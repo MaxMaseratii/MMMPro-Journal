@@ -1,18 +1,7 @@
 {
-  "updated": "2026-11-16T06:35:11Z",
-  "updated_label": "16 Nov 2026, 06:35 London",
+  "updated": "2026-11-17T06:35:07Z",
+  "updated_label": "17 Nov 2026, 06:35 London",
   "offers": [
-    {
-      "firm": "IQ Capital",
-      "plans": [],
-      "code": null,
-      "pct": 85,
-      "text": "85% off everything (Black Friday special)",
-      "ends": null,
-      "src": "https://www.iqcapital.io/",
-      "via": "site",
-      "checked": "2026-11-15"
-    },
     {
       "firm": "Apex Trader Funding",
       "plans": [],
@@ -25,6 +14,17 @@
       "checked": "2026-11-14"
     },
     {
+      "firm": "IQ Capital",
+      "plans": [],
+      "code": null,
+      "pct": 85,
+      "text": "85% off everything (Black Friday special)",
+      "ends": null,
+      "src": "https://www.iqcapital.io/",
+      "via": "site",
+      "checked": "2026-11-16"
+    },
+    {
       "firm": "Funded Futures Network",
       "plans": [
         "ffn-max"
@@ -35,7 +35,7 @@
       "ends": null,
       "src": "https://fundedfuturesnetwork.com/",
       "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
     },
     {
       "firm": "Blueberry Futures",
@@ -46,7 +46,7 @@
       "ends": null,
       "src": "https://blueberryfutures.com/",
       "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
     },
     {
       "firm": "FundedHero Futures",
@@ -57,7 +57,7 @@
       "ends": null,
       "src": "https://fundedherofutures.com/",
       "via": "site",
-      "checked": "2026-11-14"
+      "checked": "2026-11-16"
     },
     {
       "firm": "Top One Futures",
@@ -70,7 +70,7 @@
       "ends": null,
       "src": "https://www.toponefutures.com/",
       "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
     },
     {
       "firm": "TX3 Futures",
@@ -81,7 +81,7 @@
       "ends": null,
       "src": "https://www.tx3futures.com/en/tx3-core",
       "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
     },
     {
       "firm": "Alpha Futures",
@@ -95,7 +95,36 @@
       "ends": null,
       "src": "https://alpha-futures.com/",
       "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
+    },
+    {
+      "firm": "FundedNext Futures",
+      "plans": [],
+      "code": "FNFLEX",
+      "pct": 47,
+      "text": "47% off your first 2 accounts, then 40% off",
+      "ends": null,
+      "src": "https://fundednext.com/futures",
+      "via": "site",
+      "checked": "2026-11-16"
+    },
+    {
+      "firm": "Tradeify",
+      "plans": [
+        "tradeify-growth",
+        "tradeify-select",
+        "tradeify-lightning"
+      ],
+      "sizes": [
+        25
+      ],
+      "code": "NOV",
+      "pct": 45,
+      "text": "45% off 25K accounts with code NOV (not Miami plan) + 2x Gems",
+      "ends": null,
+      "src": "https://tradeify.co/",
+      "via": "site",
+      "checked": "2026-11-16"
     },
     {
       "firm": "Alpha Futures",
@@ -108,56 +137,18 @@
       "ends": null,
       "src": "https://alpha-futures.com/product/zero",
       "via": "site",
-      "checked": "2026-11-15"
-    },
-    {
-      "firm": "FundedNext Futures",
-      "plans": [],
-      "code": "FNFLEX",
-      "pct": 47,
-      "text": "47% off your first 2 accounts, then 40% off",
-      "ends": null,
-      "src": "https://fundednext.com/futures",
-      "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
     },
     {
       "firm": "MyFundedFutures",
       "plans": [],
       "code": "CLUB",
       "pct": 40,
-      "text": "40% off any plan with code CLUB",
+      "text": "40% off any plan with code CLUB (new to MFFU: 50% off your first eval)",
       "ends": null,
       "src": "https://myfundedfutures.com/",
       "via": "site",
-      "checked": "2026-11-15"
-    },
-    {
-      "firm": "Tradeify",
-      "plans": [
-        "tradeify-growth"
-      ],
-      "code": "NOV",
-      "pct": 40,
-      "text": "40% off Growth accounts",
-      "ends": null,
-      "src": "https://tradeify.co/",
-      "via": "site",
-      "checked": "2026-11-15"
-    },
-    {
-      "firm": "Tradeify",
-      "plans": [
-        "tradeify-select",
-        "tradeify-lightning"
-      ],
-      "code": "NOV",
-      "pct": 30,
-      "text": "30% off with code NOV",
-      "ends": null,
-      "src": "https://tradeify.co/",
-      "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
     },
     {
       "firm": "Futureify (FXIFY Futures)",
@@ -168,7 +159,7 @@
       "ends": null,
       "src": "https://futureify.com/",
       "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
     },
     {
       "firm": "Shark Futures",
@@ -179,18 +170,59 @@
       "ends": null,
       "src": "https://www.sharkfutures.com/",
       "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
     },
     {
       "firm": "Blue Guardian Futures",
       "plans": [],
-      "code": "BG25",
-      "pct": 25,
-      "text": "25% off with code BG25 (bigger bundle discounts for more accounts)",
+      "code": "GUARD30",
+      "pct": 30,
+      "text": "30% off with code GUARD30",
       "ends": null,
       "src": "https://blueguardian.com/futures",
       "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
+    },
+    {
+      "firm": "Tradeify",
+      "plans": [],
+      "code": "NOV",
+      "pct": 30,
+      "text": "30% off all accounts with code NOV + 2x Gems",
+      "ends": null,
+      "src": "https://tradeify.co/",
+      "via": "site",
+      "checked": "2026-11-16"
+    },
+    {
+      "firm": "FunderPro Futures",
+      "plans": [],
+      "code": "BF30",
+      "pct": 30,
+      "text": "30% off every challenge with code BF30",
+      "ends": "2026-11-22",
+      "src": "https://x.com/FunderPro/status/2122238260558602680",
+      "via": "x",
+      "checked": "2026-11-16"
+    },
+    {
+      "firm": "Phoenix Trader Funding",
+      "plans": [
+        "phoenix-classic"
+      ],
+      "sizes": [
+        50
+      ],
+      "prices": {
+        "50": 89.6
+      },
+      "code": "CUP30",
+      "pct": 30,
+      "text": "50K Classic Growth for $89.60 (list $128) with code CUP30",
+      "ends": "2026-11-18",
+      "src": "https://x.com/phoenixfunding/status/2121929528394006753",
+      "via": "x",
+      "checked": "2026-11-16"
     },
     {
       "firm": "Aqua Futures (AquaFunded)",
@@ -201,7 +233,7 @@
       "ends": null,
       "src": "https://www.aquafunded.com/futures",
       "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
     },
     {
       "firm": "E8 Futures",
@@ -212,7 +244,7 @@
       "ends": null,
       "src": "https://e8futures.com/",
       "via": "site",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
     },
     {
       "firm": "Phidias Propfirm",
@@ -223,7 +255,7 @@
       "ends": "2026-11-24",
       "src": "https://x.com/PhidiasPropfirm/status/2121635125624443082",
       "via": "x",
-      "checked": "2026-11-15"
+      "checked": "2026-11-16"
     },
     {
       "firm": "Traders Launch",
@@ -238,6 +270,7 @@
     }
   ],
   "inboxDone": [
+    "grok:2026-11-16.md",
     "grok:2026-11-15.md",
     "grok:2026-11-14.md",
     "grok:2026-11-13.md",
@@ -245,6 +278,7 @@
     "grok:2026-11-11.md"
   ],
   "log": [
+    "2026-11-17: 22 live · added FunderPro 30% BF30 (ends 22 Nov), Phoenix 50K $89.60 CUP30 (ends 18 Nov), Tradeify 45% off 25K NOV · Tradeify now 30% all (was 40% Growth) · Blue Guardian now 30% GUARD30 (was 25% BG25) · site scan missing for today (used 16 Nov scan) · Grok file for today missing (handled 16 Nov file) · inbox empty · web search only affiliate codes · 12 direct links",
     "2026-11-16: 20 live · removed FunderPro 25% EARLYBF25 (ended 15 Nov) · Phidias HONOR85 updated: 150K one-time 85% off, ends 24 Nov (Grok 15 Nov, official X) · site scan missing for today (used 15 Nov scan, it still shows all other offers) · Grok file for today missing · inbox empty · web search found only affiliate codes · 12 direct links",
     "2026-11-15: 21 live · no change · site scan missing (last scan 14 Nov, today's run not done yet) · Grok file missing · inbox empty · web search found only affiliate codes · kept all offers with old checked date · 12 direct links",
     "2026-11-14 (3rd run): 21 live · first website + YouTube scan worked (29/29 sites read) · added 16 offers seen on firm sites (FFN 70% NEXUS, Blueberry 60%, FundedHero 60%, Top One 55%, TX3 50%, Alpha 50/40%, FundedNext 47%, MFFU 40% CLUB, Tradeify 40/30% NOV, Futureify 40%, Shark 40%, Blue Guardian 25%, Aqua 25%, E8 25%) · IQ 85% now confirmed on site · 12 direct links",
