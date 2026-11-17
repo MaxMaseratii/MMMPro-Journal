@@ -116,6 +116,8 @@
       '<section class="panel"><div class="ph"><h2>Automatic ID check</h2><span class="r" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><label class="more" style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="hpAuto"> Approve clear cases by itself</label><button class="btn sm" id="hpRun" type="button">Check the next ID now</button></span></div>' +
       '<p class="more">Free, on our own server. For every ID it reads the name and number on the card, compares the face on the ID with the face in the video, checks the head turns left and right (a live person, not a photo), and checks the face and ID number are not already on another account. All clear = approved in about a minute. Anything unsure waits for you below, with the reasons. It never rejects anyone by itself.</p>' +
       '<div id="hpAutoList"></div></section>' +
+      '<section class="panel"><div class="ph"><h2>Help messages</h2><span class="r" style="display:flex;gap:8px;align-items:center"><small id="hpHc"></small><select id="hpHs"><option value="OPEN">Waiting</option><option value="ANSWERED">Answered</option><option value="ALL">All</option></select></span></div>' +
+      '<p class="more">Questions the help bot could not answer. Your answer shows in the person\'s app and goes to their email.</p><div id="hpHelp"></div></section>' +
       '<div class="g2"><section class="panel"><div class="ph"><h2>ID checks waiting for you</h2><small id="hpKc"></small></div><div id="hpKyc"></div></section>' +
       '<section class="panel"><div class="ph"><h2>Disputes</h2><small id="hpDc"></small></div><div id="hpDis"></div></section></div>' +
       '<section class="panel"><div class="ph"><h2>Orders</h2><select id="hpOs"><option value="">All</option>' + Object.keys(STATE).map(function (k) { return '<option value="' + k + '">' + STATE[k][0] + '</option>'; }).join('') + '</select></div><div class="tw" id="hpOrd"></div></section>' +
@@ -136,6 +138,7 @@
     $('hpQs').onclick = loadUsers; $('hpQ').onkeydown = function (e) { if (e.key === 'Enter') loadUsers(); };
     $('hpTim').onclick = function () { run($('hpTim'), function () { return api('POST', '/admin/run-timers').then(function (r) { toast('Timers ran: ' + JSON.stringify(r)); loadAll(); }); }); };
     $('hpRec').onclick = function () { run($('hpRec'), function () { return api('GET', '/admin/reconcile').then(function (r) { toast('Reconcile: ' + JSON.stringify(r)); }); }); };
+    $('hpHs').onchange = loadHelp;
     $('hpAuto').onchange = function () { var on = $('hpAuto').checked; api('POST', '/admin/idcheck', { auto_approve: on }).then(function () { toast(on ? 'Auto-approve is ON.' : 'Auto-approve is OFF: every ID waits for you.'); }, function (e) { toast(e.message, true); $('hpAuto').checked = !on; }); };
     $('hpRun').onclick = function () { run($('hpRun'), function () { return api('POST', '/admin/idcheck/run').then(function (r) { toast(r.done.length ? 'Checked: ' + r.done.map(function (d) { return d.status === 'AUTO_APPROVED' ? 'approved' : 'needs you'; }).join(', ') : 'Nothing waiting for the robot.'); loadKyc(); loadRobot(); loadOverview(); }); }); };
     $('hpBa').onclick = function () { run($('hpBa'), function () { return api('POST', '/admin/blocklist', { kind: $('hpBk').value, value: $('hpBv').value.trim(), reason: 'Admin' }).then(function () { $('hpBv').value = ''; loadBlock(); }); }); };
@@ -190,6 +193,19 @@
           '<td>' + ['FRONT', 'BACK', 'VIDEO'].map(function (f) { return '<a href="#" data-kview="' + k.id + '/' + f + '">' + { FRONT: 'front', BACK: 'back', VIDEO: 'video' }[f] + '</a>'; }).join(' · ') + '</td>' +
           '<td><button class="btn sm red" data-undo="' + k.id + '" type="button">Undo</button></td></tr>';
       }).join('') + '</tbody></table></div>' : '<p class="more">None yet.</p>');
+    });
+  }
+
+  function loadHelp() {
+    return api('GET', '/admin/help?status=' + $('hpHs').value).then(function (list) {
+      var open = list.filter(function (t) { return t.status === 'OPEN'; }).length;
+      $('hpHc').textContent = $('hpHs').value === 'OPEN' ? open + ' waiting' : list.length + ' shown';
+      $('hpHelp').innerHTML = list.length ? list.map(function (t) {
+        return '<div class="item" id="hh-' + t.id + '"><div class="t"><b>' + esc(t.full_name ? t.full_name + ' · ' + t.phone : t.contact) + '</b><span class="dim">' + esc(ago(t.created_at)) + ' · ' + esc((t.lang || '').toUpperCase()) + (t.page ? ' · #' + esc(t.page) : '') + '</span></div>' +
+          '<div class="quote" style="border-left-color:var(--gold)">' + esc(t.message) + '</div>' +
+          (t.reply ? '<div class="more"><b>Your answer' + (t.replied_at ? ' (' + esc(ago(t.replied_at)) + ')' : '') + ':</b> ' + esc(t.reply) + '</div>' : '') +
+          (t.status !== 'CLOSED' ? '<textarea placeholder="Your answer (in ' + esc(t.lang === 'ht' ? 'Kreyòl' : t.lang === 'fr' ? 'French' : 'English') + ')"></textarea><div style="display:flex;gap:8px;margin-top:6px"><button class="btn sm grn" data-hrep="' + t.id + '" type="button">Send answer</button><button class="btn sm" data-hclose="' + t.id + '" type="button">Close</button></div>' : '') + '</div>';
+      }).join('') : '<p class="more">No messages.</p>';
     });
   }
 
@@ -308,7 +324,7 @@
   }
 
   function loadAll() {
-    return Promise.all([loadChain(), loadOverview(), loadRobot(), loadKyc(), loadDisputes(), loadOrders(), loadAds(), loadUsers(), loadLimits(), loadBlock()])
+    return Promise.all([loadChain(), loadOverview(), loadHelp(), loadRobot(), loadKyc(), loadDisputes(), loadOrders(), loadAds(), loadUsers(), loadLimits(), loadBlock()])
       .catch(function (e) { toast(e.message, true); });
   }
 
@@ -316,7 +332,9 @@
   function onClick(e) {
     var b = e.target.closest('button,a[data-file],a[data-kview]'); if (!b || !$('hx').contains(b)) return;
     var d = b.dataset;
-    if (d.rechk) run(b, function () { return api('POST', '/staff/kyc/' + d.rechk + '/recheck').then(function () { toast('It will be checked again in about a minute.'); loadKyc(); }); });
+    if (d.hrep) { var ta = $('hh-' + d.hrep).querySelector('textarea'); run(b, function () { return api('POST', '/admin/help/' + d.hrep + '/reply', { reply: ta.value }).then(function (r) { toast(r.emailed ? 'Answer sent (app + email).' : 'Answer saved in the app.'); loadHelp(); }); }); }
+    else if (d.hclose) run(b, function () { return api('POST', '/admin/help/' + d.hclose + '/close').then(loadHelp); });
+    else if (d.rechk) run(b, function () { return api('POST', '/staff/kyc/' + d.rechk + '/recheck').then(function () { toast('It will be checked again in about a minute.'); loadKyc(); }); });
     else if (d.undo) { if (!sure(b)) return; run(b, function () { return api('POST', '/admin/kyc/' + d.undo + '/undo').then(function () { toast('Undone: the ID is back in your waiting list. Trading level back to 0.'); loadRobot(); loadKyc(); loadOverview(); }); }); }
     else if (d.kview) {
       e.preventDefault(); var pp = d.kview.split('/');
