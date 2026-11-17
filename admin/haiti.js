@@ -72,7 +72,7 @@
   // ---------- login ----------
   function loginForm() {
     $('hx').innerHTML = '<div class="login"><h2 style="margin:0 0 6px;font-family:var(--serif)">Ayiti P2P owner login</h2>' +
-      '<p class="more">Use your password, or press <b>Send me a code</b> and use the code from your email. The login stays in this browser only.</p>' +
+      '<p class="more">Owner login = your password <b>and</b> the code from your email (press <b>Send me a code</b>, or just press Log in and the code is sent). No password yet? The code alone works. The login stays in this browser only.</p>' +
       '<label for="hpPhone">Your phone or email</label><input id="hpPhone" autocomplete="username" placeholder="+44 7415 991172 or you@email.com" value="' + esc(store.get('hp2p_phone') || '') + '">' +
       '<label for="hpPw">Password</label><input id="hpPw" type="password" autocomplete="current-password" placeholder="Your Ayiti P2P password">' +
       '<p class="more" style="margin:8px 0 0">No password yet, or forgot it? Use a code:</p>' +
@@ -83,7 +83,7 @@
       var phone = $('hpPhone').value.trim(), code = $('hpCode').value.trim(), pw = $('hpPw').value, base = $('hpApi').value.trim().replace(/\/+$/, '');
       if (base) { BASE = base; store.set('hp2p_api', base === DEFAULT_API ? null : base); }
       return run($('hpGo'), function () {
-        return api('POST', '/auth/login', pw && !code ? { login: phone, password: pw } : { login: phone, code: code }).then(function (r) {
+        return api('POST', '/auth/login', pw ? { login: phone, password: pw, code: code || undefined } : { login: phone, code: code }).then(function (r) {
           if (!r.user || r.user.role !== 'ADMIN') throw new Error('This account is not the owner account.');
           TOKEN = r.token; store.set('hp2p_token', TOKEN); store.set('hp2p_phone', phone); draw();
         });
