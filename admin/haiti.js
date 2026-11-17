@@ -1,5 +1,5 @@
 /* Admin · Ayiti P2P tab: run the Ayiti P2P marketplace from here.
-   Talks to the marketplace API (Render). It has its own owner login: your owner phone + your secret 6-digit ADMIN_LOGIN_CODE.
+   Talks to the marketplace API at ayitip2p.com. Owner login: your owner phone + a code sent to your email.
    The login token is kept only in this browser. Draws the first time the tab opens, refreshes every 60 s while open. */
 (function () {
   'use strict';
@@ -40,6 +40,7 @@
     '#hx .chat{max-height:220px;overflow:auto;background:var(--sheet2);padding:8px 10px;font-size:12.5px;margin:8px 0}#hx .chat div{padding:2px 0}' +
     '#hx .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:13px}#hx .kv span{color:var(--mute)}' +
     '#hx .kmed{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0}#hx .kmed img,#hx .kmed video{width:100%;max-height:220px;object-fit:contain;background:#000;border-radius:4px;display:block}#hx .slot{font-size:12px;color:var(--faint)}' +
+    '#hx .robot{border:1px solid var(--rule2);background:var(--sheet2);padding:8px 10px;margin:8px 0;font-size:13px}#hx .robot ul{list-style:none;padding:0;margin:6px 0}#hx .robot li{padding:2px 0}' +
     '#hx .warn{border:1px solid rgba(240,179,65,.5);background:rgba(240,179,65,.08);padding:10px 12px;font-size:13px}';
 
   var drawn = false, timer = null;
@@ -53,7 +54,7 @@
           if (!r.ok) throw new Error((j && j.error) || ('Server error ' + r.status));
           return j;
         });
-      }, function () { throw new Error('Cannot reach the marketplace server. On the free Render plan it sleeps: wait 30 seconds and press Refresh.'); });
+      }, function () { throw new Error('Cannot reach ayitip2p.com. Check your internet, then press Refresh.'); });
   }
   function toast(msg, bad) {
     var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; if (bad) t.style.background = 'var(--loss)';
@@ -71,7 +72,7 @@
   // ---------- login ----------
   function loginForm() {
     $('hx').innerHTML = '<div class="login"><h2 style="margin:0 0 6px;font-family:var(--serif)">Ayiti P2P owner login</h2>' +
-      '<p class="more">Real money: press <b>Send me a code</b>, the code comes to your email. Test mode: use your secret 6-digit <code>ADMIN_LOGIN_CODE</code>. The login stays in this browser only.</p>' +
+      '<p class="more">Press <b>Send me a code</b>. The code comes to your email. The login stays in this browser only.</p>' +
       '<label for="hpPhone">Owner phone</label><input id="hpPhone" inputmode="tel" placeholder="+509…" value="' + esc(store.get('hp2p_phone') || '') + '">' +
       '<label for="hpCode">Code</label><div style="display:flex;gap:8px"><input id="hpCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6 digits"><button class="btn" id="hpSend" type="button" style="white-space:nowrap">Send me a code</button></div>' +
       '<details style="margin-top:12px"><summary class="more" style="cursor:pointer">Server address</summary><input id="hpApi" value="' + esc(BASE) + '" style="margin-top:6px"></details>' +
@@ -91,7 +92,7 @@
       var phone = $('hpPhone').value.trim();
       return run($('hpSend'), function () {
         return api('POST', '/auth/request-code', { phone: phone }).then(function (r) {
-          toast(r.to ? 'Code sent to ' + r.to + '. Check your email (and spam).' : 'Test mode: use your ADMIN_LOGIN_CODE.');
+          toast('Code sent' + (r.to ? ' to ' + r.to : '') + '. Check your email (and spam).');
         });
       });
     };
@@ -112,7 +113,10 @@
       '<div id="hpOwnBox" style="display:none;margin-top:14px"><p class="more">Take out fees, pause, or decide a dispute. If your wallet does not open inside this box, use <b>Open Owner tools (new tab)</b>.</p><iframe id="hpOwnFrame" title="Owner tools" allow="clipboard-write" style="width:100%;height:1500px;border:1px solid var(--line,#ddd);border-radius:12px;background:#fff"></iframe></div></section>' +
       '<div class="g2"><section class="panel"><div class="ph"><h2>Completed trades · 30 days</h2><small id="hpCh2"></small></div><div class="chart" id="hpCh"></div><div class="ax" id="hpAx"></div></section>' +
       '<section class="panel"><h2>Server</h2><div class="kv" id="hpSrv"></div><div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" id="hpTim" type="button">Run timers now</button><button class="btn sm" id="hpRec" type="button">Check the books (reconcile)</button><a class="btn sm" id="hpOwner" target="_blank" rel="noopener" href="#">Owner tools: contract, fees, pause</a></div><p class="more">Server settings (codes, SMS, escrow) are environment variables. Change them on Render, then it restarts by itself.</p></section></div>' +
-      '<div class="g2"><section class="panel"><div class="ph"><h2>ID checks waiting</h2><small id="hpKc"></small></div><div id="hpKyc"></div></section>' +
+      '<section class="panel"><div class="ph"><h2>Automatic ID check</h2><span class="r" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><label class="more" style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="hpAuto"> Approve clear cases by itself</label><button class="btn sm" id="hpRun" type="button">Check the next ID now</button></span></div>' +
+      '<p class="more">Free, on our own server. For every ID it reads the name and number on the card, compares the face on the ID with the face in the video, checks the head turns left and right (a live person, not a photo), and checks the face and ID number are not already on another account. All clear = approved in about a minute. Anything unsure waits for you below, with the reasons. It never rejects anyone by itself.</p>' +
+      '<div id="hpAutoList"></div></section>' +
+      '<div class="g2"><section class="panel"><div class="ph"><h2>ID checks waiting for you</h2><small id="hpKc"></small></div><div id="hpKyc"></div></section>' +
       '<section class="panel"><div class="ph"><h2>Disputes</h2><small id="hpDc"></small></div><div id="hpDis"></div></section></div>' +
       '<section class="panel"><div class="ph"><h2>Orders</h2><select id="hpOs"><option value="">All</option>' + Object.keys(STATE).map(function (k) { return '<option value="' + k + '">' + STATE[k][0] + '</option>'; }).join('') + '</select></div><div class="tw" id="hpOrd"></div></section>' +
       '<section class="panel"><div class="ph"><h2>Ads on the market</h2><small>You can pause or close any ad</small></div><div class="tw" id="hpAds"></div></section>' +
@@ -131,7 +135,9 @@
     $('hpOs').onchange = loadOrders;
     $('hpQs').onclick = loadUsers; $('hpQ').onkeydown = function (e) { if (e.key === 'Enter') loadUsers(); };
     $('hpTim').onclick = function () { run($('hpTim'), function () { return api('POST', '/admin/run-timers').then(function (r) { toast('Timers ran: ' + JSON.stringify(r)); loadAll(); }); }); };
-    $('hpRec').onclick = function () { run($('hpRec'), function () { return api('GET', '/admin/reconcile').then(function (r) { toast(r.mock ? 'Test mode: escrow is a database ledger, nothing on chain to check.' : 'Reconcile: ' + JSON.stringify(r)); }); }); };
+    $('hpRec').onclick = function () { run($('hpRec'), function () { return api('GET', '/admin/reconcile').then(function (r) { toast('Reconcile: ' + JSON.stringify(r)); }); }); };
+    $('hpAuto').onchange = function () { var on = $('hpAuto').checked; api('POST', '/admin/idcheck', { auto_approve: on }).then(function () { toast(on ? 'Auto-approve is ON.' : 'Auto-approve is OFF: every ID waits for you.'); }, function (e) { toast(e.message, true); $('hpAuto').checked = !on; }); };
+    $('hpRun').onclick = function () { run($('hpRun'), function () { return api('POST', '/admin/idcheck/run').then(function (r) { toast(r.done.length ? 'Checked: ' + r.done.map(function (d) { return d.status === 'AUTO_APPROVED' ? 'approved' : 'needs you'; }).join(', ') : 'Nothing waiting for the robot.'); loadKyc(); loadRobot(); loadOverview(); }); }); };
     $('hpBa').onclick = function () { run($('hpBa'), function () { return api('POST', '/admin/blocklist', { kind: $('hpBk').value, value: $('hpBv').value.trim(), reason: 'Admin' }).then(function () { $('hpBv').value = ''; loadBlock(); }); }); };
   }
 
@@ -155,18 +161,35 @@
       $('hpCh2').textContent = n0(o.volume.htg_all) + ' HTG all time';
       var s = o.server;
       $('hpSrv').innerHTML = [
-        ['Money', s.escrow_mode === 'MOCK' ? '<span class="amb">TEST (fake money)</span>' : '<span class="ok">REAL · ' + esc(s.escrow_mode) + '</span>'],
-        ['Login codes', s.sms === 'mock' ? '<span class="bad">test (code 000000)</span>' : '<span class="ok">' + (s.sms === 'email' ? 'by email (Brevo)' : esc(s.sms)) + '</span>'],
+        ['Money', '<span class="ok">REAL · ' + esc(s.escrow_mode) + '</span>'],
+        ['Login codes', '<span class="ok">' + (s.sms === 'email' ? 'by email (Brevo)' : esc(s.sms)) + '</span>'],
         ['Escrow network', esc(s.network)],
-        ['Owner code', s.owner_code_set ? '<span class="ok">set</span>' : '<span class="bad">NOT SET</span>'],
         ['Version', esc(s.commit || '—')], ['Running since', esc(when(s.started_at)) + ' <span class="dim">(' + ago(s.started_at) + ')</span>'],
       ].map(function (r) { return '<span>' + r[0] + '</span><b>' + r[1] + '</b>'; }).join('');
       var w = [];
-      if (s.escrow_mode === 'MOCK') w.push('Test mode: all money here is fake. Do not let people send real gourdes yet.');
-      if (!s.owner_code_set) w.push('ADMIN_LOGIN_CODE is not set on Render.');
       $('hpWarn').innerHTML = w.length ? '<div class="warn">' + w.map(esc).join('<br>') + '</div>' : '';
       $('hpKc').textContent = o.users.kyc_pending + ' waiting'; $('hpDc').textContent = o.disputes.open + ' open';
       $('hpUpd').textContent = 'Updated ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+    });
+  }
+
+  // What the automatic check saw on one ID.
+  function robot(k) {
+    var r = k.auto_result || {}, st = k.auto_status;
+    if (!st || st === 'QUEUED' || st === 'RUNNING') return '<div class="robot"><b>🤖 ' + (st === 'RUNNING' ? 'Checking now…' : 'Waiting for the automatic check (about 1 minute)') + '</b></div>';
+    return '<div class="robot"><b>🤖 ' + (r.pass ? 'Automatic check: everything passed' : 'Automatic check: needs you') + '</b>' + (r.note ? '<div class="dim">' + esc(r.note) + '</div>' : '') +
+      '<ul>' + (r.checks || []).map(function (c) { return '<li class="' + (c.ok ? 'ok' : c.blocking ? 'bad' : 'amb') + '">' + (c.ok ? '✓ ' : c.blocking ? '✗ ' : '• ') + esc(c.label) + (c.detail ? ' <span class="dim">— ' + esc(c.detail) + '</span>' : '') + '</li>'; }).join('') + '</ul>' +
+      '<button class="btn sm" data-rechk="' + k.id + '" type="button">Check again</button></div>';
+  }
+  // The on/off switch and the last IDs the robot approved (undo if one looks wrong).
+  function loadRobot() {
+    return api('GET', '/admin/idcheck').then(function (s) {
+      $('hpAuto').checked = !!s.auto_approve;
+      $('hpAutoList').innerHTML = '<b style="font-size:13px">Approved by itself, latest first</b>' + (s.recent.length ? '<div class="tw"><table><thead><tr><th>When</th><th>Name</th><th>Phone</th><th>Face match</th><th>Files</th><th></th></tr></thead><tbody>' + s.recent.map(function (k) {
+        return '<tr><td>' + esc(when(k.reviewed_at)) + '</td><td>' + esc(k.full_name) + '</td><td>' + esc(k.phone) + '</td><td class="num">' + Math.round(((k.auto_result || {}).best || 0) * 100) + '%</td>' +
+          '<td>' + ['FRONT', 'BACK', 'VIDEO'].map(function (f) { return '<a href="#" data-kview="' + k.id + '/' + f + '">' + { FRONT: 'front', BACK: 'back', VIDEO: 'video' }[f] + '</a>'; }).join(' · ') + '</td>' +
+          '<td><button class="btn sm red" data-undo="' + k.id + '" type="button">Undo</button></td></tr>';
+      }).join('') + '</tbody></table></div>' : '<p class="more">None yet.</p>');
     });
   }
 
@@ -181,6 +204,7 @@
           (k.challenge ? '<span>Must say</span><b>"My name is ' + esc(k.full_name) + '. My phone number is ' + esc(k.phone) + '. My code is ' + esc(k.challenge) + '."</b>' : '') + '</div>' +
           (String(k.name_on_id || '').trim().toLowerCase() !== String(k.full_name || '').trim().toLowerCase() ? '<div class="amb" style="font-size:12.5px">Names do not match exactly. Check carefully.</div>' : '') +
           (files.length ? '<div class="kmed">' + files.map(function (f) { return '<div><span class="dim">' + { FRONT: 'Front', BACK: 'Back', VIDEO: 'Video' }[f] + '</span><div class="slot" data-kf="' + k.id + '/' + f + '">Loading…</div></div>'; }).join('') + '</div>' : '') +
+          robot(k) +
           '<p class="more">Check: the face in the video is the face on the ID · they say the right name, phone and code · the ID looks real and not expired.</p>' +
           '<div style="display:flex;gap:8px;margin-top:6px"><button class="btn sm grn" data-kyc="' + k.id + '" data-ok="1" type="button">Approve</button><button class="btn sm red" data-kyc="' + k.id + '" type="button">Reject</button></div></div>';
       }).join('') : '<p class="more">Nobody is waiting.</p>';
@@ -270,11 +294,10 @@
 
   function loadChain() {
     return api('GET', '/admin/chain-status').then(function (c) {
-      if (c.mock) { $('hpChain').innerHTML = '<span>Status</span><b><span class="amb">TEST mode: no contract yet. Money is a database ledger.</span></b>'; return; }
       var short = function (a) { return a ? '<code>' + esc(a.slice(0, 6) + '…' + a.slice(-4)) + '</code>' : '—'; };
       var fees = Object.keys(c.fees_waiting || {}).map(function (k) { return n2(c.fees_waiting[k]) + ' ' + k; }).join(' · ');
       $('hpChain').innerHTML = [
-        ['Network', c.chain_id === 42161 ? '<span class="ok">Arbitrum One (REAL money)</span>' : '<span class="amb">Practice network ' + esc(c.chain_id) + '</span>'],
+        ['Network', c.chain_id === 42161 ? '<span class="ok">Arbitrum One (REAL money)</span>' : '<span class="bad">Wrong network ' + esc(c.chain_id) + '</span>'],
         ['Contract', (c.explorer ? '<a href="' + esc(c.explorer) + '" target="_blank" rel="noopener">' : '') + short(c.contract) + (c.explorer ? ' ↗</a>' : '')],
         ['Contract state', c.paused ? '<span class="bad">PAUSED (no new locks)</span>' : '<span class="ok">Running</span>'],
         ['Fees waiting for you', '<span class="ok">' + esc(fees || '0') + '</span> <span class="dim">(take them out in Owner tools)</span>'],
@@ -285,15 +308,21 @@
   }
 
   function loadAll() {
-    return Promise.all([loadChain(), loadOverview(), loadKyc(), loadDisputes(), loadOrders(), loadAds(), loadUsers(), loadLimits(), loadBlock()])
+    return Promise.all([loadChain(), loadOverview(), loadRobot(), loadKyc(), loadDisputes(), loadOrders(), loadAds(), loadUsers(), loadLimits(), loadBlock()])
       .catch(function (e) { toast(e.message, true); });
   }
 
   // one click handler for everything inside the tab
   function onClick(e) {
-    var b = e.target.closest('button,a[data-file]'); if (!b || !$('hx').contains(b)) return;
+    var b = e.target.closest('button,a[data-file],a[data-kview]'); if (!b || !$('hx').contains(b)) return;
     var d = b.dataset;
-    if (d.kyc) run(b, function () { return api('POST', '/staff/kyc/' + d.kyc + '/decision', { approve: !!d.ok }).then(function () { toast(d.ok ? 'Approved.' : 'Rejected.'); loadKyc(); loadOverview(); }); });
+    if (d.rechk) run(b, function () { return api('POST', '/staff/kyc/' + d.rechk + '/recheck').then(function () { toast('It will be checked again in about a minute.'); loadKyc(); }); });
+    else if (d.undo) { if (!sure(b)) return; run(b, function () { return api('POST', '/admin/kyc/' + d.undo + '/undo').then(function () { toast('Undone: the ID is back in your waiting list. Trading level back to 0.'); loadRobot(); loadKyc(); loadOverview(); }); }); }
+    else if (d.kview) {
+      e.preventDefault(); var pp = d.kview.split('/');
+      run(b, function () { return fetch(BASE + '/api/staff/kyc/' + pp[0] + '/file/' + pp[1], { headers: { authorization: 'Bearer ' + TOKEN } }).then(function (r) { if (!r.ok) throw new Error('Could not open the file.'); return r.blob(); }).then(function (bl) { window.open(URL.createObjectURL(bl), '_blank', 'noopener'); }); });
+    }
+    else if (d.kyc) run(b, function () { return api('POST', '/staff/kyc/' + d.kyc + '/decision', { approve: !!d.ok }).then(function () { toast(d.ok ? 'Approved.' : 'Rejected.'); loadKyc(); loadOverview(); }); });
     else if (d.dis) run(b, function () { return openCase(d.dis, b); });
     else if (d.vote) {
       var item = $('hd-' + d.id), note = item.querySelector('textarea').value, fake = item.querySelector('.fk').checked;
