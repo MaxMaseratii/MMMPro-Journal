@@ -73,7 +73,7 @@
   function loginForm() {
     $('hx').innerHTML = '<div class="login"><h2 style="margin:0 0 6px;font-family:var(--serif)">Ayiti P2P owner login</h2>' +
       '<p class="more">Press <b>Send me a code</b>. The code comes to your email. The login stays in this browser only.</p>' +
-      '<label for="hpPhone">Owner phone</label><input id="hpPhone" inputmode="tel" placeholder="+509…" value="' + esc(store.get('hp2p_phone') || '') + '">' +
+      '<label for="hpPhone">Your phone or email</label><input id="hpPhone" autocomplete="username" placeholder="+44 7415 991172 or you@email.com" value="' + esc(store.get('hp2p_phone') || '') + '">' +
       '<label for="hpCode">Code</label><div style="display:flex;gap:8px"><input id="hpCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6 digits"><button class="btn" id="hpSend" type="button" style="white-space:nowrap">Send me a code</button></div>' +
       '<details style="margin-top:12px"><summary class="more" style="cursor:pointer">Server address</summary><input id="hpApi" value="' + esc(BASE) + '" style="margin-top:6px"></details>' +
       '<div style="margin-top:14px;display:flex;gap:8px"><button class="btn gold" id="hpGo" type="button">Log in</button><a class="btn" href="' + esc(BASE) + '" target="_blank" rel="noopener">Open the app</a></div></div>';
@@ -81,8 +81,8 @@
       var phone = $('hpPhone').value.trim(), code = $('hpCode').value.trim(), base = $('hpApi').value.trim().replace(/\/+$/, '');
       if (base) { BASE = base; store.set('hp2p_api', base === DEFAULT_API ? null : base); }
       return run($('hpGo'), function () {
-        return api('POST', '/auth/login', { phone: phone, code: code }).then(function (r) {
-          if (!r.user || r.user.role !== 'ADMIN') throw new Error('This phone is not the owner account.');
+        return api('POST', '/auth/login', { login: phone, code: code }).then(function (r) {
+          if (!r.user || r.user.role !== 'ADMIN') throw new Error('This account is not the owner account.');
           TOKEN = r.token; store.set('hp2p_token', TOKEN); store.set('hp2p_phone', phone); draw();
         });
       });
@@ -91,7 +91,7 @@
     $('hpSend').onclick = function () {
       var phone = $('hpPhone').value.trim();
       return run($('hpSend'), function () {
-        return api('POST', '/auth/request-code', { phone: phone }).then(function (r) {
+        return api('POST', '/auth/request-code', { login: phone, mode: 'login' }).then(function (r) {
           toast('Code sent' + (r.to ? ' to ' + r.to : '') + '. Check your email (and spam).');
         });
       });
