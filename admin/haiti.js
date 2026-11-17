@@ -6,7 +6,9 @@
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
   var store = { get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set: function (k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} } };
-  var DEFAULT_API = 'https://haiti-p2p-usdt-marketplace.onrender.com';
+  var DEFAULT_API = 'https://ayitip2p.com';
+  // The old onrender.com address is switched off: move saved logins to the real domain.
+  if (/onrender\.com/.test(store.get('hp2p_api') || '')) { store.set('hp2p_api', null); store.set('hp2p_token', null); }
   var BASE = (store.get('hp2p_api') || DEFAULT_API).replace(/\/+$/, '');
   var TOKEN = store.get('hp2p_token');
   var n0 = function (x) { return Number(x || 0).toLocaleString('en-US', { maximumFractionDigits: 0 }); };
