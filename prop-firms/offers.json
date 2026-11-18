@@ -1,17 +1,17 @@
 {
-  "updated": "2026-11-17T06:35:07Z",
-  "updated_label": "17 Nov 2026, 06:35 London",
+  "updated": "2026-11-18T06:35:16Z",
+  "updated_label": "18 Nov 2026, 06:35 London",
   "offers": [
     {
       "firm": "Apex Trader Funding",
       "plans": [],
       "code": null,
       "pct": 90,
-      "text": "90% off any size evaluation (Milestone Celebration Sale)",
+      "text": "90% off Legacy accounts in 5-packs (5 accounts in one checkout)",
       "ends": null,
-      "src": "https://x.com/ApexTradeFund/status/2121252212311458226",
+      "src": "https://x.com/ApexTradeFund/status/2122352938723295336",
       "via": "x",
-      "checked": "2026-11-14"
+      "checked": "2026-11-17"
     },
     {
       "firm": "IQ Capital",
@@ -22,7 +22,7 @@
       "ends": null,
       "src": "https://www.iqcapital.io/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Funded Futures Network",
@@ -35,7 +35,21 @@
       "ends": null,
       "src": "https://fundedfuturesnetwork.com/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
+    },
+    {
+      "firm": "FuturesElite",
+      "plans": [],
+      "sizes": [
+        50
+      ],
+      "code": "LAUNCH",
+      "pct": 70,
+      "text": "Launch week: 5 x 50K Instant Elite accounts for $209.70 each with code LAUNCH (5th account free + Breakout Pack + 3,000 credits)",
+      "ends": null,
+      "src": "https://x.com/Futureselitecom/status/2122301881359736869",
+      "via": "x",
+      "checked": "2026-11-17"
     },
     {
       "firm": "Blueberry Futures",
@@ -46,7 +60,7 @@
       "ends": null,
       "src": "https://blueberryfutures.com/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "FundedHero Futures",
@@ -57,7 +71,7 @@
       "ends": null,
       "src": "https://fundedherofutures.com/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Top One Futures",
@@ -70,7 +84,7 @@
       "ends": null,
       "src": "https://www.toponefutures.com/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "TX3 Futures",
@@ -81,7 +95,7 @@
       "ends": null,
       "src": "https://www.tx3futures.com/en/tx3-core",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Alpha Futures",
@@ -95,7 +109,7 @@
       "ends": null,
       "src": "https://alpha-futures.com/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "FundedNext Futures",
@@ -106,7 +120,7 @@
       "ends": null,
       "src": "https://fundednext.com/futures",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Tradeify",
@@ -124,7 +138,7 @@
       "ends": null,
       "src": "https://tradeify.co/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Alpha Futures",
@@ -137,7 +151,7 @@
       "ends": null,
       "src": "https://alpha-futures.com/product/zero",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "MyFundedFutures",
@@ -148,7 +162,7 @@
       "ends": null,
       "src": "https://myfundedfutures.com/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Futureify (FXIFY Futures)",
@@ -159,7 +173,7 @@
       "ends": null,
       "src": "https://futureify.com/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Shark Futures",
@@ -170,7 +184,7 @@
       "ends": null,
       "src": "https://www.sharkfutures.com/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Blue Guardian Futures",
@@ -181,7 +195,7 @@
       "ends": null,
       "src": "https://blueguardian.com/futures",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Tradeify",
@@ -192,7 +206,7 @@
       "ends": null,
       "src": "https://tradeify.co/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "FunderPro Futures",
@@ -201,9 +215,9 @@
       "pct": 30,
       "text": "30% off every challenge with code BF30",
       "ends": "2026-11-22",
-      "src": "https://x.com/FunderPro/status/2122238260558602680",
+      "src": "https://x.com/FunderPro/status/2122600669404185073",
       "via": "x",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Phoenix Trader Funding",
@@ -227,13 +241,13 @@
     {
       "firm": "Aqua Futures (AquaFunded)",
       "plans": [],
-      "code": "HONOR",
-      "pct": 25,
-      "text": "Veterans Day Sale: 25% off",
+      "code": "BLACKFRIDAY",
+      "pct": 35,
+      "text": "Black Friday: 35% off every account",
       "ends": null,
       "src": "https://www.aquafunded.com/futures",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "E8 Futures",
@@ -244,18 +258,18 @@
       "ends": null,
       "src": "https://e8futures.com/",
       "via": "site",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Phidias Propfirm",
       "plans": [],
       "code": "HONOR85",
       "pct": null,
-      "text": "85% off 150K one-time accounts with code HONOR85 (150K Express to Live $168.45, 150K Premium and Fundamental $129.45); up to 80% off other accounts",
+      "text": "Up to 85% off one-time accounts and up to 60% off evals with code HONOR85 (150K Premium for $168.45)",
       "ends": "2026-11-24",
-      "src": "https://x.com/PhidiasPropfirm/status/2121635125624443082",
+      "src": "https://x.com/PhidiasPropfirm/status/2122427181632500089",
       "via": "x",
-      "checked": "2026-11-16"
+      "checked": "2026-11-17"
     },
     {
       "firm": "Traders Launch",
@@ -270,6 +284,7 @@
     }
   ],
   "inboxDone": [
+    "grok:2026-11-17.md",
     "grok:2026-11-16.md",
     "grok:2026-11-15.md",
     "grok:2026-11-14.md",
@@ -278,6 +293,7 @@
     "grok:2026-11-11.md"
   ],
   "log": [
+    "2026-11-18: 23 live · added FuturesElite 70% LAUNCH (5x 50K pack) · Aqua now 35% BLACKFRIDAY (was 25% HONOR) · Apex 90% now Legacy 5-packs · Phidias HONOR85 text updated · site scan missing for today (used 17 Nov scan) · Grok file for today missing (handled 17 Nov file) · inbox empty · web search only affiliate codes · 12 direct links",
     "2026-11-17: 22 live · added FunderPro 30% BF30 (ends 22 Nov), Phoenix 50K $89.60 CUP30 (ends 18 Nov), Tradeify 45% off 25K NOV · Tradeify now 30% all (was 40% Growth) · Blue Guardian now 30% GUARD30 (was 25% BG25) · site scan missing for today (used 16 Nov scan) · Grok file for today missing (handled 16 Nov file) · inbox empty · web search only affiliate codes · 12 direct links",
     "2026-11-16: 20 live · removed FunderPro 25% EARLYBF25 (ended 15 Nov) · Phidias HONOR85 updated: 150K one-time 85% off, ends 24 Nov (Grok 15 Nov, official X) · site scan missing for today (used 15 Nov scan, it still shows all other offers) · Grok file for today missing · inbox empty · web search found only affiliate codes · 12 direct links",
     "2026-11-15: 21 live · no change · site scan missing (last scan 14 Nov, today's run not done yet) · Grok file missing · inbox empty · web search found only affiliate codes · kept all offers with old checked date · 12 direct links",
