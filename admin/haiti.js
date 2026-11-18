@@ -225,6 +225,7 @@
     });
   }
 
+  var nameKey = function (s) { return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(Boolean).sort().join(' '); };
   var ID_NAME = { NATIONAL_ID: 'National ID card', PASSPORT: 'Passport', DRIVER_LICENSE: "Driver's license" };
   function loadKyc() {
     return api('GET', '/staff/kyc').then(function (list) {
@@ -234,11 +235,11 @@
           '<div class="kv" style="margin:6px 0"><span>Phone</span><b>' + esc(k.phone) + '</b><span>Name on ID</span><b>' + esc(k.name_on_id) + '</b>' +
           '<span>ID</span><b>' + esc((ID_NAME[k.id_type] || k.id_type || 'old form') + (k.id_number ? ' · ' + k.id_number : '')) + '</b>' +
           (k.challenge ? '<span>Must say</span><b>"My name is ' + esc(k.full_name) + '. My phone number is ' + esc(k.phone) + '. My code is ' + esc(k.challenge) + '."</b>' : '') + '</div>' +
-          (String(k.name_on_id || '').trim().toLowerCase() !== String(k.full_name || '').trim().toLowerCase() ? '<div class="amb" style="font-size:12.5px">Names do not match exactly. Check carefully.</div>' : '') +
+          (nameKey(k.name_on_id) !== nameKey(k.full_name) ? '<div class="warn" style="margin:6px 0">The name on the ID is not the account name. Plain <b>Approve</b> will not work. If the ID is good, press <b>Approve + use ID name</b>: the account name becomes <b>' + esc(k.name_on_id) + '</b>.</div>' : '') +
           (files.length ? '<div class="kmed">' + files.map(function (f) { return '<div><span class="dim">' + { FRONT: 'Front', BACK: 'Back', VIDEO: 'Video' }[f] + '</span><div class="slot" data-kf="' + k.id + '/' + f + '">Loading…</div></div>'; }).join('') + '</div>' : '') +
           robot(k) +
           '<p class="more">Check: the face in the video is the face on the ID · they say the right name, phone and code · the ID looks real and not expired.</p>' +
-          '<div style="display:flex;gap:8px;margin-top:6px"><button class="btn sm grn" data-kyc="' + k.id + '" data-ok="1" type="button">Approve</button><button class="btn sm red" data-kyc="' + k.id + '" type="button">Reject</button></div></div>';
+          '<div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">' + (nameKey(k.name_on_id) !== nameKey(k.full_name) ? '<button class="btn sm grn" data-kyc="' + k.id + '" data-ok="1" data-idname="1" type="button">Approve + use ID name</button>' : '<button class="btn sm grn" data-kyc="' + k.id + '" data-ok="1" type="button">Approve</button>') + '<button class="btn sm red" data-kyc="' + k.id + '" type="button">Reject</button></div><div class="bad" data-kerr="' + k.id + '" style="font-size:13px;margin-top:6px"></div></div>';
       }).join('') : '<p class="more">Nobody is waiting.</p>';
       // load the photos and the video (they need the login token)
       [].forEach.call($('hpKyc').querySelectorAll('[data-kf]'), function (slot) {
@@ -357,7 +358,17 @@
       e.preventDefault(); var pp = d.kview.split('/');
       run(b, function () { return fetch(BASE + '/api/staff/kyc/' + pp[0] + '/file/' + pp[1], { headers: { authorization: 'Bearer ' + TOKEN } }).then(function (r) { if (!r.ok) throw new Error('Could not open the file.'); return r.blob(); }).then(function (bl) { window.open(URL.createObjectURL(bl), '_blank', 'noopener'); }); });
     }
-    else if (d.kyc) run(b, function () { return api('POST', '/staff/kyc/' + d.kyc + '/decision', { approve: !!d.ok }).then(function () { toast(d.ok ? 'Approved.' : 'Rejected.'); loadKyc(); loadOverview(); }); });
+    else if (d.kyc) {
+      var kerr = $('hx').querySelector('[data-kerr="' + d.kyc + '"]'); if (kerr) kerr.textContent = '';
+      b.disabled = true;
+      api('POST', '/staff/kyc/' + d.kyc + '/decision', { approve: !!d.ok, use_id_name: !!d.idname })
+        .then(function () { toast(d.ok ? 'Approved. They can trade now.' : 'Rejected.'); loadKyc(); loadOverview(); loadUsers(); },
+          function (e) {
+            // keep the reason on screen (a toast is easy to miss), and refresh if it was already decided
+            if (kerr) kerr.textContent = e.message; toast(e.message, true); b.disabled = false;
+            if (/Already decided/.test(e.message)) { loadKyc(); loadRobot(); loadOverview(); loadUsers(); }
+          });
+    }
     else if (d.dis) run(b, function () { return openCase(d.dis, b); });
     else if (d.vote) {
       var item = $('hd-' + d.id), note = item.querySelector('textarea').value, fake = item.querySelector('.fk').checked;
