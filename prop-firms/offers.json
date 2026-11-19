@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-18T06:35:16Z",
-  "updated_label": "18 Nov 2026, 06:35 London",
+  "updated": "2026-11-19T06:35:51Z",
+  "updated_label": "19 Nov 2026, 06:35 London",
   "offers": [
     {
       "firm": "Apex Trader Funding",
@@ -22,7 +22,7 @@
       "ends": null,
       "src": "https://www.iqcapital.io/",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "Funded Futures Network",
@@ -32,10 +32,10 @@
       "code": "NEXUS",
       "pct": 70,
       "text": "70% off any Steady or Max account with code NEXUS (or 50% off + buy 1 get 1 free on Max, no code)",
-      "ends": null,
+      "ends": "2026-11-30",
       "src": "https://fundedfuturesnetwork.com/",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "FuturesElite",
@@ -60,7 +60,7 @@
       "ends": null,
       "src": "https://blueberryfutures.com/",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "FundedHero Futures",
@@ -71,7 +71,7 @@
       "ends": null,
       "src": "https://fundedherofutures.com/",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "Top One Futures",
@@ -84,7 +84,7 @@
       "ends": null,
       "src": "https://www.toponefutures.com/",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "TX3 Futures",
@@ -95,7 +95,7 @@
       "ends": null,
       "src": "https://www.tx3futures.com/en/tx3-core",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "Alpha Futures",
@@ -109,7 +109,7 @@
       "ends": null,
       "src": "https://alpha-futures.com/",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "FundedNext Futures",
@@ -120,7 +120,7 @@
       "ends": null,
       "src": "https://fundednext.com/futures",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "Tradeify",
@@ -138,7 +138,7 @@
       "ends": null,
       "src": "https://tradeify.co/",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "Alpha Futures",
@@ -151,7 +151,7 @@
       "ends": null,
       "src": "https://alpha-futures.com/product/zero",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "MyFundedFutures",
@@ -162,7 +162,7 @@
       "ends": null,
       "src": "https://myfundedfutures.com/",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "Futureify (FXIFY Futures)",
@@ -173,7 +173,7 @@
       "ends": null,
       "src": "https://futureify.com/",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "Shark Futures",
@@ -184,59 +184,7 @@
       "ends": null,
       "src": "https://www.sharkfutures.com/",
       "via": "site",
-      "checked": "2026-11-17"
-    },
-    {
-      "firm": "Blue Guardian Futures",
-      "plans": [],
-      "code": "GUARD30",
-      "pct": 30,
-      "text": "30% off with code GUARD30",
-      "ends": null,
-      "src": "https://blueguardian.com/futures",
-      "via": "site",
-      "checked": "2026-11-17"
-    },
-    {
-      "firm": "Tradeify",
-      "plans": [],
-      "code": "NOV",
-      "pct": 30,
-      "text": "30% off all accounts with code NOV + 2x Gems",
-      "ends": null,
-      "src": "https://tradeify.co/",
-      "via": "site",
-      "checked": "2026-11-17"
-    },
-    {
-      "firm": "FunderPro Futures",
-      "plans": [],
-      "code": "BF30",
-      "pct": 30,
-      "text": "30% off every challenge with code BF30",
-      "ends": "2026-11-22",
-      "src": "https://x.com/FunderPro/status/2122600669404185073",
-      "via": "x",
-      "checked": "2026-11-17"
-    },
-    {
-      "firm": "Phoenix Trader Funding",
-      "plans": [
-        "phoenix-classic"
-      ],
-      "sizes": [
-        50
-      ],
-      "prices": {
-        "50": 89.6
-      },
-      "code": "CUP30",
-      "pct": 30,
-      "text": "50K Classic Growth for $89.60 (list $128) with code CUP30",
-      "ends": "2026-11-18",
-      "src": "https://x.com/phoenixfunding/status/2121929528394006753",
-      "via": "x",
-      "checked": "2026-11-16"
+      "checked": "2026-11-18"
     },
     {
       "firm": "Aqua Futures (AquaFunded)",
@@ -247,7 +195,51 @@
       "ends": null,
       "src": "https://www.aquafunded.com/futures",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
+    },
+    {
+      "firm": "Futureify (FXIFY Futures)",
+      "plans": [],
+      "code": "BLACK35",
+      "pct": 35,
+      "text": "Black Friday: 35% off all programs with code BLACK35 (not Instant Funding Lite)",
+      "ends": "2026-12-09",
+      "src": "https://x.com/fxifycom/status/2122646043820978386",
+      "via": "x",
+      "checked": "2026-11-18"
+    },
+    {
+      "firm": "Blue Guardian Futures",
+      "plans": [],
+      "code": "GUARD30",
+      "pct": 30,
+      "text": "30% off with code GUARD30",
+      "ends": null,
+      "src": "https://blueguardian.com/futures",
+      "via": "site",
+      "checked": "2026-11-18"
+    },
+    {
+      "firm": "Tradeify",
+      "plans": [],
+      "code": "NOV",
+      "pct": 30,
+      "text": "30% off all accounts with code NOV + 2x Gems",
+      "ends": null,
+      "src": "https://tradeify.co/",
+      "via": "site",
+      "checked": "2026-11-18"
+    },
+    {
+      "firm": "FunderPro Futures",
+      "plans": [],
+      "code": "BF30",
+      "pct": 30,
+      "text": "30% off every challenge with code BF30",
+      "ends": "2026-11-22",
+      "src": "https://x.com/FunderPro/status/2122736550718931079",
+      "via": "x",
+      "checked": "2026-11-18"
     },
     {
       "firm": "E8 Futures",
@@ -258,7 +250,7 @@
       "ends": null,
       "src": "https://e8futures.com/",
       "via": "site",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "Phidias Propfirm",
@@ -269,7 +261,7 @@
       "ends": "2026-11-24",
       "src": "https://x.com/PhidiasPropfirm/status/2122427181632500089",
       "via": "x",
-      "checked": "2026-11-17"
+      "checked": "2026-11-18"
     },
     {
       "firm": "Traders Launch",
@@ -284,6 +276,7 @@
     }
   ],
   "inboxDone": [
+    "grok:2026-11-18.md",
     "grok:2026-11-17.md",
     "grok:2026-11-16.md",
     "grok:2026-11-15.md",
@@ -293,6 +286,7 @@
     "grok:2026-11-11.md"
   ],
   "log": [
+    "2026-11-19: 23 live · added Futureify 35% BLACK35 (ends 9 Dec, official X) · removed Phoenix CUP30 (ended 18 Nov) · FFN Black Friday ends 30 Nov · FunderPro BF30 re-confirmed · site scan missing for today (used 18 Nov 14:29 UTC scan) · Grok file for today missing (handled 18 Nov file) · inbox empty · web search only affiliate codes · 12 direct links",
     "2026-11-18: 23 live · added FuturesElite 70% LAUNCH (5x 50K pack) · Aqua now 35% BLACKFRIDAY (was 25% HONOR) · Apex 90% now Legacy 5-packs · Phidias HONOR85 text updated · site scan missing for today (used 17 Nov scan) · Grok file for today missing (handled 17 Nov file) · inbox empty · web search only affiliate codes · 12 direct links",
     "2026-11-17: 22 live · added FunderPro 30% BF30 (ends 22 Nov), Phoenix 50K $89.60 CUP30 (ends 18 Nov), Tradeify 45% off 25K NOV · Tradeify now 30% all (was 40% Growth) · Blue Guardian now 30% GUARD30 (was 25% BG25) · site scan missing for today (used 16 Nov scan) · Grok file for today missing (handled 16 Nov file) · inbox empty · web search only affiliate codes · 12 direct links",
     "2026-11-16: 20 live · removed FunderPro 25% EARLYBF25 (ended 15 Nov) · Phidias HONOR85 updated: 150K one-time 85% off, ends 24 Nov (Grok 15 Nov, official X) · site scan missing for today (used 15 Nov scan, it still shows all other offers) · Grok file for today missing · inbox empty · web search found only affiliate codes · 12 direct links",
