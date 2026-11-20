@@ -9,6 +9,7 @@ import { buildServer } from './tools.js';
 import { ACCOUNTS } from './accounts.js';
 import * as mail from './mail.js';
 import * as ms from './ms.js';
+import * as cache from './cache.js';
 import { messagePage } from './admin.js';
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -44,7 +45,7 @@ app.use((req, res, next) => {
 });
 
 const notFound = (_req, res) => res.status(404).type('text/plain').send('Not found');
-app.get('/healthz', (_req, res) => res.type('text/plain').send('ok v3'));
+app.get('/healthz', (_req, res) => res.type('text/plain').send('ok v4'));
 
 // ---------- Claude connector (stateless Streamable HTTP) ----------
 const guard = (req, res, next) => (tokenMatches(req.params.token) ? next() : notFound(req, res));
@@ -105,20 +106,42 @@ const run = (fn) => async (req, res) => {
   }
 };
 
-api.get('/overview', run(async () => {
+function setupInfo() {
   const missing = ACCOUNTS.filter((a) => a.secret && !process.env[a.secret]).map((a) => `${a.secret} (app password for ${a.email})`);
   if (ACCOUNTS.some((a) => a.kind === 'outlook') && !ms.msConfigured()) missing.push('MS_CLIENT_ID and MS_CLIENT_SECRET (only for Hotmail)');
   if (!TOKEN_OK) missing.push('HUB_TOKEN (32+ random characters, turns on the Claude connector)');
   return {
-    accounts: await mail.listAccounts(),
     connector_url: TOKEN_OK ? `${ms.publicBase()}/mcp/${TOKEN}` : null,
     hotmail: { configured: ms.msConfigured(), connected: ms.msConnected() },
     missing,
   };
+}
+
+// Everything the Mail tab needs to open, in one call, straight from memory.
+api.get('/boot', run(async (req) => {
+  await cache.ready();
+  return { ...cache.snapshot({ account: req.query.account || 'all', unreadOnly: req.query.unread === '1' }), ...setupInfo() };
+}));
+
+// "Refresh" button: re-check every inbox now.
+api.post('/sync', run(async () => {
+  await cache.syncAll(true);
+  return { ...cache.snapshot(), ...setupInfo() };
+}));
+
+api.get('/overview', run(async () => {
+  await cache.ready();
+  return { accounts: cache.snapshot().accounts, ...setupInfo() };
 }));
 
 api.get('/search', run(async (req) => {
   const q = req.query;
+  if (!q.q && (!q.folder || q.folder === 'inbox')) {
+    // Plain Inbox view: answer from memory.
+    await cache.ready();
+    const snap = cache.snapshot({ account: q.account || 'all', unreadOnly: q.unread === '1', limit: Math.min(Number(q.limit) || 80, 200) });
+    return { results: [{ account: q.account || 'all', messages: snap.rows }], accounts: snap.accounts, synced_at: snap.synced_at };
+  }
   return {
     results: await mail.searchEmails({
       account: q.account || 'all',
@@ -130,7 +153,16 @@ api.get('/search', run(async (req) => {
   };
 }));
 
-api.get('/read', run(async (req) => ({ message: await mail.readEmail({ account: req.query.account, folder: req.query.folder, uid: Number(req.query.uid), includeHtml: true }) })));
+api.get('/read', run(async (req) => {
+  const { account, folder } = req.query;
+  const uid = Number(req.query.uid);
+  const key = cache.readKey(account, folder, uid);
+  const hit = cache.getRead(key);
+  if (hit) return { message: hit, cached: true };
+  const message = await mail.readEmail({ account, folder, uid, includeHtml: true });
+  cache.putRead(key, message);
+  return { message };
+}));
 
 const ACTIONS = {
   trash: mail.trashEmails,
@@ -142,7 +174,9 @@ const ACTIONS = {
 api.post('/act', run(async (req) => {
   const { action, account, folder, uids } = req.body || {};
   if (!ACTIONS[action]) throw new Error(`Unknown action "${action}"`);
-  return { result: await ACTIONS[action]({ account, folder, uids }) };
+  const result = await ACTIONS[action]({ account, folder, uids });
+  cache.applyAction(result.account || account, result.folder || folder, result.uids || uids, action);
+  return { result };
 }));
 
 api.post('/unsubscribe', run(async (req) => ({ result: await mail.unsubscribe(req.body || {}) })));
@@ -171,6 +205,7 @@ app.use(notFound);
 
 app.listen(PORT, () => {
   console.log(`MiniMax OS engine listening on ${PORT}`);
+  cache.start();
   const missing = ACCOUNTS.filter((a) => a.secret && !process.env[a.secret]).map((a) => a.secret);
   if (missing.length) console.log(`Missing app passwords: ${missing.join(', ')}`);
 });

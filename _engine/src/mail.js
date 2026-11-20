@@ -29,29 +29,32 @@ function withTimeout(promise, ms_, label) {
   return Promise.race([promise, timer]).finally(() => clearTimeout(t));
 }
 
-// One open connection per mailbox, reused for 4 minutes, so each click does not log in again.
-const POOL = new Map(); // account id -> { client, connecting, timer }
-const IDLE_MS = 4 * 60 * 1000;
+// One open connection per mailbox, kept alive (a small "still here" ping every 2 minutes),
+// so no click ever waits for a fresh Gmail login.
+const POOL = new Map(); // account id -> { client, connecting, ka }
+const KEEPALIVE_MS = 2 * 60 * 1000;
 
 function dropClient(id) {
   const e = POOL.get(id);
   POOL.delete(id);
-  if (e?.timer) clearTimeout(e.timer);
+  if (e?.ka) clearInterval(e.ka);
   if (e?.client) e.client.logout().catch(() => e.client.close());
 }
 
-function touch(id, entry) {
-  clearTimeout(entry.timer);
-  entry.timer = setTimeout(() => { if (POOL.get(id) === entry) dropClient(id); }, IDLE_MS);
-  entry.timer.unref?.();
+function keepAlive(id, entry) {
+  entry.ka = setInterval(() => {
+    if (POOL.get(id) !== entry || !entry.client?.usable) return dropClient(id);
+    entry.client.noop().catch(() => dropClient(id));
+  }, KEEPALIVE_MS);
+  entry.ka.unref?.();
 }
 
 async function getClient(acc) {
   const have = POOL.get(acc.id);
-  if (have?.client?.usable) { touch(acc.id, have); return have.client; }
+  if (have?.client?.usable) return have.client;
   if (have?.connecting) return have.connecting;
   if (have) dropClient(acc.id);
-  const entry = { client: null, connecting: null, timer: null };
+  const entry = { client: null, connecting: null, ka: null };
   POOL.set(acc.id, entry);
   entry.connecting = (async () => {
     const client = new ImapFlow({
@@ -63,11 +66,11 @@ async function getClient(acc) {
       socketTimeout: 90000,
     });
     client.on('error', () => {}); // surfaced through the awaited calls
-    client.on('close', () => { if (POOL.get(acc.id) === entry) POOL.delete(acc.id); });
+    client.on('close', () => { if (entry.ka) clearInterval(entry.ka); if (POOL.get(acc.id) === entry) POOL.delete(acc.id); });
     await client.connect();
     entry.client = client;
     entry.connecting = null;
-    touch(acc.id, entry);
+    keepAlive(acc.id, entry);
     return client;
   })().catch((err) => {
     if (POOL.get(acc.id) === entry) POOL.delete(acc.id);
@@ -167,7 +170,7 @@ function hasAttachment(node) {
 
 const addr = (list) => (list || []).map((a) => (a.name ? `${a.name} <${a.address}>` : a.address)).join(', ');
 
-async function searchOne(acc, opts) {
+export async function searchOne(acc, opts) {
   const limit = Math.min(Math.max(opts.limit || 20, 1), 50);
   return withImap(acc, async (client) => {
     const path = await resolveFolder(client, acc, opts.folder);
