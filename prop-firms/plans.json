@@ -1,8 +1,8 @@
 {
  "title": "One-Pay Futures Prop Plans",
  "summary": "Only plans with no activation fee and an end-of-day or static drawdown in both the evaluation and the funded account. One row per account size, lowest to highest.",
- "verified": "2026-11-11",
- "verified_label": "11 Nov 2026 (London time)",
+ "verified": "2026-11-20",
+ "verified_label": "20 Nov 2026 (London time)",
  "criteria": [
   "No activation fee",
   "One-time payment (monthly-billed plans hidden behind a toggle)",
@@ -424,8 +424,8 @@
    "consistency": "40% in eval (50% add-on); none funded",
    "payout": "Daily or every 5 days (choose after passing)",
    "maxAcc": "5",
-   "notes": "No daily loss limit in eval. Site showed $111 / $181 / $251 (50K/100K/150K) and 25K N/A on 11 Nov; list prices from Capital Critic (2 Nov).",
-   "src": "https://tradeify.co/select-plan",
+   "notes": "No daily loss limit in eval on 25K–150K. 300K is permanently available at $570 (official pricing reference and 300K help article, 20 Nov 2026): $14,000 target, $8,000 EOD eval drawdown, $4,000 eval daily loss limit, 40% consistency (min 3 days), no resets, KYC before purchase, max 5 purchases per rolling 30 days and 3 funded 300K accounts (inside the usual 5 funded). 300K purchases do not count toward the 15-evaluation limit. After passing, Flex (5 winning days, $8,000 EOD, $4,000 DLL, 50% of profit capped at $10,000) or Daily ($6,000 EOD, $3,000 DLL, $6,100 buffer, $4,000 daily cap). Both funded paths are EOD and have no consistency rule; drawdown locks at $300,100. Site showed $111 / $181 / $251 (50K/100K/150K) and 25K N/A on 11 Nov; list prices for 25K–150K from Capital Critic (2 Nov) and the official pricing reference.",
+   "src": "https://help.tradeify.co/en/articles/17845238-300k-select-account-permanent-plan",
    "sizes": [
     {
      "k": 25,
@@ -458,6 +458,14 @@
      "dd": 4500,
      "target": 9000,
      "dll": "None"
+    },
+    {
+     "k": 300,
+     "list": 570,
+     "promo": "",
+     "dd": 8000,
+     "target": 14000,
+     "dll": "$4,000"
     }
    ],
    "fCons": 0,
@@ -600,6 +608,40 @@
       "cost": 369,
       "mfee": 0,
       "dllUnknown": false
+     },
+     "300": {
+      "start": 300000,
+      "maxc": 16,
+      "ev": {
+       "type": "eod",
+       "dd": 8000,
+       "lock": 100,
+       "dll": 4000,
+       "dllType": "soft",
+       "target": 14000,
+       "cons": 40,
+       "minDays": 3,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 8000,
+       "lock": 100,
+       "dll": 4000,
+       "dllType": "soft",
+       "cons": 0,
+       "winDays": 5,
+       "minWin": 750,
+       "buffer": 0,
+       "pct": 50,
+       "cap": 10000,
+       "minPay": 0,
+       "split": 90,
+       "goal": 0
+      },
+      "cost": 570,
+      "mfee": 0,
+      "dllUnknown": true
      }
     },
     "instant": false,
@@ -801,6 +843,160 @@
      "profit goal per payout",
      "split",
      "cap"
+    ]
+   }
+  },
+  {
+   "id": "tradeify-miami",
+   "firm": "Tradeify",
+   "plan": "Miami Plan",
+   "kind": "Evaluation",
+   "dd": "Static",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "Static in evaluation, sim funded and live: the floor sits the drawdown amount below the starting balance and never trails, including after payouts. Touching it ends the account. Enforced in real time.",
+   "consistency": "None in eval or sim funded",
+   "payout": "Daily sim payouts once above the minimum; 80/10/10 split (you / live fund / Tradeify). Total requests capped at $12,000 across all Miami accounts, then a $1,500 static live account (your $1,200 live fund plus a $300 top-up). Live pays daily, $250 minimum, 90/10, on profit above $1,500.",
+   "maxAcc": "10 evals per version; 3 funded Miami (shared V1/V2, inside the usual 5 funded)",
+   "notes": "Limited drop, on sale until 10 Dec 2026. Micros only (10 / 20 / 30 on 10K / 25K / 50K; 20 micros on live). Pass in 1 day; no minimum days. No activation fee: after you pass, click Activate Account on the new funded card (profit above the target does not carry over). Soft daily loss limit is optional and pauses the day only; it applies in eval and sim funded. List and sale prices are from the official Inter Miami page on 20 Nov 2026 ($141→$99, $264→$185, $444→$311 with code MIAMI). The help-centre FAQ also lists separate V1/V2 no-DLL and soft-DLL tables that do not all match this live sale page; use checkout. Reaching the $12,000 request cap pauses every other Tradeify account until the Miami live account ends. One person per household. Traders already in the regular live program cannot buy Miami.",
+   "src": "https://tradeify.co/inter-miami-cf",
+   "sizes": [
+    {
+     "k": 10,
+     "list": 141,
+     "promo": "$99 with MIAMI (to 10 Dec 2026)",
+     "dd": 500,
+     "target": 1000,
+     "dll": "Optional soft $300 / None"
+    },
+    {
+     "k": 25,
+     "list": 264,
+     "promo": "$185 with MIAMI (to 10 Dec 2026)",
+     "dd": 1000,
+     "target": 2000,
+     "dll": "Optional soft $600 / None"
+    },
+    {
+     "k": 50,
+     "list": 444,
+     "promo": "$311 with MIAMI (to 10 Dec 2026)",
+     "dd": 1500,
+     "target": 3500,
+     "dll": "Optional soft $900 / None"
+    }
+   ],
+   "fCons": 0,
+   "payDays": 1,
+   "payNote": "Daily once above the $200 / $400 / $600 gross minimum. 80% to you, 10% to your live fund, 10% to Tradeify. $12,000 total request cap, then live.",
+   "bp": {
+    "sizes": {
+     "10": {
+      "start": 10000,
+      "maxc": 1,
+      "ev": {
+       "type": "static",
+       "dd": 500,
+       "lock": null,
+       "dll": 300,
+       "dllType": "soft",
+       "target": 1000,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "static",
+       "dd": 500,
+       "lock": null,
+       "dll": 300,
+       "dllType": "soft",
+       "cons": 0,
+       "winDays": 1,
+       "minWin": 1,
+       "buffer": 0,
+       "pct": 80,
+       "cap": 12000,
+       "minPay": 200,
+       "split": 80,
+       "goal": 0
+      },
+      "cost": 141,
+      "mfee": 0,
+      "dllUnknown": false
+     },
+     "25": {
+      "start": 25000,
+      "maxc": 2,
+      "ev": {
+       "type": "static",
+       "dd": 1000,
+       "lock": null,
+       "dll": 600,
+       "dllType": "soft",
+       "target": 2000,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "static",
+       "dd": 1000,
+       "lock": null,
+       "dll": 600,
+       "dllType": "soft",
+       "cons": 0,
+       "winDays": 1,
+       "minWin": 1,
+       "buffer": 0,
+       "pct": 80,
+       "cap": 12000,
+       "minPay": 400,
+       "split": 80,
+       "goal": 0
+      },
+      "cost": 264,
+      "mfee": 0,
+      "dllUnknown": false
+     },
+     "50": {
+      "start": 50000,
+      "maxc": 3,
+      "ev": {
+       "type": "static",
+       "dd": 1500,
+       "lock": null,
+       "dll": 900,
+       "dllType": "soft",
+       "target": 3500,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "static",
+       "dd": 1500,
+       "lock": null,
+       "dll": 900,
+       "dllType": "soft",
+       "cons": 0,
+       "winDays": 1,
+       "minWin": 1,
+       "buffer": 0,
+       "pct": 80,
+       "cap": 12000,
+       "minPay": 600,
+       "split": 80,
+       "goal": 0
+      },
+      "cost": 444,
+      "mfee": 0,
+      "dllUnknown": false
+     }
+    },
+    "instant": false,
+    "chk": [
+     "optional DLL (sale prices are the path shown on the live page)"
     ]
    }
   },
@@ -1151,6 +1347,160 @@
    "payNote": null
   },
   {
+   "id": "fn-direct",
+   "firm": "FundedNext Futures",
+   "plan": "Direct",
+   "kind": "Instant funded",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing maximum loss limit ($2,000 / $3,500 / $5,000). It updates once per day on the highest balance that day, never moves down, and is still a breach if floating equity hits it during the session. It locks at $50,100 / $100,100 / $150,100 on the first withdrawal.",
+   "consistency": "20% perpetual (best day ever ≤ 20% of current cycle profit)",
+   "payout": "Per cycle once the buffer is cleared and consistency is met; 90% share; 5 performance rewards then the account is concluded. Min $800 / $1,500 / $2,000; max $1,200 / $2,000 / $2,500.",
+   "maxAcc": "Counts toward 5 active funded and 10 funded per month",
+   "notes": "No evaluation, no profit goal to start, no reset. KYC is required before the first withdrawal. Soft daily loss limit $1,000 / $2,000 / $3,000. Buffer to withdraw: $2,100 / $3,600 / $5,100 (stays in the account). Official base prices $284.99 / $584.99 / $754.99; first purchase $149.99 / $309.99 / $399.99 (47% off) and later $169.99 / $349.99 / $449.99 (40% off) with code FNDIRECT, from 19 Nov 2026 until further notice. One trade per week or the account is breached for inactivity. Max contracts 3 / 6 / 8 minis (30 / 60 / 80 micros).",
+   "src": "https://helpfutures.fundednext.com/en/articles/17430065-fundednext-futures-direct-account-all-rules",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 284.99,
+     "promo": "$149.99 first purchase with FNDIRECT (47%); then $169.99 (40%)",
+     "dd": 2000,
+     "target": null,
+     "dll": "$1,000 (soft)"
+    },
+    {
+     "k": 100,
+     "list": 584.99,
+     "promo": "$309.99 first purchase with FNDIRECT (47%); then $349.99 (40%)",
+     "dd": 3500,
+     "target": null,
+     "dll": "$2,000 (soft)"
+    },
+    {
+     "k": 150,
+     "list": 754.99,
+     "promo": "$399.99 first purchase with FNDIRECT (47%); then $449.99 (40%)",
+     "dd": 5000,
+     "target": null,
+     "dll": "$3,000 (soft)"
+    }
+   ],
+   "fCons": 20,
+   "payDays": null,
+   "payNote": "Once per cycle after clearing the buffer ($2,100 / $3,600 / $5,100) and the 20% perpetual consistency rule. Five rewards, then the account is concluded.",
+   "bp": {
+    "sizes": {
+     "50": {
+      "start": 50000,
+      "maxc": 3,
+      "ev": {
+       "type": "eod",
+       "dd": 2000,
+       "lock": 100,
+       "dll": 1000,
+       "dllType": "soft",
+       "target": 1,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 2000,
+       "lock": 100,
+       "dll": 1000,
+       "dllType": "soft",
+       "cons": 20,
+       "winDays": 1,
+       "minWin": 1,
+       "buffer": 2100,
+       "pct": 100,
+       "cap": 1200,
+       "minPay": 800,
+       "split": 90,
+       "goal": 0
+      },
+      "cost": 284.99,
+      "mfee": 0,
+      "dllUnknown": false
+     },
+     "100": {
+      "start": 100000,
+      "maxc": 6,
+      "ev": {
+       "type": "eod",
+       "dd": 3500,
+       "lock": 100,
+       "dll": 2000,
+       "dllType": "soft",
+       "target": 1,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 3500,
+       "lock": 100,
+       "dll": 2000,
+       "dllType": "soft",
+       "cons": 20,
+       "winDays": 1,
+       "minWin": 1,
+       "buffer": 3600,
+       "pct": 100,
+       "cap": 2000,
+       "minPay": 1500,
+       "split": 90,
+       "goal": 0
+      },
+      "cost": 584.99,
+      "mfee": 0,
+      "dllUnknown": false
+     },
+     "150": {
+      "start": 150000,
+      "maxc": 8,
+      "ev": {
+       "type": "eod",
+       "dd": 5000,
+       "lock": 100,
+       "dll": 3000,
+       "dllType": "soft",
+       "target": 1,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 5000,
+       "lock": 100,
+       "dll": 3000,
+       "dllType": "soft",
+       "cons": 20,
+       "winDays": 1,
+       "minWin": 1,
+       "buffer": 5100,
+       "pct": 100,
+       "cap": 2500,
+       "minPay": 2000,
+       "split": 90,
+       "goal": 0
+      },
+      "cost": 754.99,
+      "mfee": 0,
+      "dllUnknown": false
+     }
+    },
+    "instant": true,
+    "chk": [
+     "cycle length (not a fixed winning-day count)"
+    ]
+   }
+  },
+  {
    "id": "ffn-max",
    "firm": "Funded Futures Network",
    "plan": "MAX Standard",
@@ -1251,6 +1601,363 @@
      "daily limit type"
     ]
    }
+  },
+  {
+   "id": "ffone-s2f",
+   "firm": "Funded Family One",
+   "plan": "Straight to Funded (Standard)",
+   "kind": "Instant funded",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing (official drawdown page updated 20 Nov 2026): $1,000 / $2,000 / $4,000 / $5,500. Floor = highest end-of-day balance minus that amount. An older S2F overview article listed $3,000 / $4,500 on the 100K / 150K; this row uses the drawdown page updated today.",
+   "consistency": "25% on payouts",
+   "payout": "After 7 trading days; $1,000 minimum. Profit goals and maximum payouts depend on size and payout number (see the official payout-requirements article).",
+   "maxAcc": "5",
+   "notes": "No evaluation and no activation fee; official one-time fees $329 / $489 / $629 / $749 (account overview, 20 Nov 2026). Scaling applies (starting size may be below the listed max). Soft daily loss limit on 50K / 100K / 150K: $1,250 / $2,500 / $3,000; none on 25K. Resets are not available on S2F (account-fees article). S2F Accelerate (intraday) is excluded.",
+   "src": "https://intercom.help/funded-futures-family/en/articles/15879855-straight-to-funded-account-overview",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 329,
+     "promo": "",
+     "dd": 1000,
+     "target": null,
+     "dll": "None"
+    },
+    {
+     "k": 50,
+     "list": 489,
+     "promo": "",
+     "dd": 2000,
+     "target": null,
+     "dll": "$1,250 (soft)"
+    },
+    {
+     "k": 100,
+     "list": 629,
+     "promo": "",
+     "dd": 4000,
+     "target": null,
+     "dll": "$2,500 (soft)"
+    },
+    {
+     "k": 150,
+     "list": 749,
+     "promo": "",
+     "dd": 5500,
+     "target": null,
+     "dll": "$3,000 (soft)"
+    }
+   ],
+   "fCons": 25,
+   "payDays": 7,
+   "payNote": "Seven trading days and 25% consistency. $1,000 minimum payout.",
+   "bp": {
+    "sizes": {
+     "25": {
+      "start": 25000,
+      "maxc": 1,
+      "ev": {
+       "type": "eod",
+       "dd": 1000,
+       "lock": 100,
+       "dll": 0,
+       "dllType": "soft",
+       "target": 1,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 1000,
+       "lock": 100,
+       "dll": 0,
+       "dllType": "soft",
+       "cons": 25,
+       "winDays": 7,
+       "minWin": 1,
+       "buffer": 0,
+       "pct": 100,
+       "cap": 0,
+       "minPay": 1000,
+       "split": 0,
+       "goal": 0
+      },
+      "cost": 329,
+      "mfee": 0,
+      "dllUnknown": false
+     },
+     "50": {
+      "start": 50000,
+      "maxc": 5,
+      "ev": {
+       "type": "eod",
+       "dd": 2000,
+       "lock": 100,
+       "dll": 1250,
+       "dllType": "soft",
+       "target": 1,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 2000,
+       "lock": 100,
+       "dll": 1250,
+       "dllType": "soft",
+       "cons": 25,
+       "winDays": 7,
+       "minWin": 1,
+       "buffer": 0,
+       "pct": 100,
+       "cap": 0,
+       "minPay": 1000,
+       "split": 0,
+       "goal": 0
+      },
+      "cost": 489,
+      "mfee": 0,
+      "dllUnknown": false
+     },
+     "100": {
+      "start": 100000,
+      "maxc": 10,
+      "ev": {
+       "type": "eod",
+       "dd": 4000,
+       "lock": 100,
+       "dll": 2500,
+       "dllType": "soft",
+       "target": 1,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 4000,
+       "lock": 100,
+       "dll": 2500,
+       "dllType": "soft",
+       "cons": 25,
+       "winDays": 7,
+       "minWin": 1,
+       "buffer": 0,
+       "pct": 100,
+       "cap": 0,
+       "minPay": 1000,
+       "split": 0,
+       "goal": 0
+      },
+      "cost": 629,
+      "mfee": 0,
+      "dllUnknown": false
+     },
+     "150": {
+      "start": 150000,
+      "maxc": 15,
+      "ev": {
+       "type": "eod",
+       "dd": 5500,
+       "lock": 100,
+       "dll": 3000,
+       "dllType": "soft",
+       "target": 1,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 5500,
+       "lock": 100,
+       "dll": 3000,
+       "dllType": "soft",
+       "cons": 25,
+       "winDays": 7,
+       "minWin": 1,
+       "buffer": 0,
+       "pct": 100,
+       "cap": 0,
+       "minPay": 1000,
+       "split": 0,
+       "goal": 0
+      },
+      "cost": 749,
+      "mfee": 0,
+      "dllUnknown": false
+     }
+    },
+    "instant": true,
+    "chk": [
+     "profit split",
+     "payout caps",
+     "lock (not restated on the drawdown page)"
+    ]
+   }
+  },
+  {
+   "id": "ffone-prime",
+   "firm": "Funded Family One",
+   "plan": "Prime",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "End-of-day drawdown in evaluation and funded: $1,000 / $2,000 / $3,000 / $4,500. Official Prime drawdown article: the floor trails the highest end-of-day balance and locks at the starting balance.",
+   "consistency": "None in eval or funded",
+   "payout": "Every 3 trading days; no activation fee",
+   "maxAcc": "Not stated on the official Prime pages read",
+   "notes": "Monthly evaluation subscription (account-fees article: only S2F is a one-time fee; the subscription ends when you pass). No activation fee and no funded monthly fee. No consistency rule and no daily loss limit. Pass in as little as one day. Official profit targets $1,250 / $3,000 / $6,000 / $9,000. Prices are not listed on the help articles or in the static homepage HTML (the plan picker needs JavaScript); list prices left null. After passing you have 7 days to activate the funded account. A $10 TruTik Starter launch offer appears on the homepage but is not added as a plan row (24 hours or first 1,000 places; the on-page countdown was showing 24:00:00 on 20 Nov 2026).",
+   "src": "https://intercom.help/funded-futures-family/en/articles/15657092-prime-evaluation-account",
+   "sizes": [
+    {
+     "k": 25,
+     "list": null,
+     "promo": null,
+     "dd": 1000,
+     "target": 1250,
+     "dll": "None"
+    },
+    {
+     "k": 50,
+     "list": null,
+     "promo": null,
+     "dd": 2000,
+     "target": 3000,
+     "dll": "None"
+    },
+    {
+     "k": 100,
+     "list": null,
+     "promo": null,
+     "dd": 3000,
+     "target": 6000,
+     "dll": "None"
+    },
+    {
+     "k": 150,
+     "list": null,
+     "promo": null,
+     "dd": 4500,
+     "target": 9000,
+     "dll": "None"
+    }
+   ],
+   "fCons": 0,
+   "payDays": 3,
+   "payNote": "Every 3 trading days. Official funded article does not state the split on the pages read.",
+   "bp": null
+  },
+  {
+   "id": "ffone-choice",
+   "firm": "Funded Family One",
+   "plan": "Choice",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "EOD trailing in evaluation and on both funded payout paths. Floor moves with the highest end-of-day balance and locks at starting balance + $100 (or on a payout). Evaluation and Weekly Pay funded drawdown: $1,000 / $2,000 / $3,000 / $4,500. Daily Pay funded is tighter on 100K / 150K: $2,500 / $3,500. Touching the floor at any time closes the account.",
+   "consistency": "40% in eval (optional 50% add-on, +20% to the eval price, allows a 2-day pass); none funded",
+   "payout": "After passing, choose Daily Pay or Weekly Pay (permanent per account). 90/10 split. Daily: once per trading day after the 2 p.m. Pacific close, $250 minimum, payout cushion required, two-strike daily loss rule. Weekly: after each set of 5 winning days ($200+), $500 minimum, no cushion.",
+   "maxAcc": "5 funded",
+   "notes": "Monthly evaluation subscription; no activation fee. Current prices are shown only at checkout (official evaluation article), so list prices are null. No daily loss limit in the evaluation. Contract limits stay the same once funded (no scaling). After the first payout you must earn at least $1 net since the last payout before requesting another.",
+   "src": "https://intercom.help/funded-futures-family/en/articles/17728477-choice-plan-evaluation",
+   "sizes": [
+    {
+     "k": 25,
+     "list": null,
+     "promo": null,
+     "dd": 1000,
+     "target": 1500,
+     "dll": "None in eval"
+    },
+    {
+     "k": 50,
+     "list": null,
+     "promo": null,
+     "dd": 2000,
+     "target": 3000,
+     "dll": "None in eval"
+    },
+    {
+     "k": 100,
+     "list": null,
+     "promo": null,
+     "dd": 3000,
+     "target": 6000,
+     "dll": "None in eval"
+    },
+    {
+     "k": 150,
+     "list": null,
+     "promo": null,
+     "dd": 4500,
+     "target": 9000,
+     "dll": "None in eval"
+    }
+   ],
+   "fCons": 0,
+   "payDays": 1,
+   "payNote": "Pick Daily Pay (daily) or Weekly Pay (5 winning days) after you pass.",
+   "bp": null
+  },
+  {
+   "id": "ffone-premier-eod",
+   "firm": "Funded Family One",
+   "plan": "Premier+ (EOD)",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Partially verified",
+   "ddNote": "This row is the official End-of-Day evaluation option only (intraday toggle excluded). Eval EOD drawdown for accounts bought on or after 9 Sep 2026: $750 / $1,500 / $2,500 / $4,000. Official funded article lists max drawdown $1,000 / $2,000 / $3,000 / $4,500 without splitting EOD vs intraday; EOD accounts lock once the floor reaches the base balance. Confirm funded drawdown for the EOD path at checkout.",
+   "consistency": "None in eval (Standard is a 2-day pass; Fast Pass add-on allows 1 day). Funded accounts bought on or after 9 Sep 2026 have a 40% consistency rule that resets after each approved payout.",
+   "payout": "Every 5 qualifying trading days; no activation fee; no daily loss limit",
+   "maxAcc": "Not stated on the official Premier+ pages read",
+   "notes": "Monthly evaluation subscription (account-fees article: only S2F is a one-time fee). No activation fee. Prices are not listed on the help articles, so list prices are null. Contract sizes in the post-9 Sep EOD eval table: 2 / 4 / 6 / 10 minis (the 150K EOD line writes “10 Micros/100 Minis”, which conflicts with the Intraday table’s “10 Minis/100 Micros”; treat contract limits as unconfirmed). After passing you have 7 days to activate.",
+   "src": "https://intercom.help/funded-futures-family/en/articles/15809232-premier-evaluation",
+   "sizes": [
+    {
+     "k": 25,
+     "list": null,
+     "promo": null,
+     "dd": 750,
+     "target": 1500,
+     "dll": "None"
+    },
+    {
+     "k": 50,
+     "list": null,
+     "promo": null,
+     "dd": 1500,
+     "target": 3000,
+     "dll": "None"
+    },
+    {
+     "k": 100,
+     "list": null,
+     "promo": null,
+     "dd": 2500,
+     "target": 6000,
+     "dll": "None"
+    },
+    {
+     "k": 150,
+     "list": null,
+     "promo": null,
+     "dd": 4000,
+     "target": 9000,
+     "dll": "None"
+    }
+   ],
+   "fCons": 40,
+   "payDays": 5,
+   "payNote": "Every 5 qualifying trading days. Profit split not stated on the funded article read.",
+   "bp": null
   },
   {
    "id": "topone-elite-daily",
@@ -3334,6 +4041,200 @@
    "payNote": null
   },
   {
+   "id": "alpha-direct",
+   "firm": "Alpha Futures",
+   "plan": "Direct",
+   "kind": "Instant funded",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "EOD trailing maximum loss limit. The floor follows the highest end-of-day balance, not an intraday high, and stops trailing at the starting balance. Equity can still breach the active limit during the session.",
+   "consistency": "20% on every withdrawal",
+   "payout": "Up to 4 times per month once the withdrawal profit target and 20% consistency are met; 90% split. First target $1,500 / $3,000 / $6,000 / $9,000, then $1,000 / $2,000 / $4,000 / $6,000. Min $500; max $1,000 / $2,000 / $2,500 / $3,000.",
+   "maxAcc": "Not stated on the official Direct pages read",
+   "notes": "No evaluation, no monthly fee, no scaling plan, no activation fee. Daily Loss Guard is a soft breach ($500 / $1,000 / $2,000 / $3,000). Leftover profit does not carry over to the next withdrawal cycle. Official one-time fees $349 / $519 / $689 / $859 from the Direct help article and alpha-futures.com, checked 20 Nov 2026.",
+   "src": "https://help.alpha-futures.com/en/articles/15838742-direct-account-overview",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 349,
+     "promo": "",
+     "dd": 1000,
+     "target": null,
+     "dll": "$500 (soft)"
+    },
+    {
+     "k": 50,
+     "list": 519,
+     "promo": "",
+     "dd": 2000,
+     "target": null,
+     "dll": "$1,000 (soft)"
+    },
+    {
+     "k": 100,
+     "list": 689,
+     "promo": "",
+     "dd": 3000,
+     "target": null,
+     "dll": "$2,000 (soft)"
+    },
+    {
+     "k": 150,
+     "list": 859,
+     "promo": "",
+     "dd": 4500,
+     "target": null,
+     "dll": "$3,000 (soft)"
+    }
+   ],
+   "fCons": 20,
+   "payDays": null,
+   "payNote": "On request once the withdrawal profit target and 20% consistency are met, up to 4 times per month.",
+   "bp": {
+    "sizes": {
+     "25": {
+      "start": 25000,
+      "maxc": 2,
+      "ev": {
+       "type": "eod",
+       "dd": 1000,
+       "lock": 100,
+       "dll": 500,
+       "dllType": "soft",
+       "target": 1,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 1000,
+       "lock": 100,
+       "dll": 500,
+       "dllType": "soft",
+       "cons": 20,
+       "winDays": 1,
+       "minWin": 1,
+       "buffer": 0,
+       "pct": 100,
+       "cap": 1000,
+       "minPay": 500,
+       "split": 90,
+       "goal": 1500
+      },
+      "cost": 349,
+      "mfee": 0,
+      "dllUnknown": false
+     },
+     "50": {
+      "start": 50000,
+      "maxc": 4,
+      "ev": {
+       "type": "eod",
+       "dd": 2000,
+       "lock": 100,
+       "dll": 1000,
+       "dllType": "soft",
+       "target": 1,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 2000,
+       "lock": 100,
+       "dll": 1000,
+       "dllType": "soft",
+       "cons": 20,
+       "winDays": 1,
+       "minWin": 1,
+       "buffer": 0,
+       "pct": 100,
+       "cap": 2000,
+       "minPay": 500,
+       "split": 90,
+       "goal": 3000
+      },
+      "cost": 519,
+      "mfee": 0,
+      "dllUnknown": false
+     },
+     "100": {
+      "start": 100000,
+      "maxc": 8,
+      "ev": {
+       "type": "eod",
+       "dd": 3000,
+       "lock": 100,
+       "dll": 2000,
+       "dllType": "soft",
+       "target": 1,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 3000,
+       "lock": 100,
+       "dll": 2000,
+       "dllType": "soft",
+       "cons": 20,
+       "winDays": 1,
+       "minWin": 1,
+       "buffer": 0,
+       "pct": 100,
+       "cap": 2500,
+       "minPay": 500,
+       "split": 90,
+       "goal": 6000
+      },
+      "cost": 689,
+      "mfee": 0,
+      "dllUnknown": false
+     },
+     "150": {
+      "start": 150000,
+      "maxc": 10,
+      "ev": {
+       "type": "eod",
+       "dd": 4500,
+       "lock": 100,
+       "dll": 3000,
+       "dllType": "soft",
+       "target": 1,
+       "cons": 0,
+       "minDays": 1,
+       "limit": 0
+      },
+      "fd": {
+       "type": "eod",
+       "dd": 4500,
+       "lock": 100,
+       "dll": 3000,
+       "dllType": "soft",
+       "cons": 20,
+       "winDays": 1,
+       "minWin": 1,
+       "buffer": 0,
+       "pct": 100,
+       "cap": 3000,
+       "minPay": 500,
+       "split": 90,
+       "goal": 9000
+      },
+      "cost": 859,
+      "mfee": 0,
+      "dllUnknown": false
+     }
+    },
+    "instant": true,
+    "chk": []
+   }
+  },
+  {
    "id": "topstep-naf",
    "firm": "Topstep",
    "plan": "Combine (No Activation Fee path)",
@@ -3626,11 +4527,15 @@
   "Apex Intraday Trail (all) and EOD Trail standard: intraday drawdown or $109–$159 activation.",
   "TradeDay: Quick Pay funded is always intraday; also monthly.",
   "Goat Funded Futures: Daily Payouts and Instant Classic are intraday when funded; EOD and Flex prices/activation not confirmed on pages read.",
-  "Blueberry Accelerated and Funded Futures Family Velocity: intraday trailing.",
+  "Blueberry Accelerated, and Funded Family One (formerly Funded Futures Family) Velocity and S2F Accelerate: intraday trailing.",
   "Shark LITE, Top One Elite Access, FundedHero Hero ONE, IQ Capital Core, Swiss Firmup Classic, Futureify Direct: activation fee or activation not confirmed.",
   "Earn2Trade, Elite Trader Funding, Legends, Leeloo, Purdia, BluSky, Legacy Funded, Lvlup, DayTraders: activation fee.",
   "Winbance (LiveX activation wording conflicts), Savius and Nextproptrader (no prices shown), 18th Street (activation not stated): not confirmed.",
-  "Closed or not selling: FundingTicks, TickTick Trader, YRM Prop. Maven has no futures program."
+  "Closed or not selling: FundingTicks, TickTick Trader, YRM Prop. Maven has no futures program.",
+  "Blue Guardian Futures Zero: evaluation may be EOD or intraday, but official Zero account rules say funded Zero accounts always use an intraday trailing drawdown (stops at starting balance + $100).",
+  "Tradeify Level Up V2: $89 one-time 10-level reward ladder with a $1,000 static drawdown on each level, not an evaluation that becomes a funded account.",
+  "Swiss Firmup Algo: $29 for a $5,000 algo-test / leaderboard account. Official page: drawdown equals the full account capital, no profit target, and no funded payout path like the Pro evaluation.",
+  "Funded Family One TruTik Starter ($10, $1,000, $100 EOD trailing): official help and homepage describe a launch offer limited to 24 hours or the first 1,000 places. On 20 Nov 2026 the homepage still showed the offer with a countdown reading 24:00:00, so availability was not confirmed and it is not added as a plan row."
  ],
  "firms": {
   "Apex Trader Funding": {
@@ -3864,7 +4769,8 @@
     "programs": [
      "Lightning",
      "Growth",
-     "Select"
+     "Select",
+     "Miami"
     ],
     "hq": "United States",
     "founded": "2024",
@@ -4234,7 +5140,8 @@
      "Legacy",
      "Flex",
      "Rapid",
-     "Bolt"
+     "Bolt",
+     "Direct"
     ],
     "hq": "United Arab Emirates",
     "founded": "2022",
@@ -4317,6 +5224,50 @@
     "site": "https://fundedfuturesnetwork.com",
     "src": "/prop-firms/logos/funded-futures-network.png",
     "bg": "dark"
+   }
+  },
+  "Funded Family One": {
+   "tp": {
+    "score": 4.3,
+    "n": null,
+    "url": null,
+    "note": "Official homepage on 20 Nov 2026 said “4.3 on Trustpilot, 3,900+ reviews”. Exact review count and the Trustpilot URL were not opened today."
+   },
+   "copy": {
+    "s": null,
+    "note": "Copier rule not confirmed on official pages read 20 Nov 2026."
+   },
+   "proc": null,
+   "banned": [],
+   "bannedNote": "Country list not found on official pages read 20 Nov 2026.",
+   "bannedSrc": null,
+   "aff": {
+    "url": "",
+    "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "TruTik"
+    ],
+    "payout": null,
+    "programs": [
+     "Prime",
+     "Choice",
+     "Premier+",
+     "S2F Standard",
+     "S2F Accelerate",
+     "Velocity",
+     "TruTik Starter"
+    ],
+    "hq": null,
+    "founded": null,
+    "maxAlloc": null,
+    "src": "fundedfamilyone.com and Funded Family One Help Center",
+    "srcUrl": "https://fundedfamilyone.com/",
+    "checked": "2026-11-20"
+   },
+   "logo": {
+    "site": "https://fundedfamilyone.com"
    }
   },
   "Top One Futures": {
@@ -4679,7 +5630,8 @@
      "Standard",
      "Reserve",
      "Express",
-     "Direct"
+     "Direct",
+     "Zero"
     ],
     "hq": "United Arab Emirates",
     "founded": "2021",
