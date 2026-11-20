@@ -329,6 +329,167 @@ body.rd-open{overflow:hidden}
 .tips{margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
 .tips div{background:var(--panel2);padding:12px 14px;font-size:13.5px;line-height:1.5;color:#c9d0d6}
 .tips b{display:block;font:700 14px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+/* ===== 2026-11 redesign: one control deck, offers drawer, view switcher ===== */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.lnk{all:unset;cursor:pointer;font:600 13px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--teal)}
+.lnk:hover{color:var(--gold2)}
+.btn-offer{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:10px;padding:11px 14px 11px 13px;background:linear-gradient(120deg,var(--gold),var(--gold2));color:#0b0b0b;font:700 17px/1 var(--display);letter-spacing:.06em;text-transform:uppercase;box-shadow:0 8px 30px -10px rgba(225,179,26,.7);transition:transform .15s,box-shadow .2s}
+.btn-offer:hover{transform:translateY(-1px);box-shadow:0 12px 36px -8px rgba(225,179,26,.85)}
+.btn-offer .pulse{width:8px;height:8px;border-radius:50%;background:#0b0b0b;animation:opl 1.6s ease-in-out infinite}
+.btn-offer b{font:700 12px/1 var(--mono);background:#0b0b0b;color:var(--gold2);padding:4px 6px;letter-spacing:0;text-transform:none}
+@keyframes opl{50%{opacity:.25}}
+.sz{padding-block:34px 0}
+.fhd{margin-bottom:14px}
+.fhd h2{font:700 clamp(24px,2.6vw,32px)/1.1 var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--gold);margin:0}
+.fhd p{margin:6px 0 0;color:var(--mute);font-size:14.5px;max-width:84ch;line-height:1.5}
+.fhd p b{color:var(--fg)}
+.deck{position:sticky;top:var(--hh,68px);z-index:32;background:rgba(7,8,10,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-block:1px solid var(--line)}
+.deck>.desk{padding-block:10px}
+.deck .sztabs{position:static;margin:0;padding:0 0 10px;border:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.deck .sztabs button{flex:none;min-width:78px;padding:8px 12px;font-size:17px;transition:background .15s,border-color .15s,color .15s}
+.deck .sztabs button.z{opacity:.45}
+.drow2{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.dq{position:relative;flex:0 1 250px;min-width:170px}
+.dq svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--mute);pointer-events:none}
+.dq input,.fin{width:100%;box-sizing:border-box;height:38px;background:var(--panel2);color:var(--fg);border:1px solid var(--line2);padding:0 10px;font:14px var(--body);border-radius:0}
+.dq input{padding-left:33px}
+.dq input:focus,.fin:focus,.dsort:focus-within{border-color:var(--gold);outline:0}
+.dbtn{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:7px;height:38px;padding:0 12px;border:1px solid var(--line2);background:var(--panel2);font:600 14px/1 var(--display);letter-spacing:.07em;text-transform:uppercase;color:var(--fg);transition:border-color .15s,color .15s,background .15s}
+.dbtn:hover,.dbtn[aria-expanded=true]{border-color:var(--gold);color:var(--gold2)}
+.dbtn b{font:700 11px/1 var(--mono);background:var(--gold);color:#0b0b0b;padding:3px 5px;letter-spacing:0}
+.dbtn.of{border-color:rgba(225,179,26,.55);background:rgba(225,179,26,.1);color:var(--gold2)}
+.dbtn.of:hover{background:rgba(225,179,26,.18)}
+.dsort{display:inline-flex;align-items:center;gap:4px;height:38px;box-sizing:border-box;border:1px solid var(--line2);background:var(--panel2);padding-left:10px;font:600 12px var(--display);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.dsort select{appearance:none;-webkit-appearance:none;border:0;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238f97a1' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 9px center;height:36px;padding:0 28px 0 4px;font:14px var(--body);color:var(--fg);cursor:pointer;max-width:210px}
+.dsort select:focus{outline:0}
+.dsort option{background:var(--panel)}
+.views{display:inline-flex;margin-left:auto;border:1px solid var(--line2);background:var(--panel2);max-width:100%;overflow-x:auto;scrollbar-width:none}
+.views::-webkit-scrollbar{display:none}
+.views button{all:unset;flex:none;cursor:pointer;height:36px;padding:0 13px;font:600 14px/36px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--mute);white-space:nowrap;transition:color .15s,background .15s}
+.views button+button{border-left:1px solid var(--line2)}
+.views button:hover{color:var(--fg)}
+.views button[aria-selected=true]{background:var(--gold);color:#0b0b0b}
+.achips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:9px;min-height:22px}
+.achips .count{font:12px var(--mono);color:var(--mute);margin-right:6px}
+.achips .count b{color:var(--gold2);font-weight:600}
+.achips .ac1{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border:1px solid rgba(79,209,197,.45);background:rgba(79,209,197,.08);font:13px var(--body);color:var(--fg);transition:border-color .15s}
+.achips .ac1 em{font-style:normal;color:var(--mute)}
+.achips .ac1 i{font-style:normal;color:var(--mute);font-size:11px}
+.achips .ac1:hover{border-color:var(--dn)}.achips .ac1:hover i{color:var(--dn)}
+.fpop{margin-top:10px;border:1px solid var(--line2);background:var(--panel);max-height:min(64vh,560px);overflow:auto;animation:fIn .18s ease-out;overscroll-behavior:contain}
+.fpop[hidden]{display:none}
+@keyframes fIn{from{opacity:0;transform:translateY(-4px)}}
+.fsh{display:none}
+.fgrid{display:grid;grid-template-columns:1.1fr 1fr 1.25fr .95fr;gap:1px;background:var(--line)}
+.fg{background:var(--panel);padding:14px 16px;min-width:0}
+.fg h4{margin:0 0 8px;font:700 13px var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.fg h4~h4{margin-top:16px}
+.clist2{list-style:none;margin:6px 0 0;padding:0;max-height:200px;overflow:auto}
+.clist2 button{all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;padding:7px 9px;font:14px var(--body);color:var(--fg)}
+.clist2 button:hover,.clist2 button:focus-visible{background:var(--row);outline:0}
+.clist2 button mark{background:none;color:var(--gold2)}
+.csel{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border:1px solid rgba(79,209,197,.5);background:rgba(79,209,197,.08);font-size:14.5px}
+.csel[hidden]{display:none}
+.hint{margin:8px 0 0;font:12.5px/1.5 var(--body);color:var(--mute)}
+.hint b{color:var(--fg)}
+.sg,.pch{display:flex;flex-wrap:wrap;gap:4px}
+.sg button,.pch button{all:unset;cursor:pointer;padding:8px 10px;border:1px solid var(--line2);background:var(--panel2);font:600 13px/1 var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--mute);transition:color .15s,border-color .15s,background .15s}
+.pch button{text-transform:none;font:500 13px/1 var(--body);letter-spacing:0;padding:7px 9px}
+.sg button:hover,.pch button:hover{color:var(--fg);border-color:var(--faint)}
+.sg button[aria-pressed=true],.pch button[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:#0b0b0b}
+.mp{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.mp .fin{width:92px;font-family:var(--mono)}
+.sw{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer;font-size:14px;color:var(--fg)}
+.fg h4+.sw{border-top:0;padding-top:2px}
+.sw small{display:block;color:var(--mute);font-size:12px;line-height:1.35;margin-top:2px}
+.sw input{appearance:none;-webkit-appearance:none;flex:none;width:38px;height:22px;border-radius:22px;background:var(--line2);position:relative;cursor:pointer;transition:background .15s;margin:0}
+.sw input::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#cfd5da;transition:transform .18s}
+.sw input:checked{background:var(--gold)}
+.sw input:checked::after{transform:translateX(16px);background:#0b0b0b}
+.ffoot{position:sticky;bottom:0;display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 16px;border-top:1px solid var(--line);background:var(--panel2)}
+.ffoot .btn-try{border:0;cursor:pointer;font-size:15px;padding:10px 16px}
+.fscrim{display:none}
+.pkv{padding-top:20px}
+.pkv[hidden],.vsec[hidden]{display:none!important}
+.morebtn{all:unset;box-sizing:border-box;cursor:pointer;display:block;margin:18px auto 0;padding:12px 20px;border:1px solid var(--line2);background:var(--panel2);font:600 15px/1 var(--display);letter-spacing:.07em;text-transform:uppercase;color:var(--fg);transition:border-color .15s,color .15s}
+.morebtn:hover{border-color:var(--gold);color:var(--gold2)}
+.morebtn[hidden]{display:none}
+.szgrid .ac{animation:cIn .25s ease-out both}
+@keyframes cIn{from{opacity:0;transform:translateY(6px)}}
+/* offers drawer */
+.odr{position:fixed;inset:0 0 0 auto;margin:0;width:min(540px,100vw);height:100vh;height:100dvh;max-height:none;max-width:none;padding:0;border:0;border-left:1px solid var(--line2);background:var(--panel);color:var(--fg);flex-direction:column;box-shadow:-30px 0 80px -20px rgba(0,0,0,.8)}
+.odr[open]{display:flex;animation:oIn .26s cubic-bezier(.2,.8,.2,1)}
+@keyframes oIn{from{transform:translateX(40px);opacity:0}}
+.odr::backdrop{background:rgba(0,0,0,.62);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+.oh2{padding:16px 18px 12px;border-bottom:1px solid var(--line);background:linear-gradient(120deg,rgba(225,179,26,.13),transparent 70%)}
+.oh2 .t{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.oh2 h2{margin:0;font:700 26px/1 var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--gold)}
+.oh2 small{display:block;margin-top:5px;font:12px var(--mono);color:var(--mute)}
+.oh2 .x{all:unset;white-space:nowrap;cursor:pointer;font:700 14px var(--display);letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line2);padding:7px 11px;color:var(--fg)}
+.oh2 .x:hover{border-color:var(--gold);color:var(--gold)}
+.otabs{display:flex;margin-top:12px;border:1px solid var(--line2);background:var(--panel2)}
+.otabs button{all:unset;flex:1;text-align:center;cursor:pointer;height:36px;font:600 14px/36px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--mute);transition:color .15s,background .15s}
+.otabs button+button{border-left:1px solid var(--line2)}
+.oh2 .otabs button small{display:inline;margin:0 0 0 6px;font:600 11px var(--mono);color:inherit;opacity:.7}
+.otabs button[aria-selected=true]{background:var(--gold);color:#0b0b0b}
+.ob{flex:1;overflow:auto;overscroll-behavior:contain}
+.orow{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:6px 12px;align-items:center;padding:13px 18px;border-bottom:1px solid var(--line);transition:background .15s}
+.orow:hover{background:var(--row2)}
+.orow .nm{font:700 17px/1.15 var(--display);letter-spacing:.03em;color:var(--fg);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.orow .pc{font:700 28px/1 var(--display);color:var(--gold2);text-align:right;letter-spacing:.02em;white-space:nowrap}
+.orow .pc small{font:600 12px var(--mono);color:var(--mute);margin-left:3px;letter-spacing:0}
+.orow .bar,.orow .tx,.orow .ft,.orow details{grid-column:2/4}
+.orow .bar{height:4px;background:var(--line);overflow:hidden}
+.orow .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));transform-origin:left;animation:bIn .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes bIn{from{transform:scaleX(0)}}
+.orow .tx{font:13.5px/1.45 var(--body);color:#c9d0d6}
+.orow .ft{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font:12px var(--mono);color:var(--mute)}
+.orow .go2{margin-left:auto;color:var(--teal);font:600 14px var(--display);letter-spacing:.07em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
+.orow .go2:hover{color:var(--gold2)}
+.orow details summary{cursor:pointer;font:600 12.5px var(--display);letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}
+.orow details p{margin:6px 0 0;font-size:13px;line-height:1.45;color:#c9d0d6}
+.orow details p b{color:var(--gold2);font-family:var(--mono)}
+.osz{display:flex;gap:4px;padding:14px 18px 6px}
+.osz button{all:unset;cursor:pointer;padding:8px 12px;border:1px solid var(--line2);background:var(--panel2);font:700 15px/1 var(--display);letter-spacing:.05em;color:var(--mute)}
+.osz button[aria-pressed=true]{background:var(--gold);border-color:var(--gold);color:#0b0b0b}
+.olg{display:flex;gap:16px;padding:4px 18px 10px;font:12px var(--mono);color:var(--mute);border-bottom:1px solid var(--line)}
+.olg i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.olg i.l,.prow .tr i.l{background:#3a434d}.olg i.n,.prow .tr i.n{background:var(--gold)}
+.prow{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:11px 18px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--fg);transition:background .15s}
+.prow:hover{background:var(--row2)}
+.prow .nm b{display:block;font:600 14.5px/1.2 var(--body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow .nm small{display:block;font-size:12px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow .pp{text-align:right;white-space:nowrap}
+.prow .pp b{font:700 20px/1 var(--display);color:var(--gold2);letter-spacing:.02em}
+.prow .pp s{display:block;font:12px var(--mono);color:var(--faint);margin-top:2px}
+.prow .tr{grid-column:2/4;position:relative;height:6px;background:var(--panel2)}
+.prow .tr i{position:absolute;left:0;top:0;bottom:0;transform-origin:left;animation:bIn .55s cubic-bezier(.2,.8,.2,1) both}
+.oemp{padding:28px 18px;color:var(--mute);text-align:center}
+.ofoot{margin:0;padding:10px 18px calc(10px + env(safe-area-inset-bottom,0px));font:12px/1.5 var(--body);color:var(--faint);border-top:1px solid var(--line)}
+@media (max-width:1100px){.fgrid{grid-template-columns:1fr 1fr}.views{margin-left:0}}
+@media (max-width:700px){
+  .deck{position:static;backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--bg)}
+  .dq{flex:1 1 100%;order:0}
+  .dbtn{flex:1 1 0;justify-content:center;order:1}
+  .dsort{flex:1 1 100%;order:2}
+  .views{order:3}
+  .dsort select{max-width:none;flex:1}
+  .deck .sztabs button{white-space:nowrap;min-width:0;padding:8px 11px;font-size:16px}
+  .otabs button{font-size:13px;letter-spacing:.04em}
+  .oh2 h2{font-size:23px}
+  .views{width:100%}
+  .views button{flex:1 0 auto;padding:0 11px}
+  .fpop{position:fixed;left:0;right:0;bottom:0;z-index:130;margin:0;max-height:86vh;max-height:86dvh;border-width:1px 0 0;box-shadow:0 -24px 60px rgba(0,0,0,.7);animation:fUp .24s cubic-bezier(.2,.8,.2,1)}
+  @keyframes fUp{from{transform:translateY(40px);opacity:0}}
+  .fsh{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--panel2);position:sticky;top:0;z-index:2}
+  .fsh b{font:700 18px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .ffoot{padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+  .fscrim:not([hidden]){display:block;position:fixed;inset:0;z-index:125;background:rgba(0,0,0,.6)}
+  .odr,.odr[open]{inset:auto 0 0 0;width:100vw;height:auto;max-height:88vh;max-height:88dvh;border-left:0;border-top:1px solid var(--line2)}
+  .odr[open]{animation:fUp .26s cubic-bezier(.2,.8,.2,1)}
+  .orow{padding:12px 14px}.prow{padding:10px 14px}
+}
 </style>
 <link rel="stylesheet" href="/assets/tw.css?v=20261108">
 </head>
@@ -344,9 +505,8 @@ body.rd-open{overflow:hidden}
       <p class="facts" id="facts">Loading the plans…</p>
       <p class="affnote" id="affTop" hidden>Some links are affiliate links: MMM may earn a commission, at no extra cost to you.</p>
       <div class="acts">
-        <a class="btn-try" href="#compare">Compare every size ↓</a>
-        <a class="btn-ghost" href="#speed">Fastest payouts</a>
-        <a class="btn-ghost" href="#copier">Copier groups</a>
+        <button type="button" class="btn-offer" id="offBtn" hidden><span class="pulse" aria-hidden="true"></span><span>See today's offers</span><b id="offBadge" translate="no"></b></button>
+        <a class="btn-ghost" href="#sizes">Find your account ↓</a>
         <a class="btn-ghost" href="/vip/">Plan your accounts · V.I.P</a>
       </div>
     </div>
@@ -356,36 +516,60 @@ body.rd-open{overflow:hidden}
       <p class="why"><b>Why the drawdown type matters:</b> an intraday trailing drawdown follows your open profit, so a winning trade that comes back can fail the account. End-of-day (EOD) only moves on the closing balance, and static never moves.</p>
     </aside>
   </div>
-  <div class="desk" style="padding-bottom:30px"><div class="kpis" id="kpis" style="margin-top:0"></div><div class="offers" id="offers" hidden></div></div>
+  <div class="desk" style="padding-bottom:30px"><div class="kpis" id="kpis" style="margin-top:0"></div></div>
 </section>
 
 <section class="sz" id="sizes" aria-labelledby="sz-h">
-  <div class="desk">
-    <div class="szhead"><div><h2 id="sz-h" style="font:700 clamp(24px,2.6vw,32px)/1.1 var(--display);text-transform:uppercase;letter-spacing:.05em;color:var(--gold);margin:0">Pick your account size</h2><p>Every account on our list, cheapest first after today's offer. <b style="color:var(--fg)">Only EOD or static drawdown accounts</b> (evaluation and funded), one-time payment, no activation fee. Intraday trailing drawdown accounts are not on this page.</p></div><p id="sz-n" class="num"></p></div>
-    <div class="sztabs" id="sztabs" role="tablist" aria-label="Account size"></div>
-    <div class="szgrid" id="szgrid" role="tabpanel"></div>
+  <div class="desk fhd">
+    <h2 id="sz-h">Find your account</h2>
+    <p>Pick a size, narrow it down, then choose how to see it. <b>Only EOD or static drawdown accounts</b> (evaluation and funded), one-time payment, no activation fee. Intraday trailing drawdown accounts are not on this page.</p>
   </div>
+  <div class="deck" id="deck">
+    <div class="desk">
+      <div class="sztabs" id="sztabs" role="tablist" aria-label="Account size"></div>
+      <div class="drow2">
+        <label class="dq"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input type="search" id="f-q" placeholder="Search a firm or plan" aria-label="Search a firm or plan" autocomplete="off"></label>
+        <button type="button" class="dbtn" id="fBtn" aria-expanded="false" aria-controls="fpop"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Filters</span><b id="fN" hidden></b></button>
+        <label class="dsort"><span>Sort</span><select id="f-sort"><option value="net">Price today, low to high</option><option value="per1k">$ per $1K drawdown</option><option value="pay">Fastest first payout</option><option value="tp">Trustpilot stars</option><option value="cons">Funded consistency, lowest</option><option value="price">List price, low to high</option><option value="dd">Drawdown, high to low</option><option value="ratio">Target ÷ drawdown</option><option value="size">Account size</option><option value="firm">Firm A–Z</option></select></label>
+        <button type="button" class="dbtn of" id="offBtn2" hidden><span>Offers</span><b id="offBadge2" translate="no"></b></button>
+        <div class="views" id="views" role="tablist" aria-label="How to see the accounts">
+          <button type="button" role="tab" data-v="picks">Best picks</button>
+          <button type="button" role="tab" data-v="compare">Table</button>
+          <button type="button" role="tab" data-v="speed">Payouts</button>
+          <button type="button" role="tab" data-v="copier">Copier</button>
+          <button type="button" role="tab" data-v="firms">Firms</button>
+        </div>
+      </div>
+      <div class="achips" id="achips"><span class="count num" id="count"></span></div>
+      <div class="fpop" id="fpop" role="region" aria-label="Filters" hidden>
+        <div class="fsh"><b>Filters</b><button type="button" class="lnk" data-fclose>Done</button></div>
+        <div class="fgrid">
+          <div class="fg"><h4>Your country</h4>
+            <div class="csel" id="f-csel" hidden><span>✓ <b translate="no" id="f-cname"></b></span><button type="button" class="lnk" id="f-cchg">Change</button></div>
+            <div id="f-cbox"><input type="search" id="f-cq" class="fin" placeholder="Type your country" autocomplete="off" aria-label="Your country" aria-controls="f-cl"><ul class="clist2" id="f-cl"></ul></div>
+            <p class="hint" id="f-chint"></p>
+          </div>
+          <div class="fg"><h4>Drawdown</h4><div class="sg" data-f="dd"><button type="button" data-v="all">EOD or static</button><button type="button" data-v="EOD">EOD only</button><button type="button" data-v="Static">Static only</button></div>
+            <h4>Plan type</h4><div class="sg" data-f="kind"><button type="button" data-v="all">All</button><button type="button" data-v="Evaluation">Evaluation</button><button type="button" data-v="Instant funded">Instant funded</button></div>
+            <h4>Max price</h4><div class="mp"><input type="number" id="f-max" class="fin" min="0" step="10" placeholder="Any $" aria-label="Max price in dollars"><div class="sg" data-f="max"><button type="button" data-v="100">$100</button><button type="button" data-v="200">$200</button><button type="button" data-v="300">$300</button><button type="button" data-v="">Any</button></div></div>
+          </div>
+          <div class="fg"><h4>Platform</h4><div class="pch" id="f-plat"></div></div>
+          <div class="fg"><h4>Only show</h4>
+            <label class="sw"><span>Copier OK<small>Firms that let you copy your own accounts</small></span><input type="checkbox" id="f-cp"></label>
+            <label class="sw"><span>Fully checked<small>Every rule confirmed on the firm's own site</small></span><input type="checkbox" id="f-ver"></label>
+            <label class="sw"><span>Monthly-billed plans<small>Plans you pay every month, hidden by default</small></span><input type="checkbox" id="f-mo"></label>
+          </div>
+        </div>
+        <div class="ffoot"><button type="button" class="lnk" id="fReset">Reset filters</button><button type="button" class="btn-try" data-fclose>Show <span id="fShow"></span></button></div>
+      </div>
+    </div>
+  </div>
+  <div class="fscrim" id="fscrim" hidden></div>
+  <div class="desk pkv" id="pkv"><div class="szgrid" id="szgrid" role="tabpanel" aria-label="Best picks"></div><button type="button" class="morebtn" id="pkMore" hidden></button></div>
 </section>
 
-<div class="fbar" id="filters" role="region" aria-label="Filters">
-  <div class="desk">
-    <label><span>Your country</span><select id="f-country"><option value="">Any country</option></select></label>
-    <label><span>Platform</span><select id="f-plat"><option value="">Any platform</option></select></label>
-    <label class="q"><span>Search firm or plan</span><input type="search" id="f-q" placeholder="e.g. Tradeify"></label>
-    <div class="fl" role="group" aria-label="Account size"><span>Account size</span><span class="chips" id="f-size"></span></div>
-    <label><span>Drawdown</span><select id="f-dd"><option value="all">EOD or static</option><option value="EOD">EOD only</option><option value="Static">Static only</option></select></label>
-    <label><span>Plan type</span><select id="f-kind"><option value="all">All plan types</option><option value="Evaluation">Evaluation</option><option value="Instant funded">Instant funded</option></select></label>
-    <label><span>Sort by</span><select id="f-sort"><option value="per1k">$ per $1K drawdown</option><option value="pay">Fastest first payout</option><option value="tp">Trustpilot stars</option><option value="cons">Funded consistency, lowest</option><option value="net">Price after today's offer</option><option value="price">Price, low to high</option><option value="dd">Drawdown, high to low</option><option value="ratio">Target ÷ drawdown</option><option value="size">Account size</option><option value="firm">Firm A–Z</option></select></label>
-    <label><span>Max price $</span><input type="number" id="f-max" min="0" step="10" placeholder="any"></label>
-    <label class="tg"><input type="checkbox" id="f-cp"> <span>Copier OK only</span></label>
-    <label class="tg"><input type="checkbox" id="f-ver"> <span>Fully checked only</span></label>
-    <label class="tg"><input type="checkbox" id="f-mo"> <span>Show monthly-billed plans</span></label>
-    <span class="count" id="count"></span>
-  </div>
-</div>
-
 <main>
-  <section class="sec" id="compare">
+  <section class="sec vsec" id="compare">
     <div class="desk">
       <div class="sh"><div><h2>Every account size, side by side</h2><p>One row per account size. Tap a row for the plan's rules, payout details, banned countries and the link to the firm. <b>$ per $1K drawdown</b> = price ÷ drawdown × 1,000: lower means more room for your money. <b>1st payout</b> = the fewest funded trading days before you can ask for your first payout. <b>Funded consistency</b> = your best day must stay under this % of your total profit to get paid.</p></div></div>
       <div class="cnote" id="cnote"></div>
@@ -404,17 +588,18 @@ body.rd-open{overflow:hidden}
         </tr></thead>
         <tbody><tr><td colspan="10" class="l loading">Loading the plans…</td></tr></tbody>
       </table></div>
+      <button type="button" class="morebtn" id="ledMore" hidden></button>
     </div>
   </section>
 
-  <section class="sec" id="speed">
+  <section class="sec vsec" id="speed">
     <div class="desk">
       <div class="sh"><div><h2>How fast you get paid</h2><p>Each plan sorted by the fewest funded trading days before your first payout request. Money then takes the firm's processing time to arrive (shown when you open a row). Tap a plan to see it in the table.</p></div></div>
       <div class="ladder" id="ladder"></div>
     </div>
   </section>
 
-  <section class="sec" id="copier">
+  <section class="sec vsec" id="copier">
     <div class="desk">
       <div class="sh"><div><h2>Copier groups: trade these together</h2><p>A trade copier sends one trade to many accounts. It only works well when every account has the same payout rule. These groups put together the plans that let you copy your own accounts and share the same funded consistency rule.</p></div></div>
       <div class="groups" id="groups"></div>
@@ -427,9 +612,9 @@ body.rd-open{overflow:hidden}
     </div>
   </section>
 
-  <section class="sec" id="firms">
+  <section class="sec vsec" id="firms">
     <div class="desk">
-      <div class="sh"><div><h2>Firm by firm</h2><p>Each plan's drawdown, consistency, payout and copier rules in one card. Same filters as the table above.</p></div></div>
+      <div class="sh"><div><h2>Firm by firm</h2><p>Each plan's drawdown, consistency, payout and copier rules in one card. Same size and filters as the rest of the page.</p></div></div>
       <div class="cards" id="cards"></div>
     </div>
   </section>
@@ -465,6 +650,7 @@ body.rd-open{overflow:hidden}
   </div>
 </main>
 
+<dialog class="odr" id="odr" aria-labelledby="odr-h"></dialog>
 <div id="mmm-footer"></div>
 <script>
 (function () {
@@ -478,14 +664,15 @@ body.rd-open{overflow:hidden}
   var H = '<i hidden></i>'; // a second child, so the translator takes the label inside on its own
   var LB = function (t) { return '<div class="lb">' + t + '</div>'; };
   var CHECK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3ddc97" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
-  var SIZES = [['all', 'All'], ['small', '< 25K'], ['25', '25K'], ['50', '50K'], ['100', '100K'], ['150', '150K'], ['250', '250K+']];
   var CP = { yes: ['cy', '✓ Yes'], limited: ['cl', 'Limited'], approval: ['ca', 'Ask first'], unknown: ['cu', 'Not published'], no: ['cn', '✗ No'] };
   var CPR = { yes: 0, limited: 1, approval: 2, unknown: 3, no: 4 };
-  var F = { q: '', size: 'all', dd: 'all', kind: 'all', max: '', ver: false, mo: false, cp: false, country: '', plat: '', sort: 'per1k', open: '' };
-  var D = null, ROWS = [], OF = null, LK = {}, TAB = '25', TODAY = new Date().toISOString().slice(0, 10);
-  try { TAB = localStorage.getItem('mmm-propfirms-tab') || '25'; } catch (e) {}
-  try { var sv = JSON.parse(localStorage.getItem('mmm-propfirms') || 'null'); if (sv) Object.keys(F).forEach(function (k) { if (sv[k] != null && k !== 'open' && k !== 'q') F[k] = sv[k]; }); } catch (e) {}
-  function save() { try { localStorage.setItem('mmm-propfirms', JSON.stringify(F)); } catch (e) {} }
+  var F = { q: '', size: '25', dd: 'all', kind: 'all', max: '', ver: false, mo: false, cp: false, country: '', plat: '', sort: 'net', open: '' };
+  var VIEWS = ['picks', 'compare', 'speed', 'copier', 'firms'], VIEW = 'picks', LIMC = 12, LIMT = 60, OTAB = 'firm', OSZ = 50;
+  var D = null, ROWS = [], OF = null, LK = {}, TODAY = new Date().toISOString().slice(0, 10);
+  try { var sv = JSON.parse(localStorage.getItem('mmm-propfirms') || 'null'); if (sv) Object.keys(F).forEach(function (k) { if (sv[k] != null && k !== 'open' && k !== 'q' && k !== 'size' && k !== 'sort') F[k] = sv[k]; }); } catch (e) {}
+  try { F.size = localStorage.getItem('mmm-pf-size') || localStorage.getItem('mmm-propfirms-tab') || '25'; F.sort = localStorage.getItem('mmm-pf-sort') || 'net'; VIEW = localStorage.getItem('mmm-pf-view') || 'picks'; } catch (e) {}
+  if (VIEWS.indexOf(VIEW) < 0) VIEW = 'picks';
+  function save() { try { localStorage.setItem('mmm-propfirms', JSON.stringify(F)); localStorage.setItem('mmm-pf-size', F.size); localStorage.setItem('mmm-pf-sort', F.sort); localStorage.setItem('mmm-pf-view', VIEW); } catch (e) {} }
 
   function FM(p) { return (D.firms && D.firms[p.firm]) || { tp: {}, copy: { s: 'unknown', note: '' }, banned: null, aff: {} }; }
   // firm's own site icon (official favicon, stored in /prop-firms/logos/) + name; initials when a firm publishes no icon
@@ -519,14 +706,8 @@ body.rd-open{overflow:hidden}
     if (!b) return 'unk';
     return b.indexOf(F.country) >= 0 ? 'ban' : 'ok';
   }
-  function sizeOk(z) {
-    var s = F.size, m = F.max === '' ? null : Number(F.max);
-    if (s === 'small' && !(z.k < 25)) return false;
-    if (s === '250' && !(z.k >= 250)) return false;
-    if (['all', 'small', '250'].indexOf(s) < 0 && z.k !== Number(s)) return false;
-    if (m != null && !isNaN(m) && (z.list == null || z.list > m)) return false;
-    return true;
-  }
+  function maxOk(z) { var m = F.max === '' ? null : Number(F.max); return m == null || isNaN(m) || (z.list != null && z.list <= m); }
+  function sizeOk(z) { return tabFn(curTab())(z.k) && maxOk(z); }
   function planOk(p) {
     var t = F.q.trim().toLowerCase(), c = FM(p).copy.s;
     return (F.mo || p.billing !== 'Monthly') && (F.dd === 'all' || p.dd === F.dd) && (F.kind === 'all' || p.kind === F.kind) &&
@@ -578,19 +759,74 @@ body.rd-open{overflow:hidden}
     drawOffers();
     $('#cav').innerHTML = D.caveats.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('');
     $('#exc').innerHTML = D.excluded.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('');
-    $('#f-plat').insertAdjacentHTML('beforeend', (D.platforms || []).map(function (c) { return '<option value="' + esc(c) + '" translate="no">' + esc(c) + '</option>'; }).join(''));
-    $('#f-country').insertAdjacentHTML('beforeend', D.countries.map(function (c) { return '<option value="' + esc(c) + '" translate="no">' + esc(c) + '</option>'; }).join(''));
   }
 
+  function liveOffers() { return OF && OF.offers ? OF.offers.filter(function (o) { return !o.ends || o.ends >= TODAY; }) : []; }
   function drawOffers() {
-    var box = $('#offers'), L = OF && OF.offers ? OF.offers.filter(function (o) { return !o.ends || o.ends >= TODAY; }) : [];
-    if (!L.length) { box.hidden = true; return; }
-    L.sort(function (a, b) { return (b.pct || 0) - (a.pct || 0); });
-    box.hidden = false;
-    box.innerHTML = '<div class="oh"><h2>Today\'s offers</h2><small><span>Checked every morning ·</span> <span translate="no">' + esc(OF.updated_label || '') + '</span></small></div><div class="ol">' +
-      L.map(function (o) {
-        return '<div class="oc" data-pk="x-' + esc(o.firm.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 38)) + '|0">' + LG(o.firm, 's') + '<b translate="no">' + esc(o.firm) + '</b>' + (o.pct ? '<span class="pc" translate="no">' + o.pct + '%</span>' : '') + '<small translate="no">' + esc(o.text) + (o.ends ? ' · → ' + esc(o.ends) : '') + '</small>' + (o.code ? cpyBtn(o.code) : H) + '</div>';
-      }).join('') + '</div>';
+    var L = liveOffers(); if (!L.length) return;
+    var top = L.reduce(function (m, o) { return Math.max(m, o.pct || 0); }, 0), nf = {}; L.forEach(function (o) { nf[o.firm] = 1; });
+    $('#offBtn').hidden = false; $('#offBtn2').hidden = false;
+    $('#offBadge').textContent = Object.keys(nf).length + ' firms' + (top ? ' · up to ' + top + '%' : '');
+    $('#offBadge2').textContent = top ? top + '%' : String(L.length);
+  }
+  function openOffers(from) {
+    var d = $('#odr');
+    if (!d._w) {
+      d._w = 1;
+      d.addEventListener('click', function (e) {
+        if (e.target === d || e.target.closest('.x')) { d.close(); return; }
+        var t = e.target.closest('[data-ot]'); if (t) { OTAB = t.dataset.ot; odraw(); return; }
+        var z = e.target.closest('[data-os]'); if (z) { OSZ = Number(z.dataset.os); odraw(); }
+      });
+      d.addEventListener('close', function () { document.body.classList.remove('rd-open'); if (d._from) d._from.focus({ preventScroll: true }); });
+    }
+    d._from = from || null;
+    odraw();
+    document.body.classList.add('rd-open');
+    if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+  }
+  function odraw() {
+    var d = $('#odr'), L = liveOffers(), by = {};
+    L.forEach(function (o) { (by[o.firm] = by[o.firm] || []).push(o); });
+    var G = Object.keys(by).map(function (f) { var os = by[f].slice().sort(function (a, b) { return (b.pct || 0) - (a.pct || 0); }); return { f: f, os: os, top: os[0] }; })
+      .sort(function (a, b) { return (b.top.pct || 0) - (a.top.pct || 0) || a.f.localeCompare(b.f); });
+    var sc = d.querySelector('.ob') ? d.querySelector('.ob').scrollTop : 0, same = d._t === OTAB;
+    d._t = OTAB;
+    d.innerHTML = '<div class="oh2"><div class="t"><div><h2 id="odr-h">Today\'s offers</h2><small><span>Checked every morning ·</span> <span translate="no">' + esc(OF.updated_label || '') + '</span></small></div><button type="button" class="x" aria-label="Close">Close ✕</button></div>' +
+      '<div class="otabs" role="tablist"><button type="button" role="tab" data-ot="firm" aria-selected="' + (OTAB === 'firm') + '">Best per firm<small translate="no">' + G.length + '</small></button><button type="button" role="tab" data-ot="price" aria-selected="' + (OTAB === 'price') + '">Price today vs list</button></div></div>' +
+      '<div class="ob">' + (OTAB === 'firm' ? G.map(orow).join('') : priceView()) + '</div>' +
+      '<p class="ofoot">From each firm\'s own site and official posts, checked every morning. Confirm the final price at checkout.</p>';
+    if (same) d.querySelector('.ob').scrollTop = sc;
+  }
+  function orow(g) {
+    var o = g.top, f = (D.firms && D.firms[g.f]) || {}, a = f.aff || {}, p = D.plans.filter(function (x) { return x.firm === g.f; })[0];
+    var url = a.url || (p ? p.src : o.src) || '#', pid = p ? p.id : 'x-' + g.f.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 38);
+    return '<div class="orow" data-pk="' + esc(pid) + '|0">' + LG(g.f) +
+      '<div class="nm" translate="no">' + esc(g.f) + '</div>' +
+      '<div class="pc">' + (o.pct ? '<span translate="no">' + o.pct + '%</span><small>off</small>' : '<small>Deal</small>') + '</div>' +
+      (o.pct ? '<div class="bar"><i style="width:' + o.pct + '%"></i></div>' : '') +
+      '<div class="tx" translate="no">' + esc(o.text) + '</div>' +
+      '<div class="ft">' + (o.code ? '<span class="chipc"><span>Code</span> ' + cpyBtn(o.code) + '</span>' : '<span>No code needed</span>') +
+      (o.ends ? '<span><span>Ends</span> <span translate="no">' + esc(o.ends) + '</span></span>' : '') +
+      '<a class="go2" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url ? ' sponsored' : ' nofollow') + '">Go to firm →</a></div>' +
+      (g.os.length > 1 ? '<details><summary>' + (g.os.length - 1) + (g.os.length > 2 ? ' more offers' : ' more offer') + '</summary>' + g.os.slice(1).map(function (x) {
+        return '<p>' + (x.pct ? '<b translate="no">' + x.pct + '%</b> ' : '') + '<span translate="no">' + esc(x.text) + '</span>' + (x.code ? ' ' + cpyBtn(x.code) : '') + (x.ends ? ' <small class="ns" translate="no">→ ' + esc(x.ends) + '</small>' : '') + '</p>';
+      }).join('') + '</details>' : '') + '</div>';
+  }
+  function priceView() {
+    var R = [];
+    D.plans.forEach(function (p) { if (p.billing === 'Monthly') return; p.sizes.forEach(function (z) { if (z.k !== OSZ || z.list == null) return; var dl = deal(p, z); if (dl) R.push({ p: p, z: z, d: dl }); }); });
+    R.sort(function (a, b) { return a.d.now - b.d.now; });
+    var mx = Math.max.apply(0, R.map(function (r) { return r.z.list; }).concat([1]));
+    return '<div class="osz">' + [25, 50, 100, 150].map(function (k) { return '<button type="button" data-os="' + k + '" aria-pressed="' + (k === OSZ) + '">' + k + 'K</button>'; }).join('') + '</div>' +
+      '<div class="olg"><span><i class="l"></i>List price</span><span><i class="n"></i>Today, after the offer</span></div>' +
+      (R.map(function (r) {
+        var f = FM(r.p), a = f.aff || {}, su = sizeUrl(r.p, r.z), u = su || a.url || r.p.src;
+        return '<a class="prow" data-pk="' + esc(r.p.id + '|' + r.z.k) + '" href="' + esc(u) + '" target="_blank" rel="noopener' + (a.url && !su ? ' sponsored' : ' nofollow') + '">' + LG(r.p.firm, 's') +
+          '<span class="nm"><b translate="no">' + esc(r.p.firm) + '</b><small translate="no">' + esc(r.p.plan) + ' · -' + r.d.off + '%</small></span>' +
+          '<span class="pp"><b class="num">' + money(r.d.now) + '</b><s class="num">' + money(r.z.list) + '</s></span>' +
+          '<span class="tr" aria-hidden="true"><i class="l" style="width:' + (r.z.list / mx * 100).toFixed(1) + '%"></i><i class="n" style="width:' + (r.d.now / mx * 100).toFixed(1) + '%"></i></span></a>';
+      }).join('') || '<p class="oemp">No offer on a ' + OSZ + 'K account today.</p>');
   }
   function detail(p, k, compact) {
     var f = FM(p), sz = p.sizes.slice().sort(function (a, b) { return a.k - b.k; });
@@ -641,38 +877,75 @@ body.rd-open{overflow:hidden}
       (code ? '<span class="code"><span>MMM code</span> ' + cpyBtn(code) + '</span>' : '') + '</div>' + '</div>';
   }
 
-  var TABS = [['small', 'Under 25K', function (k) { return k < 25; }], ['25', '25K'], ['50', '50K'], ['75', '75K'], ['100', '100K'], ['150', '150K'], ['250', '250K+', function (k) { return k >= 250; }]];
+  var TABS = [['all', 'All sizes', function () { return true; }], ['small', 'Under 25K', function (k) { return k < 25; }], ['25', '25K'], ['50', '50K'], ['75', '75K'], ['100', '100K'], ['150', '150K'], ['250', '250K+', function (k) { return k >= 250; }]];
   function tabFn(t) { return t[2] || function (k) { return k === Number(t[0]); }; }
-  function sizeCards() {
-    var plans = D.plans.filter(function (p) { return F.mo || p.billing !== 'Monthly'; }), cnt = {}; // every account on the list: the filters below only change the big table
-    TABS.forEach(function (t) { cnt[t[0]] = 0; plans.forEach(function (p) { p.sizes.forEach(function (z) { if (tabFn(t)(z.k)) cnt[t[0]]++; }); }); });
-    var tabs = TABS.filter(function (t) { return cnt[t[0]]; });
-    if (!tabs.some(function (t) { return t[0] === TAB; })) TAB = (tabs.filter(function (t) { return t[0] === '25'; })[0] || tabs[0] || ['25'])[0];
-    $('#sztabs').innerHTML = tabs.map(function (t) { return '<button type="button" role="tab" data-t="' + t[0] + '" aria-selected="' + (t[0] === TAB) + '">' + t[1] + '<small>' + cnt[t[0]] + (cnt[t[0]] === 1 ? ' account' : ' accounts') + '</small></button>'; }).join('');
-    var fn = tabFn(TABS.filter(function (t) { return t[0] === TAB; })[0] || TABS[1]), R = [];
-    plans.forEach(function (p) { p.sizes.forEach(function (z) { if (fn(z.k)) R.push({ p: p, z: z, d: deal(p, z) }); }); });
-    R.sort(function (a, b) { var x = a.d ? a.d.now : a.z.list, y = b.d ? b.d.now : b.z.list; return (x == null ? 1e9 : x) - (y == null ? 1e9 : y) || a.z.k - b.z.k; });
-    $('#sz-n').textContent = R.length + ' accounts · ' + R.filter(function (r) { return r.d; }).length + ' on sale today';
-    $('#szgrid').innerHTML = R.map(function (r, i) {
-      var p = r.p, z = r.z, d = r.d, f = FM(p), a = f.aff || {}, su = sizeUrl(p, z), url = su || a.url || p.src, v = per1k(z);
-      var price = d ? '<span class="now num">' + money(d.now) + '</span>' + (z.list != null ? '<span class="was num">' + money(z.list) + '</span>' : '') + (d.off ? '<span class="off">-' + d.off + '%</span>' : '')
-        : (z.list != null ? '<span class="now num">' + money(z.list) + '</span>' : '<span class="now">—</span>');
-      var note = d ? '<span class="pn" translate="no">' + esc(d.o.text) + (d.o.ends ? ' · ends ' + esc(d.o.ends) : '') + '</span>'
-        : (offers(p, z.k).length ? '<span class="pn" translate="no">' + esc(offers(p, z.k)[0].text) + '</span>' : z.promo ? '<span class="pn" translate="no">Often sold lower: ' + esc(z.promo) + '</span>' : '');
-      var codes = offers(p, z.k).filter(function (o) { return o.code; }).map(function (o) { return '<span class="chipc"><span>Firm code</span> ' + cpyBtn(o.code) + '</span>'; });
-      if (a.code && codes.join('').indexOf('data-code="' + esc(a.code) + '"') < 0) codes.push('<span class="chipc mine"><span>MMM code</span> ' + cpyBtn(a.code) + '</span>');
-      return '<article class="ac' + (d ? ' deal' : '') + '" data-pk="' + esc(p.id + '|' + z.k) + '"><span class="rk num">#' + (i + 1) + '</span>' +
-        '<div class="fn">' + LG(p.firm, 'l') + '<span><h3 translate="no">' + esc(p.firm) + '</h3><p class="pl"><span translate="no">' + esc(p.plan) + '</span> · <b style="color:var(--fg)">' + z.k + 'K</b></p></span></div>' +
-        '<div class="pr">' + price + note + '</div>' +
-        '<div class="mx"><div><div class="k">Drawdown</div><div class="v">' + (z.dd != null ? money(z.dd) : '—') + ' <small class="ns">' + esc(p.dd) + '</small></div></div><div><div class="k">Target</div><div class="v">' + (z.target != null ? money(z.target) : '—') + '</div></div><div><div class="k">1st payout</div><div class="v">' + payBadge(p) + '</div></div></div>' +
-        '<div class="tags">' + stars(f) + ' ' + cpTag(f) + ' <span class="tag">' + (p.kind === 'Evaluation' ? 'Evaluation' : 'Instant') + '</span>' + (p.billing === 'Monthly' ? ' <span class="tag mo">Monthly</span>' : '') + '</div>' +
-        (codes.length ? '<div class="codes">' + codes.join('') + '</div>' : '') +
-        '<a class="buy" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url && !su ? ' sponsored' : ' nofollow') + '">Open this ' + z.k + 'K account →</a>' +
-        '<p class="lk">' + (su ? 'Direct link to this ' + z.k + 'K account' : 'Opens the plan page: pick ' + z.k + 'K there') + '</p>' +
-        '<button type="button" class="more" data-row="' + esc(p.id + '|' + z.k) + '">See full rules</button></article>';
-    }).join('') || '<p class="empty">No account matches your filters.</p>';
+  function curTab() { return TABS.filter(function (t) { return t[0] === F.size; })[0] || TABS[2]; }
+  function sizeTabs(plans) {
+    var base = D.plans.filter(function (p) { return F.mo || p.billing !== 'Monthly'; }), cnt = {}, has = {};
+    TABS.forEach(function (t) {
+      var fn = tabFn(t); cnt[t[0]] = 0;
+      base.forEach(function (p) { p.sizes.forEach(function (z) { if (fn(z.k)) has[t[0]] = 1; }); });
+      plans.forEach(function (p) { p.sizes.forEach(function (z) { if (fn(z.k) && maxOk(z)) cnt[t[0]]++; }); });
+    });
+    $('#sztabs').innerHTML = TABS.filter(function (t) { return has[t[0]] || t[0] === F.size; }).map(function (t) {
+      var n = cnt[t[0]];
+      return '<button type="button" role="tab" data-t="' + t[0] + '" aria-selected="' + (t[0] === F.size) + '"' + (n ? '' : ' class="z"') + '>' + t[1] + '<small>' + n + (n === 1 ? ' account' : ' accounts') + '</small></button>';
+    }).join('');
   }
-
+  function card(r, i) {
+    var p = r.p, z = r.z, d = deal(p, z), f = FM(p), a = f.aff || {}, su = sizeUrl(p, z), url = su || a.url || p.src, v = per1k(z);
+    var price = d ? '<span class="now num">' + money(d.now) + '</span>' + (z.list != null ? '<span class="was num">' + money(z.list) + '</span>' : '') + (d.off ? '<span class="off">-' + d.off + '%</span>' : '')
+      : (z.list != null ? '<span class="now num">' + money(z.list) + '</span>' : '<span class="now">—</span>');
+    var ofs = offers(p, z.k);
+    var note = d ? '<span class="pn" translate="no">' + esc(d.o.text) + (d.o.ends ? ' · ends ' + esc(d.o.ends) : '') + '</span>'
+      : (ofs.length ? '<span class="pn" translate="no">' + esc(ofs[0].text) + '</span>' : z.promo ? '<span class="pn" translate="no">Often sold lower: ' + esc(z.promo) + '</span>' : '');
+    var seen = {}, codes = ofs.filter(function (o) { if (!o.code || seen[o.code]) return false; seen[o.code] = 1; return true; }).map(function (o) { return '<span class="chipc"><span>Firm code</span> ' + cpyBtn(o.code) + '</span>'; });
+    if (a.code && codes.join('').indexOf('data-code="' + esc(a.code) + '"') < 0) codes.push('<span class="chipc mine"><span>MMM code</span> ' + cpyBtn(a.code) + '</span>');
+    return '<article class="ac' + (d ? ' deal' : '') + '" data-pk="' + esc(p.id + '|' + z.k) + '" style="animation-delay:' + Math.min(i % 24, 11) * 25 + 'ms"><span class="rk num">#' + (i + 1) + '</span>' +
+      '<div class="fn">' + LG(p.firm, 'l') + '<span><h3 translate="no">' + esc(p.firm) + '</h3><p class="pl"><span translate="no">' + esc(p.plan) + '</span> · <b style="color:var(--fg)">' + z.k + 'K</b></p></span></div>' +
+      '<div class="pr">' + price + note + '</div>' +
+      '<div class="mx"><div><div class="k">Drawdown</div><div class="v">' + (z.dd != null ? money(z.dd) : '—') + ' <small class="ns">' + esc(p.dd) + '</small></div></div><div><div class="k">Target</div><div class="v">' + (z.target != null ? money(z.target) : '—') + '</div></div><div><div class="k">1st payout</div><div class="v">' + payBadge(p) + H + '</div></div></div>' +
+      '<div class="tags">' + stars(f) + ' ' + cpTag(f) + ' <span class="tag">' + (p.kind === 'Evaluation' ? 'Evaluation' : 'Instant') + '</span>' + (p.billing === 'Monthly' ? ' <span class="tag mo">Monthly</span>' : '') + (v != null ? ' <span class="tag" translate="no">' + money(Math.round(v)) + ' / $1K DD</span>' : '') + '</div>' +
+      (codes.length ? '<div class="codes">' + codes.join('') + '</div>' : '') +
+      '<a class="buy" href="' + esc(url) + '" target="_blank" rel="noopener' + (a.url && !su ? ' sponsored' : ' nofollow') + '">Open this ' + z.k + 'K account →</a>' +
+      '<p class="lk">' + (su ? 'Direct link to this ' + z.k + 'K account' : 'Opens the plan page: pick ' + z.k + 'K there') + '</p>' +
+      '<button type="button" class="more" data-row="' + esc(p.id + '|' + z.k) + '">See full rules</button></article>';
+  }
+  function picks(from) {
+    var n = ROWS.length, lim = Math.min(n, LIMC), g = $('#szgrid');
+    if (from) g.insertAdjacentHTML('beforeend', ROWS.slice(from, lim).map(function (r, i) { return card(r, from + i); }).join(''));
+    else g.innerHTML = ROWS.slice(0, lim).map(card).join('') || '<p class="empty">No account matches these filters. <button type="button" class="lnk" data-x="all">Clear the filters</button></p>';
+    var m = $('#pkMore'); m.hidden = n <= lim; m.textContent = 'Show ' + Math.min(24, n - lim) + ' more · ' + (n - lim) + ' left';
+  }
+  function chipsRow() {
+    var C = [];
+    if (F.q.trim()) C.push(['q', 'Search', F.q.trim()]);
+    if (F.country) C.push(['country', 'Country', F.country]);
+    if (F.plat) C.push(['plat', 'Platform', F.plat]);
+    if (F.dd !== 'all') C.push(['dd', 'Drawdown', F.dd]);
+    if (F.kind !== 'all') C.push(['kind', 'Type', F.kind]);
+    if (F.max !== '' && !isNaN(Number(F.max))) C.push(['max', 'Max', money(Number(F.max))]);
+    if (F.cp) C.push(['cp', 'Copier OK', '']);
+    if (F.ver) C.push(['ver', 'Fully checked', '']);
+    if (F.mo) C.push(['mo', 'Monthly plans shown', '']);
+    var firms = {}, nd = 0; ROWS.forEach(function (r) { firms[r.p.firm] = 1; if (deal(r.p, r.z)) nd++; });
+    $('#achips').innerHTML = '<span class="count num" id="count">' + ROWS.length + (ROWS.length === 1 ? ' account' : ' accounts') + ' · ' + Object.keys(firms).length + ' firms' + (nd ? ' · <b>' + nd + ' on sale today</b>' : '') + '</span>' +
+      C.map(function (c) { return '<button type="button" class="ac1" data-x="' + c[0] + '"><span>' + (c[2] ? '<em>' + c[1] + ':</em> <span translate="no">' + esc(c[2]) + '</span>' : c[1]) + '</span><i aria-hidden="true">✕</i><span class="sr">Remove</span></button>'; }).join('') +
+      (C.length > 1 ? '<button type="button" class="lnk" data-x="all">Clear all</button>' : '');
+    var nf = C.filter(function (c) { return c[0] !== 'q'; }).length;
+    $('#fN').hidden = !nf; $('#fN').textContent = nf;
+    $('#fShow').textContent = ROWS.length + (ROWS.length === 1 ? ' account' : ' accounts');
+  }
+  function showView() {
+    document.querySelectorAll('#views button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.v === VIEW)); });
+    $('#pkv').hidden = VIEW !== 'picks';
+    ['compare', 'speed', 'copier', 'firms'].forEach(function (id) { $('#' + id).hidden = VIEW !== id; });
+  }
+  function setView(v, scroll) {
+    VIEW = VIEWS.indexOf(v) >= 0 ? v : 'picks';
+    showView(); save();
+    if (scroll && $('#sizes').getBoundingClientRect().top < 0) $('#sizes').scrollIntoView({ behavior: 'smooth' });
+  }
   // keep the thing you clicked in the same place on screen after the page redraws
   function steady(el, fn) {
     var key = el && (el.dataset.id || el.dataset.k || el.dataset.t), sel = el && el.dataset.id ? '[data-id="' + key + '"]' : el && el.dataset.k ? 'th[data-k="' + key + '"]' : el && el.dataset.t ? '[data-t="' + key + '"]' : null;
@@ -696,7 +969,6 @@ body.rd-open{overflow:hidden}
   }
 
   function paint() {
-    sizeCards();
     var plans = D.plans.filter(planOk);
     ROWS = [];
     plans.forEach(function (p) { p.sizes.forEach(function (z) { if (sizeOk(z)) ROWS.push({ p: p, z: z, id: p.id + '|' + z.k }); }); });
@@ -710,12 +982,11 @@ body.rd-open{overflow:hidden}
       tp: function (r) { var t = FM(r.p).tp; return t.score == null ? big : -t.score * 1e9 - (t.n || 0); },
       copy: function (r) { return CPR[FM(r.p).copy.s] * 1e6 + (per1k(r.z) || 0); } }[F.sort];
     ROWS.sort(function (a, b) { var x = key(a), y = key(b); return x < y ? -1 : x > y ? 1 : a.z.k - b.z.k; });
+    sizeTabs(plans); picks(); chipsRow(); showView();
     var vals = ROWS.map(function (r) { return per1k(r.z); }).filter(function (v) { return v != null; }).sort(function (a, b) { return a - b; });
     var best = vals.slice(0, 3), mx = vals.length ? vals[vals.length - 1] : 1, mn = vals.length ? vals[0] : 0;
     var fs = $('#f-sort'); if (fs && fs.value !== F.sort) fs.value = F.sort;
     document.querySelectorAll('#led th[data-k]').forEach(function (th) { if (th.dataset.k === F.sort) th.setAttribute('aria-sort', 'ascending'); else th.removeAttribute('aria-sort'); });
-    var firms = {}; plans.forEach(function (p) { if (p.sizes.some(sizeOk)) firms[p.firm] = 1; });
-    $('#count').textContent = ROWS.length + ' sizes · ' + Object.keys(firms).length + ' firms';
     // country note
     var cn = $('#cnote');
     if (F.country) {
@@ -724,7 +995,7 @@ body.rd-open{overflow:hidden}
       cn.innerHTML = '<span><b>Your country:</b></span> ' + NO(F.country) + ' · <span><b>' + nb + '</b> firms hidden because they do not accept traders from there.</span> <span><b>' + nu + '</b> firms do not publish a full list: they show a yellow tag, ask them first.</span>';
       cn.classList.add('on');
     } else { cn.classList.remove('on'); cn.innerHTML = ''; }
-    $('#led tbody').innerHTML = ROWS.length ? ROWS.map(function (r) {
+    $('#led tbody').innerHTML = ROWS.length ? ROWS.slice(0, LIMT).map(function (r) {
       var p = r.p, z = r.z, f = FM(p), v = per1k(z), rt = ratio(z), open = F.open === r.id, cs = cstat(p);
       var w = v == null ? 0 : Math.max(6, Math.round((1 - (v - mn) / Math.max(1e-9, mx - mn)) * 100));
       return '<tr class="r' + (open ? ' open' : '') + '" data-id="' + esc(r.id) + '" tabindex="0" aria-expanded="' + open + '">' +
@@ -739,8 +1010,9 @@ body.rd-open{overflow:hidden}
         '<td>' + LB('Funded consistency') + consCell(p) + '</td>' +
         '<td class="l">' + LB('Copier') + cpTag(f) + '</td></tr>' +
         (open ? '<tr class="d"><td colspan="10">' + detail(p, z.k) + '</td></tr>' : '');
-    }).join('') : '<tr><td colspan="10" class="empty">No account size matches these filters. Clear a filter or raise the max price.</td></tr>';
+    }).join('') : '<tr><td colspan="10" class="empty">No account matches these filters. <button type="button" class="lnk" data-x="all">Clear the filters</button></td></tr>';
 
+    var lm = $('#ledMore'); lm.hidden = ROWS.length <= LIMT; lm.textContent = 'Show all ' + ROWS.length + ' rows';
     var shown = plans.filter(function (p) { return p.sizes.some(sizeOk); });
     // payout ladder
     var L = [['l1', 'Day 1', 'Ask after your first funded day', function (d) { return d != null && d <= 1; }],
@@ -791,29 +1063,99 @@ body.rd-open{overflow:hidden}
     save();
   }
 
+  function syncControls() {
+    $('#f-q').value = F.q; $('#f-max').value = F.max; $('#f-sort').value = F.sort;
+    $('#f-cp').checked = F.cp; $('#f-ver').checked = F.ver; $('#f-mo').checked = F.mo;
+    document.querySelectorAll('#fpop .sg').forEach(function (g) { var k = g.dataset.f; g.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(F[k] === b.dataset.v)); }); });
+    document.querySelectorAll('#f-plat button').forEach(function (b) { b.setAttribute('aria-pressed', String(F.plat === b.dataset.v)); });
+    countryUi();
+  }
+  function countryUi() {
+    var on = !!F.country;
+    $('#f-csel').hidden = !on; $('#f-cbox').hidden = on; $('#f-cname').textContent = F.country;
+    var h = $('#f-chint');
+    if (on) {
+      var fall = {}; D.plans.forEach(function (p) { if (F.mo || p.billing !== 'Monthly') fall[p.firm] = p; });
+      var nb = 0, nu = 0; Object.keys(fall).forEach(function (n) { var s = cstat(fall[n]); if (s === 'ban') nb++; else if (s === 'unk') nu++; });
+      h.innerHTML = '<b>' + nb + '</b> firms hidden: they do not accept traders from there. <b>' + nu + '</b> firms publish no list: they get a yellow tag, ask them first.';
+    } else h.textContent = 'Firms that do not accept traders from your country disappear from the list.';
+    var q = $('#f-cq').value.trim().toLowerCase(), L = [];
+    if (!on && q) {
+      D.countries.forEach(function (c) { var i = c.toLowerCase().indexOf(q); if (i >= 0) L.push([i === 0 ? 0 : 1, c, i]); });
+      L.sort(function (a, b) { return a[0] - b[0] || a[1].localeCompare(b[1]); });
+    }
+    $('#f-cl').innerHTML = L.slice(0, 8).map(function (x) { var c = x[1], i = x[2]; return '<li><button type="button" data-c="' + esc(c) + '" translate="no">' + esc(c.slice(0, i)) + '<mark>' + esc(c.slice(i, i + q.length)) + '</mark>' + esc(c.slice(i + q.length)) + '</button></li>'; }).join('') ||
+      (q && !on ? '<li class="hint" style="padding:6px 9px">No country called that on the firms\' lists.</li>' : '');
+  }
+  function setCountry(c) { F.country = c; F.open = ''; $('#f-cq').value = ''; LIMC = 12; paint(); countryUi(); }
+  function fOpen(on) {
+    var p = $('#fpop'); if (on !== p.hidden) return;
+    p.hidden = !on; $('#fBtn').setAttribute('aria-expanded', String(on)); $('#fscrim').hidden = !on;
+    if (on) { syncControls(); if (matchMedia('(max-width:700px)').matches) document.body.classList.add('rd-open'); }
+    else document.body.classList.remove('rd-open');
+  }
+  function clearKey(k) {
+    var D0 = { q: '', country: '', plat: '', dd: 'all', kind: 'all', max: '', cp: false, ver: false, mo: false };
+    if (k === 'all') Object.keys(D0).forEach(function (x) { F[x] = D0[x]; }); else if (k in D0) F[k] = D0[k];
+    LIMC = 12; syncControls(); paint();
+  }
+  function changed() { LIMC = 12; paint(); }
   function wire() {
-    $('#f-size').innerHTML = SIZES.map(function (s) { return '<button type="button" data-v="' + s[0] + '" aria-pressed="' + (F.size === s[0]) + '">' + s[1] + '</button>'; }).join('');
-    $('#f-size').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; F.size = b.dataset.v; $('#f-size').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); paint(); });
-    $('#f-q').addEventListener('input', function (e) { F.q = e.target.value; paint(); });
+    $('#f-plat').innerHTML = '<button type="button" data-v="">Any</button>' + (D.platforms || []).map(function (c) { return '<button type="button" data-v="' + esc(c) + '" translate="no">' + esc(c) + '</button>'; }).join('');
     if (F.country && D.countries.indexOf(F.country) < 0) F.country = '';
     if (F.plat && (D.platforms || []).indexOf(F.plat) < 0) F.plat = '';
-    $('#f-plat').value = F.plat; $('#f-plat').addEventListener('change', function (e) { F.plat = e.target.value; paint(); });
-    $('#f-country').value = F.country; $('#f-country').addEventListener('change', function (e) { F.country = e.target.value; F.open = ''; paint(); });
-    $('#f-dd').value = F.dd; $('#f-dd').addEventListener('change', function (e) { F.dd = e.target.value; paint(); });
-    $('#f-sort').value = F.sort; $('#f-sort').addEventListener('change', function (e) { F.sort = e.target.value; paint(); });
-    $('#f-kind').value = F.kind; $('#f-kind').addEventListener('change', function (e) { F.kind = e.target.value; paint(); });
-    $('#f-max').value = F.max; $('#f-max').addEventListener('input', function (e) { F.max = e.target.value; paint(); });
-    $('#f-cp').checked = F.cp; $('#f-cp').addEventListener('change', function (e) { F.cp = e.target.checked; paint(); });
-    $('#f-ver').checked = F.ver; $('#f-ver').addEventListener('change', function (e) { F.ver = e.target.checked; paint(); });
-    $('#f-mo').checked = F.mo; $('#f-mo').addEventListener('change', function (e) { F.mo = e.target.checked; paint(); });
+    if (!TABS.some(function (t) { return t[0] === F.size; })) F.size = '25';
+    if (!$('#f-sort').querySelector('option[value="' + F.sort + '"]')) F.sort = 'net';
+    syncControls();
+    var qT; $('#f-q').addEventListener('input', function (e) { clearTimeout(qT); qT = setTimeout(function () { F.q = e.target.value; changed(); }, 120); });
+    $('#f-sort').addEventListener('change', function (e) { F.sort = e.target.value; changed(); });
+    $('#fBtn').addEventListener('click', function () { fOpen($('#fpop').hidden); });
+    $('#fscrim').addEventListener('click', function () { fOpen(false); });
+    $('#fpop').addEventListener('click', function (e) {
+      if (e.target.closest('[data-fclose]')) { fOpen(false); if ($('#sizes').getBoundingClientRect().top < 0) $('#sizes').scrollIntoView({ behavior: 'smooth' }); return; }
+      var b = e.target.closest('.sg button'); if (b) { F[b.parentNode.dataset.f] = b.dataset.v; syncControls(); changed(); return; }
+      var pl = e.target.closest('#f-plat button'); if (pl) { F.plat = F.plat === pl.dataset.v ? '' : pl.dataset.v; syncControls(); changed(); return; }
+      var c = e.target.closest('#f-cl button'); if (c) { setCountry(c.dataset.c); return; }
+      if (e.target.closest('#f-cchg')) { F.country = ''; F.open = ''; changed(); countryUi(); $('#f-cq').focus(); return; }
+      if (e.target.closest('#fReset')) clearKey('all');
+    });
+    $('#f-cq').addEventListener('input', countryUi);
+    $('#f-cq').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { var b = $('#f-cl button'); if (b) { e.preventDefault(); setCountry(b.dataset.c); } }
+      else if (e.key === 'ArrowDown') { var f = $('#f-cl button'); if (f) { e.preventDefault(); f.focus(); } }
+    });
+    $('#f-cl').addEventListener('keydown', function (e) {
+      var li = e.target.closest('li'); if (!li) return;
+      if (e.key === 'ArrowDown' && li.nextElementSibling) { e.preventDefault(); li.nextElementSibling.querySelector('button').focus(); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); (li.previousElementSibling ? li.previousElementSibling.querySelector('button') : $('#f-cq')).focus(); }
+    });
+    $('#f-max').addEventListener('input', function (e) { F.max = e.target.value; document.querySelectorAll('#fpop .sg[data-f=max] button').forEach(function (b) { b.setAttribute('aria-pressed', String(F.max === b.dataset.v)); }); changed(); });
+    ['cp', 'ver', 'mo'].forEach(function (k) { $('#f-' + k).addEventListener('change', function (e) { F[k] = e.target.checked; changed(); }); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('#fpop').hidden) fOpen(false); });
+    document.addEventListener('click', function (e) { if (!$('#fpop').hidden && !e.target.closest('#fpop,#fBtn,#achips') && document.contains(e.target)) fOpen(false); });
+    document.addEventListener('click', function (e) { var x = e.target.closest('[data-x]'); if (x) clearKey(x.dataset.x); });
+    $('#sztabs').addEventListener('click', function (e) { var b = e.target.closest('button[data-t]'); if (!b) return; F.size = b.dataset.t; LIMC = 12; LIMT = 60; steady(b, paint); });
+    $('#views').addEventListener('click', function (e) { var b = e.target.closest('button[data-v]'); if (b) setView(b.dataset.v, true); });
+    $('#pkMore').addEventListener('click', function () { var from = Math.min(LIMC, ROWS.length); LIMC += 24; picks(from); });
+    $('#ledMore').addEventListener('click', function () { LIMT = 1e9; paint(); });
+    ['#offBtn', '#offBtn2'].forEach(function (s) { $(s).addEventListener('click', function (e) { openOffers(e.currentTarget); }); });
     document.querySelectorAll('#led th[data-k] button').forEach(function (b) { b.addEventListener('click', function () { steady(b.parentNode, function () { F.sort = b.parentNode.dataset.k; paint(); }); }); });
-    $('#sztabs').addEventListener('click', function (e) { var b = e.target.closest('button[data-t]'); if (!b) return; TAB = b.dataset.t; try { localStorage.setItem('mmm-propfirms-tab', TAB); } catch (x) {} steady(b, sizeCards); var g = $('#sizes'); if (g.getBoundingClientRect().top < 0) g.scrollIntoView(); });
     $('#szgrid').addEventListener('click', function (e) { var b = e.target.closest('button.more'); if (!b) return; showRules(b.dataset.row, b); });
     var tb = $('#led tbody');
     var tog = function (tr) { if (!tr || !tr.dataset.id) return; steady(tr, function () { F.open = F.open === tr.dataset.id ? '' : tr.dataset.id; paint(); }); };
-    tb.addEventListener('click', function (e) { if (e.target.closest('a,summary,details')) return; tog(e.target.closest('tr.r')); });
+    tb.addEventListener('click', function (e) { if (e.target.closest('a,summary,details,button')) return; tog(e.target.closest('tr.r')); });
     tb.addEventListener('keydown', function (e) { if (e.target.closest('tr.r') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); tog(e.target.closest('tr.r')); } });
-    $('#ladder').addEventListener('click', function (e) { var b = e.target.closest('button[data-q]'); if (!b) return; F.q = b.dataset.q; $('#f-q').value = F.q; F.sort = 'pay'; paint(); $('#compare').scrollIntoView({ behavior: 'smooth' }); });
+    $('#ladder').addEventListener('click', function (e) { var b = e.target.closest('button[data-q]'); if (!b) return; F.q = b.dataset.q; $('#f-q').value = F.q; F.sort = 'pay'; LIMT = 60; VIEW = 'compare'; paint(); $('#sizes').scrollIntoView({ behavior: 'smooth' }); });
+    // links to #compare, #speed, #copier, #firms open that view; #offers opens the drawer
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href^="#"]'); if (!a) return;
+      var h = a.getAttribute('href').slice(1);
+      if (VIEWS.indexOf(h) >= 0) { e.preventDefault(); setView(h); $('#sizes').scrollIntoView({ behavior: 'smooth' }); }
+      else if (h === 'offers' && !$('#offBtn').hidden) { e.preventDefault(); openOffers(a); }
+    });
+    var h0 = location.hash.slice(1);
+    if (VIEWS.indexOf(h0) >= 0) { VIEW = h0; setTimeout(function () { $('#sizes').scrollIntoView(); }, 50); }
+    if (h0 === 'offers' && !$('#offBtn').hidden) setTimeout(function () { openOffers($('#offBtn')); }, 50);
   }
 
   // count clicks on buy buttons and code copies (only a number per account per day: no cookie, no personal data)
@@ -824,7 +1166,7 @@ body.rd-open{overflow:hidden}
     try { fetch('https://firestore.googleapis.com/v1/projects/mmm-pro-journal/databases/(default)/documents:commit?key=AIzaSyDcrEEhcY6kHLQxZ7RQ37KmAcCDPgol0gg', { method: 'POST', keepalive: true, headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ writes: [{ transform: { document: 'projects/mmm-pro-journal/databases/(default)/documents/propClicks/' + id, fieldTransforms: [{ fieldPath: 'n', increment: { integerValue: '1' } }] } }] }) }).catch(function () {}); } catch (x) {}
   }
-  document.addEventListener('click', function (e) { var a = e.target.closest('a.buy, .go a.btn-try'); if (a) track(a, 'b'); }, true);
+  document.addEventListener('click', function (e) { var a = e.target.closest('a.buy, .go a.btn-try, a.go2, a.prow'); if (a) track(a, 'b'); }, true);
   document.addEventListener('click', function (e) {
     var b = e.target.closest('.cpy'); if (!b) return; e.stopPropagation(); track(b, 'c');
     var c = b.dataset.code, done = function () { var t = b.textContent; b.style.minWidth = b.offsetWidth + 'px'; b.textContent = '✓ copied'; setTimeout(function () { b.textContent = t; }, 1400); };
