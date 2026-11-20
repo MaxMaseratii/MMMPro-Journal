@@ -8,10 +8,10 @@
 <meta name="referrer" content="no-referrer">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <meta name="theme-color" content="#0b0f12">
-<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="/assets/tw.css?v=20261108">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* Private member desk. Same palette as the Strategy Book. */
 :root{
@@ -164,6 +164,8 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
 .prop iframe#affFrame{height:1400px;min-height:0;border:0;border-top:1px solid var(--rule2);border-radius:0 0 6px 6px}
 .prop iframe#offFrame{height:900px;min-height:0;border:0;border-top:1px solid var(--rule2);border-radius:0 0 6px 6px}
 </style>
+<link rel="preconnect" href="https://minimax-engine.onrender.com" crossorigin>
+<link rel="stylesheet" href="/admin/jarvis.css?v=20261120b">
 </head>
 <body>
 <div id="mmm-header"></div>
@@ -269,6 +271,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
 <div id="mmm-footer"></div>
 <script src="/assets/mmm-config.js"></script>
 <script src="/assets/mmm-geo.js"></script>
+<script src="/admin/jarvis.js?v=20261120b"></script>
 <script>
 (function () {
   var $ = function (id) { return document.getElementById(id); };
@@ -664,7 +667,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
 /* admin tabs: Members · V.I.P · CRM (they show once the admin login is confirmed) */
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], whop: ['Whop', 'Members, money and store visits on Whop, and what your indicator launches do to them.'], crm: ['CRM', 'Everything in one place: money, targets, content and what needs you.'], prop: ['Prop firms', 'Money and link clicks from /prop-firms/, then offers, direct links and the daily checks.'], haiti: ['Ayiti P2P', 'The USDT marketplace in Haiti: ID checks, disputes, orders, ads, users and limits.'], mail: ['Mail', 'Every inbox in one place. Read, clean and unsubscribe, and plug them all into Claude.'], strat: ['MMM Personal Strategy', 'My H4 Plan: the 5 setups, every mix, when to trade, account size, rules, pictures and curves. Final test, Nov 2026.'], size: ['Prop Safe Size', 'How many contracts a prop account can carry. Opens on the MMM H4 Plan.'] };
+  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], whop: ['Whop', 'Live store control: edit products, run promo codes, catch failed renewals. Daily charts below.'], crm: ['CRM', 'Everything in one place: money, targets, content and what needs you.'], prop: ['Prop firms', 'Money and link clicks from /prop-firms/, then offers, direct links and the daily checks.'], haiti: ['Ayiti P2P', 'The USDT marketplace in Haiti: ID checks, disputes, orders, ads, users and limits.'], mail: ['Mail', 'Every inbox in one place. Read, clean and unsubscribe, and plug them all into Claude.'], strat: ['MMM Personal Strategy', 'My H4 Plan: the 5 setups, every mix, when to trade, account size, rules, pictures and curves. Final test, Nov 2026.'], size: ['Prop Safe Size', 'How many contracts a prop account can carry. Opens on the MMM H4 Plan.'] };
   var SUB = $('sub').textContent;
   function pick(t, push) {
     if (!TABS[t]) t = 'members';
@@ -672,10 +675,12 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
     [].forEach.call(tabs.querySelectorAll('[data-tab]'), function (b) { b.setAttribute('aria-selected', b.dataset.tab === t); });
     document.querySelector('.head h1').textContent = TABS[t][0];
     $('sub').textContent = t === 'members' ? SUB : TABS[t][1];
-    if ((t === 'crm' || t === 'whop') && window.MMMCrm) window.MMMCrm(t);
-    if (t === 'haiti' && window.MMMHaiti) window.MMMHaiti();
-    if (t === 'mail' && window.MMMMail) window.MMMMail();
-    if (t === 'strat' && window.MMMStrategy) window.MMMStrategy();
+    var need = window.MMMNeed || function () { return Promise.resolve(); };
+    if (t === 'crm' || t === 'whop') need('crm').then(function () { if (window.MMMCrm && main.dataset.tab === t) window.MMMCrm(t); });
+    if (t === 'whop') need('whop').then(function () { if (window.MMMWhop) window.MMMWhop(); });
+    if (t === 'haiti') need('haiti').then(function () { if (window.MMMHaiti) window.MMMHaiti(); });
+    if (t === 'mail') need('mail').then(function () { if (window.MMMMail) window.MMMMail(); });
+    if (t === 'strat') need('strat').then(function () { if (window.MMMStrategy) window.MMMStrategy(); });
     if (t === 'size' && !$('psFrame').src) $('psFrame').src = '/admin/prop-size/?embed=1&theme=dark&p=h4';
     if (t === 'prop') { if (window.MMMPropDash) window.MMMPropDash(); if ($('offBox').open && !$('offFrame').src) $('offFrame').src = '/admin/offers/?embed=1'; if ($('affBox').open && !$('affFrame').src) $('affFrame').src = '/admin/affiliates/?embed=1'; }
     if (push) { try { history.replaceState(null, '', t === 'members' ? location.pathname : '#' + t); } catch (e) {} }
@@ -694,7 +699,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
     if ($('strat').hidden === ok) $('strat').hidden = !ok;
     if ($('psize').hidden === ok) $('psize').hidden = !ok;
     if (!ok && main.dataset.tab !== 'members') pick('members');
-    if (was && ok) pick((location.hash || '').slice(1));
+    if (was && ok) { pick((location.hash || '').slice(1)); if (window.MMMPrefetchTabs) setTimeout(window.MMMPrefetchTabs, 1200); }
   }
   tabs.addEventListener('click', function (e) { var b = e.target.closest('[data-tab]'); if (b) pick(b.dataset.tab, true); });
   window.addEventListener('message', function (e) { if (e.origin === location.origin && e.data && e.data.mmmPropSize) $('psFrame').style.height = (e.data.mmmPropSize + 24) + 'px'; });
@@ -705,11 +710,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
   pick('members'); sync();
 })();
 </script>
-<script src="/admin/crm.js?v=20261114b"></script>
 <script src="/admin/prop.js?v=20261114b"></script>
-<script src="/admin/haiti.js?v=20261118b"></script>
-<script src="/admin/mail.js?v=20261120a"></script>
-<script src="/admin/strategy.js?v=20261116b"></script>
 <script src="/assets/nav.js"></script>
 <script src="/assets/site.js"></script>
 </body>

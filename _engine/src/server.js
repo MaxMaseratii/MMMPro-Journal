@@ -10,6 +10,7 @@ import { ACCOUNTS } from './accounts.js';
 import * as mail from './mail.js';
 import * as ms from './ms.js';
 import * as cache from './cache.js';
+import * as whop from './whop.js';
 import { messagePage } from './admin.js';
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -45,7 +46,7 @@ app.use((req, res, next) => {
 });
 
 const notFound = (_req, res) => res.status(404).type('text/plain').send('Not found');
-app.get('/healthz', (_req, res) => res.type('text/plain').send('ok v4'));
+app.get('/healthz', (_req, res) => res.type('text/plain').send('ok v5'));
 
 // ---------- Claude connector (stateless Streamable HTTP) ----------
 const guard = (req, res, next) => (tokenMatches(req.params.token) ? next() : notFound(req, res));
@@ -178,6 +179,15 @@ api.post('/act', run(async (req) => {
   cache.applyAction(result.account || account, result.folder || folder, result.uids || uids, action);
   return { result };
 }));
+
+// ---------- Whop control ----------
+api.get('/whop/overview', run(async (req) => {
+  if (!whop.whopReady()) return { ready: false, account: whop.whopAccount() };
+  return { ready: true, ...(await whop.overview(req.query.fresh === '1')) };
+}));
+api.post('/whop/product', run(async (req) => ({ product: await whop.updateProduct(req.body?.id, req.body?.fields || {}) })));
+api.post('/whop/promo', run(async (req) => ({ promo: await whop.createPromo(req.body || {}) })));
+api.post('/whop/promo/state', run(async (req) => ({ promo: await whop.setPromo(req.body?.id, Boolean(req.body?.on)) })));
 
 api.post('/unsubscribe', run(async (req) => ({ result: await mail.unsubscribe(req.body || {}) })));
 

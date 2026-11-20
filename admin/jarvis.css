@@ -1,0 +1,120 @@
+/* MiniMax OS · admin HUD theme.
+   Loaded after the page's own styles: it re-colours the shared design tokens, so every tab
+   (Members, Whop, CRM, V.I.P, Prop firms, Ayiti P2P, Strategy, Prop Safe Size) picks up the look. */
+:root{
+  --paper:#03070a; --sheet:rgba(7,18,24,.86); --sheet2:#0a1b23; --rule:rgba(62,232,255,.13); --rule2:rgba(62,232,255,.28);
+  --ink:#dcf5fb; --mute:#7f9aa5; --faint:#4e6772;
+  --gold:#3ee8ff; --teal:#7ff3ff; --win:#36f1a1; --amber:#ffb23e; --loss:#ff5d6c;
+  --serif:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --jc:#3ee8ff; --jc-soft:rgba(62,232,255,.12); --jglow:0 0 18px -4px rgba(62,232,255,.65);
+  --hud:linear-gradient(var(--jc),var(--jc)) top left/16px 2px no-repeat,linear-gradient(var(--jc),var(--jc)) top left/2px 16px no-repeat,
+        linear-gradient(var(--jc),var(--jc)) bottom right/16px 2px no-repeat,linear-gradient(var(--jc),var(--jc)) bottom right/2px 16px no-repeat;
+}
+html{background:#03070a}
+body{
+  background:
+    radial-gradient(1100px 520px at 12% -8%,rgba(62,232,255,.09),transparent 60%),
+    radial-gradient(900px 600px at 105% 105%,rgba(178,140,255,.06),transparent 60%),
+    linear-gradient(rgba(62,232,255,.028) 1px,transparent 1px) 0 0/32px 32px,
+    linear-gradient(90deg,rgba(62,232,255,.028) 1px,transparent 1px) 0 0/32px 32px,
+    #03070a;
+  background-attachment:fixed;
+  color:var(--ink);
+}
+::selection{background:rgba(62,232,255,.3);color:#fff}
+*{scrollbar-color:rgba(62,232,255,.3) transparent}
+:focus-visible{outline:2px solid var(--jc);outline-offset:2px}
+a{color:var(--teal)}
+
+/* ---------- header HUD ---------- */
+.head{position:relative;align-items:center;padding-block:26px 18px;border-bottom:0;gap:18px}
+.head:after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,var(--jc),rgba(62,232,255,.15) 40%,transparent)}
+.head h1{font:700 clamp(22px,2.6vw,30px)/1.1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:#effcff;text-shadow:0 0 22px rgba(62,232,255,.25)}
+.head h1:before{content:"MINIMAX OS // ";color:var(--jc);font-weight:600;font-size:.62em;letter-spacing:.22em;vertical-align:middle;margin-right:4px}
+.head p{font:12.5px/1.5 "JetBrains Mono",ui-monospace,monospace;color:var(--mute);letter-spacing:.02em}
+.lock{color:var(--jc);border-color:rgba(62,232,255,.4);background:rgba(62,232,255,.06);font-family:"JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;box-shadow:var(--jglow)}
+.hudbar{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font:600 11px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.12em;color:var(--mute);text-transform:uppercase}
+.hudbar b{color:#effcff;font-weight:600}
+.hudbar .ok{color:var(--win)}.hudbar .warn{color:var(--amber)}
+.hudbar .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--win);box-shadow:0 0 8px var(--win);margin-right:6px;animation:jvPulse 2s ease-in-out infinite}
+.hudbar kbd{font:600 10px "JetBrains Mono",monospace;color:var(--jc);border:1px solid var(--rule2);border-radius:3px;padding:1px 5px}
+@keyframes jvPulse{50%{opacity:.35}}
+
+/* ---------- tab rail ---------- */
+.atabs{position:sticky;top:var(--jv-top,0px);z-index:40;gap:6px;border:1px solid var(--rule);border-radius:8px;padding:6px;margin:14px 0 18px;
+  background:rgba(4,11,15,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 10px 30px -18px #000}
+.atabs button{font:600 11.5px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);border:1px solid transparent;border-radius:5px;padding:9px 12px;border-bottom:1px solid transparent;transition:color .15s,border-color .15s,background .15s,box-shadow .15s}
+.atabs button:hover{color:var(--ink);border-color:var(--rule2)}
+.atabs button[aria-selected=true]{color:#02131a;background:var(--jc);border-color:var(--jc);box-shadow:var(--jglow)}
+.atabs button .k{opacity:.55;margin-right:7px;font-size:10px}
+.atabs button[aria-selected=true] .k{opacity:.7}
+
+/* ---------- surfaces ---------- */
+.panel,.gate,.vip,.kpi,.cx details.box,.prop details.offers,.crm details.offers{background:var(--hud),var(--sheet)!important;border:1px solid var(--rule)!important;border-radius:6px}
+.panel h2,.gate h2,.vip h2,.res h2,.cx details.box>summary h2{font:700 13px/1.3 "JetBrains Mono",ui-monospace,monospace!important;letter-spacing:.16em;text-transform:uppercase;color:#effcff}
+.panel h2:before,.res h2:before{content:"// ";color:var(--jc)}
+.panel h3{font-family:"JetBrains Mono",ui-monospace,monospace;letter-spacing:.14em;color:var(--mute)}
+.vip h2{color:var(--jc)!important}
+.vip .out{border-color:rgba(62,232,255,.45)!important}
+.vip .master{background:rgba(62,232,255,.05)!important}
+.kpis{background:transparent!important;border:0!important;gap:10px!important}
+.kpi{padding:14px 16px!important;transition:transform .15s,box-shadow .15s}
+.kpi:hover{transform:translateY(-1px);box-shadow:0 0 0 1px var(--rule2),0 12px 30px -20px rgba(62,232,255,.6)}
+.kpi b{color:#f1fdff;text-shadow:0 0 16px rgba(62,232,255,.25)}
+.kpi span{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:11px!important;letter-spacing:.08em;text-transform:uppercase}
+
+/* ---------- controls ---------- */
+.btn{font:600 11.5px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;border-color:var(--rule2);border-radius:5px;transition:all .15s}
+.btn:hover{border-color:var(--jc);color:#fff;box-shadow:var(--jglow)}
+.btn.gold{background:var(--jc);border-color:var(--jc);color:#02131a;box-shadow:var(--jglow)}
+.btn.gold:hover{filter:brightness(1.1)}
+input,select,textarea{color-scheme:dark}
+.tools input[type=search],.tools select,.vip select,.vip input,.cx input,.cx select{background:rgba(2,8,12,.85)!important;border-color:var(--rule2)!important;color:var(--ink)!important;border-radius:5px!important}
+.tools input:focus,.tools select:focus,.vip input:focus,.vip select:focus{border-color:var(--jc)!important;box-shadow:0 0 0 3px rgba(62,232,255,.12);outline:0}
+.tools{border-color:var(--rule)!important}
+.seg{border-color:var(--rule2)}.seg button[aria-pressed=true]{background:var(--jc);color:#02131a}
+.vip .seg2 button[aria-pressed=true]{background:var(--jc)!important;border-color:var(--jc)!important;color:#02131a!important}
+
+/* ---------- tables ---------- */
+table.m th,.vip th,.cx table.t th{background:#061218!important;color:var(--mute)!important;font-family:"JetBrains Mono",ui-monospace,monospace!important;letter-spacing:.1em;border-bottom:1px solid var(--rule2)!important}
+table.m th.on{color:var(--jc)!important}
+table.m td,.vip td,.cx table.t td{border-bottom-color:var(--rule)!important}
+table.m tr:hover td,.vip tr:hover td,.cx table.t tr:hover td{background:rgba(62,232,255,.045)!important}
+.tablewrap{border-color:var(--rule)}
+
+/* ---------- misc ---------- */
+.tag.y{color:var(--win);background:rgba(54,241,161,.12)}
+.toast{background:var(--jc)!important;color:#02131a!important;font:700 12px "JetBrains Mono",ui-monospace,monospace!important;letter-spacing:.1em;text-transform:uppercase;box-shadow:var(--jglow)}
+.tip{background:#02080c;border-color:var(--rule2)}
+.bar .lbl i{background:rgba(62,232,255,.18)!important}
+.fun .st .tr i{background:var(--jc)!important}
+.fun .st:first-child .tr i{background:var(--win)!important}
+.crm iframe,.prop iframe,#psFrame{border-color:var(--rule2)!important;background:#04090d!important}
+.note{color:var(--faint)}
+.gate{box-shadow:0 0 60px -30px rgba(62,232,255,.5)}
+
+/* skeleton shimmer for loading states */
+.jv-sk{height:12px;border-radius:3px;margin:8px 0;background:linear-gradient(90deg,rgba(62,232,255,.05),rgba(62,232,255,.15),rgba(62,232,255,.05));background-size:200% 100%;animation:jvSk 1.2s linear infinite}
+@keyframes jvSk{to{background-position:-200% 0}}
+
+/* tab content fades in */
+main[data-tab] > section:not([hidden]),#board:not([hidden]){animation:jvIn .22s ease-out}
+@keyframes jvIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ---------- command palette (Ctrl/Cmd + K) ---------- */
+.jv-pal{position:fixed;inset:0;z-index:200;display:grid;place-items:start center;padding-top:12vh;background:rgba(1,5,8,.6);backdrop-filter:blur(4px)}
+.jv-pal[hidden]{display:none}
+.jv-box{width:min(620px,calc(100vw - 32px));background:var(--hud),#050d12;border:1px solid var(--rule2);border-radius:8px;box-shadow:0 30px 80px -20px #000,0 0 40px -16px rgba(62,232,255,.5);overflow:hidden}
+.jv-box input{width:100%;box-sizing:border-box;background:transparent;border:0;border-bottom:1px solid var(--rule);color:#effcff;font:15px "JetBrains Mono",ui-monospace,monospace;padding:16px 18px;outline:0}
+.jv-box ul{list-style:none;margin:0;padding:6px;max-height:50vh;overflow:auto}
+.jv-box li{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:5px;cursor:pointer;font:13px var(--sans);color:var(--ink)}
+.jv-box li small{color:var(--mute);font:11px "JetBrains Mono",monospace;letter-spacing:.1em;text-transform:uppercase}
+.jv-box li.on{background:rgba(62,232,255,.12);box-shadow:inset 2px 0 0 var(--jc)}
+
+@media (max-width:700px){
+  .head h1:before{display:block;margin-bottom:4px}
+  .atabs{overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}
+  .atabs button{white-space:nowrap;flex:none}
+  .hudbar .hide-sm{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
