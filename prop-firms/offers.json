@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-20T17:09:00Z",
-  "updated_label": "20 Nov 2026, 17:09 London",
+  "updated": "2026-11-21T06:30:00Z",
+  "updated_label": "21 Nov 2026, 06:30 London",
   "offers": [
     {
       "firm": "Apex Trader Funding",
@@ -125,19 +125,6 @@
       "checked": "2026-11-19"
     },
     {
-      "firm": "Funded Family One",
-      "plans": [
-        "ffone-s2f"
-      ],
-      "code": "FFONE",
-      "pct": 55,
-      "text": "55% off your first 5 Straight to Funded accounts (50K, 100K or 150K), then 40% off. Ends 20 Nov 2026, 23:00 Amsterdam (17:00 ET)",
-      "ends": "2026-11-20",
-      "src": "https://x.com/fundedfamily/status/2123551164121895228",
-      "via": "x",
-      "checked": "2026-11-20"
-    },
-    {
       "firm": "Goat Funded Futures",
       "plans": [],
       "code": "EARLYFRIDAY55",
@@ -176,7 +163,7 @@
       "ends": null,
       "src": "https://x.com/Alpha_Futures_/status/2123719195548430785",
       "via": "x",
-      "checked": "2026-11-20"
+      "checked": "2026-11-21"
     },
     {
       "firm": "Futureify (FXIFY Futures)",
@@ -282,7 +269,7 @@
       "ends": null,
       "src": "https://x.com/Alpha_Futures_/status/2123719195548430785",
       "via": "x",
-      "checked": "2026-11-20"
+      "checked": "2026-11-21"
     },
     {
       "firm": "MyFundedFutures",
@@ -348,7 +335,7 @@
       "ends": "2026-11-22",
       "src": "https://x.com/FunderPro/status/2123687804093792498",
       "via": "x",
-      "checked": "2026-11-20"
+      "checked": "2026-11-21"
     },
     {
       "firm": "Tradeify",
@@ -405,18 +392,18 @@
       "ends": "2026-11-30",
       "src": "https://x.com/fundedfamily/status/2123763914341060698",
       "via": "x",
-      "checked": "2026-11-20"
+      "checked": "2026-11-21"
     },
     {
       "firm": "Phidias Propfirm",
       "plans": [],
       "code": "HONOR85",
       "pct": null,
-      "text": "150K Fundamental for $129.45 with code HONOR85 (up to 85% off one-time accounts)",
+      "text": "150K Express to Live for $168.45 with code HONOR85 (up to 85% off one-time accounts)",
       "ends": "2026-11-24",
-      "src": "https://x.com/PhidiasPropfirm/status/2123514343559921939",
+      "src": "https://x.com/PhidiasPropfirm/status/2123876772492071250",
       "via": "x",
-      "checked": "2026-11-20"
+      "checked": "2026-11-21"
     },
     {
       "firm": "Phoenix Trader Funding",
@@ -427,7 +414,7 @@
       "ends": "2026-11-24",
       "src": "https://x.com/phoenixfunding/status/2123763395279442216",
       "via": "x",
-      "checked": "2026-11-20"
+      "checked": "2026-11-21"
     },
     {
       "firm": "Traders Launch",
@@ -442,6 +429,7 @@
     }
   ],
   "inboxDone": [
+    "grok:2026-11-21.md",
     "grok:2026-11-20.md",
     "grok:2026-11-18.md",
     "grok:2026-11-17.md",
@@ -453,6 +441,7 @@
     "grok:2026-11-11.md"
   ],
   "log": [
+    "2026-11-21: 35 live · removed Funded Family One S2F FFONE (ended 20 Nov) · re-confirmed on official X today: Alpha EARLYBOGO40/50, FunderPro BF30, Funded Family One TruTik L3, Phoenix reset, Phidias HONOR85 (150K Express to Live now $168.45) · no new coded offers · new plans: Aqua Lab #1 50K, Bizi BiziSelect 50K, Phidias E2L 150K sale price · not added: Ylos Static Prime (price not shown)",
     "2026-11-20 (evening): 36 live · replaced Futureify FUTUREIFY 40% with BF50 50% · added FundedHero Holiday70 70%, Shark LITE BOGO, Elite GOBBLE90 (ends 1 Dec, 06:00 Amsterdam), Ylos YLOSBLACK (ends 23 Nov, 17:00 Amsterdam), Goat EARLYFRIDAY55, Bizi BOGO (ends 2 Dec, 05:59 Amsterdam) · set ends on Aqua BLACKFRIDAY, Tradeify NOV, Shark BFCM and FFN NEXUS (30 Nov) · updated Top One text to 70% off Ignite 5+ and Funded Family One S2F end time 23:00 Amsterdam",
     "2026-11-20 (afternoon): 30 live · added Alpha Futures EARLYBOGO50, Alpha Futures EARLYBOGO40, FundedNext Futures FNDIRECT, Funded Family One FFONE, Funded Family One FFONE, Tradeify MIAMI, Phoenix Trader Funding Free reset of your simulated $50K accoun · updated FunderPro BF30 and Phidias HONOR85 from official X, FundedNext FNFLEX from fundednext.com · no dated offer past its end date · new plans in plans.json: Tradeify Miami, Tradeify Select 300K, FundedNext Direct, Alpha Direct, Funded Family One S2F / Prime / Choice / Premier+ EOD · not added: Blue Guardian Zero (funded always intraday), Tradeify Level Up V2 (reward ladder), Swiss Firmup Algo (test account), TruTik Starter (launch offer, availability not confirmed)",
     "2026-11-20: 23 live · no changes · all site offers still on 19 Nov 14:39 UTC scan · Top One also has 70% off Ignite 5+ bundles (not our plan) · site scan missing for today (used 19 Nov scan) · Grok file for today missing (no new Grok file) · inbox empty · web search only affiliate codes · 12 direct links",

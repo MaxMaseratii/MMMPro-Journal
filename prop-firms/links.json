@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-14T12:22:50Z",
+  "updated": "2026-11-21T06:30:00Z",
   "note": "Direct buy link for each account size: {plan id: {size in K: url}}. Filled by the daily offers check from prop-firms/scan/latest.json.",
   "links": {
     "tradeify-select": {
@@ -29,6 +29,12 @@
     },
     "topstep-naf": {
       "50": "https://dashboard.topstep.com/checkout/66?origin=cms"
+    },
+    "aqua-lab1": {
+      "50": "https://www.aquafunded.com/aqua-lab"
+    },
+    "bizi-select": {
+      "50": "https://www.bizifutures.com/"
     }
   }
 }

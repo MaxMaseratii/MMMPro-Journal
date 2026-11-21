@@ -1,8 +1,8 @@
 {
  "title": "One-Pay Futures Prop Plans",
  "summary": "Only plans with no activation fee and an end-of-day or static drawdown in both the evaluation and the funded account. One row per account size, lowest to highest.",
- "verified": "2026-11-20",
- "verified_label": "20 Nov 2026 (London time)",
+ "verified": "2026-11-21",
+ "verified_label": "21 Nov 2026 (London time)",
  "criteria": [
   "No activation fee",
   "One-time payment (monthly-billed plans hidden behind a toggle)",
@@ -2307,6 +2307,34 @@
    "payNote": null
   },
   {
+   "id": "aqua-lab1",
+   "firm": "Aqua Futures (AquaFunded)",
+   "plan": "Lab #1 (Drop 001 Zero, limited)",
+   "kind": "Evaluation",
+   "dd": "Static",
+   "billing": "One-time",
+   "status": "Partially verified",
+   "ddNote": "3% static max loss ($1,500 on the 50K) stated in the official launch post; the post does not separately describe the funded-stage drawdown.",
+   "consistency": "None",
+   "payout": "90% split, rewards on demand; no minimum trading days, no daily profit cap.",
+   "maxAcc": "Not stated",
+   "notes": "Limited drop: accounts sell out, then it is gone. 1% daily loss ($500), 6% profit target ($3,000). Details from the official AquaFunded X post of 20 Nov 2026; the aquafunded.com/aqua-lab page did not render the plan card. Site FAQ says futures accounts have a one-time fee and no funded activation fee.",
+   "src": "https://x.com/AquaFunded/status/2123806766865821801",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 99,
+     "promo": "",
+     "dd": 1500,
+     "target": 3000,
+     "dll": "$500 (1% daily loss)"
+    }
+   ],
+   "fCons": 0,
+   "payDays": null,
+   "payNote": null
+  },
+  {
    "id": "fe-elite",
    "firm": "FuturesElite",
    "plan": "Elite",
@@ -3342,7 +3370,7 @@
    "consistency": "None in eval",
    "payout": "First payout is a bonus payout (80/20), then LIVE",
    "maxAcc": "15 funded (all Phidias types)",
-   "notes": "Only the one-time-payment path waives the $149 activation. 50K and 150K one-time prices not shown on pages read.",
+   "notes": "Only the one-time-payment path waives the $149 activation. 50K one-time price not shown on pages read. 150K one-time price shown only as the HONOR85 sale price on the official X post (list price not shown).",
    "src": "https://phidiaspropfirm.com/accounts",
    "sizes": [
     {
@@ -3357,6 +3385,14 @@
      "k": 100,
      "list": 900,
      "promo": "$180",
+     "dd": null,
+     "target": null,
+     "dll": "None"
+    },
+    {
+     "k": 150,
+     "list": null,
+     "promo": "$168.45 with HONOR85 (to 24 Nov 2026, official X 20 Nov)",
      "dd": null,
      "target": null,
      "dll": "None"
@@ -4517,6 +4553,34 @@
    "fCons": 0,
    "payDays": 5,
    "payNote": null
+  },
+  {
+   "id": "bizi-select",
+   "firm": "Bizi Futures",
+   "plan": "BiziSelect",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Partially verified",
+   "ddNote": "End-of-day trailing max loss ($2,000 on the 50K); on the funded account it stops trailing at start + $100. No daily loss limit.",
+   "consistency": "51% in evaluation; none funded",
+   "payout": "85% split. First payout after 3 days of $100+, then daily, $500 min; $1,500 per request, then $2,000.",
+   "maxAcc": "Not stated",
+   "notes": "Billed monthly until you pass, then no monthly fee and $0 activation. $169/mo for the 50K (shown $118.30 with START30). Other sizes' prices were not readable on the page (animated price digits). BiziDirect (no evaluation) price not readable, so not added.",
+   "src": "https://www.bizifutures.com/",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 169,
+     "promo": "$118.30 with START30",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "None"
+    }
+   ],
+   "fCons": 0,
+   "payDays": 3,
+   "payNote": null
   }
  ],
  "excluded": [
@@ -4535,7 +4599,8 @@
   "Blue Guardian Futures Zero: evaluation may be EOD or intraday, but official Zero account rules say funded Zero accounts always use an intraday trailing drawdown (stops at starting balance + $100).",
   "Tradeify Level Up V2: $89 one-time 10-level reward ladder with a $1,000 static drawdown on each level, not an evaluation that becomes a funded account.",
   "Swiss Firmup Algo: $29 for a $5,000 algo-test / leaderboard account. Official page: drawdown equals the full account capital, no profit target, and no funded payout path like the Pro evaluation.",
-  "Funded Family One TruTik Starter ($10, $1,000, $100 EOD trailing): official help and homepage describe a launch offer limited to 24 hours or the first 1,000 places. On 20 Nov 2026 the homepage still showed the offer with a countdown reading 24:00:00, so availability was not confirmed and it is not added as a plan row."
+  "Funded Family One TruTik Starter ($10, $1,000, $100 EOD trailing): official help and homepage describe a launch offer limited to 24 hours or the first 1,000 places. On 20 Nov 2026 the homepage still showed the offer with a countdown reading 24:00:00, so availability was not confirmed and it is not added as a plan row.",
+  "Ylos Trading Static Prime (Rocket Launch experiment, 25K and 50K, static drawdown, hard daily loss limit, one-time fee): fee amounts not shown on ylostrading.com/rocket-launch (only account size and rules), funded-stage rules not confirmed, limited test product, so not added."
  ],
  "firms": {
   "Apex Trader Funding": {
@@ -6983,6 +7048,43 @@
     "site": "https://phoenixtraderfunding.com",
     "src": "/prop-firms/logos/phoenix-trader-funding.png",
     "bg": "dark"
+   }
+  },
+  "Bizi Futures": {
+   "tp": {
+    "score": null,
+    "n": null,
+    "url": null,
+    "note": null
+   },
+   "copy": {
+    "s": null,
+    "note": null
+   },
+   "proc": null,
+   "banned": null,
+   "bannedNote": null,
+   "bannedSrc": null,
+   "aff": {
+    "url": "",
+    "code": ""
+   },
+   "prof": {
+    "platforms": [],
+    "payout": [],
+    "programs": [
+     "BiziDirect",
+     "BiziSelect"
+    ],
+    "hq": null,
+    "founded": "2026",
+    "maxAlloc": null,
+    "src": "bizifutures.com",
+    "srcUrl": "https://www.bizifutures.com/",
+    "checked": "2026-11-21"
+   },
+   "logo": {
+    "site": "https://www.bizifutures.com"
    }
   }
  },
