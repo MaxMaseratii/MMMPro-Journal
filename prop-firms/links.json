@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21T06:30:00Z",
+  "updated": "2026-11-22T06:30:00Z",
   "note": "Direct buy link for each account size: {plan id: {size in K: url}}. Filled by the daily offers check from prop-firms/scan/latest.json.",
   "links": {
     "tradeify-select": {
@@ -35,6 +35,10 @@
     },
     "bizi-select": {
       "50": "https://www.bizifutures.com/"
+    },
+    "tradingpit-instant": {
+      "50": "https://www.thetradingpit.com/futures",
+      "100": "https://www.thetradingpit.com/futures"
     }
   }
 }

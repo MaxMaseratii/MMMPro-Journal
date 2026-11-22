@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-21T06:30:00Z",
-  "updated_label": "21 Nov 2026, 06:30 London",
+  "updated": "2026-11-22T06:30:00Z",
+  "updated_label": "22 Nov 2026, 06:30 London",
   "offers": [
     {
       "firm": "Apex Trader Funding",
@@ -333,9 +333,9 @@
       "pct": 30,
       "text": "30% off every challenge with code BF30",
       "ends": "2026-11-22",
-      "src": "https://x.com/FunderPro/status/2123687804093792498",
+      "src": "https://x.com/FunderPro/status/2124125690198962333",
       "via": "x",
-      "checked": "2026-11-21"
+      "checked": "2026-11-22"
     },
     {
       "firm": "Tradeify",
@@ -426,9 +426,21 @@
       "src": "https://x.com/TradersLaunch/status/2121329868717584603",
       "via": "x",
       "checked": "2026-11-14"
+    },
+    {
+      "firm": "Phidias Propfirm",
+      "plans": [],
+      "code": "PHIDIAS",
+      "pct": 60,
+      "text": "Up to 60% off evaluations, limited time (banner on phidiaspropfirm.com)",
+      "ends": null,
+      "src": "https://phidiaspropfirm.com",
+      "via": "site",
+      "checked": "2026-11-22"
     }
   ],
   "inboxDone": [
+    "grok:2026-11-22.md",
     "grok:2026-11-21.md",
     "grok:2026-11-20.md",
     "grok:2026-11-18.md",
@@ -441,6 +453,7 @@
     "grok:2026-11-11.md"
   ],
   "log": [
+    "2026-11-22: 36 live · re-confirmed FunderPro BF30 on official X (ends today, 22 Nov) · added Phidias PHIDIAS up to 60% (official site banner) · nothing expired · new plan: The Trading Pit Futures Instant 50K/100K · no new coded X offers · Hola Prime site blocked",
     "2026-11-21: 35 live · removed Funded Family One S2F FFONE (ended 20 Nov) · re-confirmed on official X today: Alpha EARLYBOGO40/50, FunderPro BF30, Funded Family One TruTik L3, Phoenix reset, Phidias HONOR85 (150K Express to Live now $168.45) · no new coded offers · new plans: Aqua Lab #1 50K, Bizi BiziSelect 50K, Phidias E2L 150K sale price · not added: Ylos Static Prime (price not shown)",
     "2026-11-20 (evening): 36 live · replaced Futureify FUTUREIFY 40% with BF50 50% · added FundedHero Holiday70 70%, Shark LITE BOGO, Elite GOBBLE90 (ends 1 Dec, 06:00 Amsterdam), Ylos YLOSBLACK (ends 23 Nov, 17:00 Amsterdam), Goat EARLYFRIDAY55, Bizi BOGO (ends 2 Dec, 05:59 Amsterdam) · set ends on Aqua BLACKFRIDAY, Tradeify NOV, Shark BFCM and FFN NEXUS (30 Nov) · updated Top One text to 70% off Ignite 5+ and Funded Family One S2F end time 23:00 Amsterdam",
     "2026-11-20 (afternoon): 30 live · added Alpha Futures EARLYBOGO50, Alpha Futures EARLYBOGO40, FundedNext Futures FNDIRECT, Funded Family One FFONE, Funded Family One FFONE, Tradeify MIAMI, Phoenix Trader Funding Free reset of your simulated $50K accoun · updated FunderPro BF30 and Phidias HONOR85 from official X, FundedNext FNFLEX from fundednext.com · no dated offer past its end date · new plans in plans.json: Tradeify Miami, Tradeify Select 300K, FundedNext Direct, Alpha Direct, Funded Family One S2F / Prime / Choice / Premier+ EOD · not added: Blue Guardian Zero (funded always intraday), Tradeify Level Up V2 (reward ladder), Swiss Firmup Algo (test account), TruTik Starter (launch offer, availability not confirmed)",
