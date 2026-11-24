@@ -1,5 +1,5 @@
 {
- "scanned": "2026-11-23T16:25:25Z",
+ "scanned": "2026-11-24T16:18:20Z",
  "firms": {
   "Apex Trader Funding": {
    "pages": [
@@ -150,6 +150,13 @@
     "channel": "https://www.youtube.com/channel/UCFWpvt9xS67iuqhTnEBmbCw",
     "videos": [
      {
+      "title": "The Prop Trader Summit 2026 | 7 Pro Traders LIVE, $500K+ in Giveaways | Tradeify FX",
+      "url": "https://www.youtube.com/watch?v=r8RdSoqWkjI",
+      "published": "2026-11-07",
+      "promo": [],
+      "codes": []
+     },
+     {
       "title": "Why Going All In Blows Accounts",
       "url": "https://www.youtube.com/shorts/gy5X7Uk8B3Y",
       "published": "2026-11-23",
@@ -197,18 +204,6 @@
       "published": "2026-11-20",
       "promo": [],
       "codes": []
-     },
-     {
-      "title": "GBP/USD, Gold and EUR/USD: Trading the London Open | Live Forex London Session Trading",
-      "url": "https://www.youtube.com/watch?v=jyH1tW9k0z0",
-      "published": "2026-11-20",
-      "promo": [
-       "Use code NOV at checkout.",
-       "⭐⭐ Start any challenge this week with code NOV, any size"
-      ],
-      "codes": [
-       "NOV"
-      ]
      }
     ]
    },
@@ -232,7 +227,6 @@
       "New to MFFU? Get 50% off your first eval.",
       "Claim 40% off",
       "Based on current promotions",
-      "Targets and drawdowns shown for the selected account size. Prices reflect current promotions.",
       "Receive product updates, education and insights, and special offers in your inbox.",
       "4.2% of participants trading in a Simulated Funded Account were promoted to a Live Funded Account."
      ],
@@ -342,9 +336,27 @@
     "channel": "https://www.youtube.com/channel/UCBeO1KrgxOjoZCq6MAsYiVA",
     "videos": [
      {
+      "title": "Tuesday: Live Futures Trading & Market Talk | MyFundedTV 11/24/26",
+      "url": "https://www.youtube.com/watch?v=-yPz8sIF9pI",
+      "published": "2026-11-19",
+      "promo": [
+       "Use Code: youtube"
+      ],
+      "codes": []
+     },
+     {
+      "title": "Monday: Live Futures Trading | Asia Session with Stephen Kalayjian | MyFunded TV 11/23/26",
+      "url": "https://www.youtube.com/watch?v=EJ-xCPIvOOw",
+      "published": "2026-11-24",
+      "promo": [
+       "Use Code: youtube"
+      ],
+      "codes": []
+     },
+     {
       "title": "Monday: Live Futures Trading & Market Talk | MyFundedTV 11/23/26",
       "url": "https://www.youtube.com/watch?v=H4Bt0JwwcDk",
-      "published": "2026-11-16",
+      "published": "2026-11-23",
       "promo": [
        "Use Code: youtube"
       ],
@@ -387,27 +399,9 @@
       "codes": []
      },
      {
-      "title": "Wednesday: Live Futures Trading | Asia Session with Stephen Kalayjian | MyFundedTV 11/18/26",
-      "url": "https://www.youtube.com/watch?v=iHoA4rpDF1M",
+      "title": "Tuesday: Live Futures Trading | Asia Session with Stephen Kalayjian | MyFundedTV 11/24/26",
+      "url": "https://www.youtube.com/watch?v=1wy2Z4kXHuE",
       "published": "2026-11-19",
-      "promo": [
-       "Use Code: youtube"
-      ],
-      "codes": []
-     },
-     {
-      "title": "Wednesday: Live Futures Trading & Market Talk | MyFundedTV 11/18/26",
-      "url": "https://www.youtube.com/watch?v=Qbto6j73vyw",
-      "published": "2026-11-18",
-      "promo": [
-       "Use Code: youtube"
-      ],
-      "codes": []
-     },
-     {
-      "title": "Tuesday: Live Futures Trading | Asia Session with Stephen Kalayjian | MyFundedTV 11/17/26",
-      "url": "https://www.youtube.com/watch?v=6IoyHkGVFos",
-      "published": "2026-11-18",
       "promo": [
        "Use Code: youtube"
       ],
@@ -571,6 +565,15 @@
     "channel": "https://www.youtube.com/channel/UCiENktUjtWpf6cjoIQ2HNbw",
     "videos": [
      {
+      "title": "Stellar Lite Explained: The $32.99 Way Into a FundedNext Challenge",
+      "url": "https://www.youtube.com/watch?v=-bft9wpxrh0",
+      "published": "2026-11-24",
+      "promo": [
+       "Prices shown are list prices; promotions can change them. FundedNext challenges use simulated trading. Results vary, scale-up is reviewed and not guaranteed, and nothing in this video is financial advice. Check fundednext.com for the curren"
+      ],
+      "codes": []
+     },
+     {
       "title": "He Moved Into a Hotel for 30 Days to Stop Overtrading #meetthetrader #podcast #propfirm #fundednext",
       "url": "https://www.youtube.com/shorts/rHhJ220bORw",
       "published": "2026-11-22",
@@ -615,13 +618,6 @@
      {
       "title": "The Boot Camp That Changed His Futures Trading Forever #meetthetrader #fundednext #propfirmtrading",
       "url": "https://www.youtube.com/shorts/0MzMHXMP25U",
-      "published": "2026-11-14",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "How This Trader Prepares for the New York Open #meetthetrader #fundednext #propfirmtrading",
-      "url": "https://www.youtube.com/shorts/QfciC-yk56E",
       "published": "2026-11-14",
       "promo": [],
       "codes": []
@@ -795,83 +791,83 @@
      ],
      "buy_links": [
       [
-       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=25&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=25&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 25K"
       ],
       [
-       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=50&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=50&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 50K"
       ],
       [
-       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=100&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=100&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 100K"
       ],
       [
-       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=150&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=150&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 150K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=25&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=25&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 25K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=50&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=50&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 50K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=100&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=100&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 100K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=150&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=150&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 150K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=25&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=25&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 25K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=50&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=50&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 50K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=100&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=100&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 100K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=150&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=150&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 150K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=25&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=25&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 25K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=50&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=50&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 50K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=100&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=100&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 100K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=150&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=150&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 150K"
       ],
       [
-       "https://propscore.co/firms/topone-futures?tab=accounts&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://propscore.co/firms/topone-futures?tab=accounts&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        ""
       ]
      ],
      "social": {
       "youtube": [
-       "https://www.youtube.com/channel/UCWoWTvvwhfuAqDuxYJHa03Q?callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
+       "https://www.youtube.com/channel/UCWoWTvvwhfuAqDuxYJHa03Q?callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
       ],
       "discord": [
-       "https://discord.com/invite/6wTPNM9XwN?callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
+       "https://discord.com/invite/6wTPNM9XwN?callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
       ],
       "x": [
-       "https://x.com/TopOneFutures?callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
+       "https://x.com/TopOneFutures?callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
       ]
      }
     },
@@ -901,83 +897,83 @@
      ],
      "buy_links": [
       [
-       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=25&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=25&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 25K"
       ],
       [
-       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=50&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=50&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 50K"
       ],
       [
-       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=100&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=100&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 100K"
       ],
       [
-       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=150&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?type=elite-daily&billing=onetime&size=150&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 150K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=25&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=25&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 25K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=50&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=50&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 50K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=100&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=100&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 100K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=150&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=elite-access&size=150&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 150K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=25&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=25&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 25K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=50&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=50&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 50K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=100&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=100&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 100K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=150&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=instant-sim-funded&size=150&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 150K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=25&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=25&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 25K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=50&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=50&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 50K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=100&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=100&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 100K"
       ],
       [
-       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=150&variation=a&gwtest=a&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://checkout.toponefutures.com/?splitTest=A&type=ignite-af&size=150&variation=a&gwtest=a&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        "Start with 150K"
       ],
       [
-       "https://propscore.co/firms/topone-futures?tab=accounts&callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
+       "https://propscore.co/firms/topone-futures?tab=accounts&callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy",
        ""
       ]
      ],
      "social": {
       "youtube": [
-       "https://www.youtube.com/channel/UCWoWTvvwhfuAqDuxYJHa03Q?callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
+       "https://www.youtube.com/channel/UCWoWTvvwhfuAqDuxYJHa03Q?callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
       ],
       "discord": [
-       "https://discord.com/invite/6wTPNM9XwN?callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
+       "https://discord.com/invite/6wTPNM9XwN?callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
       ],
       "x": [
-       "https://x.com/TopOneFutures?callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
+       "https://x.com/TopOneFutures?callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
       ]
      }
     }
@@ -987,10 +983,10 @@
     "videos": []
    },
    "discord": [
-    "https://discord.com/invite/6wTPNM9XwN?callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
+    "https://discord.com/invite/6wTPNM9XwN?callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
    ],
    "x": [
-    "https://x.com/TopOneFutures?callix_sid_ref=7f2fb2de-b3f7-4dac-80ee-38ec2195ca04&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
+    "https://x.com/TopOneFutures?callix_sid_ref=6c1e32f2-c320-4b5f-99d1-59494c9c5211&callix_ref_id=j57drachn5etstzxhy1pg97t3h8h49qy"
    ]
   },
   "Futureify (FXIFY Futures)": {
@@ -1120,6 +1116,23 @@
     "channel": "https://www.youtube.com/channel/UCmqrKtuW0zGRDteM6knZYPg",
     "videos": [
      {
+      "title": "market crash 35% off.",
+      "url": "https://www.youtube.com/shorts/O1j_Kb_fud4",
+      "published": "2026-11-24",
+      "promo": [
+       "market crash 35% off.",
+       "Enjoy **35% OFF across all accounts** with code **BLACK**."
+      ],
+      "codes": []
+     },
+     {
+      "title": "Stubbornness Kills Profits.",
+      "url": "https://www.youtube.com/shorts/YIM_kcJXZJw",
+      "published": "2026-11-24",
+      "promo": [],
+      "codes": []
+     },
+     {
       "title": "Stop Choosing To Deviate From The Plan.",
       "url": "https://www.youtube.com/shorts/1ApBm5O0N3k",
       "published": "2026-11-22",
@@ -1163,22 +1176,6 @@
       "published": "2026-11-16",
       "promo": [],
       "codes": []
-     },
-     {
-      "title": "Why Your Winning Strategy Keeps Blowing Accounts.",
-      "url": "https://www.youtube.com/shorts/R6JDhxtu69c",
-      "published": "2026-11-12",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "Blue Guardian Futures Standard vs Reserve: Which One Actually Pays You More?",
-      "url": "https://www.youtube.com/watch?v=P-RTuzrQCzs",
-      "published": "2026-11-10",
-      "promo": [
-       "⚠️ Disclaimer: Trading futures involves substantial risk and isn't suitable for everyone. Nothing in this video is financial advice. Prop firm rules and prices change often, so always check the firm's site for the current rules and promotio"
-      ],
-      "codes": []
      }
     ]
    },
@@ -1198,14 +1195,14 @@
      "final": "https://www.aquafunded.com/",
      "title": "AquaFunded | Leading Prop Firm with Instant Funding & 100% Profit Split",
      "promo": [
-      "Black Friday",
-      "35% off every account",
+      "Black Friday Mega Sale",
+      "40% off every account",
       "Use code",
-      "35%off",
-      "Black Friday sale",
+      "ENDS IN",
+      "Mega Sale fees. INSTANT PRO 100K: $560, now $336. INSTANT PRO 200K: $905, now $543. INSTANT STANDARD 100K: $505, now $303. CFDS: +200% FEE BACK. INSTANT FLEX 100K: $999, now $599. TWO STEP PRO 100K: $279, now $167. ONE STEP TURBO 100K: $359",
       "Limited time",
-      "Includes your 35% promo, plus extra off for more accounts.",
-      "35% off",
+      "Includes your 40% promo, plus extra off for more accounts.",
+      "40% off",
       "Exclusive insights, discounts and giveaways"
      ],
      "codes": [
@@ -1231,11 +1228,11 @@
      "final": "https://www.aquafunded.com/futures",
      "title": "Funded Futures Accounts | Futures Prop Firm | AquaFunded",
      "promo": [
-      "Black Friday",
-      "35% off every account",
+      "Black Friday Mega Sale",
+      "40% off every account",
       "Use code",
-      "35%off",
-      "Black Friday sale",
+      "ENDS IN",
+      "Mega Sale fees. FLEX 50K: $91. DAILY 50K: $79. INSTANT 50K: $317. STANDARD 50K: $112. FLEX 100K: $133. DAILY 100K: $121.",
       "Exclusive insights, discounts and giveaways"
      ],
      "codes": [
@@ -1273,6 +1270,13 @@
    "youtube": {
     "channel": "https://www.youtube.com/channel/UCEeA81AUPP4IZbo1gi9SliA",
     "videos": [
+     {
+      "title": "Weekly Case Study",
+      "url": "https://www.youtube.com/shorts/fPQrX2dMFSw",
+      "published": "2026-11-24",
+      "promo": [],
+      "codes": []
+     },
      {
       "title": "Featured Payouts",
       "url": "https://www.youtube.com/shorts/Hi52d7w8yXo",
@@ -1736,6 +1740,19 @@
     "channel": "https://www.youtube.com/channel/UCh8EqZyAUunyl1ryHeZAaSw",
     "videos": [
      {
+      "title": "ACHTUNG: Ist das der Anfang vom nächsten CRASH?!",
+      "url": "https://www.youtube.com/watch?v=eDSVe6Ca8Mg",
+      "published": "2026-11-24",
+      "promo": [
+       "👤 Du nutzt OKX bereits, aber dein Account ist noch keinem Referral-Code zugeordnet?",
+       "Code: 26852176 | Grund: „Ich möchte Trademania beitreten“",
+       "➡️ Code: TRADEMANIA"
+      ],
+      "codes": [
+       "TRADEMANIA"
+      ]
+     },
+     {
       "title": "KRYPTO: Diesen Chart musst Du HEUTE sehen bevor du tradest!",
       "url": "https://www.youtube.com/watch?v=CWjkbVCTXIE",
       "published": "2026-11-23",
@@ -1825,19 +1842,6 @@
       "codes": [
        "TRADEMANIA"
       ]
-     },
-     {
-      "title": "So maximierst du deine Gewinne im nächsten Bullrun!",
-      "url": "https://www.youtube.com/shorts/382uHRVKj_A",
-      "published": "2026-11-17",
-      "promo": [
-       "👤 Du nutzt OKX bereits, aber dein Account ist noch keinem Referral-Code zugeordnet?",
-       "Code: 26852176 | Grund: „Ich möchte Trademania beitreten“",
-       "➡️ Code: TRADEMANIA"
-      ],
-      "codes": [
-       "TRADEMANIA"
-      ]
      }
     ]
    },
@@ -1883,9 +1887,7 @@
       "Limited time",
       "SAVE 80%",
       "Discount code",
-      "It depends on your trading style and goals.",
-      "and grab 80% off",
-      "Enter our giveaway for a free trading account, and everyone who joins gets an instant 80% off code on any evaluation. One email. One entry. That is it."
+      "It depends on your trading style and goals."
      ],
      "codes": [
       "SAVE",
@@ -1895,10 +1897,6 @@
       [
        "https://member.phidiaspropfirm.com/signup/NfNKNvbJV?product_id_page-0[]=115-407",
        "GET YOUR 100K EXPRESS TO LIVE ACCOUNT"
-      ],
-      [
-       "https://phidiaspropfirm.com/accounts#pricingSection",
-       "Get Your 10K Drawdown Challenge Account"
       ]
      ],
      "social": {
@@ -1919,35 +1917,8 @@
     "channel": "https://www.youtube.com/channel/UC356JMO4fxq4Mk2m4X21R7w",
     "videos": [
      {
-      "title": "This viewer trades from a ship in the Strait of Hormuz",
-      "url": "https://www.youtube.com/shorts/8yrtRbF8a3c",
-      "published": "2026-11-23",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "A new door every morning: the 10K Advent Edition #Shorts",
-      "url": "https://www.youtube.com/shorts/CAOBmAvG1FM",
-      "published": "2026-11-23",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "Trade the Opening of the Week! Day Trading Live NQ & ES!",
-      "url": "https://www.youtube.com/watch?v=FOy9syL6JHY",
-      "published": "2026-11-23",
-      "promo": [
-       "PHIDIAS PROPFIRM: Sculpt your trading success! Enjoy the exclusive discounts with the code: PPTV",
-       "Turn your payouts and successful challenges into real achievements with Trading Trophy! Premium trophies, fast delivery! Enjoy the biggest discounts with the code: PPTV30"
-      ],
-      "codes": [
-       "PPTV",
-       "PPTV30"
-      ]
-     },
-     {
-      "title": "BIG REVEAL: The New 10K Drawdown Challenge Is Here (December Edition)",
-      "url": "https://www.youtube.com/watch?v=XW4EPmBru5w",
+      "title": "NEW 10K ADVENT OPENING! Day Trading Live | The Phidias Floor",
+      "url": "https://www.youtube.com/watch?v=cEvmBYkmWnA",
       "published": "2026-11-22",
       "promo": [
        "PHIDIAS PROPFIRM: Sculpt your trading success! Enjoy the exclusive discounts with the code: PHIDIASLIVE",
@@ -1959,36 +1930,65 @@
       ]
      },
      {
-      "title": "A viewer's cat closed his laptop: no trading today",
-      "url": "https://www.youtube.com/shorts/P2wvfbavVy8",
+      "title": "Trade with your creator's team: the 10K Advent Edition #Shorts",
+      "url": "https://www.youtube.com/shorts/PNCzZBRbA9M",
+      "published": "2026-11-24",
+      "promo": [],
+      "codes": []
+     },
+     {
+      "title": "Let's scalp this Insane Market ! Day Trading Live NQ & ES!",
+      "url": "https://www.youtube.com/watch?v=2IBlshw3Lw0",
+      "published": "2026-11-22",
+      "promo": [
+       "PHIDIAS PROPFIRM: Sculpt your trading success! Enjoy the exclusive discounts with the code: PPTV",
+       "Turn your payouts and successful challenges into real achievements with Trading Trophy! Premium trophies, fast delivery! Enjoy the biggest discounts with the code: PPTV30"
+      ],
+      "codes": [
+       "PPTV",
+       "PPTV30"
+      ]
+     },
+     {
+      "title": "Phidias 10K Advent : The Teams",
+      "url": "https://www.youtube.com/shorts/Ozny6BZ2RYw",
       "published": "2026-11-23",
       "promo": [],
       "codes": []
      },
      {
-      "title": "Why traders blow up right before (or right after) a payout",
-      "url": "https://www.youtube.com/shorts/gNreYju_NeQ",
-      "published": "2026-11-22",
-      "promo": [
-       "🎁 Promo code \"PPTV\" → https://phidiaspropfirm.com/"
-      ],
-      "codes": []
-     },
-     {
-      "title": "Early Access opens November 24: the 10K Advent Edition #Shorts",
-      "url": "https://www.youtube.com/shorts/excWAAxgqFw",
-      "published": "2026-11-22",
+      "title": "Phidias 10K Advent: The rules",
+      "url": "https://www.youtube.com/shorts/cwFs7W10Q1Y",
+      "published": "2026-11-23",
       "promo": [],
       "codes": []
      },
      {
-      "title": "Under-leverage or die: one micro per entry",
-      "url": "https://www.youtube.com/shorts/ePyKFu8HDlg",
-      "published": "2026-11-22",
-      "promo": [
-       "🎁 Promo code \"PPTV\" → https://phidiaspropfirm.com/"
-      ],
+      "title": "Every morning, a new door",
+      "url": "https://www.youtube.com/shorts/MkDVJniDLVY",
+      "published": "2026-11-23",
+      "promo": [],
       "codes": []
+     },
+     {
+      "title": "Phidias 10K Advent",
+      "url": "https://www.youtube.com/shorts/xnq0UtssvEk",
+      "published": "2026-11-23",
+      "promo": [],
+      "codes": []
+     },
+     {
+      "title": "BIG REVEAL: The New 10K Drawdown Challenge Is Here (December Edition)",
+      "url": "https://www.youtube.com/watch?v=XW4EPmBru5w",
+      "published": "2026-11-23",
+      "promo": [
+       "PHIDIAS PROPFIRM: Sculpt your trading success! Enjoy the exclusive discounts with the code: PHIDIASLIVE",
+       "Turn your payouts and successful challenges into real achievements with Trading Trophy! Premium trophies, fast delivery! Enjoy the biggest discounts with the code: PPTV30"
+      ],
+      "codes": [
+       "PHIDIASLIVE",
+       "PPTV30"
+      ]
      }
     ]
    },
@@ -2043,12 +2043,44 @@
     "channel": "https://www.youtube.com/channel/UCHGznmL3rdnsDKDgrRyK_VQ",
     "videos": [
      {
+      "title": "Trading en Vivo: Nasdaq ¿Rebote o Trampa? | Futuros NQ y ES con Angel y Cristian Correa | E8 Markets",
+      "url": "https://www.youtube.com/watch?v=KC7-iLjCrY8",
+      "published": "2026-11-23",
+      "promo": [
+       "(= 50% off all E8 One & E8 Pro Perpetual challenges – code LATAM)",
+       "(= 15% off your first E8 Forex challenge – code LATAM)"
+      ],
+      "codes": [
+       "LATAM"
+      ]
+     },
+     {
+      "title": "Gold Live Trading: Risk-On Rally | XAUUSD, Oil, NQ & Forex | E8 Markets London w/ Ken & Joel",
+      "url": "https://www.youtube.com/watch?v=f-_jKlYD-34",
+      "published": "2026-11-24",
+      "promo": [
+       "🔥 GET 50% OFF ALL E8 ONE & E8 PRO PERPETUAL CHALLENGES – CODE KENMACRO",
+       "💱 GET 15% OFF YOUR FIRST E8 FOREX CHALLENGE – KENMACRO",
+       "💱 E8 CLASSIC $2K – SAVE WITH CODE E8 ON YOUR FIRST ORDER"
+      ],
+      "codes": [
+       "KENMACRO"
+      ]
+     },
+     {
       "title": "Nasdaq Live Trading: Worst Week Since 2020 | NQ, ES, Oil & Gold | E8 Markets NY w/ Angel & Albert",
       "url": "https://www.youtube.com/watch?v=84Lyc2yERhw",
-      "published": "2026-11-23",
+      "published": "2026-11-24",
       "promo": [
        "🔴 Nasdaq Live Trading: 2020 Flashback – Nasdaq Fights Back | NY Session w/ Angel & Albert | Nov 23 | E8 Markets"
       ],
+      "codes": []
+     },
+     {
+      "title": "The Easiest Liquidity Explanation You'll Ever Watch",
+      "url": "https://www.youtube.com/shorts/ff3GSh1qBu0",
+      "published": "2026-11-23",
+      "promo": [],
       "codes": []
      },
      {
@@ -2095,42 +2127,6 @@
       ],
       "codes": [
        "KENMACRO"
-      ]
-     },
-     {
-      "title": "Nasdaq Live Trading: Biggest IPO Ever Debuts | NQ, ES, Oil & Gold | E8 Markets NY w/ Angel & Josef",
-      "url": "https://www.youtube.com/watch?v=p8573kcjXbM",
-      "published": "2026-11-20",
-      "promo": [
-       "🔥 GET 50% OFF ALL E8 ONE & E8 PRO PERPETUAL CHALLENGES – CODE E8ARC",
-       "💱 GET 15% OFF YOUR FIRST E8 FOREX CHALLENGE – CODE E8"
-      ],
-      "codes": [
-       "E8ARC"
-      ]
-     },
-     {
-      "title": "Gold Live Trading: Bounce or New Low? | XAUUSD, Oil, NQ & Forex | E8 Markets London w/ Ken & Joel",
-      "url": "https://www.youtube.com/watch?v=1tYXssQUny4",
-      "published": "2026-11-19",
-      "promo": [
-       "🔥 GET 50% OFF ALL E8 ONE & E8 PRO PERPETUAL CHALLENGES – CODE KENMACRO",
-       "💱 GET 15% OFF YOUR FIRST E8 FOREX CHALLENGE – CODE E8"
-      ],
-      "codes": [
-       "KENMACRO"
-      ]
-     },
-     {
-      "title": "Nasdaq Live Trading: Bounce or Bull Trap? | NQ & S&P 500 Futures | E8 Markets NY w/Angel",
-      "url": "https://www.youtube.com/watch?v=oK3oZZvp-N0",
-      "published": "2026-11-19",
-      "promo": [
-       "🔥 GET 50% OFF ALL E8 ONE & E8 PRO PERPETUAL CHALLENGES – CODE E8ARC",
-       "💱 GET 15% OFF YOUR FIRST E8 FOREX CHALLENGE – CODE E8"
-      ],
-      "codes": [
-       "E8ARC"
       ]
      }
     ]
@@ -2276,8 +2272,8 @@
     "channel": "https://www.youtube.com/channel/UCU1FAGwhbCMRfoB6wBkgaJA",
     "videos": [
      {
-      "title": "🔴 LIVE Futures Day Trading | NY Market Open with Josh | NQ HALT | JENSEN HUANG IS BACK!",
-      "url": "https://www.youtube.com/watch?v=7UieJcPW0EU",
+      "title": "Are Prop Firms Making Trading HARDER Than It Needs to Be?",
+      "url": "https://www.youtube.com/shorts/RDbYvQw8iMQ",
       "published": "2026-11-23",
       "promo": [],
       "codes": []
@@ -2285,6 +2281,13 @@
      {
       "title": "🔴 LIVE Futures Day Trading | NY Market Open with Josh | TLTV",
       "url": "https://www.youtube.com/watch?v=07Rd_6ztvN0",
+      "published": "2026-11-23",
+      "promo": [],
+      "codes": []
+     },
+     {
+      "title": "🔴 LIVE Futures Day Trading | NY Market Open with Josh | NQ HALT | JENSEN HUANG IS BACK!",
+      "url": "https://www.youtube.com/watch?v=7UieJcPW0EU",
       "published": "2026-11-23",
       "promo": [],
       "codes": []
@@ -2321,13 +2324,6 @@
       "title": "Most Beginner Traders Get This Completely Wrong",
       "url": "https://www.youtube.com/shorts/a3OfGexFVAM",
       "published": "2026-11-20",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "You're Letting Numbers on a Screen Control Your Life…",
-      "url": "https://www.youtube.com/shorts/ChlPnCOUm3M",
-      "published": "2026-11-19",
       "promo": [],
       "codes": []
      }
@@ -2368,9 +2364,12 @@
      "url": "https://the5ers.com/futures/",
      "ok": true,
      "status": 200,
-     "final": "https://the5ers.com/futures/",
+     "final": "https://the5ers.com/futures/?type=day",
      "title": "Futures - The5ers | The5ers",
      "promo": [
+      "20% OFF",
+      "SAVE 20%",
+      "Get 20% OFF",
       "Subscribe for the latest updates and exclusive promotions"
      ],
      "codes": [],
@@ -2382,7 +2381,6 @@
       ],
       "discord": [],
       "x": [
-       "https://twitter.com/en/privacy",
        "https://x.com/The5ersFutures",
        "https://x.com/the5erstrading"
       ]
@@ -2393,9 +2391,33 @@
     "channel": "https://www.youtube.com/channel/UCEPKWIz6WN-rlANZhpXWVsA",
     "videos": [
      {
+      "title": "Nvidia just moved the Nasdaq 1,200 points in minutes #the5ers",
+      "url": "https://www.youtube.com/shorts/kMiknXqGo3Q",
+      "published": "2026-11-24",
+      "promo": [],
+      "codes": []
+     },
+     {
+      "title": "Gold Strategy (XAUUSD) & Market Auction Theory | Market Masters Day 7",
+      "url": "https://www.youtube.com/watch?v=d3h7y1v5NpI",
+      "published": "2026-11-13",
+      "promo": [
+       "🎉 BLACK FRIDAY IS LIVE (Nov 23–30)",
+       "✅ 10% off all The5ers programs"
+      ],
+      "codes": []
+     },
+     {
+      "title": "$11,000+ in Payouts: A Stay-at-Home Mom’s Futures Trader Journey | Female Trader",
+      "url": "https://www.youtube.com/watch?v=bpZm9rdMq8k",
+      "published": "2026-11-23",
+      "promo": [],
+      "codes": []
+     },
+     {
       "title": "Order Flow & Price Action + Building AI Bots | Market Masters Day 6",
       "url": "https://www.youtube.com/watch?v=dXZxSzldbZ0",
-      "published": "2026-11-13",
+      "published": "2026-11-23",
       "promo": [],
       "codes": []
      },
@@ -2424,27 +2446,6 @@
       "title": "Market Masters - Master Thinking in Probabilities and Catching the Next Big Trade with LJ & Mitch",
       "url": "https://www.youtube.com/watch?v=J0YBwJ-I1hs",
       "published": "2026-11-18",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "Market Masters - Mastering The Quasimodo & The Bounce with Victor & Josh",
-      "url": "https://www.youtube.com/watch?v=2tpYQqCXmHs",
-      "published": "2026-11-17",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "Abe, our Head of Community, is inviting you to join Market Masters!",
-      "url": "https://www.youtube.com/shorts/agHbvnV6JVU",
-      "published": "2026-11-17",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "What Happens When the Stock Market Hits a Circuit Breaker?",
-      "url": "https://www.youtube.com/watch?v=RunPylc0muw",
-      "published": "2026-11-17",
       "promo": [],
       "codes": []
      }
@@ -2618,6 +2619,13 @@
     "channel": "https://www.youtube.com/channel/UCr9Qw-7SxbJbO6Tt6bJIr2A",
     "videos": [
      {
+      "title": "Charts closed. Rackets out 🎾",
+      "url": "https://www.youtube.com/shorts/PBfui-PJWnY",
+      "published": "2026-11-24",
+      "promo": [],
+      "codes": []
+     },
+     {
       "title": "3 filters to help boost your win rate this month 📈",
       "url": "https://www.youtube.com/shorts/vU-1xMIoFmc",
       "published": "2026-11-21",
@@ -2663,13 +2671,6 @@
       "title": "Remember this 👇",
       "url": "https://www.youtube.com/shorts/CMvoL4XvIWQ",
       "published": "2026-11-12",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "\"Losing $100 feels so much worse than making $100 feels good.” 🧠",
-      "url": "https://www.youtube.com/shorts/l6_VRTEGTx0",
-      "published": "2026-11-11",
       "promo": [],
       "codes": []
      }
@@ -2752,8 +2753,8 @@
     "channel": "https://www.youtube.com/channel/UCTDYMpdFhZU6Ivf3F2AEVUQ",
     "videos": [
      {
-      "title": "TopstepTV: Slow Markets with Dakota - Live Futures Day Trading (11/23/26)",
-      "url": "https://www.youtube.com/watch?v=GvXpIJwEPCc",
+      "title": "TopstepTV Live Futures Day Trading: Topstep Challenges Are Here to Stay! (11/24/26)",
+      "url": "https://www.youtube.com/watch?v=6hCpGYdXpRo",
       "published": "2026-11-23",
       "promo": [
        "- No self-promotion allowed within the chat.",
@@ -2762,16 +2763,56 @@
       "codes": []
      },
      {
-      "title": "TopstepTV: Market Tip-off with Dakota (11/23/26)",
-      "url": "https://www.youtube.com/watch?v=m9YP7RjiSn4",
-      "published": "2026-11-23",
-      "promo": [],
+      "title": "TopstepTV: Coach DBA Marathon!!! (11/23/26)",
+      "url": "https://www.youtube.com/watch?v=GvXpIJwEPCc",
+      "published": "2026-11-24",
+      "promo": [
+       "- No self-promotion allowed within the chat.",
+       "NOTHING CONTAINED IN THIS WEBSITE CONSTITUTES INVESTMENT ADVICE, NOR DOES IT CONSTITUTE THE SOLICITATION, ENDORSEMENT, OR RECOMMENDATION OF THE PURCHASE OR SALE OF ANY FUTURES OR OTHER FINANCIAL PRODUCT. THE WEBSITE CONTENT IS FOR GENERAL I"
+      ],
+      "codes": []
+     },
+     {
+      "title": "TopstepTV: Slow Markets with Dakota - Live Futures Day Trading (11/24/26)",
+      "url": "https://www.youtube.com/watch?v=U61lrOL0nhg",
+      "published": "2026-11-24",
+      "promo": [
+       "- No self-promotion allowed within the chat.",
+       "NOTHING CONTAINED IN THIS WEBSITE CONSTITUTES INVESTMENT ADVICE, NOR DOES IT CONSTITUTE THE SOLICITATION, ENDORSEMENT, OR RECOMMENDATION OF THE PURCHASE OR SALE OF ANY FUTURES OR OTHER FINANCIAL PRODUCT. THE WEBSITE CONTENT IS FOR GENERAL I"
+      ],
       "codes": []
      },
      {
       "title": "TopstepTV Live Futures Day Trading: Got Your Take Profit (11/23/26)",
       "url": "https://www.youtube.com/watch?v=ecpidfuke6k",
-      "published": "2026-11-20",
+      "published": "2026-11-24",
+      "promo": [
+       "- No self-promotion allowed within the chat.",
+       "NOTHING CONTAINED IN THIS WEBSITE CONSTITUTES INVESTMENT ADVICE, NOR DOES IT CONSTITUTE THE SOLICITATION, ENDORSEMENT, OR RECOMMENDATION OF THE PURCHASE OR SALE OF ANY FUTURES OR OTHER FINANCIAL PRODUCT. THE WEBSITE CONTENT IS FOR GENERAL I"
+      ],
+      "codes": []
+     },
+     {
+      "title": "TopstepTV: Market Tip-off with Jay (11/24/26)",
+      "url": "https://www.youtube.com/watch?v=pM30hWLnRPY",
+      "published": "2026-11-23",
+      "promo": [],
+      "codes": []
+     },
+     {
+      "title": "TopstepTV: Slow Markets with Dakota - Live Futures Day Trading (6/4/26)",
+      "url": "https://www.youtube.com/watch?v=NSOI4UaeABI",
+      "published": "2026-11-23",
+      "promo": [
+       "- No self-promotion allowed within the chat.",
+       "NOTHING CONTAINED IN THIS WEBSITE CONSTITUTES INVESTMENT ADVICE, NOR DOES IT CONSTITUTE THE SOLICITATION, ENDORSEMENT, OR RECOMMENDATION OF THE PURCHASE OR SALE OF ANY FUTURES OR OTHER FINANCIAL PRODUCT. THE WEBSITE CONTENT IS FOR GENERAL I"
+      ],
+      "codes": []
+     },
+     {
+      "title": "TopstepTV: Slow Markets with Dakota - Live Futures Day Trading (6/4/26)",
+      "url": "https://www.youtube.com/watch?v=vObW6MzSq4Q",
+      "published": "2026-11-23",
       "promo": [
        "- No self-promotion allowed within the chat.",
        "NOTHING CONTAINED IN THIS WEBSITE CONSTITUTES INVESTMENT ADVICE, NOR DOES IT CONSTITUTE THE SOLICITATION, ENDORSEMENT, OR RECOMMENDATION OF THE PURCHASE OR SALE OF ANY FUTURES OR OTHER FINANCIAL PRODUCT. THE WEBSITE CONTENT IS FOR GENERAL I"
@@ -2786,40 +2827,6 @@
        "- No self-promotion allowed within the chat.",
        "NOTHING CONTAINED IN THIS WEBSITE CONSTITUTES INVESTMENT ADVICE, NOR DOES IT CONSTITUTE THE SOLICITATION, ENDORSEMENT, OR RECOMMENDATION OF THE PURCHASE OR SALE OF ANY FUTURES OR OTHER FINANCIAL PRODUCT. THE WEBSITE CONTENT IS FOR GENERAL I"
       ],
-      "codes": []
-     },
-     {
-      "title": "TopstepTV Live Futures Day Trading: Trading in the Name (11/20/26)",
-      "url": "https://www.youtube.com/watch?v=RXUJrb2HV_o",
-      "published": "2026-11-20",
-      "promo": [
-       "- No self-promotion allowed within the chat.",
-       "NOTHING CONTAINED IN THIS WEBSITE CONSTITUTES INVESTMENT ADVICE, NOR DOES IT CONSTITUTE THE SOLICITATION, ENDORSEMENT, OR RECOMMENDATION OF THE PURCHASE OR SALE OF ANY FUTURES OR OTHER FINANCIAL PRODUCT. THE WEBSITE CONTENT IS FOR GENERAL I"
-      ],
-      "codes": []
-     },
-     {
-      "title": "Topstep Merch Store",
-      "url": "https://www.youtube.com/shorts/7pHhU-nLOCo",
-      "published": "2026-11-20",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "TopstepTV: Slow Markets with Dakota - Live Futures Day Trading (11/19/26)",
-      "url": "https://www.youtube.com/watch?v=JADFI_Xhs3I",
-      "published": "2026-11-20",
-      "promo": [
-       "- No self-promotion allowed within the chat.",
-       "NOTHING CONTAINED IN THIS WEBSITE CONSTITUTES INVESTMENT ADVICE, NOR DOES IT CONSTITUTE THE SOLICITATION, ENDORSEMENT, OR RECOMMENDATION OF THE PURCHASE OR SALE OF ANY FUTURES OR OTHER FINANCIAL PRODUCT. THE WEBSITE CONTENT IS FOR GENERAL I"
-      ],
-      "codes": []
-     },
-     {
-      "title": "TopstepTV: Market Tip-off with Jay (11/19/26)",
-      "url": "https://www.youtube.com/watch?v=PyC0baB6Ub0",
-      "published": "2026-11-20",
-      "promo": [],
       "codes": []
      }
     ]
@@ -2993,6 +3000,13 @@
     "channel": "https://www.youtube.com/channel/UCQtiScqbSAfe_xnkcXkOQMQ",
     "videos": [
      {
+      "title": "It's not psychology, it's your plan #Shorts",
+      "url": "https://www.youtube.com/shorts/MBbHubSiN08",
+      "published": "2026-11-24",
+      "promo": [],
+      "codes": []
+     },
+     {
       "title": "25 Challenges Before He Got Funded — Now Trading $200K | Funded Stories",
       "url": "https://www.youtube.com/watch?v=a5M_FvbqsBw",
       "published": "2026-11-23",
@@ -3038,13 +3052,6 @@
       "title": "9 payouts trading one pair at 6am #Shorts",
       "url": "https://www.youtube.com/shorts/SkLnCkUrOH4",
       "published": "2026-11-03",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "9 Payouts Trading GBP/USD While London Sleeps | Funded Stories",
-      "url": "https://www.youtube.com/watch?v=2RdQD3fsfjA",
-      "published": "2026-11-02",
       "promo": [],
       "codes": []
      }
@@ -3184,6 +3191,13 @@
     "channel": "https://www.youtube.com/channel/UC1NayQDCjKN5BNqkkW9kqMg",
     "videos": [
      {
+      "title": "One more certificate in Italy: $600 for the record, Gabriele G. 🇮🇹.",
+      "url": "https://www.youtube.com/shorts/aWhv69M2pUM",
+      "published": "2026-11-23",
+      "promo": [],
+      "codes": []
+     },
+     {
       "title": "Payout certificate. Name: Fernando V. 🇵🇦. Amount: $956.",
       "url": "https://www.youtube.com/shorts/zlb7bxyoMq0",
       "published": "2026-11-21",
@@ -3231,13 +3245,6 @@
       "published": "2026-11-17",
       "promo": [],
       "codes": []
-     },
-     {
-      "title": "NQ short, red from the moment it filled. The chart freezes right there. Hold or close? #NQ #PropTra…",
-      "url": "https://www.youtube.com/shorts/_1CltJAFmp4",
-      "published": "2026-11-14",
-      "promo": [],
-      "codes": []
      }
     ]
    },
@@ -3257,12 +3264,12 @@
      "final": "https://www.bizifutures.com/",
      "title": "Futures Prop Firm: No Evaluation, No DLL | Bizi Futures",
      "promo": [
-      "BLACK FRIDAY Buy one, get one free on BiziDirect and BiziSelect: for every account you buy, you get a code for another, same size, at no charge, on your dashboard and by email. START30 still takes 30% off. Ends in 8 days Shop now →",
+      "BLACK FRIDAY Buy one, get one free on BiziDirect and BiziSelect: for every account you buy, you get a code for another, same size, at no charge, on your dashboard and by email. START30 still takes 30% off. Ends in 7 days Shop now →",
       "BLACK FRIDAY",
       "For every BiziDirect or BiziSelect account you buy, you get a code for another account of the same size, at no charge. It is emailed to you and shows on your dashboard.",
       "START30 still takes 30% off the account you buy",
       "Use the code whenever you like: it does not expire",
-      "Ends in 8 days",
+      "Ends in 7 days",
       "Simulated trading accounts for evaluation and education. One code per account bought, for the buyer’s own use. Offer terms"
      ],
      "codes": [
@@ -3344,6 +3351,20 @@
     "channel": "https://www.youtube.com/channel/UCXceuDbVYIYzeR4WgvUvgjg",
     "videos": [
      {
+      "title": "The strategy gets you in. The discipline keeps you funded. 💪 #trading #trader #proptrading #rewards",
+      "url": "https://www.youtube.com/shorts/zTB4Hn1P5pE",
+      "published": "2026-11-24",
+      "promo": [],
+      "codes": []
+     },
+     {
+      "title": "He Kept Blowing Prop Accounts for 3 Years. Then ONE Thing Changed",
+      "url": "https://www.youtube.com/watch?v=S-Vl6VYWJ2o",
+      "published": "2026-11-24",
+      "promo": [],
+      "codes": []
+     },
+     {
       "title": "Live Trading Room - European Market Trading With Lachlan Elsworth [EN]",
       "url": "https://www.youtube.com/watch?v=Kgxy5JPa5XY",
       "published": "2026-11-19",
@@ -3388,24 +3409,6 @@
       "title": "And how many trades do you take a week?😅 #trading #proptrading #trader #futures",
       "url": "https://www.youtube.com/shorts/4kR7il8NBjo",
       "published": "2026-11-16",
-      "promo": [],
-      "codes": []
-     },
-     {
-      "title": "Have you completed 4/4? 🔥 40% OFF - Code: BF40📅 Until Nov 30#trading #proptrading #rewards #trader",
-      "url": "https://www.youtube.com/shorts/_WyayT1Ps3E",
-      "published": "2026-11-15",
-      "promo": [
-       "Have you completed 4/4? 🔥 40% OFF - Code: BF40📅 Until Nov 30#trading #proptrading #rewards #trader"
-      ],
-      "codes": [
-       "BF40"
-      ]
-     },
-     {
-      "title": "Only prop traders will understand😊 #proptrading #trading #trader #futures",
-      "url": "https://www.youtube.com/shorts/my3JgLS61CM",
-      "published": "2026-11-14",
       "promo": [],
       "codes": []
      }
