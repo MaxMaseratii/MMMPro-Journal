@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-22T06:30:00Z",
-  "updated_label": "22 Nov 2026, 06:30 London",
+  "updated": "2026-11-24T06:35:17Z",
+  "updated_label": "24 Nov 2026, 06:35 London",
   "offers": [
     {
       "firm": "Apex Trader Funding",
@@ -25,17 +25,6 @@
       "checked": "2026-11-20"
     },
     {
-      "firm": "Ylos Trading",
-      "plans": [],
-      "code": "YLOSBLACK",
-      "pct": 90,
-      "text": "90% off Standard, 70% off No Activation Fee, 50% off Instant / Fast Pass with code YLOSBLACK. Ends 23 Nov 2026, 17:00 Amsterdam (11:00 ET)",
-      "ends": "2026-11-23",
-      "src": "https://x.com/ylostrading/status/2123388823522697637",
-      "via": "x",
-      "checked": "2026-11-20"
-    },
-    {
       "firm": "IQ Capital",
       "plans": [],
       "code": null,
@@ -44,7 +33,7 @@
       "ends": null,
       "src": "https://www.iqcapital.io/",
       "via": "site",
-      "checked": "2026-11-19"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Funded Futures Network",
@@ -57,37 +46,7 @@
       "ends": "2026-11-30",
       "src": "https://fundedfuturesnetwork.com/",
       "via": "site",
-      "checked": "2026-11-20"
-    },
-    {
-      "firm": "FundedHero Futures",
-      "plans": [
-        "fh-zero1",
-        "fh-zero2",
-        "fh-x",
-        "fh-live"
-      ],
-      "code": "Holiday70",
-      "pct": 70,
-      "text": "Holiday sale: 70% off all challenges with code Holiday70",
-      "ends": null,
-      "src": "https://fundedherofutures.com/",
-      "via": "site",
-      "checked": "2026-11-20"
-    },
-    {
-      "firm": "FuturesElite",
-      "plans": [],
-      "sizes": [
-        50
-      ],
-      "code": "LAUNCH",
-      "pct": 70,
-      "text": "Launch week: 5 x 50K Instant Elite accounts for $209.70 each with code LAUNCH (5th account free + Breakout Pack + 3,000 credits)",
-      "ends": null,
-      "src": "https://x.com/Futureselitecom/status/2122301881359736869",
-      "via": "x",
-      "checked": "2026-11-17"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Top One Futures",
@@ -100,7 +59,7 @@
       "ends": null,
       "src": "https://www.toponefutures.com/",
       "via": "site",
-      "checked": "2026-11-20"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Blueberry Futures",
@@ -111,7 +70,7 @@
       "ends": null,
       "src": "https://blueberryfutures.com/",
       "via": "site",
-      "checked": "2026-11-19"
+      "checked": "2026-11-23"
     },
     {
       "firm": "FundedHero Futures",
@@ -122,7 +81,29 @@
       "ends": null,
       "src": "https://fundedherofutures.com/",
       "via": "site",
-      "checked": "2026-11-19"
+      "checked": "2026-11-23"
+    },
+    {
+      "firm": "Phidias Propfirm",
+      "plans": [],
+      "code": "PHIDIAS",
+      "pct": 60,
+      "text": "Up to 60% off evaluations, limited time (banner on phidiaspropfirm.com)",
+      "ends": null,
+      "src": "https://phidiaspropfirm.com",
+      "via": "site",
+      "checked": "2026-11-22"
+    },
+    {
+      "firm": "PropEd Capital",
+      "plans": [],
+      "code": null,
+      "pct": 60,
+      "text": "60% off every account, every size (limited time). 25K Standard Eval from $43.60",
+      "ends": null,
+      "src": "https://propedcapital.com/plans",
+      "via": "site",
+      "checked": "2026-11-23"
     },
     {
       "firm": "Goat Funded Futures",
@@ -147,7 +128,7 @@
       "ends": null,
       "src": "https://alpha-futures.com/",
       "via": "site",
-      "checked": "2026-11-19"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Alpha Futures",
@@ -176,7 +157,7 @@
       "ends": null,
       "src": "https://futureify.com/",
       "via": "site",
-      "checked": "2026-11-20"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Shark Futures",
@@ -198,7 +179,7 @@
       "ends": null,
       "src": "https://www.tx3futures.com/en/tx3-core",
       "via": "site",
-      "checked": "2026-11-19"
+      "checked": "2026-11-23"
     },
     {
       "firm": "FundedNext Futures",
@@ -222,7 +203,7 @@
       "ends": null,
       "src": "https://fundednext.com/futures",
       "via": "site",
-      "checked": "2026-11-20"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Tradeify",
@@ -240,7 +221,7 @@
       "ends": "2026-11-30",
       "src": "https://tradeify.co/",
       "via": "site",
-      "checked": "2026-11-20"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Alpha Futures",
@@ -253,7 +234,7 @@
       "ends": null,
       "src": "https://alpha-futures.com/product/zero",
       "via": "site",
-      "checked": "2026-11-19"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Alpha Futures",
@@ -280,7 +261,7 @@
       "ends": null,
       "src": "https://myfundedfutures.com/",
       "via": "site",
-      "checked": "2026-11-19"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Shark Futures",
@@ -291,7 +272,31 @@
       "ends": "2026-11-30",
       "src": "https://www.sharkfutures.com/",
       "via": "site",
-      "checked": "2026-11-20"
+      "checked": "2026-11-23"
+    },
+    {
+      "firm": "The Trading Pit",
+      "plans": [
+        "tradingpit-instant"
+      ],
+      "code": "BF40",
+      "pct": 40,
+      "text": "Black Friday: 40% off all Instant Accounts and Swing Challenges of $10K and up with code BF40",
+      "ends": null,
+      "src": "https://www.thetradingpit.com/",
+      "via": "site",
+      "checked": "2026-11-23"
+    },
+    {
+      "firm": "FuturesElite",
+      "plans": [],
+      "code": null,
+      "pct": 40,
+      "text": "Black Friday: 40% off, add a 2nd account for 43% off (shown at checkout, no code)",
+      "ends": null,
+      "src": "https://app.futureselite.com/website/choose-plan?transparent=true&version=v2",
+      "via": "site",
+      "checked": "2026-11-23"
     },
     {
       "firm": "Aqua Futures (AquaFunded)",
@@ -302,7 +307,7 @@
       "ends": "2026-11-30",
       "src": "https://www.aquafunded.com/futures",
       "via": "site",
-      "checked": "2026-11-20"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Futureify (FXIFY Futures)",
@@ -318,24 +323,13 @@
     {
       "firm": "Blue Guardian Futures",
       "plans": [],
-      "code": "GUARD30",
-      "pct": 30,
-      "text": "30% off with code GUARD30",
+      "code": "BLACK",
+      "pct": 35,
+      "text": "Black Friday: 35% off with code BLACK",
       "ends": null,
       "src": "https://blueguardian.com/futures",
       "via": "site",
-      "checked": "2026-11-19"
-    },
-    {
-      "firm": "FunderPro Futures",
-      "plans": [],
-      "code": "BF30",
-      "pct": 30,
-      "text": "30% off every challenge with code BF30",
-      "ends": "2026-11-22",
-      "src": "https://x.com/FunderPro/status/2124125690198962333",
-      "via": "x",
-      "checked": "2026-11-22"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Tradeify",
@@ -359,7 +353,18 @@
       "ends": "2026-11-30",
       "src": "https://tradeify.co/",
       "via": "site",
-      "checked": "2026-11-20"
+      "checked": "2026-11-23"
+    },
+    {
+      "firm": "Traders Launch",
+      "plans": [],
+      "code": "TL30",
+      "pct": 30,
+      "text": "Black Friday sale: 30% off all accounts with code TL30",
+      "ends": null,
+      "src": "https://traderslaunch.com/pricing",
+      "via": "site",
+      "checked": "2026-11-23"
     },
     {
       "firm": "E8 Futures",
@@ -370,7 +375,18 @@
       "ends": null,
       "src": "https://e8futures.com/",
       "via": "site",
-      "checked": "2026-11-19"
+      "checked": "2026-11-23"
+    },
+    {
+      "firm": "UProfit",
+      "plans": [],
+      "code": "UPTBLACK",
+      "pct": 20,
+      "text": "Black Friday: extra 20% off the already discounted price with code UPTBLACK",
+      "ends": null,
+      "src": "https://uprofit.com/",
+      "via": "site",
+      "checked": "2026-11-23"
     },
     {
       "firm": "Bizi Futures",
@@ -381,7 +397,7 @@
       "ends": "2026-12-02",
       "src": "https://www.bizifutures.com/black-friday",
       "via": "site",
-      "checked": "2026-11-20"
+      "checked": "2026-11-23"
     },
     {
       "firm": "Funded Family One",
@@ -415,28 +431,6 @@
       "src": "https://x.com/phoenixfunding/status/2123763395279442216",
       "via": "x",
       "checked": "2026-11-21"
-    },
-    {
-      "firm": "Traders Launch",
-      "plans": [],
-      "code": "TL20",
-      "pct": null,
-      "text": "Discount on all accounts with code TL20 (amount not stated)",
-      "ends": null,
-      "src": "https://x.com/TradersLaunch/status/2121329868717584603",
-      "via": "x",
-      "checked": "2026-11-14"
-    },
-    {
-      "firm": "Phidias Propfirm",
-      "plans": [],
-      "code": "PHIDIAS",
-      "pct": 60,
-      "text": "Up to 60% off evaluations, limited time (banner on phidiaspropfirm.com)",
-      "ends": null,
-      "src": "https://phidiaspropfirm.com",
-      "via": "site",
-      "checked": "2026-11-22"
     }
   ],
   "inboxDone": [
@@ -453,6 +447,7 @@
     "grok:2026-11-11.md"
   ],
   "log": [
+    "2026-11-24: 36 live · new: PropEd 60% (no code), Trading Pit BF40 40%, FuturesElite 40% Black Friday, UProfit UPTBLACK +20% · changed: Blue Guardian GUARD30 to BLACK 35%, Traders Launch TL20 to TL30 30% · ended/removed: Ylos YLOSBLACK, FunderPro BF30, FundedHero Holiday70, FuturesElite LAUNCH · Bizi 50K direct checkout link · site scan old (23 Nov), Grok files missing 23+24 Nov · skipped Topstep Friendsgiving (referral code only)",
     "2026-11-22: 36 live · re-confirmed FunderPro BF30 on official X (ends today, 22 Nov) · added Phidias PHIDIAS up to 60% (official site banner) · nothing expired · new plan: The Trading Pit Futures Instant 50K/100K · no new coded X offers · Hola Prime site blocked",
     "2026-11-21: 35 live · removed Funded Family One S2F FFONE (ended 20 Nov) · re-confirmed on official X today: Alpha EARLYBOGO40/50, FunderPro BF30, Funded Family One TruTik L3, Phoenix reset, Phidias HONOR85 (150K Express to Live now $168.45) · no new coded offers · new plans: Aqua Lab #1 50K, Bizi BiziSelect 50K, Phidias E2L 150K sale price · not added: Ylos Static Prime (price not shown)",
     "2026-11-20 (evening): 36 live · replaced Futureify FUTUREIFY 40% with BF50 50% · added FundedHero Holiday70 70%, Shark LITE BOGO, Elite GOBBLE90 (ends 1 Dec, 06:00 Amsterdam), Ylos YLOSBLACK (ends 23 Nov, 17:00 Amsterdam), Goat EARLYFRIDAY55, Bizi BOGO (ends 2 Dec, 05:59 Amsterdam) · set ends on Aqua BLACKFRIDAY, Tradeify NOV, Shark BFCM and FFN NEXUS (30 Nov) · updated Top One text to 70% off Ignite 5+ and Funded Family One S2F end time 23:00 Amsterdam",
