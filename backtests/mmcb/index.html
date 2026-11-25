@@ -126,7 +126,7 @@ const LEARN=[
  ['Candle zones',`One ladder for BuC and BeC: <b>XDz · MDz · BALz · MPz · XPz</b>. After a wick pulls back, the odds of the MMCB Target first are about the distance from the PL, like a fuel gauge. <b>BALz</b> is a true coin flip. A zone is the map, the BC is the trigger.`],
  ['Alignment stack',`Daily → H4 → H1 → 15m body closes all lined up, enter at the 15m close, out on the first H1 opposite BC: <b class="up">PF 1.69, t 2.62, money every year</b>. With the Weekly on top: <b class="up">PF 2.60</b>. With a fixed 1:2 it is only MAYBE.`],
  ['Rule fix',`Your code calls a candle <b>C2+</b> only when it took the other side <b>and closed past</b> the prior high / low. An outside candle that closes back inside is <b>S&amp;D</b>. The first test mixed 4–5% of S&amp;D•BuAF into "strong". Everything here is re-tested with your exact code.`],
- ['Where to get it',`Everything on this page is built into the <b>MMCB Edge</b> indicator on TradingView: the MMCB class of each candle, the BuC / BeC MP · BAL · MD lines, the meter, the ladder line, the 8 strategies and the LIVE / INFO / GUIDE tables.`]];
+ ['Where to get it',`Everything on this page is built into the <b>MMCB Edge</b> indicator on TradingView: the MMCB class of each candle, the MMCB Map (TGT · MPz / BALz / MDz · Z2H) that reacts to every close, today's bias and alignment, the ladder line, the 8 strategies + the alignment strategy (CB.A) and the LIVE / INFO / GUIDE tables.`]];
 $('learn').innerHTML=LEARN.map(([h,p])=>`<div class="card"><h3>${h}</h3><p>${p}</p></div>`).join('');
 
 function curve(c,U){
@@ -255,19 +255,50 @@ function stopTab(){
   <li><b>Ladder line</b> (BuC BAL line of the latest H4 BuBC+ / BuC2+, steps up only): the best trend exit. CB.M3: 439 trades, PF 1.63, green every year.</li>
   <li><b>Close above the last 1m BeBC high</b> (a reclaim) as an extra entry rule on 1m turned a weak 1m entry into CB.M4 (t 3.38).</li></ul>`;
 }
+function alTab(){
+  const F=state.al||(state.al={bias:'D',v:''});
+  const L=D.AL.filter(r=>r.bias===F.bias&&(!F.v||r.v===F.v)).sort((a,b)=>b.t-a.t);
+  const best={W:'W → D → H4 → H1 → 15m · PF 2.60 · t 2.93 · 99 trades',D:'D → H4 → H1 → 15m · PF 1.77 · t 2.82 · 232 trades',H4:'H4 → H1 (Direct) · PF 1.43 · t 2.99 · 641 trades',H1:'none passed: H1 is too close to the entry TF'}[F.bias];
+  let h=`<h2 class="ttl">Alignment chooser · pick your bias TF, see every chain</h2>
+  <p class="note">The rule is general: pick the <b>bias TF</b> (W, D, H4 or H1). Its last closed candle must be a body close (BuBC± / BuC2±). Then every TF in the chain must close a body close the same way. Enter at the close of the <b>entry TF</b> candle when the chain lines up (a NEW alignment only). Out by the Daily close. <b>Direct</b> = bias TF + entry TF. <b>Core</b> = bias + the D / H4 / H1 / 15m / 5m between + entry. <b>Full</b> = every TF between, 3m and 2m too.</p>
+  <div class="warn"><b>Best for ${esc(F.bias)} bias:</b> ${best}. Core beats Direct for W and D. Adding 3m and 2m adds nothing. The Be side mostly fails. The MMCB Edge indicator picks the best chain for your bias TF by itself (Alignment = Auto), or you pick it (Manual).</div>
+  <div class="filters"><label for="al-bias">Bias TF<select id="al-bias">${['W','D','H4','H1'].map(v=>`<option ${F.bias===v?'selected':''}>${v}</option>`).join('')}</select></label>
+  <label for="al-v">Verdict<select id="al-v">${[['','All'],['WORKS','WORKS'],['MAYBE','MAYBE'],['NO','NO']].map(([v,l])=>`<option value="${v}" ${F.v===v?'selected':''}>${l}</option>`).join('')}</select></label></div>
+  <div class="tw"><table><thead><tr><th>Chain</th><th>Best stop</th><th>Best exit</th><th>Trades</th><th>WR</th><th>PF</th><th>t</th><th>W: won</th><th>L: lost</th><th>Net</th><th>Max DD</th><th>Losses in a row</th><th>Verdict</th></tr></thead><tbody>`;
+  for(const r of L){h+=`<tr class="${{WORKS:'g',MAYBE:'y',NO:'r'}[r.v]}"><td translate="no"><b>${esc(r.key.split('→').join(' → '))}</b></td><td>${esc(r.stop)}</td><td>${esc(r.exit)}</td><td>${r.n.toLocaleString('en-US')}</td><td>${nf(r.wr)}%</td><td>${nf(r.pf,2)}</td><td><b>${nf(r.t,2)}</b></td><td class="p">${usd(r.won)}</td><td class="n">${usd(r.lost)}</td><td class="${cl(r.net)}">${usd(r.net)}</td><td class="n">${usd(r.dd)}</td><td>${r.maxL}</td><td>${r.v}</td></tr>`;}
+  return h+`</tbody></table></div><p class="note">Bull side, 1 MNQ ($2 a point), 1 pt cost, one trade at a time, stop wins ties. Each chain shows its best of 18 stop × exit settings, so the best can look better than it is by luck: trust WORKS rows with many trades.</p>`;
+}
+function mgTab(){
+  const F=state.mg||(state.mg={tf:'D'});
+  const rc=D.RC.filter(r=>r.htf===F.tf), hc=D.HC.filter(r=>r.htf===F.tf), ms=D.MS.filter(r=>r.htf===F.tf);
+  const le=D.LE.filter(r=>r.htf===F.tf&&r.grp==='Bu+').sort((a,b)=>b.t-a.t);
+  let h=`<h2 class="ttl">Managing the candle · lines, reclaims, HTF closes, minus candles</h2>
+  <div class="filters"><label for="mg-tf">MMCB candle TF<select id="mg-tf">${['D','H4','H1'].map(v=>`<option ${F.tf===v?'selected':''}>${v}</option>`).join('')}</select></label></div>
+  <div class="cards" style="display:grid;gap:10px">
+  <div class="warn"><b>1 · Reclaims: WHERE price closes back matters, not how deep it went.</b> After an LTF close past a line, a close back past the <b>25% line</b> (BuC MPz / BeC MDz) reached the TGT first about 8 times in 10. Back past <b>50%</b> (BALz): about 5–6 in 10. Back past <b>75%</b>: about 4 in 10. Going deeper first and then closing back past 25% gave the same 80%. Warning: the odds are high but the TGT is close and the Z2H stop is far, so the avg payoff is about break-even. Use the reclaim as a <b>signal</b>, then manage with a tight stop.</div>
+  <div class="tw"><table><thead><tr><th>After (first LTF close past)</th><th>Reclaim back past</th><th>Times</th><th>TGT first</th></tr></thead><tbody>${rc.map(r=>`<tr class="${r.p>=70?'g':r.p>=50?'y':'r'}"><td>${esc(r.k)}</td><td><b>${esc(r.j)}</b></td><td>${r.n}</td><td><b>${pct(r.p)}</b></td></tr>`).join('')}</tbody></table></div>
+  <div class="warn"><b>2 · An HTF close past a line kills it.</b> When the ${esc(F.tf)} candle itself closes past a line, the TGT-first odds drop to 0–50%. That is why the indicator deletes a line on an HTF close, and only fades it (grey, caution) on an LTF close.</div>
+  <div class="tw"><table><thead><tr><th>Candle</th><th>${esc(F.tf)} closed past</th><th>Times</th><th>TGT first</th><th>PL / PH first</th></tr></thead><tbody>${hc.map(r=>`<tr class="${r.tgt>=50?'y':'r'}"><td translate="no">${esc(r.grp)}</td><td>${esc(r.k)}</td><td>${r.n}</td><td><b>${pct(r.tgt)}</b></td><td>${pct(r.pl)}</td></tr>`).join('')}</tbody></table></div>
+  <div class="warn"><b>3 · The "true minus" is a close in the wrong half.</b> A BuBC− that closes under 50% (or a BeBC− over 50%) reached the TGT first only about 35% of the time and the PL / PH first about 63%. A minus candle in the right half (Bu− 50–75%, Be− 25–50%) reached the TGT first 55–68%: close to a plus candle.</div>
+  <div class="tw"><table><thead><tr><th>Candle</th><th>Where it closed</th><th>Times</th><th>TGT first</th><th>PL / PH first</th></tr></thead><tbody>${ms.map(r=>`<tr class="${r.tgt>=55?'g':r.tgt>=40?'y':'r'}"><td translate="no">${esc(r.name)}</td><td>${esc(r.band)}</td><td>${r.n}</td><td><b>${pct(r.tgt)}</b></td><td>${pct(r.pl)}</td></tr>`).join('')}</tbody></table></div>
+  <div class="warn"><b>4 · Buying at the lines (BuBC+ / BuC2+).</b> Buy at discount is right in theory, but deeper lines get filled less and fail more: the price gain and the lower odds cancel. Only the <b>Daily</b> pays at a line: limit at the 25% line, Z2H stop, TGT exit (WR 83%, PF 1.72, green 4/4 years) and the BAL line with a close stop (PF 2.27, only 32 trades). The 75% line lost (13% WR). On H4 and H1 a limit at any line is about break-even. Entering at the candle close hits the TGT 80–92% of the time but pays only +0.04 R: the close is already near the TGT.</div>
+  <div class="tw"><table><thead><tr><th>Entry</th><th>Stop</th><th>Exit</th><th>Trades</th><th>WR</th><th>PF</th><th>t</th><th>avg RR</th><th>Net pts</th><th>Green years</th></tr></thead><tbody>${le.map(r=>`<tr class="${r.t>=2?'g':r.t>=1?'y':'r'}"><td>${esc(r.e)}</td><td>${esc(r.s)}</td><td>${esc(r.x)}</td><td>${r.n}</td><td>${nf(r.wr)}%</td><td>${nf(r.pf,2)}</td><td><b>${nf(r.t,2)}</b></td><td class="${cl(r.avgR)}">${sg(r.avgR)}</td><td class="${cl(r.net)}">${sg(r.net,0)}</td><td>${esc(r.green)}</td></tr>`).join('')}</tbody></table></div>
+  </div><p class="note">Lines are measured back from the MMCB Target: 25% = BuC MP line (BeC MD line) · 50% = BAL · 75% = BuC MD line (BeC MP line). Z2H = Zone To Hold = PL (Bu candles) / PH (Be candles). Window = the next 10 candles. 1m engine, stop wins ties, 1 pt cost, NQ + MNQ Dec 2022 – Nov 2026.</p>`;
+  return h;
+}
 function indTab(){
-  return `<h2 class="ttl">The MMCB Edge indicator</h2><p class="note">Every rule on this page, drawn live on your chart. Closed candles only, no repaint. The candle classes use the exact MMM Candle Bias Pro code.</p>
+  return `<h2 class="ttl">The MMCB Edge indicator · v3</h2><p class="note">Every rule on this page, drawn live on your chart and labelled in MMCB words. Closed candles only, no repaint. The candle classes use the exact MMM Candle Bias Pro code.</p>
   <dl class="spec" style="margin-top:6px">
-   <div><dt>8 strategies</dt><dd>CB.M1 – CB.M8, Bu side only. CB.M1 is on by default. Turn on the ONE you trade.</dd></div>
-   <div><dt>Trade tool</dt><dd>Entry, stop and target lines with W / L labels. Keeps the last 3 winners and 2 losers.</dd></div>
-   <div><dt>Prop Survival sizing</dt><dd>Contracts = your max drawdown ÷ (1.5 × the worst drawdown the strategy had on 1 contract).</dd></div>
-   <div><dt>MMCB lines</dt><dd>The MMCB Target plus the BuC / BeC MP · BAL · MD lines of the last plus candle on D, H4 or H1, labelled with its class (for example "H1 BuC2+ ▲ MMCB Target").</dd></div>
-   <div><dt>Strength meter</dt><dd>STRONG / TESTING / FADING / REVERSAL with the tested "Target first" %.</dd></div>
-   <div><dt>Ladder line</dt><dd>The trend line from BuBC+ / BuC2+ candles on D, H4 or H1.</dd></div>
-   <div><dt>LIVE table</dt><dd>Top right. The class of the last plus candle and the meter, then each strategy only when it is armed, waiting, in a trade or traded today, with W: +$ · L: −$ · Net.</dd></div>
-   <div><dt>INFO + GUIDE tables</dt><dd>INFO: the tested stats of up to 3 strategies you pick. GUIDE: the rules in plain words.</dd></div>
+   <div><dt>Today's bias</dt><dd>Pick the bias TF (W, D, H4, H1) or Auto. Auto side = the last closed candle of that TF: a Bu body close = Bull, a Be body close = Bear, anything else = no bias today. Or set Bull / Bear yourself.</dd></div>
+   <div><dt>Alignment</dt><dd>Auto = the best tested chain for your bias TF (W → D → H4 → H1 → 15m · D → H4 → H1 → 15m · H4 → H1). Manual = pick the entry TF (H1 down to 1m, 3m and 2m too) and Direct / Core / Full. The LIVE table shows each TF: D▲ H4▲ H1✕ · 2 / 3 aligned, plus that chain's tested PF and t-score.</dd></div>
+   <div><dt>Strategy: Auto or Manual</dt><dd>Auto picks the best tested strategy for your bias TF and chart (W → CB.A · D → CB.M2 · H4 → CB.M7 · H1 → CB.M4 / CB.M1). Manual = pick CB.A or CB.M1 – CB.M8. One at a time.</dd></div>
+   <div><dt>MMCB Map</dt><dd>The newest body close (BuBC± / BuC2± / BeBC± / BeC2±) of the map TF always replaces the old map. TGT line + its strength %, the MPz / BALz / MDz lines with the tested % to reach the TGT (for example "BuBC MPz 73% ▲ TGT [D]"), and the PL / PH (Z2H).</dd></div>
+   <div><dt>Lines that react</dt><dd>STRONG = width 4, bright · then thinner and paler as LTF closes go deeper. An LTF close past a line turns it grey with its reclaim odds ("✕ LTF close · reclaim 79% ▲ TGT"). An HTF close past a line deletes it. An HTF close past the PL / PH deletes the map. Lines extend 5 bars past price.</dd></div>
+   <div><dt>Ladder line</dt><dd>Green on the Bu side, red on the Be side, bright while the map is STRONG. Grey and dashed when an LTF closes past it (caution). Deleted only when the map TF closes past it.</dd></div>
+   <div><dt>Minus candles</dt><dd>A minus candle in its wrong half is labelled "minus · weak half" with its real odds (about 36% TGT first).</dd></div>
+   <div><dt>Trade tool + Prop Survival</dt><dd>Entry, stop and target lines with W / L labels. Contracts = your max drawdown ÷ (1.5 × the worst drawdown on 1 contract).</dd></div>
+   <div><dt>LIVE · INFO · GUIDE</dt><dd>LIVE: bias, map, align, chain test, strategy, today W: +$ · L: −$ · Net, ladder. INFO: tested stats of the active strategy + 2 you pick. GUIDE: how to read it.</dd></div>
   </dl>
-  <p class="note">Checked against this backtest: on MNQ 5m, 23 of 23 CB.M1 trades in the overlap window matched on entry time and result.</p>
   <p><a class="cta" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener">Try it for free</a></p>`;
 }
 function howTab(){return `<h2 class="ttl">How it was tested</h2><ul>
@@ -309,8 +340,8 @@ function zonesTab(){
 function stackTab(){
   const F=state.sk||(state.sk={bias:'Body close any',stk:'D…',entry:'E15',side:'1'});
   const C=D.SK.cols, R=D.SK.rows.map(r=>Object.fromEntries(C.map((k,i)=>[k,r[i]])));
-  let h=`<h2 class="ttl">Alignment stack · Daily → H4 → H1 → 15m → 5m body closes</h2>
-  <p class="note">A student's method: the last closed <b>Daily</b> candle is a body close (BuBC± or BuC2± = closed above the prior high). Then wait until the last closed <b>H4, H1, 15m</b> (and <b>5m</b>) candles are body closes the same way. When they all line up, enter at the <b>15m close</b> (E15) or the <b>5m close</b> (E5). Only a NEW alignment triggers. Every trade is out by the Daily close. Tested with every stop (50 pts · entry candle PL · last H1 candle PL) and every exit (1:1 · 1:2 · 1:3 · 15m opposite BC · H1 opposite BC = the first H1 body close the other way).</p>
+  let h=`<h2 class="ttl">Alignment rule · Daily → H4 → H1 → 15m → 5m body closes</h2>
+  <p class="note">The alignment rule: the last closed <b>Daily</b> candle is a body close (BuBC± or BuC2± = closed above the prior high). Then wait until the last closed <b>H4, H1, 15m</b> (and <b>5m</b>) candles are body closes the same way. When they all line up, enter at the <b>15m close</b> (E15) or the <b>5m close</b> (E5). Only a NEW alignment triggers. Every trade is out by the Daily close. Tested with every stop (50 pts · entry candle PL · last H1 candle PL) and every exit (1:1 · 1:2 · 1:3 · 15m opposite BC · H1 opposite BC = the first H1 body close the other way).</p>
   <div class="warn"><b>Result: it works, with the right exit.</b> Bu side, enter at the 15m close, stop 50 pts or the H1 candle PL, out on the first H1 opposite BC: 232 trades · WR 40.5–42.7% · PF 1.69–1.77 · t-score 2.62–2.82 · money made every year. Add the <b>Weekly</b> body close on top and it gets cleaner: 99 trades · WR 47.5% · PF 2.60 · t 2.93 · max DD −$487. With a fixed 1:2 it is only MAYBE (2024 lost). "Plus only" alignment (BC+ / C2+) is worse: any body close is the right rule. The Be side does not pass.</div>
   <div class="filters"><label for="sk-bias">Body close<select id="sk-bias">${['Body close any','Plus only'].map(v=>`<option ${F.bias===v?'selected':''}>${v}</option>`).join('')}</select></label>
   <label for="sk-stk">Stack<select id="sk-stk">${[['D…','D → H4 → H1 → 15m (→ 5m)'],['W+D…','W → D → H4 → H1 → 15m (→ 5m)']].map(([v,l])=>`<option value="${v}" ${F.stk===v?'selected':''}>${l}</option>`).join('')}</select></label>
@@ -319,7 +350,7 @@ function stackTab(){
   const L=R.filter(r=>r.bias===F.bias&&r.stack===F.stk&&r.entry===F.entry&&String(r.side)===F.side).sort((a,b)=>(b.t??-9)-(a.t??-9));
   h+=`<div class="tw"><table><thead><tr><th>Stop</th><th>Exit</th><th>Trades</th><th>WR</th><th>PF</th><th>avg RR</th><th>t</th><th>Net</th><th>Max DD</th><th>Green years</th>${YRS.map(y=>`<th>${y}</th>`).join('')}<th>Verdict</th></tr></thead><tbody>`;
   for(const r of L){h+=`<tr class="${{WORKS:'g',MAYBE:'y',NO:'r'}[r.verdict]}"><td>${esc(r.stop)}</td><td>${esc(r.exit)}</td><td>${r.n}</td><td>${nf(r.wr)}%</td><td>${nf(r.pf,2)}</td><td class="${cl(r.avgR)}">${sg(r.avgR)}</td><td><b>${nf(r.t,2)}</b></td><td class="${cl(r.net)}">${usd(r.net)}</td><td class="n">${usd(r.dd)}</td><td>${esc(r.green)}</td>${YRS.map(y=>`<td class="${cl(r['net'+y])}">${usd(r['net'+y])}</td>`).join('')}<td>${r.verdict}</td></tr>`;}
-  return h+`</tbody></table></div><p class="note">1 MNQ ($2 a point), 1 pt cost, one trade at a time, stop wins ties. 2026 = MNQ, about 4 months. A great account run (for example from a tiny drawdown left to a payout) shows the method can work, but one account is one path: size every trade from your drawdown (Prop Survival).</p>`;
+  return h+`</tbody></table></div><p class="note">1 MNQ ($2 a point), 1 pt cost, one trade at a time, stop wins ties. 2026 = MNQ, about 4 months. One great account run is one path, not proof: size every trade from your drawdown (Prop Survival).</p>`;
 }
 function wmTab(){
   const F=state.wm||(state.wm={tf:'W'});
@@ -334,7 +365,7 @@ function wmTab(){
   for(const r of L){h+=`<tr class="${r.n<10?'few':''} ${r.tgt>=85?'g':r.tgt>=65?'y':'r'}"><td translate="no"><b>${esc(r.ty)}</b></td><td>${r.n}</td><td><b>${pct(r.tgt)}</b></td><td>${pct(r.nT)}</td></tr>`;}
   return h+`</tbody></table></div>`;
 }
-const TABS=[['str','Strategies'],['ty','Candle classes'],['zo','Candle zones'],['tt','Class trade test'],['sk','Alignment stack'],['wm','Weekly & Monthly'],['use','How to use'],['meter','Strength meter'],['pair','HTF × LTF'],['stop','Stops & exits'],['ind','Indicator'],['how','How tested']];
+const TABS=[['str','Strategies'],['ty','Candle classes'],['zo','Candle zones'],['tt','Class trade test'],['sk','Alignment rule'],['al','Alignment chooser'],['mg','Manage & reclaim'],['wm','Weekly & Monthly'],['use','How to use'],['meter','Strength meter'],['pair','HTF × LTF'],['stop','Stops & exits'],['ind','Indicator'],['how','How tested']];
 const state={tab:'str'};
 try{const s=JSON.parse(localStorage.getItem('mmcb_state3')||'null');if(s&&s.tab)Object.assign(state,s);}catch(e){}
 function save(){try{localStorage.setItem('mmcb_state3',JSON.stringify(state));}catch(e){}}
@@ -342,7 +373,7 @@ function render(){
   $('tabs').innerHTML=TABS.map(([k,l])=>`<button role="tab" data-t="${k}" aria-selected="${state.tab===k}">${l}</button>`).join('');
   const U=size(); $('m-eg').textContent=`1 point = $${(U.a*U.q).toLocaleString('en-US')}`;
   const t=state.tab;
-  $('view').innerHTML=t==='str'?stratTab():t==='ty'?typesTab():t==='zo'?zonesTab():t==='sk'?stackTab():t==='wm'?wmTab():t==='tt'?ttTab():t==='use'?useTab():t==='meter'?meterTab():t==='pair'?pairTab():t==='stop'?stopTab():t==='ind'?indTab():howTab();
+  $('view').innerHTML=t==='str'?stratTab():t==='ty'?typesTab():t==='zo'?zonesTab():t==='sk'?stackTab():t==='al'?alTab():t==='mg'?mgTab():t==='wm'?wmTab():t==='tt'?ttTab():t==='use'?useTab():t==='meter'?meterTab():t==='pair'?pairTab():t==='stop'?stopTab():t==='ind'?indTab():howTab();
   save();
 }
 $('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-t]');if(!b)return;state.tab=b.dataset.t;render();});
@@ -353,6 +384,8 @@ $('view').addEventListener('change',e=>{const id=e.target.id,v=e.target.value;
   else if(id.startsWith('tt-'))state.tt[id.slice(3)]=v;
   else if(id.startsWith('zo-'))state.zo[id.slice(3)]=v;
   else if(id.startsWith('sk-'))state.sk[id.slice(3)]=v;
+  else if(id.startsWith('al-'))state.al[id.slice(3)]=v;
+  else if(id==='mg-tf')state.mg={tf:v};
   else if(id==='wm-tf')state.wm={tf:v};
   else return;
   render();const n=$(id);if(n)n.focus();});
