@@ -22,6 +22,7 @@ After the first deploy, put the service address in `/assets/mmm-config.js` → `
 | `PW_BMB` | Google app password for bmbillionsinvestments@gmail.com |
 | `PW_MISTERBME` | Google app password for misterbme02@gmail.com |
 | `MS_CLIENT_ID`, `MS_CLIENT_SECRET` | Microsoft app for misterbme02@hotmail.com (optional, later) |
+| `PERSONAL_KEY` | The MMM Personal Strategy page key (base64, 32 bytes). Given only to logged-in members with a paying Whop membership of "MMM Personal Strategy · Read Access" (5-day grace). |
 | `ADMIN_EMAILS` | Optional. Logins allowed to use the Mail tab. Default `infotrade@maxmaserati.com` |
 
 ## What it serves

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>MMM Personal Strategy · Members Only | MMM Trading</title>
+<meta name="description" content="Max Maserati's own best backtested strategies: MMM ONE and MMCB Edge 1, with rules, real trade pictures and equity curves. Members only.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Source+Serif+4:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/tw.css?v=20261108">
+<style>
+:root{--paper:#0b0f12;--sheet:#10161a;--sheet2:#131b20;--rule:#22303a;--rule2:#2c3c47;--ink:#e8eef1;--mute:#8d9ba3;--faint:#5f6e77;
+  --gold:hsl(45,100%,55%);--win:#4fd39a;--amber:#f0b341;--loss:#f2736a;
+  --serif:"Source Serif 4",Georgia,serif;--sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans)}
+[hidden]{display:none!important}
+.wrap{max-width:1240px;margin:0 auto;padding:40px 16px 60px}
+.eyebrow{font:600 12px var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--gold)}
+h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);line-height:1.05;margin:10px 0 10px}
+.sub{color:#c9d3d8;font-size:16px;line-height:1.6;max-width:75ch;margin:0}
+.gate{border:1px solid var(--rule2);background:var(--sheet);padding:24px;margin-top:28px;display:grid;gap:16px}
+.gate h2{font-family:var(--serif);font-size:24px;margin:0}
+.gate p{margin:0;color:#c9d3d8;line-height:1.6}
+.offers{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.offer{border:1px solid var(--rule2);background:var(--sheet2);padding:18px;display:grid;gap:8px;border-radius:4px}
+.offer b.p{font:700 30px/1 var(--mono);color:var(--ink)}
+.offer span{color:var(--mute);font-size:14px;line-height:1.5}
+.offer.best{border-color:var(--gold)}
+.cta{display:inline-block;background:var(--gold);color:#111;font-weight:700;text-decoration:none;padding:11px 16px;border-radius:4px;border:0;cursor:pointer;font-size:15px;text-align:center}
+.cta.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule2)}
+.msg{color:var(--amber);font-size:14px;min-height:1em}
+.small{color:var(--faint);font-size:12.5px;line-height:1.5}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:24px}
+.kpi{background:var(--sheet);padding:14px 16px}.kpi b{display:block;font:600 26px/1.1 var(--mono);font-variant-numeric:tabular-nums}
+.kpi span{display:block;font-size:12.5px;color:var(--mute);margin-top:5px;line-height:1.35}.kpi small{color:var(--faint);font-size:11.5px}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 18px}
+.tabs button{font:600 14px var(--sans);background:var(--sheet);color:var(--ink);border:1px solid var(--rule2);padding:10px 14px;border-radius:4px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--gold);color:#111;border-color:var(--gold)}
+#p-one,#p-edge{display:grid;gap:22px;min-width:0}
+#stx ol{list-style:decimal}#stx ul{list-style:disc}
+#stx .pic img[src^="data:"]{min-height:220px;background:#f3f4f6}
+.who{color:var(--mute);font-size:13px}
+</style>
+</head>
+<body>
+<div id="mmm-header"></div>
+<main class="wrap">
+  <div class="eyebrow">Members only · MMM Personal Strategy</div>
+  <h1 class="t">The strategies I trade myself</h1>
+  <p class="sub">MMM ONE (my 7-setup day plan) and MMCB Edge 1 (9 candle bias strategies and the plan that mixes them). Every rule, a real trade picture and the equity curve of every strategy, from 1-minute backtests on NQ and MNQ.</p>
+
+  <section class="gate" id="gate">
+    <h2 id="g-title">Log in to open the page</h2>
+    <p id="g-text">Use the same email as your Whop payment.</p>
+    <div id="g-offers" class="offers" hidden>
+      <div class="offer best"><span>Monthly</span><b class="p">$10</b><span>to join (your first month), then <b>$4.99</b> every 30 days. Miss a payment: 5 days to pay before the page locks. Let it end and joining again costs the $10 again.</span>
+        <a class="cta" href="https://whop.com/checkout/plan_FmSImcTSTpHtj" target="_blank" rel="noopener">Join monthly</a></div>
+      <div class="offer"><span>Lifetime</span><b class="p">$100</b><span>once. The page stays open for life.</span>
+        <a class="cta ghost" href="https://whop.com/checkout/plan_YJHvkgdIQ4sOb" target="_blank" rel="noopener">Get lifetime access</a></div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+      <button class="cta" id="g-login" type="button">Log in</button>
+      <button class="cta ghost" id="g-retry" type="button" hidden>I paid · check again</button>
+      <span class="who" id="g-who"></span>
+    </div>
+    <div class="msg" id="g-msg" role="status"></div>
+    <p class="small">The page content is encrypted. It opens only for a logged-in member with a paid Whop membership. Backtests are not a promise of future results. Education only, not financial advice.</p>
+  </section>
+
+  <div id="app" hidden>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-t="edge" aria-selected="true">MMCB Edge 1</button>
+      <button type="button" role="tab" data-t="one" aria-selected="false">MMM ONE</button>
+    </div>
+    <div id="stx"><div id="p-edge"></div><div id="p-one" hidden></div></div>
+  </div>
+</main>
+<div id="mmm-footer"></div>
+<script src="/assets/mmm-config.js"></script>
+<script src="/assets/nav.js"></script>
+<script src="/assets/site.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var ENGINE = (window.MMM_ENGINE_URL || 'https://minimax-engine.onrender.com').replace(/\/$/, '');
+  var KEY = null, USER = null, busy = false, URLS = {};
+  function b64(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+  function say(title, text, opt) {
+    opt = opt || {};
+    $('g-title').textContent = title; $('g-text').textContent = text || '';
+    $('g-offers').hidden = !opt.offers; $('g-login').hidden = !opt.login; $('g-retry').hidden = !opt.retry;
+    $('g-msg').textContent = opt.msg || '';
+  }
+  function dec(buf) { return crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, KEY, buf.slice(12)); }
+  function img(name) {
+    if (!URLS[name]) URLS[name] = fetch('img/' + encodeURIComponent(name) + '.enc', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('img'); return r.arrayBuffer(); })
+      .then(dec).then(function (b) { return URL.createObjectURL(new Blob([b], { type: 'image/png' })); });
+    return URLS[name];
+  }
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { io.unobserve(e.target); show(e.target); } });
+  }, { rootMargin: '600px 0px' }) : null;
+  function show(el) {
+    var n = el.getAttribute('data-enc');
+    img(n).then(function (u) { el.src = u; var a = el.closest('a[data-enc]'); if (a) a.href = u; }).catch(function () { el.alt = 'Picture could not open. Reload the page.'; });
+  }
+  function images(root) { root.querySelectorAll('img[data-enc]').forEach(function (el) { if (io) io.observe(el); else show(el); }); }
+  function openPage() {
+    say('Opening…', 'Unlocking the page.', {});
+    return fetch('bundle.enc', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('bundle'); return r.arrayBuffer(); })
+      .then(dec).then(function (b) {
+        var j = JSON.parse(new TextDecoder().decode(b));
+        (new Function(j.js))();
+        window.MMCBEdge(); window.MMMOne();
+        $('gate').hidden = true; $('app').hidden = false;
+        images($('stx'));
+        if (location.hash && document.querySelector(location.hash)) document.querySelector(location.hash).scrollIntoView();
+      });
+  }
+  function check() {
+    if (busy || !USER) return; busy = true;
+    say('Checking your membership…', USER.email || '', {});
+    USER.getIdToken().then(function (tok) {
+      return fetch(ENGINE + '/pub/personal/key', { headers: { Authorization: 'Bearer ' + tok } }).then(function (r) { return r.json().then(function (j) { j._s = r.status; return j; }); });
+    }).then(function (j) {
+      if (j.ok) return crypto.subtle.importKey('raw', b64(j.key), 'AES-GCM', false, ['decrypt']).then(function (k) { KEY = k; return openPage(); });
+      if (j.code === 'pay') return say('Join to open the page', 'No paid membership found for ' + (j.email || 'this email') + (j.why && j.why !== 'none' ? ' (status: ' + j.why.replace('_', ' ') + ')' : '') + '. Pay on Whop with this same email, then press "I paid · check again".', { offers: true, retry: true });
+      if (j.code === 'unverified') return say('Confirm your email first', 'Open the link we sent to ' + (j.email || 'your email') + ', then reload this page.', { retry: true });
+      if (j.code === 'setup') return say('Almost ready', 'The members check is being switched on. Try again in a few minutes.', { retry: true });
+      return say('Could not check right now', 'Try again in a minute.', { retry: true });
+    }).catch(function () {
+      say('Could not reach the members check', 'It can take up to a minute to wake up. Press "check again".', { retry: true });
+    }).then(function () { busy = false; });
+  }
+  function onUser(u) {
+    USER = u || null; $('g-who').textContent = USER && USER.email ? 'Logged in as ' + USER.email : '';
+    if (!USER) return say('Log in to open the page', 'Use the same email as your Whop payment. New here? Pick a plan below, pay on Whop, then log in with that email.', { login: true, offers: true });
+    if (!KEY) check();
+  }
+  document.addEventListener('mmm:auth', function (e) { onUser(e.detail); });
+  $('g-login').addEventListener('click', function () { if (window.MMM) window.MMM.openAuth('login'); });
+  $('g-retry').addEventListener('click', check);
+  document.querySelector('.tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-t]'); if (!b) return;
+    document.querySelectorAll('.tabs button').forEach(function (x) { x.setAttribute('aria-selected', String(x === b)); });
+    $('p-edge').hidden = b.dataset.t !== 'edge'; $('p-one').hidden = b.dataset.t !== 'one';
+  });
+  say('Log in to open the page', 'Use the same email as your Whop payment.', { login: true, offers: true });
+  if (window.MMM && window.MMM.user && window.MMM.user()) onUser(window.MMM.user());
+})();
+</script>
+</body>
+</html>

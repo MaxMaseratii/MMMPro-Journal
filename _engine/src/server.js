@@ -11,6 +11,7 @@ import * as mail from './mail.js';
 import * as ms from './ms.js';
 import * as cache from './cache.js';
 import * as whop from './whop.js';
+import * as personal from './personal.js';
 import { messagePage } from './admin.js';
 
 const PORT = Number(process.env.PORT) || 3000;
@@ -46,7 +47,7 @@ app.use((req, res, next) => {
 });
 
 const notFound = (_req, res) => res.status(404).type('text/plain').send('Not found');
-app.get('/healthz', (_req, res) => res.type('text/plain').send('ok v5'));
+app.get('/healthz', (_req, res) => res.type('text/plain').send('ok v6'));
 
 // ---------- Claude connector (stateless Streamable HTTP) ----------
 const guard = (req, res, next) => (tokenMatches(req.params.token) ? next() : notFound(req, res));
@@ -68,6 +69,42 @@ app.post('/mcp/:token', guard, express.json({ limit: '2mb' }), async (req, res) 
 app.all('/mcp/:token', guard, (_req, res) =>
   res.status(405).set('Allow', 'POST').json({ jsonrpc: '2.0', error: { code: -32000, message: 'Method not allowed' }, id: null }),
 );
+
+// ---------- MMM Personal Strategy page (any logged-in member with a paying Whop membership) ----------
+const pub = express.Router();
+pub.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && ORIGINS.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Max-Age', '600');
+  }
+  if (req.method === 'OPTIONS') return res.status(204).end();
+  next();
+});
+pub.get('/personal/key', async (req, res) => {
+  const m = /^Bearer (.+)$/.exec(req.headers.authorization || '');
+  if (!m) return res.status(401).json({ ok: false, code: 'auth' });
+  let email;
+  try {
+    const { payload } = await jwtVerify(m[1], JWKS, { issuer: `https://securetoken.google.com/${PROJECT}`, audience: PROJECT });
+    if (!payload.email_verified) return res.status(403).json({ ok: false, code: 'unverified', email: payload.email || '' });
+    email = String(payload.email || '').toLowerCase();
+  } catch {
+    return res.status(401).json({ ok: false, code: 'auth' });
+  }
+  if (!personal.personalReady()) return res.status(503).json({ ok: false, code: 'setup' });
+  try {
+    const a = await personal.access(email, ADMIN_EMAILS);
+    if (!a.open) return res.status(402).json({ ok: false, code: 'pay', why: a.why, email });
+    res.json({ ok: true, key: personal.personalKey(), why: a.why, until: a.until, email });
+  } catch {
+    res.status(502).json({ ok: false, code: 'whop' });
+  }
+});
+app.use('/pub', pub);
 
 // ---------- Admin page API ----------
 const api = express.Router();
