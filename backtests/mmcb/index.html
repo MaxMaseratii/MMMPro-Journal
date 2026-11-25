@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MMCB Candle Bias lab · every MMCB candle tested | MMM Trading</title>
+<meta name="description" content="MMM Candle Bias (MMCB) backtests in MMCB language: all 16 candle classes (BuBC±, BeBC±, BuC2±, BeC2±, S&amp;D, Affinity, Close Inside) tested, the MP / BAL / MD ladder, the strength meter and 8 working bull strategies. NQ / MNQ Dec 2022 – Nov 2026: all data and each year.">
+<link rel="canonical" href="https://www.maxmaserati.com/backtests/mmcb/">
+<meta name="mmm-page" content="backtests">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<meta name="theme-color" content="#07080a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#07080a; --panel:#0f1114; --panel2:#0b0d10; --row:#14171b; --row2:#101317; --line:#252a31;
+  --fg:#d9dde3; --mute:#8f97a1; --gold:#e1b31a; --up:#3ddc97; --dn:#ff5c6c; --mix:#f2c94c;
+  --g:#0d2c20; --y:#2b2610; --r:#2f1216;
+  --display:'Barlow Condensed','Arial Narrow',sans-serif; --body:'Barlow',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  color-scheme:dark;
+}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--body);font-size:14px;margin:0} .wrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 40px}
+main{max-width:1500px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+main h1{font-family:var(--display);font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);font-size:30px;margin:0;text-wrap:balance}
+.sub{color:var(--mute);margin:2px 0 0;max-width:95ch;line-height:1.45}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);padding:11px 13px;min-width:0}
+.card h3{font-family:var(--display);color:var(--gold);letter-spacing:.06em;text-transform:uppercase;font-size:15px;margin:0 0 5px}
+.card p{margin:0;line-height:1.45}
+b.up{color:var(--up)} b.dn{color:var(--dn)}
+.money{display:flex;flex-wrap:wrap;gap:10px;align-items:end;background:var(--panel);border:1px solid var(--line);padding:10px 12px}
+.money .lab{font-family:var(--display);color:var(--gold);letter-spacing:.06em;text-transform:uppercase;font-size:15px;margin-right:6px;align-self:center}
+label{display:flex;flex-direction:column;gap:3px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+main select,main input[type=number]{background:var(--bg);color:var(--fg);border:1px solid var(--line);padding:5px 8px;font-family:var(--body);font-size:13px;max-width:100%}
+main input[type=number]{font-family:var(--mono);width:96px}
+.money .eg{font-family:var(--mono);font-size:12px;align-self:center;color:var(--mute)}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button{font-family:var(--display);font-size:16px;letter-spacing:.05em;text-transform:uppercase;background:var(--panel);color:var(--mute);border:1px solid var(--line);padding:6px 12px;cursor:pointer}
+.tabs button[aria-selected=true]{color:var(--bg);background:var(--gold);border-color:var(--gold)}
+main button:focus-visible,main select:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.ttl{font-family:var(--display);color:var(--gold);letter-spacing:.08em;text-transform:uppercase;font-size:18px;margin:4px 0 0}
+.note{color:var(--mute);font-size:13px;margin:0;max-width:115ch;line-height:1.5}
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.tw{overflow:auto;border:1px solid var(--line);max-height:72vh}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums}
+th{position:sticky;top:0;z-index:1;background:#000;color:var(--gold);text-align:left;font-weight:600;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap;font-family:var(--display);font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+th .h2{display:block;color:var(--mute);font-weight:400;font-size:10.5px;text-transform:none;letter-spacing:0;font-family:var(--body)}
+td{padding:4px 8px;white-space:nowrap;border-bottom:1px solid #1a1e23}
+tbody tr:nth-child(odd){background:var(--row)} tbody tr:nth-child(even){background:var(--row2)}
+tbody tr.g{background:var(--g)} tbody tr.y{background:var(--y)} tbody tr.r{background:var(--r)}
+td.p{color:var(--up)} td.n{color:var(--dn)}
+.warn{border:1px solid var(--gold);padding:10px 14px;background:var(--panel);line-height:1.45}
+.cards{display:grid;gap:14px}
+.sc{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--up);padding:14px 16px;display:grid;gap:12px;min-width:0}
+.sc header{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.sc h3{font-family:var(--display);font-size:26px;margin:0;color:var(--gold);letter-spacing:.04em}
+.pass{display:flex;flex-wrap:wrap;align-items:center;background:var(--up);color:#00170d;font-family:var(--display);font-size:15px;letter-spacing:.04em;font-weight:700}
+.pass span{padding:3px 10px;border-left:1px solid #0a3d27}
+.pass span:first-child{border-left:0;background:#1aa86f}
+tr.all td{font-weight:600;color:#fff} tr.yr td{color:var(--mute)} tr.yr td.p{color:var(--up)} tr.yr td.n{color:var(--dn)} tr.yr td:first-child{padding-left:16px} tr.few td{opacity:.55}
+tbody tr.grp td{background:#000;color:var(--gold);font-family:var(--display);font-size:14px;letter-spacing:.04em;padding-top:9px;white-space:normal}
+.tag{font-family:var(--display);letter-spacing:.06em;text-transform:uppercase;font-size:12px;color:var(--mute);border:1px solid var(--line);padding:1px 7px}
+.tag.on{color:var(--gold);border-color:var(--gold)}
+.kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:0}
+.kpi div{background:var(--panel2);border:1px solid var(--line);padding:8px 10px;min-width:0}
+.kpi dt{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:12px;color:var(--mute)}
+.kpi dd{margin:2px 0 0;font-family:var(--mono);font-size:19px;font-weight:600}
+.spec{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:6px 16px;margin:0}
+.spec dt{font-family:var(--display);text-transform:uppercase;letter-spacing:.06em;font-size:12px;color:var(--mute)}
+.spec dd{margin:0;line-height:1.4}
+.small{font-size:12.5px;color:var(--mute);margin:0}
+.eq{background:var(--panel2);border:1px solid var(--line);padding:8px 10px}
+.eq svg{display:block;width:100%;height:120px}
+.eq .cap{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--mute)}
+ul{margin:4px 0;padding-left:20px;line-height:1.55;max-width:110ch}
+.cta{display:inline-block;background:var(--gold);color:#000;font-family:var(--display);font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-size:17px;padding:9px 18px;text-decoration:none}
+.meter{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.fam{font-family:var(--display);letter-spacing:.05em;color:var(--gold)}
+.meter>div{border:1px solid var(--line);padding:9px 11px;background:var(--panel2)}
+.meter b{font-family:var(--display);font-size:17px;letter-spacing:.05em;display:block}
+.meter .s1 b{color:var(--up)} .meter .s2 b{color:var(--mix)} .meter .s3 b{color:#ff9f43} .meter .s4 b{color:var(--dn)}
+@media (max-width:600px){main h1{font-size:24px}.kpi dd{font-size:16px}}
+</style>
+<link rel="stylesheet" href="/assets/tw.css?v=20261108">
+</head>
+<body>
+<div id="mmm-header"></div>
+
+<div class="wrap"><main>
+<header>
+<h1>MMCB Candle Bias lab</h1>
+<p class="sub">Every MMM Candle Bias class tested: Body Close (BuBC± / BeBC±), C2 (BuC2± / BeC2±), Seek &amp; Destroy (S&amp;D•BuAF / S&amp;D•BeAF), Affinity sweep (BuAFs± / BeAFs±) and Close Inside (CI•BuAF / CI•BeAF). The higher-timeframe candle sets the bias, a lower timeframe gives the entry. Ladder from the candle low: XD 0 · D 12.5 · <b>MD 25</b> · <b>BAL 50</b> · <b>MP 75</b> · P 87.5 · XP 100. NQ / MNQ 1m, Dec 2022 – Nov 2026. Every result is shown for <b>all data</b> in one, then for each year alone. 1 pt cost per trade. Closed candles only. New York time. One trade at a time. WR = win rate · PF = profit factor · RR = reward ÷ risk · t = t-score (2+ = strong).</p>
+</header>
+<section class="sum" id="learn"></section>
+<div class="money" role="group" aria-label="Your size">
+ <span class="lab">Your size</span>
+ <label for="m-asset">Asset<select id="m-asset"><option value="2">MNQ · $2 a point</option><option value="20">NQ · $20 a point</option></select></label>
+ <label for="m-qty">Contracts<input type="number" id="m-qty" min="1" max="100" step="1" value="1"></label>
+ <label for="m-dd">Your max drawdown $<input type="number" id="m-dd" min="100" max="1000000" step="100" value="2000"></label>
+ <span class="eg" id="m-eg"></span>
+</div>
+<div class="tabs" role="tablist" id="tabs"></div>
+<section id="view" style="display:grid;gap:10px;min-width:0"></section>
+<p class="note" style="margin-top:18px">Education only, not financial advice. Backtests describe the past and do not promise future results. Futures trading carries a high risk of loss.</p></main></div>
+
+<div id="mmm-footer"></div>
+<script id="main" type="text/plain">const D=window.__MMCB;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nf=(x,p=1)=>x==null||isNaN(x)?'—':(+x).toFixed(p);
+const sg=(x,p=2)=>x==null||isNaN(x)?'—':(x>0?'+':x<0?'−':'')+Math.abs(x).toFixed(p);
+const pct=x=>x==null||isNaN(x)?'—':Math.round(x)+'%';
+const cl=v=>v==null||isNaN(v)?'':v>0?'p':v<0?'n':'';
+function usd(v){if(v==null||isNaN(v))return '—';const s=v<0?'−':v>0?'+':'';return s+'$'+Math.abs(Math.round(v)).toLocaleString('en-US');}
+function size(){const a=+$('m-asset').value||2,q=Math.max(1,+$('m-qty').value||1),dd=Math.max(100,+$('m-dd').value||2000);return{k:a/2*q,a,q,dd};}
+const YRS=D.meta.years;
+
+const LEARN=[
+ ['Read the candle first',`Plus candles (<b>BuBC+ · BuC2+ · BeBC+ · BeC2+</b>) trade their MMCB Target first <b class="up">85–91%</b> of the time on H1 and H4. Minus candles (<b>BuBC− · BeBC− · C2−</b>) only <b class="dn">57–67%</b>: close to a coin flip.`],
+ ['Affinity sweeps',`<b>BuAFs+ / BeAFs+</b> (took one side, closed back inside, strong half): Target first 73–77%. <b>BuAFs− / BeAFs−</b> are the trap: only <b class="dn">33–37%</b>. Their PL breaks first about 65% of the time. The sweep failed.`],
+ ['S&D and Close Inside',`<b>S&amp;D•BuAF / S&amp;D•BeAF</b> and <b>CI•BuAF / CI•BeAF</b> reach the Target first 67–75%. Useful context, weaker than a plus candle. Only S&amp;D•BuAF made one setting pass (49 trades).`],
+ ['Strength meter',`After a plus candle, nothing closed past <b>MP</b> (bull) → the Target trades first <b class="up">97–99%</b>. A close past <b>MD</b> → only <b class="dn">4–10%</b>. Only closes count. A wick is a test.`],
+ ['8 working strategies',`All Bu side, all made money in every year 2023–2026. Best t-scores: <b class="up">CB.M2</b> Daily → H4 (t 5.22) and <b class="up">CB.M5</b> Daily → H1 (t 3.56). New from the candle test: <b class="up">CB.M6</b> H4 BuC2+ close (PF 1.75). Pick ONE.`],
+ ['What failed',`No <b>Be</b> class passed: every bear setup lost in at least one year. A bias on M15 or lower has no edge. Fading BuAFs− / BeAFs− only reached MAYBE. Trailing under LTF swings cut the winners.`],
+ ['Rule fix',`Your code calls a candle <b>C2+</b> only when it took the other side <b>and closed past</b> the prior high / low. An outside candle that closes back inside is <b>S&amp;D</b>. The first test mixed 4–5% of S&amp;D•BuAF into "strong". Everything here is re-tested with your exact code.`],
+ ['Where to get it',`Everything on this page is built into the <b>MMCB Edge</b> indicator on TradingView: the MMCB class of each candle, the MP / BAL / MD ladder, the meter, the ladder line, the 8 strategies and the LIVE / INFO / GUIDE tables.`]];
+$('learn').innerHTML=LEARN.map(([h,p])=>`<div class="card"><h3>${h}</h3><p>${p}</p></div>`).join('');
+
+function curve(c,U){
+  const ys=c.map(p=>p[1]*U.k),mn=Math.min(0,...ys),mx=Math.max(...ys),W=600,H=120,pad=4;
+  const X=i=>pad+i*(W-2*pad)/Math.max(1,c.length-1),Y=v=>H-pad-(v-mn)*(H-2*pad)/Math.max(1,mx-mn);
+  const pts=ys.map((v,i)=>X(i).toFixed(1)+','+Y(v).toFixed(1)).join(' ');
+  return `<div class="eq"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Equity curve"><line x1="0" x2="${W}" y1="${Y(0)}" y2="${Y(0)}" stroke="#252a31" stroke-dasharray="4 4"/><polyline points="${pts}" fill="none" stroke="#3ddc97" stroke-width="2" vector-effect="non-scaling-stroke"/></svg><div class="cap"><span>${esc(c[0][0])}</span><span>equity, your size · end ${usd(ys[ys.length-1])}</span><span>${esc(c[c.length-1][0])}</span></div></div>`;
+}
+function srow(x,lab,cls,U){
+  if(!x)return `<tr class="${cls} few"><td>${lab}</td><td colspan="11">no trades</td></tr>`;
+  return `<tr class="${cls}${x.n<10?' few':''}"><td>${lab}</td><td>${x.n}</td><td>${nf(x.wr)}%</td><td>${nf(x.pf,2)}</td><td>${nf(x.t,2)}</td><td class="${cl(x.avgR)}">${sg(x.avgR)}</td><td class="p">${usd(x['win$']*U.k)}</td><td class="n">${usd(x['loss$']*U.k)}</td><td class="${cl(x['net$'])}"><b>${usd(x['net$']*U.k)}</b></td><td class="n">${usd(x['dd$']*U.k)}</td><td>${x.maxW} / ${x.maxL}</td><td>${nf(x.avgStop,0)}</td></tr>`;
+}
+function card(s,U){
+  const b=s.all, green=YRS.filter(y=>s.years[y]&&s.years[y]['net$']>0).length;
+  const prop=Math.floor(U.dd/(1.5*s.ddPts*2));
+  const rows=srow(b,'<b>All data</b>','all g',U)+YRS.map(y=>srow(s.years[y],y,'yr',U)).join('');
+  return `<article class="sc" id="${s.code.replace('.','-')}"><header><h3 translate="no">${s.code}</h3><span class="tag" style="text-transform:none;font-size:13px" translate="no">${esc(s.name)}</span>
+   <span class="pass"><span>✔ WORKS</span><span>WR ${nf(b.wr)}%</span><span>PF ${nf(b.pf,2)}</span><span>t ${nf(b.t,2)}</span></span>
+   <span class="tag">${esc(s.style)}</span><span class="tag">${esc(s.chart)} chart</span>${s.on?'<span class="tag on">on by default in the indicator</span>':''}${s.new?'<span class="tag on">new · from the candle class test</span>':''}<span class="tag" style="text-transform:none">money made in ${green} of 4 years</span></header>
+   <dl class="kpi"><div><dt>Trades</dt><dd>${b.n}</dd></div><div><dt>Win rate</dt><dd>${nf(b.wr)}%</dd></div><div><dt>avg RR a trade</dt><dd style="color:var(--up)">${sg(b.avgR)}</dd></div><div><dt>Profit factor</dt><dd>${nf(b.pf,2)}</dd></div><div><dt>Trades / month</dt><dd>${nf(b.perMonth)}</dd></div><div><dt>Net (your size)</dt><dd style="color:var(--up)">${usd(b['net$']*U.k)}</dd></div><div><dt>Max DD (your size)</dt><dd style="color:var(--dn)">${usd(b['dd$']*U.k)}</dd></div><div><dt>Losses in a row</dt><dd>${b.maxL}</dd></div></dl>
+   <p class="small">W: <b style="color:var(--up)">${usd(b['win$']*U.k)}</b> · L: <b style="color:var(--dn)">${usd(b['loss$']*U.k)}</b> · Net: <b style="color:var(--up)">${usd(b['net$']*U.k)}</b> · avg hold ${nf(b.holdH)} h · avg stop ${nf(b.avgStop,0)} pts</p>
+   <dl class="spec"><div><dt>Bias candle</dt><dd translate="no">${esc(s.bias)}</dd></div><div><dt>Entry</dt><dd>${esc(s.entry)}</dd></div><div><dt>Stop</dt><dd>${esc(s.stop)}</dd></div><div><dt>Exit</dt><dd>${esc(s.exit)}</dd></div><div><dt>Prop Survival size</dt><dd>${prop>=1?`<b>${prop} MNQ</b> for a ${usd(U.dd).slice(1)} drawdown`:`<b style="color:var(--dn)">0</b>: one MNQ needs a ${usd(Math.ceil(1.5*s.ddPts*2/100)*100).slice(1)}+ drawdown`} (drawdown ÷ 1.5 × worst test drawdown of ${s.ddPts} pts)</dd></div>${s.robust?`<div><dt>Neighbour settings</dt><dd>${esc(s.robust)}</dd></div>`:''}</dl>
+   ${curve(s.curve,U)}
+   <div class="tw" style="max-height:none"><table><thead><tr><th>Data</th><th>Trades</th><th>WR</th><th>PF</th><th>t</th><th>avg RR</th><th>Won</th><th>Lost</th><th>Net</th><th>Max DD</th><th>Wins / losses in a row</th><th>avg stop pts</th></tr></thead><tbody>${rows}</tbody></table></div>
+   <p class="small">2023 includes the last days of Dec 2022. 2026 = MNQ data, about 4 months (Mar–Apr, Sep–Nov). A year with fewer than 10 trades is shown pale.</p></article>`;
+}
+function stratTab(){
+  const U=size();
+  let h=`<div class="warn"><b>Pick ONE strategy.</b> Study it, check it fits your style (day trade, swing or trend), backtest it yourself, then decide. Do not trade them all together.</div>`;
+  h+=`<p class="note">WORKS = 40+ trades, t-score 2+ over all data, and money made in every year 2023–2026. All 8 are <b>Bu side</b>: no Be class passed. CB.M1–M5 use a <b translate="no">BuBC+ or BuC2+</b> as the bias. CB.M6–M8 come from the candle class test (all 16 classes × entry × stop × exit). Money = 1 MNQ ($2 a point) scaled by "Your size", after a 1 pt cost a trade.</p>`;
+  h+='<div class="tw" style="max-height:none"><table><thead><tr><th>Code</th><th>Strategy</th><th>Style</th><th>Trades</th><th>WR</th><th>PF</th><th>t</th><th>Net</th><th>Max DD</th><th>Losses in a row</th></tr></thead><tbody>'+
+    D.S.map(s=>`<tr class="g"><td translate="no"><a href="#${s.code.replace('.','-')}" style="color:var(--gold)"><b>${s.code}</b></a></td><td translate="no">${esc(s.name)}</td><td>${esc(s.style)}</td><td>${s.all.n}</td><td>${nf(s.all.wr)}%</td><td>${nf(s.all.pf,2)}</td><td>${nf(s.all.t,2)}</td><td class="p">${usd(s.all['net$']*U.k)}</td><td class="n">${usd(s.all['dd$']*U.k)}</td><td>${s.all.maxL}</td></tr>`).join('')+'</tbody></table></div>';
+  return h+'<div class="cards">'+D.S.map(s=>card(s,U)).join('')+'</div>';
+}
+const FAMS=['Body Close','C2 (engulf)','Affinity sweep','Seek & Destroy','Close Inside'];
+function typesTab(){
+  const F=state.ty||(state.ty={tf:'H1'});
+  let h=`<h2 class="ttl">Every MMCB candle class · what happens next</h2>
+  <p class="note">All 16 classes from MMM Candle Bias Pro, then the next 10 candles of the same timeframe, read on 1m. <b>MMCB Target</b> = Bu classes → the candle high · Be classes → the candle low. <b>PL</b> = the other end. "Target first" = the Target traded before the PL. Pullbacks are wicks back from the Target: <b>25%</b> = MP (Bu) / MD (Be) · <b>BAL</b> 50% · <b>75%</b> = MD (Bu) / MP (Be). Meter = deepest LTF close (W: D · D: H4 · H4: H1 · H1: 15m · M15: 5m). Row color: green = Target first 85%+, yellow 65–85%, red under 65%.</p>
+  <div class="filters"><label for="ty-tf">Timeframe<select id="ty-tf">${['W','D','H4','H1','M15'].map(v=>`<option ${F.tf===v?'selected':''}>${v}</option>`).join('')}</select></label></div>`;
+  const L=D.TY.filter(r=>r.tf===F.tf);
+  h+=`<div class="tw"><table><thead><tr><th>Class</th><th>What the candle did</th><th>Candles</th><th>Share</th><th>Target first</th><th>PL first</th><th>Next candle<span class="h2">takes Target</span></th><th>Next candle<span class="h2">closes past Target</span></th><th>Pullback<span class="h2">25% (MP / MD)</span></th><th>Pullback<span class="h2">BAL 50%</span></th><th>Pullback<span class="h2">75% line</span></th><th>STRONG →<span class="h2">Target first</span></th><th>REVERSAL →<span class="h2">Target first</span></th>${YRS.map(y=>`<th>${y}<span class="h2">Target first</span></th>`).join('')}</tr></thead><tbody>`;
+  for(const fam of FAMS){
+    const G=L.filter(r=>r.fam===fam); if(!G.length)continue;
+    h+=`<tr class="grp"><td colspan="${13+YRS.length}">${esc(fam)}</td></tr>`;
+    for(const r of G){const c=r.tgt>=85?'g':r.tgt>=65?'y':'r';
+      h+=`<tr class="${c}${r.n<30?' few':''}"><td translate="no"><b>${esc(r.ty)}</b></td><td style="white-space:normal;min-width:220px">${esc(r.what)}</td><td>${r.n.toLocaleString('en-US')}</td><td>${pct(r.share)}</td><td><b>${pct(r.tgt)}</b></td><td>${pct(r.pl)}</td><td>${pct(r.nT)}</td><td>${pct(r.nBC)}</td><td>${pct(r.p25)}</td><td>${pct(r.p50)}</td><td>${pct(r.p75)}</td><td>${pct(r.m[0])}</td><td>${pct(r.m[3])}</td>${r.y.map(v=>`<td>${pct(v)}</td>`).join('')}</tr>`;}
+  }
+  h+=`</tbody></table></div>
+  <ul><li><b>Plus beats minus.</b> BuBC+ / BeBC+ / BuC2+ / BeC2+ reach the Target first 85–91% (H1, H4). The minus side of the same candle: 57–67%.</li>
+  <li><b>Minus Affinity is a trap.</b> BuAFs− and BeAFs− reach the Target first only 33–37%: the PL breaks first. Read them as the other side winning.</li>
+  <li><b>The next candle tells you fast.</b> After a plus candle the next candle takes the Target about 80–88% of the time.</li>
+  <li><b>Pullbacks:</b> after a plus candle about 4 in 10 wick back to MP, 2 in 10 to BAL and 1 in 7 to the 75% line before the Target. Minus candles already closed deep, so they almost always trade back to the 25% level.</li>
+  <li>Years are steady: each class keeps about the same odds in 2023, 2024, 2025 and 2026. Pale rows have fewer than 30 candles (W, D minus classes).</li></ul>`;
+  return h;
+}
+function ttTab(){
+  const F=state.tt||(state.tt={tf:'',ty:'',en:'',vd:'WORKS'});
+  const C=D.TT.cols, R=D.TT.rows.map(r=>Object.fromEntries(C.map((k,i)=>[k,r[i]])));
+  const types=[...new Set(R.map(r=>r.name))];
+  let h=`<h2 class="ttl">Trade test · every class × entry × stop × exit</h2>
+  <p class="note">Each MMCB class traded on its lean side (Bu long, Be short). Entry chart: D → H1 · H4 → 15m · H1 → 5m · M15 → 1m. <b>Entries:</b> Close = the MMCB candle close · First BC = first LTF BC in 3 candles, no LTF close past the 75% line · Entry box = plus classes (BC+, C2+, AFs+) P–MP box, all others BAL–MD box, wick in then the first LTF BC. <b>Stops:</b> 50 pts · 75% line (Bu MD / Be MP) · PL (candle low / high). <b>Exits:</b> 1:1 · 1:2 · 1:3 · MMCB Target · out at the 10th candle close. "Fade" rows trade BuAFs− short and BeAFs− long. WORKS = 40+ trades, t 2+, money every year · MAYBE = t 1+, at most one losing year.</p>
+  <p class="note"><b>Read with care:</b> 2,580 settings were tested and 25 passed. The best of many settings can look good by luck, so the 3 new strategies (CB.M6–M8) were only kept when the settings next to them also worked.</p>
+  <div class="filters"><label for="tt-tf">Timeframe<select id="tt-tf"><option value="">All</option>${['D','H4','H1','M15'].map(v=>`<option ${F.tf===v?'selected':''}>${v}</option>`).join('')}</select></label>
+  <label for="tt-ty">Class<select id="tt-ty"><option value="">All</option>${types.map(v=>`<option ${F.ty===v?'selected':''}>${esc(v)}</option>`).join('')}</select></label>
+  <label for="tt-en">Entry<select id="tt-en"><option value="">All</option>${['Close','First BC','Entry box'].map(v=>`<option ${F.en===v?'selected':''}>${v}</option>`).join('')}</select></label>
+  <label for="tt-vd">Verdict<select id="tt-vd"><option value="">All</option>${['WORKS','MAYBE','NO'].map(v=>`<option ${F.vd===v?'selected':''}>${v}</option>`).join('')}</select></label></div>`;
+  const cnt={};for(const r of R){const k=r.name+(r.trade==='fade'?' (fade)':'');cnt[k]=cnt[k]||{W:0,M:0,N:0};cnt[k][r.verdict[0]]++;}
+  let L=R.filter(r=>(!F.tf||r.htf===F.tf)&&(!F.ty||r.name===F.ty)&&(!F.en||r.entryN===F.en)&&(!F.vd||r.verdict===F.vd)).sort((a,b)=>(b.t??-9)-(a.t??-9));
+  const N=L.length; L=L.slice(0,400);
+  h+=`<p class="note">${N} settings${N>400?' · first 400 shown':''}, best t-score first.</p><div class="tw"><table><thead><tr><th>TF → entry TF</th><th>Class</th><th>Trade</th><th>Entry</th><th>Stop</th><th>Exit</th><th>Trades</th><th>WR</th><th>PF</th><th>avg RR</th><th>t</th><th>Net</th><th>Max DD</th><th>Green years</th>${YRS.map(y=>`<th>${y}</th>`).join('')}<th>Verdict</th></tr></thead><tbody>`;
+  for(const r of L){const c={WORKS:'g',MAYBE:'y',NO:'r'}[r.verdict];
+    h+=`<tr class="${c}"><td>${r.entryN==='Close'?r.htf+' close':r.htf+' → '+r.ltf}</td><td translate="no"><b>${esc(r.name)}</b></td><td>${r.trade==='fade'?'fade':'lean'}</td><td>${esc(r.entryN)}</td><td>${esc(r.stopN)}</td><td>${esc(r.exitN)}</td><td>${r.n}</td><td>${nf(r.wr)}%</td><td>${nf(r.pf,2)}</td><td class="${cl(r.avgR)}">${sg(r.avgR)}</td><td><b>${nf(r.t,2)}</b></td><td class="${cl(r.net)}">${usd(r.net)}</td><td class="n">${usd(r.dd)}</td><td>${esc(r.green)}</td>${YRS.map(y=>`<td class="${cl(r['net'+y])}">${usd(r['net'+y])}</td>`).join('')}<td>${r.verdict}</td></tr>`;}
+  h+=`</tbody></table></div><h2 class="ttl" style="margin-top:8px">Passes by class</h2><div class="tw" style="max-height:none"><table><thead><tr><th>Class</th><th>WORKS</th><th>MAYBE</th><th>NO</th></tr></thead><tbody>`;
+  for(const [k,v] of Object.entries(cnt)){h+=`<tr class="${v.W?'g':v.M>10?'y':''}"><td translate="no">${esc(k)}</td><td><b>${v.W}</b></td><td>${v.M}</td><td>${v.N}</td></tr>`;}
+  return h+`</tbody></table></div><p class="note">WORKS by class: BuBC+ 11 · BuC2+ 6 · BuAFs+ 4 · BuBC− 3 · S&amp;D•BuAF 1. Every Be class: 0. The 1:1 and 1:2 exits did best; the MMCB Target exit hit often but its few losses were too big for the Close entry.</p>`;
+}
+function useTab(){
+  return `<h2 class="ttl">How to use the MMCB</h2>
+  <p class="note">The MMCB class tells you <b>who is in control</b> and where the other side should defend. It is context first. Buying every plus candle close at 1:2 barely breaks even, because price often pulls back into the candle before it moves on. The edge comes from reading the class, then waiting for the entry.</p>
+  <dl class="spec" style="margin-top:6px">
+   <div><dt>1 · Read the class</dt><dd>On the Daily, H4 or H1. <b translate="no">BuBC+ / BuC2+</b> = buyers in control (85–91% Target first). <b translate="no">BuAFs+</b>, <b translate="no">S&amp;D•BuAF</b>, <b translate="no">CI•BuAF</b> = buyers lean (67–77%). <b translate="no">BuBC− / BuC2−</b> = weak (57–67%). <b translate="no">BuAFs−</b> = buyers failed (PL breaks first ~65%).</dd></div>
+   <div><dt>2 · Mark the ladder</dt><dd><b>MMCB Target</b> = the high (Bu) / low (Be). From the low: XD 0 · D 12.5 · <b>MD 25</b> · <b>BAL 50</b> · <b>MP 75</b> · P 87.5 · XP 100. Bu pullback: MP → BAL → MD. Be pullback: MD → BAL → MP.</dd></div>
+   <div><dt>3 · Read the meter</dt><dd>Only <b>closes</b> count. Bu: nothing closed below MP = STRONG · below MP = TESTING · below BAL = FADING · below MD = REVERSAL, drop the bias.</dd></div>
+   <div><dt>4 · Drop to the entry chart</dt><dd>D → H4 / H1 · H4 → H1 · H1 → 5m or 1m. Wait for the first BC (or NBC) in the bias direction while the meter is still STRONG.</dd></div>
+   <div><dt>5 · Manage</dt><dd>Fixed stop, the next ladder level, the MD line or the PL. Exit at the MMCB Target, a fixed RR, the clock (10 candles), or the ladder line. Each strategy card says which.</dd></div>
+   <div><dt>6 · Pick ONE</dt><dd>Day trade: CB.M1 or CB.M4. Swing: CB.M2, CB.M5, CB.M6, CB.M7 or CB.M8. Trend: CB.M3. One strategy, one trade at a time.</dd></div>
+  </dl>
+  <h2 class="ttl" style="margin-top:10px">Which timeframe for the bias, which for the entry</h2>
+  <ul><li><b>Daily BuBC+ / BuC2+ → H4 or H1 entry</b>: the cleanest. Few trades, very high win rate (CB.M2, CB.M5).</li>
+  <li><b>H4 class at the close</b>: BuC2+ (CB.M6), BuBC− (CB.M7) and the ladder trend from BuBC+ / BuC2+ (CB.M3).</li>
+  <li><b>H1 BuBC+ / BuC2+ → 5m or 1m entry</b>: the day-trade pair. Most trades, t-score 3.2–3.4 (CB.M1, CB.M4).</li>
+  <li><b>Weekly</b>: BuBC+ reached its Target first 94% (33 candles), but data starts Dec 2022, so too few candles to trade as a strategy.</li>
+  <li><b>M15 or lower as the bias</b>: the odds stay similar, but entries there have no edge after costs.</li></ul>
+  <p class="note">See the <b>Candle classes</b> tab for every class and the <b>HTF × LTF</b> tab for every pairing.</p>`;
+}
+const ST=['STRONG','TESTING','FADING','REVERSAL'],STD=['no close past MP (Bu) / MD (Be)','closed past MP / MD','closed past BAL','closed past MD (Bu) / MP (Be)'];
+function meterTab(){
+  const h1=D.FADE.find(r=>r.htf==='H1'&&r.bias==='Bull');
+  let h=`<h2 class="ttl">Strength meter · does the MMCB Target trade first?</h2><p class="note">After a plus candle (<b translate="no">BuBC+ / BuC2+</b> or <b translate="no">BeBC+ / BeC2+</b>) closes, we track the deepest <b>close</b> on the lower timeframe (D: H4 closes · H4: H1 · H1: 15m · M15: 5m) until the Target trades or price closes past the PL. A wick does not move the meter. % = how often the MMCB Target traded before a full reversal.</p>`;
+  h+=`<div class="meter">${ST.map((t,i)=>`<div class="s${i+1}"><b>${t}</b><span class="small">${STD[i]}</span><div style="font-family:var(--mono);font-size:22px;margin-top:4px">${pct(h1.st[i])}</div><span class="small">H1 Bu plus candle · Target first</span></div>`).join('')}</div>`;
+  h+=`<div class="tw" style="margin-top:6px"><table><thead><tr><th>HTF</th><th>Side</th><th>Candles<span class="h2">all data</span></th><th>Target first<span class="h2">at the close</span></th><th>STRONG</th><th>TESTING</th><th>FADING</th><th>REVERSAL</th><th>Close past<span class="h2">25% (MP / MD)</span></th><th>Close past<span class="h2">BAL</span></th><th>Close past<span class="h2">75% line</span></th></tr></thead><tbody>`;
+  for(const r of D.FADE){h+=`<tr class="${r.bias==='Bull'?'':'r'}"><td>${r.htf}</td><td translate="no">${r.bias==='Bull'?'BuBC+ / BuC2+':'BeBC+ / BeC2+'}</td><td>${r.n.toLocaleString('en-US')}</td><td>${pct(r.at)}</td>${r.st.map(v=>`<td class="${v>=70?'p':v<35?'n':''}"><b>${pct(v)}</b></td>`).join('')}<td>${pct(r.p25)}</td><td>${pct(r.p50)}</td><td>${pct(r.p75)}</td></tr>`;}
+  h+='</tbody></table></div><p class="note">How to read it: while nothing has closed past the 25% level the bias is almost always right (97–100%). One close past it makes it a coin flip. A close past the 75% line means the move is over 87–96% of the time. Be rows (red) behave the same way, but the Be strategies failed, so trade the Bu side. The meter by class is on the <b>Candle classes</b> tab.</p>';
+  return h;
+}
+function pairTab(){
+  const F=state.pair||(state.pair={bias:'Bull'});
+  let h=`<h2 class="ttl">HTF × LTF · which entry chart works best with which bias</h2><p class="note">Every plus candle (<b translate="no">BuBC+ / BuC2+</b> or <b translate="no">BeBC+ / BeC2+</b>), then an LTF entry at the ladder (wick into MP, BAL or MD, then NBC or BC) with every stop (50 pts or the next level) and exit (1:1, 1:2, 1:3, MMCB Target). Shown: the <b>best</b> of the 16 settings for each pair with 30+ trades, and the <b>median t-score</b> of all its settings. Green = best t-score 2+ and money in 3+ of 4 years.</p><p class="note">The best of 16 settings can look good by luck. Only the 8 strategies on the first tab passed every check.</p><div class="filters"><label for="p-bias">Side<select id="p-bias">${[['','Both'],['Bull','Bu'],['Bear','Be']].map(([v,l])=>`<option value="${v}" ${F.bias===v?'selected':''}>${l}</option>`).join('')}</select></label></div>`;
+  const L=D.PAIR.filter(r=>!F.bias||r.bias===F.bias);
+  h+=`<div class="tw"><table><thead><tr><th>HTF bias</th><th>LTF entry</th><th>Side</th><th>Best setting</th><th>Trades</th><th>WR</th><th>PF</th><th>avg RR</th><th>t</th><th>Green years<span class="h2">2023–26</span></th><th>Median t<span class="h2">all settings</span></th></tr></thead><tbody>`;
+  for(const r of L){const g=parseInt(r.green);const c=r.t>=2&&g>=3?'g':r.t<1?'r':'y';
+    h+=`<tr class="${c}"><td>${r.htf}</td><td>${r.ltf}</td><td>${r.bias==='Bull'?'Bu':'Be'}</td><td>${esc(r.trig)} · ${esc(r.stop==='Level'?'next level':r.stop)} · ${esc(r.exit)}</td><td>${r.n}</td><td>${nf(r.wr)}%</td><td>${nf(r.pf,2)}</td><td class="${cl(r.avgR)}">${sg(r.avgR)}</td><td><b>${nf(r.t,2)}</b></td><td>${esc(r.green)}</td><td class="${cl(r.med)}">${nf(r.med,2)}</td></tr>`;}
+  return h+`</tbody></table></div><p class="note">The Daily → H4 pair has few trades but the best quality. The H1 → 1m / 3m / 5m / 15m pairs give the most trades. From M15 down the bias stops helping.</p>`;
+}
+function stopTab(){
+  return `<h2 class="ttl">Stops and exits · what we learned</h2><ul>
+  <li><b>Fixed 50 pt stop (NQ)</b> beat structural stops (the LTF swing low) for the H1 day trades.</li>
+  <li><b>Ladder stops</b> (BAL for an MP entry, MD for a BAL entry) work for the Daily swing (CB.M2) because the levels are wide.</li>
+  <li><b>MD line stop</b> for a close entry: the best stop for H4 BuC2+ (CB.M6) and Daily BuAFs+ (CB.M8). The PL (candle low) also worked for BuC2+.</li>
+  <li><b>Trailing</b> under each LTF swing, or to each LTF MP / MD, <b class="dn">cut the winners short</b> and lowered every t-score we tested.</li>
+  <li><b>One trail did help:</b> on CB.M2, moving the stop to the BAL of each new H4 BuBC+ / BuC2+.</li>
+  <li><b>MMCB Target</b> as the exit gives the highest win rate (88–93% on the Daily swings), but the stop is far: one loss ≈ 5 wins on CB.M5. For close entries it hit 78–89% of the time but still lost money.</li>
+  <li><b>Fixed RR:</b> 1:2 is the best balance for most entries. We also tested 1:1, 1:3, 1:4 and 1:5.</li>
+  <li><b>Clock exit</b> (out at the close of the 10th HTF candle) lets CB.M4 ride without a target: WR 37%, but the winners pay.</li>
+  <li><b>Ladder line</b> (BAL of the latest H4 BuBC+ / BuC2+, steps up only): the best trend exit. CB.M3: 439 trades, PF 1.63, green every year.</li>
+  <li><b>Close above the last 1m BeBC high</b> (a reclaim) as an extra entry rule on 1m turned a weak 1m entry into CB.M4 (t 3.38).</li></ul>`;
+}
+function indTab(){
+  return `<h2 class="ttl">The MMCB Edge indicator</h2><p class="note">Every rule on this page, drawn live on your chart. Closed candles only, no repaint. The candle classes use the exact MMM Candle Bias Pro code.</p>
+  <dl class="spec" style="margin-top:6px">
+   <div><dt>8 strategies</dt><dd>CB.M1 – CB.M8, Bu side only. CB.M1 is on by default. Turn on the ONE you trade.</dd></div>
+   <div><dt>Trade tool</dt><dd>Entry, stop and target lines with W / L labels. Keeps the last 3 winners and 2 losers.</dd></div>
+   <div><dt>Prop Survival sizing</dt><dd>Contracts = your max drawdown ÷ (1.5 × the worst drawdown the strategy had on 1 contract).</dd></div>
+   <div><dt>MMCB ladder</dt><dd>The MMCB Target plus MP · BAL · MD of the last plus candle on D, H4 or H1, labelled with its class (for example "H1 BuC2+ ▲ MMCB Target").</dd></div>
+   <div><dt>Strength meter</dt><dd>STRONG / TESTING / FADING / REVERSAL with the tested "Target first" %.</dd></div>
+   <div><dt>Ladder line</dt><dd>The trend line from BuBC+ / BuC2+ candles on D, H4 or H1.</dd></div>
+   <div><dt>LIVE table</dt><dd>Top right. The class of the last plus candle and the meter, then each strategy only when it is armed, waiting, in a trade or traded today, with W: +$ · L: −$ · Net.</dd></div>
+   <div><dt>INFO + GUIDE tables</dt><dd>INFO: the tested stats of up to 3 strategies you pick. GUIDE: the rules in plain words.</dd></div>
+  </dl>
+  <p class="note">Checked against this backtest: on MNQ 5m, 23 of 23 CB.M1 trades in the overlap window matched on entry time and result.</p>
+  <p><a class="cta" href="https://whop.com/mmmtrading/products/" target="_blank" rel="noopener">Try it for free</a></p>`;
+}
+function howTab(){return `<h2 class="ttl">How it was tested</h2><ul>
+<li><b>Data:</b> NQ 1m Dec 2022 – Nov 2025, then MNQ 1m to Nov 2026 (about 4 months of 2026: Mar–Apr, Sep–Nov). No day counted twice.</li>
+<li><b>Classes:</b> line for line from MMM Candle Bias Pro. In order: <span translate="no">BuC2± (took the prior low and closed above the prior high) · BeC2± · BuBC± (closed above the prior high) · BeBC± · S&amp;D•BuAF / S&amp;D•BeAF (took both sides, closed inside) · BuAFs± (took the prior low only, closed inside) · BeAFs± · CI•BuAF / CI•BeAF (inside)</span>. "+" = close in the top 25% (Bu) / bottom 25% (Be); for AFs and S&amp;D / CI it is the top / bottom half.</li>
+<li><b>Ladder:</b> from the candle low, XD 0 · D 12.5 · MD 25 · BAL 50 · MP 75 · P 87.5 · XP 100. MMCB Target = Bu high / Be low. PL = the other end.</li>
+<li><b>Candle study:</b> W, D, H4, H1 and M15, the next 10 candles of the same timeframe, events ordered on 1m (if the Target and the PL trade in the same minute, the PL counts first).</li>
+<li><b>Trade test:</b> 16 classes × D / H4 / H1 / M15 × 3 entries × 3 stops × 4 exits = 2,292 settings, plus 288 fade settings for BuAFs− / BeAFs−.</li>
+<li><b>Strategy tests (CB.M1–M5):</b> first trigger, ladder walk, BC reclaim and ladder-line tests on every HTF × LTF pair, re-run with the exact class code.</li>
+<li><b>Rules:</b> 1m exit engine, stop wins a tie inside a candle, 1 pt cost a trade, one trade at a time per setting.</li>
+<li><b>WORKS:</b> 40+ trades, t-score 2+ over all data and money made in every year 2023–2026 (years with 5+ trades). Be classes, M15-or-lower bias and time filters were dropped after they failed the year checks.</li>
+<li><b>Rule fix (Nov 25 2026):</b> the first test counted an outside candle that closed in its top 25% but NOT above the prior high as "C2+". Your code calls it S&amp;D•BuAF. 4–5% of the "strong" candles changed. CB.M1–M5 were re-run: all still pass every year (CB.M1 t 3.43 → 3.16, CB.M2 4.64 → 5.22, CB.M3 2.62 → 2.87, CB.M4 3.35 → 3.38, CB.M5 3.84 → 3.56).</li>
+<li><b>Money:</b> $2 a point for 1 MNQ, scaled by "Your size". Max DD = the deepest drop from a high of the equity curve.</li></ul>`;}
+const TABS=[['str','Strategies'],['ty','Candle classes'],['tt','Class trade test'],['use','How to use'],['meter','Strength meter'],['pair','HTF × LTF'],['stop','Stops & exits'],['ind','Indicator'],['how','How tested']];
+const state={tab:'str'};
+try{const s=JSON.parse(localStorage.getItem('mmcb_state2')||'null');if(s&&s.tab)Object.assign(state,s);}catch(e){}
+function save(){try{localStorage.setItem('mmcb_state2',JSON.stringify(state));}catch(e){}}
+function render(){
+  $('tabs').innerHTML=TABS.map(([k,l])=>`<button role="tab" data-t="${k}" aria-selected="${state.tab===k}">${l}</button>`).join('');
+  const U=size(); $('m-eg').textContent=`1 point = $${(U.a*U.q).toLocaleString('en-US')}`;
+  const t=state.tab;
+  $('view').innerHTML=t==='str'?stratTab():t==='ty'?typesTab():t==='tt'?ttTab():t==='use'?useTab():t==='meter'?meterTab():t==='pair'?pairTab():t==='stop'?stopTab():t==='ind'?indTab():howTab();
+  save();
+}
+$('tabs').addEventListener('click',e=>{const b=e.target.closest('button[data-t]');if(!b)return;state.tab=b.dataset.t;render();});
+['m-asset','m-qty','m-dd'].forEach(id=>$(id).addEventListener('input',render));
+$('view').addEventListener('change',e=>{const id=e.target.id,v=e.target.value;
+  if(id==='p-bias')state.pair={bias:v};
+  else if(id==='ty-tf')state.ty={tf:v};
+  else if(id.startsWith('tt-'))state.tt[id.slice(3)]=v;
+  else return;
+  render();const n=$(id);if(n)n.focus();});
+if(location.hash&&TABS.some(([k])=>'#'+k===location.hash))state.tab=location.hash.slice(1);
+render();
+</script>
+<script>
+fetch('data.json').then(function(r){return r.json();}).then(function(j){window.__MMCB=j;var s=document.createElement('script');s.textContent=document.getElementById('main').textContent;document.body.appendChild(s);})
+.catch(function(){document.getElementById('view').innerHTML='<p class="note">The data could not load. Reload the page to try again.</p>';});
+</script>
+<script src="/assets/nav.js"></script>
+<script src="/assets/site.js"></script>
+<script src="/i18n.js"></script>
+</body>
+</html>
