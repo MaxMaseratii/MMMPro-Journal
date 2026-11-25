@@ -126,7 +126,7 @@ const LEARN=[
  ['Candle zones',`One ladder for BuC and BeC: <b>XDz · MDz · BALz · MPz · XPz</b>. After a wick pulls back, the odds of the MMCB Target first are about the distance from the PL, like a fuel gauge. <b>BALz</b> is a true coin flip. A zone is the map, the BC is the trigger.`],
  ['Alignment stack',`Daily → H4 → H1 → 15m body closes all lined up, enter at the 15m close, out on the first H1 opposite BC: <b class="up">PF 1.69, t 2.62, money every year</b>. With the Weekly on top: <b class="up">PF 2.60</b>. With a fixed 1:2 it is only MAYBE.`],
  ['Rule fix',`Your code calls a candle <b>C2+</b> only when it took the other side <b>and closed past</b> the prior high / low. An outside candle that closes back inside is <b>S&amp;D</b>. The first test mixed 4–5% of S&amp;D•BuAF into "strong". Everything here is re-tested with your exact code.`],
- ['Where to get it',`Everything on this page is built into the <b>MMCB Edge</b> indicator on TradingView: the MMCB class of each candle, the MMCB Map (TGT · MPz / BALz / MDz · Z2H) that reacts to every close, today's bias and alignment, the ladder line, the 8 strategies + the alignment strategy (CB.A) and the LIVE / INFO / GUIDE tables.`]];
+ ['Where to get it',`Everything on this page is built into the <b>MMCB Edge 1</b> indicator on TradingView: the MMCB class of each candle, the MMCB Map (TGT · MPz / BALz / MDz · Z2H) that reacts to every close, today's bias and alignment, the ladder line, the 8 strategies + the alignment strategy (CB.A) and the LIVE / INFO / GUIDE tables.`]];
 $('learn').innerHTML=LEARN.map(([h,p])=>`<div class="card"><h3>${h}</h3><p>${p}</p></div>`).join('');
 
 function curve(c,U){
@@ -287,14 +287,15 @@ function mgTab(){
   return h;
 }
 function indTab(){
-  return `<h2 class="ttl">The MMCB Edge indicator · v3</h2><p class="note">Every rule on this page, drawn live on your chart and labelled in MMCB words. Closed candles only, no repaint. The candle classes use the exact MMM Candle Bias Pro code.</p>
+  return `<h2 class="ttl">The MMCB Edge 1 indicator</h2><p class="note">Every rule on this page, drawn live on your chart and labelled in MMCB words. Closed candles only, no repaint. The candle classes use the exact MMM Candle Bias Pro code.</p>
   <dl class="spec" style="margin-top:6px">
    <div><dt>Today's bias</dt><dd>Pick the bias TF (W, D, H4, H1) or Auto. Auto side = the last closed candle of that TF: a Bu body close = Bull, a Be body close = Bear, anything else = no bias today. Or set Bull / Bear yourself.</dd></div>
    <div><dt>Alignment</dt><dd>Auto = the best tested chain for your bias TF (W → D → H4 → H1 → 15m · D → H4 → H1 → 15m · H4 → H1). Manual = pick the entry TF (H1 down to 1m, 3m and 2m too) and Direct / Core / Full. The LIVE table shows each TF: D▲ H4▲ H1✕ · 2 / 3 aligned, plus that chain's tested PF and t-score.</dd></div>
    <div><dt>Strategy: Auto or Manual</dt><dd>Auto picks the best tested strategy for your bias TF and chart (W → CB.A · D → CB.M2 · H4 → CB.M7 · H1 → CB.M4 / CB.M1). Manual = pick CB.A or CB.M1 – CB.M8. One at a time.</dd></div>
-   <div><dt>MMCB Map</dt><dd>The newest body close (BuBC± / BuC2± / BeBC± / BeC2±) of the map TF always replaces the old map. TGT line + its strength %, the MPz / BALz / MDz lines with the tested % to reach the TGT (for example "BuBC MPz 73% ▲ TGT [D]"), and the PL / PH (Z2H).</dd></div>
+   <div><dt>MMCB Map</dt><dd>The newest body close (BuBC± / BuC2± / BeBC± / BeC2±) of the map TF always replaces the old map. TGT line + its strength %, the MPz / BALz / MDz lines with the tested % to reach the TGT (Minimal labels by default, for example "MPz 73% to reach TGT [D]"; Detailed labels spell it out: "BuBC at MPz · 73% chance to reach the MMCB Target [D]"), and the PL / PH (Z2H).</dd></div>
    <div><dt>Lines that react</dt><dd>STRONG = width 4, bright · then thinner and paler as LTF closes go deeper. An LTF close past a line turns it grey with its reclaim odds ("✕ LTF close · reclaim 79% ▲ TGT"). An HTF close past a line deletes it. An HTF close past the PL / PH deletes the map. Lines extend 5 bars past price.</dd></div>
-   <div><dt>Ladder line</dt><dd>Green on the Bu side, red on the Be side, bright while the map is STRONG. Grey and dashed when an LTF closes past it (caution). Deleted only when the map TF closes past it.</dd></div>
+   <div><dt>Trend line</dt><dd>A real trend line: it starts at the map candle (Bu: its low, Be: its high) and follows price through each higher low (Bu) or lower high (Be). Green on the Bu side, red on the Be side, bright while the map is STRONG. Grey dotted when an LTF candle closes past it (caution). It stops when the TGT is hit and is deleted when the map TF closes past the PL / PH: no more hope for the TGT.</dd></div>
+   <div><dt>Clean labels</dt><dd>Solid and dotted lines only. Lines closer than 0.5 pt share one line and one label (A &amp; B). Every line and label reaches 5 bars past price.</dd></div>
    <div><dt>Minus candles</dt><dd>A minus candle in its wrong half is labelled "minus · weak half" with its real odds (about 36% TGT first).</dd></div>
    <div><dt>Trade tool + Prop Survival</dt><dd>Entry, stop and target lines with W / L labels. Contracts = your max drawdown ÷ (1.5 × the worst drawdown on 1 contract).</dd></div>
    <div><dt>LIVE · INFO · GUIDE</dt><dd>LIVE: bias, map, align, chain test, strategy, today W: +$ · L: −$ · Net, ladder. INFO: tested stats of the active strategy + 2 you pick. GUIDE: how to read it.</dd></div>
