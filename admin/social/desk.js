@@ -17,7 +17,7 @@
     '.modes button.org[aria-pressed=true]{background:var(--brand);color:var(--on)}',
     '.modes button.ads[aria-pressed=true]{background:var(--spend);color:#fff}',
     '.modes button.bill[aria-pressed=true]{background:var(--bill);color:var(--bill-on)}',
-    '.shell{display:grid;grid-template-columns:280px minmax(0,1fr) 320px;gap:16px;align-items:start}',
+    '.shell{display:grid;grid-template-columns:220px minmax(420px,1.4fr) 320px;gap:16px;align-items:start}',
     '.col{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px 16px 18px;box-shadow:0 24px 60px rgba(0,0,0,.28)}',
     '.col.work{box-shadow:inset 0 2px 0 var(--brand), 0 24px 60px rgba(0,0,0,.28)}',
     '.bizs{display:grid;gap:8px;margin-bottom:18px}',
@@ -35,7 +35,13 @@
     '.logo{width:36px;height:36px;border-radius:11px;flex:none;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}.logo svg{width:18px;height:18px;display:block}',
     '.acc .nm{display:block;font-weight:600;font-size:14.5px;letter-spacing:-.01em}',
     '.acc .meta{display:block;color:var(--mute);font-size:12px;margin-top:1px}',
+    '.feed{max-height:min(58vh,560px);overflow:auto;margin:0 -4px;padding:0 4px}',
     '.grow{min-width:0}',
+    '.setup{margin:0 0 12px;border:1px solid var(--line);border-radius:14px;padding:4px 12px 10px;background:rgba(255,255,255,.02)}',
+    '.setup summary{cursor:pointer;font-weight:600;font-size:13px;color:var(--mute);padding:8px 0}',
+    '.stage{display:flex;justify-content:center}',
+    '.phone{width:100%;background:#07080a;border:8px solid #23262e;border-radius:32px;padding:18px 14px 20px;min-height:460px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05)}',
+    '.phone .card{background:transparent;border:0;padding:4px 2px 12px;margin:0}',
     '.add{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}',
     '.sp input,.sp select,.sp textarea{width:100%;background:#0a0c10;border:1px solid var(--line);border-radius:12px;padding:11px 13px;outline:none}',
     '.sp textarea{min-height:168px;resize:vertical;font:18px/1.5 "Instrument Sans",system-ui,sans-serif;letter-spacing:-.015em;padding:16px;border-radius:16px}',
@@ -484,7 +490,7 @@
     left.appendChild(addBox);
 
     var cap = document.createElement('textarea');
-    cap.placeholder = 'Write the post once. Or switch to a different caption per account.';
+    cap.placeholder = 'Write the post.';
     var customBox = el('div');
     var link = document.createElement('input');
     link.type = 'url'; link.placeholder = 'https://';
@@ -517,7 +523,6 @@
       return wrap;
     }
 
-    mid.appendChild(el('h2', 'h', 'Composer'));
     var tone = el('div', 'seg');
     var sameBtn = el('button', '', 'Same text');
     var customBtn = el('button', '', 'Different per account');
@@ -559,8 +564,10 @@
     mid.appendChild(msg);
 
     right.appendChild(el('h2', 'h', 'Preview'));
-    var preview = el('div');
-    right.appendChild(preview);
+    var stage = el('div', 'stage');
+    var preview = el('div', 'phone');
+    stage.appendChild(preview);
+    right.appendChild(stage);
 
     function setPressed(btn, on) { btn.setAttribute('aria-pressed', on ? 'true' : 'false'); }
 
@@ -795,7 +802,13 @@
     function paintSide() {
       var b = businesses(state).filter(function (x) { return x.id === state.biz; })[0];
       listBox.replaceChildren();
-      listBox.appendChild(el('p', 'msg', lookOf(state, b.id).why));
+      listBox.className = 'side';
+    var setup = document.createElement('details');
+    setup.className = 'setup';
+    var sum = document.createElement('summary');
+    sum.textContent = 'Business';
+    setup.appendChild(sum);
+    setup.appendChild(el('p', 'msg', lookOf(state, b.id).why));
       var nameLab = el('label', 'lab', 'Name');
       var nameIn = document.createElement('input');
       nameIn.value = b.name;
@@ -808,8 +821,8 @@
         save();
         paintBiz();
       });
-      listBox.appendChild(nameLab);
-      listBox.appendChild(nameIn);
+      setup.appendChild(nameLab);
+      setup.appendChild(nameIn);
       var webLab = el('label', 'lab', 'Website');
       var web = document.createElement('input');
       web.type = 'url';
@@ -821,9 +834,9 @@
         save();
         paintBiz();
       });
-      listBox.appendChild(webLab);
-      listBox.appendChild(web);
-      listBox.appendChild(el('p', 'msg', 'The CRM counts visits on this site and ranks which post or link brought them.'));
+      setup.appendChild(webLab);
+      setup.appendChild(web);
+      setup.appendChild(el('p', 'msg', 'The CRM ranks which post brought the visit.'));
       if ((state.more || []).some(function (m) { return m.id === b.id; })) {
         var colors = el('div', 'swatches');
         ['deal', 'trust', 'clear', 'energy', 'community', 'craft'].forEach(function (key) {
@@ -841,10 +854,10 @@
           });
           colors.appendChild(sw);
         });
-        listBox.appendChild(colors);
+        setup.appendChild(colors);
         var snip = el('p', 'msg', '');
         snip.textContent = 'On this website, add: <script src="https://www.maxmaserati.com/admin/social/track.js" data-biz="' + b.id + '"></script>';
-        listBox.appendChild(snip);
+        setup.appendChild(snip);
         var drop = el('button', 'btn', 'Remove business');
         drop.type = 'button';
         drop.style.marginTop = '8px';
@@ -854,8 +867,10 @@
           save();
           paintBiz(); paintSide(); paintPreview(); paintButtons();
         });
-        listBox.appendChild(drop);
+        setup.appendChild(drop);
       }
+      listBox.appendChild(setup);
+      var feed = el('div', 'feed');
       var rows = state.mode === 'ads' ? b.ads : b.organic;
       if (pending && rows.some(function (r) { return r.id === pending.id; })) {
         var box = el('div', 'card');
@@ -932,8 +947,9 @@
           if (i >= 0) state.selected.splice(i, 1); else state.selected.push(p.id);
           save(); paintSide(); paintCustom(); paintPreview(); paintButtons();
         });
-        listBox.appendChild(btn);
+        feed.appendChild(btn);
       });
+      listBox.appendChild(feed);
       addBox.replaceChildren();
       var net = document.createElement('select');
       var catalog = state.mode === 'ads' ? ADS.map(function (a) { return a[1]; }) : ORGANIC.map(function (n) { return n[1]; }).concat(['Whop']);
