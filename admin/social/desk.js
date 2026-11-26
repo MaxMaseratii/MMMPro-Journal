@@ -101,7 +101,7 @@
     '.bar i{display:block;height:8px;background:var(--gold);border-radius:0}',
     '.bar em{font-style:normal;color:var(--mute);font:12px var(--mono)}',
     '.cols3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}',
-    '.check{display:flex;gap:8px;align-items:flex-start;text-transform:none;letter-spacing:0;font-size:14px;color:#c9d0d6;line-height:1.4;margin:0 0 8px}',
+    '.mmm-social label.check{display:flex;gap:8px;align-items:flex-start;text-transform:none;letter-spacing:0;font-size:14px;color:#c9d0d6;line-height:1.4;margin:0 0 8px;font-weight:400}',
     '.check input{width:auto;margin-top:3px}',
     '.bizgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}',
     '.links{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}',
