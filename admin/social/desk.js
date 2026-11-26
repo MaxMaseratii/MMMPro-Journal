@@ -22,10 +22,11 @@
     '.biz small,.rail>.h,.acc .dot{display:none}',
     '.biz.on{background:#fff}',
     '.feed{display:flex;flex-direction:column;gap:2px;overflow:auto;max-height:calc(100vh - 320px);margin-top:8px}',
-    '.acc{width:100%;min-height:48px;padding:6px 8px;border:0;border-radius:12px;background:transparent;display:flex;align-items:center;gap:10px;text-align:left}',
-    '.acc .nm{font-weight:600;font-size:14px;letter-spacing:-.01em}',
-    '.acc .meta{color:var(--mute);font-size:12px}',
-    '.acc.on{background:#fff}',
+    '.acc{width:100%;min-height:52px;padding:8px 8px;border:0;border-radius:12px;background:transparent;display:flex;align-items:center;gap:10px;text-align:left}',
+    '.grow{display:flex;flex-direction:column;min-width:0;flex:1;align-items:flex-start}',
+    '.acc .nm{display:block;font-weight:600;font-size:14px;letter-spacing:-.01em;line-height:1.2}',
+    '.acc .meta{display:block;color:var(--mute);font-size:12px;line-height:1.3;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}',
+    '.acc.on,.acc.open{background:#fff}',
     '.logo{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}.logo svg{width:18px;height:18px;display:block}',
     '.minis{display:flex;gap:4px;flex-wrap:wrap}.minis .logo{width:18px;height:18px;border-radius:5px}.minis .logo svg{width:11px;height:11px}',
     '.calhead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:0 0 16px}',
@@ -49,9 +50,25 @@
     '.tag.ok{color:#1f8a4c}.tag.wait{color:#9a6b12}.tag.pay{color:#e25b2a}',
     '.work,.setuphost{display:none}',
     '.stagecol{display:none}',
-    '.sp[data-view="post"] .boardpage,.sp[data-view="setup"] .boardpage{display:none}',
+    '.sp[data-view="post"] .boardpage,.sp[data-view="setup"] .boardpage,.sp[data-view="account"] .boardpage{display:none}',
     '.sp[data-view="post"] .work{display:block;width:min(680px,100%);margin:0 auto;padding:8px 0 48px}',
-    '.sp[data-view="setup"] .setuphost{display:block;width:min(520px,100%);margin:0 auto;padding:8px 0 48px}',
+    '.sp[data-view="setup"] .setuphost,.sp[data-view="account"] .account{display:block;width:min(560px,100%);margin:0 auto;padding:8px 0 48px}',
+    '.account{display:none}',
+    '.acctop{display:flex;align-items:center;gap:14px;margin:0 0 8px}',
+    '.acctop .logo{width:48px;height:48px;border-radius:14px}',
+    '.acctop .logo svg{width:26px;height:26px}',
+    '.acctop h2{margin:0;font:400 36px/1 "Instrument Serif",Georgia,serif}',
+    '.pagerow{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}',
+    '.pagerow b{display:block;font-size:14px}',
+    '.pagerow span{display:block;color:var(--mute);font-size:12px}',
+    '.sp[data-theme="dark"]{--ink:#f3efe7;--mute:#a39c92;--line:rgba(255,255,255,.1);--panel:#1c1b19;background:#141311;color:#f3efe7}',
+    '.sp[data-theme="dark"] .main{background:#1c1b19}',
+    '.sp[data-theme="dark"] .biz.on,.sp[data-theme="dark"] .acc.on,.sp[data-theme="dark"] .acc.open{background:#2a2826}',
+    '.sp[data-theme="dark"] .postc,.sp[data-theme="dark"] .phone .card,.sp[data-theme="dark"] .card{background:#262421;color:#f3efe7}',
+    '.sp[data-theme="dark"] .loose .postc{background:#1c1b19;border-color:rgba(255,255,255,.08)}',
+    '.sp[data-theme="dark"] .paper,.sp[data-theme="dark"] .day,.sp[data-theme="dark"] .caltitle{color:#f3efe7}',
+    '.sp[data-theme="dark"] input,.sp[data-theme="dark"] select,.sp[data-theme="dark"] textarea{background:#141311;color:#f3efe7;border-color:rgba(255,255,255,.12)}',
+    '.sp[data-theme="dark"] .btn{background:transparent;color:#f3efe7}',
     '.x{border:0;background:transparent;color:var(--mute);font-weight:600;padding:0 0 8px}',
     '.modes{display:flex;padding:4px;border:1px solid var(--line);background:#f6f7f4;border-radius:999px;gap:2px;width:max-content;margin-bottom:12px}',
     '.modes button{min-height:34px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--mute);font-weight:600;font-size:13px}',
@@ -292,7 +309,7 @@
   }
 
   function load() {
-    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '', goal: 5, format: 'Post', tags: [], tagsCustom: false, autoReply: false, replyText: '', board: 'queue', apis: [], websites: {}, more: [], names: {}, looks: {}, view: 'accounts' };
+    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '', goal: 5, format: 'Post', tags: [], tagsCustom: false, autoReply: false, replyText: '', board: 'queue', apis: [], websites: {}, more: [], names: {}, looks: {}, view: 'accounts', theme: 'light', account: '' };
     try {
       var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (!raw) return s;
@@ -503,8 +520,10 @@
     var queue = el('section', 'col boardpage');
     main.appendChild(queue);
     var setupHost = el('div', 'setuphost');
+    var accountHost = el('div', 'account');
     var newBiz = el('div', 'newbiz');
     main.appendChild(setupHost);
+    main.appendChild(accountHost);
     wrap.appendChild(shell);
 
     var bizBox = el('div', 'bizs');
@@ -515,16 +534,23 @@
     plus.type = 'button';
     plus.title = 'New post';
     plus.addEventListener('click', function () { state.mode = 'organic'; goView('post'); paintSide(); paintButtons(); paintPreview(); });
-    var gear = el('button', 'gear', 'Setup');
+    var gear = el('button', 'gear', 'New business');
     gear.type = 'button';
-    gear.title = 'Setup';
     gear.addEventListener('click', function () { goView(state.view === 'setup' ? 'queue' : 'setup'); });
+    var themeBtn = el('button', 'gear', 'Dark');
+    themeBtn.type = 'button';
+    themeBtn.addEventListener('click', function () {
+      state.theme = state.theme === 'dark' ? 'light' : 'dark';
+      save();
+      applyTheme();
+    });
     left.appendChild(el('div', 'railbrand', 'Social+'));
     left.appendChild(plus);
     left.appendChild(bizBox);
     left.appendChild(el('h2', 'h', 'Accounts'));
     left.appendChild(listBox);
     left.appendChild(gear);
+    left.appendChild(themeBtn);
 
     var cap = document.createElement('textarea');
     cap.placeholder = 'Write the post.';
@@ -620,6 +646,10 @@
       state.view = name;
       save();
       applyView();
+    }
+    function applyTheme() {
+      wrap.dataset.theme = state.theme === 'dark' ? 'dark' : 'light';
+      themeBtn.textContent = state.theme === 'dark' ? 'Light' : 'Dark';
     }
     function applyView() {
       var name = state.view || 'queue';
@@ -1000,30 +1030,24 @@
         box.appendChild(done);
         setupHost.appendChild(box);
       }
-      rows.forEach(function (p) {
+      var real = rows.filter(function (p) { return p.name && p.name !== 'Connect a page'; });
+      var shown = real.length ? real : rows;
+      shown.forEach(function (p) {
         var on = state.selected.indexOf(p.id) >= 0;
-        var btn = el('button', 'acc' + (on ? ' on' : ''));
+        var open = state.view === 'account' && state.account === p.network;
+        var btn = el('button', 'acc' + (on ? ' on' : '') + (open ? ' open' : ''));
         btn.type = 'button';
         var mark = logo(p.network);
         var dot = el('span', 'dot' + (p.live ? ' live' : ''));
         var g = el('span', 'grow');
+        var pageLabel = (!p.name || p.name === 'Connect a page') ? 'Sign in' : p.name;
         g.appendChild(el('span', 'nm', p.network));
-        g.appendChild(el('span', 'meta', p.name + ' · ' + (p.live ? 'Ready' : 'Sign in')));
+        g.appendChild(el('span', 'meta', pageLabel));
         btn.appendChild(mark); btn.appendChild(g); btn.appendChild(dot);
         btn.addEventListener('click', function () {
-          if (!p.live) {
-            pending = { id: p.id, network: p.network, name: p.name === 'Connect a page' ? '' : p.name };
-            var login = LOGIN[p.network];
-            if (login) window.open(login, '_blank', 'noopener,noreferrer');
-            msg.className = 'msg';
-            msg.textContent = 'Sign in to ' + p.network + '. Then name the page in Setup.';
-            goView('setup');
-            paintSide();
-            return;
-          }
-          var i = state.selected.indexOf(p.id);
-          if (i >= 0) state.selected.splice(i, 1); else state.selected.push(p.id);
-          save(); paintSide(); paintCustom(); paintPreview(); paintButtons();
+          state.account = p.network;
+          goView('account');
+          paintAccount();
         });
         feed.appendChild(btn);
       });
@@ -1049,6 +1073,96 @@
       });
       addBox.appendChild(net); addBox.appendChild(name); addBox.appendChild(go);
       paintApis(apiBox);
+    }
+
+    function paintAccount() {
+      var network = state.account || 'Facebook';
+      accountHost.replaceChildren();
+      var shut = el('button', 'x', 'Back to the week');
+      shut.type = 'button';
+      shut.addEventListener('click', function () { goView('queue'); });
+      accountHost.appendChild(shut);
+      var top = el('div', 'acctop');
+      top.appendChild(logo(network));
+      top.appendChild(el('h2', '', network));
+      accountHost.appendChild(top);
+      accountHost.appendChild(el('p', 'msg', 'One ' + network + ' login can hold several pages. Sign in, then send each page to the business it belongs to.'));
+      var url = LOGIN[network];
+      if (url) {
+        var a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'btn go';
+        a.textContent = 'Open ' + network;
+        accountHost.appendChild(a);
+      }
+      var pages = [];
+      businesses(state).forEach(function (biz) {
+        ['organic', 'ads'].forEach(function (kind) {
+          (biz[kind] || []).forEach(function (p) {
+            if (p.network === network && p.name && p.name !== 'Connect a page') pages.push({ biz: biz, page: p });
+          });
+        });
+      });
+      accountHost.appendChild(el('p', 'kicker', pages.length ? 'Pages on this login' : 'No page on this login yet'));
+      pages.forEach(function (hit) {
+        var row = el('div', 'pagerow');
+        var g = el('div', 'grow');
+        g.appendChild(el('b', '', hit.page.name));
+        g.appendChild(el('span', '', hit.biz.name));
+        row.appendChild(g);
+        var use = el('button', 'btn' + (state.selected.indexOf(hit.page.id) >= 0 ? ' go' : ''), state.selected.indexOf(hit.page.id) >= 0 ? 'Using' : 'Use');
+        use.type = 'button';
+        use.addEventListener('click', function () {
+          var i = state.selected.indexOf(hit.page.id);
+          if (i >= 0) state.selected.splice(i, 1); else state.selected.push(hit.page.id);
+          save();
+          paintAccount();
+          paintSide();
+          paintPreview();
+          paintButtons();
+        });
+        row.appendChild(use);
+        accountHost.appendChild(row);
+      });
+      accountHost.appendChild(el('label', 'lab', 'Add a page from this login'));
+      var pageName = document.createElement('input');
+      pageName.placeholder = 'Page, channel, or @handle';
+      var bizPick = document.createElement('select');
+      businesses(state).forEach(function (bb) {
+        var o = document.createElement('option');
+        o.value = bb.id;
+        o.textContent = bb.name;
+        if (bb.id === state.biz) o.selected = true;
+        bizPick.appendChild(o);
+      });
+      bizPick.style.marginTop = '8px';
+      var done = el('button', 'btn go', 'Add page');
+      done.type = 'button';
+      done.style.marginTop = '8px';
+      done.addEventListener('click', function () {
+        var label = pageName.value.trim();
+        if (!label) { msg.className = 'msg bad'; msg.textContent = 'Name the page.'; return; }
+        var bizId = bizPick.value;
+        state.extra[bizId] = state.extra[bizId] || { organic: [], ads: [] };
+        var kind = state.mode === 'ads' ? 'ads' : 'organic';
+        var id = uid(bizId);
+        state.extra[bizId][kind].push({ id: id, network: network, name: label, live: true, note: 'Connected' });
+        if (state.selected.indexOf(id) < 0) state.selected.push(id);
+        pageName.value = '';
+        save();
+        msg.className = 'msg ok';
+        msg.textContent = label + ' is on ' + (businesses(state).filter(function (x) { return x.id === bizId; })[0] || {}).name + '.';
+        paintBiz();
+        paintSide();
+        paintAccount();
+        paintPreview();
+        paintButtons();
+      });
+      accountHost.appendChild(pageName);
+      accountHost.appendChild(bizPick);
+      accountHost.appendChild(done);
     }
 
     function paintApis(host) {
@@ -1480,6 +1594,7 @@
 
     save();
     applyLook();
+    applyTheme();
     paintBiz(); paintSide(); paintWhen(); paintCustom(); paintBilling(); paintButtons(); paintPreview(); paintQueue();
     applyView();
   }
