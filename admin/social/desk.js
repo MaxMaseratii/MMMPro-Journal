@@ -3,6 +3,7 @@
   'use strict';
   var KEY = 'mmm.social.plus.v4';
   var PLATFORM = { facebook: '1107484722267711', google: '' };
+  var OAUTH_REDIRECT = 'https://www.maxmaserati.com/admin/social/index.html';
   var PENDING_OAUTH = null;
   try {
     if ((location.hash || '').indexOf('access_token=') >= 0) {
@@ -1189,7 +1190,7 @@
         if (relogin) ses.token = '';
         sessionStorage.setItem('mmm.oauth.net', key);
         sessionStorage.setItem('mmm.oauth.view', network);
-        var back = location.origin + location.pathname;
+        var back = OAUTH_REDIRECT;
         var url;
         if (key === 'Google') {
           url = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' + encodeURIComponent(appId) + '&redirect_uri=' + encodeURIComponent(back) + '&response_type=token&include_granted_scopes=true&prompt=select_account&scope=' + encodeURIComponent('openid email profile https://www.googleapis.com/auth/youtube.readonly');
