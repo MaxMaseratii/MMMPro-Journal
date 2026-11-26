@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MMM SOCIAL+ · Admin | MMM Trading</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<meta name="mmm-page" content="admin">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<meta name="theme-color" content="#07080a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html,body{background:#07080a;color:#d9dde3;margin:0}
+.gate{max-width:560px;margin:40px auto;border:1px solid #323942;background:#0f1114;padding:22px}
+.gate h2{font:700 22px 'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.05em;color:#e1b31a;margin:0 0 8px}
+.gate p{line-height:1.5;color:#c9d0d6}
+.gate .btn{display:inline-flex;font:700 15px/1 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:11px 14px;border:1px solid #e1b31a;background:#e1b31a;color:#111;cursor:pointer}
+</style>
+<link rel="stylesheet" href="/assets/tw.css?v=20261108">
+</head>
+<body>
+<div id="mmm-header"></div>
+<script>/* ?embed=1: shown inside the admin tab, so no site header/footer */
+if (/[?&]embed=1/.test(location.search)) { var h = document.getElementById('mmm-header'); if (h) h.remove(); }</script>
+<main>
+  <div id="gate"></div>
+  <div id="app" hidden></div>
+</main>
+<div id="mmm-footer"></div>
+<script>if (/[?&]embed=1/.test(location.search)) { var f = document.getElementById('mmm-footer'); if (f) f.remove(); }</script>
+<script src="desk.js?v=20261126a"></script>
+<script>
+(function () {
+  var gateEl = document.getElementById('gate');
+  var app = document.getElementById('app');
+  function gate(html) {
+    gateEl.innerHTML = html ? '<div class="gate">' + html + '</div>' : '';
+    app.hidden = !!html;
+  }
+  function open() {
+    gate('');
+    if (window.MMMSocialDesk) window.MMMSocialDesk.mount(app);
+  }
+  document.addEventListener('click', function (e) { if (e.target.id === 'b-login') window.MMM && window.MMM.openAuth('login'); });
+  document.addEventListener('mmm:auth', function (e) {
+    if (!(e.detail)) return gate('<h2>Log in</h2><p>This page is private. Log in with your admin email.</p><button class="btn" type="button" id="b-login">Log in</button>');
+    open();
+  });
+  gate('<h2>Loading…</h2><p>Checking who is logged in.</p>');
+})();
+</script>
+<script src="/assets/nav.js"></script>
+<script src="/assets/site.js"></script>
+</body>
+</html>

@@ -140,7 +140,7 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
 .vip th{font:600 11px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
 .vip .tw{overflow-x:auto;margin-top:10px}
 .vip .ok{color:var(--win)}.vip .no{color:var(--loss)}.vip .dim{color:var(--faint)}
-.vip [hidden],.crm[hidden],.prop[hidden],.strat[hidden],.psize[hidden],.atabs[hidden]{display:none!important}
+.vip [hidden],.crm[hidden],.prop[hidden],.strat[hidden],.psize[hidden],.social[hidden],.atabs[hidden]{display:none!important}
 .vip .master{border-style:solid;background:rgba(245,197,24,.06);margin:0 0 16px}
 .vip .master .big{font-size:18px;letter-spacing:.04em}
 /* admin tabs: Members · V.I.P · CRM */
@@ -149,7 +149,7 @@ td .sub{display:block;color:var(--mute);font-size:12px;margin-top:2px}
 .atabs button[aria-selected=true]{color:var(--gold);border-bottom-color:var(--gold)}
 .atabs button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 main:not([data-tab=members]) #board,main:not([data-tab=members]) #gate,main:not([data-tab=members]) #acts,
-main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=prop]) #prop,main:not([data-tab=whop]) #whop,main:not([data-tab=haiti]) #haiti,main:not([data-tab=mail]) #mail,main:not([data-tab=strat]) #strat,main:not([data-tab=size]) #psize{display:none!important}
+main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=prop]) #prop,main:not([data-tab=whop]) #whop,main:not([data-tab=haiti]) #haiti,main:not([data-tab=mail]) #mail,main:not([data-tab=strat]) #strat,main:not([data-tab=size]) #psize,main:not([data-tab=social]) #social{display:none!important}
 .mail[hidden]{display:none!important}
 .haiti[hidden]{display:none!important}
 .whop[hidden]{display:none!important}
@@ -191,6 +191,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
     <button type="button" role="tab" data-tab="mail" aria-selected="false">Mail</button>
     <button type="button" role="tab" data-tab="strat" aria-selected="false">MMM Personal Strategy</button>
     <button type="button" role="tab" data-tab="size" aria-selected="false">Prop Safe Size</button>
+    <button type="button" role="tab" data-tab="social" aria-selected="false">MMM SOCIAL+</button>
   </nav>
   <section class="vip" id="vip" hidden>
     <div class="out master" id="vmBox">
@@ -228,6 +229,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
   <section class="mail" id="mail" hidden></section>
   <section class="strat" id="strat" hidden><div id="stx"></div></section>
   <section class="psize" id="psize" hidden><iframe id="psFrame" title="MMM Prop Safe Size" style="width:100%;height:1900px;border:1px solid var(--rule);border-radius:6px;background:#0b1017;display:block"></iframe></section>
+  <section class="social" id="social" hidden><iframe id="socialFrame" title="MMM SOCIAL+" style="width:100%;height:2200px;border:1px solid var(--rule);border-radius:6px;background:#0b1017;display:block"></iframe></section>
   <section class="prop" id="prop" hidden>
     <div id="pd"></div>
     <details class="offers" id="offBox"><summary>Offers inbox <small>Paste an offer by hand · the 06:33 check publishes it to /prop-firms/</small></summary><iframe id="offFrame" title="Prop firm offers inbox"></iframe></details>
@@ -667,7 +669,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
 /* admin tabs: Members · V.I.P · CRM (they show once the admin login is confirmed) */
 (function () {
   var $ = function (id) { return document.getElementById(id); };
-  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], whop: ['Whop', 'Live store control: edit products, run promo codes, catch failed renewals. Daily charts below.'], crm: ['CRM', 'Everything in one place: money, targets, content and what needs you.'], prop: ['Prop firms', 'Money and link clicks from /prop-firms/, then offers, direct links and the daily checks.'], haiti: ['Ayiti P2P', 'The USDT marketplace in Haiti: ID checks, disputes, orders, ads, users and limits.'], mail: ['Mail', 'Every inbox in one place. Read, clean and unsubscribe, and plug them all into Claude.'], strat: ['MMM Personal Strategy', 'MMM ONE + MMCB Edge 1 on the paid members page (/mmm-personal/). Updated Nov 25 2026.'], size: ['Prop Safe Size', 'How many contracts a prop account can carry. Opens on the MMM ONE plan.'] };
+  var main = $('app'), tabs = $('atabs'), TABS = { members: ['Members', 'Everyone registered on the website and the journal.'], vip: ['V.I.P', 'Your master code, private sign-up links and member codes.'], whop: ['Whop', 'Live store control: edit products, run promo codes, catch failed renewals. Daily charts below.'], crm: ['CRM', 'Everything in one place: money, targets, content and what needs you.'], prop: ['Prop firms', 'Money and link clicks from /prop-firms/, then offers, direct links and the daily checks.'], haiti: ['Ayiti P2P', 'The USDT marketplace in Haiti: ID checks, disputes, orders, ads, users and limits.'], mail: ['Mail', 'Every inbox in one place. Read, clean and unsubscribe, and plug them all into Claude.'], strat: ['MMM Personal Strategy', 'MMM ONE + MMCB Edge 1 on the paid members page (/mmm-personal/). Updated Nov 25 2026.'], size: ['Prop Safe Size', 'How many contracts a prop account can carry. Opens on the MMM ONE plan.'], social: ['MMM SOCIAL+', 'One desk for five businesses. Plan Meta, YouTube and TikTok here, then publish in the free native studios.'] };
   var SUB = $('sub').textContent;
   function pick(t, push) {
     if (!TABS[t]) t = 'members';
@@ -682,6 +684,7 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
     if (t === 'mail') need('mail').then(function () { if (window.MMMMail) window.MMMMail(); });
     if (t === 'strat') need('strat').then(function () { if (window.MMMStrategy) window.MMMStrategy(); });
     if (t === 'size' && !$('psFrame').src) $('psFrame').src = '/admin/prop-size/?embed=1&theme=dark&p=h4';
+    if (t === 'social' && !$('socialFrame').src) $('socialFrame').src = '/admin/social/?embed=1';
     if (t === 'prop') { if (window.MMMPropDash) window.MMMPropDash(); if ($('offBox').open && !$('offFrame').src) $('offFrame').src = '/admin/offers/?embed=1'; if ($('affBox').open && !$('affFrame').src) $('affFrame').src = '/admin/affiliates/?embed=1'; }
     if (push) { try { history.replaceState(null, '', t === 'members' ? location.pathname : '#' + t); } catch (e) {} }
   }
@@ -698,11 +701,12 @@ main:not([data-tab=vip]) #vip,main:not([data-tab=crm]) #crm,main:not([data-tab=p
     if ($('mail').hidden === ok) $('mail').hidden = !ok;
     if ($('strat').hidden === ok) $('strat').hidden = !ok;
     if ($('psize').hidden === ok) $('psize').hidden = !ok;
+    if ($('social').hidden === ok) $('social').hidden = !ok;
     if (!ok && main.dataset.tab !== 'members') pick('members');
     if (was && ok) { pick((location.hash || '').slice(1)); if (window.MMMPrefetchTabs) setTimeout(window.MMMPrefetchTabs, 1200); }
   }
   tabs.addEventListener('click', function (e) { var b = e.target.closest('[data-tab]'); if (b) pick(b.dataset.tab, true); });
-  window.addEventListener('message', function (e) { if (e.origin === location.origin && e.data && e.data.mmmPropSize) $('psFrame').style.height = (e.data.mmmPropSize + 24) + 'px'; });
+  window.addEventListener('message', function (e) { if (e.origin !== location.origin || !e.data) return; if (e.data.mmmPropSize) $('psFrame').style.height = (e.data.mmmPropSize + 24) + 'px'; if (e.data.mmmSocial) $('socialFrame').style.height = Math.max(900, e.data.mmmSocial + 24) + 'px'; });
   window.MMMPick = function (t) { pick(t, true); window.scrollTo(0, 0); };
   var mo = new MutationObserver(sync);
   mo.observe($('board'), { attributes: true, attributeFilter: ['hidden'] });
