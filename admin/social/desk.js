@@ -1,79 +1,113 @@
-/* MMM SOCIAL+ — approval composer.
-   Grok writes the post. Max approves it. Then Grok publishes through Buffer
-   to the pages Max picked. This file does not hold tokens and does not post. */
+/* MMM SOCIAL+ — three businesses, as many platforms as Max connects.
+   Whop is only for the trading business (maxmaserati.com). */
 (function (global) {
   'use strict';
-  var KEY = 'mmm.social.plus.v2';
+  var KEY = 'mmm.social.plus.v3';
+  var NETS = ['Facebook', 'Instagram', 'TikTok', 'YouTube', 'X', 'Whop'];
   var CSS = [
     '.mmm-social{max-width:1100px;margin:0 auto;padding:8px 16px 40px;color:#d9dde3;font:15px/1.5 Barlow,system-ui,sans-serif}',
     '.mmm-social h1{font:700 clamp(32px,4vw,48px)/1 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.03em;text-transform:uppercase;color:#e1b31a;margin:0 0 8px}',
-    '.mmm-social h2{font:700 18px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e1b31a;margin:0 0 10px}',
-    '.mmm-social p{margin:0 0 12px}',
-    '.lede{color:#c9d0d6;max-width:68ch}',
-    '.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#252a31;border:1px solid #252a31;margin:0 0 14px}',
-    '.kpis div{background:#0f1114;padding:12px 14px}',
-    '.kpis b{display:block;font:700 22px/1 "Barlow Condensed",sans-serif;color:#f2cf5b}',
-    '.kpis span{color:#8f97a1;font-size:13px}',
+    '.mmm-social h2{font:700 18px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e1b31a;margin:0 0 8px}',
+    '.lede{color:#c9d0d6;max-width:70ch;margin:0 0 14px}',
+    '.bizs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 14px}',
+    '.biz{text-align:left;padding:12px;border:1px solid #323942;background:#0f1114;color:#d9dde3;cursor:pointer}',
+    '.biz.on{border-color:#e1b31a;background:rgba(225,179,26,.08)}',
+    '.biz b{display:block;font:700 18px/1.1 "Barlow Condensed",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#f2cf5b}',
+    '.biz small{color:#8f97a1}',
     '.box{border:1px solid #252a31;background:#0f1114;padding:16px;margin:0 0 14px}',
     '.pages{display:flex;flex-wrap:wrap;gap:8px}',
-    '.page{display:flex;flex-direction:column;gap:2px;text-align:left;min-width:160px;max-width:240px;padding:10px 12px;border:1px solid #323942;background:#0b0d10;color:#d9dde3;cursor:pointer;font:600 14px/1.3 Barlow,sans-serif}',
-    '.page small{font-weight:500;color:#8f97a1}',
-    '.page.on{border-color:#e1b31a;background:rgba(225,179,26,.08);color:#f2cf5b}',
-    '.page.off{opacity:.55}',
-    '.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}',
+    '.page{text-align:left;min-width:150px;max-width:240px;padding:10px 12px;border:1px solid #323942;background:#0b0d10;color:#d9dde3;cursor:pointer;font:600 14px/1.3 Barlow,sans-serif}',
+    '.page small{display:block;font-weight:500;color:#8f97a1}',
+    '.page.on{border-color:#e1b31a;color:#f2cf5b}',
+    '.page.off{opacity:.72}',
+    '.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}',
     '.seg button,.btn{font:700 14px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;border:1px solid #323942;background:transparent;color:#d9dde3;cursor:pointer}',
     '.seg button[aria-pressed=true],.btn.gold{background:#e1b31a;border-color:#e1b31a;color:#111}',
     '.mmm-social label{display:block;font:600 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8f97a1;margin:10px 0 4px}',
-    '.mmm-social textarea,.mmm-social input[type=datetime-local],.mmm-social input[type=url]{width:100%;box-sizing:border-box;background:#0b0d10;color:#d9dde3;border:1px solid #323942;padding:10px;font:14px/1.45 "IBM Plex Mono",ui-monospace,Menlo,monospace}',
-    '.mmm-social textarea{min-height:120px;resize:vertical}',
-    '.count{float:right;color:#5f6873;letter-spacing:0;text-transform:none;font:12px "IBM Plex Mono",monospace}',
+    '.mmm-social textarea,.mmm-social input,.mmm-social select{width:100%;box-sizing:border-box;background:#0b0d10;color:#d9dde3;border:1px solid #323942;padding:10px;font:14px/1.45 "IBM Plex Mono",ui-monospace,Menlo,monospace}',
+    '.mmm-social textarea{min-height:110px;resize:vertical}',
+    '.add{display:grid;grid-template-columns:140px 1fr auto;gap:8px;align-items:end;margin-top:12px}',
     '.item{border-top:1px solid #252a31;padding:12px 0}',
-    '.item:first-child{border-top:0}',
     '.tag{display:inline-block;font:600 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border:1px solid #323942;margin-right:6px}',
-    '.tag.ok{color:#3ddc97;border-color:rgba(61,220,151,.45)}',
-    '.tag.wait{color:#f2cf5b;border-color:rgba(225,179,26,.5)}',
-    '.tag.no{color:#8f97a1}',
-    '.msg{color:#8f97a1;font-size:14px}.msg.ok{color:#3ddc97}.msg.bad{color:#ff5c6c}',
-    '.cap{white-space:pre-wrap;font:13.5px/1.45 "IBM Plex Mono",monospace;color:#cfd5da;margin:8px 0}',
-    '@media (max-width:760px){.kpis{grid-template-columns:1fr}}'
+    '.tag.ok{color:#3ddc97;border-color:rgba(61,220,151,.45)}.tag.wait{color:#f2cf5b;border-color:rgba(225,179,26,.5)}',
+    '.msg{color:#8f97a1;font-size:14px}.msg.bad{color:#ff5c6c}.msg.ok{color:#3ddc97}',
+    '.cap{white-space:pre-wrap;font:13.5px/1.45 "IBM Plex Mono",monospace;color:#cfd5da;margin:6px 0}',
+    '@media (max-width:760px){.bizs,.add{grid-template-columns:1fr}}'
   ].join('');
 
-  var PAGES = [
-    { id: 'fb', name: 'Max Maserati Trading University', network: 'Facebook', live: true, note: 'Connected. I can post here.' },
-    { id: 'yt', name: 'Max Maserati', network: 'YouTube', live: true, note: 'Connected. A video is required. Text alone will not publish.' },
-    { id: 'x', name: '@Emaxmaserati', network: 'X', live: true, note: 'Connected. I can post here.' },
-    { id: 'ig', name: 'Instagram', network: 'Instagram', live: false, note: 'Not connected. Buffer’s free plan already holds 3 accounts.' },
-    { id: 'tt', name: 'TikTok', network: 'TikTok', live: false, note: 'Not connected. Buffer’s free plan already holds 3 accounts.' },
-    { id: 'whop', name: 'Whop', network: 'Whop', live: false, note: 'Not a Buffer account. Name the forum and I can post there after you approve.' },
-    { id: 'journal', name: 'MMM Journal', network: 'Page', live: false, note: 'A page, not its own network. Choose which account it should go out on.' },
-    { id: 'ayiti', name: 'Ayiti P2P', network: 'Page', live: false, note: 'A page, not its own network. Choose which account it should go out on.' },
-    { id: 'prop', name: 'Prop firms', network: 'Page', live: false, note: 'A page, not its own network. Choose which account it should go out on.' }
-  ];
+  function base() {
+    return [
+      {
+        id: 'trading', name: 'Trading', site: 'maxmaserati.com',
+        blurb: 'Several pages. Whop is only for this business.',
+        platforms: [
+          { id: 'fb', network: 'Facebook', name: 'Max Maserati Trading University', live: true, note: 'Connected. I can post.' },
+          { id: 'yt', network: 'YouTube', name: 'Max Maserati', live: true, note: 'Connected. A video is required.' },
+          { id: 'x', network: 'X', name: '@Emaxmaserati', live: true, note: 'Connected. I can post.' },
+          { id: 'ig', network: 'Instagram', name: 'Add the account', live: false, note: 'Not connected yet.' },
+          { id: 'tt', network: 'TikTok', name: 'Add the account', live: false, note: 'Not connected yet.' },
+          { id: 'whop-public', network: 'Whop', name: 'Public forum', live: true, note: 'Trading only. I can post after you approve.' },
+          { id: 'whop-weekly', network: 'Whop', name: 'Weekly Analysis', live: true, note: 'Trading only. Members.' }
+        ]
+      },
+      {
+        id: 'table', name: 'Table Fifty', site: 'tablefifty.co.uk',
+        blurb: 'Half-price restaurant and takeaway deals, UK-wide. No Whop.',
+        platforms: [
+          { id: 'tf-fb', network: 'Facebook', name: 'Add the account', live: false, note: 'Not connected yet.' },
+          { id: 'tf-ig', network: 'Instagram', name: 'Add the account', live: false, note: 'Not connected yet.' },
+          { id: 'tf-tt', network: 'TikTok', name: 'Add the account', live: false, note: 'Not connected yet.' },
+          { id: 'tf-yt', network: 'YouTube', name: 'Add the account', live: false, note: 'Not connected yet.' },
+          { id: 'tf-x', network: 'X', name: 'Add the account', live: false, note: 'Not connected yet.' }
+        ]
+      },
+      {
+        id: 'ayiti', name: 'Ayiti P2P', site: 'ayitip2p.com',
+        blurb: 'Its own business. No Whop.',
+        platforms: [
+          { id: 'ap-fb', network: 'Facebook', name: 'Add the account', live: false, note: 'Not connected yet.' },
+          { id: 'ap-ig', network: 'Instagram', name: 'Add the account', live: false, note: 'Not connected yet.' },
+          { id: 'ap-tt', network: 'TikTok', name: 'Add the account', live: false, note: 'Not connected yet.' },
+          { id: 'ap-yt', network: 'YouTube', name: 'Add the account', live: false, note: 'Not connected yet.' },
+          { id: 'ap-x', network: 'X', name: 'Add the account', live: false, note: 'Not connected yet.' }
+        ]
+      }
+    ];
+  }
 
-  function page(id) { return PAGES.filter(function (p) { return p.id === id; })[0]; }
   function load() {
-    var blank = { selected: ['fb', 'x'], mode: 'same', text: '', custom: {}, when: 'now', at: '', link: '', items: [] };
+    var state = { biz: 'trading', selected: ['fb', 'x'], mode: 'same', text: '', custom: {}, when: 'now', at: '', link: '', items: [], extra: {} };
     try {
       var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (!raw || typeof raw !== 'object') return blank;
-      blank.selected = Array.isArray(raw.selected) && raw.selected.length ? raw.selected : blank.selected;
-      blank.mode = raw.mode === 'custom' ? 'custom' : 'same';
-      blank.text = raw.text || '';
-      blank.custom = raw.custom || {};
-      blank.when = raw.when === 'later' ? 'later' : 'now';
-      blank.at = raw.at || '';
-      blank.link = raw.link || '';
-      blank.items = Array.isArray(raw.items) ? raw.items : [];
-      return blank;
-    } catch (e) { return blank; }
+      if (!raw) return state;
+      if (raw.biz) state.biz = raw.biz;
+      if (Array.isArray(raw.selected)) state.selected = raw.selected;
+      if (raw.mode === 'custom') state.mode = 'custom';
+      state.text = raw.text || '';
+      state.custom = raw.custom || {};
+      state.when = raw.when === 'later' ? 'later' : 'now';
+      state.at = raw.at || '';
+      state.link = raw.link || '';
+      state.items = Array.isArray(raw.items) ? raw.items : [];
+      state.extra = raw.extra && typeof raw.extra === 'object' ? raw.extra : {};
+      return state;
+    } catch (e) { return state; }
   }
-  function uid() { return 'p' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
-  function limits(id) {
-    if (id === 'x') return 280;
-    if (id === 'ig') return 2200;
-    if (id === 'tt') return 2200;
-    return 5000;
+
+  function businesses(state) {
+    return base().map(function (b) {
+      var extra = (state.extra && state.extra[b.id]) || [];
+      return { id: b.id, name: b.name, site: b.site, blurb: b.blurb, platforms: b.platforms.concat(extra) };
+    });
   }
+  function findPlat(state, id) {
+    var hit = null;
+    businesses(state).forEach(function (b) {
+      b.platforms.forEach(function (p) { if (p.id === id) hit = { biz: b, plat: p }; });
+    });
+    return hit;
+  }
+  function uid(p) { return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
 
   function mount(root) {
     if (!root || root.dataset.mmmSocial) return;
@@ -83,11 +117,8 @@
     style.textContent = CSS;
     document.head.appendChild(style);
     var state = load();
-    var els = {};
 
-    function saveLocal() {
-      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
-    }
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
     function el(tag, cls, text) {
       var n = document.createElement(tag);
       if (cls) n.className = cls;
@@ -96,215 +127,186 @@
     }
     function report() {
       if (global.parent === global) return;
-      var h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
-      try { global.parent.postMessage({ mmmSocial: h }, global.location.origin); } catch (e) {}
+      try { global.parent.postMessage({ mmmSocial: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) }, global.location.origin); } catch (e) {}
     }
 
     var wrap = el('div', 'mmm-social');
     root.appendChild(wrap);
-    wrap.appendChild(el('h1', '', 'MMM SOCIAL+'));
-    wrap.appendChild(el('p', 'lede', 'I write the post. You approve it. Then I publish it to the pages you pick — the same caption, or a different one per page, now or at a time you set. Nothing goes out until you say so.'));
-
-    var kpis = el('div', 'kpis');
-    wrap.appendChild(kpis);
-    var pagesBox = el('div', 'box');
-    wrap.appendChild(pagesBox);
+    var bizRow = el('div', 'bizs');
+    var box = el('div', 'box');
     var comp = el('div', 'box');
-    wrap.appendChild(comp);
     var queue = el('div', 'box');
+    wrap.appendChild(el('h1', '', 'MMM SOCIAL+'));
+    wrap.appendChild(el('p', 'lede', 'Three businesses. Each one can have as many social accounts as you connect. I write the post, you approve it, then I publish only to the accounts you picked. Whop is only for Trading.'));
+    wrap.appendChild(bizRow);
+    wrap.appendChild(box);
+    wrap.appendChild(comp);
     wrap.appendChild(queue);
 
-    function selectedPages() { return state.selected.map(page).filter(Boolean); }
-    function bodyFor(p) {
-      var t = state.mode === 'custom' ? (state.custom[p.id] || '') : state.text;
+    function current() { return businesses(state).filter(function (b) { return b.id === state.biz; })[0]; }
+    function chosen() { return state.selected.map(function (id) { return findPlat(state, id); }).filter(Boolean); }
+    function bodyFor(id) {
+      var t = state.mode === 'custom' ? (state.custom[id] || '') : state.text;
       if (state.link && t.indexOf(state.link) < 0) t = (t ? t + '\n\n' : '') + state.link;
       return t.trim();
     }
-    function handoff(item) {
-      var lines = ['Approved MMM SOCIAL+ post. Publish it.', 'When: ' + (item.when === 'now' ? 'now' : item.at || 'scheduled')];
-      item.pages.forEach(function (p) {
-        lines.push('', p.network + ' · ' + p.name + (p.live ? '' : ' (not connected yet — skip unless I say otherwise)'), p.text);
-      });
-      return lines.join('\n');
-    }
 
-    function paintKpis() {
-      kpis.replaceChildren();
-      var waiting = state.items.filter(function (i) { return i.status === 'draft'; }).length;
-      var approved = state.items.filter(function (i) { return i.status === 'approved'; }).length;
-      [['3', 'Accounts I can post to now'], [String(waiting), 'Waiting for your approval'], [String(approved), 'Approved, not sent yet']].forEach(function (pair) {
-        var d = el('div');
-        d.appendChild(el('b', '', pair[0]));
-        d.appendChild(el('span', '', pair[1]));
-        kpis.appendChild(d);
+    function paintBiz() {
+      bizRow.replaceChildren();
+      businesses(state).forEach(function (b) {
+        var live = b.platforms.filter(function (p) { return p.live; }).length;
+        var btn = el('button', 'biz' + (state.biz === b.id ? ' on' : ''));
+        btn.type = 'button';
+        btn.appendChild(el('b', '', b.name));
+        btn.appendChild(el('small', '', b.site + ' · ' + live + ' ready'));
+        btn.addEventListener('click', function () { state.biz = b.id; save(); paint(); });
+        bizRow.appendChild(btn);
       });
     }
 
-    function paintPages() {
-      pagesBox.replaceChildren();
-      pagesBox.appendChild(el('h2', '', 'Pages'));
-      pagesBox.appendChild(el('p', 'lede', 'These are pages, not five businesses. Facebook, YouTube and X are connected. Instagram, TikTok and Whop are not, because the free Buffer plan stops at 3.'));
+    function paintPlatforms() {
+      var b = current();
+      box.replaceChildren();
+      box.appendChild(el('h2', '', b.name + ' accounts'));
+      box.appendChild(el('p', 'lede', b.blurb + ' Tap every account this post should use. Add another any time.'));
       var rail = el('div', 'pages');
-      PAGES.forEach(function (p) {
-        var b = el('button', 'page' + (state.selected.indexOf(p.id) >= 0 ? ' on' : '') + (p.live ? '' : ' off'), p.network + ' · ' + p.name);
-        b.type = 'button';
-        b.appendChild(document.createElement('br'));
-        var s = el('small', '', p.note);
-        b.appendChild(s);
-        b.addEventListener('click', function () {
+      b.platforms.forEach(function (p) {
+        var on = state.selected.indexOf(p.id) >= 0;
+        var btn = el('button', 'page' + (on ? ' on' : '') + (p.live ? '' : ' off'));
+        btn.type = 'button';
+        btn.appendChild(document.createTextNode(p.network + ' · ' + p.name));
+        btn.appendChild(el('small', '', p.note || (p.live ? 'Ready' : 'Not connected yet')));
+        btn.addEventListener('click', function () {
           var i = state.selected.indexOf(p.id);
           if (i >= 0) state.selected.splice(i, 1); else state.selected.push(p.id);
-          saveLocal();
-          paint();
+          save(); paint();
         });
-        rail.appendChild(b);
+        rail.appendChild(btn);
       });
-      pagesBox.appendChild(rail);
+      box.appendChild(rail);
+      var add = el('div', 'add');
+      var net = document.createElement('select');
+      (b.id === 'trading' ? NETS : NETS.filter(function (n) { return n !== 'Whop'; })).forEach(function (n) {
+        var o = document.createElement('option'); o.textContent = n; net.appendChild(o);
+      });
+      var name = document.createElement('input');
+      name.placeholder = 'Account or page name';
+      var go = el('button', 'btn', 'Add account');
+      go.type = 'button';
+      go.addEventListener('click', function () {
+        var label = name.value.trim();
+        if (!label) return;
+        if (net.value === 'Whop' && b.id !== 'trading') return;
+        state.extra[b.id] = state.extra[b.id] || [];
+        var id = uid(b.id);
+        state.extra[b.id].push({ id: id, network: net.value, name: label, live: false, note: 'Saved here. Tell me when this login is connected and I will post to it.' });
+        state.selected.push(id);
+        name.value = '';
+        save(); paint();
+      });
+      add.appendChild(net); add.appendChild(name); add.appendChild(go);
+      box.appendChild(add);
     }
 
     function paintComposer() {
       comp.replaceChildren();
       comp.appendChild(el('h2', '', 'Composer'));
       var seg = el('div', 'seg row');
-      [['same', 'Same text everywhere'], ['custom', 'Different text per page']].forEach(function (pair) {
+      [['same', 'Same text on every account'], ['custom', 'Different text per account']].forEach(function (pair) {
         var b = el('button', '', pair[1]);
         b.type = 'button';
         b.setAttribute('aria-pressed', state.mode === pair[0] ? 'true' : 'false');
-        b.addEventListener('click', function () { state.mode = pair[0]; saveLocal(); paint(); });
+        b.addEventListener('click', function () { state.mode = pair[0]; save(); paint(); });
         seg.appendChild(b);
       });
       comp.appendChild(seg);
-
-      function field(label, value, oninput, max) {
-        var lab = el('label');
-        lab.appendChild(document.createTextNode(label));
-        if (max) {
-          var c = el('span', 'count', (value || '').length + ' / ' + max);
-          lab.appendChild(c);
-        }
+      function area(label, value, write) {
+        comp.appendChild(el('label', '', label));
         var ta = document.createElement('textarea');
         ta.value = value || '';
-        ta.addEventListener('input', function () { oninput(ta.value); if (max) lab.querySelector('.count').textContent = ta.value.length + ' / ' + max; saveLocal(); });
-        comp.appendChild(lab);
+        ta.addEventListener('input', function () { write(ta.value); save(); });
         comp.appendChild(ta);
-        return ta;
       }
-
-      if (state.mode === 'same') {
-        field('Caption for every selected page', state.text, function (v) { state.text = v; }, 5000);
-      } else {
-        var chosen = selectedPages();
-        if (!chosen.length) comp.appendChild(el('p', 'msg', 'Pick at least one page.'));
-        chosen.forEach(function (p) {
-          field(p.network + ' · ' + p.name, state.custom[p.id] || state.text || '', function (v) { state.custom[p.id] = v; }, limits(p.id));
+      if (state.mode === 'same') area('Caption', state.text, function (v) { state.text = v; });
+      else {
+        var list = chosen();
+        if (!list.length) comp.appendChild(el('p', 'msg', 'Pick at least one account.'));
+        list.forEach(function (hit) {
+          area(hit.biz.name + ' · ' + hit.plat.network + ' · ' + hit.plat.name, state.custom[hit.plat.id] || '', function (v) { state.custom[hit.plat.id] = v; });
         });
       }
-
-      var linkLab = el('label', '', 'Link (optional, added if it is not already in the text)');
+      comp.appendChild(el('label', '', 'Link (optional)'));
       var link = document.createElement('input');
-      link.type = 'url';
-      link.placeholder = 'https://';
-      link.value = state.link || '';
-      link.addEventListener('input', function () { state.link = link.value; saveLocal(); });
-      comp.appendChild(linkLab);
+      link.type = 'url'; link.placeholder = 'https://'; link.value = state.link || '';
+      link.addEventListener('input', function () { state.link = link.value; save(); });
       comp.appendChild(link);
-
-      var whenLab = el('label', '', 'When');
-      var whenRow = el('div', 'seg row');
+      var when = el('div', 'seg row');
       [['now', 'Post when I say go'], ['later', 'Schedule']].forEach(function (pair) {
         var b = el('button', '', pair[1]);
         b.type = 'button';
         b.setAttribute('aria-pressed', state.when === pair[0] ? 'true' : 'false');
-        b.addEventListener('click', function () { state.when = pair[0]; saveLocal(); paint(); });
-        whenRow.appendChild(b);
+        b.addEventListener('click', function () { state.when = pair[0]; save(); paint(); });
+        when.appendChild(b);
       });
-      comp.appendChild(whenLab);
-      comp.appendChild(whenRow);
+      comp.appendChild(el('label', '', 'When'));
+      comp.appendChild(when);
       if (state.when === 'later') {
         var at = document.createElement('input');
-        at.type = 'datetime-local';
-        at.value = state.at || '';
-        at.addEventListener('input', function () { state.at = at.value; saveLocal(); });
+        at.type = 'datetime-local'; at.value = state.at || '';
+        at.addEventListener('input', function () { state.at = at.value; save(); });
         comp.appendChild(at);
       }
-
       var msg = el('p', 'msg');
-      var actions = el('div', 'row');
-      actions.style.marginTop = '12px';
       function take(status) {
-        var pages = selectedPages();
-        if (!pages.length) { msg.className = 'msg bad'; msg.textContent = 'Pick at least one page.'; return; }
-        var packed = pages.map(function (p) { return { id: p.id, name: p.name, network: p.network, live: p.live, text: bodyFor(p) }; });
-        if (packed.every(function (p) { return !p.text; })) { msg.className = 'msg bad'; msg.textContent = 'Write the caption first.'; return; }
+        var list = chosen();
+        if (!list.length) { msg.className = 'msg bad'; msg.textContent = 'Pick at least one account.'; return; }
+        var pages = list.map(function (hit) {
+          return { id: hit.plat.id, biz: hit.biz.name, site: hit.biz.site, network: hit.plat.network, name: hit.plat.name, live: !!hit.plat.live, text: bodyFor(hit.plat.id) };
+        });
+        if (pages.every(function (p) { return !p.text; })) { msg.className = 'msg bad'; msg.textContent = 'Write the caption first.'; return; }
         if (state.when === 'later' && !state.at) { msg.className = 'msg bad'; msg.textContent = 'Set the time.'; return; }
-        state.items.unshift({ id: uid(), status: status, when: state.when, at: state.at, created: new Date().toISOString(), pages: packed });
-        saveLocal();
+        state.items.unshift({ id: uid('post'), status: status, when: state.when, at: state.at, pages: pages });
+        save();
         msg.className = 'msg ok';
-        msg.textContent = status === 'approved' ? 'Approved. Tell me in chat to post it, and name the pages if you want a smaller set.' : 'Saved. It waits until you approve it.';
+        msg.textContent = status === 'approved' ? 'Approved. In chat, say post it. I will send only the connected accounts, and skip the rest.' : 'Draft saved.';
         paintQueue();
-        paintKpis();
       }
-      var draft = el('button', 'btn', 'Save draft');
-      draft.type = 'button';
-      draft.addEventListener('click', function () { take('draft'); });
-      var ok = el('button', 'btn gold', 'I approve this');
-      ok.type = 'button';
-      ok.addEventListener('click', function () { take('approved'); });
-      actions.appendChild(draft);
-      actions.appendChild(ok);
-      comp.appendChild(actions);
-      comp.appendChild(msg);
-      if (els.focusId) {
-        var node = comp.querySelector('textarea');
-        if (node && document.activeElement && document.activeElement.tagName !== 'TEXTAREA') node.focus();
-      }
+      var row = el('div', 'row');
+      var d = el('button', 'btn', 'Save draft'); d.type = 'button'; d.addEventListener('click', function () { take('draft'); });
+      var a = el('button', 'btn gold', 'I approve this'); a.type = 'button'; a.addEventListener('click', function () { take('approved'); });
+      row.appendChild(d); row.appendChild(a);
+      comp.appendChild(row); comp.appendChild(msg);
     }
 
     function paintQueue() {
       queue.replaceChildren();
-      queue.appendChild(el('h2', '', 'Waiting'));
-      if (!state.items.length) {
-        queue.appendChild(el('p', 'msg', 'Nothing yet. Write a caption, or tell me the topic in chat and I will draft it here for you to approve.'));
-        return;
-      }
+      queue.appendChild(el('h2', '', 'Waiting for you'));
+      if (!state.items.length) { queue.appendChild(el('p', 'msg', 'Nothing yet. Pick a business, pick the accounts, write it — or tell me the topic in chat and I will draft it.')); return; }
       state.items.forEach(function (item) {
         var card = el('div', 'item');
-        var top = el('div', 'row');
-        var tag = el('span', 'tag ' + (item.status === 'approved' ? 'ok' : 'wait'), item.status === 'approved' ? 'Approved' : 'Draft');
-        top.appendChild(tag);
-        top.appendChild(el('span', 'msg', (item.when === 'now' ? 'Post when I say go' : 'Schedule ' + (item.at || ''))));
-        card.appendChild(top);
+        card.appendChild(el('span', 'tag ' + (item.status === 'approved' ? 'ok' : 'wait'), item.status === 'approved' ? 'Approved' : 'Draft'));
+        card.appendChild(el('span', 'msg', item.when === 'now' ? 'Post when you say go' : ('Schedule ' + (item.at || ''))));
         item.pages.forEach(function (p) {
-          card.appendChild(el('div', '', p.network + ' · ' + p.name));
+          card.appendChild(el('div', '', p.biz + ' · ' + p.network + ' · ' + p.name + (p.live ? '' : ' · not connected')));
           card.appendChild(el('div', 'cap', p.text || '(empty)'));
         });
-        var actions = el('div', 'row');
+        var row = el('div', 'row');
         if (item.status !== 'approved') {
-          var ap = el('button', 'btn gold', 'Approve');
-          ap.type = 'button';
-          ap.addEventListener('click', function () { item.status = 'approved'; saveLocal(); paint(); });
-          actions.appendChild(ap);
+          var ap = el('button', 'btn gold', 'Approve'); ap.type = 'button';
+          ap.addEventListener('click', function () { item.status = 'approved'; save(); paint(); });
+          row.appendChild(ap);
         }
-        var copy = el('button', 'btn', 'Copy for me');
-        copy.type = 'button';
-        copy.addEventListener('click', function () {
-          var t = handoff(item);
-          (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { copy.textContent = 'Copied'; }, function () { copy.textContent = 'Copy failed'; });
-        });
-        var del = el('button', 'btn', 'Remove');
-        del.type = 'button';
-        del.addEventListener('click', function () { state.items = state.items.filter(function (x) { return x.id !== item.id; }); saveLocal(); paint(); });
-        actions.appendChild(copy);
-        actions.appendChild(del);
-        card.appendChild(actions);
+        var del = el('button', 'btn', 'Remove'); del.type = 'button';
+        del.addEventListener('click', function () { state.items = state.items.filter(function (x) { return x.id !== item.id; }); save(); paint(); });
+        row.appendChild(del);
+        card.appendChild(row);
         queue.appendChild(card);
       });
     }
 
-    function paint() { paintKpis(); paintPages(); paintComposer(); paintQueue(); report(); }
+    function paint() { paintBiz(); paintPlatforms(); paintComposer(); paintQueue(); report(); }
     paint();
-    global.addEventListener('resize', report);
   }
 
-  global.MMMSocialDesk = { mount: mount, pages: PAGES };
+  global.MMMSocialDesk = { mount: mount };
 })(window);
