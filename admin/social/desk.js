@@ -1,5 +1,4 @@
-/* MMM SOCIAL+ — publisher. Organic posts and paid ads across every major network.
-   Whop belongs only to Trading (maxmaserati.com). */
+/* MMM SOCIAL+ — the publisher. Its own product. Each business keeps its own color. */
 (function (global) {
   'use strict';
   var KEY = 'mmm.social.plus.v4';
@@ -10,9 +9,9 @@
     '.sp button,.sp select,.sp input,.sp textarea{font:inherit;color:inherit}',
     '.sp button{cursor:pointer}',
     '.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:8px 4px 16px;flex-wrap:wrap}',
-    '.mark{font:700 34px/0.9 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);margin:0}',
-    '.mark span{color:var(--brand)}',
-    '.sub{margin:6px 0 0;color:var(--mute);max-width:62ch;font-size:14px}',
+    '.mark{font:700 34px/0.9 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#f4f1ea;margin:0}',
+    '.mark span{color:#f4f1ea}',
+    '.sub{margin:6px 0 0;color:var(--mute);max-width:68ch;font-size:14px}',
     '.modes{display:flex;padding:3px;border:1px solid var(--line);background:var(--panel2)}',
     '.modes button{min-height:44px;padding:0 18px;border:0;background:transparent;color:var(--mute);font:700 15px/1 "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase}',
     '.modes button.org[aria-pressed=true]{background:var(--brand);color:var(--on)}',
@@ -20,6 +19,7 @@
     '.modes button.bill[aria-pressed=true]{background:var(--bill);color:var(--bill-on)}',
     '.shell{display:grid;grid-template-columns:272px minmax(0,1fr) 300px;gap:12px;align-items:start}',
     '.col{background:var(--panel);border:1px solid var(--line);padding:14px}',
+    '.col.work{box-shadow:inset 0 3px 0 var(--brand)}',
     '.bizs{display:grid;gap:6px;margin-bottom:14px}',
     '.biz{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 12px 10px 14px;min-height:44px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-left:4px solid var(--biz,var(--line))}',
     '.biz b{font:700 16px/1.1 "Barlow Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase}',
@@ -432,11 +432,6 @@
       var L = lookOf(state, state.biz);
       var go = state.mode === 'ads' ? L.spend : state.mode === 'billing' ? L.bill : L.accent;
       var onGo = state.mode === 'ads' ? L.spendOn : state.mode === 'billing' ? L.billOn : L.on;
-      wrap.style.background = L.bg;
-      wrap.style.setProperty('--bg', L.bg);
-      wrap.style.setProperty('--panel', L.panel);
-      wrap.style.setProperty('--panel2', L.panel2);
-      wrap.style.setProperty('--line', L.line);
       wrap.style.setProperty('--brand', L.accent);
       wrap.style.setProperty('--brand2', L.live);
       wrap.style.setProperty('--live', L.live);
@@ -453,7 +448,7 @@
     h.appendChild(document.createTextNode('MMM '));
     h.appendChild(el('span', '', 'SOCIAL+'));
     titles.appendChild(h);
-    titles.appendChild(el('p', 'sub', 'Each business keeps its own color. Organic, ads, and billing do not share one. Nothing goes out until you approve it.'));
+    titles.appendChild(el('p', 'sub', 'The desk stays its own product. The business you select brings its color. Organic, ads, and billing never share one. Nothing goes out until you approve it.'));
     var modes = el('div', 'modes');
     var bOrg = el('button', 'org', 'Organic');
     var bAds = el('button', 'ads', 'Paid ads');
@@ -465,7 +460,7 @@
 
     var shell = el('div', 'shell');
     var left = el('aside', 'col');
-    var mid = el('section', 'col');
+    var mid = el('section', 'col work');
     var right = el('aside', 'col');
     shell.appendChild(left); shell.appendChild(mid); shell.appendChild(right);
     wrap.appendChild(shell);
