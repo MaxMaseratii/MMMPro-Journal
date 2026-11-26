@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>MMM Personal Strategy · Members Only | MMM Trading</title>
-<meta name="description" content="Max Maserati's own best backtested strategies: MMM ONE and MMCB Edge 1, with rules, real trade pictures and equity curves. Members only.">
+<meta name="description" content="Max Maserati's own best backtested strategies: MMM ONE, MMCB Edge 1 and MMM Orderflow, with rules, real trade pictures and equity curves. Members only.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -40,7 +40,7 @@ h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);l
 .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 18px}
 .tabs button{font:600 14px var(--sans);background:var(--sheet);color:var(--ink);border:1px solid var(--rule2);padding:10px 14px;border-radius:4px;cursor:pointer}
 .tabs button[aria-selected=true]{background:var(--gold);color:#111;border-color:var(--gold)}
-#p-one,#p-edge{display:grid;gap:22px;min-width:0}
+#p-one,#p-edge,#p-flow{display:grid;gap:22px;min-width:0}
 #stx ol{list-style:decimal}#stx ul{list-style:disc}
 #stx .pic img[src^="data:"]{min-height:220px;background:#f3f4f6}
 .who{color:var(--mute);font-size:13px}
@@ -51,7 +51,7 @@ h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);l
 <main class="wrap">
   <div class="eyebrow">Members only · MMM Personal Strategy</div>
   <h1 class="t">The strategies I trade myself</h1>
-  <p class="sub">MMM ONE (my 7-setup day plan) and MMCB Edge 1 (9 candle bias strategies and the plan that mixes them). Every rule, a real trade picture and the equity curve of every strategy, from 1-minute backtests on NQ and MNQ.</p>
+  <p class="sub">MMM ONE (my 7-setup day plan), MMCB Edge 1 (9 candle bias strategies and the plan that mixes them) and MMM Orderflow (3 strategies from MMM Pro C). Every rule, a real trade picture and the equity curve of every strategy, from 1-minute backtests on NQ and MNQ.</p>
 
   <section class="gate" id="gate">
     <h2 id="g-title">Log in to open the page</h2>
@@ -75,8 +75,9 @@ h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);l
     <div class="tabs" role="tablist">
       <button type="button" role="tab" data-t="edge" aria-selected="true">MMCB Edge 1</button>
       <button type="button" role="tab" data-t="one" aria-selected="false">MMM ONE</button>
+      <button type="button" role="tab" data-t="flow" aria-selected="false">MMM Orderflow</button>
     </div>
-    <div id="stx"><div id="p-edge"></div><div id="p-one" hidden></div></div>
+    <div id="stx"><div id="p-edge"></div><div id="p-one" hidden></div><div id="p-flow" hidden></div></div>
   </div>
 </main>
 <div id="mmm-footer"></div>
@@ -116,7 +117,7 @@ h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);l
       .then(dec).then(function (b) {
         var j = JSON.parse(new TextDecoder().decode(b));
         (new Function(j.js))();
-        window.MMCBEdge(); window.MMMOne();
+        window.MMCBEdge(); window.MMMOne(); if (window.MMMFlow) window.MMMFlow();
         $('gate').hidden = true; $('app').hidden = false;
         images($('stx'));
         if (location.hash && document.querySelector(location.hash)) document.querySelector(location.hash).scrollIntoView();
@@ -148,7 +149,7 @@ h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);l
   document.querySelector('.tabs').addEventListener('click', function (e) {
     var b = e.target.closest('button[data-t]'); if (!b) return;
     document.querySelectorAll('.tabs button').forEach(function (x) { x.setAttribute('aria-selected', String(x === b)); });
-    $('p-edge').hidden = b.dataset.t !== 'edge'; $('p-one').hidden = b.dataset.t !== 'one';
+    $('p-edge').hidden = b.dataset.t !== 'edge'; $('p-one').hidden = b.dataset.t !== 'one'; $('p-flow').hidden = b.dataset.t !== 'flow';
   });
   // wait for the login state first, so an admin or member never sees the price screen by mistake
   say('Loading…', '', {});
