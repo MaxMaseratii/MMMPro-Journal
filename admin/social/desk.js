@@ -63,6 +63,12 @@
     '.day b{display:block;font:700 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--mute)}',
     '.day span{color:var(--gold2);font:700 16px/1 "Barlow Condensed",sans-serif}',
     '.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}',
+    '.pay{display:grid;gap:8px}',
+    '.payrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px;min-height:64px;border:1px solid var(--line);background:var(--panel2);color:var(--ink)}',
+    '.payrow.on{border-color:var(--gold);background:rgba(225,179,26,.07)}',
+    '.payrow b{display:block;font:700 16px/1.1 "Barlow Condensed",sans-serif;letter-spacing:.04em;text-transform:uppercase}',
+    '.markbox{width:72px;height:32px;flex:none;display:grid;place-items:center;border:1px solid var(--line);font:700 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.04em}',
+    '.payrow .meta{display:block;color:var(--mute);font-size:12px}',
     '@media (max-width:980px){.shell{grid-template-columns:1fr}.week{grid-template-columns:repeat(4,minmax(0,1fr))}}',
     '@media (max-width:560px){.grid2,.week{grid-template-columns:1fr 1fr}.mark{font-size:28px}}',
     '@media (prefers-reduced-motion:reduce){.sp *{transition:none!important}}'
@@ -138,7 +144,7 @@
   function letter(network) { return (network || '?').replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase(); }
 
   function load() {
-    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '' };
+    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '' };
     try {
       var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (!raw) return s;
@@ -147,6 +153,7 @@
       if (raw.custom) s.custom = raw.custom;
       if (Array.isArray(raw.items)) s.items = raw.items;
       if (raw.extra) s.extra = raw.extra;
+      if (raw.wallets) s.wallets = raw.wallets;
       return s;
     } catch (e) { return s; }
   }
@@ -217,8 +224,9 @@
     var modes = el('div', 'modes');
     var bOrg = el('button', '', 'Organic');
     var bAds = el('button', '', 'Paid ads');
-    bOrg.type = bAds.type = 'button';
-    modes.appendChild(bOrg); modes.appendChild(bAds);
+    var bBill = el('button', '', 'Billing');
+    bOrg.type = bAds.type = bBill.type = 'button';
+    modes.appendChild(bOrg); modes.appendChild(bAds); modes.appendChild(bBill);
     top.appendChild(titles); top.appendChild(modes);
     wrap.appendChild(top);
 
@@ -296,8 +304,16 @@
     adExtra.appendChild(adGrid);
     adExtra.appendChild(field('End', end));
     adExtra.appendChild(field('Audience', audience));
-    adExtra.appendChild(el('p', 'msg', 'Approving an ad does not charge you. I only place it after you say go, and only on an ad account that is connected and funded.'));
+    var payerLine = el('p', 'msg', '');
+    adExtra.appendChild(payerLine);
+    var toBill = el('button', 'btn', 'Connect Google Pay or Apple Pay');
+    toBill.type = 'button';
+    toBill.addEventListener('click', function () { state.mode = 'billing'; save(); paintBilling(); paintButtons(); });
+    adExtra.appendChild(toBill);
+    adExtra.appendChild(el('p', 'msg', 'The wallet confirms who pays. This desk never stores a full card number and does not charge by itself. Meta, Google, YouTube, TikTok and X charge the daily budget after you say go.'));
     mid.appendChild(adExtra);
+    var billBox = el('div');
+    mid.appendChild(billBox);
     mid.appendChild(actions);
     mid.appendChild(msg);
 
@@ -307,6 +323,169 @@
 
     function setPressed(btn, on) { btn.setAttribute('aria-pressed', on ? 'true' : 'false'); }
 
+    function bag() {
+      if (!state.wallets[state.biz]) state.wallets[state.biz] = { google: null, apple: null, card: null, use: '' };
+      return state.wallets[state.biz];
+    }
+    function payerText() {
+      var w = bag();
+      var row = w[w.use];
+      if (!row) return 'No wallet yet. Open Billing and connect Google Pay, Apple Pay, or a card.';
+      return (w.use === 'google' ? 'Google Pay' : w.use === 'apple' ? 'Apple Pay' : 'Card') + ' · ' + row.detail + (row.confirmed ? ' · wallet confirmed' : ' · selected');
+    }
+    function googlePayRequest(price) {
+      var method = {
+        type: 'CARD',
+        parameters: {
+          allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+          allowedCardNetworks: ['AMEX', 'DISCOVER', 'INTERAC', 'JCB', 'MASTERCARD', 'VISA']
+        },
+        tokenizationSpecification: {
+          type: 'PAYMENT_GATEWAY',
+          parameters: { gateway: 'example', gatewayMerchantId: 'mmmSocial' }
+        }
+      };
+      return {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        allowedPaymentMethods: [method],
+        merchantInfo: { merchantName: 'MMM SOCIAL+' },
+        transactionInfo: {
+          totalPriceStatus: 'FINAL',
+          totalPrice: price,
+          currencyCode: state.currency || 'GBP',
+          countryCode: 'GB'
+        }
+      };
+    }
+    function ensureGooglePay() {
+      if (global.google && global.google.payments && global.google.payments.api) return Promise.resolve(true);
+      return new Promise(function (resolve) {
+        var s = document.createElement('script');
+        s.src = 'https://pay.google.com/gp/p/js/pay.js';
+        s.async = true;
+        s.onload = function () { resolve(true); };
+        s.onerror = function () { resolve(false); };
+        document.head.appendChild(s);
+      });
+    }
+    function priceNow() {
+      var n = parseFloat(state.budget);
+      return (n > 0 ? n : 1).toFixed(2);
+    }
+    function openGoogle() {
+      return ensureGooglePay().then(function (ok) {
+        if (ok && global.google && global.google.payments && global.google.payments.api) {
+          var client = new global.google.payments.api.PaymentsClient({ environment: 'TEST' });
+          var request = googlePayRequest(priceNow());
+          return client.isReadyToPay({
+            apiVersion: 2,
+            apiVersionMinor: 0,
+            allowedPaymentMethods: request.allowedPaymentMethods
+          }).then(function (ready) {
+            if (!ready || !ready.result) throw new Error('Google Pay is not on this device. Chrome with a Google account can confirm it. The method is still saved for this business.');
+            return client.loadPaymentData(request);
+          }).then(function (data) {
+            return { confirmed: true, detail: (data && data.email) || 'Google Pay wallet' };
+          });
+        }
+        throw new Error('Google Pay did not load. The method is still saved for this business.');
+      });
+    }
+    function openApple() {
+      if (global.ApplePaySession && global.ApplePaySession.canMakePayments && global.ApplePaySession.canMakePayments()) {
+        return new Promise(function (resolve, reject) {
+          try {
+            var session = new global.ApplePaySession(3, {
+              countryCode: 'GB',
+              currencyCode: state.currency || 'GBP',
+              supportedNetworks: ['visa', 'masterCard', 'amex'],
+              merchantCapabilities: ['supports3DS'],
+              total: { label: 'MMM ad budget', amount: priceNow() }
+            });
+            session.onvalidatemerchant = function () {
+              try { session.abort(); } catch (e) {}
+              reject(new Error('Apple Pay is on this device. The site still needs an Apple merchant certificate before the sheet can take payment. The method is saved.'));
+            };
+            session.oncancel = function () { reject(new Error('Apple Pay cancelled.')); };
+            session.begin();
+          } catch (err) {
+            reject(err);
+          }
+        });
+      }
+      return Promise.reject(new Error('Apple Pay opens in Safari on iPhone, iPad, or Mac. The method is saved for this business.'));
+    }
+    function remember(kind, detail, confirmed, note) {
+      var w = bag();
+      w[kind] = { detail: detail, confirmed: !!confirmed, at: new Date().toISOString() };
+      w.use = kind;
+      save();
+      msg.className = note && !confirmed ? 'msg' : 'msg ok';
+      msg.textContent = note || (confirmed ? 'Wallet confirmed. No card number was stored.' : 'Saved as the payer for this business.');
+      paintBilling();
+      paintButtons();
+    }
+    function paintBilling() {
+      billBox.replaceChildren();
+      if (state.mode !== 'billing') return;
+      var b = businesses(state).filter(function (x) { return x.id === state.biz; })[0];
+      billBox.appendChild(el('h2', 'h', 'Billing · ' + b.name));
+      billBox.appendChild(el('p', 'msg', 'Connect the wallet that pays ads for ' + b.site + '. Google Pay and Apple Pay. Card is last 4 only.'));
+      var w = bag();
+      function row(kind, title, hint) {
+        var saved = w[kind];
+        var btn = el('button', 'payrow' + (w.use === kind && saved ? ' on' : ''));
+        btn.type = 'button';
+        btn.appendChild(el('span', 'markbox', kind === 'google' ? 'G Pay' : kind === 'apple' ? 'Apple' : 'Card'));
+        var g = el('span', 'grow');
+        g.appendChild(el('b', '', title));
+        g.appendChild(el('span', 'meta', saved ? saved.detail + (saved.confirmed ? ' · confirmed' : ' · selected') : hint));
+        btn.appendChild(g);
+        btn.addEventListener('click', function () {
+          if (kind === 'card') return;
+          msg.className = 'msg';
+          msg.textContent = 'Opening ' + title + '…';
+          var job = kind === 'google' ? openGoogle() : openApple();
+          job.then(function (res) {
+            remember(kind, (res && res.detail) || title, true, title + ' confirmed for ' + b.name + '. Nothing was charged.');
+          }).catch(function (err) {
+            remember(kind, title, false, err && err.message ? err.message : 'Saved as the payer.');
+          });
+        });
+        return btn;
+      }
+      var list = el('div', 'pay');
+      list.appendChild(row('google', 'Google Pay', 'Confirm in Chrome. No card number is saved.'));
+      list.appendChild(row('apple', 'Apple Pay', 'Confirm in Safari. No card number is saved.'));
+      billBox.appendChild(list);
+      var card = el('div', 'card');
+      card.appendChild(el('div', 'who', 'Card on file'));
+      card.appendChild(el('p', 'msg', 'Last 4 digits and the brand. Never the full number.'));
+      var brand = document.createElement('select');
+      ['Visa', 'Mastercard', 'Amex'].forEach(function (c) { var o = document.createElement('option'); o.textContent = c; brand.appendChild(o); });
+      var last4 = document.createElement('input');
+      last4.inputMode = 'numeric';
+      last4.maxLength = 4;
+      last4.placeholder = 'Last 4';
+      last4.autocomplete = 'off';
+      var saveCard = el('button', 'btn gold', 'Save card');
+      saveCard.type = 'button';
+      saveCard.addEventListener('click', function () {
+        var digits = (last4.value || '').replace(/\s/g, '');
+        if (!/^\d{4}$/.test(digits)) { msg.className = 'msg bad'; msg.textContent = 'Enter only the last 4 digits.'; return; }
+        remember('card', brand.value + ' · ' + digits, true, 'Card saved as ' + brand.value + ' ending ' + digits + '. The full number was not stored.');
+      });
+      var grid = el('div', 'grid2');
+      grid.appendChild(brand);
+      grid.appendChild(last4);
+      card.appendChild(grid);
+      card.appendChild(saveCard);
+      if (w.card) card.appendChild(el('p', 'msg ok', 'On file: ' + w.card.detail));
+      billBox.appendChild(card);
+      report();
+    }
+
     function paintBiz() {
       bizBox.replaceChildren();
       businesses(state).forEach(function (b) {
@@ -315,7 +494,7 @@
         btn.type = 'button';
         btn.appendChild(el('b', '', b.name));
         btn.appendChild(el('small', '', b.site + ' · ' + live + ' ready'));
-        btn.addEventListener('click', function () { state.biz = b.id; save(); paintSide(); paintPreview(); });
+        btn.addEventListener('click', function () { state.biz = b.id; save(); paintSide(); paintPreview(); paintBilling(); paintButtons(); });
         bizBox.appendChild(btn);
       });
     }
@@ -367,6 +546,7 @@
 
     function paintCustom() {
       customBox.replaceChildren();
+      if (state.mode === 'billing') { customBox.hidden = true; cap.hidden = true; capLab.hidden = true; return; }
       if (state.tone !== 'custom') { customBox.hidden = true; cap.hidden = false; capLab.hidden = false; return; }
       customBox.hidden = false; cap.hidden = true; capLab.hidden = true;
       var list = chosen();
@@ -407,15 +587,24 @@
     }
 
     function paintButtons() {
+      var billing = state.mode === 'billing';
       var n = chosen().length;
-      okBtn.textContent = n ? ('Approve · ' + n) : 'Approve';
+      okBtn.textContent = state.mode === 'ads' ? (n ? ('Approve ad · ' + n) : 'Approve ad') : (n ? ('Approve · ' + n) : 'Approve');
       setPressed(bOrg, state.mode === 'organic');
       setPressed(bAds, state.mode === 'ads');
+      setPressed(bBill, billing);
       setPressed(sameBtn, state.tone === 'same');
       setPressed(customBtn, state.tone === 'custom');
+      tone.hidden = billing;
       organicExtra.hidden = state.mode !== 'organic';
       adExtra.hidden = state.mode !== 'ads';
+      billBox.hidden = !billing;
+      actions.hidden = billing;
       at.hidden = state.when !== 'later';
+      cap.hidden = billing || state.tone === 'custom';
+      capLab.hidden = billing || state.tone === 'custom';
+      if (billing) customBox.hidden = true;
+      if (state.mode === 'ads') payerLine.textContent = payerText();
     }
 
     function paintWhen() {
@@ -452,7 +641,7 @@
         var card = el('div', 'qitem');
         var tag = el('span', 'tag ' + (item.kind === 'ads' ? 'pay' : item.status === 'approved' ? 'ok' : 'wait'), item.kind === 'ads' ? 'Paid' : (item.status === 'approved' ? 'Approved' : 'Draft'));
         card.appendChild(tag);
-        card.appendChild(el('span', 'msg', item.kind === 'ads' ? (item.objective + ' · ' + item.currency + ' ' + item.budget + '/day') : (item.when === 'now' ? 'Post when you say go' : ('Schedule ' + (item.at || '')))));
+        card.appendChild(el('span', 'msg', item.kind === 'ads' ? (item.objective + ' · ' + item.currency + ' ' + item.budget + '/day' + (item.payer ? (' · ' + item.payer.detail) : '')) : (item.when === 'now' ? 'Post when you say go' : ('Schedule ' + (item.at || '')))));
         (item.pages || []).forEach(function (p) {
           card.appendChild(el('div', '', p.biz + ' · ' + p.network + ' · ' + p.name + (p.live ? '' : ' · connect first')));
           if (p.text) card.appendChild(el('p', 'msg', p.text));
@@ -461,7 +650,10 @@
         if (item.status !== 'approved') {
           var ap = el('button', 'btn gold', 'Approve');
           ap.type = 'button';
-          ap.addEventListener('click', function () { item.status = 'approved'; save(); paintQueue(); });
+          ap.addEventListener('click', function () {
+            if (item.kind === 'ads' && !(item.payer && item.payer.detail)) { msg.className = 'msg bad'; msg.textContent = 'Connect Google Pay, Apple Pay, or a card in Billing before approving this ad.'; return; }
+            item.status = 'approved'; save(); paintQueue();
+          });
           row.appendChild(ap);
         }
         var del = el('button', 'btn', 'Remove');
@@ -483,14 +675,20 @@
       if (state.mode === 'organic' && pages.every(function (p) { return !p.text; })) { msg.className = 'msg bad'; msg.textContent = 'Write the caption first.'; return; }
       if (state.mode === 'organic' && state.when === 'later' && !state.at) { msg.className = 'msg bad'; msg.textContent = 'Set the time.'; return; }
       if (state.mode === 'ads' && !(parseFloat(state.budget) > 0)) { msg.className = 'msg bad'; msg.textContent = 'Set a daily budget.'; return; }
+      var payer = null;
+      if (state.mode === 'ads') {
+        var w = bag();
+        if (w.use && w[w.use]) payer = { method: w.use, detail: w[w.use].detail, confirmed: !!w[w.use].confirmed };
+        if (status === 'approved' && !payer) { msg.className = 'msg bad'; msg.textContent = 'Open Billing and connect Google Pay, Apple Pay, or a card.'; return; }
+      }
       state.items.unshift({
         id: uid('post'), status: status, kind: state.mode, when: state.when, at: state.at, pages: pages,
-        objective: state.objective, budget: state.budget, currency: state.currency, start: state.start, end: state.end, audience: state.audience
+        objective: state.objective, budget: state.budget, currency: state.currency, start: state.start, end: state.end, audience: state.audience, payer: payer
       });
       save();
       msg.className = 'msg ok';
       msg.textContent = status === 'approved'
-        ? (state.mode === 'ads' ? 'Ad approved. Say go in chat and I will place it only on a funded account. This did not charge you.' : 'Approved. Say post it in chat. I will send only the accounts that are connected.')
+        ? (state.mode === 'ads' ? ('Ad approved. Payer: ' + payer.detail + '. Nothing was charged. Say go in chat and I will place it. The ad account charges that wallet.') : 'Approved. Say post it in chat. I will send only the accounts that are connected.')
         : 'Draft saved.';
       paintQueue();
     }
@@ -508,6 +706,7 @@
     customBtn.addEventListener('click', function () { state.tone = 'custom'; save(); paintCustom(); paintButtons(); paintPreview(); });
     bOrg.addEventListener('click', function () { state.mode = 'organic'; save(); paintSide(); paintCustom(); paintButtons(); paintPreview(); });
     bAds.addEventListener('click', function () { state.mode = 'ads'; save(); paintSide(); paintCustom(); paintButtons(); paintPreview(); });
+    bBill.addEventListener('click', function () { state.mode = 'billing'; save(); paintBilling(); paintButtons(); });
     saveBtn.addEventListener('click', function () { take('draft'); });
     okBtn.addEventListener('click', function () { take('approved'); });
 
@@ -521,7 +720,7 @@
     end.value = state.end || '';
     audience.value = state.audience || '';
 
-    paintBiz(); paintSide(); paintWhen(); paintCustom(); paintButtons(); paintPreview(); paintQueue();
+    paintBiz(); paintSide(); paintWhen(); paintCustom(); paintBilling(); paintButtons(); paintPreview(); paintQueue();
   }
 
   global.MMMSocialDesk = { mount: mount };
