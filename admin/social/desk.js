@@ -1216,6 +1216,7 @@
     end.value = state.end || '';
     audience.value = state.audience || '';
 
+    save();
     paintBiz(); paintSide(); paintWhen(); paintCustom(); paintBilling(); paintButtons(); paintPreview(); paintQueue();
   }
 
