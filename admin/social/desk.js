@@ -1072,7 +1072,11 @@
           if (p.network === 'Facebook' || p.network === 'Instagram' || p.network === 'Threads' || p.network === 'Meta Ads') {
             var ses = state.sessions.Facebook;
             if (ses && ses.token) pullSession('Facebook');
-            else { paintAccount(); connectFacebook(false); }
+            else paintAccount();
+            return;
+          }
+          if (p.live && p.name && p.name !== 'Connect a page') {
+            paintAccount();
             return;
           }
           var login = LOGIN[p.network];
@@ -1105,41 +1109,12 @@
       paintApis(apiBox);
     }
 
-    function loadFb(cb) {
-      if (window.FB) { cb(); return; }
-      loadFb.q = loadFb.q || [];
-      loadFb.q.push(cb);
-      if (loadFb.started) return;
-      loadFb.started = true;
-      window.fbAsyncInit = function () {
-        window.FB.init({ appId: '1107484722267711', cookie: true, xfbml: false, version: 'v21.0' });
-        var q = loadFb.q || [];
-        loadFb.q = [];
-        q.forEach(function (fn) { try { fn(); } catch (e) {} });
-      };
-      var s = document.createElement('script');
-      s.src = 'https://connect.facebook.net/en_US/sdk.js';
-      s.async = true;
-      document.head.appendChild(s);
-    }
     function connectFacebook(relogin) {
-      loadFb(function () {
-        var opts = { scope: 'public_profile,pages_show_list,pages_read_engagement,instagram_basic,business_management' };
-        if (relogin) opts.auth_type = 'reauthenticate';
-        window.FB.login(function (res) {
-          state.sessions.Facebook = state.sessions.Facebook || {};
-          if (!res || !res.authResponse) {
-            state.sessions.Facebook.error = 'Facebook sign-in did not finish.';
-            save();
-            paintAccount();
-            return;
-          }
-          state.sessions.Facebook.token = res.authResponse.accessToken;
-          state.sessions.Facebook.error = '';
-          save();
-          pullSession('Facebook');
-        }, opts);
-      });
+      sessionStorage.setItem('mmm.oauth.net', 'Facebook');
+      sessionStorage.setItem('mmm.oauth.view', state.account || 'Facebook');
+      var url = 'https://www.facebook.com/v21.0/dialog/oauth?client_id=1107484722267711&redirect_uri=' + encodeURIComponent(OAUTH_REDIRECT) + '&response_type=token&display=popup&scope=' + encodeURIComponent('public_profile,pages_show_list,pages_read_engagement,instagram_basic,business_management') + (relogin ? '&auth_type=reauthenticate' : '');
+      var pop = window.open(url, 'mmm-facebook', 'width=520,height=720');
+      if (!pop) location.href = url;
     }
     function paintAccount() {
       var network = state.account || 'Facebook';
@@ -1776,7 +1751,6 @@
     save();
     applyLook();
     applyTheme();
-    loadFb(function () {});
     window.addEventListener('message', function (e) {
       if (e.origin !== location.origin || !e.data || e.data.source !== 'mmm-oauth' || !e.data.token) return;
       takeToken(e.data.network, e.data.token, sessionStorage.getItem('mmm.oauth.view') || '');
