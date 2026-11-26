@@ -1,110 +1,177 @@
-/* MMM SOCIAL+ — three businesses, as many platforms as Max connects.
-   Whop is only for the trading business (maxmaserati.com). */
+/* MMM SOCIAL+ — publisher. Organic posts and paid ads across every major network.
+   Whop belongs only to Trading (maxmaserati.com). */
 (function (global) {
   'use strict';
-  var KEY = 'mmm.social.plus.v3';
-  var NETS = ['Facebook', 'Instagram', 'TikTok', 'YouTube', 'X', 'Whop'];
+  var KEY = 'mmm.social.plus.v4';
   var CSS = [
-    '.mmm-social{max-width:1100px;margin:0 auto;padding:8px 16px 40px;color:#d9dde3;font:15px/1.5 Barlow,system-ui,sans-serif}',
-    '.mmm-social h1{font:700 clamp(32px,4vw,48px)/1 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.03em;text-transform:uppercase;color:#e1b31a;margin:0 0 8px}',
-    '.mmm-social h2{font:700 18px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#e1b31a;margin:0 0 8px}',
-    '.lede{color:#c9d0d6;max-width:70ch;margin:0 0 14px}',
-    '.bizs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 14px}',
-    '.biz{text-align:left;padding:12px;border:1px solid #323942;background:#0f1114;color:#d9dde3;cursor:pointer}',
-    '.biz.on{border-color:#e1b31a;background:rgba(225,179,26,.08)}',
-    '.biz b{display:block;font:700 18px/1.1 "Barlow Condensed",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#f2cf5b}',
-    '.biz small{color:#8f97a1}',
-    '.box{border:1px solid #252a31;background:#0f1114;padding:16px;margin:0 0 14px}',
-    '.pages{display:flex;flex-wrap:wrap;gap:8px}',
-    '.page{text-align:left;min-width:150px;max-width:240px;padding:10px 12px;border:1px solid #323942;background:#0b0d10;color:#d9dde3;cursor:pointer;font:600 14px/1.3 Barlow,sans-serif}',
-    '.page small{display:block;font-weight:500;color:#8f97a1}',
-    '.page.on{border-color:#e1b31a;color:#f2cf5b}',
-    '.page.off{opacity:.72}',
-    '.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}',
-    '.seg button,.btn{font:700 14px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;border:1px solid #323942;background:transparent;color:#d9dde3;cursor:pointer}',
-    '.seg button[aria-pressed=true],.btn.gold{background:#e1b31a;border-color:#e1b31a;color:#111}',
-    '.mmm-social label{display:block;font:600 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#8f97a1;margin:10px 0 4px}',
-    '.mmm-social textarea,.mmm-social input,.mmm-social select{width:100%;box-sizing:border-box;background:#0b0d10;color:#d9dde3;border:1px solid #323942;padding:10px;font:14px/1.45 "IBM Plex Mono",ui-monospace,Menlo,monospace}',
-    '.mmm-social textarea{min-height:110px;resize:vertical}',
-    '.add{display:grid;grid-template-columns:140px 1fr auto;gap:8px;align-items:end;margin-top:12px}',
-    '.item{border-top:1px solid #252a31;padding:12px 0}',
-    '.tag{display:inline-block;font:600 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:3px 6px;border:1px solid #323942;margin-right:6px}',
-    '.tag.ok{color:#3ddc97;border-color:rgba(61,220,151,.45)}.tag.wait{color:#f2cf5b;border-color:rgba(225,179,26,.5)}',
-    '.msg{color:#8f97a1;font-size:14px}.msg.bad{color:#ff5c6c}.msg.ok{color:#3ddc97}',
-    '.cap{white-space:pre-wrap;font:13.5px/1.45 "IBM Plex Mono",monospace;color:#cfd5da;margin:6px 0}',
-    '@media (max-width:760px){.bizs,.add{grid-template-columns:1fr}}'
-  ].join('');
+    '.sp{--bg:#07080a;--panel:#101318;--panel2:#0b0d10;--line:#2a3038;--ink:#e7ebf0;--mute:#8b949e;--faint:#5c6770;--gold:#e1b31a;--gold2:#f3d36a;--teal:#3dbea8;--bad:#ff5d6c;',
+    'color:var(--ink);font:15px/1.5 Barlow,system-ui,sans-serif;background:var(--bg)}',
+    '.sp *{box-sizing:border-box}',
+    '.sp button,.sp select,.sp input,.sp textarea{font:inherit;color:inherit}',
+    '.sp button{cursor:pointer}',
+    '.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:8px 4px 16px;flex-wrap:wrap}',
+    '.mark{font:700 34px/0.9 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);margin:0}',
+    '.mark span{color:var(--ink)}',
+    '.sub{margin:6px 0 0;color:var(--mute);max-width:62ch;font-size:14px}',
+    '.modes{display:flex;padding:3px;border:1px solid var(--line);background:var(--panel2)}',
+    '.modes button{min-height:44px;padding:0 18px;border:0;background:transparent;color:var(--mute);font:700 15px/1 "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase}',
+    '.modes button[aria-pressed=true]{background:var(--gold);color:#14120a}',
+    '.shell{display:grid;grid-template-columns:272px minmax(0,1fr) 300px;gap:12px;align-items:start}',
+    '.col{background:var(--panel);border:1px solid var(--line);padding:14px}',
+    '.bizs{display:grid;gap:6px;margin-bottom:14px}',
+    '.biz{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 12px;min-height:44px;border:1px solid var(--line);background:var(--panel2);color:var(--ink)}',
+    '.biz b{font:700 16px/1.1 "Barlow Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase}',
+    '.biz small{color:var(--mute);font-size:12px}',
+    '.biz.on{border-color:var(--gold);background:rgba(225,179,26,.08)}',
+    '.biz.on b{color:var(--gold2)}',
+    '.h{font:700 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 8px}',
+    '.acc{display:flex;gap:8px;align-items:center;width:100%;text-align:left;padding:8px;min-height:44px;border:1px solid transparent;background:transparent;color:var(--ink);margin:0 0 2px}',
+    '.acc:hover{background:rgba(255,255,255,.03)}',
+    '.acc.on{border-color:var(--gold);background:rgba(225,179,26,.07)}',
+    '.dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}',
+    '.dot.live{background:var(--teal)}',
+    '.mono{width:28px;height:28px;flex:none;display:grid;place-items:center;border:1px solid var(--line);font:700 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.04em;color:var(--gold2)}',
+    '.acc .nm{display:block;font-weight:600;font-size:13.5px}',
+    '.acc .meta{display:block;color:var(--mute);font-size:12px}',
+    '.grow{min-width:0}',
+    '.add{display:grid;grid-template-columns:1fr;gap:6px;margin-top:10px}',
+    '.sp input,.sp select,.sp textarea{width:100%;background:var(--panel2);border:1px solid var(--line);padding:10px 12px;outline:none}',
+    '.sp textarea{min-height:140px;resize:vertical;font:14.5px/1.5 "IBM Plex Mono",ui-monospace,Menlo,monospace}',
+    '.sp input:focus,.sp select:focus,.sp textarea:focus{border-color:var(--gold)}',
+    '.lab{display:block;margin:12px 0 4px;font:600 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}',
+    '.seg{display:flex;flex-wrap:wrap;gap:6px}',
+    '.seg button{min-height:40px;padding:0 12px;border:1px solid var(--line);background:var(--panel2);color:var(--mute);font:700 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase}',
+    '.seg button[aria-pressed=true]{border-color:var(--gold);color:#14120a;background:var(--gold)}',
+    '.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}',
+    '.btn{min-height:44px;padding:0 16px;border:1px solid var(--line);background:transparent;color:var(--ink);font:700 15px/1 "Barlow Condensed",sans-serif;letter-spacing:.07em;text-transform:uppercase}',
+    '.btn.gold{background:var(--gold);border-color:var(--gold);color:#14120a}',
+    '.btn:disabled{opacity:.45;cursor:not-allowed}',
+    '.msg{min-height:1.2em;margin:8px 0 0;color:var(--mute);font-size:13.5px}',
+    '.msg.ok{color:var(--teal)}.msg.bad{color:var(--bad)}',
+    '.card{border:1px solid var(--line);background:var(--panel2);padding:12px;margin:0 0 8px}',
+    '.card .who{font:700 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--gold2)}',
+    '.card p{margin:8px 0 0;white-space:pre-wrap;font-size:13.5px;color:var(--ink)}',
+    '.bar{height:3px;background:#1c2228;margin-top:8px}',
+    '.bar i{display:block;height:100%;background:var(--teal);width:0}',
+    '.bar i.hot{background:var(--bad)}',
+    '.sponsored{display:inline-block;margin-top:8px;font:600 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);border:1px solid var(--line);padding:3px 6px}',
+    '.qitem{border-top:1px solid var(--line);padding:12px 0}',
+    '.tag{display:inline-block;margin-right:6px;padding:3px 6px;border:1px solid var(--line);font:700 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase}',
+    '.tag.ok{color:var(--teal);border-color:rgba(61,190,168,.5)}.tag.wait,.tag.pay{color:var(--gold2);border-color:rgba(225,179,26,.45)}',
+    '.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:0 0 12px}',
+    '.day{border:1px solid var(--line);padding:6px;min-height:52px;background:var(--panel2)}',
+    '.day b{display:block;font:700 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--mute)}',
+    '.day span{color:var(--gold2);font:700 16px/1 "Barlow Condensed",sans-serif}',
+    '.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}',
+    '@media (max-width:980px){.shell{grid-template-columns:1fr}.week{grid-template-columns:repeat(4,minmax(0,1fr))}}',
+    '@media (max-width:560px){.grid2,.week{grid-template-columns:1fr 1fr}.mark{font-size:28px}}',
+    '@media (prefers-reduced-motion:reduce){.sp *{transition:none!important}}'
+  ].join('\n');
 
-  function base() {
+  var ORGANIC = [
+    ['facebook', 'Facebook', 5000],
+    ['instagram', 'Instagram', 2200],
+    ['tiktok', 'TikTok', 2200],
+    ['youtube', 'YouTube', 5000],
+    ['x', 'X', 280],
+    ['linkedin', 'LinkedIn', 3000],
+    ['threads', 'Threads', 500],
+    ['pinterest', 'Pinterest', 500],
+    ['bluesky', 'Bluesky', 300],
+    ['google', 'Google Business', 1500],
+    ['snapchat', 'Snapchat', 160],
+    ['telegram', 'Telegram', 4096],
+    ['discord', 'Discord', 2000],
+    ['whatsapp', 'WhatsApp', 700],
+    ['reddit', 'Reddit', 40000]
+  ];
+  var ADS = [
+    ['meta', 'Meta Ads', 'Facebook and Instagram'],
+    ['youtube-ads', 'YouTube Ads', 'In-stream, in-feed, Shorts'],
+    ['tiktok-ads', 'TikTok Ads', 'In-feed and Spark'],
+    ['x-ads', 'X Ads', 'Promoted posts'],
+    ['linkedin-ads', 'LinkedIn Ads', 'Sponsored content'],
+    ['google-ads', 'Google Ads', 'Search and display'],
+    ['pinterest-ads', 'Pinterest Ads', 'Promoted pins'],
+    ['snap-ads', 'Snapchat Ads', 'Story and Spotlight']
+  ];
+
+  function seed() {
+    function slot(id, network, name, live, note) {
+      return { id: id, network: network, name: name, live: !!live, note: note || (live ? 'Ready to publish' : 'Not connected') };
+    }
+    var tradingOrg = [
+      slot('fb', 'Facebook', 'Max Maserati Trading University', true),
+      slot('ig', 'Instagram', 'Connect a page', false),
+      slot('tt', 'TikTok', 'Connect a page', false),
+      slot('yt', 'YouTube', 'Max Maserati', true, 'Ready. A video is required.'),
+      slot('x', 'X', '@Emaxmaserati', true),
+      slot('whop-public', 'Whop', 'Public forum', true, 'Trading only'),
+      slot('whop-weekly', 'Whop', 'Weekly Analysis', true, 'Trading only · members')
+    ];
+    ORGANIC.forEach(function (n) {
+      if (n[0] === 'facebook' || n[0] === 'instagram' || n[0] === 'tiktok' || n[0] === 'youtube' || n[0] === 'x') return;
+      tradingOrg.push(slot('tr-' + n[0], n[1], 'Connect a page', false));
+    });
+    function blank(prefix) {
+      return ORGANIC.filter(function (n) { return n[1] !== 'Whop'; }).map(function (n) {
+        return slot(prefix + n[0], n[1], 'Connect a page', false);
+      });
+    }
+    function ads(prefix) {
+      return ADS.map(function (a) {
+        return slot(prefix + a[0], a[1], a[2], false, 'Add a funded ad account to run this');
+      });
+    }
     return [
-      {
-        id: 'trading', name: 'Trading', site: 'maxmaserati.com',
-        blurb: 'Several pages. Whop is only for this business.',
-        platforms: [
-          { id: 'fb', network: 'Facebook', name: 'Max Maserati Trading University', live: true, note: 'Connected. I can post.' },
-          { id: 'yt', network: 'YouTube', name: 'Max Maserati', live: true, note: 'Connected. A video is required.' },
-          { id: 'x', network: 'X', name: '@Emaxmaserati', live: true, note: 'Connected. I can post.' },
-          { id: 'ig', network: 'Instagram', name: 'Add the account', live: false, note: 'Not connected yet.' },
-          { id: 'tt', network: 'TikTok', name: 'Add the account', live: false, note: 'Not connected yet.' },
-          { id: 'whop-public', network: 'Whop', name: 'Public forum', live: true, note: 'Trading only. I can post after you approve.' },
-          { id: 'whop-weekly', network: 'Whop', name: 'Weekly Analysis', live: true, note: 'Trading only. Members.' }
-        ]
-      },
-      {
-        id: 'table', name: 'Table Fifty', site: 'tablefifty.co.uk',
-        blurb: 'Half-price restaurant and takeaway deals, UK-wide. No Whop.',
-        platforms: [
-          { id: 'tf-fb', network: 'Facebook', name: 'Add the account', live: false, note: 'Not connected yet.' },
-          { id: 'tf-ig', network: 'Instagram', name: 'Add the account', live: false, note: 'Not connected yet.' },
-          { id: 'tf-tt', network: 'TikTok', name: 'Add the account', live: false, note: 'Not connected yet.' },
-          { id: 'tf-yt', network: 'YouTube', name: 'Add the account', live: false, note: 'Not connected yet.' },
-          { id: 'tf-x', network: 'X', name: 'Add the account', live: false, note: 'Not connected yet.' }
-        ]
-      },
-      {
-        id: 'ayiti', name: 'Ayiti P2P', site: 'ayitip2p.com',
-        blurb: 'Its own business. No Whop.',
-        platforms: [
-          { id: 'ap-fb', network: 'Facebook', name: 'Add the account', live: false, note: 'Not connected yet.' },
-          { id: 'ap-ig', network: 'Instagram', name: 'Add the account', live: false, note: 'Not connected yet.' },
-          { id: 'ap-tt', network: 'TikTok', name: 'Add the account', live: false, note: 'Not connected yet.' },
-          { id: 'ap-yt', network: 'YouTube', name: 'Add the account', live: false, note: 'Not connected yet.' },
-          { id: 'ap-x', network: 'X', name: 'Add the account', live: false, note: 'Not connected yet.' }
-        ]
-      }
+      { id: 'trading', name: 'Trading', site: 'maxmaserati.com', blurb: 'Several pages. Whop is only here.', organic: tradingOrg, ads: ads('tr-ad-') },
+      { id: 'table', name: 'Table Fifty', site: 'tablefifty.co.uk', blurb: 'Half-price tables and delivery, UK-wide. No Whop.', organic: blank('tf-'), ads: ads('tf-ad-') },
+      { id: 'ayiti', name: 'Ayiti P2P', site: 'ayitip2p.com', blurb: 'Its own business. No Whop.', organic: blank('ap-'), ads: ads('ap-ad-') }
     ];
   }
 
+  function limitOf(network) {
+    var hit = ORGANIC.filter(function (n) { return n[1] === network; })[0];
+    if (network === 'Whop') return 5000;
+    return hit ? hit[2] : 5000;
+  }
+  function letter(network) { return (network || '?').replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase(); }
+
   function load() {
-    var state = { biz: 'trading', selected: ['fb', 'x'], mode: 'same', text: '', custom: {}, when: 'now', at: '', link: '', items: [], extra: {} };
+    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '' };
     try {
       var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
-      if (!raw) return state;
-      if (raw.biz) state.biz = raw.biz;
-      if (Array.isArray(raw.selected)) state.selected = raw.selected;
-      if (raw.mode === 'custom') state.mode = 'custom';
-      state.text = raw.text || '';
-      state.custom = raw.custom || {};
-      state.when = raw.when === 'later' ? 'later' : 'now';
-      state.at = raw.at || '';
-      state.link = raw.link || '';
-      state.items = Array.isArray(raw.items) ? raw.items : [];
-      state.extra = raw.extra && typeof raw.extra === 'object' ? raw.extra : {};
-      return state;
-    } catch (e) { return state; }
+      if (!raw) return s;
+      ['biz', 'mode', 'tone', 'text', 'when', 'at', 'link', 'objective', 'budget', 'currency', 'start', 'end', 'audience'].forEach(function (k) { if (raw[k] != null) s[k] = raw[k]; });
+      if (Array.isArray(raw.selected)) s.selected = raw.selected;
+      if (raw.custom) s.custom = raw.custom;
+      if (Array.isArray(raw.items)) s.items = raw.items;
+      if (raw.extra) s.extra = raw.extra;
+      return s;
+    } catch (e) { return s; }
   }
 
   function businesses(state) {
-    return base().map(function (b) {
-      var extra = (state.extra && state.extra[b.id]) || [];
-      return { id: b.id, name: b.name, site: b.site, blurb: b.blurb, platforms: b.platforms.concat(extra) };
+    return seed().map(function (b) {
+      var ex = (state.extra && state.extra[b.id]) || { organic: [], ads: [] };
+      return {
+        id: b.id, name: b.name, site: b.site, blurb: b.blurb,
+        organic: b.organic.concat(ex.organic || []),
+        ads: b.ads.concat(ex.ads || [])
+      };
     });
   }
-  function findPlat(state, id) {
-    var hit = null;
+  function pool(state) {
+    var out = [];
     businesses(state).forEach(function (b) {
-      b.platforms.forEach(function (p) { if (p.id === id) hit = { biz: b, plat: p }; });
+      b.organic.forEach(function (p) { out.push({ biz: b, kind: 'organic', plat: p }); });
+      b.ads.forEach(function (p) { out.push({ biz: b, kind: 'ads', plat: p }); });
     });
+    return out;
+  }
+  function find(state, id) {
+    var hit = null;
+    pool(state).forEach(function (x) { if (x.plat.id === id) hit = x; });
     return hit;
   }
   function uid(p) { return p + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
@@ -127,185 +194,334 @@
     }
     function report() {
       if (global.parent === global) return;
-      try { global.parent.postMessage({ mmmSocial: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) }, global.location.origin); } catch (e) {}
+      try { global.parent.postMessage({ mmmSocial: Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) }, location.origin); } catch (e) {}
     }
-
-    var wrap = el('div', 'mmm-social');
-    root.appendChild(wrap);
-    var bizRow = el('div', 'bizs');
-    var box = el('div', 'box');
-    var comp = el('div', 'box');
-    var queue = el('div', 'box');
-    wrap.appendChild(el('h1', '', 'MMM SOCIAL+'));
-    wrap.appendChild(el('p', 'lede', 'Three businesses. Each one can have as many social accounts as you connect. I write the post, you approve it, then I publish only to the accounts you picked. Whop is only for Trading.'));
-    wrap.appendChild(bizRow);
-    wrap.appendChild(box);
-    wrap.appendChild(comp);
-    wrap.appendChild(queue);
-
-    function current() { return businesses(state).filter(function (b) { return b.id === state.biz; })[0]; }
-    function chosen() { return state.selected.map(function (id) { return findPlat(state, id); }).filter(Boolean); }
-    function bodyFor(id) {
-      var t = state.mode === 'custom' ? (state.custom[id] || '') : state.text;
-      if (state.link && t.indexOf(state.link) < 0) t = (t ? t + '\n\n' : '') + state.link;
+    function chosen() {
+      return state.selected.map(function (id) { return find(state, id); }).filter(function (x) { return x && x.kind === state.mode; });
+    }
+    function caption(id) {
+      var t = state.tone === 'custom' ? (state.custom[id] || '') : (state.text || '');
+      if (state.mode === 'organic' && state.link && t.indexOf(state.link) < 0) t = (t ? t + '\n\n' : '') + state.link;
       return t.trim();
     }
 
+    var wrap = el('div', 'sp');
+    root.appendChild(wrap);
+    var top = el('div', 'top');
+    var titles = el('div');
+    var h = el('h1', 'mark');
+    h.appendChild(document.createTextNode('MMM '));
+    h.appendChild(el('span', '', 'SOCIAL+'));
+    titles.appendChild(h);
+    titles.appendChild(el('p', 'sub', 'One desk for Trading, Table Fifty and Ayiti P2P. Organic posts and paid ads. Nothing goes out until you approve it.'));
+    var modes = el('div', 'modes');
+    var bOrg = el('button', '', 'Organic');
+    var bAds = el('button', '', 'Paid ads');
+    bOrg.type = bAds.type = 'button';
+    modes.appendChild(bOrg); modes.appendChild(bAds);
+    top.appendChild(titles); top.appendChild(modes);
+    wrap.appendChild(top);
+
+    var shell = el('div', 'shell');
+    var left = el('aside', 'col');
+    var mid = el('section', 'col');
+    var right = el('aside', 'col');
+    shell.appendChild(left); shell.appendChild(mid); shell.appendChild(right);
+    wrap.appendChild(shell);
+    var queue = el('section', 'col');
+    queue.style.marginTop = '12px';
+    wrap.appendChild(queue);
+
+    var bizBox = el('div', 'bizs');
+    var listBox = el('div');
+    var addBox = el('div', 'add');
+    left.appendChild(bizBox);
+    left.appendChild(el('h2', 'h', 'Accounts'));
+    left.appendChild(listBox);
+    left.appendChild(addBox);
+
+    var cap = document.createElement('textarea');
+    cap.placeholder = 'Write the post once. Or switch to a different caption per account.';
+    var customBox = el('div');
+    var link = document.createElement('input');
+    link.type = 'url'; link.placeholder = 'https://';
+    var whenBox = el('div', 'seg');
+    var at = document.createElement('input');
+    at.type = 'datetime-local';
+    var adGrid = el('div', 'grid2');
+    var objective = document.createElement('select');
+    ['Awareness', 'Traffic', 'Engagement', 'Leads', 'Sales'].forEach(function (o) { var opt = document.createElement('option'); opt.textContent = o; objective.appendChild(opt); });
+    var budget = document.createElement('input');
+    budget.inputMode = 'decimal'; budget.placeholder = '20';
+    var currency = document.createElement('select');
+    ['GBP', 'USD', 'EUR'].forEach(function (c) { var opt = document.createElement('option'); opt.textContent = c; currency.appendChild(opt); });
+    var start = document.createElement('input'); start.type = 'date';
+    var end = document.createElement('input'); end.type = 'date';
+    var audience = document.createElement('textarea');
+    audience.placeholder = 'Who should see it. Country, age, interest. Example: UK, 25–45, restaurants.';
+    audience.style.minHeight = '80px';
+    var msg = el('p', 'msg');
+    var actions = el('div', 'actions');
+    var saveBtn = el('button', 'btn', 'Save draft');
+    var okBtn = el('button', 'btn gold', 'Approve');
+    saveBtn.type = okBtn.type = 'button';
+    actions.appendChild(saveBtn); actions.appendChild(okBtn);
+
+    function field(label, node) {
+      var wrap = el('div');
+      wrap.appendChild(el('label', 'lab', label));
+      wrap.appendChild(node);
+      return wrap;
+    }
+
+    mid.appendChild(el('h2', 'h', 'Composer'));
+    var tone = el('div', 'seg');
+    var sameBtn = el('button', '', 'Same text');
+    var customBtn = el('button', '', 'Different per account');
+    sameBtn.type = customBtn.type = 'button';
+    tone.appendChild(sameBtn); tone.appendChild(customBtn);
+    mid.appendChild(tone);
+    var capLab = el('label', 'lab', 'Caption');
+    mid.appendChild(capLab); mid.appendChild(cap); mid.appendChild(customBox);
+    var organicExtra = el('div');
+    organicExtra.appendChild(field('Link', link));
+    var whenLab = el('label', 'lab', 'When');
+    organicExtra.appendChild(whenLab); organicExtra.appendChild(whenBox); organicExtra.appendChild(at);
+    mid.appendChild(organicExtra);
+    var adExtra = el('div');
+    adGrid.appendChild(field('Objective', objective));
+    adGrid.appendChild(field('Daily budget', budget));
+    adGrid.appendChild(field('Currency', currency));
+    adGrid.appendChild(field('Start', start));
+    adExtra.appendChild(adGrid);
+    adExtra.appendChild(field('End', end));
+    adExtra.appendChild(field('Audience', audience));
+    adExtra.appendChild(el('p', 'msg', 'Approving an ad does not charge you. I only place it after you say go, and only on an ad account that is connected and funded.'));
+    mid.appendChild(adExtra);
+    mid.appendChild(actions);
+    mid.appendChild(msg);
+
+    right.appendChild(el('h2', 'h', 'Preview'));
+    var preview = el('div');
+    right.appendChild(preview);
+
+    function setPressed(btn, on) { btn.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+
     function paintBiz() {
-      bizRow.replaceChildren();
+      bizBox.replaceChildren();
       businesses(state).forEach(function (b) {
-        var live = b.platforms.filter(function (p) { return p.live; }).length;
+        var live = b.organic.concat(b.ads).filter(function (p) { return p.live; }).length;
         var btn = el('button', 'biz' + (state.biz === b.id ? ' on' : ''));
         btn.type = 'button';
         btn.appendChild(el('b', '', b.name));
         btn.appendChild(el('small', '', b.site + ' · ' + live + ' ready'));
-        btn.addEventListener('click', function () { state.biz = b.id; save(); paint(); });
-        bizRow.appendChild(btn);
+        btn.addEventListener('click', function () { state.biz = b.id; save(); paintSide(); paintPreview(); });
+        bizBox.appendChild(btn);
       });
     }
 
-    function paintPlatforms() {
-      var b = current();
-      box.replaceChildren();
-      box.appendChild(el('h2', '', b.name + ' accounts'));
-      box.appendChild(el('p', 'lede', b.blurb + ' Tap every account this post should use. Add another any time.'));
-      var rail = el('div', 'pages');
-      b.platforms.forEach(function (p) {
+    function paintSide() {
+      var b = businesses(state).filter(function (x) { return x.id === state.biz; })[0];
+      listBox.replaceChildren();
+      listBox.appendChild(el('p', 'msg', b.blurb));
+      var rows = state.mode === 'ads' ? b.ads : b.organic;
+      rows.forEach(function (p) {
         var on = state.selected.indexOf(p.id) >= 0;
-        var btn = el('button', 'page' + (on ? ' on' : '') + (p.live ? '' : ' off'));
+        var btn = el('button', 'acc' + (on ? ' on' : ''));
         btn.type = 'button';
-        btn.appendChild(document.createTextNode(p.network + ' · ' + p.name));
-        btn.appendChild(el('small', '', p.note || (p.live ? 'Ready' : 'Not connected yet')));
+        var mark = el('span', 'mono', letter(p.network));
+        var dot = el('span', 'dot' + (p.live ? ' live' : ''));
+        var g = el('span', 'grow');
+        g.appendChild(el('span', 'nm', p.network));
+        g.appendChild(el('span', 'meta', p.name + ' · ' + (p.live ? 'Ready' : 'Connect')));
+        btn.appendChild(mark); btn.appendChild(g); btn.appendChild(dot);
         btn.addEventListener('click', function () {
           var i = state.selected.indexOf(p.id);
           if (i >= 0) state.selected.splice(i, 1); else state.selected.push(p.id);
-          save(); paint();
+          save(); paintSide(); paintCustom(); paintPreview(); paintButtons();
         });
-        rail.appendChild(btn);
+        listBox.appendChild(btn);
       });
-      box.appendChild(rail);
-      var add = el('div', 'add');
+      addBox.replaceChildren();
       var net = document.createElement('select');
-      (b.id === 'trading' ? NETS : NETS.filter(function (n) { return n !== 'Whop'; })).forEach(function (n) {
-        var o = document.createElement('option'); o.textContent = n; net.appendChild(o);
-      });
+      var catalog = state.mode === 'ads' ? ADS.map(function (a) { return a[1]; }) : ORGANIC.map(function (n) { return n[1]; }).concat(b.id === 'trading' ? ['Whop'] : []);
+      catalog.forEach(function (n) { var o = document.createElement('option'); o.textContent = n; net.appendChild(o); });
       var name = document.createElement('input');
-      name.placeholder = 'Account or page name';
-      var go = el('button', 'btn', 'Add account');
+      name.placeholder = state.mode === 'ads' ? 'Ad account name' : 'Page or @handle';
+      var go = el('button', 'btn', state.mode === 'ads' ? 'Add ad account' : 'Add page');
       go.type = 'button';
       go.addEventListener('click', function () {
         var label = name.value.trim();
         if (!label) return;
         if (net.value === 'Whop' && b.id !== 'trading') return;
-        state.extra[b.id] = state.extra[b.id] || [];
+        state.extra[b.id] = state.extra[b.id] || { organic: [], ads: [] };
         var id = uid(b.id);
-        state.extra[b.id].push({ id: id, network: net.value, name: label, live: false, note: 'Saved here. Tell me when this login is connected and I will post to it.' });
+        var row = { id: id, network: net.value, name: label, live: false, note: 'Saved. Tell me when the login is connected.' };
+        state.extra[b.id][state.mode === 'ads' ? 'ads' : 'organic'].push(row);
         state.selected.push(id);
         name.value = '';
-        save(); paint();
+        save(); paintSide(); paintCustom(); paintPreview();
       });
-      add.appendChild(net); add.appendChild(name); add.appendChild(go);
-      box.appendChild(add);
+      addBox.appendChild(net); addBox.appendChild(name); addBox.appendChild(go);
     }
 
-    function paintComposer() {
-      comp.replaceChildren();
-      comp.appendChild(el('h2', '', 'Composer'));
-      var seg = el('div', 'seg row');
-      [['same', 'Same text on every account'], ['custom', 'Different text per account']].forEach(function (pair) {
-        var b = el('button', '', pair[1]);
-        b.type = 'button';
-        b.setAttribute('aria-pressed', state.mode === pair[0] ? 'true' : 'false');
-        b.addEventListener('click', function () { state.mode = pair[0]; save(); paint(); });
-        seg.appendChild(b);
-      });
-      comp.appendChild(seg);
-      function area(label, value, write) {
-        comp.appendChild(el('label', '', label));
+    function paintCustom() {
+      customBox.replaceChildren();
+      if (state.tone !== 'custom') { customBox.hidden = true; cap.hidden = false; capLab.hidden = false; return; }
+      customBox.hidden = false; cap.hidden = true; capLab.hidden = true;
+      var list = chosen();
+      if (!list.length) { customBox.appendChild(el('p', 'msg', 'Select at least one account.')); return; }
+      list.forEach(function (hit) {
+        customBox.appendChild(el('label', 'lab', hit.biz.name + ' · ' + hit.plat.network + ' · ' + hit.plat.name));
         var ta = document.createElement('textarea');
-        ta.value = value || '';
-        ta.addEventListener('input', function () { write(ta.value); save(); });
-        comp.appendChild(ta);
-      }
-      if (state.mode === 'same') area('Caption', state.text, function (v) { state.text = v; });
-      else {
-        var list = chosen();
-        if (!list.length) comp.appendChild(el('p', 'msg', 'Pick at least one account.'));
-        list.forEach(function (hit) {
-          area(hit.biz.name + ' · ' + hit.plat.network + ' · ' + hit.plat.name, state.custom[hit.plat.id] || '', function (v) { state.custom[hit.plat.id] = v; });
-        });
-      }
-      comp.appendChild(el('label', '', 'Link (optional)'));
-      var link = document.createElement('input');
-      link.type = 'url'; link.placeholder = 'https://'; link.value = state.link || '';
-      link.addEventListener('input', function () { state.link = link.value; save(); });
-      comp.appendChild(link);
-      var when = el('div', 'seg row');
+        ta.value = state.custom[hit.plat.id] || '';
+        ta.addEventListener('input', function () { state.custom[hit.plat.id] = ta.value; save(); paintPreview(); });
+        customBox.appendChild(ta);
+      });
+    }
+
+    function paintPreview() {
+      preview.replaceChildren();
+      var list = chosen();
+      if (!list.length) { preview.appendChild(el('p', 'msg', 'Select accounts on the left. The post previews here, one card per page.')); return; }
+      list.forEach(function (hit) {
+        var text = caption(hit.plat.id);
+        var max = state.mode === 'ads' ? 500 : limitOf(hit.plat.network);
+        var card = el('article', 'card');
+        card.appendChild(el('div', 'who', hit.plat.network + ' · ' + hit.plat.name));
+        card.appendChild(el('p', '', text || 'Caption will show here.'));
+        if (state.mode === 'ads') card.appendChild(el('div', 'sponsored', 'Sponsored · ' + state.objective + ' · ' + (state.currency || 'GBP') + ' ' + (state.budget || '0') + '/day'));
+        else {
+          var bar = el('div', 'bar');
+          var i = document.createElement('i');
+          var pct = Math.min(100, Math.round((text.length / max) * 100));
+          i.style.width = pct + '%';
+          if (text.length > max) i.className = 'hot';
+          bar.appendChild(i);
+          card.appendChild(bar);
+          card.appendChild(el('div', 'msg', text.length + ' / ' + max + (hit.plat.live ? '' : ' · not connected yet')));
+        }
+        preview.appendChild(card);
+      });
+      report();
+    }
+
+    function paintButtons() {
+      var n = chosen().length;
+      okBtn.textContent = n ? ('Approve · ' + n) : 'Approve';
+      setPressed(bOrg, state.mode === 'organic');
+      setPressed(bAds, state.mode === 'ads');
+      setPressed(sameBtn, state.tone === 'same');
+      setPressed(customBtn, state.tone === 'custom');
+      organicExtra.hidden = state.mode !== 'organic';
+      adExtra.hidden = state.mode !== 'ads';
+      at.hidden = state.when !== 'later';
+    }
+
+    function paintWhen() {
+      whenBox.replaceChildren();
       [['now', 'Post when I say go'], ['later', 'Schedule']].forEach(function (pair) {
         var b = el('button', '', pair[1]);
         b.type = 'button';
-        b.setAttribute('aria-pressed', state.when === pair[0] ? 'true' : 'false');
-        b.addEventListener('click', function () { state.when = pair[0]; save(); paint(); });
-        when.appendChild(b);
+        setPressed(b, state.when === pair[0]);
+        b.addEventListener('click', function () { state.when = pair[0]; save(); paintWhen(); paintButtons(); paintQueue(); });
+        whenBox.appendChild(b);
       });
-      comp.appendChild(el('label', '', 'When'));
-      comp.appendChild(when);
-      if (state.when === 'later') {
-        var at = document.createElement('input');
-        at.type = 'datetime-local'; at.value = state.at || '';
-        at.addEventListener('input', function () { state.at = at.value; save(); });
-        comp.appendChild(at);
-      }
-      var msg = el('p', 'msg');
-      function take(status) {
-        var list = chosen();
-        if (!list.length) { msg.className = 'msg bad'; msg.textContent = 'Pick at least one account.'; return; }
-        var pages = list.map(function (hit) {
-          return { id: hit.plat.id, biz: hit.biz.name, site: hit.biz.site, network: hit.plat.network, name: hit.plat.name, live: !!hit.plat.live, text: bodyFor(hit.plat.id) };
-        });
-        if (pages.every(function (p) { return !p.text; })) { msg.className = 'msg bad'; msg.textContent = 'Write the caption first.'; return; }
-        if (state.when === 'later' && !state.at) { msg.className = 'msg bad'; msg.textContent = 'Set the time.'; return; }
-        state.items.unshift({ id: uid('post'), status: status, when: state.when, at: state.at, pages: pages });
-        save();
-        msg.className = 'msg ok';
-        msg.textContent = status === 'approved' ? 'Approved. In chat, say post it. I will send only the connected accounts, and skip the rest.' : 'Draft saved.';
-        paintQueue();
-      }
-      var row = el('div', 'row');
-      var d = el('button', 'btn', 'Save draft'); d.type = 'button'; d.addEventListener('click', function () { take('draft'); });
-      var a = el('button', 'btn gold', 'I approve this'); a.type = 'button'; a.addEventListener('click', function () { take('approved'); });
-      row.appendChild(d); row.appendChild(a);
-      comp.appendChild(row); comp.appendChild(msg);
     }
 
     function paintQueue() {
       queue.replaceChildren();
-      queue.appendChild(el('h2', '', 'Waiting for you'));
-      if (!state.items.length) { queue.appendChild(el('p', 'msg', 'Nothing yet. Pick a business, pick the accounts, write it — or tell me the topic in chat and I will draft it.')); return; }
+      queue.appendChild(el('h2', 'h', 'Calendar'));
+      var week = el('div', 'week');
+      for (var d = 0; d < 7; d++) {
+        var day = new Date(); day.setDate(day.getDate() + d);
+        var key = day.toISOString().slice(0, 10);
+        var count = state.items.filter(function (item) {
+          if (item.when !== 'later' || !item.at) return false;
+          return String(item.at).slice(0, 10) === key;
+        }).length;
+        var cell = el('div', 'day');
+        cell.appendChild(el('b', '', day.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric' })));
+        cell.appendChild(el('span', '', count ? String(count) : '·'));
+        week.appendChild(cell);
+      }
+      queue.appendChild(week);
+      queue.appendChild(el('h2', 'h', 'Queue'));
+      if (!state.items.length) { queue.appendChild(el('p', 'msg', 'No drafts. Write a post, or tell me the topic in chat and I will draft it for your approval.')); return; }
       state.items.forEach(function (item) {
-        var card = el('div', 'item');
-        card.appendChild(el('span', 'tag ' + (item.status === 'approved' ? 'ok' : 'wait'), item.status === 'approved' ? 'Approved' : 'Draft'));
-        card.appendChild(el('span', 'msg', item.when === 'now' ? 'Post when you say go' : ('Schedule ' + (item.at || ''))));
-        item.pages.forEach(function (p) {
-          card.appendChild(el('div', '', p.biz + ' · ' + p.network + ' · ' + p.name + (p.live ? '' : ' · not connected')));
-          card.appendChild(el('div', 'cap', p.text || '(empty)'));
+        var card = el('div', 'qitem');
+        var tag = el('span', 'tag ' + (item.kind === 'ads' ? 'pay' : item.status === 'approved' ? 'ok' : 'wait'), item.kind === 'ads' ? 'Paid' : (item.status === 'approved' ? 'Approved' : 'Draft'));
+        card.appendChild(tag);
+        card.appendChild(el('span', 'msg', item.kind === 'ads' ? (item.objective + ' · ' + item.currency + ' ' + item.budget + '/day') : (item.when === 'now' ? 'Post when you say go' : ('Schedule ' + (item.at || '')))));
+        (item.pages || []).forEach(function (p) {
+          card.appendChild(el('div', '', p.biz + ' · ' + p.network + ' · ' + p.name + (p.live ? '' : ' · connect first')));
+          if (p.text) card.appendChild(el('p', 'msg', p.text));
         });
-        var row = el('div', 'row');
+        var row = el('div', 'actions');
         if (item.status !== 'approved') {
-          var ap = el('button', 'btn gold', 'Approve'); ap.type = 'button';
-          ap.addEventListener('click', function () { item.status = 'approved'; save(); paint(); });
+          var ap = el('button', 'btn gold', 'Approve');
+          ap.type = 'button';
+          ap.addEventListener('click', function () { item.status = 'approved'; save(); paintQueue(); });
           row.appendChild(ap);
         }
-        var del = el('button', 'btn', 'Remove'); del.type = 'button';
-        del.addEventListener('click', function () { state.items = state.items.filter(function (x) { return x.id !== item.id; }); save(); paint(); });
+        var del = el('button', 'btn', 'Remove');
+        del.type = 'button';
+        del.addEventListener('click', function () { state.items = state.items.filter(function (x) { return x.id !== item.id; }); save(); paintQueue(); });
         row.appendChild(del);
         card.appendChild(row);
         queue.appendChild(card);
       });
+      report();
     }
 
-    function paint() { paintBiz(); paintPlatforms(); paintComposer(); paintQueue(); report(); }
-    paint();
+    function take(status) {
+      var list = chosen();
+      if (!list.length) { msg.className = 'msg bad'; msg.textContent = 'Select at least one account.'; return; }
+      var pages = list.map(function (hit) {
+        return { id: hit.plat.id, biz: hit.biz.name, site: hit.biz.site, network: hit.plat.network, name: hit.plat.name, live: !!hit.plat.live, text: caption(hit.plat.id) };
+      });
+      if (state.mode === 'organic' && pages.every(function (p) { return !p.text; })) { msg.className = 'msg bad'; msg.textContent = 'Write the caption first.'; return; }
+      if (state.mode === 'organic' && state.when === 'later' && !state.at) { msg.className = 'msg bad'; msg.textContent = 'Set the time.'; return; }
+      if (state.mode === 'ads' && !(parseFloat(state.budget) > 0)) { msg.className = 'msg bad'; msg.textContent = 'Set a daily budget.'; return; }
+      state.items.unshift({
+        id: uid('post'), status: status, kind: state.mode, when: state.when, at: state.at, pages: pages,
+        objective: state.objective, budget: state.budget, currency: state.currency, start: state.start, end: state.end, audience: state.audience
+      });
+      save();
+      msg.className = 'msg ok';
+      msg.textContent = status === 'approved'
+        ? (state.mode === 'ads' ? 'Ad approved. Say go in chat and I will place it only on a funded account. This did not charge you.' : 'Approved. Say post it in chat. I will send only the accounts that are connected.')
+        : 'Draft saved.';
+      paintQueue();
+    }
+
+    cap.addEventListener('input', function () { state.text = cap.value; save(); paintPreview(); });
+    link.addEventListener('input', function () { state.link = link.value; save(); paintPreview(); });
+    at.addEventListener('input', function () { state.at = at.value; save(); });
+    objective.addEventListener('change', function () { state.objective = objective.value; save(); paintPreview(); });
+    budget.addEventListener('input', function () { state.budget = budget.value; save(); paintPreview(); });
+    currency.addEventListener('change', function () { state.currency = currency.value; save(); paintPreview(); });
+    start.addEventListener('input', function () { state.start = start.value; save(); });
+    end.addEventListener('input', function () { state.end = end.value; save(); });
+    audience.addEventListener('input', function () { state.audience = audience.value; save(); });
+    sameBtn.addEventListener('click', function () { state.tone = 'same'; save(); paintCustom(); paintButtons(); paintPreview(); });
+    customBtn.addEventListener('click', function () { state.tone = 'custom'; save(); paintCustom(); paintButtons(); paintPreview(); });
+    bOrg.addEventListener('click', function () { state.mode = 'organic'; save(); paintSide(); paintCustom(); paintButtons(); paintPreview(); });
+    bAds.addEventListener('click', function () { state.mode = 'ads'; save(); paintSide(); paintCustom(); paintButtons(); paintPreview(); });
+    saveBtn.addEventListener('click', function () { take('draft'); });
+    okBtn.addEventListener('click', function () { take('approved'); });
+
+    cap.value = state.text || '';
+    link.value = state.link || '';
+    at.value = state.at || '';
+    objective.value = state.objective || 'Traffic';
+    budget.value = state.budget || '';
+    currency.value = state.currency || 'GBP';
+    start.value = state.start || '';
+    end.value = state.end || '';
+    audience.value = state.audience || '';
+
+    paintBiz(); paintSide(); paintWhen(); paintCustom(); paintButtons(); paintPreview(); paintQueue();
   }
 
   global.MMMSocialDesk = { mount: mount };
