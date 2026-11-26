@@ -2,6 +2,7 @@
 (function (global) {
   'use strict';
   var KEY = 'mmm.social.plus.v4';
+  var PLATFORM = { facebook: '', google: '' };
   var PENDING_OAUTH = null;
   try {
     if ((location.hash || '').indexOf('access_token=') >= 0) {
@@ -1128,30 +1129,11 @@
       if (ses.loading) accountHost.appendChild(el('p', 'msg', 'Reading the pages on this login…'));
       if (ses.error) accountHost.appendChild(el('p', 'msg bad', ses.error));
       if (!ses.token) {
-        var appKey = key === 'Google' ? 'google' : 'facebook';
-        if (!state.apps[appKey]) {
-          accountHost.appendChild(el('p', 'msg', (key === 'Google' ? 'Google' : 'Facebook') + ' only lists pages for an app it already knows. Paste the app id once. It stays in this browser.'));
-          var idInput = document.createElement('input');
-          idInput.placeholder = key === 'Google' ? 'Google client ID' : 'Meta app ID';
-          accountHost.appendChild(idInput);
-          accountHost.appendChild(el('p', 'msg', 'Allow this redirect in the app: ' + location.origin + location.pathname));
-          var saveApp = el('button', 'btn go', 'Continue');
-          saveApp.type = 'button';
-          saveApp.addEventListener('click', function () {
-            var v = idInput.value.trim();
-            if (!v) return;
-            state.apps[appKey] = v;
-            save();
-            beginLogin(false);
-          });
-          accountHost.appendChild(saveApp);
-        } else {
-          accountHost.appendChild(el('p', 'msg', 'Pick the ' + network + ' account. Its pages will show here so you can send each one to a business.'));
-          var connect = el('button', 'btn go', 'Connect ' + network);
-          connect.type = 'button';
-          connect.addEventListener('click', function () { beginLogin(false); });
-          accountHost.appendChild(connect);
-        }
+        accountHost.appendChild(el('p', 'msg', 'Sign in. The pages on that login show up here, and you choose which business each one belongs to.'));
+        var connect = el('button', 'btn go', 'Connect ' + network);
+        connect.type = 'button';
+        connect.addEventListener('click', function () { beginLogin(false); });
+        accountHost.appendChild(connect);
       } else if (!ses.loading && !found.length && !ses.error) {
         accountHost.appendChild(el('p', 'msg', 'This login has no ' + network + ' page yet.'));
       }
@@ -1198,9 +1180,11 @@
         accountHost.appendChild(other);
       }
       function beginLogin(relogin) {
-        var appKey = key === 'Google' ? 'google' : 'facebook';
-        var appId = state.apps[appKey];
-        if (!appId) { paintAccount(); return; }
+        var appId = PLATFORM[key === 'Google' ? 'google' : 'facebook'];
+        if (!appId) {
+          accountHost.appendChild(el('p', 'msg bad', 'Sign-in for ' + network + ' is not switched on for the product yet.'));
+          return;
+        }
         if (relogin) ses.token = '';
         sessionStorage.setItem('mmm.oauth.net', key);
         sessionStorage.setItem('mmm.oauth.view', network);
