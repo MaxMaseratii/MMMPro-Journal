@@ -1070,7 +1070,7 @@
           state.account = p.network;
           goView('account');
           if (p.network === 'Facebook' || p.network === 'Instagram' || p.network === 'Threads' || p.network === 'Meta Ads') {
-            var ses = state.sessions.Facebook;
+            var ses = fbSession();
             if (ses && ses.token) pullSession('Facebook');
             else paintAccount();
             return;
@@ -1109,10 +1109,17 @@
       paintApis(apiBox);
     }
 
+    function fbSession(bizId) {
+      var id = bizId || state.biz || 'trading';
+      state.sessions.byBiz = state.sessions.byBiz || {};
+      if (!state.sessions.byBiz[id]) state.sessions.byBiz[id] = {};
+      return state.sessions.byBiz[id];
+    }
     function connectFacebook(relogin) {
       sessionStorage.setItem('mmm.oauth.net', 'Facebook');
       sessionStorage.setItem('mmm.oauth.view', state.account || 'Facebook');
-      var url = 'https://www.facebook.com/v21.0/dialog/oauth?client_id=1107484722267711&redirect_uri=' + encodeURIComponent(OAUTH_REDIRECT) + '&response_type=token&display=popup&scope=' + encodeURIComponent('public_profile,pages_show_list,pages_read_engagement,instagram_basic,business_management') + (relogin ? '&auth_type=reauthenticate' : '');
+      sessionStorage.setItem('mmm.oauth.biz', state.biz || 'trading');
+      var url = 'https://www.facebook.com/v21.0/dialog/oauth?client_id=1107484722267711&redirect_uri=' + encodeURIComponent(OAUTH_REDIRECT) + '&response_type=token&display=popup&scope=public_profile' + (relogin ? '&auth_type=reauthenticate' : '');
       var pop = window.open(url, 'mmm-facebook', 'width=520,height=720');
       if (!pop) location.href = url;
     }
@@ -1129,7 +1136,7 @@
       top.appendChild(el('h2', '', network));
       accountHost.appendChild(top);
       if (meta) {
-        var ses = state.sessions.Facebook || {};
+        var ses = fbSession();
         var found = network === 'Instagram' ? (ses.instagram || []) : (ses.pages || []);
         if (ses.user) accountHost.appendChild(el('p', 'msg', 'Signed in as ' + ses.user + '. Choose a page.'));
         else accountHost.appendChild(el('p', 'msg', 'Sign in with Facebook. Then choose the page for each business.'));
@@ -1176,7 +1183,37 @@
           row.appendChild(use);
           accountHost.appendChild(row);
         });
-        if (ses.token && !found.length && !ses.loading && !ses.error) accountHost.appendChild(el('p', 'msg', 'This login has no ' + network + ' page.'));
+        if (ses.token && !found.length && !ses.loading && !ses.error) {
+          accountHost.appendChild(el('p', 'msg', 'Signed in for this business. Name the page and choose the business.'));
+          var pageName = document.createElement('input');
+          pageName.placeholder = 'Page name';
+          var bizPick = document.createElement('select');
+          businesses(state).forEach(function (bb) {
+            var o = document.createElement('option');
+            o.value = bb.id; o.textContent = bb.name;
+            if (bb.id === state.biz) o.selected = true;
+            bizPick.appendChild(o);
+          });
+          bizPick.style.marginTop = '8px';
+          var done = el('button', 'btn go', 'Use this page');
+          done.type = 'button';
+          done.style.marginTop = '8px';
+          done.addEventListener('click', function () {
+            var label = pageName.value.trim();
+            if (!label) return;
+            var bizId = bizPick.value;
+            state.extra[bizId] = state.extra[bizId] || { organic: [], ads: [] };
+            var kind = state.mode === 'ads' ? 'ads' : 'organic';
+            var id = uid(bizId);
+            state.extra[bizId][kind].push({ id: id, network: network, name: label, live: true, note: 'Connected' });
+            if (state.selected.indexOf(id) < 0) state.selected.push(id);
+            save();
+            paintBiz(); paintSide(); paintAccount(); paintPreview(); paintButtons();
+          });
+          accountHost.appendChild(pageName);
+          accountHost.appendChild(bizPick);
+          accountHost.appendChild(done);
+        }
         if (ses.token) {
           var other = el('button', 'btn', 'Use a different Facebook account');
           other.type = 'button';
@@ -1262,7 +1299,7 @@
       accountHost.appendChild(done);
     }
     function pullSession(which) {
-      var ses = state.sessions[which];
+      var ses = which === 'Facebook' ? fbSession() : state.sessions[which];
       if (!ses || !ses.token) return;
       ses.loading = true;
       ses.error = '';
@@ -1274,13 +1311,20 @@
           fetch('https://graph.facebook.com/v21.0/me/accounts?fields=id,name,instagram_business_account{id,username,name}&limit=100&access_token=' + encodeURIComponent(token)).then(function (r) { return r.json(); })
         ]).then(function (pair) {
           var me = pair[0] || {}, acc = pair[1] || {};
-          if (me.error || acc.error) {
+          if (me.error) {
             ses.loading = false;
-            ses.error = (acc.error && acc.error.message) || (me.error && me.error.message) || 'Facebook refused the login.';
+            ses.error = me.error.message || 'Facebook refused the login.';
             if (/expired|validating|session/i.test(ses.error)) ses.token = '';
             save(); paintAccount(); return;
           }
           ses.user = me.name || ses.user || '';
+          if (acc.error) {
+            ses.pages = [];
+            ses.instagram = [];
+            ses.loading = false;
+            ses.error = '';
+            save(); paintAccount(); return;
+          }
           ses.pages = (acc.data || []).map(function (p) { return { id: p.id, name: p.name }; });
           ses.instagram = [];
           (acc.data || []).forEach(function (p) {
@@ -1311,14 +1355,22 @@
     }
 
     function takeToken(which, token, view) {
-      if (!which || (which !== 'Facebook' && which !== 'Google')) which = 'Facebook';
-      state.sessions[which] = state.sessions[which] || {};
-      state.sessions[which].token = token;
-      state.sessions[which].error = '';
       if (view) state.account = view;
+      var biz = sessionStorage.getItem('mmm.oauth.biz') || state.biz;
+      if (biz) state.biz = biz;
+      if (which === 'Google') {
+        state.sessions.Google = state.sessions.Google || {};
+        state.sessions.Google.token = token;
+        state.sessions.Google.error = '';
+      } else {
+        var ses = fbSession(biz);
+        ses.token = token;
+        ses.error = '';
+        ses.pages = [];
+      }
       save();
       goView('account');
-      pullSession(which);
+      pullSession(which === 'Google' ? 'Google' : 'Facebook');
     }
 
     function paintApis(host) {
