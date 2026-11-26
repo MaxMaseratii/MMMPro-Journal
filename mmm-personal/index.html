@@ -60,7 +60,7 @@ h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);l
       <div class="offer best"><span>Monthly</span><b class="p">$10</b><span>to join (your first month), then <b>$4.99</b> every 30 days. Miss a payment: 5 days to pay before the page locks. Let it end and joining again costs the $10 again.</span>
         <a class="cta" href="https://whop.com/checkout/plan_FmSImcTSTpHtj" target="_blank" rel="noopener">Join monthly</a></div>
       <div class="offer"><span>Lifetime</span><b class="p">$100</b><span>once. The page stays open for life.</span>
-        <a class="cta ghost" href="https://whop.com/checkout/plan_YJHvkgdIQ4sOb" target="_blank" rel="noopener">Get lifetime access</a></div>
+        <a class="cta ghost" href="https://whop.com/checkout/ch_gEVsCTqdcJjBXO6/" target="_blank" rel="noopener">Get lifetime access</a></div>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
       <button class="cta" id="g-login" type="button">Log in</button>
@@ -89,7 +89,7 @@ h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);l
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
   var ENGINE = (window.MMM_ENGINE_URL || 'https://minimax-engine.onrender.com').replace(/\/$/, '');
-  var KEY = null, USER = null, busy = false, URLS = {};
+  var KEY = null, USER = null, busy = false, URLS = {}, tries = 0, PAID = /[?&]paid=1/.test(location.search);
   function b64(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
   function say(title, text, opt) {
     opt = opt || {};
@@ -130,6 +130,7 @@ h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);l
       return fetch(ENGINE + '/pub/personal/key', { headers: { Authorization: 'Bearer ' + tok } }).then(function (r) { return r.json().then(function (j) { j._s = r.status; return j; }); });
     }).then(function (j) {
       if (j.ok) return crypto.subtle.importKey('raw', b64(j.key), 'AES-GCM', false, ['decrypt']).then(function (k) { KEY = k; return openPage(); });
+      if (j.code === 'pay' && PAID && tries < 6) { tries++; say('Payment received?', 'Whop can take a minute to confirm. Checking again in 20 seconds… (' + tries + '/6)', {}); setTimeout(function () { busy = false; check(); }, 20000); return; }
       if (j.code === 'pay') return say('Join to open the page', 'No paid membership found for ' + (j.email || 'this email') + (j.why && j.why !== 'none' ? ' (status: ' + j.why.replace('_', ' ') + ')' : '') + '. Pay on Whop with this same email, then press "I paid · check again".', { offers: true, retry: true });
       if (j.code === 'unverified') return say('Confirm your email first', 'Open the link we sent to ' + (j.email || 'your email') + ', then reload this page.', { retry: true });
       if (j.code === 'setup') return say('Almost ready', 'The members check is being switched on. Try again in a few minutes.', { retry: true });
