@@ -17,19 +17,20 @@
     '.modes button.org[aria-pressed=true]{background:var(--brand);color:var(--on)}',
     '.modes button.ads[aria-pressed=true]{background:var(--spend);color:#fff}',
     '.modes button.bill[aria-pressed=true]{background:var(--bill);color:var(--bill-on)}',
-    '.shell{display:grid;grid-template-columns:220px minmax(420px,1.4fr) 320px;gap:16px;align-items:start}',
+    '.shell{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;align-items:start}',
     '.col{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:16px 16px 18px;box-shadow:0 24px 60px rgba(0,0,0,.28)}',
     '.col.work{box-shadow:inset 0 2px 0 var(--brand), 0 24px 60px rgba(0,0,0,.28)}',
     '.bizs{display:grid;gap:8px;margin-bottom:18px}',
     '.biz{display:flex;flex-direction:column;gap:2px;text-align:left;padding:12px 14px;min-height:52px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.02);color:var(--ink);border-left:3px solid var(--biz, transparent)}',
     '.biz b{font-weight:600;font-size:15px;letter-spacing:-.01em;line-height:1.2}',
     '.biz small{color:var(--mute);font-size:12px}',
-    '.biz.on{border-color:color-mix(in srgb, var(--biz, var(--brand)) 70%, transparent);background:color-mix(in srgb, var(--biz, var(--brand)) 16%, transparent)}',
-    '.biz.on b{color:var(--ink)}',
+    '.biz.on{background:var(--biz);border-color:var(--biz)}',
+    '.biz.on b,.biz.on small{color:var(--on)}',
     '.h{font-weight:600;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0 0 10px}',
     '.acc{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:8px 10px;min-height:52px;border:1px solid transparent;border-radius:14px;background:transparent;color:var(--ink);margin:0 0 2px}',
     '.acc:hover{background:rgba(255,255,255,.04)}',
-    '.acc.on{border-color:color-mix(in srgb, var(--brand) 55%, transparent);background:color-mix(in srgb, var(--brand) 14%, transparent)}',
+    '.acc.on{background:var(--brand);color:var(--on);border-color:transparent}',
+    '.acc.on .meta{color:var(--on);opacity:.75}',
     '.dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none;box-shadow:0 0 0 3px rgba(255,255,255,.03)}',
     '.dot.live{background:var(--live);box-shadow:0 0 0 3px color-mix(in srgb, var(--live) 25%, transparent)}',
     '.logo{width:36px;height:36px;border-radius:11px;flex:none;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}.logo svg{width:18px;height:18px;display:block}',
@@ -94,15 +95,18 @@
     '.dest{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px}',
     '.dest .logo{width:32px;height:32px}',
     '.apis{display:none;margin-top:12px}',
-    '.sp[data-view="queue"] .shell,.sp[data-view="queue"] .modes{display:none}',
-    '.sp[data-view="post"] .rail,.sp[data-view="post"] .boardpage{display:none}',
-    '.sp[data-view="post"] .shell{grid-template-columns:minmax(0,1fr) 340px}',
-    '.sp[data-view="accounts"] .work,.sp[data-view="accounts"] .stagecol,.sp[data-view="accounts"] .boardpage,.sp[data-view="accounts"] .modes,.sp[data-view="accounts"] .setup,.sp[data-view="accounts"] .apis{display:none}',
-    '.sp[data-view="accounts"] .shell{display:block;max-width:760px}',
-    '.sp[data-view="setup"] .work,.sp[data-view="setup"] .stagecol,.sp[data-view="setup"] .boardpage,.sp[data-view="setup"] .modes,.sp[data-view="setup"] .feed,.sp[data-view="setup"] .add,.sp[data-view="setup"] .rail > .h{display:none}',
-    '.sp[data-view="setup"] .shell{display:block;max-width:680px}',
+    '.main{min-width:0;display:grid;gap:16px;align-items:start}',
+    '.sp .modes{display:none}',
+    '.sp[data-view="post"] .modes{display:flex}',
+    '.sp[data-view="post"] .main{grid-template-columns:minmax(0,1fr) 320px}',
+    '.sp[data-view="post"] .boardpage{display:none}',
+    '.sp[data-view="queue"] .work,.sp[data-view="queue"] .stagecol,.sp[data-view="queue"] .setup,.sp[data-view="queue"] .apis{display:none}',
+    '.sp[data-view="accounts"] .main,.sp[data-view="accounts"] .setup,.sp[data-view="accounts"] .apis{display:none}',
+    '.sp[data-view="accounts"] .shell{grid-template-columns:minmax(280px,640px)}',
+    '.sp[data-view="setup"] .main,.sp[data-view="setup"] .feed,.sp[data-view="setup"] .add,.sp[data-view="setup"] .rail > .h{display:none}',
+    '.sp[data-view="setup"] .shell{grid-template-columns:minmax(280px,680px)}',
     '.sp[data-view="setup"] .apis,.sp[data-view="setup"] .setup{display:block}',
-    '@media (max-width:980px){.shell,.sp[data-view="post"] .shell{grid-template-columns:1fr}.week{grid-template-columns:repeat(4,minmax(0,1fr))}.col{border-radius:16px}}',
+    '@media (max-width:980px){.shell,.sp[data-view="post"] .main{grid-template-columns:1fr}.week{grid-template-columns:repeat(4,minmax(0,1fr))}.col{border-radius:16px}}',
     '@media (max-width:560px){.grid2,.week{grid-template-columns:1fr 1fr}.mark{font-size:34px}.modes{width:100%;overflow:auto}}',
     '@media (prefers-reduced-motion:reduce){.sp *{transition:none!important}}'
   ].join('\n');
@@ -297,7 +301,7 @@
   }
 
   function load() {
-    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '', goal: 5, format: 'Post', tags: [], tagsCustom: false, autoReply: false, replyText: '', board: 'queue', apis: [], websites: {}, more: [], names: {}, looks: {}, view: 'queue' };
+    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '', goal: 5, format: 'Post', tags: [], tagsCustom: false, autoReply: false, replyText: '', board: 'queue', apis: [], websites: {}, more: [], names: {}, looks: {}, view: 'accounts' };
     try {
       var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (!raw) return s;
@@ -461,6 +465,11 @@
       var L = lookOf(state, state.biz);
       var go = state.mode === 'ads' ? L.spend : state.mode === 'billing' ? L.bill : L.accent;
       var onGo = state.mode === 'ads' ? L.spendOn : state.mode === 'billing' ? L.billOn : L.on;
+      wrap.style.setProperty('--bg', L.bg);
+      wrap.style.setProperty('--panel', L.panel);
+      wrap.style.setProperty('--panel2', L.panel2);
+      wrap.style.setProperty('--line', L.line);
+      wrap.style.background = L.bg;
       wrap.style.setProperty('--brand', L.accent);
       wrap.style.setProperty('--brand2', L.live);
       wrap.style.setProperty('--live', L.live);
@@ -488,7 +497,7 @@
     top.appendChild(titles); top.appendChild(modes);
     wrap.appendChild(top);
     var nav = el('nav', 'nav');
-    [['queue', 'Queue'], ['post', 'Post'], ['accounts', 'Accounts'], ['setup', 'Setup']].forEach(function (pair) {
+    [['accounts', 'Accounts'], ['queue', 'Queue'], ['post', 'Post'], ['setup', 'Setup']].forEach(function (pair) {
       var b = el('button', '', pair[1]);
       b.type = 'button';
       b.dataset.view = pair[0];
@@ -501,10 +510,12 @@
     var left = el('aside', 'col rail');
     var mid = el('section', 'col work');
     var right = el('aside', 'col stagecol');
-    shell.appendChild(left); shell.appendChild(mid); shell.appendChild(right);
-    wrap.appendChild(shell);
+    var main = el('div', 'main');
+    shell.appendChild(left); shell.appendChild(main);
+    main.appendChild(mid); main.appendChild(right);
     var queue = el('section', 'col boardpage');
-    wrap.appendChild(queue);
+    main.appendChild(queue);
+    wrap.appendChild(shell);
 
     var bizBox = el('div', 'bizs');
     var listBox = el('div');
@@ -608,7 +619,7 @@
       var name = state.view || 'queue';
       wrap.dataset.view = name;
       nav.querySelectorAll('button').forEach(function (b) { setPressed(b, b.dataset.view === name); });
-      sub.textContent = name === 'post' ? 'Write it once. The phone is what people will see.' : name === 'accounts' ? 'The pages that belong to this business.' : name === 'setup' ? 'The business, its website, and any other API.' : 'What is waiting to go out.';
+      sub.textContent = name === 'post' ? 'Write it once. The phone is what people will see.' : name === 'queue' ? 'What is waiting to go out.' : name === 'setup' ? 'The business, its website, and any other API.' : 'The pages for this business. The color follows the one you select.';
       var open = wrap.querySelector('.setup');
       if (open) open.open = name === 'setup';
     }
@@ -802,7 +813,7 @@
         btn.appendChild(el('small', '', b.site + ' · ' + live + ' ready'));
         var tone = lookOf(state, b.id);
         btn.style.setProperty('--biz', tone.accent);
-        btn.addEventListener('click', function () { state.biz = b.id; save(); applyLook(); paintSide(); paintPreview(); paintBilling(); paintButtons(); });
+        btn.addEventListener('click', function () { state.biz = b.id; save(); applyLook(); paintBiz(); paintSide(); paintPreview(); paintBilling(); paintButtons(); });
         bizBox.appendChild(btn);
       });
       var add = el('div', 'card');
