@@ -54,11 +54,31 @@ export function judge(m, now = Date.now()) {
   return { open: false, why: st || 'none', until: null };
 }
 
-export async function access(email, admins = []) {
+// The admin center's own admin list lives in the MMM Test Mailer (Apps Script, Script property ADMIN_EMAILS).
+// Ask it with the user's own Firebase token, so every admin who can open /admin/ also opens this page without paying.
+const MAILER = process.env.MMM_TEST_MAIL_URL || 'https://script.google.com/macros/s/AKfycbxCEhB8tVKIFFIckhz8PyEdd5uOEtCkmtbJAg7wlNJuHOOF6Az4SyqlWDjxqe2qPjeNHQ/exec';
+const adminSeen = new Map();
+async function mailerAdmin(email, idToken) {
+  const hit = adminSeen.get(email);
+  if (hit && Date.now() - hit < 6 * 36e5) return true;
+  if (!idToken) return false;
+  try {
+    const res = await fetch(MAILER, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'admin', idToken }), redirect: 'follow', signal: AbortSignal.timeout(45000) });
+    const j = await res.json();
+    if (j && j.ok) { adminSeen.set(email, Date.now()); return true; }
+  } catch { /* the Apps Script did not answer: fall back to the Whop check */ }
+  return false;
+}
+
+export async function access(email, admins = [], idToken = null) {
   email = String(email || '').toLowerCase();
-  if (admins.includes(email)) return { open: true, why: 'admin', until: null };
-  const mine = (await memberships()).filter((m) => emailOf(m) === email);
+  if (admins.includes(email) || adminSeen.has(email)) return { open: true, why: 'admin', until: null };
+  let mine = [], whopErr = null;
+  try { mine = (await memberships()).filter((m) => emailOf(m) === email); } catch (e) { whopErr = e; }
   const best = mine.map((m) => judge(m)).sort((a, b) => Number(b.open) - Number(a.open) || (b.why === 'lifetime') - (a.why === 'lifetime'))[0];
+  if (best && best.open) return best;
+  if (await mailerAdmin(email, idToken)) return { open: true, why: 'admin', until: null };
+  if (whopErr) throw whopErr;
   return best || { open: false, why: 'none', until: null };
 }
 

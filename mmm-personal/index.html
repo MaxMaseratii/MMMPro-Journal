@@ -124,7 +124,7 @@ h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);l
   }
   function check() {
     if (busy || !USER) return; busy = true;
-    say('Checking your membership…', USER.email || '', {});
+    say('Checking your access…', (USER.email || '') + ' · admins and members open without paying. The first check can take up to a minute.', {});
     USER.getIdToken().then(function (tok) {
       return fetch(ENGINE + '/pub/personal/key', { headers: { Authorization: 'Bearer ' + tok } }).then(function (r) { return r.json().then(function (j) { j._s = r.status; return j; }); });
     }).then(function (j) {
@@ -150,7 +150,8 @@ h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);l
     document.querySelectorAll('.tabs button').forEach(function (x) { x.setAttribute('aria-selected', String(x === b)); });
     $('p-edge').hidden = b.dataset.t !== 'edge'; $('p-one').hidden = b.dataset.t !== 'one';
   });
-  say('Log in to open the page', 'Use the same email as your Whop payment.', { login: true, offers: true });
+  // wait for the login state first, so an admin or member never sees the price screen by mistake
+  say('Loading…', '', {});
   if (window.MMM && window.MMM.user && window.MMM.user()) onUser(window.MMM.user());
 })();
 </script>
