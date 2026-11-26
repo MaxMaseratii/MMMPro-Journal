@@ -47,7 +47,7 @@ app.use((req, res, next) => {
 });
 
 const notFound = (_req, res) => res.status(404).type('text/plain').send('Not found');
-app.get('/healthz', (_req, res) => res.type('text/plain').send('ok v6'));
+app.get('/healthz', (_req, res) => res.type('text/plain').send('ok v7'));
 
 // ---------- Claude connector (stateless Streamable HTTP) ----------
 const guard = (req, res, next) => (tokenMatches(req.params.token) ? next() : notFound(req, res));
@@ -97,7 +97,7 @@ pub.get('/personal/key', async (req, res) => {
   }
   if (!personal.personalReady()) return res.status(503).json({ ok: false, code: 'setup' });
   try {
-    const a = await personal.access(email, ADMIN_EMAILS);
+    const a = await personal.access(email, ADMIN_EMAILS, m[1]);
     if (!a.open) return res.status(402).json({ ok: false, code: 'pay', why: a.why, email });
     res.json({ ok: true, key: personal.personalKey(), why: a.why, until: a.until, email });
   } catch {
