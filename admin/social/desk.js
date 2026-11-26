@@ -1068,9 +1068,15 @@
         btn.appendChild(mark); btn.appendChild(g); btn.appendChild(dot);
         btn.addEventListener('click', function () {
           state.account = p.network;
+          goView('account');
+          if (p.network === 'Facebook' || p.network === 'Instagram' || p.network === 'Threads' || p.network === 'Meta Ads') {
+            var ses = state.sessions.Facebook;
+            if (ses && ses.token) pullSession('Facebook');
+            else { paintAccount(); connectFacebook(false); }
+            return;
+          }
           var login = LOGIN[p.network];
           if (login) window.open(login, '_blank', 'noopener,noreferrer');
-          goView('account');
           paintAccount();
         });
         feed.appendChild(btn);
@@ -1099,8 +1105,45 @@
       paintApis(apiBox);
     }
 
+    function loadFb(cb) {
+      if (window.FB) { cb(); return; }
+      loadFb.q = loadFb.q || [];
+      loadFb.q.push(cb);
+      if (loadFb.started) return;
+      loadFb.started = true;
+      window.fbAsyncInit = function () {
+        window.FB.init({ appId: '1107484722267711', cookie: true, xfbml: false, version: 'v21.0' });
+        var q = loadFb.q || [];
+        loadFb.q = [];
+        q.forEach(function (fn) { try { fn(); } catch (e) {} });
+      };
+      var s = document.createElement('script');
+      s.src = 'https://connect.facebook.net/en_US/sdk.js';
+      s.async = true;
+      document.head.appendChild(s);
+    }
+    function connectFacebook(relogin) {
+      loadFb(function () {
+        var opts = { scope: 'public_profile,pages_show_list,pages_read_engagement,instagram_basic,business_management' };
+        if (relogin) opts.auth_type = 'reauthenticate';
+        window.FB.login(function (res) {
+          state.sessions.Facebook = state.sessions.Facebook || {};
+          if (!res || !res.authResponse) {
+            state.sessions.Facebook.error = 'Facebook sign-in did not finish.';
+            save();
+            paintAccount();
+            return;
+          }
+          state.sessions.Facebook.token = res.authResponse.accessToken;
+          state.sessions.Facebook.error = '';
+          save();
+          pullSession('Facebook');
+        }, opts);
+      });
+    }
     function paintAccount() {
       var network = state.account || 'Facebook';
+      var meta = network === 'Facebook' || network === 'Instagram' || network === 'Threads' || network === 'Meta Ads';
       accountHost.replaceChildren();
       var shut = el('button', 'x', 'Back to the week');
       shut.type = 'button';
@@ -1110,6 +1153,64 @@
       top.appendChild(logo(network));
       top.appendChild(el('h2', '', network));
       accountHost.appendChild(top);
+      if (meta) {
+        var ses = state.sessions.Facebook || {};
+        var found = network === 'Instagram' ? (ses.instagram || []) : (ses.pages || []);
+        if (ses.user) accountHost.appendChild(el('p', 'msg', 'Signed in as ' + ses.user + '. Choose a page.'));
+        else accountHost.appendChild(el('p', 'msg', 'Sign in with Facebook. Then choose the page for each business.'));
+        if (ses.loading) accountHost.appendChild(el('p', 'msg', 'Reading your pages…'));
+        if (ses.error) accountHost.appendChild(el('p', 'msg bad', ses.error));
+        if (!ses.token) {
+          var connect = el('button', 'btn go', 'Sign in with Facebook');
+          connect.type = 'button';
+          connect.addEventListener('click', function () { connectFacebook(false); });
+          accountHost.appendChild(connect);
+        }
+        found.forEach(function (page) {
+          var row = el('div', 'pagerow');
+          var g = el('div', 'grow');
+          g.appendChild(el('b', '', page.name));
+          var where = '';
+          businesses(state).forEach(function (biz) {
+            var bag = (state.extra[biz.id] && state.extra[biz.id][state.mode === 'ads' ? 'ads' : 'organic']) || [];
+            bag.forEach(function (p) { if (p.remoteId === page.id) where = biz.name; });
+          });
+          g.appendChild(el('span', '', where ? ('On ' + where) : 'Not on a business yet'));
+          row.appendChild(g);
+          var bizPick = document.createElement('select');
+          businesses(state).forEach(function (bb) {
+            var o = document.createElement('option');
+            o.value = bb.id; o.textContent = bb.name;
+            if (bb.id === state.biz) o.selected = true;
+            bizPick.appendChild(o);
+          });
+          var use = el('button', 'btn go', where ? 'Move' : 'Use');
+          use.type = 'button';
+          use.addEventListener('click', function () {
+            var bizId = bizPick.value;
+            var id = network.toLowerCase().replace(/[^a-z0-9]/g, '') + '-' + page.id;
+            state.extra[bizId] = state.extra[bizId] || { organic: [], ads: [] };
+            var kind = state.mode === 'ads' ? 'ads' : 'organic';
+            var bag = state.extra[bizId][kind];
+            if (!bag.some(function (p) { return p.id === id; })) bag.push({ id: id, network: network, name: page.name, live: true, note: 'From the login', remoteId: page.id });
+            if (state.selected.indexOf(id) < 0) state.selected.push(id);
+            save();
+            paintBiz(); paintSide(); paintAccount(); paintPreview(); paintButtons();
+          });
+          row.appendChild(bizPick);
+          row.appendChild(use);
+          accountHost.appendChild(row);
+        });
+        if (ses.token && !found.length && !ses.loading && !ses.error) accountHost.appendChild(el('p', 'msg', 'This login has no ' + network + ' page.'));
+        if (ses.token) {
+          var other = el('button', 'btn', 'Use a different Facebook account');
+          other.type = 'button';
+          other.style.marginTop = '16px';
+          other.addEventListener('click', function () { connectFacebook(true); });
+          accountHost.appendChild(other);
+        }
+        return;
+      }
       accountHost.appendChild(el('p', 'msg', 'One ' + network + ' login can hold several pages. Sign in, then send each page to the business it belongs to.'));
       var url = LOGIN[network];
       if (url) {
@@ -1675,6 +1776,7 @@
     save();
     applyLook();
     applyTheme();
+    loadFb(function () {});
     window.addEventListener('message', function (e) {
       if (e.origin !== location.origin || !e.data || e.data.source !== 'mmm-oauth' || !e.data.token) return;
       takeToken(e.data.network, e.data.token, sessionStorage.getItem('mmm.oauth.view') || '');
