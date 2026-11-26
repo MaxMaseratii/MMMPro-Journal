@@ -4,32 +4,34 @@
   'use strict';
   var KEY = 'mmm.social.plus.v4';
   var CSS = [
-    '.sp{--bg:#07080a;--panel:#101318;--panel2:#0b0d10;--line:#2a3038;--ink:#e7ebf0;--mute:#8b949e;--faint:#5c6770;--gold:#e1b31a;--gold2:#f3d36a;--teal:#3dbea8;--bad:#ff5d6c;',
+    '.sp{--bg:#0c0e12;--panel:#14181e;--panel2:#10141a;--line:#2c333c;--ink:#e7ebf0;--mute:#8b949e;--faint:#5c6770;--brand:#e7ebf0;--brand2:#e7ebf0;--go:#e7ebf0;--on:#14120a;--on-go:#14120a;--live:#3dbea8;--spend:#e25b2a;--bad:#ff5d6c;',
     'color:var(--ink);font:15px/1.5 Barlow,system-ui,sans-serif;background:var(--bg)}',
     '.sp *{box-sizing:border-box}',
     '.sp button,.sp select,.sp input,.sp textarea{font:inherit;color:inherit}',
     '.sp button{cursor:pointer}',
     '.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:8px 4px 16px;flex-wrap:wrap}',
-    '.mark{font:700 34px/0.9 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);margin:0}',
-    '.mark span{color:var(--ink)}',
+    '.mark{font:700 34px/0.9 "Barlow Condensed","Arial Narrow",sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--ink);margin:0}',
+    '.mark span{color:var(--brand)}',
     '.sub{margin:6px 0 0;color:var(--mute);max-width:62ch;font-size:14px}',
     '.modes{display:flex;padding:3px;border:1px solid var(--line);background:var(--panel2)}',
     '.modes button{min-height:44px;padding:0 18px;border:0;background:transparent;color:var(--mute);font:700 15px/1 "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase}',
-    '.modes button[aria-pressed=true]{background:var(--gold);color:#14120a}',
+    '.modes button.org[aria-pressed=true]{background:var(--brand);color:var(--on)}',
+    '.modes button.ads[aria-pressed=true]{background:var(--spend);color:#fff}',
+    '.modes button.bill[aria-pressed=true]{background:var(--bill);color:var(--bill-on)}',
     '.shell{display:grid;grid-template-columns:272px minmax(0,1fr) 300px;gap:12px;align-items:start}',
     '.col{background:var(--panel);border:1px solid var(--line);padding:14px}',
     '.bizs{display:grid;gap:6px;margin-bottom:14px}',
-    '.biz{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 12px;min-height:44px;border:1px solid var(--line);background:var(--panel2);color:var(--ink)}',
+    '.biz{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 12px 10px 14px;min-height:44px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-left:4px solid var(--biz,var(--line))}',
     '.biz b{font:700 16px/1.1 "Barlow Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase}',
     '.biz small{color:var(--mute);font-size:12px}',
-    '.biz.on{border-color:var(--gold);background:rgba(225,179,26,.08)}',
-    '.biz.on b{color:var(--gold2)}',
-    '.h{font:700 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 8px}',
+    '.biz.on{border-color:var(--biz,var(--brand));background:color-mix(in srgb, var(--biz,var(--brand)) 14%, var(--panel2))}',
+    '.biz.on b{color:var(--ink)}',
+    '.h{font:700 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);margin:0 0 8px}',
     '.acc{display:flex;gap:8px;align-items:center;width:100%;text-align:left;padding:8px;min-height:44px;border:1px solid transparent;background:transparent;color:var(--ink);margin:0 0 2px}',
     '.acc:hover{background:rgba(255,255,255,.03)}',
-    '.acc.on{border-color:var(--gold);background:rgba(225,179,26,.07)}',
+    '.acc.on{border-color:var(--brand);background:color-mix(in srgb, var(--brand) 12%, transparent)}',
     '.dot{width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}',
-    '.dot.live{background:var(--teal)}',
+    '.dot.live{background:var(--live)}',
     '.logo{width:32px;height:32px;border-radius:8px;flex:none;display:grid;place-items:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}.logo svg{width:18px;height:18px;display:block}',
     '.acc .nm{display:block;font-weight:600;font-size:15px}',
     '.acc .meta{display:block;color:var(--mute);font-size:12px}',
@@ -37,45 +39,48 @@
     '.add{display:grid;grid-template-columns:1fr;gap:6px;margin-top:10px}',
     '.sp input,.sp select,.sp textarea{width:100%;background:var(--panel2);border:1px solid var(--line);padding:10px 12px;outline:none}',
     '.sp textarea{min-height:140px;resize:vertical;font:14.5px/1.5 "IBM Plex Mono",ui-monospace,Menlo,monospace}',
-    '.sp input:focus,.sp select:focus,.sp textarea:focus{border-color:var(--gold)}',
+    '.sp input:focus,.sp select:focus,.sp textarea:focus{border-color:var(--brand)}',
     '.lab{display:block;margin:12px 0 4px;font:600 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--mute)}',
     '.seg{display:flex;flex-wrap:wrap;gap:6px}',
     '.seg button{min-height:40px;padding:0 12px;border:1px solid var(--line);background:var(--panel2);color:var(--mute);font:700 13px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase}',
-    '.seg button[aria-pressed=true]{border-color:var(--gold);color:#14120a;background:var(--gold)}',
+    '.seg button[aria-pressed=true]{border-color:var(--brand);color:var(--on);background:var(--brand)}',
     '.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}',
     '.btn{min-height:44px;padding:0 16px;border:1px solid var(--line);background:transparent;color:var(--ink);font:700 15px/1 "Barlow Condensed",sans-serif;letter-spacing:.07em;text-transform:uppercase}',
-    '.btn.gold{background:var(--gold);border-color:var(--gold);color:#14120a}',
+    '.btn.go{background:var(--go);border-color:var(--go);color:var(--on-go)}',
     '.sp a.btn{display:inline-flex;align-items:center;text-decoration:none;margin-top:8px}',
     '.btn:disabled{opacity:.45;cursor:not-allowed}',
     '.msg{min-height:1.2em;margin:8px 0 0;color:var(--mute);font-size:13.5px}',
-    '.msg.ok{color:var(--teal)}.msg.bad{color:var(--bad)}',
+    '.msg.ok{color:var(--live)}.msg.bad{color:var(--bad)}',
     '.card{border:1px solid var(--line);background:var(--panel2);padding:12px;margin:0 0 8px}',
     '.card .who{display:flex;align-items:center;gap:8px}.card .who b{display:block;font:600 14px/1.15 Barlow,sans-serif;color:var(--ink)}.card .who span{display:block;color:var(--mute);font-size:12px;font-weight:400}',
     '.card p{margin:8px 0 0;white-space:pre-wrap;font-size:13.5px;color:var(--ink)}',
     '.bar{height:3px;background:#1c2228;margin-top:8px}',
-    '.bar i{display:block;height:100%;background:var(--teal);width:0}',
+    '.bar i{display:block;height:100%;background:var(--live);width:0}',
     '.bar i.hot{background:var(--bad)}',
     '.sponsored{display:inline-block;margin-top:8px;font:600 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);border:1px solid var(--line);padding:3px 6px}',
     '.qitem{border-top:1px solid var(--line);padding:12px 0}',
     '.tag{display:inline-block;margin-right:6px;padding:3px 6px;border:1px solid var(--line);font:700 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase}',
-    '.tag.ok{color:var(--teal);border-color:rgba(61,190,168,.5)}.tag.wait,.tag.pay{color:var(--gold2);border-color:rgba(225,179,26,.45)}',
+    '.tag.ok{color:var(--live);border-color:color-mix(in srgb, var(--live) 55%, transparent)}.tag.wait{color:var(--brand2);border-color:color-mix(in srgb, var(--brand) 45%, transparent)}.tag.pay{color:var(--spend);border-color:color-mix(in srgb, var(--spend) 50%, transparent)}',
     '.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:0 0 12px}',
     '.board{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}',
     '.goal{display:flex;align-items:center;gap:8px}',
     '.goal input{width:72px}',
     '.chips{display:flex;flex-wrap:wrap;gap:6px}',
     '.chip{min-height:36px;padding:0 10px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);font:600 13px/1 Barlow,sans-serif}',
-    '.chip.on{border-color:var(--gold);background:var(--gold);color:#14120a}',
+    '.chip.on{border-color:var(--brand);background:var(--brand);color:var(--on)}',
     '.day{border:1px solid var(--line);padding:6px;min-height:52px;background:var(--panel2)}',
     '.day b{display:block;font:700 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--mute)}',
-    '.day span{color:var(--gold2);font:700 16px/1 "Barlow Condensed",sans-serif}',
+    '.day span{color:var(--brand);font:700 16px/1 "Barlow Condensed",sans-serif}',
     '.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}',
     '.pay{display:grid;gap:8px}',
     '.payrow{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px;min-height:64px;border:1px solid var(--line);background:var(--panel2);color:var(--ink)}',
-    '.payrow.on{border-color:var(--gold);background:rgba(225,179,26,.07)}',
+    '.payrow.on{border-color:var(--bill);background:color-mix(in srgb, var(--bill) 14%, transparent)}',
     '.payrow b{display:block;font:700 16px/1.1 "Barlow Condensed",sans-serif;letter-spacing:.04em;text-transform:uppercase}',
-    '.markbox{width:72px;height:32px;flex:none;display:grid;place-items:center;border:1px solid var(--line);font:700 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.04em}',
     '.payrow .meta{display:block;color:var(--mute);font-size:12px}',
+    '.markbox{width:72px;height:32px;flex:none;display:grid;place-items:center;border:1px solid var(--line);font:700 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.04em}',
+    '.swatches{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}',
+    '.sw{width:28px;height:28px;min-height:28px;padding:0;border-radius:50%;border:2px solid transparent}',
+    '.sw.on{border-color:#fff}',
     '@media (max-width:980px){.shell{grid-template-columns:1fr}.week{grid-template-columns:repeat(4,minmax(0,1fr))}}',
     '@media (max-width:560px){.grid2,.week{grid-template-columns:1fr 1fr}.mark{font-size:28px}}',
     '@media (prefers-reduced-motion:reduce){.sp *{transition:none!important}}'
@@ -271,7 +276,7 @@
   }
 
   function load() {
-    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '', goal: 5, format: 'Post', tags: [], tagsCustom: false, autoReply: false, replyText: '', board: 'queue', apis: [], websites: {}, more: [], names: {} };
+    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '', goal: 5, format: 'Post', tags: [], tagsCustom: false, autoReply: false, replyText: '', board: 'queue', apis: [], websites: {}, more: [], names: {}, looks: {} };
     try {
       var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (!raw) return s;
@@ -290,10 +295,29 @@
       if (raw.websites && typeof raw.websites === 'object') s.websites = raw.websites;
       if (Array.isArray(raw.more)) s.more = raw.more;
       if (raw.names && typeof raw.names === 'object') s.names = raw.names;
+      if (raw.looks && typeof raw.looks === 'object') s.looks = raw.looks;
       return s;
     } catch (e) { return s; }
   }
 
+  function lookOf(state, id) {
+    var fixed = {
+      trading: { bg:'#07080a', panel:'#101318', panel2:'#0b0d10', line:'#2a3038', accent:'#e1b31a', on:'#14120a', live:'#e1b31a', spend:'#e25b2a', spendOn:'#ffffff', bill:'#b7c0cc', billOn:'#14181e', why:'Black and gold. Premium and precise. Only Max Maserati wears this.' },
+      table: { bg:'#0b1220', panel:'#121a2b', panel2:'#0e1626', line:'#2a3a56', accent:'#10b981', on:'#04261c', live:'#34d399', spend:'#f59e0b', spendOn:'#2b1a01', bill:'#7dd3fc', billOn:'#082033', why:'Emerald is the deal. Amber is the meal. Navy is the room.' },
+      ayiti: { bg:'#101412', panel:'#171c19', panel2:'#121714', line:'#2c3832', accent:'#3ddc97', on:'#06150e', live:'#3ddc97', spend:'#3b6fe0', spendOn:'#ffffff', bill:'#e7d7b1', billOn:'#241a08', why:'Green is trust with the money. Blue is a paid ad. Sand is the wallet.' }
+    };
+    if (fixed[id]) return fixed[id];
+    var key = (state.looks && state.looks[id]) || 'clear';
+    var sw = {
+      deal: { bg:'#0b1220', panel:'#121a2b', panel2:'#0e1626', line:'#2a3a56', accent:'#10b981', on:'#04261c', live:'#34d399', spend:'#f59e0b', spendOn:'#2b1a01', bill:'#7dd3fc', billOn:'#082033', why:'Deals. Green to act, amber when it costs.' },
+      trust: { bg:'#101412', panel:'#171c19', panel2:'#121714', line:'#2c3832', accent:'#3ddc97', on:'#06150e', live:'#3ddc97', spend:'#3b6fe0', spendOn:'#ffffff', bill:'#e7d7b1', billOn:'#241a08', why:'Trust. Calm green, and a different color when money moves.' },
+      clear: { bg:'#0c1018', panel:'#141a26', panel2:'#10151f', line:'#2a3548', accent:'#4c8dff', on:'#06101f', live:'#7eb0ff', spend:'#ff8a3d', spendOn:'#2a1204', bill:'#c9d4e3', billOn:'#14181e', why:'Clarity. Blue to explain, orange when you pay.' },
+      energy: { bg:'#140c0c', panel:'#1c1212', panel2:'#160e0e', line:'#3a2424', accent:'#ff4d4d', on:'#ffffff', live:'#ff8a80', spend:'#ffb020', spendOn:'#2b1a01', bill:'#d7c4a3', billOn:'#241a08', why:'Energy. Red to be seen, gold only when it is an ad.' },
+      community: { bg:'#100e16', panel:'#181522', panel2:'#14111c', line:'#322a42', accent:'#a78bfa', on:'#160c28', live:'#c4b5fd', spend:'#f472b6', spendOn:'#2a0a18', bill:'#ddd6fe', billOn:'#160c28', why:'Community. Violet for the people, pink when you boost it.' },
+      craft: { bg:'#14110c', panel:'#1c1812', panel2:'#16130e', line:'#3a3226', accent:'#d97706', on:'#241403', live:'#fbbf24', spend:'#65a30d', spendOn:'#0c1a04', bill:'#fcd34d', billOn:'#241a08', why:'Craft. Warm brown-orange for the work, green for the spend.' }
+    };
+    return sw[key] || sw.clear;
+  }
   function siteUrlOf(state, id) {
     var defaults = { trading: 'https://www.maxmaserati.com', table: 'https://tablefifty.co.uk', ayiti: 'https://ayitip2p.com' };
     var raw = (state.websites && state.websites[id]) || defaults[id] || '';
@@ -404,17 +428,36 @@
 
     var wrap = el('div', 'sp');
     root.appendChild(wrap);
+    function applyLook() {
+      var L = lookOf(state, state.biz);
+      var go = state.mode === 'ads' ? L.spend : state.mode === 'billing' ? L.bill : L.accent;
+      var onGo = state.mode === 'ads' ? L.spendOn : state.mode === 'billing' ? L.billOn : L.on;
+      wrap.style.background = L.bg;
+      wrap.style.setProperty('--bg', L.bg);
+      wrap.style.setProperty('--panel', L.panel);
+      wrap.style.setProperty('--panel2', L.panel2);
+      wrap.style.setProperty('--line', L.line);
+      wrap.style.setProperty('--brand', L.accent);
+      wrap.style.setProperty('--brand2', L.live);
+      wrap.style.setProperty('--live', L.live);
+      wrap.style.setProperty('--on', L.on);
+      wrap.style.setProperty('--go', go);
+      wrap.style.setProperty('--on-go', onGo);
+      wrap.style.setProperty('--spend', L.spend);
+      wrap.style.setProperty('--bill', L.bill);
+      wrap.style.setProperty('--bill-on', L.billOn);
+    }
     var top = el('div', 'top');
     var titles = el('div');
     var h = el('h1', 'mark');
     h.appendChild(document.createTextNode('MMM '));
     h.appendChild(el('span', '', 'SOCIAL+'));
     titles.appendChild(h);
-    titles.appendChild(el('p', 'sub', 'One desk for Trading, Table Fifty and Ayiti P2P. Organic posts and paid ads. Nothing goes out until you approve it.'));
+    titles.appendChild(el('p', 'sub', 'Each business keeps its own color. Organic, ads, and billing do not share one. Nothing goes out until you approve it.'));
     var modes = el('div', 'modes');
-    var bOrg = el('button', '', 'Organic');
-    var bAds = el('button', '', 'Paid ads');
-    var bBill = el('button', '', 'Billing');
+    var bOrg = el('button', 'org', 'Organic');
+    var bAds = el('button', 'ads', 'Paid ads');
+    var bBill = el('button', 'bill', 'Billing');
     bOrg.type = bAds.type = bBill.type = 'button';
     modes.appendChild(bOrg); modes.appendChild(bAds); modes.appendChild(bBill);
     top.appendChild(titles); top.appendChild(modes);
@@ -461,7 +504,7 @@
     var msg = el('p', 'msg');
     var actions = el('div', 'actions');
     var saveBtn = el('button', 'btn', 'Save draft');
-    var okBtn = el('button', 'btn gold', 'Approve');
+    var okBtn = el('button', 'btn go', 'Approve');
     saveBtn.type = okBtn.type = 'button';
     actions.appendChild(saveBtn); actions.appendChild(okBtn);
 
@@ -665,7 +708,7 @@
       last4.maxLength = 4;
       last4.placeholder = 'Last 4';
       last4.autocomplete = 'off';
-      var saveCard = el('button', 'btn gold', 'Save card');
+      var saveCard = el('button', 'btn go', 'Save card');
       saveCard.type = 'button';
       saveCard.addEventListener('click', function () {
         var digits = (last4.value || '').replace(/\s/g, '');
@@ -690,7 +733,9 @@
         btn.type = 'button';
         btn.appendChild(el('b', '', b.name));
         btn.appendChild(el('small', '', b.site + ' · ' + live + ' ready'));
-        btn.addEventListener('click', function () { state.biz = b.id; save(); paintSide(); paintPreview(); paintBilling(); paintButtons(); });
+        var tone = lookOf(state, b.id);
+        btn.style.setProperty('--biz', tone.accent);
+        btn.addEventListener('click', function () { state.biz = b.id; save(); applyLook(); paintSide(); paintPreview(); paintBilling(); paintButtons(); });
         bizBox.appendChild(btn);
       });
       var add = el('div', 'card');
@@ -702,7 +747,22 @@
       site.type = 'url';
       site.placeholder = 'https://website';
       site.style.marginTop = '8px';
-      var go = el('button', 'btn gold', 'Add business');
+      var picked = 'clear';
+      var swatches = el('div', 'swatches');
+      ['deal', 'trust', 'clear', 'energy', 'community', 'craft'].forEach(function (key) {
+        var sw = el('button', 'sw' + (key === picked ? ' on' : ''));
+        sw.type = 'button';
+        sw.title = lookOf({ looks: { x: key } }, 'x').why;
+        sw.style.background = lookOf({ looks: { x: key } }, 'x').accent;
+        sw.addEventListener('click', function () {
+          picked = key;
+          swatches.querySelectorAll('button').forEach(function (n) { n.classList.remove('on'); });
+          sw.classList.add('on');
+        });
+        swatches.appendChild(sw);
+      });
+      add.appendChild(swatches);
+      var go = el('button', 'btn go', 'Add business');
       go.type = 'button';
       go.style.marginTop = '8px';
       go.addEventListener('click', function () {
@@ -712,6 +772,8 @@
         state.more = state.more || [];
         state.more.push({ id: id, name: label });
         state.extra[id] = { organic: [], ads: [] };
+        state.looks = state.looks || {};
+        state.looks[id] = picked;
         state.websites = state.websites || {};
         if (site.value.trim()) state.websites[id] = site.value.trim();
         state.biz = id;
@@ -731,7 +793,7 @@
     function paintSide() {
       var b = businesses(state).filter(function (x) { return x.id === state.biz; })[0];
       listBox.replaceChildren();
-      listBox.appendChild(el('p', 'msg', b.blurb));
+      listBox.appendChild(el('p', 'msg', lookOf(state, b.id).why));
       var nameLab = el('label', 'lab', 'Name');
       var nameIn = document.createElement('input');
       nameIn.value = b.name;
@@ -761,6 +823,23 @@
       listBox.appendChild(web);
       listBox.appendChild(el('p', 'msg', 'The CRM counts visits on this site and ranks which post or link brought them.'));
       if ((state.more || []).some(function (m) { return m.id === b.id; })) {
+        var colors = el('div', 'swatches');
+        ['deal', 'trust', 'clear', 'energy', 'community', 'craft'].forEach(function (key) {
+          var sw = el('button', 'sw' + (((state.looks && state.looks[b.id]) || 'clear') === key ? ' on' : ''));
+          sw.type = 'button';
+          sw.title = lookOf({ looks: { x: key } }, 'x').why;
+          sw.style.background = lookOf({ looks: { x: key } }, 'x').accent;
+          sw.addEventListener('click', function () {
+            state.looks = state.looks || {};
+            state.looks[b.id] = key;
+            save();
+            applyLook();
+            paintBiz();
+            paintSide();
+          });
+          colors.appendChild(sw);
+        });
+        listBox.appendChild(colors);
         var snip = el('p', 'msg', '');
         snip.textContent = 'On this website, add: <script src="https://www.maxmaserati.com/admin/social/track.js" data-biz="' + b.id + '"></script>';
         listBox.appendChild(snip);
@@ -786,7 +865,7 @@
           a.href = url;
           a.target = '_blank';
           a.rel = 'noopener noreferrer';
-          a.className = 'btn gold';
+          a.className = 'btn go';
           a.textContent = 'Open ' + pending.network + ' login';
           box.appendChild(a);
         }
@@ -893,7 +972,7 @@
       key.placeholder = 'API key';
       key.autocomplete = 'off';
       [site, login, api, key].forEach(function (n) { n.style.marginTop = '8px'; card.appendChild(n); });
-      var saveApi = el('button', 'btn gold', 'Save API');
+      var saveApi = el('button', 'btn go', 'Save API');
       saveApi.type = 'button';
       saveApi.style.marginTop = '8px';
       saveApi.addEventListener('click', function () {
@@ -1055,6 +1134,7 @@
     }
 
     function paintButtons() {
+      applyLook();
       var billing = state.mode === 'billing';
       var n = chosen().length;
       okBtn.textContent = state.mode === 'ads' ? (n ? ('Approve ad · ' + n) : 'Approve ad') : (n ? ('Approve · ' + n) : 'Approve');
@@ -1210,7 +1290,7 @@
         });
         var row = el('div', 'actions');
         if (item.status !== 'approved') {
-          var ap = el('button', 'btn gold', 'Approve');
+          var ap = el('button', 'btn go', 'Approve');
           ap.type = 'button';
           ap.addEventListener('click', function () {
             if (item.kind === 'ads' && !(item.payer && item.payer.detail)) { msg.className = 'msg bad'; msg.textContent = 'Connect Google Pay, Apple Pay, or a card in Billing before approving this ad.'; return; }
@@ -1293,6 +1373,7 @@
     audience.value = state.audience || '';
 
     save();
+    applyLook();
     paintBiz(); paintSide(); paintWhen(); paintCustom(); paintBilling(); paintButtons(); paintPreview(); paintQueue();
   }
 
