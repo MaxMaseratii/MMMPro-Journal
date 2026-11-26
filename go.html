@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Opening</title>
+  <style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#07080a;color:#e8eef1;font:15px/1.4 system-ui,sans-serif}p{margin:0}</style>
+</head>
+<body>
+  <p>Opening the site…</p>
+  <script>
+  (function () {
+    var q = new URLSearchParams(location.search);
+    var biz = (q.get('b') || '').replace(/[^a-z0-9]/gi, '').slice(0, 24);
+    var post = (q.get('p') || '').replace(/[^a-z0-9]/gi, '').slice(0, 40);
+    var net = (q.get('n') || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 24);
+    var raw = q.get('to') || '';
+    function hit(key) {
+      if (!key) return Promise.resolve();
+      return fetch('https://abacus.jasoncameron.dev/hit/mmm-maserati-crm/' + key, { mode: 'cors', cache: 'no-store' }).catch(function () {});
+    }
+    function dest() {
+      try {
+        var u = new URL(raw);
+        if (u.protocol !== 'https:' && u.protocol !== 'http:') return 'https://www.maxmaserati.com/';
+        if (!u.hostname || u.hostname === 'localhost' || /^\d+\.\d+\.\d+\.\d+$/.test(u.hostname)) return 'https://www.maxmaserati.com/';
+        if (post && !u.searchParams.get('utm_campaign')) u.searchParams.set('utm_campaign', post);
+        if (net && !u.searchParams.get('utm_source')) u.searchParams.set('utm_source', net);
+        if (!u.searchParams.get('utm_medium')) u.searchParams.set('utm_medium', 'social');
+        return u.toString();
+      } catch (e) { return 'https://www.maxmaserati.com/'; }
+    }
+    var jobs = [];
+    if (biz) jobs.push(hit('c-' + biz));
+    if (post) jobs.push(hit('c-' + post));
+    Promise.race([Promise.all(jobs), new Promise(function (r) { setTimeout(r, 800); })]).then(function () {
+      location.replace(dest());
+    });
+  })();
+  </script>
+</body>
+</html>

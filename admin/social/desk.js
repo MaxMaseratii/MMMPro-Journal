@@ -60,6 +60,12 @@
     '.tag{display:inline-block;margin-right:6px;padding:3px 6px;border:1px solid var(--line);font:700 11px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase}',
     '.tag.ok{color:var(--teal);border-color:rgba(61,190,168,.5)}.tag.wait,.tag.pay{color:var(--gold2);border-color:rgba(225,179,26,.45)}',
     '.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin:0 0 12px}',
+    '.board{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 12px}',
+    '.goal{display:flex;align-items:center;gap:8px}',
+    '.goal input{width:72px}',
+    '.chips{display:flex;flex-wrap:wrap;gap:6px}',
+    '.chip{min-height:36px;padding:0 10px;border:1px solid var(--line);background:var(--panel2);color:var(--ink);font:600 13px/1 Barlow,sans-serif}',
+    '.chip.on{border-color:var(--gold);background:var(--gold);color:#14120a}',
     '.day{border:1px solid var(--line);padding:6px;min-height:52px;background:var(--panel2)}',
     '.day b{display:block;font:700 12px/1 "Barlow Condensed",sans-serif;letter-spacing:.05em;text-transform:uppercase;color:var(--mute)}',
     '.day span{color:var(--gold2);font:700 16px/1 "Barlow Condensed",sans-serif}',
@@ -197,22 +203,97 @@
     'Snapchat Ads': 'https://ads.snapchat.com/'
   };
 
+  var FORMATS = {
+    Facebook: ['Post', 'Reel', 'Story'],
+    Instagram: ['Post', 'Reel', 'Story', 'Carousel'],
+    TikTok: ['Video', 'Photo', 'Story'],
+    YouTube: ['Video', 'Short'],
+    X: ['Post', 'Thread'],
+    LinkedIn: ['Post', 'Article'],
+    Threads: ['Post'],
+    Pinterest: ['Pin', 'Idea Pin'],
+    Bluesky: ['Post'],
+    'Google Business': ['Update', 'Offer', 'Event'],
+    Snapchat: ['Story', 'Spotlight'],
+    Telegram: ['Post'],
+    Discord: ['Message'],
+    WhatsApp: ['Status', 'Broadcast'],
+    Reddit: ['Post'],
+    Whop: ['Forum post']
+  };
+  var INBOX = {
+    Facebook: 'https://business.facebook.com/latest/inbox',
+    Instagram: 'https://www.instagram.com/',
+    TikTok: 'https://www.tiktok.com/',
+    YouTube: 'https://studio.youtube.com/',
+    X: 'https://x.com/notifications',
+    LinkedIn: 'https://www.linkedin.com/messaging/',
+    Threads: 'https://www.threads.net/',
+    Pinterest: 'https://www.pinterest.com/',
+    Bluesky: 'https://bsky.app/',
+    'Google Business': 'https://business.google.com/',
+    Snapchat: 'https://www.snapchat.com/',
+    Telegram: 'https://web.telegram.org/',
+    Discord: 'https://discord.com/channels/@me',
+    WhatsApp: 'https://web.whatsapp.com/',
+    Reddit: 'https://www.reddit.com/message/inbox/',
+    Whop: 'https://whop.com/hub/'
+  };
+  function formatsFor(networks) {
+    var out = [];
+    (networks || []).forEach(function (n) {
+      (FORMATS[n] || ['Post']).forEach(function (f) { if (out.indexOf(f) < 0) out.push(f); });
+    });
+    return out.length ? out : ['Post'];
+  }
+  function formatFor(network, picked) {
+    var list = FORMATS[network] || ['Post'];
+    return list.indexOf(picked) >= 0 ? picked : list[0];
+  }
+  function suggestedTags(bizId, networks, format) {
+    var base = { trading: ['#MaxMaserati', '#trading'], table: ['#TableFifty', '#LondonEats'], ayiti: ['#AyitiP2P'] }[bizId] || [];
+    var extra = [];
+    (networks || []).forEach(function (n) {
+      var t = '#' + String(n).replace(/[^A-Za-z0-9]/g, '');
+      if (extra.indexOf(t) < 0) extra.push(t);
+    });
+    if (format) extra.push('#' + String(format).replace(/[^A-Za-z0-9]/g, ''));
+    return base.concat(extra).filter(function (t, i, a) { return t.length > 1 && a.indexOf(t) === i; });
+  }
+
   function load() {
-    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '' };
+    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '', goal: 5, format: 'Post', tags: [], tagsCustom: false, autoReply: false, replyText: '', board: 'queue', apis: [], websites: {} };
     try {
       var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (!raw) return s;
-      ['biz', 'mode', 'tone', 'text', 'when', 'at', 'link', 'objective', 'budget', 'currency', 'start', 'end', 'audience'].forEach(function (k) { if (raw[k] != null) s[k] = raw[k]; });
+      ['biz', 'mode', 'tone', 'text', 'when', 'at', 'link', 'objective', 'budget', 'currency', 'start', 'end', 'audience', 'format', 'replyText', 'board'].forEach(function (k) { if (raw[k] != null) s[k] = raw[k]; });
+      if (raw.goal != null) s.goal = raw.goal;
+      if (raw.tagsCustom != null) s.tagsCustom = !!raw.tagsCustom;
+      if (raw.autoReply != null) s.autoReply = !!raw.autoReply;
+      if (Array.isArray(raw.tags)) s.tags = raw.tags;
       if (Array.isArray(raw.selected)) s.selected = raw.selected;
       if (raw.custom) s.custom = raw.custom;
       if (Array.isArray(raw.items)) s.items = raw.items;
       if (raw.extra) s.extra = raw.extra;
       if (raw.wallets) s.wallets = raw.wallets;
       if (raw.linked) s.linked = raw.linked;
+      if (Array.isArray(raw.apis)) s.apis = raw.apis;
+      if (raw.websites && typeof raw.websites === 'object') s.websites = raw.websites;
       return s;
     } catch (e) { return s; }
   }
 
+  function siteUrlOf(state, id) {
+    var defaults = { trading: 'https://www.maxmaserati.com', table: 'https://tablefifty.co.uk', ayiti: 'https://ayitip2p.com' };
+    var raw = (state.websites && state.websites[id]) || defaults[id] || '';
+    raw = String(raw || '').trim();
+    if (!raw) return '';
+    if (!/^https?:\/\//i.test(raw)) raw = 'https://' + raw;
+    return raw;
+  }
+  function siteHostOf(state, id) {
+    try { return new URL(siteUrlOf(state, id)).host.replace(/^www\./, ''); } catch (e) { return ''; }
+  }
   function businesses(state) {
     function apply(list) {
       return (list || []).map(function (p) {
@@ -223,10 +304,18 @@
     }
     return seed().map(function (b) {
       var ex = (state.extra && state.extra[b.id]) || { organic: [], ads: [] };
+      var fromApi = { organic: [], ads: [] };
+      (state.apis || []).forEach(function (api) {
+        (api.pages || []).forEach(function (pg) {
+          if (pg.biz !== b.id) return;
+          var row = { id: pg.id, network: api.site, name: pg.name, live: true, note: 'API connected' };
+          fromApi[pg.kind === 'ads' ? 'ads' : 'organic'].push(row);
+        });
+      });
       return {
-        id: b.id, name: b.name, site: b.site, blurb: b.blurb,
-        organic: apply(b.organic.concat(ex.organic || [])),
-        ads: apply(b.ads.concat(ex.ads || []))
+        id: b.id, name: b.name, site: siteHostOf(state, b.id) || b.site, url: siteUrlOf(state, b.id), blurb: b.blurb,
+        organic: apply(b.organic.concat(ex.organic || []).concat(fromApi.organic)),
+        ads: apply(b.ads.concat(ex.ads || []).concat(fromApi.ads))
       };
     });
   }
@@ -255,7 +344,29 @@
     var state = load();
     var pending = null;
 
-    function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+    function publishCrm() {
+      var rows = [];
+      (state.items || []).forEach(function (item) {
+        (item.pages || []).forEach(function (p) {
+          var stats = item.stats || {};
+          rows.push({
+            id: item.id + ':' + p.id, biz: p.biz, site: p.site, network: p.network, name: p.name,
+            format: (item.formats && item.formats[p.network]) || item.format || 'Post',
+            tags: item.tags || [], status: item.status, when: item.when, at: item.at || item.saved || '',
+            url: (item.links && item.links[p.id]) || '', dest: item.dest || '', website: p.url || '',
+            post: item.id, bizId: p.bizId || '',
+            views: stats.views || '', likes: stats.likes || '', comments: stats.comments || '', text: String(p.text || '').slice(0, 280)
+          });
+        });
+      });
+      try { localStorage.setItem('mmm.social.crm.v1', JSON.stringify(rows)); } catch (e) {}
+      try {
+        var sites = businesses(state).map(function (b) { return { id: b.id, name: b.name, url: b.url }; });
+        localStorage.setItem('mmm.crm.websites.v1', JSON.stringify(sites));
+      } catch (e2) {}
+      try { if (global.parent !== global) global.parent.postMessage({ mmmSocialCrm: rows.length }, location.origin); } catch (e) {}
+    }
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} publishCrm(); }
     function el(tag, cls, text) {
       var n = document.createElement(tag);
       if (cls) n.className = cls;
@@ -358,6 +469,12 @@
     organicExtra.appendChild(field('Link', link));
     var whenLab = el('label', 'lab', 'When');
     organicExtra.appendChild(whenLab); organicExtra.appendChild(whenBox); organicExtra.appendChild(at);
+    var formatBox = el('div');
+    var tagBox = el('div');
+    var replyBox = el('div');
+    organicExtra.appendChild(formatBox);
+    organicExtra.appendChild(tagBox);
+    organicExtra.appendChild(replyBox);
     mid.appendChild(organicExtra);
     var adExtra = el('div');
     adGrid.appendChild(field('Objective', objective));
@@ -566,12 +683,26 @@
       var b = businesses(state).filter(function (x) { return x.id === state.biz; })[0];
       listBox.replaceChildren();
       listBox.appendChild(el('p', 'msg', b.blurb));
+      var webLab = el('label', 'lab', 'Website');
+      var web = document.createElement('input');
+      web.type = 'url';
+      web.placeholder = 'https://';
+      web.value = b.url || '';
+      web.addEventListener('change', function () {
+        state.websites = state.websites || {};
+        state.websites[b.id] = web.value.trim();
+        save();
+        paintBiz();
+      });
+      listBox.appendChild(webLab);
+      listBox.appendChild(web);
+      listBox.appendChild(el('p', 'msg', 'The CRM counts visits on this site and ranks which post or link brought them.'));
       var rows = state.mode === 'ads' ? b.ads : b.organic;
       if (pending && rows.some(function (r) { return r.id === pending.id; })) {
         var box = el('div', 'card');
         var url = LOGIN[pending.network];
         box.appendChild(el('div', 'who', 'Sign in · ' + pending.network));
-        box.appendChild(el('p', 'msg', 'Log in on ' + pending.network + ', then name the page and mark it connected.'));
+        box.appendChild(el('p', 'msg', 'One login can hold several pages. Sign in, then assign each page to a business.'));
         if (url) {
           var a = document.createElement('a');
           a.href = url;
@@ -582,25 +713,40 @@
           box.appendChild(a);
         }
         var pageName = document.createElement('input');
-        pageName.placeholder = state.mode === 'ads' ? 'Ad account name' : 'Page or @handle';
+        pageName.placeholder = 'Page, channel, or @handle';
         pageName.value = pending.name || '';
         pageName.style.marginTop = '8px';
-        box.appendChild(pageName);
-        var done = el('button', 'btn', 'Mark connected');
+        var bizPick = document.createElement('select');
+        businesses(state).forEach(function (bb) {
+          if (pending.network === 'Whop' && bb.id !== 'trading') return;
+          var o = document.createElement('option');
+          o.value = bb.id;
+          o.textContent = bb.name;
+          if (bb.id === state.biz) o.selected = true;
+          bizPick.appendChild(o);
+        });
+        bizPick.style.marginTop = '8px';
+        var done = el('button', 'btn', 'Add page to this business');
         done.type = 'button';
         done.style.marginTop = '8px';
         done.addEventListener('click', function () {
           var label = pageName.value.trim();
-          if (!label || label === 'Connect a page') { msg.className = 'msg bad'; msg.textContent = 'Name the page or account you just signed into.'; return; }
-          state.linked[pending.id] = { name: label };
-          if (state.selected.indexOf(pending.id) < 0) state.selected.push(pending.id);
-          var netName = pending.network;
-          pending = null;
+          if (!label || label === 'Connect a page') { msg.className = 'msg bad'; msg.textContent = 'Name the page on this login.'; return; }
+          var bizId = bizPick.value;
+          state.extra[bizId] = state.extra[bizId] || { organic: [], ads: [] };
+          var id = uid(bizId);
+          var kind = state.mode === 'ads' ? 'ads' : 'organic';
+          state.extra[bizId][kind].push({ id: id, network: pending.network, name: label, live: true, note: 'Connected' });
+          if (state.selected.indexOf(id) < 0) state.selected.push(id);
+          pageName.value = '';
+          pending.name = '';
           save();
           msg.className = 'msg ok';
-          msg.textContent = netName + ' is connected on this desk.';
+          msg.textContent = label + ' is on ' + (businesses(state).filter(function (x) { return x.id === bizId; })[0] || {}).name + '. Add another page from the same login, or switch business.';
           paintBiz(); paintSide(); paintCustom(); paintPreview(); paintButtons();
         });
+        box.appendChild(pageName);
+        box.appendChild(bizPick);
         box.appendChild(done);
         listBox.appendChild(box);
       }
@@ -620,7 +766,7 @@
             var login = LOGIN[p.network];
             if (login) window.open(login, '_blank', 'noopener,noreferrer');
             msg.className = 'msg';
-            msg.textContent = 'Sign in to ' + p.network + ', then mark the page connected.';
+            msg.textContent = 'Sign in to ' + p.network + '. Then choose which page goes to which business.';
             paintSide();
             return;
           }
@@ -651,6 +797,136 @@
         save(); paintSide(); paintCustom(); paintPreview();
       });
       addBox.appendChild(net); addBox.appendChild(name); addBox.appendChild(go);
+      paintApis(addBox);
+    }
+
+    function paintApis(host) {
+      var card = el('div', 'card');
+      card.appendChild(el('div', 'who', 'Any site API'));
+      card.appendChild(el('p', 'msg', 'Connect a site that is not in the list. The key stays in this browser. It is not saved on the website.'));
+      var site = document.createElement('input');
+      site.placeholder = 'Site name';
+      var login = document.createElement('input');
+      login.type = 'url';
+      login.placeholder = 'Login URL';
+      var api = document.createElement('input');
+      api.type = 'url';
+      api.placeholder = 'API URL';
+      var key = document.createElement('input');
+      key.type = 'password';
+      key.placeholder = 'API key';
+      key.autocomplete = 'off';
+      [site, login, api, key].forEach(function (n) { n.style.marginTop = '8px'; card.appendChild(n); });
+      var saveApi = el('button', 'btn gold', 'Save API');
+      saveApi.type = 'button';
+      saveApi.style.marginTop = '8px';
+      saveApi.addEventListener('click', function () {
+        var label = site.value.trim();
+        if (!label) { msg.className = 'msg bad'; msg.textContent = 'Name the site.'; return; }
+        var row = { id: uid('api'), site: label, login: login.value.trim(), api: api.value.trim(), token: key.value, ok: '', pages: [] };
+        state.apis.push(row);
+        site.value = login.value = api.value = key.value = '';
+        save();
+        msg.className = 'msg ok';
+        msg.textContent = label + ' API saved on this browser. Add a page and pick the business.';
+        paintSide();
+      });
+      card.appendChild(saveApi);
+      (state.apis || []).forEach(function (row) {
+        var block = el('div', 'qitem');
+        block.appendChild(el('div', 'nm', row.site));
+        block.appendChild(el('p', 'msg', row.ok || (row.token ? 'Key saved on this browser.' : 'No key yet.') + (row.api ? ' · ' + row.api : '')));
+        if (row.login) {
+          var open = document.createElement('a');
+          open.href = row.login;
+          open.target = '_blank';
+          open.rel = 'noopener noreferrer';
+          open.className = 'btn';
+          open.textContent = 'Open login';
+          block.appendChild(open);
+        }
+        var test = el('button', 'btn', 'Test API');
+        test.type = 'button';
+        test.style.marginTop = '8px';
+        test.addEventListener('click', function () {
+          if (!row.api) { row.ok = 'Add an API URL first.'; save(); paintSide(); return; }
+          var headers = {};
+          if (row.token) headers.Authorization = 'Bearer ' + row.token;
+          fetch(row.api, { headers: headers }).then(function (res) {
+            row.ok = res.ok ? ('Connected · HTTP ' + res.status) : ('HTTP ' + res.status);
+            save(); paintSide();
+          }).catch(function () {
+            row.ok = 'Saved. This browser could not call that API (often blocked by the site). The key is still stored here.';
+            save(); paintSide();
+          });
+        });
+        block.appendChild(test);
+        var page = document.createElement('input');
+        page.placeholder = 'Page or account on this API';
+        page.style.marginTop = '8px';
+        var bizPick = document.createElement('select');
+        businesses(state).forEach(function (bb) {
+          var o = document.createElement('option');
+          o.value = bb.id;
+          o.textContent = bb.name;
+          if (bb.id === state.biz) o.selected = true;
+          bizPick.appendChild(o);
+        });
+        bizPick.style.marginTop = '8px';
+        var kind = document.createElement('select');
+        [['organic', 'Organic page'], ['ads', 'Ad account']].forEach(function (pair) {
+          var o = document.createElement('option');
+          o.value = pair[0];
+          o.textContent = pair[1];
+          kind.appendChild(o);
+        });
+        kind.style.marginTop = '8px';
+        var add = el('button', 'btn', 'Add page to business');
+        add.type = 'button';
+        add.style.marginTop = '8px';
+        add.addEventListener('click', function () {
+          var label = page.value.trim();
+          if (!label) return;
+          row.pages = row.pages || [];
+          var id = uid('pg');
+          row.pages.push({ id: id, name: label, biz: bizPick.value, kind: kind.value });
+          if (state.selected.indexOf(id) < 0) state.selected.push(id);
+          page.value = '';
+          save();
+          msg.className = 'msg ok';
+          msg.textContent = label + ' added. Switch business if you assigned it somewhere else.';
+          paintBiz(); paintSide(); paintPreview(); paintButtons();
+        });
+        block.appendChild(page);
+        block.appendChild(bizPick);
+        block.appendChild(kind);
+        block.appendChild(add);
+        (row.pages || []).forEach(function (pg) {
+          var bizName = (businesses(state).filter(function (x) { return x.id === pg.biz; })[0] || {}).name || pg.biz;
+          var line = el('div', 'msg', pg.name + ' · ' + bizName + ' · ' + (pg.kind === 'ads' ? 'Ad' : 'Organic'));
+          var rm = el('button', 'btn', 'Remove');
+          rm.type = 'button';
+          rm.addEventListener('click', function () {
+            row.pages = row.pages.filter(function (x) { return x.id !== pg.id; });
+            state.selected = state.selected.filter(function (x) { return x !== pg.id; });
+            save(); paintBiz(); paintSide(); paintPreview();
+          });
+          block.appendChild(line);
+          block.appendChild(rm);
+        });
+        var drop = el('button', 'btn', 'Remove API');
+        drop.type = 'button';
+        drop.style.marginTop = '8px';
+        drop.addEventListener('click', function () {
+          var ids = (row.pages || []).map(function (pg) { return pg.id; });
+          state.apis = state.apis.filter(function (x) { return x.id !== row.id; });
+          state.selected = state.selected.filter(function (x) { return ids.indexOf(x) < 0; });
+          save(); paintBiz(); paintSide(); paintPreview();
+        });
+        block.appendChild(drop);
+        card.appendChild(block);
+      });
+      host.appendChild(card);
     }
 
     function paintCustom() {
@@ -681,10 +957,11 @@
         who.appendChild(logo(hit.plat.network));
         var whoText = el('div');
         whoText.appendChild(el('b', '', hit.plat.network));
-        whoText.appendChild(el('span', '', hit.plat.name));
+        whoText.appendChild(el('span', '', hit.plat.name + (state.mode === 'organic' ? (' · ' + formatFor(hit.plat.network, state.format)) : '')));
         who.appendChild(whoText);
         card.appendChild(who);
         card.appendChild(el('p', '', text || 'Caption will show here.'));
+        if (state.mode === 'organic' && state.tags && state.tags.length) card.appendChild(el('p', 'msg', state.tags.join(' ')));
         if (state.mode === 'ads') card.appendChild(el('div', 'sponsored', 'Sponsored · ' + state.objective + ' · ' + (state.currency || 'GBP') + ' ' + (state.budget || '0') + '/day'));
         else {
           var bar = el('div', 'bar');
@@ -720,6 +997,9 @@
       capLab.hidden = billing || state.tone === 'custom';
       if (billing) customBox.hidden = true;
       if (state.mode === 'ads') payerLine.textContent = payerText();
+      paintFormat();
+      paintTags();
+      paintReply();
     }
 
     function paintWhen() {
@@ -731,6 +1011,88 @@
         b.addEventListener('click', function () { state.when = pair[0]; save(); paintWhen(); paintButtons(); paintQueue(); });
         whenBox.appendChild(b);
       });
+    }
+
+    function chosenNetworks() {
+      return chosen().map(function (h) { return h.plat.network; });
+    }
+    function paintFormat() {
+      formatBox.replaceChildren();
+      if (state.mode !== 'organic') return;
+      formatBox.appendChild(el('label', 'lab', 'Post type'));
+      var list = formatsFor(chosenNetworks());
+      if (list.indexOf(state.format) < 0) state.format = list[0];
+      var row = el('div', 'chips');
+      list.forEach(function (f) {
+        var b = el('button', 'chip' + (state.format === f ? ' on' : ''), f);
+        b.type = 'button';
+        b.addEventListener('click', function () {
+          state.format = f;
+          if (!state.tagsCustom) state.tags = suggestedTags(state.biz, chosenNetworks(), f);
+          save(); paintFormat(); paintTags(); paintPreview();
+        });
+        row.appendChild(b);
+      });
+      formatBox.appendChild(row);
+    }
+    function paintTags() {
+      tagBox.replaceChildren();
+      if (state.mode !== 'organic') return;
+      if (!state.tagsCustom) state.tags = suggestedTags(state.biz, chosenNetworks(), state.format);
+      tagBox.appendChild(el('label', 'lab', 'Tags'));
+      var row = el('div', 'chips');
+      (state.tags || []).forEach(function (t) {
+        var b = el('button', 'chip', t + '  ×');
+        b.type = 'button';
+        b.addEventListener('click', function () {
+          state.tagsCustom = true;
+          state.tags = state.tags.filter(function (x) { return x !== t; });
+          save(); paintTags(); paintPreview();
+        });
+        row.appendChild(b);
+      });
+      tagBox.appendChild(row);
+      var add = document.createElement('input');
+      add.placeholder = 'Add a tag and press enter';
+      add.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        var v = add.value.trim();
+        if (!v) return;
+        if (v.charAt(0) !== '#') v = '#' + v.replace(/\s+/g, '');
+        state.tagsCustom = true;
+        if (state.tags.indexOf(v) < 0) state.tags.push(v);
+        save(); paintTags(); paintPreview();
+      });
+      tagBox.appendChild(add);
+      var reset = el('button', 'btn', 'Automatic tags');
+      reset.type = 'button';
+      reset.addEventListener('click', function () {
+        state.tagsCustom = false;
+        state.tags = suggestedTags(state.biz, chosenNetworks(), state.format);
+        save(); paintTags(); paintPreview();
+      });
+      tagBox.appendChild(reset);
+    }
+    function paintReply() {
+      replyBox.replaceChildren();
+      if (state.mode !== 'organic') return;
+      replyBox.appendChild(el('label', 'lab', 'Comments'));
+      var row = el('div', 'chips');
+      var off = el('button', 'chip' + (!state.autoReply ? ' on' : ''), 'Reply myself');
+      var on = el('button', 'chip' + (state.autoReply ? ' on' : ''), 'Auto-reply');
+      off.type = on.type = 'button';
+      off.addEventListener('click', function () { state.autoReply = false; save(); paintReply(); });
+      on.addEventListener('click', function () { state.autoReply = true; save(); paintReply(); });
+      row.appendChild(off); row.appendChild(on);
+      replyBox.appendChild(row);
+      var ta = document.createElement('textarea');
+      ta.placeholder = 'Reply text. Auto-reply copies this and opens the comments.';
+      ta.style.minHeight = '72px';
+      ta.value = state.replyText || '';
+      ta.addEventListener('input', function () { state.replyText = ta.value; save(); });
+      replyBox.appendChild(ta);
+      replyBox.appendChild(el('p', 'msg', 'Respond opens the live post, or the inbox if it is not live yet. Auto-reply copies this text for you.'));
     }
 
     function paintQueue() {
@@ -759,6 +1121,15 @@
         card.appendChild(el('span', 'msg', item.kind === 'ads' ? (item.objective + ' · ' + item.currency + ' ' + item.budget + '/day' + (item.payer ? (' · ' + item.payer.detail) : '')) : (item.when === 'now' ? 'Post when you say go' : ('Schedule ' + (item.at || '')))));
         (item.pages || []).forEach(function (p) {
           card.appendChild(el('div', '', p.biz + ' · ' + p.network + ' · ' + p.name + (p.live ? '' : ' · connect first')));
+          if (item.links && item.links[p.id]) {
+            var tracked = document.createElement('a');
+            tracked.href = item.links[p.id];
+            tracked.target = '_blank';
+            tracked.rel = 'noopener noreferrer';
+            tracked.className = 'msg';
+            tracked.textContent = 'Counted link';
+            card.appendChild(tracked);
+          }
           if (p.text) card.appendChild(el('p', 'msg', p.text));
         });
         var row = el('div', 'actions');
@@ -785,7 +1156,7 @@
       var list = chosen();
       if (!list.length) { msg.className = 'msg bad'; msg.textContent = 'Select at least one account.'; return; }
       var pages = list.map(function (hit) {
-        return { id: hit.plat.id, biz: hit.biz.name, site: hit.biz.site, network: hit.plat.network, name: hit.plat.name, live: !!hit.plat.live, text: caption(hit.plat.id) };
+        return { id: hit.plat.id, biz: hit.biz.name, bizId: hit.biz.id, site: hit.biz.site, url: hit.biz.url, network: hit.plat.network, name: hit.plat.name, live: !!hit.plat.live, text: caption(hit.plat.id) };
       });
       if (state.mode === 'organic' && pages.every(function (p) { return !p.text; })) { msg.className = 'msg bad'; msg.textContent = 'Write the caption first.'; return; }
       if (state.mode === 'organic' && state.when === 'later' && !state.at) { msg.className = 'msg bad'; msg.textContent = 'Set the time.'; return; }
@@ -796,8 +1167,18 @@
         if (w.use && w[w.use]) payer = { method: w.use, detail: w[w.use].detail, confirmed: !!w[w.use].confirmed };
         if (status === 'approved' && !payer) { msg.className = 'msg bad'; msg.textContent = 'Open Billing and connect Google Pay, Apple Pay, or a card.'; return; }
       }
+      var postId = uid('post');
+      var links = {};
+      var dest = (state.link || '').trim();
+      pages.forEach(function (p) {
+        var target = dest || p.url || '';
+        var tracked = 'https://www.maxmaserati.com/go.html?b=' + encodeURIComponent(p.bizId || '') + '&p=' + encodeURIComponent(postId) + '&n=' + encodeURIComponent(p.network) + '&to=' + encodeURIComponent(target);
+        links[p.id] = tracked;
+        if (dest && p.text.indexOf(dest) >= 0) p.text = p.text.split(dest).join(tracked);
+        else if (tracked && p.text.indexOf(tracked) < 0) p.text = (p.text ? p.text + '\n\n' : '') + tracked;
+      });
       state.items.unshift({
-        id: uid('post'), status: status, kind: state.mode, when: state.when, at: state.at, pages: pages,
+        id: postId, status: status, kind: state.mode, when: state.when, at: state.at, pages: pages, links: links, dest: dest,
         objective: state.objective, budget: state.budget, currency: state.currency, start: state.start, end: state.end, audience: state.audience, payer: payer
       });
       save();

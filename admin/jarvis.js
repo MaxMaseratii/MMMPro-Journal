@@ -6,7 +6,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var V = '20261120b';
   var LAZY = {
-    crm: '/admin/crm.js?v=20261114b',
+    crm: '/admin/crm.js?v=20261126k',
     haiti: '/admin/haiti.js?v=20261118b',
     mail: '/admin/mail.js?v=20261120a',
     strat: '/admin/strategy.js?v=20261116b',

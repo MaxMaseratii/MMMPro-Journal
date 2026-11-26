@@ -234,6 +234,63 @@
   }
 
   /* ---------- MAIN CRM TAB ---------- */
+  function countGet(key) {
+    return fetch('https://abacus.jasoncameron.dev/get/mmm-maserati-crm/' + key, { cache: 'no-store' }).then(function (r) {
+      return r.ok ? r.json() : { value: 0 };
+    }).then(function (j) { return j && j.value ? j.value : 0; }).catch(function () { return 0; });
+  }
+  function readJson(key, fallback) {
+    try { var v = JSON.parse(localStorage.getItem(key) || ''); return v == null ? fallback : v; } catch (e) { return fallback; }
+  }
+  function wireSites() {
+    var box = document.getElementById('mmmSiteBody');
+    if (!box) return;
+    var sites = readJson('mmm.crm.websites.v1', []);
+    if (!sites.length) sites = [
+      { id: 'trading', name: 'Trading', url: 'https://www.maxmaserati.com' },
+      { id: 'table', name: 'Table Fifty', url: 'https://tablefifty.co.uk' },
+      { id: 'ayiti', name: 'Ayiti P2P', url: 'https://ayitip2p.com' }
+    ];
+    var rows = readJson('mmm.social.crm.v1', []).filter(function (r) { return r.url || r.dest || r.website; });
+    var jobs = [];
+    sites.forEach(function (s) {
+      jobs.push(countGet('c-' + s.id).then(function (n) { s.clicks = n; }));
+      jobs.push(countGet('v-' + s.id).then(function (n) { s.visits = n; }));
+    });
+    rows.slice(0, 16).forEach(function (r) {
+      var post = String(r.post || (r.id || '').split(':')[0] || '').replace(/[^a-z0-9]/gi, '').slice(0, 40);
+      var net = String(r.network || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 24);
+      r._post = post; r._net = net;
+      if (post) jobs.push(countGet('c-' + post).then(function (n) { r.clicks = n; }));
+      if (post && net) jobs.push(countGet('v-' + post + '-' + net).then(function (n) { r.visits = n; }));
+    });
+    Promise.all(jobs).then(function () {
+      var ranked = rows.slice().sort(function (a, b) { return ((b.clicks || 0) + (b.visits || 0)) - ((a.clicks || 0) + (a.visits || 0)); });
+      var best = ranked[0];
+      var html = '';
+      if (best && ((best.clicks || 0) + (best.visits || 0)) > 0) {
+        html += '<div class="ins"><b class="big">' + num((best.clicks || 0) + (best.visits || 0)) + '</b><p><b>' + esc(best.biz || '') + ' · ' + esc(best.network || '') + '</b> is bringing the most. ' + num(best.clicks || 0) + ' link clicks' + (best.visits ? ' · ' + num(best.visits) + ' visits on the site' : '') + '.</p></div>';
+      } else {
+        html += '<p class="more">No visits yet. Save a post in MMM SOCIAL+. The counted link records the click, then opens the business site. Add the one-line tracker on the site to count the visit itself.</p>';
+      }
+      html += '<div class="kpis">' + sites.map(function (s) {
+        return '<div class="kpi"><b>' + num(s.visits || 0) + '</b><span>' + esc(s.name) + '<br><small>' + num(s.clicks || 0) + ' link clicks · ' + esc((s.url || '').replace(/^https?:\/\//, '')) + '</small></span></div>';
+      }).join('') + '</div>';
+      html += '<div class="tw"><table class="t"><thead><tr><th>Post</th><th>Site</th><th>Clicks</th><th>Visits</th></tr></thead><tbody>';
+      if (!ranked.length) html += '<tr><td colspan="4">No posts with a link yet.</td></tr>';
+      ranked.slice(0, 12).forEach(function (r) {
+        var href = r.dest || r.website || r.url || '';
+        html += '<tr><td>' + esc(r.network || '') + ' · ' + esc(r.format || 'Post') + '<br><small>' + esc(String(r.text || '').slice(0, 80)) + '</small></td><td>' + (href ? '<a href="' + esc(href) + '" target="_blank" rel="noopener noreferrer">' + esc(r.biz || '') + '</a>' : esc(r.biz || '')) + '</td><td class="n">' + num(r.clicks || 0) + '</td><td class="n">' + num(r.visits || 0) + '</td></tr>';
+      });
+      html += '</tbody></table></div>';
+      html += sites.map(function (s) {
+        var snip = '<script src="https://www.maxmaserati.com/admin/social/track.js" data-biz="' + s.id + '"><\/script>';
+        return '<p class="more" style="margin-top:10px"><b>' + esc(s.name) + '</b> · paste on ' + esc(s.url || 'the website') + '<br><code>' + esc(snip) + '</code></p>';
+      }).join('');
+      box.innerHTML = html;
+    });
+  }
+
   function crm(el, d) {
     var rev = d.revenue || {}, tw = rev.this_week || {}, lw = rev.last_week || {}, m = mrr(d), paid = pipe(d, /^Paid active/i), reach = card(d, /^Reach/i), fol = card(d, /^Followers/i), vis = sb(d, /Whop page visits/i), best = card(d, /^Best post/i);
     var h = top(d) + kpis([
@@ -272,8 +329,9 @@
       geo.filter(function (g) { return g.countries && g.countries.length; }).map(function (g) { var t = g.total || g.countries.reduce(function (a, c) { return a + c.people; }, 0); return '<div><h3>' + esc(g.label) + '</h3><div class="bars">' + barsHtml(g.countries.map(function (c) { return [c.name, c.people]; }), t, 8) + '</div></div>'; }).join('') + '</div></div></details>';
     var bt = d.backtest;
     if (bt && bt.rows) h += '<details class="box"><summary><h2>Study claims check</h2><small>' + esc(bt.caption || '') + '</small></summary><div class="in"><table class="t"><thead><tr><th>Claim</th><th>Study</th><th>Recomputed</th><th></th></tr></thead><tbody>' + bt.rows.map(function (r) { return '<tr><td>' + esc(r[0]) + '</td><td class="n">' + esc(r[1]) + '</td><td class="n">' + esc(r[2]) + '</td><td>' + pill(r[3], /confirm/i.test(r[3]) ? 'ok' : 'warn') + '</td></tr>'; }).join('') + '</tbody></table><p class="more">' + esc(bt.note || '') + '</p></div></details>';
+    h += '<section class="panel" id="mmmSites"><div class="ph"><h2>What brings business</h2><small>each website, and which post or link sent the visit</small></div><div id="mmmSiteBody"><p class="more">Reading visit counts…</p></div></section>';
     h += '<p class="note" style="margin:0 0 30px">' + esc(d.footer || '') + '</p>';
     el.innerHTML = '<div class="cx">' + h + '</div>';
-    clampWire(el); wirePosts();
+    clampWire(el); wirePosts(); wireSites();
   }
 })();
