@@ -96,6 +96,11 @@ pub.get('/personal/key', async (req, res) => {
   } catch {
     return res.status(401).json({ ok: false, code: 'auth' });
   }
+  // Admins / the owner: no Whop check at all. Only the page key is needed.
+  if (ADMIN_EMAILS.includes(email)) {
+    if (!personal.personalKey()) return res.status(503).json({ ok: false, code: 'nokey', email });
+    return res.json({ ok: true, key: personal.personalKey(), why: 'admin', until: null, email });
+  }
   if (!personal.personalReady()) return res.status(503).json({ ok: false, code: 'setup' });
   try {
     const a = await personal.access(email, ADMIN_EMAILS, m[1]);

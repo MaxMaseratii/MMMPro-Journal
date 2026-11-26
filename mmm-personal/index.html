@@ -133,6 +133,7 @@ h1.t{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,48px);l
       if (j.code === 'pay' && PAID && tries < 6) { tries++; say('Payment received?', 'Whop can take a minute to confirm. Checking again in 20 seconds… (' + tries + '/6)', {}); setTimeout(function () { busy = false; check(); }, 20000); return; }
       if (j.code === 'pay') return say('Join to open the page', 'No paid membership found for ' + (j.email || 'this email') + (j.why && j.why !== 'none' ? ' (status: ' + j.why.replace('_', ' ') + ')' : '') + '. Pay on Whop with this same email, then press "I paid · check again".', { offers: true, retry: true });
       if (j.code === 'unverified') return say('Confirm your email first', 'Open the link we sent to ' + (j.email || 'your email') + ', then reload this page.', { retry: true });
+      if (j.code === 'nokey') return say('Page key missing on the server', 'Admin login OK (' + (j.email || '') + '), but the engine has no PERSONAL_KEY yet. Add it in Render → minimax-engine → Environment.', {});
       if (j.code === 'setup') return say('Almost ready', 'The members check is being switched on. Try again in a few minutes.', { retry: true });
       return say('Could not check right now', 'Try again in a minute.', { retry: true });
     }).catch(function () {
