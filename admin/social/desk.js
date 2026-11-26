@@ -69,6 +69,7 @@
     '.tag.ok{color:var(--live);border-color:color-mix(in srgb, var(--live) 45%, transparent)}.tag.wait{color:var(--brand2);border-color:color-mix(in srgb, var(--brand) 40%, transparent)}.tag.pay{color:var(--spend);border-color:color-mix(in srgb, var(--spend) 45%, transparent)}',
     '.week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;margin:0 0 14px}',
     '.board{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}',
+    '.board .h{margin:0}',
     '.goal{display:flex;align-items:center;gap:8px}',
     '.goal input{width:72px}',
     '.chips{display:flex;flex-wrap:wrap;gap:6px}',
@@ -87,7 +88,21 @@
     '.swatches{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}',
     '.sw{width:26px;height:26px;min-height:26px;padding:0;border-radius:50%;border:2px solid transparent;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2)}',
     '.sw.on{border-color:#fff;box-shadow:0 0 0 3px rgba(255,255,255,.15)}',
-    '@media (max-width:980px){.shell{grid-template-columns:1fr}.week{grid-template-columns:repeat(4,minmax(0,1fr))}.col{border-radius:16px}}',
+    '.nav{display:flex;gap:6px;padding:0 6px 18px;flex-wrap:wrap}',
+    '.nav button{min-height:36px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--mute);font-weight:600;font-size:14px}',
+    '.nav button[aria-pressed=true]{background:#f7f4ee;color:#14120a}',
+    '.dest{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px}',
+    '.dest .logo{width:32px;height:32px}',
+    '.apis{display:none;margin-top:12px}',
+    '.sp[data-view="queue"] .shell,.sp[data-view="queue"] .modes{display:none}',
+    '.sp[data-view="post"] .rail,.sp[data-view="post"] .boardpage{display:none}',
+    '.sp[data-view="post"] .shell{grid-template-columns:minmax(0,1fr) 340px}',
+    '.sp[data-view="accounts"] .work,.sp[data-view="accounts"] .stagecol,.sp[data-view="accounts"] .boardpage,.sp[data-view="accounts"] .modes,.sp[data-view="accounts"] .setup,.sp[data-view="accounts"] .apis{display:none}',
+    '.sp[data-view="accounts"] .shell{display:block;max-width:760px}',
+    '.sp[data-view="setup"] .work,.sp[data-view="setup"] .stagecol,.sp[data-view="setup"] .boardpage,.sp[data-view="setup"] .modes,.sp[data-view="setup"] .feed,.sp[data-view="setup"] .add,.sp[data-view="setup"] .rail > .h{display:none}',
+    '.sp[data-view="setup"] .shell{display:block;max-width:680px}',
+    '.sp[data-view="setup"] .apis,.sp[data-view="setup"] .setup{display:block}',
+    '@media (max-width:980px){.shell,.sp[data-view="post"] .shell{grid-template-columns:1fr}.week{grid-template-columns:repeat(4,minmax(0,1fr))}.col{border-radius:16px}}',
     '@media (max-width:560px){.grid2,.week{grid-template-columns:1fr 1fr}.mark{font-size:34px}.modes{width:100%;overflow:auto}}',
     '@media (prefers-reduced-motion:reduce){.sp *{transition:none!important}}'
   ].join('\n');
@@ -282,7 +297,7 @@
   }
 
   function load() {
-    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '', goal: 5, format: 'Post', tags: [], tagsCustom: false, autoReply: false, replyText: '', board: 'queue', apis: [], websites: {}, more: [], names: {}, looks: {} };
+    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '', goal: 5, format: 'Post', tags: [], tagsCustom: false, autoReply: false, replyText: '', board: 'queue', apis: [], websites: {}, more: [], names: {}, looks: {}, view: 'queue' };
     try {
       var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (!raw) return s;
@@ -302,6 +317,7 @@
       if (Array.isArray(raw.more)) s.more = raw.more;
       if (raw.names && typeof raw.names === 'object') s.names = raw.names;
       if (raw.looks && typeof raw.looks === 'object') s.looks = raw.looks;
+      if (raw.view === 'queue' || raw.view === 'post' || raw.view === 'accounts' || raw.view === 'setup') s.view = raw.view;
       return s;
     } catch (e) { return s; }
   }
@@ -461,7 +477,8 @@
     h.appendChild(document.createTextNode('MMM '));
     h.appendChild(el('span', '', 'Social+'));
     titles.appendChild(h);
-    titles.appendChild(el('p', 'sub', 'Draft the post. Approve it. Then it goes out.'));
+    var sub = el('p', 'sub', 'What is waiting to go out.');
+    titles.appendChild(sub);
     var modes = el('div', 'modes');
     var bOrg = el('button', 'org', 'Organic');
     var bAds = el('button', 'ads', 'Paid ads');
@@ -470,15 +487,23 @@
     modes.appendChild(bOrg); modes.appendChild(bAds); modes.appendChild(bBill);
     top.appendChild(titles); top.appendChild(modes);
     wrap.appendChild(top);
+    var nav = el('nav', 'nav');
+    [['queue', 'Queue'], ['post', 'Post'], ['accounts', 'Accounts'], ['setup', 'Setup']].forEach(function (pair) {
+      var b = el('button', '', pair[1]);
+      b.type = 'button';
+      b.dataset.view = pair[0];
+      b.addEventListener('click', function () { goView(pair[0]); });
+      nav.appendChild(b);
+    });
+    wrap.appendChild(nav);
 
     var shell = el('div', 'shell');
-    var left = el('aside', 'col');
+    var left = el('aside', 'col rail');
     var mid = el('section', 'col work');
-    var right = el('aside', 'col');
+    var right = el('aside', 'col stagecol');
     shell.appendChild(left); shell.appendChild(mid); shell.appendChild(right);
     wrap.appendChild(shell);
-    var queue = el('section', 'col');
-    queue.style.marginTop = '12px';
+    var queue = el('section', 'col boardpage');
     wrap.appendChild(queue);
 
     var bizBox = el('div', 'bizs');
@@ -488,6 +513,8 @@
     left.appendChild(el('h2', 'h', 'Accounts'));
     left.appendChild(listBox);
     left.appendChild(addBox);
+    var apiBox = el('div', 'apis');
+    left.appendChild(apiBox);
 
     var cap = document.createElement('textarea');
     cap.placeholder = 'Write the post.';
@@ -523,6 +550,8 @@
       return wrap;
     }
 
+    var dest = el('div', 'dest');
+    mid.appendChild(dest);
     var tone = el('div', 'seg');
     var sameBtn = el('button', '', 'Same text');
     var customBtn = el('button', '', 'Different per account');
@@ -531,7 +560,7 @@
     mid.appendChild(tone);
     var capLab = el('label', 'lab', 'Caption');
     mid.appendChild(capLab); mid.appendChild(cap); mid.appendChild(customBox);
-    var organicExtra = el('div');
+    var organicExtra = el('div', 'organic');
     organicExtra.appendChild(field('Link', link));
     var whenLab = el('label', 'lab', 'When');
     organicExtra.appendChild(whenLab); organicExtra.appendChild(whenBox); organicExtra.appendChild(at);
@@ -542,7 +571,7 @@
     organicExtra.appendChild(tagBox);
     organicExtra.appendChild(replyBox);
     mid.appendChild(organicExtra);
-    var adExtra = el('div');
+    var adExtra = el('div', 'adpane');
     adGrid.appendChild(field('Objective', objective));
     adGrid.appendChild(field('Daily budget', budget));
     adGrid.appendChild(field('Currency', currency));
@@ -558,7 +587,7 @@
     adExtra.appendChild(toBill);
     adExtra.appendChild(el('p', 'msg', 'The wallet confirms who pays. This desk never stores a full card number and does not charge by itself. Meta, Google, YouTube, TikTok and X charge the daily budget after you say go.'));
     mid.appendChild(adExtra);
-    var billBox = el('div');
+    var billBox = el('div', 'wallet');
     mid.appendChild(billBox);
     mid.appendChild(actions);
     mid.appendChild(msg);
@@ -570,6 +599,35 @@
     right.appendChild(stage);
 
     function setPressed(btn, on) { btn.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+    function goView(name) {
+      state.view = name;
+      save();
+      applyView();
+    }
+    function applyView() {
+      var name = state.view || 'queue';
+      wrap.dataset.view = name;
+      nav.querySelectorAll('button').forEach(function (b) { setPressed(b, b.dataset.view === name); });
+      sub.textContent = name === 'post' ? 'Write it once. The phone is what people will see.' : name === 'accounts' ? 'The pages that belong to this business.' : name === 'setup' ? 'The business, its website, and any other API.' : 'What is waiting to go out.';
+      var open = wrap.querySelector('.setup');
+      if (open) open.open = name === 'setup';
+    }
+    function paintDest() {
+      dest.replaceChildren();
+      var picks = chosen();
+      if (!picks.length) {
+        var b = el('button', 'btn', 'Choose accounts');
+        b.type = 'button';
+        b.addEventListener('click', function () { goView('accounts'); });
+        dest.appendChild(b);
+        return;
+      }
+      picks.forEach(function (x) { dest.appendChild(logo(x.plat.network)); });
+      var more = el('button', 'btn', 'Accounts');
+      more.type = 'button';
+      more.addEventListener('click', function () { goView('accounts'); });
+      dest.appendChild(more);
+    }
 
     function bag() {
       if (!state.wallets[state.biz]) state.wallets[state.biz] = { google: null, apple: null, card: null, use: '' };
@@ -837,6 +895,10 @@
       setup.appendChild(webLab);
       setup.appendChild(web);
       setup.appendChild(el('p', 'msg', 'The CRM ranks which post brought the visit.'));
+      var walletBtn = el('button', 'btn', 'Wallet');
+      walletBtn.type = 'button';
+      walletBtn.addEventListener('click', function () { state.mode = 'billing'; goView('post'); paintBilling(); paintButtons(); });
+      setup.appendChild(walletBtn);
       if ((state.more || []).some(function (m) { return m.id === b.id; })) {
         var colors = el('div', 'swatches');
         ['deal', 'trust', 'clear', 'energy', 'community', 'craft'].forEach(function (key) {
@@ -870,6 +932,7 @@
         setup.appendChild(drop);
       }
       listBox.appendChild(setup);
+      setup.open = state.view === 'setup';
       var feed = el('div', 'feed');
       var rows = state.mode === 'ads' ? b.ads : b.organic;
       if (pending && rows.some(function (r) { return r.id === pending.id; })) {
@@ -970,7 +1033,7 @@
         save(); paintSide(); paintCustom(); paintPreview();
       });
       addBox.appendChild(net); addBox.appendChild(name); addBox.appendChild(go);
-      paintApis(addBox);
+      paintApis(apiBox);
     }
 
     function paintApis(host) {
@@ -1174,6 +1237,7 @@
       paintFormat();
       paintTags();
       paintReply();
+      paintDest();
     }
 
     function paintWhen() {
@@ -1286,8 +1350,14 @@
         week.appendChild(cell);
       }
       queue.appendChild(week);
-      queue.appendChild(el('h2', 'h', 'Queue'));
-      if (!state.items.length) { queue.appendChild(el('p', 'msg', 'No drafts. Write a post, or tell me the topic in chat and I will draft it for your approval.')); return; }
+      var head = el('div', 'board');
+      head.appendChild(el('h2', 'h', 'Queue'));
+      var neu = el('button', 'btn go', 'New post');
+      neu.type = 'button';
+      neu.addEventListener('click', function () { goView('post'); });
+      head.appendChild(neu);
+      queue.appendChild(head);
+      if (!state.items.length) { queue.appendChild(el('p', 'msg', 'Nothing waiting. Write a post when you are ready.')); return; }
       state.items.forEach(function (item) {
         var card = el('div', 'qitem');
         var tag = el('span', 'tag ' + (item.kind === 'ads' ? 'pay' : item.status === 'approved' ? 'ok' : 'wait'), item.kind === 'ads' ? 'Paid' : (item.status === 'approved' ? 'Approved' : 'Draft'));
@@ -1393,6 +1463,7 @@
     save();
     applyLook();
     paintBiz(); paintSide(); paintWhen(); paintCustom(); paintBilling(); paintButtons(); paintPreview(); paintQueue();
+    applyView();
   }
 
   global.MMMSocialDesk = { mount: mount };
