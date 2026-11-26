@@ -45,6 +45,7 @@
     '.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}',
     '.btn{min-height:44px;padding:0 16px;border:1px solid var(--line);background:transparent;color:var(--ink);font:700 15px/1 "Barlow Condensed",sans-serif;letter-spacing:.07em;text-transform:uppercase}',
     '.btn.gold{background:var(--gold);border-color:var(--gold);color:#14120a}',
+    '.sp a.btn{display:inline-flex;align-items:center;text-decoration:none;margin-top:8px}',
     '.btn:disabled{opacity:.45;cursor:not-allowed}',
     '.msg{min-height:1.2em;margin:8px 0 0;color:var(--mute);font-size:13.5px}',
     '.msg.ok{color:var(--teal)}.msg.bad{color:var(--bad)}',
@@ -143,8 +144,35 @@
   }
   function letter(network) { return (network || '?').replace(/[^A-Za-z]/g, '').slice(0, 2).toUpperCase(); }
 
+  var LOGIN = {
+    Facebook: 'https://www.facebook.com/login.php',
+    Instagram: 'https://www.instagram.com/accounts/login/',
+    TikTok: 'https://www.tiktok.com/login',
+    YouTube: 'https://accounts.google.com/ServiceLogin?service=youtube&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2F',
+    X: 'https://x.com/i/flow/login',
+    LinkedIn: 'https://www.linkedin.com/login',
+    Threads: 'https://www.threads.net/login',
+    Pinterest: 'https://www.pinterest.com/login/',
+    Bluesky: 'https://bsky.app/',
+    'Google Business': 'https://business.google.com/',
+    Snapchat: 'https://accounts.snapchat.com/accounts/login',
+    Telegram: 'https://web.telegram.org/',
+    Discord: 'https://discord.com/login',
+    WhatsApp: 'https://web.whatsapp.com/',
+    Reddit: 'https://www.reddit.com/login/',
+    Whop: 'https://whop.com/login/',
+    'Meta Ads': 'https://adsmanager.facebook.com/',
+    'YouTube Ads': 'https://ads.google.com/',
+    'TikTok Ads': 'https://ads.tiktok.com/',
+    'X Ads': 'https://ads.x.com/',
+    'LinkedIn Ads': 'https://www.linkedin.com/campaignmanager/',
+    'Google Ads': 'https://ads.google.com/',
+    'Pinterest Ads': 'https://ads.pinterest.com/',
+    'Snapchat Ads': 'https://ads.snapchat.com/'
+  };
+
   function load() {
-    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '' };
+    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '' };
     try {
       var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (!raw) return s;
@@ -154,17 +182,25 @@
       if (Array.isArray(raw.items)) s.items = raw.items;
       if (raw.extra) s.extra = raw.extra;
       if (raw.wallets) s.wallets = raw.wallets;
+      if (raw.linked) s.linked = raw.linked;
       return s;
     } catch (e) { return s; }
   }
 
   function businesses(state) {
+    function apply(list) {
+      return (list || []).map(function (p) {
+        var o = state.linked && state.linked[p.id];
+        if (!o) return p;
+        return { id: p.id, network: p.network, name: o.name || p.name, live: true, note: 'Connected' };
+      });
+    }
     return seed().map(function (b) {
       var ex = (state.extra && state.extra[b.id]) || { organic: [], ads: [] };
       return {
         id: b.id, name: b.name, site: b.site, blurb: b.blurb,
-        organic: b.organic.concat(ex.organic || []),
-        ads: b.ads.concat(ex.ads || [])
+        organic: apply(b.organic.concat(ex.organic || [])),
+        ads: apply(b.ads.concat(ex.ads || []))
       };
     });
   }
@@ -191,6 +227,7 @@
     style.textContent = CSS;
     document.head.appendChild(style);
     var state = load();
+    var pending = null;
 
     function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
     function el(tag, cls, text) {
@@ -504,6 +541,43 @@
       listBox.replaceChildren();
       listBox.appendChild(el('p', 'msg', b.blurb));
       var rows = state.mode === 'ads' ? b.ads : b.organic;
+      if (pending && rows.some(function (r) { return r.id === pending.id; })) {
+        var box = el('div', 'card');
+        var url = LOGIN[pending.network];
+        box.appendChild(el('div', 'who', 'Sign in · ' + pending.network));
+        box.appendChild(el('p', 'msg', 'Log in on ' + pending.network + ', then name the page and mark it connected.'));
+        if (url) {
+          var a = document.createElement('a');
+          a.href = url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.className = 'btn gold';
+          a.textContent = 'Open ' + pending.network + ' login';
+          box.appendChild(a);
+        }
+        var pageName = document.createElement('input');
+        pageName.placeholder = state.mode === 'ads' ? 'Ad account name' : 'Page or @handle';
+        pageName.value = pending.name || '';
+        pageName.style.marginTop = '8px';
+        box.appendChild(pageName);
+        var done = el('button', 'btn', 'Mark connected');
+        done.type = 'button';
+        done.style.marginTop = '8px';
+        done.addEventListener('click', function () {
+          var label = pageName.value.trim();
+          if (!label || label === 'Connect a page') { msg.className = 'msg bad'; msg.textContent = 'Name the page or account you just signed into.'; return; }
+          state.linked[pending.id] = { name: label };
+          if (state.selected.indexOf(pending.id) < 0) state.selected.push(pending.id);
+          var netName = pending.network;
+          pending = null;
+          save();
+          msg.className = 'msg ok';
+          msg.textContent = netName + ' is connected on this desk.';
+          paintBiz(); paintSide(); paintCustom(); paintPreview(); paintButtons();
+        });
+        box.appendChild(done);
+        listBox.appendChild(box);
+      }
       rows.forEach(function (p) {
         var on = state.selected.indexOf(p.id) >= 0;
         var btn = el('button', 'acc' + (on ? ' on' : ''));
@@ -512,9 +586,18 @@
         var dot = el('span', 'dot' + (p.live ? ' live' : ''));
         var g = el('span', 'grow');
         g.appendChild(el('span', 'nm', p.network));
-        g.appendChild(el('span', 'meta', p.name + ' · ' + (p.live ? 'Ready' : 'Connect')));
+        g.appendChild(el('span', 'meta', p.name + ' · ' + (p.live ? 'Ready' : 'Sign in')));
         btn.appendChild(mark); btn.appendChild(g); btn.appendChild(dot);
         btn.addEventListener('click', function () {
+          if (!p.live) {
+            pending = { id: p.id, network: p.network, name: p.name === 'Connect a page' ? '' : p.name };
+            var login = LOGIN[p.network];
+            if (login) window.open(login, '_blank', 'noopener,noreferrer');
+            msg.className = 'msg';
+            msg.textContent = 'Sign in to ' + p.network + ', then mark the page connected.';
+            paintSide();
+            return;
+          }
           var i = state.selected.indexOf(p.id);
           if (i >= 0) state.selected.splice(i, 1); else state.selected.push(p.id);
           save(); paintSide(); paintCustom(); paintPreview(); paintButtons();
