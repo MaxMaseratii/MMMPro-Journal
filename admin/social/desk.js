@@ -2,7 +2,7 @@
 (function (global) {
   'use strict';
   var KEY = 'mmm.social.plus.v4';
-  var PLATFORM = { facebook: '', google: '' };
+  var PLATFORM = { facebook: '1107484722267711', google: '' };
   var PENDING_OAUTH = null;
   try {
     if ((location.hash || '').indexOf('access_token=') >= 0) {
@@ -1182,7 +1182,8 @@
       function beginLogin(relogin) {
         var appId = PLATFORM[key === 'Google' ? 'google' : 'facebook'];
         if (!appId) {
-          accountHost.appendChild(el('p', 'msg bad', 'Sign-in for ' + network + ' is not switched on for the product yet.'));
+          var note = accountHost.querySelector('.needapp');
+          if (!note) accountHost.appendChild(el('p', 'msg bad needapp', 'Sign-in for ' + network + ' is not switched on for the product yet.'));
           return;
         }
         if (relogin) ses.token = '';
