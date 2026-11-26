@@ -242,22 +242,22 @@
 
 
   var LOGIN = {
-    Facebook: 'https://www.facebook.com/login.php',
-    Instagram: 'https://www.instagram.com/accounts/login/',
-    TikTok: 'https://www.tiktok.com/login',
-    YouTube: 'https://accounts.google.com/ServiceLogin?service=youtube&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2F',
-    X: 'https://x.com/i/flow/login',
-    LinkedIn: 'https://www.linkedin.com/login',
-    Threads: 'https://www.threads.net/login',
-    Pinterest: 'https://www.pinterest.com/login/',
+    Facebook: 'https://www.facebook.com/',
+    Instagram: 'https://www.instagram.com/',
+    TikTok: 'https://www.tiktok.com/',
+    YouTube: 'https://www.youtube.com/',
+    X: 'https://x.com/',
+    LinkedIn: 'https://www.linkedin.com/',
+    Threads: 'https://www.threads.net/',
+    Pinterest: 'https://www.pinterest.com/',
     Bluesky: 'https://bsky.app/',
     'Google Business': 'https://business.google.com/',
-    Snapchat: 'https://accounts.snapchat.com/accounts/login',
+    Snapchat: 'https://www.snapchat.com/',
     Telegram: 'https://web.telegram.org/',
-    Discord: 'https://discord.com/login',
+    Discord: 'https://discord.com/channels/@me',
     WhatsApp: 'https://web.whatsapp.com/',
-    Reddit: 'https://www.reddit.com/login/',
-    Whop: 'https://whop.com/login/',
+    Reddit: 'https://www.reddit.com/',
+    Whop: 'https://whop.com/',
     'Meta Ads': 'https://adsmanager.facebook.com/',
     'YouTube Ads': 'https://ads.google.com/',
     'TikTok Ads': 'https://ads.tiktok.com/',
@@ -1113,12 +1113,9 @@
       accountHost.appendChild(el('p', 'msg', 'One ' + network + ' login can hold several pages. Sign in, then send each page to the business it belongs to.'));
       var url = LOGIN[network];
       if (url) {
-        var a = document.createElement('a');
-        a.href = url;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.className = 'btn go';
-        a.textContent = 'Open ' + network;
+        var a = el('button', 'btn go', 'Open ' + network);
+        a.type = 'button';
+        a.addEventListener('click', function () { window.open(url, '_blank', 'noopener,noreferrer'); });
         accountHost.appendChild(a);
       }
       var pages = [];
