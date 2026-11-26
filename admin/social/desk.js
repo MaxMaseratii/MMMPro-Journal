@@ -119,8 +119,8 @@
       slot('tt', 'TikTok', 'Connect a page', false),
       slot('yt', 'YouTube', 'Max Maserati', true, 'Ready. A video is required.'),
       slot('x', 'X', '@Emaxmaserati', true),
-      slot('whop-public', 'Whop', 'Public forum', true, 'Trading only'),
-      slot('whop-weekly', 'Whop', 'Weekly Analysis', true, 'Trading only · members')
+      slot('whop-public', 'Whop', 'Public forum', true, 'Ready'),
+      slot('whop-weekly', 'Whop', 'Weekly Analysis', true, 'Members')
     ];
     ORGANIC.forEach(function (n) {
       if (n[0] === 'facebook' || n[0] === 'instagram' || n[0] === 'tiktok' || n[0] === 'youtube' || n[0] === 'x') return;
@@ -137,12 +137,21 @@
       });
     }
     return [
-      { id: 'trading', name: 'Trading', site: 'maxmaserati.com', blurb: 'Several pages. Whop is only here.', organic: tradingOrg, ads: ads('tr-ad-') },
-      { id: 'table', name: 'Table Fifty', site: 'tablefifty.co.uk', blurb: 'Half-price tables and delivery, UK-wide. No Whop.', organic: blank('tf-'), ads: ads('tf-ad-') },
-      { id: 'ayiti', name: 'Ayiti P2P', site: 'ayitip2p.com', blurb: 'Its own business. No Whop.', organic: blank('ap-'), ads: ads('ap-ad-') }
+      { id: 'trading', name: 'Trading', site: 'maxmaserati.com', blurb: 'Pages, ads, and Whop.', organic: tradingOrg, ads: ads('tr-ad-') },
+      { id: 'table', name: 'Table Fifty', site: 'tablefifty.co.uk', blurb: 'Half-price tables and delivery, UK-wide.', organic: blank('tf-'), ads: ads('tf-ad-') },
+      { id: 'ayiti', name: 'Ayiti P2P', site: 'ayitip2p.com', blurb: 'Its own business.', organic: blank('ap-'), ads: ads('ap-ad-') }
     ];
   }
 
+  function freshPack(prefix) {
+    function slot(id, network, name, live, note) {
+      return { id: id, network: network, name: name, live: !!live, note: note || (live ? 'Ready to publish' : 'Not connected') };
+    }
+    return {
+      organic: ORGANIC.map(function (n) { return slot(prefix + n[0], n[1], 'Connect a page', false); }),
+      ads: ADS.map(function (a) { return slot(prefix + a[0], a[1], a[2], false, 'Add a funded ad account to run this'); })
+    };
+  }
   function limitOf(network) {
     var hit = ORGANIC.filter(function (n) { return n[1] === network; })[0];
     if (network === 'Whop') return 5000;
@@ -251,7 +260,7 @@
     return list.indexOf(picked) >= 0 ? picked : list[0];
   }
   function suggestedTags(bizId, networks, format) {
-    var base = { trading: ['#MaxMaserati', '#trading'], table: ['#TableFifty', '#LondonEats'], ayiti: ['#AyitiP2P'] }[bizId] || [];
+    var base = { trading: ['#MaxMaserati', '#trading'], table: ['#TableFifty', '#LondonEats'], ayiti: ['#AyitiP2P'] }[bizId] || ['#' + String(bizId || 'post').replace(/[^A-Za-z0-9]/g, '')];
     var extra = [];
     (networks || []).forEach(function (n) {
       var t = '#' + String(n).replace(/[^A-Za-z0-9]/g, '');
@@ -262,7 +271,7 @@
   }
 
   function load() {
-    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '', goal: 5, format: 'Post', tags: [], tagsCustom: false, autoReply: false, replyText: '', board: 'queue', apis: [], websites: {} };
+    var s = { biz: 'trading', mode: 'organic', tone: 'same', text: '', custom: {}, when: 'now', at: '', link: '', selected: ['fb', 'x'], items: [], extra: { trading: { organic: [], ads: [] }, table: { organic: [], ads: [] }, ayiti: { organic: [], ads: [] } }, wallets: {}, linked: {}, objective: 'Traffic', budget: '20', currency: 'GBP', start: '', end: '', audience: '', goal: 5, format: 'Post', tags: [], tagsCustom: false, autoReply: false, replyText: '', board: 'queue', apis: [], websites: {}, more: [], names: {} };
     try {
       var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
       if (!raw) return s;
@@ -279,6 +288,8 @@
       if (raw.linked) s.linked = raw.linked;
       if (Array.isArray(raw.apis)) s.apis = raw.apis;
       if (raw.websites && typeof raw.websites === 'object') s.websites = raw.websites;
+      if (Array.isArray(raw.more)) s.more = raw.more;
+      if (raw.names && typeof raw.names === 'object') s.names = raw.names;
       return s;
     } catch (e) { return s; }
   }
@@ -302,7 +313,12 @@
         return { id: p.id, network: p.network, name: o.name || p.name, live: true, note: 'Connected' };
       });
     }
-    return seed().map(function (b) {
+    return seed().concat((state.more || []).filter(function (m) {
+      return m && m.id && !seed().some(function (b) { return b.id === m.id; });
+    }).map(function (m) {
+      var pack = freshPack(m.id + '-');
+      return { id: m.id, name: m.name || 'Business', site: '', blurb: 'Any page, any network.', organic: pack.organic, ads: pack.ads };
+    })).map(function (b) {
       var ex = (state.extra && state.extra[b.id]) || { organic: [], ads: [] };
       var fromApi = { organic: [], ads: [] };
       (state.apis || []).forEach(function (api) {
@@ -313,7 +329,7 @@
         });
       });
       return {
-        id: b.id, name: b.name, site: siteHostOf(state, b.id) || b.site, url: siteUrlOf(state, b.id), blurb: b.blurb,
+        id: b.id, name: (state.names && state.names[b.id]) || b.name, site: siteHostOf(state, b.id) || b.site, url: siteUrlOf(state, b.id), blurb: b.blurb,
         organic: apply(b.organic.concat(ex.organic || []).concat(fromApi.organic)),
         ads: apply(b.ads.concat(ex.ads || []).concat(fromApi.ads))
       };
@@ -677,12 +693,59 @@
         btn.addEventListener('click', function () { state.biz = b.id; save(); paintSide(); paintPreview(); paintBilling(); paintButtons(); });
         bizBox.appendChild(btn);
       });
+      var add = el('div', 'card');
+      add.appendChild(el('div', 'who', 'New business'));
+      var nm = document.createElement('input');
+      nm.placeholder = 'Business name';
+      nm.style.marginTop = '8px';
+      var site = document.createElement('input');
+      site.type = 'url';
+      site.placeholder = 'https://website';
+      site.style.marginTop = '8px';
+      var go = el('button', 'btn gold', 'Add business');
+      go.type = 'button';
+      go.style.marginTop = '8px';
+      go.addEventListener('click', function () {
+        var label = nm.value.trim();
+        if (!label) { msg.className = 'msg bad'; msg.textContent = 'Name the business.'; return; }
+        var id = (label.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 16) || 'biz') + Date.now().toString(36).slice(-4);
+        state.more = state.more || [];
+        state.more.push({ id: id, name: label });
+        state.extra[id] = { organic: [], ads: [] };
+        state.websites = state.websites || {};
+        if (site.value.trim()) state.websites[id] = site.value.trim();
+        state.biz = id;
+        nm.value = '';
+        site.value = '';
+        save();
+        msg.className = 'msg ok';
+        msg.textContent = label + ' is on the desk. Connect any pages you want.';
+        paintBiz(); paintSide(); paintPreview(); paintButtons();
+      });
+      add.appendChild(nm);
+      add.appendChild(site);
+      add.appendChild(go);
+      bizBox.appendChild(add);
     }
 
     function paintSide() {
       var b = businesses(state).filter(function (x) { return x.id === state.biz; })[0];
       listBox.replaceChildren();
       listBox.appendChild(el('p', 'msg', b.blurb));
+      var nameLab = el('label', 'lab', 'Name');
+      var nameIn = document.createElement('input');
+      nameIn.value = b.name;
+      nameIn.addEventListener('change', function () {
+        var label = nameIn.value.trim();
+        if (!label) return;
+        state.names = state.names || {};
+        state.names[b.id] = label;
+        (state.more || []).forEach(function (m) { if (m.id === b.id) m.name = label; });
+        save();
+        paintBiz();
+      });
+      listBox.appendChild(nameLab);
+      listBox.appendChild(nameIn);
       var webLab = el('label', 'lab', 'Website');
       var web = document.createElement('input');
       web.type = 'url';
@@ -697,6 +760,21 @@
       listBox.appendChild(webLab);
       listBox.appendChild(web);
       listBox.appendChild(el('p', 'msg', 'The CRM counts visits on this site and ranks which post or link brought them.'));
+      if ((state.more || []).some(function (m) { return m.id === b.id; })) {
+        var snip = el('p', 'msg', '');
+        snip.textContent = 'On this website, add: <script src="https://www.maxmaserati.com/admin/social/track.js" data-biz="' + b.id + '"></script>';
+        listBox.appendChild(snip);
+        var drop = el('button', 'btn', 'Remove business');
+        drop.type = 'button';
+        drop.style.marginTop = '8px';
+        drop.addEventListener('click', function () {
+          state.more = state.more.filter(function (m) { return m.id !== b.id; });
+          if (state.biz === b.id) state.biz = 'trading';
+          save();
+          paintBiz(); paintSide(); paintPreview(); paintButtons();
+        });
+        listBox.appendChild(drop);
+      }
       var rows = state.mode === 'ads' ? b.ads : b.organic;
       if (pending && rows.some(function (r) { return r.id === pending.id; })) {
         var box = el('div', 'card');
@@ -718,7 +796,6 @@
         pageName.style.marginTop = '8px';
         var bizPick = document.createElement('select');
         businesses(state).forEach(function (bb) {
-          if (pending.network === 'Whop' && bb.id !== 'trading') return;
           var o = document.createElement('option');
           o.value = bb.id;
           o.textContent = bb.name;
@@ -778,7 +855,7 @@
       });
       addBox.replaceChildren();
       var net = document.createElement('select');
-      var catalog = state.mode === 'ads' ? ADS.map(function (a) { return a[1]; }) : ORGANIC.map(function (n) { return n[1]; }).concat(b.id === 'trading' ? ['Whop'] : []);
+      var catalog = state.mode === 'ads' ? ADS.map(function (a) { return a[1]; }) : ORGANIC.map(function (n) { return n[1]; }).concat(['Whop']);
       catalog.forEach(function (n) { var o = document.createElement('option'); o.textContent = n; net.appendChild(o); });
       var name = document.createElement('input');
       name.placeholder = state.mode === 'ads' ? 'Ad account name' : 'Page or @handle';
@@ -787,7 +864,6 @@
       go.addEventListener('click', function () {
         var label = name.value.trim();
         if (!label) return;
-        if (net.value === 'Whop' && b.id !== 'trading') return;
         state.extra[b.id] = state.extra[b.id] || { organic: [], ads: [] };
         var id = uid(b.id);
         var row = { id: id, network: net.value, name: label, live: false, note: 'Saved. Tell me when the login is connected.' };
