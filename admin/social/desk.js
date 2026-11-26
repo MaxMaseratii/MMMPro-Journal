@@ -1068,10 +1068,10 @@
         btn.appendChild(mark); btn.appendChild(g); btn.appendChild(dot);
         btn.addEventListener('click', function () {
           state.account = p.network;
+          var login = LOGIN[p.network];
+          if (login) window.open(login, '_blank', 'noopener,noreferrer');
           goView('account');
-          var key = (p.network === 'Instagram' || p.network === 'Threads' || p.network === 'Meta Ads') ? 'Facebook' : ((p.network === 'YouTube' || p.network === 'Google Business' || p.network === 'YouTube Ads' || p.network === 'Google Ads') ? 'Google' : '');
-          if (key && state.sessions[key] && state.sessions[key].token) pullSession(key);
-          else paintAccount();
+          paintAccount();
         });
         feed.appendChild(btn);
       });
@@ -1101,10 +1101,6 @@
 
     function paintAccount() {
       var network = state.account || 'Facebook';
-      var key = (network === 'Instagram' || network === 'Threads' || network === 'Meta Ads') ? 'Facebook' : ((network === 'YouTube' || network === 'Google Business' || network === 'YouTube Ads' || network === 'Google Ads') ? 'Google' : network);
-      var listed = key === 'Facebook' || key === 'Google';
-      state.sessions[key] = state.sessions[key] || {};
-      var ses = state.sessions[key];
       accountHost.replaceChildren();
       var shut = el('button', 'x', 'Back to the week');
       shut.type = 'button';
@@ -1114,94 +1110,84 @@
       top.appendChild(logo(network));
       top.appendChild(el('h2', '', network));
       accountHost.appendChild(top);
-      if (!listed) {
-        accountHost.appendChild(el('p', 'msg', network + ' does not give a website the list of pages on a login. Facebook, Instagram and YouTube do.'));
-        var url = LOGIN[network];
-        if (url) {
-          var a = document.createElement('a');
-          a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.className = 'btn';
-          a.textContent = 'Open ' + network;
-          accountHost.appendChild(a);
-        }
-        return;
+      accountHost.appendChild(el('p', 'msg', 'One ' + network + ' login can hold several pages. Sign in, then send each page to the business it belongs to.'));
+      var url = LOGIN[network];
+      if (url) {
+        var a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'btn go';
+        a.textContent = 'Open ' + network;
+        accountHost.appendChild(a);
       }
-      var found = network === 'Instagram' ? (ses.instagram || []) : (key === 'Google' ? (ses.channels || []) : (ses.pages || []));
-      if (ses.user) accountHost.appendChild(el('p', 'msg', 'Signed in as ' + ses.user + '.'));
-      if (ses.loading) accountHost.appendChild(el('p', 'msg', 'Reading the pages on this login…'));
-      if (ses.error) accountHost.appendChild(el('p', 'msg bad', ses.error));
-      if (!ses.token) {
-        accountHost.appendChild(el('p', 'msg', 'Sign in. The pages on that login show up here, and you choose which business each one belongs to.'));
-        var connect = el('button', 'btn go', 'Connect ' + network);
-        connect.type = 'button';
-        connect.addEventListener('click', function () { beginLogin(false); });
-        accountHost.appendChild(connect);
-      } else if (!ses.loading && !found.length && !ses.error) {
-        accountHost.appendChild(el('p', 'msg', 'This login has no ' + network + ' page yet.'));
-      }
-      found.forEach(function (page) {
+      var pages = [];
+      businesses(state).forEach(function (biz) {
+        ['organic', 'ads'].forEach(function (kind) {
+          (biz[kind] || []).forEach(function (p) {
+            if (p.network === network && p.name && p.name !== 'Connect a page') pages.push({ biz: biz, page: p });
+          });
+        });
+      });
+      accountHost.appendChild(el('p', 'kicker', pages.length ? 'Pages on this login' : 'No page on this login yet'));
+      pages.forEach(function (hit) {
         var row = el('div', 'pagerow');
         var g = el('div', 'grow');
-        g.appendChild(el('b', '', page.name));
-        var where = '';
-        businesses(state).forEach(function (biz) {
-          var bag = (state.extra[biz.id] && state.extra[biz.id][state.mode === 'ads' ? 'ads' : 'organic']) || [];
-          bag.forEach(function (p) { if (p.remoteId === page.id) where = biz.name; });
-        });
-        g.appendChild(el('span', '', where ? ('On ' + where) : (page.via ? ('On the page ' + page.via) : 'Not on a business yet')));
+        g.appendChild(el('b', '', hit.page.name));
+        g.appendChild(el('span', '', hit.biz.name));
         row.appendChild(g);
-        var bizPick = document.createElement('select');
-        businesses(state).forEach(function (bb) {
-          var o = document.createElement('option');
-          o.value = bb.id; o.textContent = bb.name;
-          if (bb.id === state.biz) o.selected = true;
-          bizPick.appendChild(o);
-        });
-        var use = el('button', 'btn go', where ? 'Move' : 'Use');
+        var use = el('button', 'btn' + (state.selected.indexOf(hit.page.id) >= 0 ? ' go' : ''), state.selected.indexOf(hit.page.id) >= 0 ? 'Using' : 'Use');
         use.type = 'button';
         use.addEventListener('click', function () {
-          var bizId = bizPick.value;
-          var id = network.toLowerCase().replace(/[^a-z0-9]/g, '') + '-' + page.id;
-          state.extra[bizId] = state.extra[bizId] || { organic: [], ads: [] };
-          var kind = state.mode === 'ads' ? 'ads' : 'organic';
-          var bag = state.extra[bizId][kind];
-          if (!bag.some(function (p) { return p.id === id; })) bag.push({ id: id, network: network, name: page.name, live: true, note: 'From the login', remoteId: page.id });
-          if (state.selected.indexOf(id) < 0) state.selected.push(id);
+          var i = state.selected.indexOf(hit.page.id);
+          if (i >= 0) state.selected.splice(i, 1); else state.selected.push(hit.page.id);
           save();
-          paintBiz(); paintSide(); paintAccount(); paintPreview(); paintButtons();
+          paintAccount();
+          paintSide();
+          paintPreview();
+          paintButtons();
         });
-        row.appendChild(bizPick);
         row.appendChild(use);
         accountHost.appendChild(row);
       });
-      if (ses.token) {
-        var other = el('button', 'btn', 'Use a different ' + network + ' account');
-        other.type = 'button';
-        other.style.marginTop = '16px';
-        other.addEventListener('click', function () { beginLogin(true); });
-        accountHost.appendChild(other);
-      }
-      function beginLogin(relogin) {
-        var appId = PLATFORM[key === 'Google' ? 'google' : 'facebook'];
-        if (!appId) {
-          var note = accountHost.querySelector('.needapp');
-          if (!note) accountHost.appendChild(el('p', 'msg bad needapp', 'Sign-in for ' + network + ' is not switched on for the product yet.'));
-          return;
-        }
-        if (relogin) ses.token = '';
-        sessionStorage.setItem('mmm.oauth.net', key);
-        sessionStorage.setItem('mmm.oauth.view', network);
-        var back = OAUTH_REDIRECT;
-        var url;
-        if (key === 'Google') {
-          url = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=' + encodeURIComponent(appId) + '&redirect_uri=' + encodeURIComponent(back) + '&response_type=token&include_granted_scopes=true&prompt=select_account&scope=' + encodeURIComponent('openid email profile https://www.googleapis.com/auth/youtube.readonly');
-        } else {
-          url = 'https://www.facebook.com/v21.0/dialog/oauth?client_id=' + encodeURIComponent(appId) + '&redirect_uri=' + encodeURIComponent(back) + '&response_type=token&display=popup&scope=' + encodeURIComponent('public_profile,pages_show_list,pages_read_engagement,instagram_basic,business_management') + (relogin ? '&auth_type=reauthenticate' : '');
-        }
-        var pop = window.open(url, 'mmm-oauth', 'width=520,height=720');
-        if (!pop) location.href = url;
-      }
+      accountHost.appendChild(el('label', 'lab', 'Add a page from this login'));
+      var pageName = document.createElement('input');
+      pageName.placeholder = 'Page, channel, or @handle';
+      var bizPick = document.createElement('select');
+      businesses(state).forEach(function (bb) {
+        var o = document.createElement('option');
+        o.value = bb.id;
+        o.textContent = bb.name;
+        if (bb.id === state.biz) o.selected = true;
+        bizPick.appendChild(o);
+      });
+      bizPick.style.marginTop = '8px';
+      var done = el('button', 'btn go', 'Add page');
+      done.type = 'button';
+      done.style.marginTop = '8px';
+      done.addEventListener('click', function () {
+        var label = pageName.value.trim();
+        if (!label) { msg.className = 'msg bad'; msg.textContent = 'Name the page.'; return; }
+        var bizId = bizPick.value;
+        state.extra[bizId] = state.extra[bizId] || { organic: [], ads: [] };
+        var kind = state.mode === 'ads' ? 'ads' : 'organic';
+        var id = uid(bizId);
+        state.extra[bizId][kind].push({ id: id, network: network, name: label, live: true, note: 'Connected' });
+        if (state.selected.indexOf(id) < 0) state.selected.push(id);
+        pageName.value = '';
+        save();
+        msg.className = 'msg ok';
+        msg.textContent = label + ' is on ' + (businesses(state).filter(function (x) { return x.id === bizId; })[0] || {}).name + '.';
+        paintBiz();
+        paintSide();
+        paintAccount();
+        paintPreview();
+        paintButtons();
+      });
+      accountHost.appendChild(pageName);
+      accountHost.appendChild(bizPick);
+      accountHost.appendChild(done);
     }
-
     function pullSession(which) {
       var ses = state.sessions[which];
       if (!ses || !ses.token) return;
