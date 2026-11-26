@@ -18,7 +18,8 @@ const PORT = Number(process.env.PORT) || 3000;
 const TOKEN = process.env.HUB_TOKEN || '';
 const TOKEN_OK = TOKEN.length >= 32;
 const PROJECT = process.env.FIREBASE_PROJECT_ID || 'mmm-pro-journal';
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'infotrade@maxmaserati.com').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean);
+const OWNER_EMAILS = ['infotrade@maxmaserati.com'];   // the site owner: always an admin, whatever ADMIN_EMAILS says
+const ADMIN_EMAILS = [...new Set([...OWNER_EMAILS, ...(process.env.ADMIN_EMAILS || '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean)])];
 const ORIGINS = (process.env.ALLOWED_ORIGINS || 'https://www.maxmaserati.com,https://maxmaserati.com').split(',').map((s) => s.trim());
 const ADMIN_PAGE = process.env.ADMIN_PAGE_URL || 'https://www.maxmaserati.com/admin/#mail';
 if (!TOKEN_OK) console.error('HUB_TOKEN is missing or shorter than 32 characters: the Claude connector (/mcp) is switched off.');
@@ -90,8 +91,8 @@ pub.get('/personal/key', async (req, res) => {
   let email;
   try {
     const { payload } = await jwtVerify(m[1], JWKS, { issuer: `https://securetoken.google.com/${PROJECT}`, audience: PROJECT });
-    if (!payload.email_verified) return res.status(403).json({ ok: false, code: 'unverified', email: payload.email || '' });
     email = String(payload.email || '').toLowerCase();
+    if (!payload.email_verified && !ADMIN_EMAILS.includes(email)) return res.status(403).json({ ok: false, code: 'unverified', email: payload.email || '' });
   } catch {
     return res.status(401).json({ ok: false, code: 'auth' });
   }
