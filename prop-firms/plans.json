@@ -1,8 +1,8 @@
 {
  "title": "One-Pay Futures Prop Plans",
  "summary": "Only plans with no activation fee and an end-of-day or static drawdown in both the evaluation and the funded account. One row per account size, lowest to highest.",
- "verified": "2026-11-22",
- "verified_label": "22 Nov 2026 (London time)",
+ "verified": "2026-11-27",
+ "verified_label": "27 Nov 2026 (London time)",
  "criteria": [
   "No activation fee",
   "One-time payment (monthly-billed plans hidden behind a toggle)",
@@ -1620,7 +1620,7 @@
     {
      "k": 25,
      "list": 329,
-     "promo": "",
+     "promo": "$148.05 with FFONE (55% off first 5; fundedfamilyone.com 27 Nov)",
      "dd": 1000,
      "target": null,
      "dll": "None"
@@ -3384,7 +3384,7 @@
     {
      "k": 100,
      "list": 900,
-     "promo": "$180",
+     "promo": "$135 with BLACK90 (to 27 Nov 2026 5 PM ET, official X 26 Nov)",
      "dd": null,
      "target": null,
      "dll": "None"
@@ -3392,7 +3392,7 @@
     {
      "k": 150,
      "list": null,
-     "promo": "$168.45 with HONOR85 (to 24 Nov 2026, official X 20 Nov)",
+     "promo": "",
      "dd": null,
      "target": null,
      "dll": "None"
@@ -4544,7 +4544,7 @@
     {
      "k": 50,
      "list": 128,
-     "promo": "$89.60 shown",
+     "promo": "$89.60 with BLACKFRIDAY30 (to 12 Dec 2026, official X 26 Nov)",
      "dd": 2000,
      "target": null,
      "dll": "Not stated"
@@ -4553,6 +4553,50 @@
    "fCons": 0,
    "payDays": 5,
    "payNote": null
+  },
+  {
+   "id": "phoenix-daily",
+   "firm": "Phoenix Trader Funding",
+   "plan": "Daily",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "End-of-day trailing drawdown in the challenge and in sim funded (does not tighten when funded); live funded graduates to a static drawdown. Official page phoenixtraderfunding.com/daily-accounts, 27 Nov 2026.",
+   "consistency": "50% in the challenge only; none in sim funded",
+   "payout": "Each green day matures over 3 trading days (5 on a big day), then is withdrawable from $75 at 80/20; graduate to live after withdrawing $1,200 / $3,000 / $6,000.",
+   "maxAcc": "3 active Daily accounts",
+   "notes": "Paid once, $0 activation fee (official Phoenix blog 6 Nov 2026 and activation FAQ). Prices $99 / $199 / $329 on 10K / 25K / 50K; promo prices are 40% off with BLACKFRIDAY40 (25K $119.40 and 50K $197.40 confirmed on the official X post 26 Nov; 10K promo not stated). TFeed only. Minimum 2 trading days. Trade half size until the Security Threshold is built. Resets $59 / $114 / $189.",
+   "src": "https://phoenixtraderfunding.com/daily-accounts",
+   "sizes": [
+    {
+     "k": 10,
+     "list": 99,
+     "promo": "",
+     "dd": 600,
+     "target": 600,
+     "dll": "None"
+    },
+    {
+     "k": 25,
+     "list": 199,
+     "promo": "$119.40 with BLACKFRIDAY40 (to 12 Dec 2026)",
+     "dd": 1500,
+     "target": 1500,
+     "dll": "None"
+    },
+    {
+     "k": 50,
+     "list": 329,
+     "promo": "$197.40 with BLACKFRIDAY40 (to 12 Dec 2026)",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "None"
+    }
+   ],
+   "fCons": 0,
+   "payDays": 3,
+   "payNote": "Green days mature over 3 trading days; $75 minimum payout; 80/20."
   },
   {
    "id": "bizi-select",
@@ -4637,7 +4681,9 @@
   "Swiss Firmup Algo: $29 for a $5,000 algo-test / leaderboard account. Official page: drawdown equals the full account capital, no profit target, and no funded payout path like the Pro evaluation.",
   "Funded Family One TruTik Starter ($10, $1,000, $100 EOD trailing): official help and homepage describe a launch offer limited to 24 hours or the first 1,000 places. On 20 Nov 2026 the homepage still showed the offer with a countdown reading 24:00:00, so availability was not confirmed and it is not added as a plan row.",
   "Ylos Trading Static Prime (Rocket Launch experiment, 25K and 50K, static drawdown, hard daily loss limit, one-time fee): fee amounts not shown on ylostrading.com/rocket-launch (only account size and rules), funded-stage rules not confirmed, limited test product, so not added.",
-  "The Trading Pit Futures Prime (50K $99, 100K $189, 150K $289, one-time, EOD in challenge): the page shows the $129 activation fee struck through next to $0 and does not state the funded-stage drawdown, so not added until confirmed."
+  "The Trading Pit Futures Prime (50K $99, 100K $189, 150K $289, one-time, EOD in challenge): the page shows the $129 activation fee struck through next to $0 and does not state the funded-stage drawdown, so not added until confirmed.",
+  "Apex Instant Sim Funded ($50K only, $1,970 list, $197 Black Friday sale, no evaluation, no monthly fee): intraday trailing drawdown ($1,500) with a hard $1,000 daily loss limit (Apex help centre, 27 Nov 2026).",
+  "Phoenix Trader Funding Spark (10K $44, 25K $74, one-time): $29 activation fee when you pass (Phoenix activation FAQ)."
  ],
  "firms": {
   "Apex Trader Funding": {

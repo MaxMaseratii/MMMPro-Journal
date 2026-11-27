@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-26T06:35:27Z",
-  "updated_label": "26 Nov 2026, 06:35 London",
+  "updated": "2026-11-27T06:23:08Z",
+  "updated_label": "27 Nov 2026, 06:23 London",
   "offers": [
     {
       "firm": "Apex Trader Funding",
@@ -25,6 +25,28 @@
       "checked": "2026-11-20"
     },
     {
+      "firm": "Apex Trader Funding",
+      "plans": [],
+      "code": null,
+      "pct": 90,
+      "text": "Black Friday: new $50K Instant Sim Funded account at $197 (90% off $1,970), no evaluation, one-time fee, 100% split (intraday trailing drawdown, so not in the one-pay table). No code shown in the post",
+      "ends": null,
+      "src": "https://x.com/ApexTradeFund/status/2126071723803963720",
+      "via": "x",
+      "checked": "2026-11-27"
+    },
+    {
+      "firm": "Funded Family One",
+      "plans": [],
+      "code": "FFONE",
+      "pct": 90,
+      "text": "Velocity on TruTik: 90% off every size plus buy 4 get 1 free with code FFONE. Ends Fri 27 Nov 2026, 3 PM PST",
+      "ends": "2026-11-27",
+      "src": "https://fundedfamilyone.com",
+      "via": "site",
+      "checked": "2026-11-27"
+    },
+    {
       "firm": "IQ Capital",
       "plans": [],
       "code": null,
@@ -42,11 +64,11 @@
       ],
       "code": "BLACK90",
       "pct": 85,
-      "text": "Black Friday: up to 90% off with code BLACK90 (Fundamental and Premium 90%, Express to Live 85%). Only 1,000 accounts. Ends Fri 27 Nov, 5 PM ET",
+      "text": "Black Friday: up to 90% off with code BLACK90 (Fundamental and Premium 90%, Express to Live 85%; 100K Express to Live $135, 50K Fundamental $58). Ends Fri 27 Nov, 5 PM ET",
       "ends": "2026-11-27",
-      "src": "https://phidiaspropfirm.com/accounts",
-      "via": "site",
-      "checked": "2026-11-25"
+      "src": "https://x.com/PhidiasPropfirm/status/2126119147587178641",
+      "via": "x",
+      "checked": "2026-11-27"
     },
     {
       "firm": "Funded Futures Network",
@@ -117,6 +139,19 @@
       "src": "https://goatfundedfutures.com/",
       "via": "site",
       "checked": "2026-11-20"
+    },
+    {
+      "firm": "Funded Family One",
+      "plans": [
+        "ffone-s2f"
+      ],
+      "code": "FFONE",
+      "pct": 55,
+      "text": "S2F on TruTik (no evaluation): 55% off your first 5 accounts, then 40% off, with code FFONE (25K $148.05 one time)",
+      "ends": null,
+      "src": "https://fundedfamilyone.com",
+      "via": "site",
+      "checked": "2026-11-27"
     },
     {
       "firm": "Alpha Futures",
@@ -312,6 +347,30 @@
       "checked": "2026-11-25"
     },
     {
+      "firm": "Aqua Futures (AquaFunded)",
+      "plans": [],
+      "code": "THANKSGIVING",
+      "pct": 40,
+      "text": "Thanksgiving: 40% off every account with code THANKSGIVING",
+      "ends": null,
+      "src": "https://x.com/AquaFunded/status/2126041781917921472",
+      "via": "x",
+      "checked": "2026-11-27"
+    },
+    {
+      "firm": "Phoenix Trader Funding",
+      "plans": [
+        "phoenix-daily"
+      ],
+      "code": "BLACKFRIDAY40",
+      "pct": 40,
+      "text": "Black Friday: 40% off Daily accounts with BLACKFRIDAY40 (25K $119.40, 50K $197.40, paid once). Ends Sat 12 Dec 2026, 11:59 PM CET",
+      "ends": "2026-12-12",
+      "src": "https://x.com/phoenixfunding/status/2126006678810398736",
+      "via": "x",
+      "checked": "2026-11-27"
+    },
+    {
       "firm": "Futureify (FXIFY Futures)",
       "plans": [],
       "code": "BLACK35",
@@ -332,6 +391,17 @@
       "src": "https://blueguardian.com/futures",
       "via": "site",
       "checked": "2026-11-25"
+    },
+    {
+      "firm": "Blue Guardian Futures",
+      "plans": [],
+      "code": null,
+      "pct": 35,
+      "text": "Black Friday (founder post): 35% off plus buy 4 get the 5th free; 5-pack from $675 to $516. No code shown in the post",
+      "ends": null,
+      "src": "https://x.com/seanbaint/status/2126128107845271892",
+      "via": "x",
+      "checked": "2026-11-27"
     },
     {
       "firm": "Tradeify",
@@ -369,6 +439,19 @@
       "checked": "2026-11-25"
     },
     {
+      "firm": "Phoenix Trader Funding",
+      "plans": [
+        "phoenix-classic"
+      ],
+      "code": "BLACKFRIDAY30",
+      "pct": 30,
+      "text": "Black Friday: 30% off Classic with BLACKFRIDAY30 (50K Growth from $89.60, 100K Scale from $188.30). Ends Sat 12 Dec 2026, 11:59 PM CET",
+      "ends": "2026-12-12",
+      "src": "https://x.com/phoenixfunding/status/2126006678810398736",
+      "via": "x",
+      "checked": "2026-11-27"
+    },
+    {
       "firm": "E8 Futures",
       "plans": [],
       "code": "E8",
@@ -384,11 +467,11 @@
       "plans": [],
       "code": "UPTBLACK",
       "pct": 20,
-      "text": "Black Friday: extra 20% off the already discounted price with code UPTBLACK",
+      "text": "Thanksgiving: extra 20% off on top of the 40% already applied, with code UPTBLACK",
       "ends": null,
-      "src": "https://uprofit.com/",
-      "via": "site",
-      "checked": "2026-11-25"
+      "src": "https://x.com/uprofittrader/status/2125937619229974733",
+      "via": "x",
+      "checked": "2026-11-27"
     },
     {
       "firm": "The5ers Futures",
