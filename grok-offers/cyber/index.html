@@ -2,110 +2,306 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MMM Pro Cyber Monday: scratch to see your discount</title>
-<meta name="description" content="Scratch to see your MMM Pro discount: 40% to 60% off. Free to scratch. Ends Monday 30 November 2026, 23:59 London time.">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MMM Pro Cyber Monday: scratch to reveal your discount</title>
+<meta name="description" content="Scratch to reveal your MMM Pro discount: 40% to 60% off. Free to scratch, no purchase needed. Ends Monday 30 November 2026, 23:59 London time.">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#070B16">
+<link rel="icon" href="/favicon-32x32.png">
 <style>
-:root{--navy:#0B2A5B;--blue:#1E5BFF;--sky:#EAF1FF;--orange:#FF7A00;--orange2:#E56A00;--green:#12B76A;--ink:#0F172A;--dim:#475569;--line:#D7E2F5}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--sky);color:var(--ink)}
-.wrap{max-width:560px;margin:0 auto;padding:28px 18px 48px}
-.top{background:var(--navy);color:#fff;border-radius:20px;padding:22px 22px 26px;text-align:center}
-.top small{letter-spacing:.12em;text-transform:uppercase;color:#9FC0FF;font-weight:700}
-h1{margin:8px 0 6px;font-size:28px;line-height:1.15}
-.top p{margin:0;color:#D6E4FF}
-.card{position:relative;margin:22px auto 10px;width:100%;max-width:420px;aspect-ratio:3/2;border-radius:18px;overflow:hidden;background:#fff;border:2px solid var(--line);box-shadow:0 10px 30px rgba(11,42,91,.15)}
-.prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.prize .pct{font-size:72px;font-weight:800;color:var(--blue);line-height:1}
-.prize .lbl{font-weight:700;color:var(--navy);margin-top:6px}
-.prize .code{margin-top:10px;font-family:ui-monospace,Menlo,monospace;font-size:20px;padding:6px 12px;border:2px dashed var(--blue);border-radius:10px;color:var(--navy)}
-canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:pointer}
-.hint{text-align:center;color:var(--dim);font-size:14px}
-.cta{display:none;margin:18px auto 0;max-width:420px}
-.btn{display:block;text-align:center;background:var(--orange);color:#fff;text-decoration:none;font-weight:800;font-size:19px;padding:16px;border-radius:14px}
-.btn:hover{background:var(--orange2)}
-.price{text-align:center;margin:10px 0 0;color:var(--ink);font-size:15px}
-.alt{display:block;text-align:center;margin-top:10px;color:var(--blue);font-weight:600}
-.box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-top:22px}
-.box h2{font-size:18px;margin:0 0 10px;color:var(--navy)}
-ol{margin:0;padding-left:20px}li{margin:6px 0;line-height:1.45}
-table{width:100%;border-collapse:collapse;font-size:15px}td{padding:6px 0;border-bottom:1px solid var(--line)}td:last-child{text-align:right;font-weight:700}
-.fine{font-size:13px;color:var(--dim);line-height:1.5}
+:root{
+  --bg:#070B16;--bg2:#0C1428;--panel:#0F1A33;--panel2:#13213F;--line:rgba(255,255,255,.09);
+  --text:#F3F6FD;--dim:#9AA8C7;--blue:#3D7BFF;--cyan:#38D6FF;--orange:#FF7A00;--orange2:#FF9433;
+  --gold:#F2C94C;--teal:#12B5A6;--purple:#8B5CF6;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding:18px 0 54px;background:
+  radial-gradient(900px 480px at 82% -10%,rgba(61,123,255,.30),transparent 60%),
+  radial-gradient(700px 420px at 0% 30%,rgba(56,214,255,.12),transparent 60%),
+  linear-gradient(180deg,#0A1226 0%,#070B16 100%)}
+.hero:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse at 50% 20%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse at 50% 20%,#000 20%,transparent 75%);pointer-events:none}
+.candles{position:absolute;left:0;right:0;bottom:0;height:110px;opacity:.13;pointer-events:none}
+.top{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 22px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand img{width:40px;height:40px;border-radius:50%;border:1px solid rgba(242,201,76,.55);background:#000;box-shadow:0 0 0 3px rgba(242,201,76,.08)}
+.brand b{font-size:13px;letter-spacing:.16em;text-transform:uppercase}
+.brand span{display:block;font-size:11px;color:var(--dim);letter-spacing:.06em}
+.pill{font-size:12px;color:var(--gold);border:1px solid rgba(242,201,76,.45);padding:6px 12px;border-radius:999px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;background:rgba(242,201,76,.06);white-space:nowrap}
+.grid{position:relative;display:grid;gap:22px;grid-template-columns:1fr;grid-template-areas:'txt' 'stage' 'cdw';align-items:start}
+.g-txt{grid-area:txt}.g-cd{grid-area:cdw}.stage{grid-area:stage}
+@media(min-width:900px){.grid{grid-template-columns:1.05fr .95fr;grid-template-areas:'txt stage' 'cdw stage';column-gap:56px;row-gap:22px;align-items:center}.hero{padding-bottom:78px}.g-txt{align-self:end}.g-cd{align-self:start}}
+h1{margin:0 0 14px;font-size:clamp(34px,8.2vw,60px);line-height:1.04;letter-spacing:-.025em;font-weight:800}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--cyan),var(--blue) 55%,#8FB4FF);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{margin:0 0 16px;color:#C3CEE8;font-size:clamp(16px,3.9vw,19px);max-width:520px}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.badges li{font-size:13px;color:#DCE6FB;border:1px solid var(--line);background:rgba(255,255,255,.04);padding:7px 12px;border-radius:999px}
+.badges li:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--teal);margin-right:8px;box-shadow:0 0 8px var(--teal)}
+
+/* countdown */
+.cd{display:flex;gap:8px;align-items:stretch}
+.cd div{min-width:64px;text-align:center;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;padding:10px 8px}
+.cd b{display:block;font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cd span{font-size:10px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase}
+.cdnote{margin:10px 0 0;color:var(--dim);font-size:13px}
+
+/* scratch card */
+.stage{position:relative;display:flex;flex-direction:column;align-items:center}
+.cardwrap{position:relative;width:100%;max-width:440px;padding:2px;border-radius:26px;background:linear-gradient(135deg,rgba(242,201,76,.75),rgba(255,255,255,.12) 40%,rgba(61,123,255,.5));box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 80px rgba(61,123,255,.22)}
+.card{position:relative;aspect-ratio:16/11;border-radius:24px;overflow:hidden;background:radial-gradient(420px 260px at 50% 40%,#1B2F5E,#0B1530)}
+.prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:10px}
+.prize small{font-size:11px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;font-weight:700}
+.pct{font-size:clamp(70px,22vw,104px);font-weight:900;line-height:1;letter-spacing:-.04em;background:linear-gradient(180deg,#fff,#BFD3FF 70%,#7FA8FF);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 24px rgba(61,123,255,.55))}
+.pct sup{font-size:.45em;vertical-align:.7em;margin-left:2px}
+.lbl{font-weight:700;color:#DCE6FB;font-size:14px;margin-top:2px}
+.code{margin-top:12px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:19px;padding:7px 14px;border:1.5px dashed rgba(242,201,76,.7);border-radius:12px;color:var(--gold);letter-spacing:.08em;background:rgba(242,201,76,.07)}
+canvas#scratch{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;border-radius:24px}
+canvas#scratch:active{cursor:grabbing}
+.cardwrap.won{animation:glow 1.6s ease-out 1}
+@keyframes glow{0%{box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 0 rgba(255,122,0,0)}35%{box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 120px rgba(255,148,51,.75),0 0 40px rgba(242,201,76,.6)}100%{box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 80px rgba(61,123,255,.22)}}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:50}
+.hint{margin:14px 0 0;color:var(--dim);font-size:14px;text-align:center}
+.hint button{border:0;background:none;color:var(--cyan);font-weight:700;cursor:pointer;font-size:14px;padding:4px 6px;text-decoration:underline;text-underline-offset:3px}
+.cta{display:none;width:100%;max-width:440px;margin-top:18px;text-align:center}
+.btn{display:block;background:linear-gradient(180deg,var(--orange2),var(--orange));color:#fff;text-decoration:none;font-weight:800;font-size:19px;padding:17px 18px;border-radius:16px;box-shadow:0 12px 32px rgba(255,122,0,.38),inset 0 1px 0 rgba(255,255,255,.35);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 16px 38px rgba(255,122,0,.5),inset 0 1px 0 rgba(255,255,255,.35)}
+.price{margin:12px 0 0;color:#C3CEE8;font-size:14px}
+.alt{display:inline-block;margin-top:10px;color:var(--cyan);font-weight:600;font-size:14px}
+.copy{margin-top:8px;background:none;border:1px solid var(--line);color:var(--dim);border-radius:10px;padding:6px 12px;font-size:12px;cursor:pointer}
+
+/* sections */
+section{padding:56px 0 8px}
+h2{margin:0 0 6px;font-size:clamp(26px,6vw,38px);letter-spacing:-.02em;line-height:1.1}
+.sub{margin:0 0 26px;color:var(--dim);max-width:620px}
+.eyebrow{color:var(--gold);font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;margin-bottom:10px}
+.steps{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:640px){.steps{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.steps{grid-template-columns:repeat(4,1fr)}}
+.step{position:relative;background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:20px;padding:20px 18px 20px;overflow:hidden}
+.step:after{content:"";position:absolute;top:0;left:18px;right:18px;height:2px;background:linear-gradient(90deg,var(--gold),transparent);opacity:.7}
+.ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:rgba(61,123,255,.14);border:1px solid rgba(61,123,255,.35);margin-bottom:14px}
+.ic svg{width:26px;height:26px;stroke:var(--cyan);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.n{position:absolute;top:14px;right:16px;font-size:34px;font-weight:900;color:rgba(255,255,255,.06)}
+.step h3{margin:0 0 6px;font-size:18px}
+.step p{margin:0;color:#B4C1DD;font-size:14.5px}
+
+.two{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:900px){.two{grid-template-columns:1fr 1fr}}
+.chart{background:#fff;border-radius:20px;padding:16px;color:#0F172A}
+.chart svg{width:100%;height:auto;display:block}
+.chart p{margin:10px 2px 0;font-size:13px;color:#475569}
+.odds{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:20px;padding:20px}
+.odds h3{margin:0 0 4px;font-size:18px}
+.odds .s{margin:0 0 14px;color:var(--dim);font-size:14px}
+.row{display:grid;grid-template-columns:70px 1fr 74px;gap:10px;align-items:center;margin:9px 0;font-size:14px}
+.bar{height:10px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.row b{text-align:right;font-variant-numeric:tabular-nums}
+.guard{margin-top:18px;border:1px solid rgba(242,201,76,.35);background:rgba(242,201,76,.05);border-radius:16px;padding:14px 16px;color:#E9E3C8;font-size:14.5px}
+.terms{margin:44px 0 0;padding:22px 0 46px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;line-height:1.6}
+.terms b{color:var(--text)}
+.foot{display:flex;align-items:center;gap:10px;margin-top:16px;color:var(--dim);font-size:12px}
+.foot img{width:28px;height:28px;border-radius:50%;border:1px solid rgba(242,201,76,.5)}
+@media(prefers-reduced-motion:reduce){.cardwrap.won{animation:none}*{scroll-behavior:auto}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="top">
-    <small>Cyber Monday at MMM</small>
-    <h1>Scratch to see your MMM Pro discount</h1>
-    <p>Every card wins 40% to 60% off. Free to scratch, no purchase needed.</p>
-  </div>
 
-  <div class="card" id="card">
-    <div class="prize"><div class="pct" id="pct">?</div><div class="lbl">off MMM Pro monthly for 12 months</div><div class="code" id="code">CODE</div></div>
-    <canvas id="scratch" aria-label="Scratch area. Drag to reveal your discount."></canvas>
-  </div>
-  <p class="hint" id="hint">Drag your finger or mouse across the card. <button id="reveal" style="border:0;background:none;color:#1E5BFF;font-weight:700;cursor:pointer;font-size:14px">Or tap to reveal</button></p>
+<header class="hero">
+  <svg class="candles" viewBox="0 0 1200 140" preserveAspectRatio="none" aria-hidden="true">
+    <g stroke-width="2">
+      <g stroke="#12B5A6" fill="#12B5A6"><line x1="40" y1="60" x2="40" y2="120"/><rect x="32" y="70" width="16" height="36"/><line x1="130" y1="40" x2="130" y2="100"/><rect x="122" y="50" width="16" height="40"/><line x1="310" y1="20" x2="310" y2="86"/><rect x="302" y="30" width="16" height="44"/><line x1="490" y1="30" x2="490" y2="90"/><rect x="482" y="40" width="16" height="36"/><line x1="670" y1="10" x2="670" y2="70"/><rect x="662" y="18" width="16" height="42"/><line x1="850" y1="20" x2="850" y2="80"/><rect x="842" y="28" width="16" height="38"/><line x1="1030" y1="4" x2="1030" y2="60"/><rect x="1022" y="12" width="16" height="36"/></g>
+      <g stroke="#8B5CF6" fill="#8B5CF6"><line x1="85" y1="50" x2="85" y2="116"/><rect x="77" y="60" width="16" height="44"/><line x1="220" y1="44" x2="220" y2="104"/><rect x="212" y="52" width="16" height="40"/><line x1="400" y1="30" x2="400" y2="96"/><rect x="392" y="40" width="16" height="42"/><line x1="580" y1="26" x2="580" y2="90"/><rect x="572" y="34" width="16" height="44"/><line x1="760" y1="14" x2="760" y2="80"/><rect x="752" y="22" width="16" height="44"/><line x1="940" y1="14" x2="940" y2="74"/><rect x="932" y="22" width="16" height="38"/><line x1="1120" y1="8" x2="1120" y2="66"/><rect x="1112" y="16" width="16" height="36"/></g>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="https://www.maxmaserati.com/?utm_source=620&utm_campaign=820">
+        <img src="/mmm-crest.png" alt="Max Maserati MMM logo" width="40" height="40">
+        <div><b>Max Maserati</b><span>MMM Trading</span></div>
+      </a>
+      <div class="pill">Cyber Monday</div>
+    </div>
 
-  <div class="cta" id="cta">
-    <a class="btn" id="go" href="#">Get my discount on Whop</a>
-    <p class="price" id="price"></p>
-    <a class="alt" id="site" href="https://www.maxmaserati.com/strategies/">Try it for free: see the tested strategies on maxmaserati.com</a>
-  </div>
+    <div class="grid">
+      <div class="g-txt">
+        <h1>Your MMM Pro discount is hidden. <em>Scratch to reveal it.</em></h1>
+        <p class="lead" id="lead">Every card wins 40% to 60% off MMM Pro. No more analysing the market every morning: plan the trade once, then follow it.</p>
+        <ul class="badges">
+          <li>Every card wins</li>
+          <li>Free to scratch</li>
+          <li>No purchase needed</li>
+        </ul>
+      </div>
 
-  <div class="box">
-    <h2>How MMM Pro works</h2>
-    <ol>
-      <li>Build your plan: in the VIP area open the MMM Game Plan Builder. Pick your prop firm and account size, then set your goal. It gives you your strategy, risk per trade, trading window and max loss per day.</li>
-      <li>Add only the MMM EDGE PRO indicator to your chart and set it to the strategy from your plan. Set your alerts.</li>
-      <li>Open your strategy on the Strategies page at maxmaserati.com. It shows the exact entry, stop loss and take profit, and when to move the stop or take half off.</li>
-      <li>Follow it. EDGE PRO stops showing trades outside your window and after your max daily loss, so there is no overtrading.</li>
-    </ol>
-    <p class="fine">Every strategy was backtested and had to pass strict rules before it was added. Losing trades and losing days still happen. No daily analysis, no guessing: a preplanned trade and a daily limit.</p>
-  </div>
+      <div class="g-cd">
+        <div id="cdwrap">
+          <div class="cd" id="cd" aria-live="off">
+            <div><b id="d">00</b><span>Days</span></div>
+            <div><b id="h">00</b><span>Hours</span></div>
+            <div><b id="m">00</b><span>Min</span></div>
+            <div><b id="s">00</b><span>Sec</span></div>
+          </div>
+          <p class="cdnote">Ends Monday 30 November 2026, 23:59 London time (6:59 PM New York).</p>
+        </div>
+      </div>
 
-  <div class="box">
-    <h2>The odds (every card wins)</h2>
-    <table id="odds"></table>
-    <p class="fine">Average discount: about 45%. One scratch per browser; your result stays the same if you reload.</p>
+      <div class="stage" id="stage">
+        <div class="cardwrap" id="cardwrap">
+          <div class="card" id="card">
+            <div class="prize">
+              <small>Your discount</small>
+              <div class="pct"><span id="pct">?</span><sup>%</sup></div>
+              <div class="lbl" id="lbl">off MMM Pro monthly for 12 months</div>
+              <div class="code" id="code">CODE</div>
+            </div>
+            <canvas id="scratch" aria-label="Scratch area. Drag to reveal your discount."></canvas>
+          </div>
+        </div>
+        <p class="hint" id="hint">Drag your finger or mouse across the card. <button id="reveal" type="button">Or tap to reveal</button></p>
+        <div class="cta" id="cta">
+          <a class="btn" id="go" href="#">Get my discount on Whop</a>
+          <p class="price" id="price"></p>
+          <a class="alt" id="site" href="https://www.maxmaserati.com/strategies/">Try it for free: see the tested strategies on maxmaserati.com</a><br>
+          <button class="copy" id="copy" type="button">Copy code</button>
+        </div>
+      </div>
+    </div>
   </div>
+</header>
 
-  <div class="box fine">
+<main class="wrap">
+  <section id="how">
+    <div class="eyebrow">How MMM Pro works</div>
+    <h2>Trading freedom. Preplanned trades. No FOMO.</h2>
+    <p class="sub">You do not have to guess the market or do hours of analysis. Four steps, then you follow the plan.</p>
+    <div class="steps">
+      <div class="step"><div class="n">1</div>
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M9 4h6a1 1 0 0 1 1 1v1H8V5a1 1 0 0 1 1-1z"/><rect x="5" y="6" width="14" height="15" rx="2"/><path d="M9 12l2 2 4-4M9 17h6"/></svg></div>
+        <h3>Build your plan</h3>
+        <p>In the VIP area open the MMM Game Plan Builder. Pick your prop firm and account size, then set your goal. It gives you your strategy, risk per trade, trading window and max loss per day.</p></div>
+      <div class="step"><div class="n">2</div>
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16"/><path d="M8 15l3-4 3 2 5-6"/><circle cx="19" cy="7" r="1.5"/></svg></div>
+        <h3>Add MMM EDGE PRO</h3>
+        <p>Add only the MMM EDGE PRO indicator to your chart, enter the exact settings for your strategy and set your alerts.</p></div>
+      <div class="step"><div class="n">3</div>
+        <div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z"/><path d="M4 5.5V21.5M9 8h7M9 12h5"/></svg></div>
+        <h3>Open your strategy</h3>
+        <p>Go to the Strategies page on maxmaserati.com. It shows the exact rules: entry, stop loss, take profit, when to move your stop into profit and when to take half off.</p></div>
+      <div class="step"><div class="n">4</div>
+        <div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg></div>
+        <h3>Just follow the plan</h3>
+        <p>Take the trades EDGE PRO shows. It stops showing trades outside your window and after your max daily loss, so there is no overtrading and no revenge trades.</p></div>
+    </div>
+    <div class="guard">Every strategy was backtested and had to pass strict rules before it was added. Losing trades and losing days still happen, even with a tested strategy. Stick to the plan and the daily limit.</div>
+  </section>
+
+  <section>
+    <div class="two">
+      <div class="chart">
+        <svg viewBox="0 0 420 220" role="img" aria-label="Illustration of a preplanned trade with entry, stop loss and take profit lines on teal and purple candles">
+          <rect width="420" height="220" fill="#fff"/>
+          <g stroke="#E2E8F0" stroke-width="1"><line x1="0" y1="40" x2="420" y2="40"/><line x1="0" y1="90" x2="420" y2="90"/><line x1="0" y1="140" x2="420" y2="140"/><line x1="0" y1="190" x2="420" y2="190"/></g>
+          <g stroke-width="2">
+            <g stroke="#8B5CF6" fill="#8B5CF6"><line x1="30" y1="120" x2="30" y2="170"/><rect x="24" y="130" width="12" height="30"/><line x1="78" y1="110" x2="78" y2="160"/><rect x="72" y="118" width="12" height="30"/><line x1="174" y1="108" x2="174" y2="164"/><rect x="168" y="120" width="12" height="32"/></g>
+            <g stroke="#12B5A6" fill="#12B5A6"><line x1="54" y1="100" x2="54" y2="150"/><rect x="48" y="108" width="12" height="32"/><line x1="102" y1="90" x2="102" y2="140"/><rect x="96" y="98" width="12" height="30"/><line x1="126" y1="76" x2="126" y2="128"/><rect x="120" y="84" width="12" height="32"/><line x1="150" y1="84" x2="150" y2="136"/><rect x="144" y="94" width="12" height="30"/><line x1="198" y1="70" x2="198" y2="120"/><rect x="192" y="78" width="12" height="30"/><line x1="222" y1="52" x2="222" y2="106"/><rect x="216" y="60" width="12" height="34"/><line x1="246" y1="40" x2="246" y2="92"/><rect x="240" y="48" width="12" height="32"/></g>
+          </g>
+          <g font-family="ui-monospace,Menlo,monospace" font-size="11" font-weight="700">
+            <line x1="150" y1="100" x2="410" y2="100" stroke="#1E5BFF" stroke-width="2" stroke-dasharray="5 4"/><rect x="318" y="86" width="92" height="18" rx="5" fill="#1E5BFF"/><text x="326" y="99" fill="#fff">ENTRY</text>
+            <line x1="150" y1="150" x2="410" y2="150" stroke="#D62839" stroke-width="2" stroke-dasharray="5 4"/><rect x="318" y="136" width="92" height="18" rx="5" fill="#D62839"/><text x="326" y="149" fill="#fff">STOP LOSS</text>
+            <line x1="150" y1="40" x2="410" y2="40" stroke="#0A9D5A" stroke-width="2" stroke-dasharray="5 4"/><rect x="318" y="26" width="92" height="18" rx="5" fill="#0A9D5A"/><text x="326" y="39" fill="#fff">TAKE PROFIT</text>
+          </g>
+        </svg>
+        <p>Illustration only, not a real trade or a result. Entry, stop loss and take profit are set before the trade, and you follow them.</p>
+      </div>
+      <div class="odds">
+        <h3>The odds</h3>
+        <p class="s">Every card wins. This is the full list, shown before you scratch.</p>
+        <div id="odds"></div>
+        <p class="s" style="margin-top:14px">Average discount: about 45%. One scratch per browser; your result stays the same if you reload.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="terms">
     <b>Terms.</b> Free to scratch, no purchase needed. The code works on MMM Pro monthly at whop.com/mmmtrading and takes the shown percentage off each of your first 12 monthly payments, then the normal price ($79.99 a month) unless you cancel. Prices are before tax and Whop's service fee. One code per customer. Codes expire Monday 30 November 2026 at 23:59 London time (6:59 PM New York). Not combinable with other codes.<br><br>
     Education only. Not financial advice. Trading futures involves substantial risk of loss.
+    <div class="foot"><img src="/mmm-crest.png" alt="" width="28" height="28"><span>Max Maserati, MMM Trading. maxmaserati.com</span></div>
   </div>
-</div>
+</main>
+
+<canvas class="confetti" id="confetti"></canvas>
+
 <script>
 // Odds: published on the page. Weighted pick with crypto randomness. Average = 45.4%.
 const TIERS=[{p:40,w:40,code:'CYBER40'},{p:45,w:30,code:'CYBER45'},{p:50,w:17,code:'CYBER50'},{p:55,w:8,code:'CYBER55'},{p:60,w:5,code:'CYBER60'}];
 const BASE=79.99, DEADLINE=Date.UTC(2026,10,30,23,59,0);
 const qs=new URLSearchParams(location.search); const src=(qs.get('s')||'').replace(/[^0-9]/g,'').slice(0,3)||'620'; const cmp=['821','822'].includes(qs.get('c'))?qs.get('c'):'820';
-document.getElementById('odds').innerHTML=TIERS.map(t=>`<tr><td>${t.p}% off</td><td>${t.w} in 100</td></tr>`).join('');
+document.getElementById('odds').innerHTML=TIERS.map(t=>`<div class="row"><span>${t.p}% off</span><div class="bar"><i style="width:${t.w*2}%"></i></div><b>${t.w} in 100</b></div>`).join('');
 function pick(){const r=crypto.getRandomValues(new Uint32Array(1))[0]%100;let a=0;for(const t of TIERS){a+=t.w;if(r<a)return t}return TIERS[0]}
 let t; try{const s=JSON.parse(localStorage.getItem('mmm_cyber26')||'null'); t=s&&TIERS.find(x=>x.code===s.code)}catch(e){}
 if(!t){t=pick(); try{localStorage.setItem('mmm_cyber26',JSON.stringify({code:t.code}))}catch(e){}}
-document.getElementById('pct').textContent=t.p+'%';document.getElementById('code').textContent=t.code;
+document.getElementById('pct').textContent=t.p;document.getElementById('code').textContent=t.code;
 const monthly=(BASE*(1-t.p/100)).toFixed(2);
 document.getElementById('price').textContent=`About $${monthly} a month for your first 12 months (normally $79.99), plus any tax and Whop service fee. Then $79.99 a month unless you cancel.`;
 document.getElementById('go').href=`https://whop.com/checkout/plan_YlacP2u8BmLXz?promoCode=${t.code}&utm_source=${src}&utm_campaign=${cmp}&utm_content=cyber${t.p}_s${src}`;
 document.getElementById('site').href=`https://www.maxmaserati.com/strategies/?utm_source=${src}&utm_campaign=${cmp}`;
+
+// Countdown to the real deadline
+const $=id=>document.getElementById(id), pad=n=>String(n).padStart(2,'0');
 const expired=Date.now()>DEADLINE;
-if(expired){document.querySelector('.top p').textContent='This promotion ended on Monday 30 November 2026 at 23:59 London time.';document.getElementById('card').style.display='none';document.getElementById('hint').style.display='none';}
-// Scratch layer
-const cv=document.getElementById('scratch'),ctx=cv.getContext('2d');let done=false;
-function size(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;ctx.scale(d,d);
- const g=ctx.createLinearGradient(0,0,r.width,r.height);g.addColorStop(0,'#1E5BFF');g.addColorStop(1,'#0B2A5B');ctx.fillStyle=g;ctx.fillRect(0,0,r.width,r.height);
- ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='800 26px Inter,system-ui,sans-serif';ctx.fillText('SCRATCH HERE',r.width/2,r.height/2-4);
- ctx.font='600 15px Inter,system-ui,sans-serif';ctx.fillStyle='#CFE0FF';ctx.fillText('40% to 60% off MMM Pro',r.width/2,r.height/2+24);}
-size();
-function finish(){if(done)return;done=true;cv.style.transition='opacity .4s';cv.style.opacity=0;setTimeout(()=>cv.remove(),400);document.getElementById('cta').style.display='block';document.getElementById('hint').style.display='none';}
-function scratch(x,y){ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(x,y,24,0,Math.PI*2);ctx.fill();}
-function cleared(){const d=ctx.getImageData(0,0,cv.width,cv.height).data;let c=0,n=0;for(let i=3;i<d.length;i+=64){n++;if(d[i]===0)c++}return c/n}
-let down=false;const pos=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
-cv.addEventListener('pointerdown',e=>{down=true;scratch(...pos(e))});
-cv.addEventListener('pointermove',e=>{if(down){scratch(...pos(e));}});
-addEventListener('pointerup',()=>{if(down){down=false;if(cleared()>0.45)finish()}});
-document.getElementById('reveal').onclick=finish;
+function tick(){const ms=Math.max(0,DEADLINE-Date.now());const s=Math.floor(ms/1000);$('d').textContent=pad(Math.floor(s/86400));$('h').textContent=pad(Math.floor(s%86400/3600));$('m').textContent=pad(Math.floor(s%3600/60));$('s').textContent=pad(s%60);}
+tick(); setInterval(tick,1000);
+if(expired){$('lead').textContent='This promotion ended on Monday 30 November 2026 at 23:59 London time.';$('stage').style.display='none';$('cdwrap').style.display='none';}
+
+// Metallic scratch layer
+const cv=$('scratch'),ctx=cv.getContext('2d');let done=false,moves=0;
+function paint(){const r=cv.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0);ctx.globalCompositeOperation='source-over';
+ const g=ctx.createLinearGradient(0,0,r.width,r.height);
+ [[0,'#8E98AB'],[.18,'#E6EBF4'],[.34,'#A3ADBF'],[.5,'#F4F7FC'],[.66,'#9AA5B8'],[.84,'#DCE2EE'],[1,'#8892A6']].forEach(([o,c])=>g.addColorStop(o,c));
+ ctx.fillStyle=g;ctx.fillRect(0,0,r.width,r.height);
+ // brushed grain
+ for(let i=0;i<1400;i++){ctx.fillStyle=`rgba(${Math.random()<.5?255:60},${Math.random()<.5?255:70},${Math.random()<.5?255:90},${Math.random()*.08})`;ctx.fillRect(Math.random()*r.width,Math.random()*r.height,Math.random()*26+4,1)}
+ // diagonal shine
+ const s=ctx.createLinearGradient(0,0,r.width,0);s.addColorStop(0,'rgba(255,255,255,0)');s.addColorStop(.5,'rgba(255,255,255,.35)');s.addColorStop(1,'rgba(255,255,255,0)');
+ ctx.save();ctx.translate(r.width*.2,0);ctx.rotate(.35);ctx.fillStyle=s;ctx.fillRect(0,-40,r.width*.18,r.height*2);ctx.restore();
+ // thin gold edge
+ ctx.strokeStyle='rgba(242,201,76,.75)';ctx.lineWidth=2;ctx.strokeRect(6,6,r.width-12,r.height-12);
+ // engraved text
+ ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.font='800 '+Math.max(22,r.width*.075)+'px Inter,system-ui,sans-serif';
+ ctx.fillStyle='rgba(255,255,255,.75)';ctx.fillText('SCRATCH HERE',r.width/2,r.height/2-13);
+ ctx.fillStyle='#4A5568';ctx.fillText('SCRATCH HERE',r.width/2,r.height/2-15);
+ ctx.font='600 '+Math.max(12,r.width*.036)+'px Inter,system-ui,sans-serif';ctx.fillStyle='#3B4558';ctx.fillText('40% to 60% off MMM Pro',r.width/2,r.height/2+18);
+}
+paint();
+function finish(){if(done)return;done=true;cv.style.transition='opacity .45s';cv.style.opacity=0;setTimeout(()=>cv.remove(),450);
+ $('cta').style.display='block';$('hint').style.display='none';$('cardwrap').classList.add('won');
+ if(navigator.vibrate)try{navigator.vibrate(30)}catch(e){}
+ if(!matchMedia('(prefers-reduced-motion: reduce)').matches)burst();}
+let last=null,down=false;
+const pos=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
+function stroke(a,b){ctx.globalCompositeOperation='destination-out';ctx.strokeStyle='#000';ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=46;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}
+function cleared(){const w=cv.width,h=cv.height;const d=ctx.getImageData(0,0,w,h).data;let c=0,n=0;for(let i=3;i<d.length;i+=64){n++;if(d[i]<40)c++}return c/n}
+cv.addEventListener('pointerdown',e=>{down=true;cv.setPointerCapture&&cv.setPointerCapture(e.pointerId);last=pos(e);stroke(last,last)});
+cv.addEventListener('pointermove',e=>{if(!down)return;const p=pos(e);stroke(last,p);last=p;if(++moves%12===0&&cleared()>.5)finish()});
+const up=()=>{if(down){down=false;if(!done&&cleared()>.5)finish()}};
+cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+$('reveal').onclick=finish;
+$('copy').onclick=()=>{try{navigator.clipboard.writeText(t.code);$('copy').textContent='Copied '+t.code}catch(e){$('copy').textContent=t.code}};
+
+// Confetti
+function burst(){const c=$('confetti'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;
+ const r=$('card').getBoundingClientRect(),ox=r.left+r.width/2,oy=r.top+r.height/2;
+ const cols=['#F2C94C','#FF7A00','#38D6FF','#3D7BFF','#12B5A6','#8B5CF6','#FFFFFF'];
+ const P=Array.from({length:150},()=>{const a=Math.random()*Math.PI*2,v=4+Math.random()*9;return{x:ox,y:oy,vx:Math.cos(a)*v,vy:Math.sin(a)*v-4,w:5+Math.random()*6,h:3+Math.random()*5,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[Math.floor(Math.random()*cols.length)],l:1}});
+ let f=0;(function step(){x.clearRect(0,0,c.width,c.height);let alive=0;for(const p of P){p.vy+=.22;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;p.l-=.009;if(p.l>0&&p.y<c.height+20){alive++;x.save();x.globalAlpha=Math.max(0,p.l);x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.w/2,-p.h/2,p.w,p.h);x.restore()}}
+ if(alive&&++f<260)requestAnimationFrame(step);else x.clearRect(0,0,c.width,c.height)})();}
 </script>
 </body>
 </html>
