@@ -71,7 +71,7 @@ table{width:100%;border-collapse:collapse;font-size:15px}td{padding:6px 0;border
   </div>
 
   <div class="box fine">
-    <b>Terms.</b> Free to scratch, no purchase needed. The code works on MMM Pro monthly at whop.com/mmmtrading and takes the shown percentage off each of your first 12 monthly payments, then the normal price ($79.99 a month) unless you cancel. Prices are before any tax. One code per customer. Codes expire Monday 30 November 2026 at 23:59 London time (6:59 PM New York). Not combinable with other codes.<br><br>
+    <b>Terms.</b> Free to scratch, no purchase needed. The code works on MMM Pro monthly at whop.com/mmmtrading and takes the shown percentage off each of your first 12 monthly payments, then the normal price ($79.99 a month) unless you cancel. Prices are before tax and Whop's service fee. One code per customer. Codes expire Monday 30 November 2026 at 23:59 London time (6:59 PM New York). Not combinable with other codes.<br><br>
     Education only. Not financial advice. Trading futures involves substantial risk of loss.
   </div>
 </div>
@@ -86,7 +86,7 @@ let t; try{const s=JSON.parse(localStorage.getItem('mmm_cyber26')||'null'); t=s&
 if(!t){t=pick(); try{localStorage.setItem('mmm_cyber26',JSON.stringify({code:t.code}))}catch(e){}}
 document.getElementById('pct').textContent=t.p+'%';document.getElementById('code').textContent=t.code;
 const monthly=(BASE*(1-t.p/100)).toFixed(2);
-document.getElementById('price').textContent=`About $${monthly} a month for your first 12 months (normally $79.99), plus any tax. Then $79.99 a month unless you cancel.`;
+document.getElementById('price').textContent=`About $${monthly} a month for your first 12 months (normally $79.99), plus any tax and Whop service fee. Then $79.99 a month unless you cancel.`;
 document.getElementById('go').href=`https://whop.com/checkout/plan_YlacP2u8BmLXz?promoCode=${t.code}&utm_source=${src}&utm_campaign=${cmp}&utm_content=cyber${t.p}_s${src}`;
 document.getElementById('site').href=`https://www.maxmaserati.com/strategies/?utm_source=${src}&utm_campaign=${cmp}`;
 const expired=Date.now()>DEADLINE;
