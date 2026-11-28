@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-25T06:35:36Z",
+  "updated": "2026-11-28T06:30:00Z",
   "note": "Direct buy link for each account size: {plan id: {size in K: url}}. Filled by the daily offers check from prop-firms/scan/latest.json.",
   "links": {
     "tradeify-select": {
@@ -45,6 +45,19 @@
       "50": "https://propedcapital.com/nexus/checkout?product=plan%3A318",
       "100": "https://propedcapital.com/nexus/checkout?product=plan%3A319",
       "150": "https://propedcapital.com/nexus/checkout?product=plan%3A320"
+    },
+    "ftmo-growth": {
+      "50": "https://futures.ftmo.com/configure-account/",
+      "100": "https://futures.ftmo.com/configure-account/",
+      "150": "https://futures.ftmo.com/configure-account/"
+    },
+    "ftmo-pro": {
+      "50": "https://futures.ftmo.com/configure-account/",
+      "100": "https://futures.ftmo.com/configure-account/",
+      "150": "https://futures.ftmo.com/configure-account/"
+    },
+    "fn-fnl006": {
+      "25": "https://fundednext.com/futures"
     }
   }
 }

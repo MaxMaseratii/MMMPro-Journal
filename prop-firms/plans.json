@@ -1,8 +1,8 @@
 {
  "title": "One-Pay Futures Prop Plans",
  "summary": "Only plans with no activation fee and an end-of-day or static drawdown in both the evaluation and the funded account. One row per account size, lowest to highest.",
- "verified": "2026-11-27",
- "verified_label": "27 Nov 2026 (London time)",
+ "verified": "2026-11-28",
+ "verified_label": "28 Nov 2026 (London time)",
  "criteria": [
   "No activation fee",
   "One-time payment (monthly-billed plans hidden behind a toggle)",
@@ -3384,7 +3384,7 @@
     {
      "k": 100,
      "list": 900,
-     "promo": "$135 with BLACK90 (to 27 Nov 2026 5 PM ET, official X 26 Nov)",
+     "promo": "$135 with BLACK90 (extended to Sun 29 Nov 2026, midnight ET, official X 27 Nov)",
      "dd": null,
      "target": null,
      "dll": "None"
@@ -4661,6 +4661,122 @@
    "fCons": 20,
    "payDays": 5,
    "payNote": null
+  },
+  {
+   "id": "fn-fnl006",
+   "firm": "FundedNext Futures",
+   "plan": "FNL:006 (Labs, Static MLL)",
+   "kind": "Evaluation",
+   "dd": "Static",
+   "billing": "One-time",
+   "status": "Verified",
+   "ddNote": "Static max loss limit locked at $23,500 on the 25K (never trails) in challenge and funded; $750 hard daily loss limit.",
+   "consistency": "None in challenge or funded; no buffer, no minimum winning days",
+   "payout": "Rewards every 1 day; 80% split; min $500, max $5,000 per account (account concluded after $5,000 total)",
+   "maxAcc": "Labs accounts do not count toward the 5 FundedNext Account limit",
+   "notes": "New Labs challenge launched 27 Nov 2026, limited seats, 25K only, 3 mini or 30 micro, news trading allowed, 30-day inactivity rule, no reset. Activation fee not mentioned on the pricing or help-center page.",
+   "src": "https://fundednext.com/futures",
+   "sizes": [
+    {
+     "k": 25,
+     "list": 179.99,
+     "promo": "",
+     "dd": 1500,
+     "target": 2500,
+     "dll": "$750 (hard)"
+    }
+   ],
+   "fCons": 0,
+   "payDays": 1,
+   "payNote": "Minimum reward $500; $5,000 cap per account."
+  },
+  {
+   "id": "ftmo-growth",
+   "firm": "FTMO Futures",
+   "plan": "Growth",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "EOD max drawdown with trailing lock in evaluation and Sim-Funded.",
+   "consistency": "Eval best day <=40%; none in Sim-Funded",
+   "payout": "Every 4 days ($150+ / $300+ / $450+ per day); 90/10; 50% of profit per request, caps $2,500 / $3,000 / $4,000",
+   "maxAcc": "3 concurrent Sim-Funded accounts (unlimited evaluations)",
+   "notes": "Single-phase evaluation billed as a monthly subscription, no activation fee, no time limit; reset fee $109/$159/$219 (Growth) or $129/$189/$259 (Pro); flat by 4:10 pm ET; daily loss limit in Sim-Funded: $1,000/$2,000/$3,000 soft. FTMO26 discounts the first month only.",
+   "src": "https://ftmo.com/en/futures/comparison-table/",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 119,
+     "promo": "$84 first month with FTMO26 (30% off)",
+     "dd": 2000,
+     "target": 3000,
+     "dll": "None"
+    },
+    {
+     "k": 100,
+     "list": 169,
+     "promo": "FTMO26: first month 20% off",
+     "dd": 3000,
+     "target": 6000,
+     "dll": "None"
+    },
+    {
+     "k": 150,
+     "list": 229,
+     "promo": "FTMO26: first month 10% off",
+     "dd": 4500,
+     "target": 9000,
+     "dll": "None"
+    }
+   ],
+   "fCons": 0,
+   "payDays": 4,
+   "payNote": "Payout eligibility needs 4 days with minimum profit per day."
+  },
+  {
+   "id": "ftmo-pro",
+   "firm": "FTMO Futures",
+   "plan": "Pro",
+   "kind": "Evaluation",
+   "dd": "EOD",
+   "billing": "Monthly",
+   "status": "Verified",
+   "ddNote": "EOD max drawdown with trailing lock in evaluation and Sim-Funded.",
+   "consistency": "Eval best day <=50%; none in Sim-Funded",
+   "payout": "Every 5 days ($200+ / $300+ / $500+ per day); 90/10; 100% of profit per request, caps $5,000 / $6,000 / $8,000",
+   "maxAcc": "3 concurrent Sim-Funded accounts (unlimited evaluations)",
+   "notes": "Single-phase evaluation billed as a monthly subscription, no activation fee, no time limit; reset fee $109/$159/$219 (Growth) or $129/$189/$259 (Pro); flat by 4:10 pm ET; daily loss limit in Sim-Funded: $1,000/$1,500/$2,000 hard. FTMO26 discounts the first month only.",
+   "src": "https://ftmo.com/en/futures/comparison-table/",
+   "sizes": [
+    {
+     "k": 50,
+     "list": 139,
+     "promo": "FTMO26: first month 30% off",
+     "dd": 3000,
+     "target": 3000,
+     "dll": "$1,000 (hard)"
+    },
+    {
+     "k": 100,
+     "list": 199,
+     "promo": "FTMO26: first month 20% off",
+     "dd": 4500,
+     "target": 6000,
+     "dll": "$1,500 (hard)"
+    },
+    {
+     "k": 150,
+     "list": 269,
+     "promo": "FTMO26: first month 10% off",
+     "dd": 6000,
+     "target": 9000,
+     "dll": "$2,000 (hard)"
+    }
+   ],
+   "fCons": 0,
+   "payDays": 5,
+   "payNote": "Payout eligibility needs 5 days with minimum profit per day."
   }
  ],
  "excluded": [
@@ -7213,6 +7329,47 @@
    },
    "logo": {
     "site": "https://www.thetradingpit.com"
+   }
+  },
+  "FTMO Futures": {
+   "tp": {
+    "score": 4.8,
+    "n": null,
+    "url": "https://ftmo.com/en/futures/",
+    "note": "whole FTMO brand, as shown on ftmo.com"
+   },
+   "copy": {
+    "s": null,
+    "note": null
+   },
+   "proc": null,
+   "banned": null,
+   "bannedNote": null,
+   "bannedSrc": null,
+   "aff": {
+    "url": "",
+    "code": ""
+   },
+   "prof": {
+    "platforms": [
+     "NinjaTrader",
+     "Tradovate",
+     "TradingView"
+    ],
+    "payout": [],
+    "programs": [
+     "Growth",
+     "Pro"
+    ],
+    "hq": "Czech Republic",
+    "founded": "2026",
+    "maxAlloc": "$450K",
+    "src": "ftmo.com",
+    "srcUrl": "https://ftmo.com/en/futures/",
+    "checked": "2026-11-28"
+   },
+   "logo": {
+    "site": "https://ftmo.com"
    }
   }
  },

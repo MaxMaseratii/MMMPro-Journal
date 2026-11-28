@@ -1,6 +1,6 @@
 {
-  "updated": "2026-11-27T06:23:08Z",
-  "updated_label": "27 Nov 2026, 06:23 London",
+  "updated": "2026-11-28T06:30:00Z",
+  "updated_label": "28 Nov 2026, 06:30 London",
   "offers": [
     {
       "firm": "Apex Trader Funding",
@@ -31,20 +31,9 @@
       "pct": 90,
       "text": "Black Friday: new $50K Instant Sim Funded account at $197 (90% off $1,970), no evaluation, one-time fee, 100% split (intraday trailing drawdown, so not in the one-pay table). No code shown in the post",
       "ends": null,
-      "src": "https://x.com/ApexTradeFund/status/2126071723803963720",
+      "src": "https://x.com/ApexTradeFund/status/2126375503518925191",
       "via": "x",
-      "checked": "2026-11-27"
-    },
-    {
-      "firm": "Funded Family One",
-      "plans": [],
-      "code": "FFONE",
-      "pct": 90,
-      "text": "Velocity on TruTik: 90% off every size plus buy 4 get 1 free with code FFONE. Ends Fri 27 Nov 2026, 3 PM PST",
-      "ends": "2026-11-27",
-      "src": "https://fundedfamilyone.com",
-      "via": "site",
-      "checked": "2026-11-27"
+      "checked": "2026-11-28"
     },
     {
       "firm": "IQ Capital",
@@ -56,19 +45,6 @@
       "src": "https://www.iqcapital.io/",
       "via": "site",
       "checked": "2026-11-25"
-    },
-    {
-      "firm": "Phidias Propfirm",
-      "plans": [
-        "phidias-e2l"
-      ],
-      "code": "BLACK90",
-      "pct": 85,
-      "text": "Black Friday: up to 90% off with code BLACK90 (Fundamental and Premium 90%, Express to Live 85%; 100K Express to Live $135, 50K Fundamental $58). Ends Fri 27 Nov, 5 PM ET",
-      "ends": "2026-11-27",
-      "src": "https://x.com/PhidiasPropfirm/status/2126119147587178641",
-      "via": "x",
-      "checked": "2026-11-27"
     },
     {
       "firm": "Funded Futures Network",
@@ -92,9 +68,9 @@
       "pct": 70,
       "text": "Black November: 70% off Ignite when you bundle 5+ accounts, 55% off Elite Dailies, Elite Access buy 1 get 1 free with code BOGO, 25% off activation fees",
       "ends": null,
-      "src": "https://www.toponefutures.com/",
+      "src": "https://x.com/TopOneFutures/status/2126394341002195422",
       "via": "site",
-      "checked": "2026-11-25"
+      "checked": "2026-11-28"
     },
     {
       "firm": "Blueberry Futures",
@@ -340,11 +316,11 @@
       "plans": [],
       "code": "BLACKFRIDAY",
       "pct": 40,
-      "text": "Black Friday Mega Sale: 40% off every account with code BLACKFRIDAY (extra off when you buy more accounts). Ends 30 Nov 2026",
-      "ends": "2026-11-30",
-      "src": "https://www.aquafunded.com/futures",
+      "text": "Black Friday: buy 2 accounts, get the 3rd free, plus 40% off the two you pay for, with code BLACKFRIDAY (posted 27 Nov as next 48 hours only)",
+      "ends": "2026-11-29",
+      "src": "https://x.com/AquaFunded/status/2126224260268233052",
       "via": "site",
-      "checked": "2026-11-25"
+      "checked": "2026-11-28"
     },
     {
       "firm": "Aqua Futures (AquaFunded)",
@@ -386,11 +362,11 @@
       "plans": [],
       "code": "BLACK",
       "pct": 35,
-      "text": "Black Friday: 35% off with code BLACK",
-      "ends": null,
-      "src": "https://blueguardian.com/futures",
+      "text": "Black Friday mega flash sale: 35% off with code BLACK, and when you bundle the 5th account is free. 24 hours only from 27 Nov (founder says prices return to normal on 28 Nov)",
+      "ends": "2026-11-28",
+      "src": "https://x.com/seanbaint/status/2126254460746019257",
       "via": "site",
-      "checked": "2026-11-25"
+      "checked": "2026-11-28"
     },
     {
       "firm": "Blue Guardian Futures",
@@ -398,10 +374,10 @@
       "code": null,
       "pct": 35,
       "text": "Black Friday (founder post): 35% off plus buy 4 get the 5th free; 5-pack from $675 to $516. No code shown in the post",
-      "ends": null,
-      "src": "https://x.com/seanbaint/status/2126128107845271892",
+      "ends": "2026-11-28",
+      "src": "https://x.com/seanbaint/status/2126343649948758169",
       "via": "x",
-      "checked": "2026-11-27"
+      "checked": "2026-11-28"
     },
     {
       "firm": "Tradeify",
@@ -469,9 +445,9 @@
       "pct": 20,
       "text": "Thanksgiving: extra 20% off on top of the 40% already applied, with code UPTBLACK",
       "ends": null,
-      "src": "https://x.com/uprofittrader/status/2125937619229974733",
+      "src": "https://x.com/uprofittrader/status/2126319839761375531",
       "via": "x",
-      "checked": "2026-11-27"
+      "checked": "2026-11-28"
     },
     {
       "firm": "The5ers Futures",
@@ -519,6 +495,94 @@
       "src": "https://www.sharkfutures.com/",
       "via": "site",
       "checked": "2026-11-25"
+    },
+    {
+      "firm": "Phidias Propfirm",
+      "plans": [
+        "phidias-e2l"
+      ],
+      "code": "BLACK90",
+      "pct": 85,
+      "text": "Black Friday extended: same prices until Sun 29 Nov 2026 midnight ET, 500 more accounts added (up to 90% off with BLACK90: Fundamental and Premium 90%, Express to Live 85%; 100K Express to Live $135, 50K Fundamental $58)",
+      "ends": "2026-11-29",
+      "src": "https://x.com/PhidiasPropfirm/status/2126443540066500744",
+      "via": "x",
+      "checked": "2026-11-28"
+    },
+    {
+      "firm": "Alpha Futures",
+      "plans": [
+        "alpha-zero"
+      ],
+      "code": "BOGO40",
+      "pct": 40,
+      "text": "Black Friday: 25K Zero Plan buy one get one free plus 40% off (each code usable up to 3 times). Live 27-30 Nov 2026",
+      "ends": "2026-11-30",
+      "src": "https://x.com/Alpha_Futures_/status/2126307939296100629",
+      "via": "x",
+      "checked": "2026-11-28"
+    },
+    {
+      "firm": "Alpha Futures",
+      "plans": [
+        "alpha-direct"
+      ],
+      "code": "BOGO50",
+      "pct": 50,
+      "text": "Black Friday: 25K Direct Plan buy one get one free plus 50% off (each code usable up to 3 times). Live 27-30 Nov 2026",
+      "ends": "2026-11-30",
+      "src": "https://x.com/Alpha_Futures_/status/2126307939296100629",
+      "via": "x",
+      "checked": "2026-11-28"
+    },
+    {
+      "firm": "FunderPro Futures",
+      "plans": [],
+      "code": "BLACK40",
+      "pct": 40,
+      "text": "Black Friday weekend: 40% off every challenge with code BLACK40, 27 to 29 Nov 2026",
+      "ends": "2026-11-29",
+      "src": "https://x.com/FunderPro/status/2126209426214240600",
+      "via": "x",
+      "checked": "2026-11-28"
+    },
+    {
+      "firm": "Funded Family One",
+      "plans": [],
+      "code": "FFO",
+      "pct": 90,
+      "text": "Black Friday: up to 90% off with code FFO (per the official post; details on fundedfamilyone.com)",
+      "ends": null,
+      "src": "https://x.com/fundedfamily/status/2126297700203388962",
+      "via": "x",
+      "checked": "2026-11-28"
+    },
+    {
+      "firm": "The Trading Pit",
+      "plans": [
+        "tradingpit-instant"
+      ],
+      "code": "BF50",
+      "pct": 50,
+      "text": "Black Friday flash sale: 50% off Instant Accounts and Swing Challenges of $10K and up, 24 hours only from 27 Nov 2026 (Futures Prime Challenges 40% off with BF40)",
+      "ends": "2026-11-28",
+      "src": "https://x.com/TheTradingPit_/status/2126221705114697961",
+      "via": "x",
+      "checked": "2026-11-28"
+    },
+    {
+      "firm": "FTMO Futures",
+      "plans": [
+        "ftmo-growth",
+        "ftmo-pro"
+      ],
+      "code": "FTMO26",
+      "pct": 30,
+      "text": "Black Friday: first month only, 30% off the 50K, 20% off the 100K, 10% off the 150K evaluation subscription (50K Growth from $84). No end date published",
+      "ends": null,
+      "src": "https://ftmo.com/en/futures/",
+      "via": "site",
+      "checked": "2026-11-28"
     }
   ],
   "inboxDone": [
