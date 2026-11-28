@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MMM Pro Cyber Monday: scratch to see your discount</title>
+<meta name="description" content="Scratch to see your MMM Pro discount: 40% to 60% off. Free to scratch. Ends Monday 30 November 2026, 23:59 London time.">
+<meta name="robots" content="noindex">
+<style>
+:root{--navy:#0B2A5B;--blue:#1E5BFF;--sky:#EAF1FF;--orange:#FF7A00;--orange2:#E56A00;--green:#12B76A;--ink:#0F172A;--dim:#475569;--line:#D7E2F5}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--sky);color:var(--ink)}
+.wrap{max-width:560px;margin:0 auto;padding:28px 18px 48px}
+.top{background:var(--navy);color:#fff;border-radius:20px;padding:22px 22px 26px;text-align:center}
+.top small{letter-spacing:.12em;text-transform:uppercase;color:#9FC0FF;font-weight:700}
+h1{margin:8px 0 6px;font-size:28px;line-height:1.15}
+.top p{margin:0;color:#D6E4FF}
+.card{position:relative;margin:22px auto 10px;width:100%;max-width:420px;aspect-ratio:3/2;border-radius:18px;overflow:hidden;background:#fff;border:2px solid var(--line);box-shadow:0 10px 30px rgba(11,42,91,.15)}
+.prize{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.prize .pct{font-size:72px;font-weight:800;color:var(--blue);line-height:1}
+.prize .lbl{font-weight:700;color:var(--navy);margin-top:6px}
+.prize .code{margin-top:10px;font-family:ui-monospace,Menlo,monospace;font-size:20px;padding:6px 12px;border:2px dashed var(--blue);border-radius:10px;color:var(--navy)}
+canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:pointer}
+.hint{text-align:center;color:var(--dim);font-size:14px}
+.cta{display:none;margin:18px auto 0;max-width:420px}
+.btn{display:block;text-align:center;background:var(--orange);color:#fff;text-decoration:none;font-weight:800;font-size:19px;padding:16px;border-radius:14px}
+.btn:hover{background:var(--orange2)}
+.price{text-align:center;margin:10px 0 0;color:var(--ink);font-size:15px}
+.alt{display:block;text-align:center;margin-top:10px;color:var(--blue);font-weight:600}
+.box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-top:22px}
+.box h2{font-size:18px;margin:0 0 10px;color:var(--navy)}
+ol{margin:0;padding-left:20px}li{margin:6px 0;line-height:1.45}
+table{width:100%;border-collapse:collapse;font-size:15px}td{padding:6px 0;border-bottom:1px solid var(--line)}td:last-child{text-align:right;font-weight:700}
+.fine{font-size:13px;color:var(--dim);line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <small>Cyber Monday at MMM</small>
+    <h1>Scratch to see your MMM Pro discount</h1>
+    <p>Every card wins 40% to 60% off. Free to scratch, no purchase needed.</p>
+  </div>
+
+  <div class="card" id="card">
+    <div class="prize"><div class="pct" id="pct">?</div><div class="lbl">off MMM Pro monthly for 12 months</div><div class="code" id="code">CODE</div></div>
+    <canvas id="scratch" aria-label="Scratch area. Drag to reveal your discount."></canvas>
+  </div>
+  <p class="hint" id="hint">Drag your finger or mouse across the card. <button id="reveal" style="border:0;background:none;color:#1E5BFF;font-weight:700;cursor:pointer;font-size:14px">Or tap to reveal</button></p>
+
+  <div class="cta" id="cta">
+    <a class="btn" id="go" href="#">Try it for free</a>
+    <p class="price" id="price"></p>
+    <a class="alt" id="site" href="https://www.maxmaserati.com/strategies/">See the tested strategies on maxmaserati.com</a>
+  </div>
+
+  <div class="box">
+    <h2>How MMM Pro works</h2>
+    <ol>
+      <li>Build your plan: in the VIP area open the MMM Game Plan Builder. Pick your prop firm and account size, then set your goal. It gives you your strategy, risk per trade, trading window and max loss per day.</li>
+      <li>Add only the MMM EDGE PRO indicator to your chart and set it to the strategy from your plan. Set your alerts.</li>
+      <li>Open your strategy on the Strategies page at maxmaserati.com. It shows the exact entry, stop loss and take profit, and when to move the stop or take half off.</li>
+      <li>Follow it. EDGE PRO stops showing trades outside your window and after your max daily loss, so there is no overtrading.</li>
+    </ol>
+    <p class="fine">Every strategy was backtested and had to pass strict rules before it was added. Losing trades and losing days still happen. No daily analysis, no guessing: a preplanned trade and a daily limit.</p>
+  </div>
+
+  <div class="box">
+    <h2>The odds (every card wins)</h2>
+    <table id="odds"></table>
+    <p class="fine">Average discount: about 45%. One scratch per browser; your result stays the same if you reload.</p>
+  </div>
+
+  <div class="box fine">
+    <b>Terms.</b> Free to scratch, no purchase needed. The code works on MMM Pro monthly at whop.com/mmmtrading and takes the shown percentage off each of your first 12 monthly payments, then the normal price ($79.99 a month) unless you cancel. First-time members get the 7-day free trial first. One code per customer. Codes expire Monday 30 November 2026 at 23:59 London time (6:59 PM New York). Not combinable with other codes.<br><br>
+    Education only. Not financial advice. Trading futures involves substantial risk of loss.
+  </div>
+</div>
+<script>
+// Odds: published on the page. Weighted pick with crypto randomness. Average = 45.4%.
+const TIERS=[{p:40,w:40,code:'CYBER40'},{p:45,w:30,code:'CYBER45'},{p:50,w:17,code:'CYBER50'},{p:55,w:8,code:'CYBER55'},{p:60,w:5,code:'CYBER60'}];
+const BASE=79.99, DEADLINE=Date.UTC(2026,10,30,23,59,0);
+const qs=new URLSearchParams(location.search); const src=(qs.get('s')||'').replace(/[^0-9]/g,'').slice(0,3)||'620'; const cmp=['821','822'].includes(qs.get('c'))?qs.get('c'):'820';
+document.getElementById('odds').innerHTML=TIERS.map(t=>`<tr><td>${t.p}% off</td><td>${t.w} in 100</td></tr>`).join('');
+function pick(){const r=crypto.getRandomValues(new Uint32Array(1))[0]%100;let a=0;for(const t of TIERS){a+=t.w;if(r<a)return t}return TIERS[0]}
+let t; try{const s=JSON.parse(localStorage.getItem('mmm_cyber26')||'null'); t=s&&TIERS.find(x=>x.code===s.code)}catch(e){}
+if(!t){t=pick(); try{localStorage.setItem('mmm_cyber26',JSON.stringify({code:t.code}))}catch(e){}}
+document.getElementById('pct').textContent=t.p+'%';document.getElementById('code').textContent=t.code;
+const monthly=(BASE*(1-t.p/100)).toFixed(2);
+document.getElementById('price').textContent=`$0 today for the 7-day trial, then about $${monthly} a month for 12 months (normally $79.99). Cancel any time.`;
+document.getElementById('go').href=`https://whop.com/mmmtrading/mmm-pro/?promoCode=${t.code}&utm_source=${src}&utm_campaign=${cmp}&utm_content=cyber${t.p}`;
+document.getElementById('site').href=`https://www.maxmaserati.com/strategies/?utm_source=${src}&utm_campaign=${cmp}`;
+const expired=Date.now()>DEADLINE;
+if(expired){document.querySelector('.top p').textContent='This promotion ended on Monday 30 November 2026 at 23:59 London time.';document.getElementById('card').style.display='none';document.getElementById('hint').style.display='none';}
+// Scratch layer
+const cv=document.getElementById('scratch'),ctx=cv.getContext('2d');let done=false;
+function size(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;ctx.scale(d,d);
+ const g=ctx.createLinearGradient(0,0,r.width,r.height);g.addColorStop(0,'#1E5BFF');g.addColorStop(1,'#0B2A5B');ctx.fillStyle=g;ctx.fillRect(0,0,r.width,r.height);
+ ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='800 26px Inter,system-ui,sans-serif';ctx.fillText('SCRATCH HERE',r.width/2,r.height/2-4);
+ ctx.font='600 15px Inter,system-ui,sans-serif';ctx.fillStyle='#CFE0FF';ctx.fillText('40% to 60% off MMM Pro',r.width/2,r.height/2+24);}
+size();
+function finish(){if(done)return;done=true;cv.style.transition='opacity .4s';cv.style.opacity=0;setTimeout(()=>cv.remove(),400);document.getElementById('cta').style.display='block';document.getElementById('hint').style.display='none';}
+function scratch(x,y){ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc(x,y,24,0,Math.PI*2);ctx.fill();}
+function cleared(){const d=ctx.getImageData(0,0,cv.width,cv.height).data;let c=0,n=0;for(let i=3;i<d.length;i+=64){n++;if(d[i]===0)c++}return c/n}
+let down=false;const pos=e=>{const r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]};
+cv.addEventListener('pointerdown',e=>{down=true;scratch(...pos(e))});
+cv.addEventListener('pointermove',e=>{if(down){scratch(...pos(e));}});
+addEventListener('pointerup',()=>{if(down){down=false;if(cleared()>0.45)finish()}});
+document.getElementById('reveal').onclick=finish;
+</script>
+</body>
+</html>
